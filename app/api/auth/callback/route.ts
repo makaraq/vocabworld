@@ -1,60 +1,34 @@
-import { createClient } from '@supabase/supabase-js'
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
+import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
-  const error = requestUrl.searchParams.get('error')
-  const errorDescription = requestUrl.searchParams.get('error_description')
-
-  console.log('🔵 Auth callback received:', {
-    url: request.url,
-    code: code ? 'present' : 'missing',
-    error,
-    errorDescription,
-    origin: requestUrl.origin
-  })
-
-  if (error) {
-    console.error('🔴 OAuth error received from provider:', error, errorDescription)
-    return NextResponse.redirect(
-      new URL(`/auth/error?error=${encodeURIComponent(error)}&description=${encodeURIComponent(errorDescription || '')}`, requestUrl.origin)
-    )
-  }
 
   if (code) {
+    const cookieStore = cookies()
+    const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
+    
     try {
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-      const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      await supabase.auth.exchangeCodeForSession(code)
       
-      if (!supabaseUrl || !supabaseAnonKey) {
-        console.error('🔴 Missing Supabase environment variables')
-        return NextResponse.redirect(
-          new URL(`/auth/error?error=${encodeURIComponent('Server configuration error')}`, requestUrl.origin)
-        )
-      }
+      // Return a JSON response instead of redirect for the client to handle
+      return NextResponse.json({ success: true })
+    } catch (error) {
+      console.error('Auth callback error:', error)
+      return NextResponse.json(
+        { success: false, error: 'Authentication failed' },
+        { status: 400 }
+      )
+    }
+  }
 
-      // Use anon key for client-side auth operations
-      const supabase = createClient(supabaseUrl, supabaseAnonKey)
-      
-      console.log('🔵 Exchanging code for session with PKCE...')
-      
-      // This will use the code verifier from the browser session storage automatically
-      const { data, error } = await supabase.auth.exchangeCodeForSession(code)
-      
-      if (error) {
-        console.error('🔴 Session exchange error:', error)
-        return NextResponse.redirect(
-          new URL(`/auth/error?error=${encodeURIComponent(error.message)}`, requestUrl.origin)
-        )
-      }
-
-      if (data.session) {
-        console.log('🟢 Session created successfully for user:', data.session.user.id)
-        
-        // Redirect to home - the session will be handled by the client
-        console.log('🟢 Redirecting to home page')
-        return NextResponse.redirect(new URL('/', requestUrl.origin))
+  return NextResponse.json(
+    { success: false, error: 'No code provided' },
+    { status: 400 }
+  )
+}
         
         // Check if user profile exists, create if not
         const { data: profile, error: profileError } = await supabase
