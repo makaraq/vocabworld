@@ -19,16 +19,23 @@ export async function GET(request: NextRequest) {
     const supabase = createRouteHandlerClient({ cookies })
     
     try {
+      console.log('🔵 Exchanging code for session...')
       const { data, error } = await supabase.auth.exchangeCodeForSession(code)
       
       if (error) {
-        console.error('Session exchange error:', error)
+        console.error('🔴 Session exchange error:', error)
         return NextResponse.redirect(
           new URL(`/auth/error?error=${encodeURIComponent(error.message)}`, requestUrl.origin)
         )
       }
 
       if (data.session) {
+        console.log('🟢 Session created successfully for user:', data.session.user.id)
+        
+        // Skip profile creation for now and just redirect to success
+        console.log('🟢 Redirecting to home page')
+        return NextResponse.redirect(new URL('/', requestUrl.origin))
+        
         // Check if user profile exists, create if not
         const { data: profile, error: profileError } = await supabase
           .from('user_profiles')
