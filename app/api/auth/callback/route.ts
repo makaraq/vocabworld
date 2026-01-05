@@ -8,8 +8,16 @@ export async function GET(request: NextRequest) {
   const error = requestUrl.searchParams.get('error')
   const errorDescription = requestUrl.searchParams.get('error_description')
 
+  console.log('🔵 Auth callback received:', {
+    url: request.url,
+    code: code ? 'present' : 'missing',
+    error,
+    errorDescription,
+    origin: requestUrl.origin
+  })
+
   if (error) {
-    console.error('OAuth error:', error, errorDescription)
+    console.error('🔴 OAuth error received from provider:', error, errorDescription)
     return NextResponse.redirect(
       new URL(`/auth/error?error=${encodeURIComponent(error)}&description=${encodeURIComponent(errorDescription || '')}`, requestUrl.origin)
     )
@@ -70,9 +78,15 @@ export async function GET(request: NextRequest) {
         return NextResponse.redirect(new URL('/', requestUrl.origin))
       }
     } catch (error) {
-      console.error('Auth callback error:', error)
+      console.error('🔴 Auth callback error details:', {
+        error,
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+        requestUrl: requestUrl.href,
+        code: code ? 'present' : 'missing'
+      })
       return NextResponse.redirect(
-        new URL(`/auth/error?error=${encodeURIComponent('Authentication failed')}`, requestUrl.origin)
+        new URL(`/auth/error?error=${encodeURIComponent('Authentication failed - check logs')}`, requestUrl.origin)
       )
     }
   }
