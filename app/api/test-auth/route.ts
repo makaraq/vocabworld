@@ -1,5 +1,4 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
@@ -16,13 +15,24 @@ export async function GET(request: NextRequest) {
       url: supabaseUrl ? supabaseUrl.substring(0, 30) + '...' : 'missing'
     })
     
-    const supabase = createRouteHandlerClient({ cookies })
+    if (!supabaseUrl || !supabaseAnonKey) {
+      return NextResponse.json({
+        success: false,
+        error: 'Missing Supabase environment variables',
+        environment: {
+          hasSupabaseUrl: !!supabaseUrl,
+          hasSupabaseKey: !!supabaseAnonKey
+        }
+      })
+    }
     
-    // Test basic connection
-    const { data, error } = await supabase.auth.getSession()
+    const supabase = createClient(supabaseUrl, supabaseAnonKey)
     
-    console.log('🔵 Supabase auth test:', {
-      hasSession: !!data.session,
+    // Test basic connection with a simple query
+    const { data, error } = await supabase.from('vocabulary').select('count').limit(1)
+    
+    console.log('🔵 Supabase connection test:', {
+      hasData: !!data,
       error: error?.message
     })
     
@@ -32,8 +42,8 @@ export async function GET(request: NextRequest) {
         hasSupabaseUrl: !!supabaseUrl,
         hasSupabaseKey: !!supabaseAnonKey
       },
-      auth: {
-        hasSession: !!data.session,
+      connection: {
+        working: !error,
         error: error?.message
       }
     })
