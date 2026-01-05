@@ -25,23 +25,21 @@ export async function GET(request: NextRequest) {
   if (code) {
     try {
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-      const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+      const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
       
-      if (!supabaseUrl || !supabaseServiceKey) {
+      if (!supabaseUrl || !supabaseAnonKey) {
         console.error('🔴 Missing Supabase environment variables')
         return NextResponse.redirect(
           new URL(`/auth/error?error=${encodeURIComponent('Server configuration error')}`, requestUrl.origin)
         )
       }
 
-      const supabase = createClient(supabaseUrl, supabaseServiceKey, {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false
-        }
-      })
+      // Use anon key for client-side auth operations
+      const supabase = createClient(supabaseUrl, supabaseAnonKey)
       
-      console.log('🔵 Exchanging code for session...')
+      console.log('🔵 Exchanging code for session with PKCE...')
+      
+      // This will use the code verifier from the browser session storage automatically
       const { data, error } = await supabase.auth.exchangeCodeForSession(code)
       
       if (error) {
@@ -54,26 +52,9 @@ export async function GET(request: NextRequest) {
       if (data.session) {
         console.log('🟢 Session created successfully for user:', data.session.user.id)
         
-        // Create a response that redirects to home
-        const response = NextResponse.redirect(new URL('/', requestUrl.origin))
-        
-        // Set the session cookies manually
-        response.cookies.set('sb-access-token', data.session.access_token, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax',
-          maxAge: 60 * 60 * 24 * 7 // 7 days
-        })
-        
-        response.cookies.set('sb-refresh-token', data.session.refresh_token, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax',
-          maxAge: 60 * 60 * 24 * 7 // 7 days
-        })
-        
-        console.log('🟢 Redirecting to home page with session cookies')
-        return response
+        // Redirect to home - the session will be handled by the client
+        console.log('🟢 Redirecting to home page')
+        return NextResponse.redirect(new URL('/', requestUrl.origin))
         
         // Check if user profile exists, create if not
         const { data: profile, error: profileError } = await supabase
