@@ -1,30 +1,32 @@
-"use client"
+'use client'
 
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react'
-import { authService, AuthUser } from '@/lib/auth/auth-service'
+import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { User } from '@supabase/supabase-js'
+import { FREE_TOPIC_IDS } from '@/lib/pricing'
 
-// Client-side subscription interface
-export interface UserSubscription {
-  id: string
-  user_id: string
-  status: 'free' | 'premium'
-  stripe_customer_id: string | null
-  stripe_subscription_id: string | null
-  current_period_end: string | null
-  created_at: string
-  updated_at: string
+interface SubscriptionStatus {
+  isPremium: boolean
+  subscription: {
+    id: string
+    status: string
+    planType: 'monthly' | 'yearly'
+    currentPeriodEnd: string
+    cancelAtPeriodEnd: boolean
+  } | null
 }
 
 interface AuthContextType {
-  user: AuthUser | null
-  subscription: UserSubscription | null
-  isPremium: boolean
+  user: User | null
   loading: boolean
+  isPremium: boolean
+  subscriptionLoading: boolean
+  subscriptionStatus: SubscriptionStatus | null
   signInWithGoogle: () => Promise<void>
   signInWithApple: () => Promise<void>
   signOut: () => Promise<void>
-  refreshUser: () => Promise<void>
-  checkTopicAccess: (topicId: number) => Promise<{ hasAccess: boolean, reason?: string }>
+  refreshSubscription: () => Promise<void>
+  canAccessTopic: (topicId: number) => boolean
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
@@ -42,108 +44,89 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<AuthUser | null>(null)
-  const [subscription, setSubscription] = useState<UserSubscription | null>(null)
-  const [isPremium, setIsPremium] = useState(false)
+  const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
+  const [subscriptionStatus, setSubscriptionStatus] = useState<SubscriptionStatus | null>(null)
+  const [subscriptionLoading, setSubscriptionLoading] = useState(false)
+  const supabase = createClientComponentClient()
 
-  const refreshUser = async () => {
-    if (!user?.id) {
-      setSubscription(null)
-      setIsPremium(false)
-      return
-    }
-
+  // Fetch subscription status
+  const fetchSubscriptionStatus = useCallback(async () => {
+    setSubscriptionLoading(true)
     try {
-      // Get subscription status via API
-      const response = await fetch(`/api/subscription/status?userId=${user.id}`)
-      if (response.ok) {
-        const data = await response.json()
-        setSubscription(data.subscription)
-        setIsPremium(data.isPremium)
-
-        console.log('📊 User subscription status:', {
-          userId: user.id,
-          status: data.subscription?.status,
-          isPremium: data.isPremium
-        })
-      }
+      const response = await fetch('/api/subscription/status')
+      const data = await response.json()
+      setSubscriptionStatus(data)
+      console.log('📊 Subscription status:', data)
     } catch (error) {
-      console.error('Error refreshing user:', error)
+      console.error('❌ Failed to fetch subscription:', error)
+      setSubscriptionStatus({ isPremium: false, subscription: null })
+    } finally {
+      setSubscriptionLoading(false)
     }
-  }
+  }, [])
 
-  const checkTopicAccess = async (topicId: number) => {
-    if (!user?.id) {
-      return { hasAccess: false, reason: 'Not authenticated' }
+  // Check if user can access a topic
+  const canAccessTopic = useCallback((topicId: number): boolean => {
+    // Free topics are always accessible
+    if (FREE_TOPIC_IDS.includes(topicId)) {
+      return true
     }
+    // Premium topics require subscription
+    return subscriptionStatus?.isPremium ?? false
+  }, [subscriptionStatus])
 
-    try {
-      const response = await fetch('/api/subscription/topic-access', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user.id, topicId })
-      })
-      
-      if (response.ok) {
-        return await response.json()
-      }
-      
-      // Fallback: topic 1 is free
-      return {
-        hasAccess: topicId === 1,
-        reason: topicId === 1 ? undefined : 'Premium subscription required'
-      }
-    } catch (error) {
-      console.error('Error checking topic access:', error)
-      return {
-        hasAccess: topicId === 1,
-        reason: topicId === 1 ? undefined : 'Error checking access'
-      }
-    }
-  }
+  // Refresh subscription (call after payment)
+  const refreshSubscription = useCallback(async () => {
+    await fetchSubscriptionStatus()
+  }, [fetchSubscriptionStatus])
 
   const signInWithGoogle = async () => {
-    await authService.signInWithGoogle()
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`
+      }
+    })
+    if (error) {
+      console.error('❌ Google sign-in error:', error)
+      throw error
+    }
   }
 
   const signInWithApple = async () => {
-    await authService.signInWithApple()
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'apple',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`
+      }
+    })
+    if (error) {
+      console.error('❌ Apple sign-in error:', error)
+      throw error
+    }
   }
 
   const signOut = async () => {
-    await authService.signOut()
+    await supabase.auth.signOut()
     setUser(null)
-    setSubscription(null)
-    setIsPremium(false)
+    setSubscriptionStatus(null)
   }
 
-  // Initialize auth state
   useEffect(() => {
     let mounted = true
 
-    const initAuth = async () => {
+    const getInitialSession = async () => {
       try {
-        const currentUser = await authService.getCurrentUser()
+        const { data: { session } } = await supabase.auth.getSession()
+        const currentUser = session?.user ?? null
         
         if (mounted) {
           setUser(currentUser)
-          setLoading(false)
-
+          
           if (currentUser) {
-            // Get subscription for logged in user via API
-            const response = await fetch(`/api/subscription/status?userId=${currentUser.id}`)
-            if (response.ok) {
-              const data = await response.json()
-              setSubscription(data.subscription)
-              setIsPremium(data.isPremium)
-
-              console.log('✅ Auth initialized:', {
-                email: currentUser.email,
-                status: data.subscription?.status,
-                isPremium: data.isPremium
-              })
-            }
+            // Fetch subscription status
+            await fetchSubscriptionStatus()
             
             // Update login streak
             try {
@@ -152,50 +135,39 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userId: currentUser.id })
               })
-              console.log('✅ Login streak updated')
             } catch (error) {
               console.error('Failed to update login streak:', error)
             }
           }
+          
+          setLoading(false)
         }
       } catch (error) {
-        console.error('Auth initialization error:', error)
+        console.error('❌ Auth initialization error:', error)
         if (mounted) {
           setLoading(false)
         }
       }
     }
 
-    initAuth()
+    getInitialSession()
 
     // Listen for auth changes
-    const { data: { subscription: authSubscription } } = authService.supabase.auth.onAuthStateChange(
+    const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log('🔐 Auth state changed:', event)
+        const currentUser = session?.user ?? null
         
-        if (session?.user) {
-          const authUser: AuthUser = {
-            id: session.user.id,
-            email: session.user.email!,
-            fullName: session.user.user_metadata?.full_name || session.user.email!,
-            avatarUrl: session.user.user_metadata?.avatar_url,
+        if (mounted) {
+          setUser(currentUser)
+          
+          if (currentUser) {
+            await fetchSubscriptionStatus()
+          } else {
+            setSubscriptionStatus(null)
           }
           
-          if (mounted) {
-            setUser(authUser)
-            
-            // Get subscription via API
-            const response = await fetch(`/api/subscription/status?userId=${authUser.id}`)
-            if (response.ok) {
-              const data = await response.json()
-              setSubscription(data.subscription)
-              setIsPremium(data.isPremium)
-            }
-          }
-        } else if (mounted) {
-          setUser(null)
-          setSubscription(null)
-          setIsPremium(false)
+          setLoading(false)
         }
       }
     )
@@ -204,27 +176,66 @@ export function AuthProvider({ children }: AuthProviderProps) {
       mounted = false
       authSubscription.unsubscribe()
     }
-  }, [])
+  }, [supabase, fetchSubscriptionStatus])
 
-  // Refresh subscription when user changes
+  // Check for subscription activation after payment return
   useEffect(() => {
-    if (user) {
-      refreshUser()
+    const checkPaymentReturn = async () => {
+      const justActivated = localStorage.getItem('subscriptionJustActivated')
+      if (justActivated === 'true') {
+        console.log('🎉 Subscription just activated, refreshing with polling...')
+        localStorage.removeItem('subscriptionJustActivated')
+        
+        // Poll for subscription status a few times (webhook may take a moment)
+        let attempts = 0
+        const maxAttempts = 5
+        
+        const pollSubscription = async (): Promise<boolean> => {
+          await refreshSubscription()
+          // Check if premium is now true
+          const response = await fetch('/api/subscription/status')
+          const data = await response.json()
+          console.log(`📊 Poll attempt ${attempts + 1}:`, data)
+          return data.isPremium === true
+        }
+        
+        while (attempts < maxAttempts) {
+          const isPremiumNow = await pollSubscription()
+          if (isPremiumNow) {
+            console.log('✅ Subscription confirmed as premium!')
+            break
+          }
+          attempts++
+          if (attempts < maxAttempts) {
+            console.log(`⏳ Waiting 2s before retry ${attempts + 1}/${maxAttempts}...`)
+            await new Promise(resolve => setTimeout(resolve, 2000))
+          }
+        }
+        
+        if (attempts >= maxAttempts) {
+          console.log('⚠️ Subscription may still be processing, try refreshing the page')
+        }
+      }
     }
-  }, [user?.id])
+    
+    checkPaymentReturn()
+  }, [refreshSubscription])
+
+  const isPremium = subscriptionStatus?.isPremium ?? false
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        subscription,
-        isPremium,
         loading,
+        isPremium,
+        subscriptionLoading,
+        subscriptionStatus,
         signInWithGoogle,
         signInWithApple,
         signOut,
-        refreshUser,
-        checkTopicAccess,
+        refreshSubscription,
+        canAccessTopic,
       }}
     >
       {children}

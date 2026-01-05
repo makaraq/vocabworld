@@ -18,6 +18,7 @@ export interface VocabularyWord {
   targetWord: string;
   confidenceScore: number;
   context?: string;
+  category?: string; // Category for verb grouping (Basic, Daily Routine, etc.)
   partOfSpeech?: string;
   difficultyLevel?: string;
   exampleSentence?: string;
@@ -36,21 +37,35 @@ export interface VocabularyResponse {
   error?: string;
 }
 
-// Client-side API functions
+// Client-side API functions with centralized caching
+import { apiCache } from './api-cache'
+
 export async function getLanguages(): Promise<Language[]> {
-  const response = await fetch('/api/languages');
-  if (!response.ok) {
-    throw new Error('Failed to fetch languages');
-  }
-  return response.json();
+  return apiCache.getCachedData(
+    'languages',
+    async () => {
+      const response = await fetch('/api/languages');
+      if (!response.ok) {
+        throw new Error('Failed to fetch languages');
+      }
+      return response.json();
+    },
+    10 * 60 * 1000 // Cache for 10 minutes
+  )
 }
 
 export async function getTopics(): Promise<Topic[]> {
-  const response = await fetch('/api/topics');
-  if (!response.ok) {
-    throw new Error('Failed to fetch topics');
-  }
-  return response.json();
+  return apiCache.getCachedData(
+    'topics',
+    async () => {
+      const response = await fetch('/api/topics');
+      if (!response.ok) {
+        throw new Error('Failed to fetch topics');
+      }
+      return response.json();
+    },
+    10 * 60 * 1000 // Cache for 10 minutes
+  )
 }
 
 export async function getVocabularyForTopic(
@@ -60,17 +75,25 @@ export async function getVocabularyForTopic(
   limit: number = 50,
   offset: number = 0
 ): Promise<VocabularyResponse> {
-  const params = new URLSearchParams({
-    topicId: topicId.toString(),
-    sourceLanguage,
-    targetLanguage,
-    limit: limit.toString(),
-    offset: offset.toString()
-  });
+  const cacheKey = `vocabulary-${topicId}-${sourceLanguage}-${targetLanguage}-${limit}-${offset}`
   
-  const response = await fetch(`/api/vocabulary?${params}`);
-  if (!response.ok) {
-    throw new Error('Failed to fetch vocabulary');
-  }
-  return response.json();
+  return apiCache.getCachedData(
+    cacheKey,
+    async () => {
+      const params = new URLSearchParams({
+        topicId: topicId.toString(),
+        sourceLanguage,
+        targetLanguage,
+        limit: limit.toString(),
+        offset: offset.toString()
+      });
+      
+      const response = await fetch(`/api/vocabulary?${params}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch vocabulary');
+      }
+      return response.json();
+    },
+    5 * 60 * 1000 // Cache vocabulary for 5 minutes
+  )
 }

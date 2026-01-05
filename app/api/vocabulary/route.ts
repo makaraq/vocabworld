@@ -147,12 +147,41 @@ export async function GET(request: NextRequest) {
         targetWord = targetTranslations[word.id];
       }
 
+      // Get category based on learning_order for Verbs topic (ID 41)
+      let category = '';
+      if (parseInt(topicId) === 41 && word.learning_order) {
+        const order = word.learning_order;
+        if (order <= 63) category = 'Basic';
+        else if (order <= 107) category = 'Daily Routine';
+        else if (order <= 173) category = 'Mental';
+        else if (order <= 210) category = 'Communication';
+        else if (order <= 236) category = 'Social';
+        else if (order <= 276) category = 'Work';
+        else if (order <= 304) category = 'Travel';
+        else if (order <= 334) category = 'Household';
+        else if (order <= 356) category = 'Money';
+        else if (order <= 380) category = 'Food';
+        else if (order <= 401) category = 'Nature';
+        else if (order <= 423) category = 'Health';
+        else category = 'Technology';
+      } else if (word.context) {
+        // Fallback: Extract category from context (e.g., "basic - verbs" -> "Basic")
+        const contextParts = word.context.split(' - ');
+        if (contextParts.length > 0) {
+          category = contextParts[0]
+            .split(' ')
+            .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+            .join(' ');
+        }
+      }
+
       return {
         id: word.id,
         sourceWord: sourceWord,
         targetWord: targetWord,
         confidenceScore: 0.95,
         context: word.context,
+        category: category,
         partOfSpeech: word.part_of_speech,
         difficultyLevel: word.difficulty_level,
         exampleSentence: word.example_sentence,

@@ -1,17 +1,16 @@
 "use client"
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Topic, VocabularyWord, VocabularyResponse, getTopics, getVocabularyForTopic } from "@/lib/database"
 import { useAuth } from "@/contexts/auth-context"
-import { PaywallModal } from "@/components/paywall/paywall-modal"
 import { ProgressStats } from "@/components/progress/progress-stats"
-import { ExampleSentenceModal } from "@/components/learning/example-sentence-modal"
-import { useLongPress } from "@/hooks/use-long-press"
+import { SearchWordLearning } from "@/components/learning/search-word-learning"
+import { PaywallModal } from "@/components/paywall/paywall-modal"
 
 declare global {
   interface Window {
-    AlgenibAudioService: any;
+    // Reserved for future use
   }
 }
 import { Icon } from '@iconify/react'
@@ -73,6 +72,7 @@ const TOPIC_ICONS = [
   { id: 38, icon: 'solar:confetti-minimalistic-linear' }, // Celebrations & Holidays
   { id: 39, icon: 'solar:document-medicine-linear' }, // Advanced Communication & Formal Language
   { id: 40, icon: 'solar:global-linear' }, // Cultural Integration & Global Perspectives
+  { id: 41, icon: 'solar:running-2-linear' }, // Verbs
 ]
 
 // iPhone-style Topic Slider Component
@@ -86,16 +86,29 @@ interface TopicSliderProps {
   user: any
   signOut: () => Promise<void>
   nativeLanguage: string
+  nativeLanguageCode: string
   targetLanguage: string
   targetLanguageCode: string
-  showPaywall: boolean
-  setShowPaywall: (show: boolean) => void
   handleSignOut: () => Promise<void>
   getFlagIcon: (languageCode: string) => string
   completedTopicIds: number[]
   currentSection: number
   setCurrentSection: (section: number) => void
   lastTopicSectionRef: React.MutableRefObject<number>
+  // Playlist props
+  userPlaylists: Array<{
+    id: string
+    name: string
+    icon: string
+    word_count?: number
+    source_language_code: string
+    target_language_code: string
+  }>
+  isLoadingPlaylists: boolean
+  onCreatePlaylist: () => void
+  renderTopicButton: (topic: Topic) => React.ReactElement
+  isPremium: boolean
+  setShowPaywall: (show: boolean) => void
 }
 
 const TopicSlider: React.FC<TopicSliderProps> = ({ 
@@ -108,22 +121,39 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
   user,
   signOut,
   nativeLanguage,
+  nativeLanguageCode,
   targetLanguage,
   targetLanguageCode,
-  showPaywall,
-  setShowPaywall,
   handleSignOut,
   getFlagIcon,
   completedTopicIds,
   currentSection,
   setCurrentSection,
-  lastTopicSectionRef
+  lastTopicSectionRef,
+  userPlaylists,
+  isLoadingPlaylists,
+  onCreatePlaylist,
+  renderTopicButton,
+  isPremium,
+  setShowPaywall
 }) => {
   const [touchStart, setTouchStart] = useState(0)
   const [touchEnd, setTouchEnd] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
   const [dragOffset, setDragOffset] = useState(0)
   const [isTransitioning, setIsTransitioning] = useState(false)
+  
+  // Stable icon key - only changes when section actually changes, not during transitions
+  const [iconKey, setIconKey] = useState(currentSection)
+  const lastSectionRef = useRef(currentSection)
+  
+  useEffect(() => {
+    // Only update icon key when section changes AND we're not in the middle of transitioning
+    if (lastSectionRef.current !== currentSection && !isTransitioning) {
+      setIconKey(currentSection)
+      lastSectionRef.current = currentSection
+    }
+  }, [currentSection, isTransitioning])
 
   // Define the 7 sections with their topics and metadata (Account first, but FIRST AID KIT is default)
   const sections = [
@@ -168,8 +198,15 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
     {
       name: "VETERAN FIELD",
       icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-dasharray="64" stroke-dashoffset="64" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2l-9 3.5v6.5c0 3.5 3.5 9 8 10c4.5 -1 8 -6.5 8 -10v-6.5l-8 -3.5Z"><animate fill="freeze" attributeName="fill-opacity" begin="0.7s" dur="0.15s" values="0;0.3"/><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0"/></path></svg>',
-      topics: topics.slice(36, 38), // 2 topics: Common Phrases, Modern Expressions
+      topics: topics.slice(36, 40), // 4 topics: Common Phrases, Modern Expressions, Formal Language, Verbs
       gridCols: 2
+    },
+    {
+      name: "MY WORDS",
+      icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M3 3v18h18V3zm16 16H5V5h14zm-7-2h5v-2h-5zm0-4h5V9h-5zm-6 4h4v-6H6zm0-8h10V7H6z"/></svg>',
+      topics: [], // No predefined topics - this is for custom word search
+      gridCols: 1,
+      isMyWords: true // Special flag for My Words section
     }
   ]
 
@@ -285,83 +322,20 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
     document.addEventListener('mouseup', handleMouseUp)
   }
 
-  const renderTopicButton = (topic: Topic) => {
-    const hasCustomIcon = topic.icon
-    const iconData = TOPIC_ICONS.find(icon => icon.id === topic.id)
-    const isCompleted = completedTopicIds.includes(topic.id)
-    
-    // Wrap onTopicSelect to save current section before calling it
-    const handleTopicClick = (topic: Topic) => {
-      lastTopicSectionRef.current = currentSection // Save current section
-      onTopicSelect(topic)
-    }
-    
-    // Debug logging
-    if (topic.id === 1) {
-      console.log('🎯 Topic 1 render:', { 
-        completedTopicIds, 
-        isCompleted,
-        topicId: topic.id 
-      })
-    }
-    
-    // Direct mapping for custom SVG icons
-    const customSVGIcons: { [key: number]: string } = {
-      11: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12.74 5.47c2.36 1.03 3.61 3.56 3.18 5.99A6 6 0 0 1 18 16v.17a3 3 0 0 1 1-.17a3 3 0 0 1 3 3a3 3 0 0 1-3 3H6a4 4 0 0 1-4-4a4 4 0 0 1 4-4h.27C5 12.45 4.6 10.24 5.5 8.26a5.49 5.49 0 0 1 7.24-2.79m-.81 1.83c-1.77-.8-3.84.01-4.62 1.77c-.46 1.02-.38 2.15.1 3.06A5.99 5.99 0 0 1 12 10c.7 0 1.38.12 2 .34a3.51 3.51 0 0 0-2.07-3.04m1.62-3.66c-.55-.24-1.1-.41-1.67-.52l2.49-1.3l.9 2.89a7.7 7.7 0 0 0-1.72-1.07m-7.46.8c-.49.35-.92.75-1.29 1.19l.11-2.81l2.96.68c-.62.21-1.22.53-1.78.94M18 9.71c-.09-.59-.22-1.16-.41-1.71l2.38 1.5l-2.05 2.23c.11-.65.13-1.33.08-2.02M3.04 11.3c.07.6.2 1.17.39 1.7l-2.37-1.5L3.1 9.28c-.1.65-.13 1.33-.06 2.02M19 18h-3v-2a4 4 0 0 0-4-4a4 4 0 0 0-4 4H6a2 2 0 0 0-2 2a2 2 0 0 0 2 2h13a1 1 0 0 0 1-1a1 1 0 0 0-1-1"/></svg>',
-      18: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M11 6h2V4h-2zm1 6q-1.9 0-3.625-.788T5 9.45V8q0-.825.588-1.412T7 6h2V3q0-.425.288-.712T10 2h4q.425 0 .713.288T15 3v3h2q.825 0 1.413.588T19 8v1.45q-1.65.975-3.375 1.763T12 12m-5 9q-.825 0-1.412-.587T5 19v-7.3q1.4.85 2.888 1.45t3.112.8V14q0 .425.288.713T12 15t.713-.288T13 14v-.05q1.625-.2 3.113-.8T19 11.7V19q0 .825-.587 1.413T17 21q0 .425-.288.713T16 22q-.4 0-.562-.363T15 21H9q0 .425-.288.713T8 22q-.4 0-.562-.363T7 21"/></svg>'
-    }
-    
-    return (
-      <button
-        key={topic.id}
-        onClick={() => handleTopicClick(topic)}
-        className={`bg-black/40 border-2 rounded-xl sm:rounded-2xl p-3 sm:p-5 text-center hover:bg-black/50 transition-all duration-300 transform hover:scale-[1.02] h-32 sm:h-36 shadow-lg hover:shadow-xl ${
-          selectedTopic?.id === topic.id ? "bg-black/60 border-white/30 shadow-xl" : ""
-        } ${
-          isCompleted ? "!border-white shadow-[0_0_20px_rgba(255,255,255,0.5),0_0_40px_rgba(255,255,255,0.3)]" : "border-white/20"
-        }`}
-      >
-        <div className="flex flex-col items-center justify-center h-full gap-2">
-          <div className="flex-shrink-0">
-            {hasCustomIcon ? (
-              <div 
-                className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center" 
-                style={{ color: 'rgba(255,255,255,0.8)' }}
-                dangerouslySetInnerHTML={{ __html: topic.icon! }}
-              />
-            ) : customSVGIcons[topic.id] ? (
-              <div 
-                className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center" 
-                style={{ color: 'rgba(255,255,255,0.8)' }}
-                dangerouslySetInnerHTML={{ __html: customSVGIcons[topic.id] }}
-              />
-            ) : iconData && typeof iconData.icon === 'string' ? (
-              <Icon icon={iconData.icon} width="48" height="48" className="sm:w-16 sm:h-16" style={{ color: 'rgba(255,255,255,0.8)' }} />
-            ) : iconData ? (
-              (iconData.icon as any)({ className: 'w-12 h-12 sm:w-16 sm:h-16 text-white/80' })
-            ) : (
-              <MessageCircle className="w-12 h-12 sm:w-16 sm:h-16 text-white/80" />
-            )}
-          </div>
-          <p className="text-white/90 text-base sm:text-lg font-medium leading-tight px-1 text-center">{getTopicDisplayName(topic.id, topic.name)}</p>
-        </div>
-      </button>
-    )
-  }
-
   const currentSectionData = sections[currentSection]
 
   return (
     <div className="h-full flex flex-col">
       {/* Section title */}
       <div className="mb-2 px-3 py-1 flex-shrink-0">
-        <h2 className="font-medium flex items-center justify-center gap-2 text-white">
-          <span className="text-lg sm:text-2xl tracking-wide">{currentSectionData.name}</span>
+        <h2 className="font-medium flex items-center justify-center gap-2.5 text-white">
           <div 
-            className="w-5 h-5 sm:w-7 sm:h-7 flex-shrink-0" 
+            key={`section-icon-${iconKey}`}
+            className="w-6 h-6 sm:w-7 sm:h-7 flex-shrink-0 flex items-center justify-center" 
             style={{ color: 'currentColor' }}
             dangerouslySetInnerHTML={{ __html: currentSectionData.icon }}
           />
+          <span className="text-lg sm:text-2xl tracking-wide leading-none">{currentSectionData.name}</span>
         </h2>
       </div>
 
@@ -382,7 +356,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
           }}
         >
           {sections.map((section, sectionIndex) => (
-            <div key={sectionIndex} className="w-full flex-shrink-0 px-2 overflow-hidden">
+            <div key={sectionIndex} className="w-full h-full flex-shrink-0 px-2 overflow-hidden">
               {/* Account section special content */}
               {section.isAccount ? (
                 <div className="h-full flex flex-col space-y-2.5 sm:space-y-3">
@@ -423,17 +397,27 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                         <Icon icon="solar:crown-bold" width="18" height="18" className="text-yellow-400 sm:w-5 sm:h-5" />
                         <span>Subscription</span>
                       </h4>
-                      <div className="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium bg-gray-500/20 text-gray-300 border border-gray-500/30">
-                        Free
-                      </div>
+                      {isPremium ? (
+                        <div className="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium bg-gradient-to-r from-yellow-500 to-orange-500 text-white border border-yellow-500/30">
+                          Premium
+                        </div>
+                      ) : (
+                        <div className="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium bg-gray-500/30 text-white/70 border border-gray-500/30">
+                          Free
+                        </div>
+                      )}
                     </div>
-                    
-                    <button
-                      onClick={() => setShowPaywall(true)}
-                      className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 sm:py-2.5 px-3 sm:px-4 rounded-lg font-medium text-xs sm:text-sm hover:from-blue-600 hover:to-purple-700 transition-all"
-                    >
-                      Upgrade to Premium
-                    </button>
+
+                    {/* Upgrade Button (show only for free users) */}
+                    {!isPremium && (
+                      <button
+                        onClick={() => setShowPaywall(true)}
+                        className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white py-2.5 sm:py-3 px-3 sm:px-4 rounded-lg font-medium text-sm hover:from-yellow-600 hover:to-orange-600 transition-all flex items-center justify-center space-x-2"
+                      >
+                        <Icon icon="solar:crown-bold" width="18" height="18" className="sm:w-5 sm:h-5" />
+                        <span>Upgrade to Premium</span>
+                      </button>
+                    )}
 
                     {/* Sign Out Button */}
                     <button
@@ -443,6 +427,98 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                       <Icon icon="solar:logout-3-bold" width="18" height="18" className="sm:w-5 sm:h-5" />
                       <span>Sign Out</span>
                     </button>
+                  </div>
+                </div>
+              ) : (section as any).isMyWords ? (
+                /* MY WORDS section - Search and custom playlists */
+                <div className="h-full flex flex-col gap-3 overflow-hidden">
+                  {/* Search Word Card */}
+                  <button
+                    onClick={() => {
+                      // Premium check - show paywall if not premium
+                      if (!isPremium) {
+                        setShowPaywall(true)
+                        return
+                      }
+                      lastTopicSectionRef.current = currentSection
+                      onTopicSelect({ id: -1, name: 'Search Word', icon: '' } as Topic)
+                    }}
+                    className="flex-shrink-0 bg-gradient-to-br from-blue-500/30 to-purple-600/30 border-2 border-blue-400/40 rounded-xl sm:rounded-2xl p-4 sm:p-5 text-center hover:from-blue-500/40 hover:to-purple-600/40 transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl relative"
+                  >
+                    {!isPremium && (
+                      <div className="absolute top-2 right-2">
+                        <Icon icon="solar:crown-bold" width="20" height="20" className="text-yellow-400" />
+                      </div>
+                    )}
+                    <div className="flex flex-col items-center justify-center gap-3">
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white/10 rounded-full flex items-center justify-center">
+                        <Icon icon="solar:magnifer-bold" width="32" height="32" className="sm:w-10 sm:h-10 text-blue-300" />
+                      </div>
+                      <div>
+                        <p className="text-white text-lg sm:text-xl font-semibold">Search Word</p>
+                        <p className="text-white/60 text-sm mt-1">Find any word & get translation</p>
+                      </div>
+                    </div>
+                  </button>
+
+                  {/* My Playlists Section - show 5 items then scroll */}
+                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-white/20 flex flex-col overflow-hidden max-h-[340px] min-h-[100px]">
+                    <div className="flex items-center justify-between mb-3 flex-shrink-0">
+                      <h3 className="text-white font-semibold text-base sm:text-lg flex items-center gap-2">
+                        <Icon icon="solar:playlist-bold" width="20" height="20" className="text-purple-400" />
+                        My Playlists
+                      </h3>
+                      <button 
+                        onClick={onCreatePlaylist}
+                        className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-all"
+                      >
+                        <Icon icon="solar:add-circle-bold" width="20" height="20" className="text-white/80" />
+                      </button>
+                    </div>
+                    
+                    {/* Scrollable content area */}
+                    <div className="flex-1 overflow-y-auto min-h-0 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
+                      {/* Loading state */}
+                      {isLoadingPlaylists && (
+                        <div className="text-center py-6">
+                          <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-2" />
+                          <p className="text-white/50 text-sm">Loading playlists...</p>
+                        </div>
+                      )}
+                      
+                      {/* Empty state */}
+                      {!isLoadingPlaylists && userPlaylists.length === 0 && (
+                        <div className="text-center py-6">
+                          <Icon icon="solar:folder-with-files-bold-duotone" width="48" height="48" className="text-white/30 mx-auto mb-3" />
+                          <p className="text-white/50 text-sm">No playlists yet</p>
+                          <p className="text-white/40 text-xs mt-1">Search words and add them to playlists</p>
+                        </div>
+                      )}
+                      
+                      {/* Playlist items */}
+                      {!isLoadingPlaylists && userPlaylists.length > 0 && (
+                        <div className="space-y-2 pr-1">
+                          {userPlaylists.map((playlist) => (
+                            <button
+                              key={playlist.id}
+                              onClick={() => {
+                                // Open playlist learning view
+                                lastTopicSectionRef.current = currentSection
+                                onTopicSelect({ id: -2, name: playlist.name, icon: '', playlistId: playlist.id } as any)
+                              }}
+                              className="w-full flex items-center gap-3 p-3 bg-white/5 hover:bg-white/10 rounded-lg transition-all text-left"
+                            >
+                              <Icon icon={playlist.icon || "solar:playlist-minimalistic-linear"} width="22" height="22" className="text-purple-400 flex-shrink-0" />
+                              <div className="flex-1 min-w-0">
+                                <p className="text-white font-medium truncate">{playlist.name}</p>
+                                <p className="text-white/50 text-xs">{playlist.word_count || 0} words</p>
+                              </div>
+                              <Icon icon="solar:alt-arrow-right-linear" width="16" height="16" className="text-white/40 flex-shrink-0" />
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -527,7 +603,6 @@ export function LanguageSelector() {
       setSelectedTopic(null)
       setQuestionText("What language do you speak?")
       setShowSettings(false)
-      setShowPaywall(false)
       
       // Clear any stored language preferences
       localStorage.removeItem('nativeLanguage')
@@ -551,7 +626,16 @@ export function LanguageSelector() {
     }
   }
 
-  const { user, refreshUser, signOut, signInWithGoogle, checkTopicAccess } = useAuth()
+  const { user, signOut, signInWithGoogle, isPremium, canAccessTopic, refreshSubscription } = useAuth()
+  const [showPaywall, setShowPaywall] = useState(false)
+
+  // Debug auth state
+  useEffect(() => {
+    console.log('🔍 Auth state:', { 
+      user: !!user,
+      isPremium
+    })
+  }, [user, isPremium])
   const [currentPage, setCurrentPage] = useState<PageState>("native")
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [nativeLanguage, setNativeLanguage] = useState("")
@@ -564,10 +648,22 @@ export function LanguageSelector() {
   const [currentWordIndex, setCurrentWordIndex] = useState(0)
   const [showSettings, setShowSettings] = useState(false)
   const [isIOS, setIsIOS] = useState(false)
-  const [showPaywall, setShowPaywall] = useState(false)
   const [currentSection, setCurrentSection] = useState(1) // Start with FIRST AID KIT (index 1)
   const lastTopicSectionRef = useRef(1) // Track which section the user was on when selecting a topic
-  const [showExampleSentence, setShowExampleSentence] = useState(false)
+  
+  // Playlist state for MY WORDS section
+  const [userPlaylists, setUserPlaylists] = useState<Array<{
+    id: string
+    name: string
+    icon: string
+    word_count?: number
+    source_language_code: string
+    target_language_code: string
+  }>>([])
+  const [isLoadingPlaylists, setIsLoadingPlaylists] = useState(false)
+  const [showCreatePlaylistModal, setShowCreatePlaylistModal] = useState(false)
+  const [newPlaylistName, setNewPlaylistName] = useState("")
+  const [isCreatingPlaylist, setIsCreatingPlaylist] = useState(false)
   
   // Autoplay state machine
   const autoplayAbortController = useRef<AbortController | null>(null)
@@ -619,6 +715,37 @@ export function LanguageSelector() {
     }
   }, [user?.id, targetLanguageCode]);
 
+  // 📋 Fetch playlists function - can be called from child components
+  const refreshPlaylists = useCallback(async () => {
+    if (!user?.id || !nativeLanguageCode || !targetLanguageCode) return
+    
+    console.log('🔄 Refreshing playlists...')
+    setIsLoadingPlaylists(true)
+    try {
+      const response = await fetch(
+        `/api/playlists?userId=${user.id}&sourceLanguageCode=${nativeLanguageCode}&targetLanguageCode=${targetLanguageCode}`
+      )
+      if (response.ok) {
+        const data = await response.json()
+        setUserPlaylists(data.playlists || [])
+        console.log('✅ Playlists refreshed:', data.playlists?.length || 0)
+      }
+    } catch (error) {
+      console.error('Error fetching playlists:', error)
+    } finally {
+      setIsLoadingPlaylists(false)
+    }
+  }, [user?.id, nativeLanguageCode, targetLanguageCode])
+
+  // 📋 Fetch playlists when MY WORDS section is visible or languages change
+  useEffect(() => {
+    // MY WORDS section is index 7 (8th section, 0-based)
+    const MY_WORDS_SECTION_INDEX = 7
+    if (currentSection !== MY_WORDS_SECTION_INDEX) return
+    
+    refreshPlaylists()
+  }, [currentSection, refreshPlaylists]);
+
   // Audio state
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentAudioStep, setCurrentAudioStep] = useState<'training' | 'main' | 'pause' | 'idle'>('idle')
@@ -636,9 +763,7 @@ export function LanguageSelector() {
   // Position save debounce ref
   const savePositionTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   
-  // Hybrid audio service for Umbriel + TTS
-  const [hasUmbrielAudio, setHasUmbrielAudio] = useState(false)
-  const [umbrielStatus, setUmbrielStatus] = useState<string>("")
+  // B2 Audio service state
   const [activeAudioService, setActiveAudioService] = useState<string>("None")
 
   // 🌍 UNIVERSAL LANGUAGE CODE MAPPING - All 47 Azure Languages + Alnilam
@@ -774,13 +899,6 @@ export function LanguageSelector() {
     return flagMap[languageCode] || 'flag:us-1x1'
   }
 
-  // Get available voices for a language - TTS DISABLED
-  const getVoiceForLanguage = (languageCode: string, gender: 'Female' | 'Male'): any => {
-    // const voices = speechSynthesis.getVoices()
-    console.log('TTS disabled - voice selection skipped:', { languageCode, gender })
-    return null
-  }
-
   // Speech speed mapping
   const getSpeedRate = (speed: string): number => {
     let rate: number
@@ -793,55 +911,7 @@ export function LanguageSelector() {
     return rate
   }
 
-  // Speak function with Promise support
-  const speak = (text: string, languageCode: string, voice: SpeechSynthesisVoice | null): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      // Enhanced validation to handle all edge cases
-      if (!text || text === undefined || text === null || typeof text !== 'string') {
-        console.warn('speak() called with invalid text:', text)
-        resolve()
-        return
-      }
-
-      const trimmedText = String(text).trim()
-      if (!trimmedText || trimmedText.length === 0) {
-        console.warn('speak() called with empty text after trimming:', text)
-        resolve()
-        return
-      }
-
-      try {
-        // const utterance = new SpeechSynthesisUtterance(trimmedText)
-        // utterance.lang = languageCode
-        // utterance.rate = getSpeedRate(settings.pronunciationSpeed)
-        
-        // if (voice) {
-        //   utterance.voice = voice
-        // }
-
-        // utterance.onend = () => resolve()
-        // utterance.onerror = (error) => {
-        //   console.error('Speech synthesis error:', error)
-        //   reject(error)
-        // }
-
-        // speechSynthesis.speak(utterance) // TTS DISABLED
-        console.log('TTS disabled - would speak:', trimmedText, 'in', languageCode)
-        resolve() // Immediately resolve since no actual speech
-      } catch (error) {
-        console.error('Error in speak function:', error)
-        reject(error)
-      }
-    })
-  }
-
-  // Sleep function for pauses
-  const sleep = (ms: number): Promise<void> => {
-    return new Promise(resolve => setTimeout(resolve, ms))
-  }
-
-  // Multi-voice Audio Service Integration
-  const [algenibService, setAlgenibService] = useState<any>(null)
+  // B2 Audio Service Integration
   const [alnilamService, setAlnilamService] = useState<any>(null)
   
   // Audio control for immediate stopping
@@ -882,35 +952,8 @@ export function LanguageSelector() {
     audioRequestQueue.current.push(audioRequest)
     processAudioQueue()
   }
-  
-  // Initialize Algenib Audio Service
-  useEffect(() => {
-    // Dynamically import the Algenib audio service
-    const initAlgenib = async () => {
-      try {
-        // Load the service from the public directory
-        if (typeof window !== 'undefined') {
-          const script = document.createElement('script')
-          script.src = '/lib/algenib-audio-service.js'
-          script.onload = () => {
-            if (window.AlgenibAudioService) {
-              const service = new window.AlgenibAudioService()
-              setAlgenibService(service)
-              setActiveAudioService("Algenib")
-              console.log('🎤 Algenib Audio Service initialized')
-            }
-          }
-          document.head.appendChild(script)
-        }
-      } catch (error) {
-        console.error('Failed to initialize Algenib service:', error)
-      }
-    }
-    
-    initAlgenib()
-  }, [])
 
-  // Initialize Alnilam Audio Service
+  // Initialize Audio Service (uses /api/universal-audio backed by B2)
   useEffect(() => {
     const initAlnilam = () => {
       try {
@@ -994,7 +1037,7 @@ export function LanguageSelector() {
               };
 
               // Helper function: Play audio with abort support
-              const playAudioWithAbort = (audio: HTMLAudioElement, description: string): Promise<void> => {
+              const playAudioWithAbort = (audio: HTMLAudioElement, description: string, playbackRate: number = 1.0): Promise<void> => {
                 return new Promise((resolve, reject) => {
                   // Check abort before starting
                   if (abortSignal?.aborted || stopRequestedRef.current) {
@@ -1028,6 +1071,9 @@ export function LanguageSelector() {
                       reject(new DOMException('Audio playback aborted', 'AbortError'));
                       return;
                     }
+                    // CRITICAL: Set playbackRate right before play to ensure it's applied
+                    audio.playbackRate = playbackRate;
+                    console.log(`🎚️ Playing ${description} at speed ${playbackRate}x`);
                     audio.play().catch(reject);
                   };
                   
@@ -1160,9 +1206,10 @@ export function LanguageSelector() {
                     audioElementsRef.current.push(targetAudio);
                     targetAudio.crossOrigin = 'anonymous';
                     targetAudio.preload = 'auto';
-                    targetAudio.playbackRate = getSpeedRate(settings.pronunciationSpeed || 'Normal');
+                    const speedRate = getSpeedRate(settings.pronunciationSpeed || 'Normal');
+                    console.log(`🎚️ Speed setting: ${settings.pronunciationSpeed} -> rate: ${speedRate}`);
                     
-                    await playAudioWithAbort(targetAudio, `TARGET ${targetWord} - Repeat ${i + 1}`);
+                    await playAudioWithAbort(targetAudio, `TARGET ${targetWord} - Repeat ${i + 1}`, speedRate);
                     console.log(`✅ TARGET audio played: ${targetWord} (${targetLangCode}) - Repeat ${i + 1}/${targetRepeats}`);
                     
                     // Small pause between repeats (except after last repeat)
@@ -1192,7 +1239,8 @@ export function LanguageSelector() {
               }
 
               // FIXED ORDER: Play SOURCE language second (native/main language)
-              if (wordId && sourceLangCode) {
+              // Skip if playTargetOnly is enabled
+              if (wordId && sourceLangCode && !settings?.playTargetOnly) {
                 const sourceUrl = getAudioUrl(wordId, sourceLangCode);
                 console.log(`🎵 Loading SOURCE audio SECOND: ${sourceUrl}`);
                 
@@ -1215,9 +1263,9 @@ export function LanguageSelector() {
                     audioElementsRef.current.push(sourceAudio);
                     sourceAudio.crossOrigin = 'anonymous';
                     sourceAudio.preload = 'auto';
-                    sourceAudio.playbackRate = getSpeedRate(settings.pronunciationSpeed || 'Normal');
+                    const speedRate = getSpeedRate(settings.pronunciationSpeed || 'Normal');
                     
-                    await playAudioWithAbort(sourceAudio, `SOURCE ${sourceWord} - Repeat ${i + 1}`);
+                    await playAudioWithAbort(sourceAudio, `SOURCE ${sourceWord} - Repeat ${i + 1}`, speedRate);
                     console.log(`✅ SOURCE audio played: ${sourceWord} (${sourceLangCode}) - Repeat ${i + 1}/${sourceRepeats}`);
                     
                     // Small pause between repeats (except after last repeat)
@@ -1233,6 +1281,8 @@ export function LanguageSelector() {
                     await abortableSleep(500); // Brief pause before retry
                   }
                 }
+              } else if (settings?.playTargetOnly) {
+                console.log('⏭️ Skipping source audio (playTargetOnly enabled) - will still track progress');
               }
 
               console.log('🎉 Alnilam sequence completed successfully');
@@ -1302,12 +1352,12 @@ export function LanguageSelector() {
           }
         };
 
-        console.log('🌊 Alnilam Audio Service initialized - Beautiful multilingual TTS');
-        console.log('✅ Alnilam service created:', alnilamAudioService);
+        console.log('🌊 B2 Audio Service initialized - Backblaze cloud audio');
+        console.log('✅ B2 audio service created:', alnilamAudioService);
         setAlnilamService(alnilamAudioService);
-        console.log('✅ Alnilam service set in state');
-        setActiveAudioService("Alnilam");
-        console.log('🌟 Alnilam Audio Service initialized successfully');
+        console.log('✅ B2 audio service set in state');
+        setActiveAudioService("B2 Audio");
+        console.log('🌟 B2 Audio Service initialized successfully');
         
         // IMMEDIATE TEST: Try calling the service right after initialization
         console.log('🧪 Testing Alnilam service immediately after initialization...');
@@ -1377,6 +1427,7 @@ export function LanguageSelector() {
       const sourceWord = word.sourceWord || word.training_word || ''
       const targetWord = word.targetWord || word.main_word || ''
       const wordId = word.id
+      const isCustomWord = word.isCustomWord || false // Check if this is a playlist/custom word
 
       if (!sourceWord || typeof sourceWord !== 'string' || sourceWord.trim().length === 0) {
         console.warn('No valid source word found in:', word)
@@ -1394,7 +1445,8 @@ export function LanguageSelector() {
         targetLanguage, 
         nativeLanguage,
         currentWordIndex,
-        autoPlay
+        autoPlay,
+        isCustomWord
       })
 
       if (autoPlay) {
@@ -1402,11 +1454,80 @@ export function LanguageSelector() {
       }
       setIsPlaying(true)
       
+      // For custom/playlist words, use TTS fallback instead of B2 audio
+      if (isCustomWord) {
+        console.log('🎤 Using TTS fallback for custom word')
+        setActiveAudioService("TTS")
+        
+        try {
+          // Get language codes for TTS
+          const languageMappings: Record<string, string> = {
+            'Arabic': 'ar', 'German': 'de', 'Spanish': 'es', 'French': 'fr',
+            'Hindi': 'hi', 'Indonesian': 'id', 'Italian': 'it', 'Japanese': 'ja',
+            'Korean': 'ko', 'Portuguese': 'pt', 'Russian': 'ru', 'Dutch': 'nl',
+            'Polish': 'pl', 'Thai': 'th', 'Turkish': 'tr', 'Vietnamese': 'vi',
+            'Romanian': 'ro', 'Ukrainian': 'uk', 'Bengali': 'bn', 'English': 'en',
+            'Chinese': 'zh', 'Greek': 'el', 'Hebrew': 'he', 'Czech': 'cs',
+            'Hungarian': 'hu', 'Bulgarian': 'bg', 'Croatian': 'hr', 'Slovak': 'sk',
+            'Slovenian': 'sl', 'Estonian': 'et', 'Finnish': 'fi', 'Swedish': 'sv',
+            'Norwegian': 'no', 'Danish': 'da'
+          }
+          
+          const targetLangCode = languageMappings[targetLanguage] || targetLanguageCode || 'en'
+          const nativeLangCode = languageMappings[nativeLanguage] || nativeLanguageCode || 'en'
+          
+          // Play target word (learning language)
+          setCurrentAudioStep('training')
+          const targetAudioUrl = `/api/custom-audio?text=${encodeURIComponent(sourceWord)}&languageCode=${targetLangCode}`
+          const targetAudio = new Audio(targetAudioUrl)
+          audioElementsRef.current.push(targetAudio)
+          
+          await new Promise<void>((resolve, reject) => {
+            targetAudio.onended = () => resolve()
+            targetAudio.onerror = (e) => reject(e)
+            targetAudio.play().catch(reject)
+          })
+          
+          // Pause between words
+          await new Promise(resolve => setTimeout(resolve, settings.pauseBetweenTranslations || 1000))
+          
+          if (stopRequestedRef.current) {
+            setCurrentAudioStep('idle')
+            setIsPlaying(false)
+            audioCallInProgress.current = false
+            return
+          }
+          
+          // Play native word
+          setCurrentAudioStep('main')
+          const nativeAudioUrl = `/api/custom-audio?text=${encodeURIComponent(targetWord)}&languageCode=${nativeLangCode}`
+          const nativeAudio = new Audio(nativeAudioUrl)
+          audioElementsRef.current.push(nativeAudio)
+          
+          await new Promise<void>((resolve, reject) => {
+            nativeAudio.onended = () => resolve()
+            nativeAudio.onerror = (e) => reject(e)
+            nativeAudio.play().catch(reject)
+          })
+          
+          console.log('✅ TTS audio completed successfully')
+          setCurrentAudioStep('idle')
+          setIsPlaying(false)
+          audioCallInProgress.current = false
+          return
+          
+        } catch (error) {
+          console.error('❌ TTS audio error:', error)
+          setCurrentAudioStep('idle')
+          setIsPlaying(false)
+          audioCallInProgress.current = false
+          return
+        }
+      }
+      
       console.log('🎮 Play button clicked - checking services...', {
         alnilamService: !!alnilamService,
         alnilamServiceType: typeof alnilamService,
-        alnilamServiceDetails: alnilamService,
-        algenibService: !!algenibService,
         wordId,
         sourceWord,
         targetWord,
@@ -1445,7 +1566,7 @@ export function LanguageSelector() {
             sourceWord,           // sourceWord string
             targetWord,           // targetWord string  
             {                     // settings object
-              speed: settings.pronunciationSpeed,
+              pronunciationSpeed: settings.pronunciationSpeed,
               pauseBetweenTranslations: settings.pauseBetweenTranslations,
               pauseForNextWord: settings.pauseForNextWord,
               repeatTargetLanguage: settings.repeatTargetLanguage,
@@ -1503,145 +1624,23 @@ export function LanguageSelector() {
             setIsPlaying(false)
             return
           } else {
-            console.log('⚠️ Alnilam audio not available, trying Algenib...')
+            console.log('⚠️ Audio service returned false - audio may not be available for this word')
+            setCurrentAudioStep('idle')
+            setIsPlaying(false)
           }
         } catch (error) {
-          console.error('❌ Alnilam service error:', error)
-          console.log('🔄 Falling back to Algenib due to Alnilam error')
+          console.error('❌ Audio service error:', error)
+          setCurrentAudioStep('idle')
+          setIsPlaying(false)
         }
       } else {
-        console.warn('❌ Alnilam service not available:', {
+        console.warn('❌ Audio service not available:', {
           hasService: !!alnilamService,
           hasWordId: !!wordId,
           serviceType: typeof alnilamService
         })
-      }
-      
-      // Priority 2: Try Algenib TTS as backup
-      if (algenibService && wordId) {
-        console.log('🎤 Using Algenib TTS for professional teaching voice')
-        setActiveAudioService("Algenib")
-        
-        const algenibSuccess = await algenibService.playWordSequence(
-          { id: wordId, sourceWord, targetWord },
-          targetLanguage,
-          nativeLanguage,
-          {
-            repeatTargetLanguage: settings.repeatTargetLanguage,
-            repeatMainLanguage: settings.repeatMainLanguage,
-            pauseBetweenTranslations: settings.pauseBetweenTranslations,
-            playTargetOnly: settings.playTargetOnly
-          }
-        )
-        
-        // Check abort signal first (highest priority)
-        if (autoplayAbortController.current?.signal.aborted) {
-          console.log('🛑 Autoplay aborted during Algenib playback - immediate exit');
-          setCurrentAudioStep('idle')
-          setIsPlaying(false)
-          audioCallInProgress.current = false
-          return
-        }
-        
-        // Check if stop was requested during playback - EXIT IMMEDIATELY
-        if (stopRequestedRef.current) {
-          console.log('🛑 Stop requested during Algenib playback - cleaning up and exiting');
-          setCurrentAudioStep('idle')
-          setIsPlaying(false)
-          audioCallInProgress.current = false
-          return
-        }
-        
-        if (algenibSuccess) {
-          console.log('✅ Algenib audio completed successfully')
-          
-          // Track word progress when audio is played successfully
-          if (user?.id && wordId && targetLanguageCode) {
-            try {
-              await fetch('/api/progress/track', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  userId: user.id,
-                  vocabularyId: wordId,
-                  targetLanguageCode: targetLanguageCode
-                })
-              })
-              console.log('📊 Progress tracked for word:', wordId)
-            } catch (error) {
-              console.error('Failed to track progress:', error)
-            }
-          }
-          
-          setCurrentAudioStep('idle')
-          setIsPlaying(false)
-          return
-        } else {
-          console.log('⚠️ Algenib audio not available, falling back to browser TTS')
-        }
-      }
-      
-      // Priority 3: Browser TTS fallback if neither Alnilam nor Algenib available
-      console.log('🔄 Using browser TTS as final fallback')
-      console.log('🔴 DEBUG: Browser TTS settings:', {
-        repeatTargetLanguage: settings.repeatTargetLanguage,
-        repeatMainLanguage: settings.repeatMainLanguage,
-        pauseBetweenTranslations: settings.pauseBetweenTranslations,
-        timestamp: Date.now()
-      });
-      setActiveAudioService("Browser TTS")
-      setCurrentAudioStep('training')
-      
-      // Get voices for languages
-      const trainingVoice = getVoiceForLanguage(targetLanguage, settings.trainingLanguageVoice)
-      const mainVoice = getVoiceForLanguage(nativeLanguage, settings.mainLanguageVoice)
-
-      // Play target language (what user is learning)
-      console.log('🔴 DEBUG: Starting target language loop, repeats:', settings.repeatTargetLanguage);
-      for (let i = 0; i < settings.repeatTargetLanguage; i++) {
-        console.log(`🔴 DEBUG: Target repeat ${i + 1}/${settings.repeatTargetLanguage}`);
-        await speak(sourceWord, targetLanguage, trainingVoice)
-        if (i < settings.repeatTargetLanguage - 1) {
-          await sleep(300)
-        }
-      }
-
-      // Pause between languages
-      setCurrentAudioStep('pause')
-      console.log('🔴 DEBUG: Pausing between languages for', settings.pauseBetweenTranslations * 1000, 'ms');
-      await sleep(settings.pauseBetweenTranslations * 1000)
-
-      // Play native language (translation)
-      setCurrentAudioStep('main')
-      console.log('🔴 DEBUG: Starting main language loop, repeats:', settings.repeatMainLanguage);
-      for (let i = 0; i < settings.repeatMainLanguage; i++) {
-        console.log(`🔴 DEBUG: Main repeat ${i + 1}/${settings.repeatMainLanguage}`);
-        await speak(targetWord, nativeLanguage, mainVoice)
-        if (i < settings.repeatMainLanguage - 1) {
-          await sleep(300)
-        }
-      }
-
-      // Set to idle after completing this word
-      setCurrentAudioStep('idle')
-      setIsPlaying(false)
-      
-      // Track word progress for browser TTS fallback
-      if (user?.id && wordId && targetLanguageCode) {
-        try {
-          await fetch('/api/progress/track', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              userId: user.id,
-              vocabularyId: wordId,
-              targetLanguageCode: targetLanguageCode
-            })
-          })
-          console.log('📊 Progress tracked for word:', wordId)
-        } catch (error) {
-          console.error('Failed to track progress:', error)
-        }
+        setCurrentAudioStep('idle')
+        setIsPlaying(false)
       }
 
     } catch (error) {
@@ -1692,14 +1691,6 @@ export function LanguageSelector() {
     
     // Cancel the auto-play loop - CRITICAL: Do this BEFORE resetting other states
     autoPlayRef.current = false
-    
-    // Stop hybrid audio service - TTS DISABLED
-    console.log('Audio stop requested - TTS disabled')
-    
-    // Cancel any ongoing speech synthesis - TTS DISABLED
-    // if (speechSynthesis.speaking) {
-    //   speechSynthesis.cancel()
-    // }
     
     // Reset all audio states - must happen AFTER autoPlayRef is set to false
     setIsPlaying(false)
@@ -2092,14 +2083,9 @@ export function LanguageSelector() {
     }
   }, [autoPlayActive, hasUserInteracted])
 
-  // Initialize multi-voice audio system - Alnilam + Algenib + Browser TTS
+  // Initialize B2 audio system
   useEffect(() => {
-    console.log('🎵 Multi-voice audio system active: Alnilam (Priority 1) → Algenib (Priority 2) → Browser TTS (Fallback)')
-  }, [])
-  
-  // Load voices for browser TTS fallback
-  useEffect(() => {
-    console.log('Browser TTS voices loaded for fallback scenarios')
+    console.log('🎵 B2 Audio system active - Backblaze cloud audio storage')
   }, [])
 
   // Language names mapping for better display
@@ -2365,26 +2351,116 @@ export function LanguageSelector() {
   }
 
   const handleTopicSelect = async (topic: Topic) => {
-    console.log('🔐 Checking access for topic:', topic.id, topic.name)
+    console.log('🔐 Processing topic selection:', topic.id, topic.name)
     
-    // Check if user has access to this topic
-    if (!user) {
-      // Unauthenticated users can only access Greetings
-      if (topic.id !== 1) {
-        console.log('❌ Unauthenticated user trying to access premium topic')
-        setShowPaywall(true)
+    // Special case: Playlist learning - topic id -2
+    if (topic.id === -2) {
+      console.log('📋 Playlist selected - navigating to playlist learning')
+      const playlistId = (topic as any).playlistId
+      
+      // Require authentication for playlists
+      if (!user) {
+        console.log('❌ Please sign in to access playlists')
         return
       }
-    } else {
-      // Check authenticated user's topic access
-      const hasAccess = await checkTopicAccess(topic.id)
-      if (!hasAccess) {
-        console.log('❌ User does not have access to topic:', topic.id)
-        setShowPaywall(true)
-        return
+      
+      // Allow playlist access
+      // Fetch playlist words
+      try {
+        const response = await fetch(`/api/playlists?userId=${user.id}&playlistId=${playlistId}`)
+        if (!response.ok) {
+          console.error('Failed to fetch playlist')
+          return
+        }
+        const data = await response.json()
+        
+        console.log('📋 Raw playlist data:', JSON.stringify(data, null, 2))
+        
+        if (!data.words || data.words.length === 0) {
+          alert('This playlist has no words yet. Add words from the Search Word feature!')
+          return
+        }
+        
+        // Transform playlist words to vocabulary format
+        // vocabulary expects: { sourceWord (target language), targetWord (native language) }
+        const playlistVocabulary = data.words.map((pw: any) => {
+          const dictWord = pw.dictionary_words
+          const translations = dictWord?.translations || {}
+          
+          // sourceWord = the word in target language (what user is learning)
+          // targetWord = the word in native language (user's known language)
+          const sourceWord = translations[targetLanguageCode] || dictWord?.word_en || ''
+          const targetWord = translations[nativeLanguageCode] || dictWord?.word_en || ''
+          
+          console.log('📝 Transforming word:', { 
+            word_en: dictWord?.word_en,
+            sourceWord, 
+            targetWord,
+            targetLang: targetLanguageCode,
+            nativeLang: nativeLanguageCode 
+          })
+          
+          return {
+            id: dictWord?.id,
+            sourceWord: sourceWord,
+            targetWord: targetWord,
+            word_en: dictWord?.word_en,
+            isCustomWord: true // Flag to indicate this needs TTS fallback
+          }
+        })
+        
+        console.log('📋 Loaded playlist vocabulary:', playlistVocabulary)
+        
+        // Set vocabulary and navigate
+        setVocabulary(playlistVocabulary)
+        setTotalWords(playlistVocabulary.length)
+        setCurrentOffset(playlistVocabulary.length)
+        setHasMoreWords(false)
+        setCurrentWordIndex(0)
+        setSelectedTopic({ ...topic, name: topic.name }) // Keep name without emoji, icon handled separately
+        
+        // Reset audio states
+        setIsPlaying(false)
+        setCurrentAudioStep('idle')
+        setAutoPlayActive(false)
+        autoPlayRef.current = false
+        
+        // Navigate to learning page
+        setIsTransitioning(true)
+        setTimeout(() => {
+          setCurrentPage("learning")
+          setIsTransitioning(false)
+        }, 150)
+      } catch (error) {
+        console.error('Error loading playlist:', error)
       }
-      console.log('✅ User has access to topic:', topic.id)
+      return
     }
+    
+    // Special case: Search Word (My Words feature) - topic id -1
+    if (topic.id === -1) {
+      console.log('🔍 Search Word selected - navigating to search learning')
+      
+      // Require authentication for search
+      if (!user) {
+        console.log('❌ Please sign in to use search')
+        return
+      }
+      
+      // Allow search access
+      setSelectedTopic(topic)
+      setIsTransitioning(true)
+      setTimeout(() => {
+        setCurrentPage("learning")
+        setIsTransitioning(false)
+      }, 150)
+      return
+    }
+    
+    // Access check already done in handleTopicClick, proceed with loading topic
+    // Note: For regular topics called directly (e.g., from post-payment flow), 
+    // we trust that the caller has verified access
+    console.log('✅ Proceeding with topic loading:', topic.id)
 
     // User has access, proceed with topic selection
     const cacheKey = `${topic.id}-${targetLanguage}-${nativeLanguage}`
@@ -2440,7 +2516,7 @@ export function LanguageSelector() {
           topic.id,
           targetLanguage,
           nativeLanguage,
-          200, // Reduced from 10000 for better performance
+          500, // Increased to handle larger topics like Verbs (449 words)
           0
         )
         
@@ -2489,21 +2565,73 @@ export function LanguageSelector() {
     if (vocabulary.length === 0) {
       return { 
         sourceWord: `No ${targetLanguage} words found`, 
-        targetWord: `Try a different topic or language combination` 
+        targetWord: `Try a different topic or language combination`,
+        category: ''
       }
     }
     const currentWord = vocabulary[currentWordIndex] || vocabulary[0]
+    // Debug: Log category info
+    if (selectedTopic?.id === 41) {
+      console.log('🏷️ Current word:', currentWord.sourceWord, 'Category:', currentWord.category, 'learningOrder:', currentWord.learningOrder)
+    }
     return {
       sourceWord: currentWord.sourceWord?.toLowerCase() || '', // Training language word (what user wants to learn) - displayed in lowercase
-      targetWord: currentWord.targetWord?.toLowerCase() || ''  // Main language translation (user's native language) - displayed in lowercase
+      targetWord: currentWord.targetWord?.toLowerCase() || '',  // Main language translation (user's native language) - displayed in lowercase
+      category: currentWord.category || '' // Category for verb grouping display
     }
   }
 
-  // Long-press handlers for example sentence modal
-  const longPressHandlers = useLongPress({
-    onLongPress: () => setShowExampleSentence(true),
-    delay: 600
-  })
+  // Get category-based progress for Verbs topic (41)
+  const getCategoryProgress = () => {
+    if (selectedTopic?.id !== 41 || vocabulary.length === 0) {
+      return {
+        current: currentWordIndex + 1,
+        total: vocabulary.length,
+        categoryName: ''
+      }
+    }
+
+    const currentWord = vocabulary[currentWordIndex] || vocabulary[0]
+    const learningOrder = currentWord.learningOrder || 1
+
+    // Define category ranges and names
+    const categories = [
+      { name: 'Basic', start: 1, end: 63 },
+      { name: 'Daily Routine', start: 64, end: 107 },
+      { name: 'Mental', start: 108, end: 173 },
+      { name: 'Communication', start: 174, end: 210 },
+      { name: 'Social', start: 211, end: 236 },
+      { name: 'Work', start: 237, end: 276 },
+      { name: 'Travel', start: 277, end: 304 },
+      { name: 'Household', start: 305, end: 334 },
+      { name: 'Money', start: 335, end: 356 },
+      { name: 'Food', start: 357, end: 380 },
+      { name: 'Nature', start: 381, end: 401 },
+      { name: 'Health', start: 402, end: 423 },
+      { name: 'Technology', start: 424, end: 449 }
+    ]
+
+    // Find current category
+    const currentCategory = categories.find(cat => learningOrder >= cat.start && learningOrder <= cat.end)
+    
+    if (!currentCategory) {
+      return {
+        current: currentWordIndex + 1,
+        total: vocabulary.length,
+        categoryName: ''
+      }
+    }
+
+    // Calculate position within current category
+    const positionInCategory = learningOrder - currentCategory.start + 1
+    const categorySize = currentCategory.end - currentCategory.start + 1
+
+    return {
+      current: positionInCategory,
+      total: categorySize,
+      categoryName: currentCategory.name.toUpperCase()
+    }
+  }
 
   const handlePrevious = () => {
     if (vocabulary.length > 0) {
@@ -2568,6 +2696,43 @@ export function LanguageSelector() {
           })
         }
       }
+    }
+  }
+
+  // Create a new playlist
+  const handleCreatePlaylist = async () => {
+    if (!newPlaylistName.trim() || !user?.id || !nativeLanguageCode || !targetLanguageCode) return
+    
+    setIsCreatingPlaylist(true)
+    try {
+      const response = await fetch('/api/playlists', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.id,
+          name: newPlaylistName.trim(),
+          sourceLanguageCode: nativeLanguageCode,
+          targetLanguageCode: targetLanguageCode
+        })
+      })
+      
+      if (response.ok) {
+        const data = await response.json()
+        // Add the new playlist to the list with word_count = 0
+        const newPlaylist = { ...data.playlist, word_count: 0 }
+        setUserPlaylists(prev => [newPlaylist, ...prev])
+        setNewPlaylistName("")
+        setShowCreatePlaylistModal(false)
+      } else {
+        const error = await response.json()
+        console.error('Failed to create playlist:', error)
+        alert(error.error || 'Failed to create playlist')
+      }
+    } catch (error) {
+      console.error('Error creating playlist:', error)
+      alert('Failed to create playlist')
+    } finally {
+      setIsCreatingPlaylist(false)
     }
   }
 
@@ -2644,6 +2809,84 @@ export function LanguageSelector() {
     }
   }
 
+
+
+  // Topic click handler with subscription check
+  const handleTopicClick = async (topic: Topic) => {
+    console.log('🎯 Topic clicked:', { topicId: topic.id, topicName: topic.name, isPremium })
+    
+    // Check if user can access this topic
+    if (!canAccessTopic(topic.id)) {
+      console.log('🔒 Topic requires premium:', topic.id)
+      setShowPaywall(true)
+      return
+    }
+    
+    // User has access, proceed
+    console.log('✅ Granting access to topic:', topic.id)
+    lastTopicSectionRef.current = currentSection
+    handleTopicSelect(topic)
+  }
+
+  // renderTopicButton function - defined after handleTopicClick to access it
+  const renderTopicButton = (topic: Topic) => {
+    const hasCustomIcon = topic.icon
+    const iconData = TOPIC_ICONS.find(icon => icon.id === topic.id)
+    const isCompleted = completedTopicIds.includes(topic.id)
+    
+    // Debug logging
+    if (topic.id === 1) {
+      console.log('🎯 Topic 1 render:', { 
+        completedTopicIds, 
+        isCompleted,
+        topicId: topic.id 
+      })
+    }
+    
+    // Direct mapping for custom SVG icons
+    const customSVGIcons: { [key: number]: string } = {
+      11: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12.74 5.47c2.36 1.03 3.61 3.56 3.18 5.99A6 6 0 0 1 18 16v.17a3 3 0 0 1 1-.17a3 3 0 0 1 3 3a3 3 0 0 1-3 3H6a4 4 0 0 1-4-4a4 4 0 0 1 4-4h.27C5 12.45 4.6 10.24 5.5 8.26a5.49 5.49 0 0 1 7.24-2.79m-.81 1.83c-1.77-.8-3.84.01-4.62 1.77c-.46 1.02-.38 2.15.1 3.06A5.99 5.99 0 0 1 12 10c.7 0 1.38.12 2 .34a3.51 3.51 0 0 0-2.07-3.04m1.62-3.66c-.55-.24-1.1-.41-1.67-.52l2.49-1.3l.9 2.89a7.7 7.7 0 0 0-1.72-1.07m-7.46.8c-.49.35-.92.75-1.29 1.19l.11-2.81l2.96.68c-.62.21-1.22.53-1.78.94M18 9.71c-.09-.59-.22-1.16-.41-1.71l2.38 1.5l-2.05 2.23c.11-.65.13-1.33.08-2.02M3.04 11.3c.07.6.2 1.17.39 1.7l-2.37-1.5L3.1 9.28c-.1.65-.13 1.33-.06 2.02M19 18h-3v-2a4 4 0 0 0-4-4a4 4 0 0 0-4 4H6a2 2 0 0 0-2 2a2 2 0 0 0 2 2h13a1 1 0 0 0 1-1a1 1 0 0 0-1-1"/></svg>',
+      18: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M11 6h2V4h-2zm1 6q-1.9 0-3.625-.788T5 9.45V8q0-.825.588-1.412T7 6h2V3q0-.425.288-.712T10 2h4q.425 0 .713.288T15 3v3h2q.825 0 1.413.588T19 8v1.45q-1.65.975-3.375 1.763T12 12m-5 9q-.825 0-1.412-.587T5 19v-7.3q1.4.85 2.888 1.45t3.112.8V14q0 .425.288.713T12 15t.713-.288T13 14v-.05q1.625-.2 3.113-.8T19 11.7V19q0 .825-.587 1.413T17 21q0 .425-.288.713T16 22q-.4 0-.562-.363T15 21H9q0 .425-.288.713T8 22q-.4 0-.562-.363T7 21"/></svg>'
+    }
+    
+    return (
+      <button
+        key={topic.id}
+        onClick={async () => await handleTopicClick(topic)}
+        className={`bg-black/40 rounded-xl sm:rounded-2xl p-3 sm:p-5 text-center hover:bg-black/50 transition-all duration-300 transform hover:scale-[1.02] h-32 sm:h-36 shadow-lg hover:shadow-xl ${
+          selectedTopic?.id === topic.id ? "bg-black/60 shadow-xl" : ""
+        } ${
+          isCompleted ? "shadow-[0_0_20px_rgba(255,255,255,0.5),0_0_40px_rgba(255,255,255,0.3)]" : ""
+        }`}
+      >
+        <div className="flex flex-col items-center justify-center h-full gap-2">
+          <div className="flex-shrink-0">
+            {hasCustomIcon ? (
+              <div 
+                className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center" 
+                style={{ color: 'rgba(255,255,255,0.8)' }}
+                dangerouslySetInnerHTML={{ __html: topic.icon! }}
+              />
+            ) : customSVGIcons[topic.id] ? (
+              <div 
+                className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center" 
+                style={{ color: 'rgba(255,255,255,0.8)' }}
+                dangerouslySetInnerHTML={{ __html: customSVGIcons[topic.id] }}
+              />
+            ) : iconData && typeof iconData.icon === 'string' ? (
+              <Icon icon={iconData.icon} width="48" height="48" className="sm:w-16 sm:h-16" style={{ color: 'rgba(255,255,255,0.8)' }} />
+            ) : iconData ? (
+              (iconData.icon as any)({ className: 'w-12 h-12 sm:w-16 sm:h-16 text-white/80' })
+            ) : (
+              <MessageCircle className="w-12 h-12 sm:w-16 sm:h-16 text-white/80" />
+            )}
+          </div>
+          <p className="text-white/90 text-base sm:text-lg font-medium leading-tight px-1 text-center">{getTopicDisplayName(topic.id, topic.name)}</p>
+        </div>
+      </button>
+    )
+  }
+
   return (
     <div className="w-full max-w-2xl mx-auto px-2 sm:px-3 h-full max-h-[90vh] sm:max-h-[85vh] flex items-center">
       <div className={`bg-white/5 backdrop-blur-3xl border border-white/15 rounded-2xl sm:rounded-3xl px-3 sm:px-5 md:px-7 py-4 sm:py-5 md:py-6 shadow-2xl transform transition-all duration-300 hover:scale-[1.02] hover:shadow-3xl w-full max-h-full overflow-hidden ${isTransitioning ? 'bg-white/10' : 'bg-white/5'}`}>
@@ -2654,7 +2897,27 @@ export function LanguageSelector() {
           </div>
         )}
         
-        {currentPage === "learning" && (
+        {currentPage === "learning" && selectedTopic?.id === -1 && (
+          /* Search Word Learning - Custom word search mode */
+          <div 
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
+          >
+            <SearchWordLearning
+              nativeLanguage={nativeLanguage}
+              nativeLanguageCode={nativeLanguageCode}
+              targetLanguage={targetLanguage}
+              targetLanguageCode={targetLanguageCode}
+              userId={user?.id}
+              onBack={handleBackToTopics}
+              onSettingsClick={handleSettingsClick}
+              onPlaylistUpdate={refreshPlaylists}
+            />
+          </div>
+        )}
+        
+        {currentPage === "learning" && selectedTopic?.id !== -1 && (
           <div 
             className="text-center transition-all duration-500 ease-in-out"
             onTouchStart={onTouchStart}
@@ -2673,6 +2936,11 @@ export function LanguageSelector() {
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 justify-center">
                   {/* Topic Icon */}
                   {(() => {
+                    // Special case: Playlist learning (id === -2) - show notepad icon
+                    if (selectedTopic?.id === -2) {
+                      return <Icon icon="solar:notebook-bold" className="w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0" style={{ color: 'rgba(255,255,255,0.8)' }} />
+                    }
+                    
                     // First check if topic has an SVG icon in the JSON data
                     if (selectedTopic?.icon) {
                       return (
@@ -2710,21 +2978,36 @@ export function LanguageSelector() {
               {vocabulary.length > 0 && (
                 <div className="mb-6 text-center">
                   <p className="text-white/60 text-sm">
-                    {currentWordIndex + 1} of {vocabulary.length} words
+                    {(() => {
+                      const progress = getCategoryProgress()
+                      return `${progress.current} of ${progress.total} words`
+                    })()}
                   </p>
                   <div className="w-full bg-white/10 rounded-full h-2 mt-2">
                     <div
                       className="bg-gradient-to-r from-blue-400 to-blue-600 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${((currentWordIndex + 1) / vocabulary.length) * 100}%` }}
+                      style={{ 
+                        width: `${(() => {
+                          const progress = getCategoryProgress()
+                          return (progress.current / progress.total) * 100
+                        })()}%`
+                      }}
                     />
                   </div>
                 </div>
               )}
 
+              {/* Category indicator - shown for topics with categories (e.g., Verbs) */}
+              {getCurrentContent().category && (
+                <div className="mb-4 flex justify-center">
+                  <span className="px-3 py-1 bg-white/10 rounded-lg text-white/70 text-xs font-medium uppercase tracking-wider">
+                    {getCurrentContent().category}
+                  </span>
+                </div>
+              )}
+
               <div className="space-y-6 mb-12" onTouchStart={(e) => e.stopPropagation()}>
-                <div 
-                  {...longPressHandlers}
-                  className={`bg-black/40 border border-white/20 rounded-2xl p-8 transition-all duration-300 shadow-lg cursor-pointer select-none ${
+                <div className={`bg-black/40 border border-white/20 rounded-2xl p-8 transition-all duration-300 shadow-lg ${
                   currentAudioStep === 'training' 
                     ? 'bg-blue-500/20 border-blue-400/30 scale-105' 
                     : 'bg-black/40'
@@ -2856,16 +3139,21 @@ export function LanguageSelector() {
                 user={user}
                 signOut={signOut}
                 nativeLanguage={nativeLanguage}
+                nativeLanguageCode={nativeLanguageCode}
                 targetLanguage={targetLanguage}
                 targetLanguageCode={targetLanguageCode}
-                showPaywall={showPaywall}
-                setShowPaywall={setShowPaywall}
                 handleSignOut={handleSignOut}
                 getFlagIcon={getFlagIcon}
                 completedTopicIds={completedTopicIds}
                 currentSection={currentSection}
                 setCurrentSection={setCurrentSection}
                 lastTopicSectionRef={lastTopicSectionRef}
+                userPlaylists={userPlaylists}
+                isLoadingPlaylists={isLoadingPlaylists}
+                onCreatePlaylist={() => setShowCreatePlaylistModal(true)}
+                renderTopicButton={renderTopicButton}
+                isPremium={isPremium}
+                setShowPaywall={setShowPaywall}
               />
             </div>
 
@@ -2892,17 +3180,6 @@ export function LanguageSelector() {
           </div>
         )}
       </div>
-
-      {/* Example Sentence Modal */}
-      {showExampleSentence && (
-        <ExampleSentenceModal
-          word={getCurrentContent().sourceWord}
-          translation={getCurrentContent().targetWord}
-          targetLanguage={targetLanguage}
-          nativeLanguage={nativeLanguage}
-          onClose={() => setShowExampleSentence(false)}
-        />
-      )}
 
       {/* Settings Modal - Outside main container to avoid background blur */}
       {showSettings && (
@@ -3081,16 +3358,89 @@ export function LanguageSelector() {
         </div>
       )}
 
+      {/* Create Playlist Modal */}
+      {showCreatePlaylistModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-gray-900 border border-white/20 rounded-2xl w-full max-w-md p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-white font-semibold text-lg">Create New Playlist</h3>
+              <button
+                onClick={() => {
+                  setShowCreatePlaylistModal(false)
+                  setNewPlaylistName("")
+                }}
+                className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all"
+              >
+                <Icon icon="solar:close-circle-bold" width="20" height="20" className="text-white/60" />
+              </button>
+            </div>
+            
+            <div className="mb-4">
+              <p className="text-white/60 text-sm mb-2">
+                This playlist will be for <span className="text-blue-400">{nativeLanguage}</span> → <span className="text-green-400">{targetLanguage}</span>
+              </p>
+            </div>
+            
+            <div className="relative mb-4">
+              <input
+                type="text"
+                value={newPlaylistName}
+                onChange={(e) => setNewPlaylistName(e.target.value.slice(0, 22))}
+                placeholder="Enter playlist name..."
+                maxLength={22}
+                className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white outline-none focus:border-blue-400/50"
+                autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && newPlaylistName.trim()) {
+                    handleCreatePlaylist()
+                  }
+                }}
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 text-xs">
+                {newPlaylistName.length}/22
+              </span>
+            </div>
+            
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowCreatePlaylistModal(false)
+                  setNewPlaylistName("")
+                }}
+                className="flex-1 py-3 bg-white/10 hover:bg-white/20 rounded-lg text-white font-medium transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleCreatePlaylist}
+                disabled={!newPlaylistName.trim() || isCreatingPlaylist}
+                className="flex-1 py-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-white font-medium transition-all flex items-center justify-center gap-2"
+              >
+                {isCreatingPlaylist ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  'Create Playlist'
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Paywall Modal */}
-      <PaywallModal
+      <PaywallModal 
         isOpen={showPaywall}
         onCloseAction={() => setShowPaywall(false)}
-        onSubscriptionSuccess={() => {
+        onSuccessAction={() => {
           setShowPaywall(false)
-          // Refresh user subscription status
-          refreshUser()
+          refreshSubscription()
         }}
       />
     </div>
   )
 }
+
+export default LanguageSelector

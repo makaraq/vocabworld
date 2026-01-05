@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import { Flame, TrendingUp, Trophy, BookOpen } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { Icon } from "@iconify/react"
+import { DetailedProgressModal } from "./detailed-progress-modal"
 
 interface ProgressStats {
   wordsLearned: number
@@ -41,6 +42,8 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName }: { targ
   const { user } = useAuth()
   const [stats, setStats] = useState<ProgressStats | null>(null)
   const [loading, setLoading] = useState(true)
+  const [showDetailedModal, setShowDetailedModal] = useState(false)
+  const [lastFetchKey, setLastFetchKey] = useState<string>('')
 
   useEffect(() => {
     if (!user?.id || !targetLanguageCode) {
@@ -48,12 +51,25 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName }: { targ
       return
     }
     
+    // Create cache key to prevent duplicate calls
+    const cacheKey = `${user.id}-${targetLanguageCode}`
+    
+    // Skip if we just fetched for the same user/language combination
+    if (cacheKey === lastFetchKey) {
+      console.log('⏩ Skipping progress stats fetch - same cache key')
+      setLoading(false)
+      return
+    }
+    
     const fetchStats = async () => {
       try {
+        console.log(`📊 Fetching progress stats for: ${targetLanguageName} (${targetLanguageCode})`)
         const response = await fetch(`/api/progress/stats?userId=${user.id}&targetLanguageCode=${targetLanguageCode}`)
         if (response.ok) {
           const data = await response.json()
           setStats(data)
+          setLastFetchKey(cacheKey)
+          console.log('✅ Progress stats loaded successfully')
         }
       } catch (error) {
         console.error('Failed to fetch progress stats:', error)
@@ -63,7 +79,7 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName }: { targ
     }
     
     fetchStats()
-  }, [user?.id, targetLanguageCode])
+  }, [user?.id, targetLanguageCode, lastFetchKey])
 
   if (!user) return null
   
@@ -80,56 +96,74 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName }: { targ
   if (!stats) return null
 
   return (
-    <div className="space-y-3 sm:space-y-4">
-      <div className="bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-5 border border-white/20">
-        <div className="flex items-center justify-between gap-2 mb-2 sm:mb-3">
-          <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
-            <h3 className="font-semibold text-white text-sm sm:text-base truncate">{targetLanguageName} Progress</h3>
-            <Icon icon={getFlagIcon(targetLanguageCode)} className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+    <>
+      <div className="space-y-3 sm:space-y-4">
+        <div 
+          className="bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-5 border border-white/20 cursor-pointer hover:bg-white/15 transition-all duration-200"
+          onClick={() => setShowDetailedModal(true)}
+        >
+          <div className="flex items-start gap-3 sm:gap-4">
+            {/* Flag on the left */}
+            <Icon icon={getFlagIcon(targetLanguageCode)} className="w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0 mt-1" />
+            
+            {/* Progress content in the middle */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-baseline justify-between gap-2 mb-2">
+                <h3 className="font-semibold text-white text-sm sm:text-base truncate">{targetLanguageName} Progress</h3>
+                <p className="text-sm sm:text-base font-bold text-white whitespace-nowrap">{Math.round(stats.languageCompletionPercentage)}%</p>
+              </div>
+              <div className="h-2 sm:h-3 bg-white/10 rounded-full overflow-hidden mb-2">
+                <div 
+                  className="h-full bg-gradient-to-r from-indigo-500 to-pink-500 transition-all duration-500" 
+                  style={{ width: `${Math.min(stats.languageCompletionPercentage, 100)}%` }} 
+                />
+              </div>
+              <p className="text-xs text-white/50 text-left">Click to see details</p>
+            </div>
           </div>
-          <p className="text-xs sm:text-sm font-medium text-white/90 whitespace-nowrap">{Math.round(stats.languageCompletionPercentage)}%</p>
         </div>
-        <div className="h-2 sm:h-3 bg-white/10 rounded-full overflow-hidden">
-          <div 
-            className="h-full bg-gradient-to-r from-indigo-500 to-pink-500 transition-all duration-500" 
-            style={{ width: `${Math.min(stats.languageCompletionPercentage, 100)}%` }} 
-          />
+      
+        <div className="grid grid-cols-2 gap-2 sm:gap-3">
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-1.5 sm:mb-2">
+              <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+            </div>
+            <div className="text-xl sm:text-2xl font-bold text-white">{stats.wordsLearned}</div>
+            <div className="text-[10px] sm:text-xs text-white/90">Words Learned</div>
+          </div>
+          
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center mb-1.5 sm:mb-2">
+              <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+            </div>
+            <div className="text-xl sm:text-2xl font-bold text-white">{stats.dailyLoginStreak}</div>
+            <div className="text-[10px] sm:text-xs text-white/90">Day Streak</div>
+          </div>
+          
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center mb-1.5 sm:mb-2">
+              <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+            </div>
+            <div className="text-xl sm:text-2xl font-bold text-white">{stats.wordsLearnedToday}</div>
+            <div className="text-[10px] sm:text-xs text-white/90">Today</div>
+          </div>
+          
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-1.5 sm:mb-2">
+              <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+            </div>
+            <div className="text-xl sm:text-2xl font-bold text-white">{stats.topicsCompleted}</div>
+            <div className="text-[10px] sm:text-xs text-white/90">Topics Done</div>
+          </div>
         </div>
       </div>
       
-      <div className="grid grid-cols-2 gap-2 sm:gap-3">
-        <div className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20">
-          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-1.5 sm:mb-2">
-            <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-          </div>
-          <div className="text-xl sm:text-2xl font-bold text-white">{stats.wordsLearned}</div>
-          <div className="text-[10px] sm:text-xs text-white/90">Words Learned</div>
-        </div>
-        
-        <div className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20">
-          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center mb-1.5 sm:mb-2">
-            <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-          </div>
-          <div className="text-xl sm:text-2xl font-bold text-white">{stats.dailyLoginStreak}</div>
-          <div className="text-[10px] sm:text-xs text-white/90">Day Streak</div>
-        </div>
-        
-        <div className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20">
-          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center mb-1.5 sm:mb-2">
-            <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-          </div>
-          <div className="text-xl sm:text-2xl font-bold text-white">{stats.wordsLearnedToday}</div>
-          <div className="text-[10px] sm:text-xs text-white/90">Today</div>
-        </div>
-        
-        <div className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20">
-          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-1.5 sm:mb-2">
-            <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-          </div>
-          <div className="text-xl sm:text-2xl font-bold text-white">{stats.topicsCompleted}</div>
-          <div className="text-[10px] sm:text-xs text-white/90">Topics Done</div>
-        </div>
-      </div>
-    </div>
+      <DetailedProgressModal
+        isOpen={showDetailedModal}
+        onCloseAction={() => setShowDetailedModal(false)}
+        targetLanguageCode={targetLanguageCode}
+        targetLanguageName={targetLanguageName}
+      />
+    </>
   )
 }

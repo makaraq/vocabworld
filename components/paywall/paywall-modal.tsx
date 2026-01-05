@@ -1,280 +1,211 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { loadStripe, StripeElementsOptions } from '@stripe/stripe-js'
-import { Elements } from '@stripe/react-stripe-js'
-import { Button } from '@/components/ui/button'
-import { Check, X, Loader2, Crown, CreditCard, Lock } from 'lucide-react'
-import { useAuth } from '@/contexts/auth-context'
-import { SUBSCRIPTION_PLANS } from '@/lib/subscription/subscription-plans'
-import { EmbeddedCheckoutForm } from './embedded-checkout-form'
-
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
+import { createPortal } from 'react-dom'
+import { Icon } from '@iconify/react'
+import { PRICING, formatPrice } from '@/lib/pricing'
 
 interface PaywallModalProps {
   isOpen: boolean
   onCloseAction: () => void
-  onSubscriptionSuccess?: () => void
+  onSuccessAction?: () => void
 }
 
-export function PaywallModal({ isOpen, onCloseAction, onSubscriptionSuccess }: PaywallModalProps) {
-  const { user } = useAuth()
-  const [loading, setLoading] = useState<'yearly' | 'monthly' | null>(null)
+export function PaywallModal({ isOpen, onCloseAction, onSuccessAction }: PaywallModalProps) {
+  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('yearly')
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [selectedPlan, setSelectedPlan] = useState<'yearly' | 'monthly'>('yearly')
-  const [showCheckout, setShowCheckout] = useState(false)
-  const [clientSecret, setClientSecret] = useState<string | null>(null)
-  const [paymentIntentId, setPaymentIntentId] = useState<string | null>(null)
+  const [mounted, setMounted] = useState(false)
 
-  // Store current state before payment
-  const storeCurrentState = () => {
+  useEffect(() => {
+    setMounted(true)
+    return () => setMounted(false)
+  }, [])
+
+  if (!isOpen || !mounted) return null
+
+  const handleSubscribe = async () => {
+    setLoading(true)
+    setError(null)
+    
     try {
-      const currentState = {
-        nativeLanguage: localStorage.getItem('nativeLanguage'),
-        nativeLanguageCode: localStorage.getItem('nativeLanguageCode'),
-        targetLanguage: localStorage.getItem('targetLanguage'),
-        targetLanguageCode: localStorage.getItem('targetLanguageCode'),
-        currentPage: localStorage.getItem('currentPage') || '0',
-        timestamp: Date.now()
-      }
-      
-      console.log('Storing pre-payment state:', currentState)
-      localStorage.setItem('prePaymentState', JSON.stringify(currentState))
-    } catch (error) {
-      console.error('Failed to store current state:', error)
-    }
-  }
-
-  const handleUpgrade = async (planId: 'yearly' | 'monthly') => {
-    if (!user?.id) {
-      setError('Please sign in first to subscribe')
-      return
-    }
-
-    try {
-      setError(null)
-      setLoading(planId)
-
-      // Store current state before payment
-      storeCurrentState()
-
-      console.log('Current localStorage state before payment:', {
-        nativeLanguage: localStorage.getItem('nativeLanguage'),
-        targetLanguage: localStorage.getItem('targetLanguage'),
-        currentPage: localStorage.getItem('currentPage')
-      })
-
-      const response = await fetch('/api/stripe/payment-intent', {
+      const response = await fetch('/api/subscription/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ planId, userId: user.id }),
+        body: JSON.stringify({ priceType: selectedPlan }),
       })
-
+      
       const data = await response.json()
-      if (!response.ok) throw new Error(data.error || 'Failed to create payment intent')
-
-      setClientSecret(data.clientSecret)
-      setPaymentIntentId(data.paymentIntentId)
-      setShowCheckout(true)
-    } catch (error) {
-      setError(error instanceof Error ? error.message : 'Failed to start subscription')
-      setLoading(null)
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create checkout')
+      }
+      
+      if (data.url) {
+        // Store that we're about to go to payment
+        localStorage.setItem('paymentInProgress', 'true')
+        window.location.href = data.url
+      } else {
+        throw new Error('No checkout URL returned')
+      }
+    } catch (err: any) {
+      console.error('❌ Subscription error:', err)
+      setError(err.message || 'Something went wrong')
+      setLoading(false)
     }
   }
 
-  const handlePaymentSuccess = () => {
-    setLoading(null)
-    onSubscriptionSuccess?.()
-    onCloseAction()
-  }
-
-  const handlePaymentError = (error: string) => {
-    setError(error)
-    setLoading(null)
-  }
-
-  const handleBackToPlans = () => {
-    setShowCheckout(false)
-    setClientSecret(null)
-    setPaymentIntentId(null)
-    setLoading(null)
-    setError(null)
-  }
-
-  if (!isOpen) return null
-
-  const yearlyPlan = SUBSCRIPTION_PLANS.find(plan => plan.id === 'yearly')!
-
-  const stripeOptions: StripeElementsOptions = {
-    clientSecret: clientSecret || undefined,
-    appearance: {
-      theme: 'night',
-      variables: {
-        colorPrimary: '#10b981',
-        colorBackground: 'rgba(255, 255, 255, 0.1)',
-        colorText: '#ffffff',
-        colorDanger: '#ef4444',
-        fontFamily: 'Inter, system-ui, sans-serif',
-        spacingUnit: '4px',
-        borderRadius: '8px',
-      },
-      rules: {
-        '.Input': {
-          backgroundColor: 'rgba(255, 255, 255, 0.1)',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          color: '#ffffff',
-        },
-        '.Label': {
-          color: '#ffffff',
-          fontSize: '14px',
-        },
-        '.Tab': {
-          backgroundColor: 'rgba(255, 255, 255, 0.1)',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          color: '#ffffff',
-        },
-        '.Tab--selected': {
-          backgroundColor: '#10b981',
-          color: '#ffffff',
-        },
-      },
-    },
-  }
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/20 backdrop-blur-md" />
-      <div className="relative bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 p-8 mx-4 max-w-lg w-full shadow-2xl max-h-[90vh] overflow-y-auto">
-        <button onClick={onCloseAction} className="absolute top-4 right-4 text-white/80 hover:text-white transition-colors z-10">
-          <X className="w-5 h-5" />
-        </button>
-        
-        {showCheckout && clientSecret ? (
-          <Elements stripe={stripePromise} options={stripeOptions}>
-            <div className="text-center mb-6">
-              <div className="mx-auto w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4">
-                <CreditCard className="w-6 h-6 text-white" />
-              </div>
-              <h2 className="text-2xl font-bold text-white mb-2 drop-shadow-lg">Complete Your Payment</h2>
-              <p className="text-white/90 text-sm drop-shadow">
-                {selectedPlan === 'yearly' ? 'VocabWorld Unlimited - Yearly ($29.00)' : 'VocabWorld Unlimited - Monthly ($4.99)'}
-              </p>
-              {selectedPlan === 'yearly' && (
-                <div className="inline-block bg-green-500/20 border border-green-400/50 rounded-full px-3 py-1 mt-2">
-                  <span className="text-green-300 text-xs font-semibold">7-day free trial included</span>
-                </div>
-              )}
+  const modalContent = (
+    <div 
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/20 backdrop-blur-md"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onCloseAction()
+      }}
+    >
+      <div className="bg-white/10 backdrop-blur-xl rounded-3xl max-w-md w-full overflow-hidden border border-white/20 shadow-2xl">
+        {/* Header */}
+        <div className="relative p-6 pb-4 bg-white/5 border-b border-white/10">
+          <button
+            onClick={onCloseAction}
+            className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:bg-white/20 hover:text-white transition-all"
+          >
+            <Icon icon="solar:close-circle-bold" className="w-5 h-5" />
+          </button>
+          
+          <div className="text-center">
+            <div className="w-16 h-16 bg-gradient-to-br from-yellow-400/90 to-orange-500/90 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg border border-white/20">
+              <Icon icon="solar:crown-bold" className="w-9 h-9 text-white drop-shadow-lg" />
             </div>
+            <h2 className="text-2xl font-bold text-white drop-shadow-lg mb-2">Unlock Premium</h2>
+            <p className="text-white/70 drop-shadow">Get access to all 47 vocabulary topics</p>
+          </div>
+        </div>
 
-            {error && (
-              <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-3 backdrop-blur-sm mb-4">
-                <p className="text-red-100 text-sm drop-shadow">{error}</p>
-              </div>
+        {/* Plans */}
+        <div className="p-6 space-y-3">
+          {/* Yearly Plan */}
+          <button
+            onClick={() => setSelectedPlan('yearly')}
+            className={`w-full p-4 rounded-2xl border-2 transition-all text-left relative backdrop-blur-sm ${
+              selectedPlan === 'yearly'
+                ? 'border-green-400/60 bg-green-500/20'
+                : 'border-white/20 bg-white/10 hover:bg-white/15 hover:border-white/30'
+            }`}
+          >
+            {PRICING.yearly.savings && (
+              <span className="absolute -top-2.5 right-3 px-3 py-1 bg-gradient-to-r from-green-400 to-emerald-500 text-white text-xs font-bold rounded-full shadow-lg border border-white/20">
+                SAVE {PRICING.yearly.savings}
+              </span>
             )}
-
-            <EmbeddedCheckoutForm 
-              onSuccess={handlePaymentSuccess}
-              onError={handlePaymentError}
-              loading={loading !== null}
-              planId={selectedPlan}
-              paymentIntentId={paymentIntentId}
-            />
-
-            <button 
-              onClick={handleBackToPlans} 
-              disabled={loading !== null}
-              className="w-full mt-4 text-center text-white/80 hover:text-white text-sm transition-colors py-2 drop-shadow"
-            >
-              ← Back to plan selection
-            </button>
-          </Elements>
-        ) : (
-          <>
-            <div className="text-center mb-6">
-              <div className="mx-auto w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4">
-                <Crown className="w-6 h-6 text-white" />
+            <div className="flex items-center justify-between pl-8">
+              <div>
+                <p className="text-white font-semibold drop-shadow">Yearly</p>
+                <p className="text-white/60 text-sm drop-shadow">Billed annually</p>
               </div>
-              <h2 className="text-2xl font-bold text-white mb-2 drop-shadow-lg">Get more vocabulary with VocabWorld Unlimited.</h2>
-              <p className="text-white/90 text-sm drop-shadow">Choose your plan and start learning today</p>
+              <div className="text-right">
+                <p className="text-white font-bold text-xl drop-shadow-lg">{formatPrice(PRICING.yearly.price)}</p>
+                <p className="text-white/60 text-xs drop-shadow">{formatPrice(PRICING.yearly.price / 12)}/mo</p>
+              </div>
             </div>
-
-            <div className="space-y-6">
-              {error && (
-                <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-3 backdrop-blur-sm">
-                  <p className="text-red-100 text-sm drop-shadow">{error}</p>
-                </div>
+            <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+              selectedPlan === 'yearly' ? 'border-green-400 bg-green-500 shadow-lg shadow-green-500/30' : 'border-white/40 bg-white/10'
+            }`}>
+              {selectedPlan === 'yearly' && (
+                <Icon icon="solar:check-circle-bold" className="w-4 h-4 text-white" />
               )}
+            </div>
+          </button>
 
-              <div className="space-y-3">
-                {yearlyPlan.features.map((feature, index) => (
-                  <div key={index} className="flex items-center gap-3">
-                    <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Check className="w-3 h-3 text-white" />
-                    </div>
-                    <span className="text-sm text-white/90 drop-shadow">{feature}</span>
-                  </div>
-                ))}
+          {/* Monthly Plan */}
+          <button
+            onClick={() => setSelectedPlan('monthly')}
+            className={`w-full p-4 rounded-2xl border-2 transition-all text-left relative backdrop-blur-sm ${
+              selectedPlan === 'monthly'
+                ? 'border-blue-400/60 bg-blue-500/20'
+                : 'border-white/20 bg-white/10 hover:bg-white/15 hover:border-white/30'
+            }`}
+          >
+            <div className="flex items-center justify-between pl-8">
+              <div>
+                <p className="text-white font-semibold drop-shadow">Monthly</p>
+                <p className="text-white/60 text-sm drop-shadow">Billed monthly</p>
               </div>
-
-              <div className="space-y-3">
-                <div className={`border-2 rounded-xl p-4 relative cursor-pointer transition-all backdrop-blur-sm ${selectedPlan === 'yearly' ? 'border-green-400 bg-green-500/20' : 'border-white/30 bg-white/10 hover:border-white/50'}`} onClick={() => setSelectedPlan('yearly')}>
-                  <div className="absolute -top-2 left-4 bg-green-500 text-white text-xs px-2 py-1 rounded-full font-semibold">-52% off!</div>
-                  <div className="flex justify-between items-start">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${selectedPlan === 'yearly' ? 'border-green-400 bg-green-500' : 'border-white/50'}`}>
-                        {selectedPlan === 'yearly' && <Check className="w-2 h-2 text-white" />}
-                      </div>
-                      <div>
-                        <div className="font-semibold text-white drop-shadow">Yearly • $29.00</div>
-                        <div className="text-sm text-white/80 drop-shadow">7-day free trial</div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-white drop-shadow">$2.42</div>
-                      <div className="text-sm text-white/80 drop-shadow">Per month</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className={`border-2 rounded-xl p-4 cursor-pointer transition-all backdrop-blur-sm ${selectedPlan === 'monthly' ? 'border-green-400 bg-green-500/20' : 'border-white/30 bg-white/10 hover:border-white/50'}`} onClick={() => setSelectedPlan('monthly')}>
-                  <div className="flex justify-between items-start">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${selectedPlan === 'monthly' ? 'border-green-400 bg-green-500' : 'border-white/50'}`}>
-                        {selectedPlan === 'monthly' && <Check className="w-2 h-2 text-white" />}
-                      </div>
-                      <div>
-                        <div className="font-semibold text-white drop-shadow">Monthly • $4.99</div>
-                        <div className="text-sm text-white/80 drop-shadow">No free trial</div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-white drop-shadow">$4.99</div>
-                      <div className="text-sm text-white/80 drop-shadow">Per month</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <Button onClick={() => handleUpgrade(selectedPlan)} disabled={loading !== null} className="w-full bg-white hover:bg-gray-50 text-gray-800 font-semibold py-3 text-base h-12 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200" size="lg">
-                  {loading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Processing...</> : (
-                    <>
-                      <Lock className="w-4 h-4 mr-2" />
-                      {selectedPlan === 'yearly' ? 'Continue with Yearly - $29/year' : 'Continue with Monthly - $4.99/month'}
-                    </>
-                  )}
-                </Button>
-                <button onClick={onCloseAction} disabled={loading !== null} className="w-full text-center text-white/80 hover:text-white text-sm transition-colors py-2 drop-shadow">Maybe later</button>
-              </div>
-
-              <div className="text-center space-y-2">
-                <p className="text-xs text-white/80 drop-shadow">Cancel anytime. Secure payment powered by Stripe.</p>
-                <p className="text-xs text-white/80 drop-shadow">By continuing, you agree to our Terms of Service and Privacy Policy</p>
+              <div className="text-right">
+                <p className="text-white font-bold text-xl drop-shadow-lg">{formatPrice(PRICING.monthly.price)}</p>
+                <p className="text-white/60 text-xs drop-shadow">per month</p>
               </div>
             </div>
-          </>
+            <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+              selectedPlan === 'monthly' ? 'border-blue-400 bg-blue-500 shadow-lg shadow-blue-500/30' : 'border-white/40 bg-white/10'
+            }`}>
+              {selectedPlan === 'monthly' && (
+                <Icon icon="solar:check-circle-bold" className="w-4 h-4 text-white" />
+              )}
+            </div>
+          </button>
+        </div>
+
+        {/* Features */}
+        <div className="px-6 pb-4">
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/15">
+            <p className="text-white/80 text-sm font-medium mb-3 drop-shadow">Premium includes:</p>
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="flex items-center gap-2 text-white/70">
+                <Icon icon="solar:check-circle-bold" className="w-4 h-4 text-green-400 flex-shrink-0 drop-shadow" />
+                <span className="drop-shadow">47 topics</span>
+              </div>
+              <div className="flex items-center gap-2 text-white/70">
+                <Icon icon="solar:check-circle-bold" className="w-4 h-4 text-green-400 flex-shrink-0 drop-shadow" />
+                <span className="drop-shadow">50 languages</span>
+              </div>
+              <div className="flex items-center gap-2 text-white/70">
+                <Icon icon="solar:check-circle-bold" className="w-4 h-4 text-green-400 flex-shrink-0 drop-shadow" />
+                <span className="drop-shadow">Custom playlists</span>
+              </div>
+              <div className="flex items-center gap-2 text-white/70">
+                <Icon icon="solar:check-circle-bold" className="w-4 h-4 text-green-400 flex-shrink-0 drop-shadow" />
+                <span className="drop-shadow">Word search</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="px-6 pb-4">
+            <div className="bg-red-500/20 border border-red-400/40 rounded-xl p-3 text-red-200 text-sm backdrop-blur-sm">
+              {error}
+            </div>
+          </div>
         )}
+
+        {/* Subscribe Button */}
+        <div className="p-6 pt-2 bg-white/5 border-t border-white/10">
+          <button
+            onClick={handleSubscribe}
+            disabled={loading}
+            className="w-full py-4 bg-gradient-to-r from-green-400 to-emerald-500 hover:from-green-500 hover:to-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-2xl text-white font-semibold text-lg transition-all shadow-lg hover:shadow-xl hover:shadow-green-500/20 border border-white/20 flex items-center justify-center gap-2"
+          >
+            {loading ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span className="drop-shadow">Processing...</span>
+              </>
+            ) : (
+              <>
+                <Icon icon="solar:shield-check-bold" className="w-5 h-5 drop-shadow" />
+                <span className="drop-shadow">Subscribe Now</span>
+              </>
+            )}
+          </button>
+          
+          <p className="text-center text-white/50 text-xs mt-3 drop-shadow">
+            Cancel anytime • Secure payment via Stripe
+          </p>
+        </div>
       </div>
     </div>
   )
+
+  return createPortal(modalContent, document.body)
 }

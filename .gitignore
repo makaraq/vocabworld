@@ -55,6 +55,16 @@ capacitor.config.local.ts
 **/*secret*
 **/*key*.txt
 
+# Google service account keys (NEVER commit these)
+*.json
+!package.json
+!package-lock.json
+!tsconfig.json
+!vercel.json
+!capacitor.config.json
+!components.json
+!**/topics.json
+
 # Test files and legacy scripts with hardcoded keys (DEPRECATED)
 test-*.js
 generate-*.js
@@ -75,8 +85,15 @@ gemini-algenib-*.js
 *.sqlite
 *.sqlite3
 
-# Audio library (if it contains sensitive data)
-# alnilam-audio-library/
+# Audio files (stored in B2 cloud storage)
+*.wav
+*.mp3
+*.m4a
+*.ogg
+generated-audio/
+scripts/verb-audio-full/
+**/audio-library/
+alnilam-audio-library/
 
 # Embedded repositories and submodules
 VocabWorld/

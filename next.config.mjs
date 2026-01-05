@@ -27,6 +27,19 @@ const nextConfig = {
     },
     typedRoutes: false,
   },
+  // Fix hot reload issues
+  watchOptions: {
+    ignored: [
+      '**/node_modules/**',
+      '**/.git/**',
+      '**/scripts/**',
+      '**/generated-audio/**',
+      '**/azure-audio/**',
+      '**/verb-audio-full/**',
+      '**/*.csv',
+      '**/*.json',
+    ],
+  },
 }
 
 export default nextConfig

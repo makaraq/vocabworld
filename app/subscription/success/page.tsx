@@ -1,102 +1,83 @@
 'use client'
 
-import { Suspense, useEffect, useState } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Check, Loader2 } from 'lucide-react'
-import { useAuth } from '@/contexts/auth-context'
+import { useEffect, Suspense } from 'react'
+import { useRouter } from 'next/navigation'
+import { Icon } from '@iconify/react'
 
-function SubscriptionSuccessContent() {
-  const searchParams = useSearchParams()
+function SuccessContent() {
   const router = useRouter()
-  const { refreshUser } = useAuth()
-  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const sessionId = searchParams.get('session_id')
+    // Mark subscription as just activated for the main app to detect
+    localStorage.setItem('subscriptionJustActivated', 'true')
     
-    if (sessionId) {
-      const handleSuccess = async () => {
-        try {
-          await refreshUser()
-        } catch (error) {
-          console.error('Error refreshing subscription:', error)
-        } finally {
-          setLoading(false)
-          setTimeout(() => router.push('/'), 3000)
-        }
-      }
-      handleSuccess()
-    } else {
-      setLoading(false)
-    }
-  }, [searchParams, refreshUser, router])
+    // Redirect to main app after a short delay
+    const timer = setTimeout(() => {
+      router.push('/')
+    }, 3000)
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-50">
-        <Card className="w-full max-w-md mx-4">
-          <CardContent className="pt-6">
-            <div className="text-center">
-              <Loader2 className="w-12 h-12 mx-auto text-green-500 animate-spin mb-4" />
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">Setting up your subscription...</h2>
-              <p className="text-gray-600">Please wait while we activate your premium access.</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
+    return () => clearTimeout(timer)
+  }, [router])
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-50">
-      <Card className="w-full max-w-md mx-4">
-        <CardHeader className="text-center">
-          <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Check className="w-8 h-8 text-white" />
-          </div>
-          <CardTitle className="text-2xl font-bold text-gray-900">Welcome to Premium!</CardTitle>
-        </CardHeader>
-        <CardContent className="text-center space-y-4">
-          <p className="text-gray-600">Your subscription has been activated successfully. You now have access to all vocabulary topics and premium features.</p>
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <h3 className="font-semibold text-green-800 mb-2">What's unlocked:</h3>
-            <ul className="text-sm text-green-700 space-y-1">
-              <li>✓ All vocabulary topics</li>
-              <li>✓ Daily reminder notifications</li>
-              <li>✓ Progress tracking</li>
-              <li>✓ Unlimited practice sessions</li>
-              <li>✓ Offline access</li>
-            </ul>
-          </div>
-          <div className="pt-4">
-            <Button onClick={() => router.push('/')} className="w-full bg-green-500 hover:bg-green-600 text-white" size="lg">
-              Start Learning
-            </Button>
-          </div>
-          <p className="text-xs text-gray-500">Redirecting automatically in a few seconds...</p>
-        </CardContent>
-      </Card>
+    <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 max-w-md w-full text-center border border-white/20">
+      {/* Success Icon */}
+      <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
+        <Icon icon="solar:check-circle-bold" className="w-12 h-12 text-white" />
+      </div>
+      
+      {/* Title */}
+      <h1 className="text-3xl font-bold text-white mb-3">
+        🎉 Welcome to Premium!
+      </h1>
+      
+      {/* Description */}
+      <p className="text-white/70 text-lg mb-6">
+        Your subscription is now active. You have full access to all 47 vocabulary topics!
+      </p>
+      
+      {/* Features */}
+      <div className="bg-white/5 rounded-xl p-4 mb-6 text-left">
+        <p className="text-white/80 font-medium mb-2">You now have access to:</p>
+        <ul className="space-y-2 text-white/60">
+          <li className="flex items-center gap-2">
+            <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-green-400" />
+            All 47 vocabulary topics
+          </li>
+          <li className="flex items-center gap-2">
+            <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-green-400" />
+            Audio in 50 languages
+          </li>
+          <li className="flex items-center gap-2">
+            <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-green-400" />
+            Custom playlists
+          </li>
+          <li className="flex items-center gap-2">
+            <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-green-400" />
+            Word search feature
+          </li>
+        </ul>
+      </div>
+      
+      {/* Loading indicator */}
+      <div className="flex items-center justify-center gap-3 text-white/60">
+        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+        <span>Redirecting to the app...</span>
+      </div>
     </div>
   )
 }
 
-export default function SubscriptionSuccess() {
+export default function SubscriptionSuccessPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-50">
-        <Card className="w-full max-w-md mx-4">
-          <CardContent className="pt-6">
-            <div className="text-center">
-              <Loader2 className="w-12 h-12 mx-auto text-green-500 animate-spin mb-4" />
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">Loading...</h2>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    }>
-      <SubscriptionSuccessContent />
-    </Suspense>
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
+      <Suspense fallback={
+        <div className="flex items-center justify-center">
+          <div className="w-8 h-8 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
+        </div>
+      }>
+        <SuccessContent />
+      </Suspense>
+    </div>
   )
 }

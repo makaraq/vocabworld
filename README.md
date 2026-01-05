@@ -1,11 +1,11 @@
 # Vocab World - Multilingual Language Learning Platform
 
-A modern, AI-powered language learning Progressive Web App (PWA) that teaches vocabulary across 112+ languages using advanced Text-to-Speech technology and gamification.
+A modern, AI-powered language learning Progressive Web App (PWA) that teaches vocabulary across 50 languages using advanced Text-to-Speech technology and gamification.
 
 ## 🌟 Features
 
-- **112+ Languages**: Support for comprehensive language learning across the world's most spoken languages
-- **Multiple TTS Services**: Integrated with Alnilam, Algenib, Azure, and Google Cloud TTS for high-quality pronunciation
+- **50 Languages**: Support for comprehensive language learning across the world's most spoken languages
+- **High-Quality Audio**: Pre-generated TTS audio files served from Backblaze B2 cloud storage
 - **Mobile-First**: Built with Capacitor for native iOS and Android deployment
 - **Freemium Model**: Free tier with premium subscription via Stripe
 - **Offline Support**: PWA capabilities with offline vocabulary caching
@@ -31,10 +31,9 @@ A modern, AI-powered language learning Progressive Web App (PWA) that teaches vo
 - **API**: Next.js API routes with RESTful design
 
 ### Audio Services
-- Alnilam TTS (Custom service)
-- Algenib TTS (Fallback)
-- Azure Cognitive Services TTS
-- Google Cloud Text-to-Speech
+- Backblaze B2 cloud storage for pre-generated audio files
+- 132,403+ audio file mappings across all supported languages
+- Authenticated streaming via `/api/universal-audio` endpoint
 
 ## 📦 Installation
 
@@ -176,7 +175,7 @@ See `TESTING_GUIDE.md` and `SUBSCRIPTION_TESTING_GUIDE.md` for detailed testing 
 
 ## 🌐 Language Support
 
-The app supports 112+ languages including:
+The app supports 50 languages including:
 - European: English, Spanish, French, German, Italian, Portuguese, Russian, Polish, etc.
 - Asian: Chinese, Japanese, Korean, Hindi, Arabic, Thai, Vietnamese, etc.
 - African: Swahili, Amharic, Zulu, Yoruba, etc.

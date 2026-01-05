@@ -106,44 +106,104 @@ export async function GET(request: NextRequest) {
     const downloadAuthData = await downloadAuthResponse.json();
     console.log('✅ Download authorization successful');
 
-    // Step 3: Find file URL from CSV (but use correct domain)
-    const csvPath = path.join(process.cwd(), 'backblaze-urls-20250909-180354.csv');
-    
-    if (!fs.existsSync(csvPath)) {
-      console.log(`❌ CSV file not found: ${csvPath}`);
-      return NextResponse.json(
-        { error: 'Audio mapping not available' },
-        { status: 503 }
-      );
-    }
-
-    const csvContent = fs.readFileSync(csvPath, 'utf-8');
-    const lines = csvContent.split('\n');
+    // Step 3: Find file URL from CSV (check both main CSV and verb CSV)
+    const mainCsvPath = path.join(process.cwd(), 'backblaze-urls-20250909-180354.csv');
+    const verbCsvPath = path.join(process.cwd(), 'scripts/verb-b2-urls-*.csv'); // Find latest verb CSV
     
     let fileName: string | null = null;
     let filePath: string | null = null;
     
-    console.log(`🔍 Searching ${lines.length} entries for wordId=${wordId}, language=${audioLangCode}`);
-
-    for (let i = 1; i < lines.length; i++) {
-      const line = lines[i];
-      if (!line.trim()) continue;
-
-      const match = line.match(/^"([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)"$/);
-      if (!match) continue;
-
-      const [, localPath, backblazeURL, language, category, csvFileName] = match;
+    // First check main CSV for existing audio (topics 1-40)
+    if (fs.existsSync(mainCsvPath)) {
+      const csvContent = fs.readFileSync(mainCsvPath, 'utf-8');
+      const lines = csvContent.split('\n');
       
-      const wordIdMatch = csvFileName.match(/alnilam_(\d+)_/);
-      if (!wordIdMatch) continue;
+      console.log(`🔍 Searching main CSV: ${lines.length} entries for wordId=${wordId}, language=${audioLangCode}`);
 
-      const csvWordId = wordIdMatch[1];
-      
-      if (csvWordId === wordId && language === audioLangCode) {
-        fileName = csvFileName;
-        filePath = localPath;
-        console.log(`✅ Found audio mapping: ${fileName} at ${filePath}`);
-        break;
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i];
+        if (!line.trim()) continue;
+
+        const match = line.match(/^"([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)"$/);
+        if (!match) continue;
+
+        const [, localPath, backblazeURL, language, category, csvFileName] = match;
+        
+        // Existing pattern: alnilam_{id}_
+        const wordIdMatch = csvFileName.match(/alnilam_(\d+)_/);
+        if (!wordIdMatch) continue;
+
+        const csvWordId = wordIdMatch[1];
+        
+        if (csvWordId === wordId && language === audioLangCode) {
+          fileName = csvFileName;
+          filePath = localPath;
+          console.log(`✅ Found audio mapping (main): ${fileName} at ${filePath}`);
+          break;
+        }
+      }
+    }
+    
+    // If not found, check verb CSV for verb audio (topic 41)
+    if (!fileName) {
+      // Find the latest verb CSV file
+      const scriptDir = path.join(process.cwd(), 'scripts');
+      if (fs.existsSync(scriptDir)) {
+        const files = fs.readdirSync(scriptDir);
+        const verbCsvFile = files
+          .filter(f => f.startsWith('verb-b2-urls-') && f.endsWith('.csv'))
+          .sort()
+          .pop(); // Get latest
+        
+        if (verbCsvFile) {
+          const verbCsvFullPath = path.join(scriptDir, verbCsvFile);
+          const verbCsvContent = fs.readFileSync(verbCsvFullPath, 'utf-8');
+          const verbLines = verbCsvContent.split('\n');
+          
+          console.log(`🔍 Searching verb CSV: ${verbLines.length} entries for wordId=${wordId}, language=${audioLangCode}`);
+          
+          // Need to get the verb name from database using wordId
+          const { createClient } = require('@supabase/supabase-js');
+          const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+          
+          try {
+            const { data: wordData } = await supabase
+              .from('vocabulary')
+              .select('word_en')
+              .eq('id', parseInt(wordId))
+              .single();
+            
+            if (wordData?.word_en) {
+              const verbName = wordData.word_en;
+              console.log(`🔍 Looking for verb: ${verbName}`);
+              
+              for (let i = 1; i < verbLines.length; i++) {
+                const line = verbLines[i];
+                if (!line.trim()) continue;
+
+                const match = line.match(/^"([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)"$/);
+                if (!match) continue;
+
+                const [, localPath, backblazeURL, language, category, csvFileName] = match;
+                
+                // Verb pattern: alnilam_{verbName}_
+                const verbMatch = csvFileName.match(/alnilam_([^_]+)_/);
+                if (!verbMatch) continue;
+
+                const csvVerbName = verbMatch[1];
+                
+                if (csvVerbName === verbName && language === audioLangCode && category === 'Verbs') {
+                  fileName = csvFileName;
+                  filePath = localPath;
+                  console.log(`✅ Found verb audio mapping: ${fileName} at ${filePath}`);
+                  break;
+                }
+              }
+            }
+          } catch (dbError) {
+            console.log(`❌ Database lookup failed for wordId=${wordId}:`, dbError);
+          }
+        }
       }
     }
 
@@ -176,10 +236,13 @@ export async function GET(request: NextRequest) {
     const audioBuffer = await audioResponse.arrayBuffer();
     console.log(`🔑 Serving authenticated audio: ${fileName} (${audioBuffer.byteLength} bytes)`);
 
+    // Determine content type based on file extension
+    const contentType = fileName.endsWith('.mp3') ? 'audio/mpeg' : 'audio/wav';
+
     return new NextResponse(audioBuffer, {
       status: 200,
       headers: {
-        'Content-Type': 'audio/wav',
+        'Content-Type': contentType,
         'Content-Length': audioBuffer.byteLength.toString(),
         'Cache-Control': 'public, max-age=31536000',
         'Content-Disposition': `inline; filename="${fileName}"`,

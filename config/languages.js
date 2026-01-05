@@ -1,6 +1,8 @@
-// Complete list of 112 languages for vocabulary translation
-// Current database has 93 languages, we'll add 19 more
+// Language configuration for VocabWorld
+// Database supports 112 languages for vocabulary translations
+// Audio (B2/TTS) supports 50 languages
 
+// All languages in database for translations
 const CURRENT_93_LANGUAGES = [
   'af', 'am', 'ar', 'az', 'be', 'bg', 'bn', 'br', 'bs', 'ca', 
   'co', 'cs', 'cy', 'da', 'de', 'el', 'eo', 'es', 'et', 'eu', 
@@ -14,13 +16,22 @@ const CURRENT_93_LANGUAGES = [
   'yo', 'zh', 'zu'
 ];
 
-// Additional 19 languages to reach 112 total
+// Additional languages in database
 const ADDITIONAL_19_LANGUAGES = [
   'ab', 'ay', 'ba', 'bm', 'dv', 'ee', 'fj', 'fy', 'gl', 'gn', 
   'ht', 'ia', 'ie', 'ik', 'io', 'ku', 'mi', 'na', 'ny'
 ];
 
 const ALL_112_LANGUAGES = [...CURRENT_93_LANGUAGES, ...ADDITIONAL_19_LANGUAGES];
+
+// 50 languages with audio support (B2 bucket)
+const AUDIO_SUPPORTED_LANGUAGES = [
+  'ar', 'bg', 'bn', 'ca', 'cs', 'cy', 'da', 'de', 'el', 'en',
+  'es', 'et', 'eu', 'fa', 'fi', 'fr', 'ga', 'gu', 'he', 'hi',
+  'hr', 'hu', 'id', 'is', 'it', 'ja', 'ko', 'lt', 'lv', 'mk',
+  'ml', 'mr', 'mt', 'nl', 'no', 'pl', 'pt', 'ro', 'ru', 'sk',
+  'sl', 'sv', 'ta', 'te', 'th', 'tr', 'uk', 'ur', 'vi', 'zh'
+];
 
 const LANGUAGE_NAMES = {
   'af': 'Afrikaans', 'am': 'Amharic', 'ar': 'Arabic', 'az': 'Azerbaijani',
@@ -59,5 +70,6 @@ module.exports = {
   CURRENT_93_LANGUAGES,
   ADDITIONAL_19_LANGUAGES,
   ALL_112_LANGUAGES,
+  AUDIO_SUPPORTED_LANGUAGES,
   LANGUAGE_NAMES
 };
