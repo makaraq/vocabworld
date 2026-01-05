@@ -1,0 +1,726 @@
+VOCABWORLD - IDENTICAL WORDS (English = Translation)
+============================================================
+Found 5778 identical word pairs
+============================================================
+
+Unique English words with identical translations: 719
+
+April -> same in: af, bs, da, de, id, jv, ms, mt, nl, no, sl, sr, sv
+Aristotle -> same in: sw, tl, xh, zu
+August -> same in: da, de, et, fo, lb, no, ro, sk
+Aztec -> same in: cy, jv, ro
+BFF -> same in: ms, ro
+Baha'i -> same in: da, eu, gd, id, it, jv, lb, mg, ms, nl, no, sq, tl
+British -> same in: ms
+Buddha -> same in: co, cs, cy, da, de, et, eu, fi, fo, ga, gd, ha, hu, id, is, it, jv, la, lb, ms, mt, no, ro, rw, sk, sn, so, sq, sv, sw, tk, tl, xh, yo, zu
+Buddhism -> same in: ig, lb, so, sv
+CEO -> same in: ca, de, es, id, ja, lb, lo, nl, pt, tr
+Confucius -> same in: fr, la, nl, ro
+DNA -> same in: cs, cy, da, de, el, et, fi, fo, ga, gd, id, is, it, ja, jv, ko, lb, ms, mt, nl, no, pl, pt, si, sk, sn, so, sv, sw, tl, tr, yo
+December -> same in: da, hu, la, nl, sk, sl, sv
+Descartes -> same in: es, af, br, ca, co, cs, cy, da, de, et, eu, fi, fo, fr, ga, ha, hr, hu, id, ig, is, it, jv, la, lb, mg, ms, mt, nl, no, pt, ro, rw, sk, sl, sn, so, sv, sw, tl, tr, xh, yo, zu
+Diwali -> same in: af, br, ca, co, cs, cy, da, de, es, et, eu, fi, fo, fr, ga, gd, ha, hr, hu, id, ig, it, jv, la, lb, mg, mt, nl, no, pl, pt, ro, rw, sk, sn, so, sv, sw, tk, tl, tr, vi, xh, yo, zu
+European Union -> same in: sn
+Greek -> same in: so
+Halloween -> same in: af, az, ca, co, cs, da, de, es, et, eu, fi, fr, hu, id, it, lb, ms, mt, nl, no, pl, pt, ro, sk, sv, tk, tl
+Hanukkah -> same in: co, cy, da, es, ha, id, ig, it, jv, mg, mt, no, rw, sn, so, sw, tl, vi, xh, yo, zu
+Hinduism -> same in: et, so, sv
+Hume -> same in: af, ca, co, cs, cy, da, de, eo, es, et, eu, fi, fr, ha, hr, hu, id, is, it, jv, lb, mg, ms, mt, nl, no, pl, pt, ro, rw, sk, sl, sn, sv, sw, tl, tr, uz, vi, xh, yo, zu
+Inca -> same in: ca, co, cy, es, fr, ga, gd, it, la, ms, nl, pt, sn, tl, vi, xh, yo, zu
+Islam -> same in: af, br, bs, ca, cy, da, de, es, et, fi, fo, fr, hr, id, it, jv, lb, ms, nl, no, pl, ro, sk, sl, sr, sv, tl
+Judaism -> same in: et
+June -> same in: yo
+Kant -> same in: af, az, br, bs, ca, co, cs, cy, da, de, eo, es, et, eu, fi, fo, fr, ga, gd, ha, hr, hu, id, ig, is, it, jv, lb, mg, ms, mt, nl, no, pl, pt, ro, rw, sk, sl, sn, so, sq, sr, sv, sw, tk, tl, tr, uz, vi, yo, zu
+Locke -> same in: af, br, ca, co, cs, cy, da, de, eo, es, et, eu, fi, fo, fr, ha, hr, hu, id, is, it, jv, la, lb, mg, ms, mt, nl, no, pl, pt, ro, rw, sk, sl, sn, so, sv, sw, tl, tr, vi, xh, yo, zu
+March -> same in: ig
+May -> same in: az, so, uz
+Mayan -> same in: fi
+Nietzsche -> same in: af, br, ca, co, cs, cy, da, de, eo, es, et, eu, fi, fo, fr, ha, hr, hu, id, ig, is, it, jv, la, lb, lt, mg, ms, nl, no, pl, pt, ro, rw, sk, sl, sn, so, sv, sw, tl, tr, uz, vi, yo
+November -> same in: af, da, de, et, fo, hu, id, la, lb, ms, nl, no, sk, sl, sv
+October -> same in: la
+Ottoman -> same in: af, fr, sn, so, sw
+Plato -> same in: af, cy, gd, ha, id, ig, jv, la, lb, mg, ms, nl, rw, sn, so, sw, tl, uz, vi, xh, yo, zu
+Roman -> same in: ro
+SSD -> same in: sv, af, az, be, bg, bn, br, bs, ca, co, cs, cy, da, de, el, eo, es, et, eu, fi, fo, fr, gu, he, hi, hr, hu, id, is, it, ja, jv, ka, kk, kn, ko, ky, lb, lo, lt, lv, mg, mk, mn, ms, mt, my, nl, no, or, pa, pl, pt, ro, ru, si, sk, sl, sn, so, sq, sr, sw, ta, te, tg, th, tk, tl, tr, uk, uz, yo
+September -> same in: af, da, de, et, fo, id, is, la, lb, ms, nl, no, sk, sl, sv
+Shinto -> same in: af, br, ca, cy, da, de, es, eu, fi, id, nl, no, sn, so, sv, sw, vi
+Sikhism -> same in: sv
+Socrates -> same in: cy, ga, gd, la, nl, tl, vi
+Taoism -> same in: et, ha, ro
+Thanksgiving -> same in: da, nl, no
+URL -> same in: af, az, be, bg, bn, br, bs, ca, co, cs, cy, da, de, eo, es, et, fi, fo, fr, hi, hr, hu, id, it, ja, ka, kk, ko, ky, lb, lo, lt, lv, mk, mn, mr, ms, mt, my, ne, nl, no, pt, ro, ru, sk, sl, so, sq, sr, sv, te, th, tl, tr, uk, uz, vi
+USB -> same in: af, az, be, bg, bn, br, bs, ca, co, cs, cy, da, de, el, eo, es, et, eu, fa, fi, fo, fr, ga, gd, gu, ha, he, hi, hr, hu, id, ig, is, it, ja, jv, ka, kk, km, ko, ky, lb, lo, lt, lv, mg, mk, ml, mn, mr, ms, mt, my, ne, nl, no, or, pa, pl, pt, ro, ru, rw, si, sk, sl, sn, so, sq, sr, sv, ta, te, tg, th, tk, tl, tr, uk, uz, vi, yo, zh
+Zoroastrianism -> same in: ro, sv
+abolition -> same in: fi, fr
+abstract -> same in: lb, nl, ro
+acceleration -> same in: da, sv
+accident -> same in: ca, fr, lb, ro
+account -> same in: sn
+acid -> same in: ro, sq
+acid rain -> same in: tl
+action -> same in: fr
+activism -> same in: ro
+actor -> same in: ca, cy, es, la, ro
+adapter -> same in: az, bs, da, de, et, hr, hu, lb, nl, no, pl, sl, sv, tl, az, bs, da, de, et, hr, hu, nl, no, pl, sl, sr, sv, tl
+addition -> same in: da, de, fr, sv
+aerobics -> same in: af, da, mt, nl, no, sv, tl, xh, zu
+agenda -> same in: af, co, cy, es, eu, id, lb, ms, nl, no, pt
+alarm -> same in: af, bs, da, fo, hr, id, jv, lb, nl, no, pl, rw, sl, sr, tr
+album -> same in: af, bs, co, cs, da, de, et, fr, hr, hu, id, it, jv, la, lb, ms, mt, nl, no, pl, ro, sk, sl, sq, sr, sv, tl, vi
+algae -> same in: ha, la, tl
+all -> same in: lb
+ambulance -> same in: da, fr, nl
+amulet -> same in: cs, nl, no, pl, sk
+angle -> same in: ca, fr
+animation -> same in: da, de, fr, rw
+apartment -> same in: tl
+app -> same in: da, de, fo, lb, mt, nl, no, sv, af, da, de, fo, lb, nl, no, sv
+apple -> same in: ha, ig, rw, yo
+application -> same in: fr
+architect -> same in: nl
+arm -> same in: af, da, de, lb, nl, no, sv
+arrogant -> same in: da, fr, no, sv
+art -> same in: ca, ca, fr
+artist -> same in: mt, ro, sq, sv, cy, mt, ro, sq
+assistant -> same in: fr, fr
+atom -> same in: az, br, bs, cs, cy, da, de, fo, ha, hr, hu, id, jv, lb, ms, mt, no, pl, ro, sl, sq, sr, sv, tk, tr, uz, xh
+auditorium -> same in: cs, da, fr, hu, it, la, lb, nl, no, sk, sq, tr
+avalanche -> same in: fr, pt
+axis -> same in: la, sn
+backpack -> same in: mt, mt, mt
+badge -> same in: fr, nl, tl
+badminton -> same in: af, az, br, bs, co, cs, cy, da, de, fo, fr, ga, gd, hr, is, it, lb, mg, ms, mt, nl, no, pl, pt, ro, rw, sk, sl, sn, so, sr, sv, tk, tl, tr, uz, yo
+bag -> same in: cy, tl
+baking -> same in: no
+ball -> same in: br, de, gd, lb, no
+banana -> same in: bs, co, cy, ga, gd, hr, it, mt, pt, sl, sr
+band -> same in: cy, da, de, id, nl, no, sv
+bandage -> same in: tl
+bank -> same in: af, az, br, da, de, hu, id, jv, lb, ms, mt, nl, no, pl, sv, tk, uz, af, az, br, da, de, hu, id, jv, lb, ms, mt, nl, no, pl, sv, tk, af, az, br, da, de, hu, id, jv, lb, ms, mt, nl, no, pl, sv, tk
+banner -> same in: no
+banquet -> same in: ca, fr
+bard -> same in: gd, mt, pl, sq
+base -> same in: ca, es, fr, it, no, pt
+baseball -> same in: co, cs, da, de, fo, fr, hu, is, it, lb, no, pl, ro, sk, sl
+basement -> same in: jv
+basketball -> same in: da, de, fr, lb, no, tl, da, de, fr, lb, no, tl
+bat -> same in: cy, da, ig, mt, tl
+battery -> same in: af
+beach -> same in: sw
+bed -> same in: af, nl, af, nl
+beige -> same in: af, br, co, da, de, es, fi, fo, fr, is, it, lb, mg, ms, mt, nl, no, sv
+belt -> same in: ha, ms
+bill -> same in: ga
+bitter -> same in: af, da, de, lb, nl, no
+blackboard -> same in: br
+bladder -> same in: tl
+blazer -> same in: da, de, eu, fr, hr, id, it, mg, ms, nl, no, pt, tl, tr
+blender -> same in: az, br, bs, da, id, is, jv, ms, mt, nl, no, pl, ro, sr, tl, uz
+blog -> same in: af, br, bs, co, cs, cy, da, de, es, eu, fr, gd, hr, hu, id, it, jv, lb, ms, mt, nl, pl, pt, ro, sk, sl, sq, tk, tl, tr, uz, vi
+blouse -> same in: af, fr, mg, nl, rw
+blue -> same in: sn
+blueberry -> same in: id, ms, sn, so, tl, yo
+boarding pass -> same in: tl
+boss -> same in: az, ga
+bouquet -> same in: fr, lb, tl
+bracelet -> same in: fr, mt
+brave -> same in: fr
+bride -> same in: ga
+broccoli -> same in: af, da, it, lb, nl, ro, sn, sv
+brown -> same in: cy, ha, xh, yo, zu
+browser -> same in: da, de, lb, nl, ro, tl
+brush -> same in: tl
+budget -> same in: da, de, fr, lb, nl, sv
+bus -> same in: af, br, da, de, fr, ga, gd, lb, nl, tl
+bus stop -> same in: sn
+cabinet -> same in: cy
+cable -> same in: ca, es
+cactus -> same in: co, es, fr, gd, it, la, nl, ro
+cafeteria -> same in: ca, fr
+café -> same in: da, de, es, fr, lb, nl, pt, rw, da, de, es, fr, lb, nl, pt, rw, sv
+calculator -> same in: ro, ro, ro, ro
+calendar -> same in: ro
+calm -> same in: ro, ro, ro
+camera -> same in: co, la, nl, co, la, nl
+camping -> same in: da, de, fo, fr, lb, no, ro, sv
+campus -> same in: ca, da, de, es, fo, fr, it, la, lb, nl, no, ro, sv
+canyon -> same in: da, de, fr, it, nl, no
+cap -> same in: cy
+capital -> same in: ca, es, fr, pt, ro
+capitalism -> same in: ro
+car -> same in: cy
+card -> same in: cy
+cash -> same in: lb, lb
+casual -> same in: nl
+cauliflower -> same in: co
+cell -> same in: cy, sv
+centaur -> same in: ga, gd, ms, nl, pl, ro, so, sw
+cereal -> same in: es, br, ca, sn
+chalk -> same in: ig
+chat -> same in: cs, da, de, lb, nl, sk
+chef -> same in: co, es, fr, it, ms, nl, pt, tl
+cherry -> same in: vi
+chess -> same in: sw
+chili -> same in: cy, da, de, fi, fo, hu, lb, no, pl, ro, sv
+chill -> same in: is, ms, no, vi
+chocolate -> same in: es, pt
+cinema -> same in: ca, co, it, pt, ro, ca, co, it, pt, ro
+circuit -> same in: ca, fr, ro
+clinic -> same in: ga, ga, ga
+cloud -> same in: cs, de, nl, ro, sk
+coalition -> same in: fr
+cocktail -> same in: co, da, de, fi, fr, it, lb, nl, no, ro, rw, sv, vi
+collaboration -> same in: fr
+color -> same in: ca, es, la
+commerce -> same in: fr
+compass -> same in: gd, ha, tl
+compassion -> same in: fr
+complex -> same in: nl, ro
+compost -> same in: ca, cy, fr, ga, gd, it, nl, ro
+computer -> same in: da, de, it, lb, nl, da, de, it, lb, nl, da, de, it, lb, nl, da, de, it, lb, nl, da, de, it, lb, nl
+concert -> same in: ca, fr, nl, ro, ca, fr, nl, ro
+cone -> same in: pt
+confetti -> same in: ca, co, cy, es, it, nl, ro
+constitution -> same in: fr
+consultant -> same in: fr, nl, ro
+contamination -> same in: fr
+contract -> same in: cy, nl, ro, cy, nl, ro, cy, nl, ro
+conversation -> same in: fr
+coordinate -> same in: it
+corn -> same in: cy
+correspondent -> same in: nl
+cost -> same in: ca, cy, ro
+costume -> same in: fr, it, fr, it
+cousin -> same in: de, fr
+crab -> same in: cy, ro
+credit -> same in: nl, ro
+cricket -> same in: da, de, fr, it, lb, nl, no, sv, vi
+cruise -> same in: no
+cube -> same in: fr, fr
+curtain -> same in: cy
+cylinder -> same in: da, sv
+danger -> same in: fr
+data -> same in: af, cs, cy, da, fi, fo, id, ig, jv, la, ms, no, sv, sw
+debate -> same in: es, pt, es, pt
+debit -> same in: co, id, jv, ms, ro, tk
+decide -> same in: co, ro
+decimal -> same in: ca, da, es, pt, sv
+denim -> same in: af, az, br, bs, co, cs, cy, da, de, es, et, eu, fi, fo, fr, hr, id, is, it, lb, mg, ms, mt, nl, no, pl, pt, ro, rw, sl, sn, so, sq, sr, sv, sw, tl, tr, xh, yo, zu
+desert -> same in: ca, ca
+design -> same in: da, lb, no, pt, sv
+desktop -> same in: de, id, it, ms, mt, my, pt, ro, sq, tl
+destination -> same in: da, fr, sv
+detergent -> same in: ca, ro
+determinism -> same in: et, ro, sv
+diameter -> same in: da, fo, id, jv, la, ms, nl, no, sv
+diamond -> same in: ig
+digital divide -> same in: tl
+director -> same in: ca, es, ca, es, ro, ca, es, ro
+discrimination -> same in: fr
+discussion -> same in: fr
+diversification -> same in: fr
+divide -> same in: la
+division -> same in: da, de, fr, sv
+divorce -> same in: fr
+doctor -> same in: ro, ro
+document -> same in: ca, fr, nl, ro
+dollar -> same in: af, az, br, da, de, et, fo, fr, ga, gd, is, lb, nl, no, sq, sv, tk, uz
+donut -> same in: ca, da, de, eu, lb, ms, mt, nl, pt, rw, sl, tl, tr
+download -> same in: da, it, nl, pt, da, de, it, nl, pt
+dragon -> same in: fr, ro, tl
+drama -> same in: af, br, bs, ca, cs, cy, da, de, es, eu, fo, hr, id, jv, la, lb, lt, mg, ms, mt, nl, no, pt, sl, sv, tk, tl, tr, uz
+dress code -> same in: af, cs, pl, sk
+drink -> same in: af, nl
+drone -> same in: af, co, da, fi, fr, id, it, jv, mt, nl, no, pt, tl
+dryer -> same in: tl
+duel -> same in: ca, da, fr, ro
+durable -> same in: fr
+earbuds -> same in: mt, tl
+ecosystem -> same in: cy
+editor -> same in: ca, es, id, la, pt
+egg -> same in: fo, is, no
+elbow -> same in: cy
+electrician -> same in: ro
+electron -> same in: cy, gd, la, ro, vi
+elegant -> same in: af, ca, da, de, lb, nl, no, ro, sl, sq, sv
+element -> same in: af, az, bs, ca, da, de, et, fo, hr, lb, mt, nl, no, ro, sl, sq, sv, tk, tr, uz
+elf -> same in: af, bg, ca, de, lb, nl, pl, ro, sq, uz
+elixir -> same in: br, ca, cy, es, la, lb, pt, ro, sv
+ellipse -> same in: da, de, fr, ha, lb, no, rw, so
+email -> same in: co, da, id, it, so, sq, tl, co, it, mg, pt, so, sq, tl, co, eu, it, pt, so, sq, tl, it, so, sq, tl
+emergency room -> same in: tl
+emission -> same in: da, de
+epic -> same in: ro
+episode -> same in: id, no
+euro -> same in: af, br, bs, ca, co, cs, cy, da, de, es, et, eu, fi, fr, ga, gd, hr, hu, id, it, jv, lb, mg, ms, nl, no, pl, pt, ro, rw, sk, sn, sq, sv, sw, tk, tl, tr, vi, yo
+exemplary -> same in: ro
+existence -> same in: cs, fr
+experiment -> same in: ca, cs, de, nl, ro, sk, sv
+exploration -> same in: fr
+explosion -> same in: de, fr, sv
+exponent -> same in: ca, cs, de, lb, nl, ro, sk, so, sv
+export -> same in: cs, de, hu, nl, ro, sk, sv
+extinction -> same in: fr
+fable -> same in: fr
+fall -> same in: fo
+fan -> same in: mt, mt, tr
+farmer -> same in: sr
+fascism -> same in: gd, ha, ro, sv
+fern -> same in: de
+ferry -> same in: es, fr, tl
+festival -> same in: az, bs, ca, cs, da, de, es, et, fr, hr, id, it, lb, mt, nl, no, pt, ro, sk, sl, sq, sr, sv, tr, uz, az, bs, cs, da, es, et, fr, hr, id, it, nl, no, pt, ro, sk, sl, sq, sr, sv, tr, uz, az, bs, cs, da, es, et, fr, hr, id, it, nl, no, pt, ro, sk, sl, sq, sr, sv, tr, uz
+fiancé -> same in: cy, fr, ga, gd
+fiancée -> same in: fr
+fifteen -> same in: cy, mg
+film -> same in: az, br, bs, co, cs, da, de, et, fr, gd, hr, hu, id, it, jv, lb, mt, nl, no, pl, ro, sk, sl, sq, sv, tk, tr, uz
+finance -> same in: cs, fr, sl
+finger -> same in: da, de, no, sv
+flag -> same in: da
+flash drive -> same in: mt, tl
+flex -> same in: ca, cs, is, ms, pt, ro
+folklore -> same in: ca, fr, sv
+fomo -> same in: af, az, br, bs, ca, cs, cy, da, eo, et, eu, fi, fo, fr, hr, id, is, it, ja, ko, lt, lv, mn, ms, mt, my, nl, no, pl, ro, sk, sl, sr, sv, ta, tl, uz
+football -> same in: fr, fr
+force -> same in: fr
+formal -> same in: ca, es, eu, id, ms, pt, ro
+fraction -> same in: fr
+fragile -> same in: fr, it
+freelancer -> same in: es, hr, hu, id, ms, nl, pl, pt, ro, sk, sq
+freezer -> same in: tl
+frost -> same in: da, de, is, no, sv
+full -> same in: no, sv
+funeral -> same in: es, pt
+garage -> same in: co, da, de, fr, it, lb, nl, sv
+garlic -> same in: ga, zu
+gene -> same in: it, pt, tl
+glass -> same in: no, no
+go -> same in: lb
+goblin -> same in: bs, hr, hu, id, it, ms, pl, pt, ro, sq
+gold -> same in: de
+golf -> same in: br, bs, ca, co, cs, da, de, eo, es, et, fi, fo, fr, ha, hr, hu, id, is, it, jv, lb, ms, mt, nl, no, pl, ro, sk, sl, so, sq, sr, sv, tk, tr, uz, vi
+good morning -> same in: xh
+graph -> same in: de
+graphics card -> same in: tl
+griffin -> same in: gd, id, ms, no, sv, vi
+grimoire -> same in: af, ca, da, de, fr, id, lb, lt, ms, nl, no, pl, sk, sq, sv
+guitar -> same in: da
+gust -> same in: ca
+gym -> same in: sv, tl, sv
+habitat -> same in: af, co, cs, da, fr, id, it, jv, la, ms, no, pt, ro, sk, sl, sv, af, co, cs, da, fr, id, it, jv, ms, nl, no, pt, ro, sk, sl, sq, sv
+hall -> same in: lb, sv
+hand -> same in: af, de, lb, nl, sv
+handbag -> same in: tl
+handball -> same in: de, fr, lb, mt
+hard -> same in: af, nl, no
+hard drive -> same in: mt, tl
+hardware -> same in: af, cs, da, de, es, eu, it, lb, nl, pt, ro, tl
+hat -> same in: da, ga
+headphones -> same in: mt, tl, tl, mt, tl
+headset -> same in: da, de, id, jv, lb, mt, nl, no, sv, tl
+helmet -> same in: ms, tl, ms, tl
+heroic -> same in: ca
+hexagon -> same in: ro
+hey -> same in: az, de, fo, is, tr
+hi -> same in: de, gd, tl, vi
+hiking -> same in: sq, sq
+hockey -> same in: co, es, fr, it, lb, mt, nl
+hoodie -> same in: de, id, mg, ms, nl, sv, tl
+horror -> same in: de, hu, nl, pl, sq
+hospital -> same in: ca, es, ms, pt, tk, ca, da, es, ms, pt, ca, da, es, ms, pt, ca, da, es, ms, pt
+hostel -> same in: af, bs, cs, cy, hr, ms, mt, nl, no, pl, ro, sk, sl, sq, sr, tl
+hostile -> same in: fr
+hotel -> same in: af, bs, ca, cs, da, de, es, eu, fo, hr, id, jv, lb, ms, nl, pl, pt, ro, sk, sl, sq, sr, tl, af, bs, ca, cs, da, de, es, eu, fo, hr, id, jv, lb, ms, nl, pl, pt, ro, sk, sl, sq, sr, tl, af, bs, ca, cs, da, de, es, eu, fo, hr, id, jv, lb, ms, nl, pl, pt, ro, sk, sl, sq, sr, tl
+humid -> same in: af
+ice cream -> same in: tl
+imagine -> same in: fr
+immigration -> same in: de, fr
+impatient -> same in: fr
+import -> same in: cs, da, de, et, fo, hu, lb, ms, nl, no, pl, ro, sk, sv, tk, uz
+important -> same in: ca, fr, ro, ca, fr, ro
+impossible -> same in: ca, fr
+inclusion -> same in: fr
+independent -> same in: ca, ro
+influencer -> same in: br, ca, co, cs, da, de, el, es, it, nl, pl, ro, sk
+injection -> same in: fr
+insect -> same in: nl
+integer -> same in: la, ms
+internet -> same in: af, br, bs, ca, co, cs, de, es, et, eu, fi, fo, fr, hr, hu, id, is, it, jv, lb, mg, ms, mt, nl, pl, pt, ro, sk, sl, sn, so, sq, sr, sv, tk, tl, tr, uz, vi, af, br, bs, ca, co, cs, de, es, et, eu, fi, fo, fr, hr, hu, id, is, it, jv, lb, mg, ms, mt, nl, pl, pt, ro, sk, sl, sn, so, sq, sr, sv, tk, tl, tr, vi
+interview -> same in: da, de, lb, nl
+invention -> same in: fr
+inventor -> same in: ca, es, la, pt
+invitation -> same in: da, fr
+item -> same in: pt
+itinerary -> same in: tl
+jeans -> same in: af, br, da, de, es, fo, fr, id, it, lb, mt, nl, no, pt, sv
+jogging -> same in: da, fr, it, no
+journal -> same in: da, fr, lb, no
+journalist -> same in: da, de, lb, nl, no, sl, sv, da, de, nl, no, sv
+juice -> same in: no, sv, da, no, sv
+jury -> same in: de, fr, nl, no, sv
+justice -> same in: fr, fr, fr
+ketchup -> same in: br, ca, co, da, de, eo, eu, fi, fr, ha, hu, it, lb, mg, mt, no, pl, pt, ro, sn, sq, sv, sw, tl, uz
+keyboard -> same in: id, jv, tl
+kick -> same in: mt
+kidney -> same in: yo
+kiwi -> same in: af, br, ca, co, cs, da, de, es, eu, fr, ha, id, ig, it, jv, lb, ms, mt, nl, no, pl, pt, ro, sk, so, sv
+lamb -> same in: fo, is
+lamp -> same in: af, br, cy, et, nl
+land -> same in: af, da, de, fo, is, lb, nl, no, sv
+laptop -> same in: bs, de, hu, id, jv, lb, ms, mt, nl, pl, pt, ro, sk, sq, sr, tl, bs, de, hu, id, jv, lb, ms, mt, nl, pl, pt, ro, sk, sq, sr, tl, bs, de, hu, id, jv, lb, ms, mt, nl, pl, pt, ro, sq, tl
+later -> same in: af, nl
+leader -> same in: lb
+legend -> same in: et, lb, sv
+leggings -> same in: af, ca, da, fr, gd, hu, it, mt, nl, no, sv, sw, tl
+lemon -> same in: br, cy, id, tl
+lemonade -> same in: af, ha
+lettuce -> same in: ha
+liberalism -> same in: et, ha, ro, sv
+lime -> same in: da, is, it, no, rw, sq, sv
+link -> same in: da, et, hu, nl, pl, pt, tl
+logic -> same in: vi
+long -> same in: fr
+loyal -> same in: da, de
+lunch -> same in: nl, sv
+magazine -> same in: fr
+magnet -> same in: bs, cs, cy, da, de, et, hr, id, ms, no, ro, sk, sl, sq, sv
+mammal -> same in: br, tl
+manager -> same in: de, it, nl, ro, de, it, nl, ro
+mango -> same in: af, br, bs, ca, co, cs, cy, da, de, eo, es, et, fi, fo, ha, hr, ig, it, lb, lv, mt, nl, no, pl, ro, sk, sl, sq, sr, sv, tr, uz, yo
+map -> same in: cy, cy
+marker -> same in: bs, et, hr, ro, sl, sr
+martial arts -> same in: af
+mass -> same in: et, lb
+mayonnaise -> same in: af, cy, da, de, fr, ha, la, mg, rw, sn, so, vi, yo, zu
+median -> same in: az, da, de, id, jv, lb, ms, no, sv
+medieval -> same in: ca, es, pt, ro
+meditation -> same in: da, de, sv
+memorial -> same in: pt, ro
+mentor -> same in: af, az, bs, ca, cs, da, de, es, et, fo, fr, hr, hu, id, lb, nl, no, pl, pt, ro, sk, sl, sq, sv
+menu -> same in: da, eu, fi, fr, id, it, lb, ms, mt, nl, pl, tl
+message -> same in: fr
+messenger -> same in: tl
+microphone -> same in: fr, fr, fr
+microwave -> same in: gd, id, rw
+migration -> same in: da, fr, sv
+milkshake -> same in: tr, fr, az, da, fi, hu, id, it, mg, ms, mt, nl, no, pt, ro, sl, sq, sv, tl
+minotaur -> same in: az, br, bs, cs, cy, et, gd, hr, id, jv, lb, ms, no, pl, ro, so, sq, sw, tl, tr, vi, yo
+minus -> same in: af, br, bs, da, de, eo, hr, la, lb, lt, no, pl, ro, sl, sn, sq, sr, sv, tk, tl, uz, sw
+minute -> same in: de, fr
+mode -> same in: fr
+modern -> same in: af, ca, cy, de, hu, id, jv, lb, mt, nl, ro, sq, sv, tr, af, ca, cy, de, hu, id, jv, lb, mt, nl, ro, sq, sv, tr
+monitor -> same in: af, az, bs, ca, cs, cy, es, et, hr, hu, it, jv, mt, nl, pl, pt, ro, sk, sl, sq, sr, uz
+monster -> same in: af, da, lb, nl, no, sv
+monument -> same in: af, ca, da, fr, lb, mt, nl, no, ro, sq, sv
+mop -> same in: bs, cs, et, it, lb, ms, nl, ro, sk, sl, sq, sr, tl
+mosque -> same in: rw
+motel -> same in: af, az, bs, ca, co, cs, da, de, es, et, fo, fr, hr, hu, id, it, ms, nl, no, pl, ro, sk, sl, sv, tl, tr, uz
+motherboard -> same in: id, jv, mg, tl
+mouse -> same in: it, pt, ro, so, tl
+muffin -> same in: af, co, cs, da, de, es, et, eu, fi, fr, hu, id, it, lb, ms, mt, nl, pt, ro, sk, sq
+mug -> same in: br, cy, ga, ms, sn
+multiculturalism -> same in: ro
+multiplication -> same in: fr
+museum -> same in: af, da, de, id, jv, nl, no, sv, af, da, de, id, jv, la, nl, no, sv, af, da, de, id, jv, la, nl, no, sv
+musical -> same in: ca, da, de, es, nl, pl, pt
+mustard -> same in: id, jv
+mutation -> same in: da, de, fo, fr, sv
+myth -> same in: cy
+napkin -> same in: ig, mt
+net -> same in: af, da, fo, is, lb, nl, tl
+network -> same in: tl, tl
+neutron -> same in: af, bs, ca, co, cs, da, de, et, fo, fr, ha, hr, hu, id, la, lb, ms, nl, pl, ro, sq, sr, sv, tl
+newsletter -> same in: de, it, lb
+niece -> same in: cy, da, fo, gd, is, sv
+no -> same in: ca, co, es, it
+noodles -> same in: mt
+notes -> same in: ca, fr
+novel -> same in: id, jv, ms
+number -> same in: et
+nymph -> same in: cy
+obligation -> same in: fr
+ocean -> same in: hr, pl, ro, sl, da, hr, pl, ro, sl, da, hr, pl, ro, sl
+octagon -> same in: cy
+offline -> same in: az, cs, da, de, fi, hu, it, lb, nl, pl, pt, ro, sk, sv
+okay -> same in: da, de, lb
+omen -> same in: la
+online -> same in: bs, cs, da, de, fo, hr, hu, it, jv, lb, nl, pl, pt, ro, sk, sq, sv, tl
+oracle -> same in: ca, fr
+orange -> same in: da, de, fr, lb, da, de, fr, lb, sv
+orchestra -> same in: cy, it, la, pl, ro
+organ -> same in: br, bs, cy, da, de, hr, id, jv, lb, ms, no, pl, ro, sl, sq, sv, tk, tr, uz
+organism -> same in: et, ro, sv
+ornament -> same in: ro
+oval -> same in: az, br, ca, da, de, es, hr, id, lb, no, pt, ro, rw, sl, sq, sr, sv, tr, uz, az, br, da, de, es, hr, id, lb, no, pt, ro, rw, sl, sq, sr, sv, tr, uz
+oven -> same in: id, jv, ms, nl, id, jv, nl
+palette -> same in: af, co, de, fr, it, lb, mg, tl
+pan -> same in: af, nl, af, lb, nl
+pancreas -> same in: br, co, cy, it, la, ro, sn
+paper -> same in: br, ca
+paprika -> same in: af, br, bs, co, cs, cy, da, de, et, fi, fo, fr, gd, hr, hu, id, is, it, lb, lt, lv, mt, nl, no, sk, sl, sr, sv
+parade -> same in: da, de, lb, nl, no
+parallelogram -> same in: da, tk, uz
+paramedic -> same in: ro
+parents -> same in: fr
+park -> same in: af, az, bs, cs, da, de, et, hr, hu, lb, mt, nl, no, pl, sk, sl, sq, sr, sv, tr, af, az, br, bs, cs, da, de, et, hr, hu, lb, mt, nl, no, pl, sk, sl, sq, sr, sv, tr
+partner -> same in: bs, cs, cy, da, de, et, hr, hu, lb, nl, no, pl, sk, sl, sr, sv
+party -> same in: af
+password -> same in: it
+pasta -> same in: es, de, af, br, ca, co, cy, da, et, eu, fi, fo, ga, gd, id, ig, is, it, jv, la, lb, mg, ms, nl, no, rw, sn, sr, sv, sw, tl, yo
+patient -> same in: fr
+pen -> same in: af, cy, da, ig, ms, nl, af, cy, da, ig, ms, nl, xh
+pentagon -> same in: br, bs, cs, cy, de, ga, gd, ha, hr, id, ig, jv, lb, ms, nl, ro, sq, sv, sw
+pepper -> same in: no, zu
+performance -> same in: fr, fr
+perimeter -> same in: ms
+petition -> same in: de, sv
+phoenix -> same in: la, ro
+photosynthesis -> same in: la
+piano -> same in: br, ca, eo, es, eu, fi, fr, ha, id, lb, ms, nl, no, pt, sq, sv, sw, vi
+pie -> same in: tl
+pilates -> same in: af, az, br, bs, ca, co, cs, cy, da, de, es, et, eu, fi, fo, fr, ga, ha, hr, id, ig, is, it, jv, la, lb, lt, mg, ms, mt, nl, no, pl, pt, ro, rw, sk, sl, sn, so, sq, sr, sv, sw, tk, tl, tr, uz, vi, yo, af, az, br, bs, ca, co, cs, cy, da, de, es, et, eu, fi, fo, fr, ga, ha, hr, hu, id, ig, is, it, jv, la, lb, lt, mg, ms, mt, nl, no, pl, pt, ro, rw, sk, sl, sn, so, sq, sv, sw, tk, tl, tr, vi, yo
+pilot -> same in: az, bs, ca, cs, da, de, hr, id, jv, lb, no, pl, ro, sk, sl, sq, sr, sv, tr
+pink -> same in: ha, ms
+plan -> same in: af, az, bs, da, de, es, eu, hr, nl, no, pl, ro, sq, sv, tk, tr, af, az, br, bs, da, de, es, eu, fr, hr, nl, no, pl, ro, sq, sv, tk, tr
+planet -> same in: az, da, de, fo, hr, id, ms, no, sl, sq, sv, tk
+plant -> same in: af, br, nl, af, br, nl
+plate -> same in: ha, ha
+plateau -> same in: da, fr, lb, mt, nl
+platform -> same in: af, ms
+playground -> same in: mt, mt
+playlist -> same in: fr, it, pt, ro, tl
+plot -> same in: af, cy, ms, nl
+plus -> same in: af, bs, cs, cy, da, de, eo, et, fi, fr, hr, lb, lv, nl, pl, ro, sk, sl, sq, sr, sv
+podcast -> same in: ca, co, cs, da, de, es, eu, fi, hu, id, it, jv, lb, nl, pl, pt, ro, rw, sk, so, sq, sv, tr, vi
+poet -> same in: mt, ro, sq, sv
+point -> same in: fr
+police -> same in: fr, lb, rw
+politician -> same in: ro
+pollution -> same in: fr
+polygon -> same in: da, lb, no, sv
+pool -> same in: tl
+popular -> same in: ca, es, ms, pt, ro
+pork -> same in: br
+port -> same in: az, bs, ca, cs, da, et, fo, fr, gd, hu, id, jv, lb, ms, mt, no, pl, ro, sk, sq, sr, sv, tk, uz
+portal -> same in: az, bs, ca, da, de, es, hr, lb, no, pl, pt, ro, sl, sv, tr, uz
+portrait -> same in: fr
+possible -> same in: ca, fr
+pot -> same in: af, ca, cy, fr, lb, af, cy, lb
+potion -> same in: fr
+power bank -> same in: id, it, jv, ms, pt, tl
+predator -> same in: id, sr
+present -> same in: ca, sv
+presentation -> same in: sv, sv, sv
+president -> same in: af, ca, et, lb, mt, nl, no, sq, sv
+printer -> same in: az, da, et, hr, id, jv, mt, nl, tk, tl, az, da, et, hr, id, mt, nl, sq, tk, uz
+procession -> same in: br, fr, gd, sv
+processor -> same in: da, nl, sv
+product -> same in: nl
+professor -> same in: af, az, ca, da, de, et, no, pt, sv, tk, uz
+profit -> same in: bs, da, hr, hu, ro, sr
+program -> same in: af, bs, cs, da, hr, hu, id, jv, ms, no, pl, ro, sk, sl, sq, sv, tr
+projector -> same in: ca, mt
+prophet -> same in: de
+proportion -> same in: fr, mg, sv
+protest -> same in: af, bs, cs, da, de, lb, nl, no, pl, ro, sk, sl, sr
+proton -> same in: af, az, br, bs, cs, cy, da, de, fo, fr, ha, hr, hu, id, jv, la, lb, ms, mt, nl, no, pl, ro, rw, sl, sn, sq, sv, tk, tl, tr, uz, vi
+protractor -> same in: cy
+pudding -> same in: az, bs, ca, co, da, de, hr, hu, id, nl, no, pl, sk, sq, sr, sv, sw, tk, tl, tr, uz, vi
+puzzle -> same in: de, sq
+pyramid -> same in: cy, sv
+quinoa -> same in: fr, de, ca, co, cs, da, eu, hu, id, it, la, lb, nl, no, pl, pt, ro, sk, sv, tl, vi
+quiz -> same in: da, it, lb, no, pt
+racket -> same in: lb, nl, no
+radio -> same in: af, az, br, bs, cy, da, de, eo, es, fi, fr, hr, id, it, jv, la, lb, lv, mg, ms, nl, no, pl, ro, sl, sq, sr, sv, tk, uz, vi
+radius -> same in: af, az, br, cy, da, de, fo, gd, ig, la, lb, mg, no, sn, sw, tk, uz, xh
+rare -> same in: fr
+ratio -> same in: fr, la
+real -> same in: ca, es, pt, ro
+reception -> same in: da, it, sv
+receptionist -> same in: da, it, sv
+rectangle -> same in: ca, fr, ca, fr
+recycling -> same in: de, lb, nl, de, lb, nl
+reduce -> same in: ro
+referendum -> same in: az, bs, co, cs, et, hr, id, it, la, lb, mt, nl, pl, ro, sk, sl, sq, tk, uz
+religion -> same in: da, de, fr, no, sv
+remote control -> same in: id, tl
+renaissance -> same in: af, de, fr, lb, nl
+report card -> same in: tl
+reporter -> same in: mt, az, bs, ca, da, de, et, hr, lb, no, pl, ro, sl, sq, sr, sv
+reptile -> same in: fr, la
+republic -> same in: ig
+reservation -> same in: da
+resort -> same in: ca, de, es, ms, mt, pt
+respect -> same in: fr, nl, ro
+respiration -> same in: da, fr
+restaurant -> same in: af, ca, da, de, fr, lb, nl, no, ro, af, ca, da, de, fr, lb, nl, no, ro, af, ca, da, de, fr, lb, nl, no, ro
+revolution -> same in: da, de, sv
+ride -> same in: da
+ring -> same in: af, da, de, nl, no, sv
+ritual -> same in: bs, ca, de, es, hr, id, ms, no, pt, ro, sq, sv, az, bs, ca, da, de, es, hr, id, jv, ms, no, pt, ro, sq, sv, bs, ca, da, de, es, id, ms, no, pt, ro, sv
+robot -> same in: af, az, bs, ca, co, cs, cy, da, es, et, fr, gd, hr, hu, id, it, jv, lb, ms, mt, nl, no, pl, ro, sk, sl, sn, sq, sr, sv, tk, tl, tr, uz, vi
+role -> same in: cs
+romance -> same in: es, fr, pt
+route -> same in: de, nl
+router -> same in: af, ca, cs, da, de, es, fo, hu, id, it, jv, lb, mt, nl, pl, ro, sk, sv, tl
+rugby -> same in: af, az, co, da, de, es, fi, fo, fr, ig, is, it, lb, nl, no, pl, pt, ro, sv, yo, zu
+ruler -> same in: tl, tl
+rune -> same in: af, da, de, fr, id, ms, nl, no, ro, vi
+sacrifice -> same in: fr
+saga -> same in: lt, bs, ca, co, cy, da, es, fr, ga, hr, is, it, mt, no, pl, pt, sl, sr, sv
+sage -> same in: fr
+salt -> same in: da, fo, is, no, sv
+saxophone -> same in: fr, ig, rw
+scanner -> same in: af, co, da, de, fr, it, lb, nl, pt, ro, tl, af, co, da, de, fr, it, lb, nl, pt, ro, tl
+scene -> same in: da, no
+school -> same in: nl, nl, nl
+screen -> same in: tl
+script -> same in: nl
+sculpture -> same in: fr
+search engine -> same in: tl
+second -> same in: fr
+seer -> same in: af
+senate -> same in: af
+send -> same in: da, no
+series -> same in: la
+server -> same in: az, bs, cs, da, de, et, id, it, jv, lb, mt, nl, ro, sk, so, sq, sv, tl, uz
+shaman -> same in: da, sq
+shopping -> same in: da, fr, it, lb, no, sv
+shorts -> same in: da, de, es, fr, nl, no, sv
+shrimp -> same in: rw
+sightseeing -> same in: da, is, no
+signal -> same in: bs, cy, da, de, fo, fr, hr, lb, no, sl, sr, sv, tk, uz
+silk -> same in: fo
+silver -> same in: sv
+simple -> same in: ca, fr, tl
+sit -> same in: af
+six -> same in: fr, fr
+skiing -> same in: mt
+skirt -> same in: ms, rw
+smart -> same in: no, sv
+smart home device -> same in: tl
+smartphone -> same in: co, da, de, fr, it, lb, mt, nl, pt, ro, sq, co, da, de, fr, it, lb, mt, nl, pt, ro, sq
+smartwatch -> same in: da, de, it, lb, mt, my, nl, pl, pt, sq, tl
+smoothie -> same in: tr, fr, de, af, bs, cs, cy, da, eu, fi, fo, ha, hr, hu, id, lb, lv, ms, mt, my, nl, no, pl, pt, ro, sk, sq, sr, sv, tk
+snack -> same in: da, nl
+sneakers -> same in: da, nl, sv
+snorkeling -> same in: af, id, it, ms, pl, pt, ro, tk, tl, uz
+sociable -> same in: ca, es, fr
+social media -> same in: it, tl, it, tl
+socialism -> same in: ro, sv
+soda -> same in: tr, es, fr, az, br, cy, eu, gd, id, jv, mg, ms, mt, rw, sw, tl, xh, br, cy, eu, fr, gd, id, jv, lt, mg, ms, mt, rw, sl, sn, sw, tl, tr
+sofa -> same in: bs, da, de, id, jv, lt, ms, no, pl, sr, tl
+software -> same in: cs, da, de, es, eu, ha, it, lb, mt, nl, pt, ro, sn, tl, cs, da, de, es, eu, fo, ha, it, lb, nl, pt, ro, sn, so, tl
+solution -> same in: fr
+son -> same in: sv
+soy sauce -> same in: ha
+spatula -> same in: az, ga, gd, id, la, mt, sw, tr, uz
+species -> same in: la, la
+spleen -> same in: br
+sporty -> same in: jv
+spreadsheet -> same in: id, mt, nl, tl, id, ms, mt, nl, tl
+squad -> same in: da, id, ms
+stadium -> same in: la, ms, mt, la, ms, mt
+staff -> same in: br, cy
+startup -> same in: da, fi, hu, it, pt, ro, sv
+station -> same in: da, nl, sv
+stereotype -> same in: nl, sn
+stomach -> same in: br, cy, gd
+stop -> same in: af, cy, da, nl
+storm -> same in: af, br, cy, da, nl, no, sv, af, br, cy, da, gd, nl, no, sv, af, br, cy, da, nl, no, sv, af, br, cy, da, nl, no, sv
+strawberry -> same in: ha, sn, sw, tl
+streaming -> same in: ca, co, da, de, eu, hr, id, it, lb, pt, ro
+stretcher -> same in: mt, sq
+stretching -> same in: it, sv
+student -> same in: af, bs, cs, hr, mt, nl, no, pl, ro, sq, sr, sv
+studio -> same in: bs, cs, eo, fi, fo, fr, hr, id, it, jv, ms, no, pl, sq, sv, sw
+stylish -> same in: id, mt
+subway -> same in: tl
+suit -> same in: ga
+summer -> same in: lb, lb
+sun -> same in: eo
+supermarket -> same in: az, bs, cs, et, fi, hr, id, mt, pl, ro, sk, sl, sq, sv, tk, az, bs, cs, et, fi, hr, id, mt, pl, ro, sk, sl, sq, sr, sv, tk
+supervisor -> same in: ca, da, es, nl, pt
+sweater -> same in: id, ms
+table -> same in: fr, fr
+tablet -> same in: bs, cs, da, de, hr, id, it, jv, lb, ms, nl, pl, pt, sk, sr, tl, tr, bs, cs, da, de, hr, id, it, jv, lb, ms, nl, pl, pt, sk, sr, tl, tr, bs, cs, da, de, hr, id, it, jv, lb, ms, nl, pl, pt, sk, sr, tl, tr, af, bs, cs, da, de, hr, id, it, jv, lb, ms, nl, pl, sk, sr, tl, tr
+talent -> same in: af, bs, ca, cs, da, de, et, fr, hr, lb, mt, nl, no, pl, ro, sk, sl, sq
+talisman -> same in: af, az, br, cy, da, de, et, fo, fr, ga, gd, hr, is, no, ro, sl, sq, tk, uz
+tart -> same in: br, cy, id, ms, no, sr, sv, tl, tr
+taxi -> same in: af, bs, ca, co, cs, da, de, es, eu, fr, hr, hu, it, lb, nl, no, ro, rw, sk, sv, vi
+tea -> same in: eu, hu, eu, hu
+team -> same in: de, nl, no, sv
+television -> same in: sv
+temple -> same in: ca, fr, ca, fr, ca, fr
+tennis -> same in: af, az, br, ca, co, da, de, et, fi, fo, fr, is, it, lb, mt, nl, no, rw, sv, tk, uz, af, az, br, ca, co, da, de, et, fi, fo, fr, ha, is, it, lb, mt, nl, no, rw, sv, tk, tl, uz
+terminal -> same in: az, bs, ca, da, es, et, id, jv, ms, nl, no, pt, ro, sq, sv, tr
+test -> same in: bs, de, et, hr, ro, sk, sl
+text -> same in: ca, cs, de, lb, sk, sv
+theater -> same in: de, lb
+thriller -> same in: br, ca, cs, cy, da, de, es, eu, fr, hu, it, lb, mt, nl, pl, sq
+ticket -> same in: nl
+timer -> same in: de, id, it, jv, nl, pl, sv, tl
+tip -> same in: jv, tl
+titan -> same in: az, br, bs, cy, da, de, eu, fr, hr, id, la, lb, ms, no, ro, sl, sq, sv, tk, tr, vi
+toast -> same in: fr, mg
+toe -> same in: br
+tofu -> same in: af, az, bs, ca, co, cs, da, de, es, et, eu, fi, fo, fr, gd, hr, hu, is, it, la, lb, lt, mg, mt, nl, no, pl, pt, ro, rw, sk, sl, sn, so, sq, sr, sv, tk, tl, tr, uz, yo
+tolerance -> same in: cs, da
+tomato -> same in: eo
+tornado -> same in: af, bs, ca, da, de, eo, es, fi, hr, it, lb, lv, mt, nl, no, pl, pt, sq, sv, af, bs, ca, da, de, eo, es, hr, it, mt, nl, no, pl, pt, sq, sv
+total -> same in: ca, da, es, fr, id, jv, lb, mt, pt, ro
+touchscreen -> same in: de, lb, nl
+touring -> same in: mt
+tradition -> same in: da, de, fr, sv, da, de, fr, sv, da, de, fr, sv, da, de, fr, sv
+tragic -> same in: ro
+train -> same in: fr
+tram -> same in: af, ca, cy, ga, gd, id, ig, it, jv, lb, mg, ms, mt, nl, tl
+transformation -> same in: fr
+trapezoid -> same in: ha
+trendy -> same in: da, no
+triangle -> same in: ca, fr, sn, ca, fr, sn
+trivia -> same in: da, de, es, et, fi, nl, no, sv
+troll -> same in: ca, cs, cy, de, fr, it, ms, nl, no, pl, sk, sv, tl
+trumpet -> same in: sv
+turquoise -> same in: fr, ha, ms, mt, rw
+tutor -> same in: bs, es, hr, id, nl, pt, sr
+umbrella -> same in: mt
+unicorn -> same in: ca, ms, ro
+uniform -> same in: af, br, da, de, fo, ha, hr, lb, nl, no, pl, sr, sv
+update -> same in: de, nl
+upload -> same in: da
+urgent -> same in: ca, fr, ro
+vacuum -> same in: la
+vacuum cleaner -> same in: tl
+vampire -> same in: fr, ms
+variable -> same in: ca, de, es, fr
+verdict -> same in: fr, ro
+vest -> same in: da, et, mt, nl, no
+video -> same in: af, az, br, bs, co, cs, da, de, et, fi, fo, hr, id, it, lb, lv, ms, nl, no, ro, sk, sl, sq, sv, sw, tr, uz, vi
+video game -> same in: id
+violet -> same in: af, da, fr, mg, nl, ro, sn
+violin -> same in: da, ha, sv
+visa -> same in: af, co, es, fr, ha, id, ig, jv, la, lb, mg, ms, sn, sw, uz, vi, xh, yo, zu
+volleyball -> same in: da, de, lb, mt, no, de, lb, mt, no
+volume -> same in: af, fr, id, it, nl, pt, af, fr, id, it, nl, pt
+vote -> same in: fr
+waiter -> same in: tl, tl
+warm -> same in: af, de, nl
+washing machine -> same in: tl
+water -> same in: af, nl, af, nl, af, nl
+water polo -> same in: tl
+watermelon -> same in: af
+webcam -> same in: br, co, da, de, el, fr, id, it, lb, mg, mt, nl, pt, so, tl, vi
+website -> same in: de, nl, tl, de, nl, tl, de, nl, tl
+week -> same in: af, nl
+weekend -> same in: da, it, lb, nl, pl, ro, rw
+werewolf -> same in: id
+whiteboard -> same in: da, de, nl, tl
+wind -> same in: af, de, nl, af, de, nl, af, de, nl
+winter -> same in: af, de, nl, af, de, nl
+wool -> same in: so
+yen -> same in: az, ca, cy, da, de, es, fr, it, jv, lb, ms, nl, no, ro, sv, tl, tr
+yo -> same in: es, ha, id, no, so, tr
+yoga -> same in: af, br, co, cy, da, de, es, eu, fo, fr, ga, ha, id, it, jv, la, lb, mg, ms, mt, nl, no, ro, rw, sl, sn, so, sq, sv, sw, tl, tr, uz, vi, xh, yo, af, br, co, da, de, es, eu, fo, fr, ga, ha, id, it, jv, la, lb, mg, ms, mt, nl, no, ro, rw, sn, so, sq, sv, sw, tk, tl, tr, uz, vi, xh, yo
+zero -> same in: br, ca, co, eu, it, pl, pt, ro, rw, sn, sq, xh, zu, br, ca, co, eu, it, pl, pt, ro, rw, sn, sq, xh
+zoo -> same in: br, ca, de, es, fr, it, ms, mt, pl, sn, tl
+zucchini -> same in: da, de, eo, fo, id, is, lb, ms, no, sv

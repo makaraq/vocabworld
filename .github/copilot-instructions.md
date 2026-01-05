@@ -2,13 +2,13 @@
 
 ## Architecture Overview
 
-This is a Next.js 15 PWA language learning app with Capacitor for mobile deployment. The app teaches vocabulary across 112+ languages using multiple TTS services and a freemium subscription model.
+This is a Next.js 15 PWA language learning app with Capacitor for mobile deployment. The app teaches vocabulary across 50 languages using pre-generated TTS audio and a freemium subscription model.
 
 ### Core Technology Stack
 - **Frontend**: Next.js 15, React 19, TypeScript, TailwindCSS
 - **Mobile**: Capacitor 7 for iOS/Android deployment
 - **Database**: Supabase (PostgreSQL) with custom vocabulary schema
-- **Audio**: Multiple TTS services (Alnilam, Algenib, Azure, Google Cloud)
+- **Audio**: Backblaze B2 cloud storage with pre-generated TTS audio files
 - **Auth**: Supabase Auth with Google/Apple OAuth
 - **Payments**: Stripe with webhook-driven subscription sync
 - **UI**: Radix UI components with custom theming
@@ -16,9 +16,21 @@ This is a Next.js 15 PWA language learning app with Capacitor for mobile deploym
 ## Key Architectural Patterns
 
 ### Audio Service Architecture
-The app uses a **unified audio service pattern** 
+The app uses **Backblaze B2 cloud storage** for all audio playback:
 
-**Critical**: Audio services are **stateful** and require proper cleanup. Always use the hooks pattern, never instantiate services directly in components.
+```
+User Request → /api/universal-audio → B2 Authorization → Stream Audio
+```
+
+**Key files:**
+- `app/api/universal-audio/route.ts` - Main audio API endpoint
+- `backblaze-urls-20250909-180354.csv` - Word ID to B2 file path mappings (132,403 entries)
+
+**Audio flow:**
+1. Client requests `/api/universal-audio?wordId=X&languageCode=Y`
+2. Server authorizes with B2 using `B2_APPLICATION_KEY_ID` and `B2_APPLICATION_KEY`
+3. Server looks up file path in CSV mapping
+4. Server streams authenticated audio from B2 bucket to client
 
 ### Subscription & Access Control
 Access control is **database-driven** with real-time checks:
@@ -108,7 +120,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 ## Critical Integration Points
 
 ### Language System
-Language codes follow ISO 639-1 standard. See `config/languages.js` for complete mapping of 112 supported languages.
+Language codes follow ISO 639-1 standard. The app supports 50 languages with audio files available in the B2 bucket.
 
 ### API Route Structure
 ```
@@ -128,15 +140,17 @@ NEXT_PUBLIC_SUPABASE_URL=     # Supabase project URL
 NEXT_PUBLIC_SUPABASE_ANON_KEY= # Public key
 SUPABASE_SERVICE_ROLE_KEY=    # Private key for server operations
 STRIPE_SECRET_KEY=            # Payment processing
-GOOGLE_APPLICATION_CREDENTIALS= # TTS service auth
+B2_APPLICATION_KEY_ID=        # Backblaze B2 key ID for audio
+B2_APPLICATION_KEY=           # Backblaze B2 application key
 ```
 
 ## Debugging & Troubleshooting
 
 ### Audio Issues
-1. Check browser console for TTS service errors
-2. Verify audio URLs in Network tab
-3. Test fallback sequence: Alnilam → Algenib → Azure → Browser
+1. Check browser console for B2 authorization errors
+2. Verify `/api/universal-audio` responses in Network tab
+3. Ensure `B2_APPLICATION_KEY_ID` and `B2_APPLICATION_KEY` environment variables are set
+4. Check `backblaze-urls-20250909-180354.csv` exists and contains mappings
 
 ### Subscription Issues
 1. Check `subscription_events` table for webhook logs
