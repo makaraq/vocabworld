@@ -108,7 +108,7 @@ class AuthService {
     const { data, error } = await this.supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${window.location.origin}/api/auth/callback`,
         queryParams: {
           access_type: 'offline',
           prompt: 'consent'
@@ -203,7 +203,7 @@ class AuthService {
     const { data, error } = await this.supabase.auth.signInWithOAuth({
       provider: 'apple',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`
+        redirectTo: `${window.location.origin}/api/auth/callback`
       }
     })
 

@@ -16,8 +16,16 @@ const nextConfig = {
       config.resolve.fallback = {
         ...config.resolve.fallback,
         fs: false,
+        path: false,
+        crypto: false,
       };
     }
+    // Ignore specific files that might cause issues
+    config.module.rules.push({
+      test: /\.csv$/,
+      type: 'asset/resource',
+    });
+    
     return config;
   },
   // Server-side rendering for API routes
@@ -26,6 +34,10 @@ const nextConfig = {
       bodySizeLimit: '2mb',
     },
     typedRoutes: false,
+    // Disable turbopack for now to use standard webpack
+    turbo: {
+      resolveExtensions: ['.tsx', '.ts', '.jsx', '.js', '.json'],
+    },
   },
   // Fix hot reload issues
   watchOptions: {
@@ -40,6 +52,8 @@ const nextConfig = {
       '**/*.json',
     ],
   },
+  // Force webpack instead of turbopack during development
+  swcMinify: false,
 }
 
 export default nextConfig
