@@ -3,6 +3,9 @@
 import { useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
+// This page cannot be statically generated
+export const dynamic = 'force-dynamic'
+
 export default function AuthCallbackPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
