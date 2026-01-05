@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 // This page cannot be statically generated
 export const dynamic = 'force-dynamic'
@@ -9,43 +10,37 @@ export const dynamic = 'force-dynamic'
 function AuthCallbackHandler() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const supabase = createClientComponentClient()
 
   useEffect(() => {
     const handleCallback = async () => {
-      const code = searchParams?.get('code')
       const error = searchParams?.get('error')
+      const errorDescription = searchParams?.get('error_description')
 
       if (error) {
-        console.error('OAuth error:', error)
-        router.push(`/auth/error?error=${encodeURIComponent(error)}`)
+        console.error('OAuth error:', error, errorDescription)
+        router.push(`/auth/error?error=${encodeURIComponent(errorDescription || error)}`)
         return
       }
 
-      if (code) {
-        try {
-          // Call our server-side callback to handle the code exchange
-          const response = await fetch(`/api/auth/callback?code=${code}`, {
-            method: 'GET'
-          })
-
-          if (response.ok) {
-            console.log('🟢 Authentication successful!')
-            router.push('/')
-          } else {
-            console.error('🔴 Callback failed:', response.status)
-            router.push(`/auth/error?error=${encodeURIComponent('Authentication failed')}`)
-          }
-        } catch (error) {
-          console.error('🔴 Callback error:', error)
-          router.push(`/auth/error?error=${encodeURIComponent('Authentication failed')}`)
-        }
-      } else {
+      // Check if user is already logged in (session exists)
+      const { data: { session } } = await supabase.auth.getSession()
+      
+      if (session) {
+        // User is authenticated, redirect to home
+        console.log('✅ User already authenticated, redirecting to home')
         router.push('/')
+        return
       }
+
+      // If we reach here with no session and no error, something went wrong
+      // This shouldn't happen normally as OAuth redirects go to /api/auth/callback
+      console.log('⚠️ No session found, redirecting to home')
+      router.push('/')
     }
 
     handleCallback()
-  }, [searchParams, router])
+  }, [searchParams, router, supabase])
 
   return (
     <div className="min-h-screen flex items-center justify-center">

@@ -4,14 +4,19 @@ import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import { getStripe } from '@/lib/stripe'
 
-// Service role client for reading subscription data (bypasses RLS)
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+// Lazy initialization of admin client to prevent build-time crashes
+function getSupabaseAdmin() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  
+  if (!url || !key) {
+    throw new Error('Missing Supabase environment variables for admin client')
+  }
+  
+  return createClient(url, key)
+}
 
 export async function GET(req: NextRequest) {
-  const stripe = getStripe()
   try {
     const supabase = createRouteHandlerClient({ cookies })
     
@@ -28,6 +33,7 @@ export async function GET(req: NextRequest) {
     }
     
     // Get user profile with subscription info using service role (bypasses RLS)
+    const supabaseAdmin = getSupabaseAdmin()
     const { data: profile, error: profileError } = await supabaseAdmin
       .from('user_profiles')
       .select('subscription_status, stripe_subscription_id, subscription_plan, subscription_period_end')
@@ -47,6 +53,7 @@ export async function GET(req: NextRequest) {
     // If user has premium status, verify with Stripe
     if (profile.subscription_status === 'premium' && profile.stripe_subscription_id) {
       try {
+        const stripe = getStripe()
         const subscription = await stripe.subscriptions.retrieve(profile.stripe_subscription_id)
         
         if (subscription.status === 'active' || subscription.status === 'trialing') {
