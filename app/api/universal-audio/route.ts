@@ -118,44 +118,43 @@ export async function GET(request: NextRequest) {
       'Common_Phrases', 'Slang', 'Formal', 'Informal'
     ];
 
-    // Try different filename patterns (B2 files may have varying underscores)
-    const filePatterns = [
-      `alnilam_${wordId}_.wav`,
-      `alnilam_${wordId}__.wav`,
-      `alnilam_${wordId}___.wav`,
-      `alnilam_${wordId}____.wav`,
-      `alnilam_${wordId}_____.wav`,
-      `alnilam_${wordId}______.wav`,
-      `alnilam_${wordId}_______.wav`,
-      `alnilam_${wordId}________.wav`,
-    ];
-
+    // Try different filename patterns with both wav and mp3 extensions
+    const fileExtensions = ['wav', 'mp3'];
+    const underscorePatterns = ['_', '__', '___', '____', '_____', '______', '_______', '________'];
+    
     let audioBuffer: ArrayBuffer | null = null;
     let foundPath = '';
+    let contentType = 'audio/wav';
 
-    // Try each category and pattern combination
+    // Try each category, extension, and pattern combination
     for (const category of categories) {
       if (audioBuffer) break;
       
-      for (const pattern of filePatterns) {
-        const filePath = `${audioLangCode}/${category}/${pattern}`;
-        const downloadUrl = `${authData.downloadUrl}/file/voco-audio-library/${filePath}`;
+      for (const ext of fileExtensions) {
+        if (audioBuffer) break;
         
-        try {
-          const audioResponse = await fetch(downloadUrl, {
-            headers: {
-              'Authorization': downloadAuthData.authorizationToken
-            }
-          });
+        for (const pattern of underscorePatterns) {
+          const fileName = `alnilam_${wordId}${pattern}.${ext}`;
+          const filePath = `${audioLangCode}/${category}/${fileName}`;
+          const downloadUrl = `${authData.downloadUrl}/file/voco-audio-library/${filePath}`;
+          
+          try {
+            const audioResponse = await fetch(downloadUrl, {
+              headers: {
+                'Authorization': downloadAuthData.authorizationToken
+              }
+            });
 
-          if (audioResponse.ok) {
-            audioBuffer = await audioResponse.arrayBuffer();
-            foundPath = filePath;
-            console.log(`✅ Found audio at: ${filePath}`);
-            break;
+            if (audioResponse.ok) {
+              audioBuffer = await audioResponse.arrayBuffer();
+              foundPath = filePath;
+              contentType = ext === 'mp3' ? 'audio/mpeg' : 'audio/wav';
+              console.log(`✅ Found audio at: ${filePath} (${ext})`);
+              break;
+            }
+          } catch (e) {
+            // Continue to next pattern
           }
-        } catch (e) {
-          // Continue to next pattern
         }
       }
     }
@@ -173,7 +172,7 @@ export async function GET(request: NextRequest) {
     return new NextResponse(audioBuffer, {
       status: 200,
       headers: {
-        'Content-Type': 'audio/wav',
+        'Content-Type': contentType,
         'Content-Length': audioBuffer.byteLength.toString(),
         'Cache-Control': 'public, max-age=31536000',
         'Access-Control-Allow-Origin': '*',
