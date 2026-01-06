@@ -22,6 +22,13 @@ export async function GET(request: NextRequest) {
     const keyId = process.env.B2_APPLICATION_KEY_ID;
     const applicationKey = process.env.B2_APPLICATION_KEY;
 
+    console.log(`🔑 B2 Credentials check:`, { 
+      keyIdExists: !!keyId, 
+      appKeyExists: !!applicationKey,
+      keyIdLength: keyId?.length || 0,
+      appKeyLength: applicationKey?.length || 0 
+    });
+
     if (!keyId || !applicationKey) {
       console.log('❌ B2 credentials not found in environment');
       return NextResponse.json(
@@ -104,39 +111,43 @@ export async function GET(request: NextRequest) {
     const downloadAuthData = await downloadAuthResponse.json();
     console.log('✅ Download authorization successful');
 
-    // Step 3: Try to find the audio file by listing files with the wordId prefix
-    // Files follow pattern: {lang}/{category}/alnilam_{wordId}_.wav or with underscores
-    
-    // Categories in the B2 bucket
+    // Step 3: Try to find the audio file - start with most likely categories first
+    // Categories ordered by likelihood (Greetings and Numbers are most common)
     const categories = [
-      'Greetings', 'Numbers', 'Time', 'Emergency', 'Directions', 'Travel',
-      'Shopping', 'Food', 'Home', 'Family', 'Weather', 'Colors', 'Animals',
-      'Body', 'Health', 'Clothing', 'Work', 'Education', 'Technology',
-      'Nature', 'Transportation', 'Entertainment', 'Sports', 'Music', 'Art',
-      'Religion', 'Politics', 'Business', 'Science', 'Emotions', 'Actions',
-      'Questions', 'Adjectives', 'Adverbs', 'Prepositions', 'Conjunctions',
-      'Common_Phrases', 'Slang', 'Formal', 'Informal'
+      'Greetings', 'Numbers', 'Time', 'Common_Phrases',  // Most common first
+      'Actions', 'Adjectives', 'Food', 'Home', 'Family', 'Weather',
+      'Emergency', 'Directions', 'Travel', 'Shopping', 
+      'Colors', 'Animals', 'Body', 'Health', 'Clothing', 'Work', 
+      'Education', 'Technology', 'Nature', 'Transportation', 
+      'Entertainment', 'Sports', 'Music', 'Art', 'Religion', 
+      'Politics', 'Business', 'Science', 'Emotions',
+      'Questions', 'Adverbs', 'Prepositions', 'Conjunctions',
+      'Slang', 'Formal', 'Informal'
     ];
 
-    // Try different filename patterns with both wav and mp3 extensions
+    // Try fewer patterns first - most files use just 1-3 underscores
     const fileExtensions = ['wav', 'mp3'];
-    const underscorePatterns = ['_', '__', '___', '____', '_____', '______', '_______', '________'];
+    const underscorePatterns = ['_', '__', '___', '____']; // Limited patterns to speed up
     
     let audioBuffer: ArrayBuffer | null = null;
     let foundPath = '';
     let contentType = 'audio/wav';
+    let attemptCount = 0;
 
-    // Try each category, extension, and pattern combination
-    for (const category of categories) {
+    // Try each category, extension, and pattern combination (optimized order)
+    categoryLoop: for (const category of categories) {
       if (audioBuffer) break;
       
       for (const ext of fileExtensions) {
         if (audioBuffer) break;
         
         for (const pattern of underscorePatterns) {
+          attemptCount++;
           const fileName = `alnilam_${wordId}${pattern}.${ext}`;
           const filePath = `${audioLangCode}/${category}/${fileName}`;
           const downloadUrl = `${authData.downloadUrl}/file/voco-audio-library/${filePath}`;
+          
+          console.log(`🔍 Attempt ${attemptCount}: Trying ${filePath}`);
           
           try {
             const audioResponse = await fetch(downloadUrl, {
@@ -145,29 +156,37 @@ export async function GET(request: NextRequest) {
               }
             });
 
+            console.log(`📁 ${filePath} -> ${audioResponse.status}`);
+
             if (audioResponse.ok) {
               audioBuffer = await audioResponse.arrayBuffer();
               foundPath = filePath;
               contentType = ext === 'mp3' ? 'audio/mpeg' : 'audio/wav';
-              console.log(`✅ Found audio at: ${filePath} (${ext})`);
-              break;
+              console.log(`✅ SUCCESS! Found audio at: ${filePath} (${ext}) after ${attemptCount} attempts`);
+              break categoryLoop;
             }
           } catch (e) {
-            // Continue to next pattern
+            console.log(`❌ Error fetching ${filePath}:`, e);
+          }
+          
+          // Limit attempts to avoid timeout
+          if (attemptCount > 20) {
+            console.log(`⏰ Stopping search after ${attemptCount} attempts to avoid timeout`);
+            break categoryLoop;
           }
         }
       }
     }
 
     if (!audioBuffer) {
-      console.log(`❌ Audio file not found for wordId=${wordId}, language=${audioLangCode}`);
+      console.log(`❌ Audio file not found for wordId=${wordId}, language=${audioLangCode} after ${attemptCount} attempts`);
       return NextResponse.json(
-        { error: 'Audio file not found', wordId, languageCode: audioLangCode },
+        { error: 'Audio file not found', wordId, languageCode: audioLangCode, attempts: attemptCount },
         { status: 404 }
       );
     }
 
-    console.log(`🔑 Serving audio: ${foundPath} (${audioBuffer.byteLength} bytes)`);
+    console.log(`🔑 Serving audio: ${foundPath} (${audioBuffer.byteLength} bytes) found after ${attemptCount} attempts`);
 
     return new NextResponse(audioBuffer, {
       status: 200,
