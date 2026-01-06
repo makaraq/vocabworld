@@ -1,0 +1,1565 @@
+{
+  "walk": {
+    "translation": "ходить",
+    "category": "Basic"
+  },
+  "run": {
+    "translation": "бегать",
+    "category": "Basic"
+  },
+  "jump": {
+    "translation": "прыжок",
+    "category": "Basic"
+  },
+  "hop": {
+    "translation": "хоп",
+    "category": "Basic"
+  },
+  "skip": {
+    "translation": "Пропустить",
+    "category": "Basic"
+  },
+  "crawl": {
+    "translation": "ползать",
+    "category": "Basic"
+  },
+  "climb": {
+    "translation": "подниматься",
+    "category": "Basic"
+  },
+  "slide": {
+    "translation": "слайд",
+    "category": "Basic"
+  },
+  "swing": {
+    "translation": "маятник",
+    "category": "Basic"
+  },
+  "stretch": {
+    "translation": "Растягивать",
+    "category": "Basic"
+  },
+  "bend": {
+    "translation": "изгиб",
+    "category": "Basic"
+  },
+  "lift": {
+    "translation": "подъёмник",
+    "category": "Basic"
+  },
+  "carry": {
+    "translation": "носить",
+    "category": "Basic"
+  },
+  "drag": {
+    "translation": "таскать",
+    "category": "Basic"
+  },
+  "push": {
+    "translation": "толкнуть",
+    "category": "Basic"
+  },
+  "pull": {
+    "translation": "достать",
+    "category": "Basic"
+  },
+  "hold": {
+    "translation": "держать",
+    "category": "Basic"
+  },
+  "grab": {
+    "translation": "схватить",
+    "category": "Basic"
+  },
+  "drop": {
+    "translation": "падение",
+    "category": "Basic"
+  },
+  "throw": {
+    "translation": "бросить",
+    "category": "Basic"
+  },
+  "catch": {
+    "translation": "ловить",
+    "category": "Basic"
+  },
+  "kick": {
+    "translation": "Стопа",
+    "category": "Basic"
+  },
+  "hit": {
+    "translation": "ударить",
+    "category": "Basic"
+  },
+  "press": {
+    "translation": "пресс",
+    "category": "Basic"
+  },
+  "twist": {
+    "translation": null,
+    "category": "Basic",
+    "failed": true
+  },
+  "turn": {
+    "translation": "обернуть",
+    "category": "Basic"
+  },
+  "rotate": {
+    "translation": "ировать",
+    "category": "Basic"
+  },
+  "flip": {
+    "translation": "перевернуть",
+    "category": "Basic"
+  },
+  "shake": {
+    "translation": null,
+    "category": "Basic",
+    "failed": true
+  },
+  "wave": {
+    "translation": "волна",
+    "category": "Basic"
+  },
+  "reach": {
+    "translation": "Достичь",
+    "category": "Basic"
+  },
+  "lean": {
+    "translation": "искренний",
+    "category": "Basic"
+  },
+  "rest": {
+    "translation": "покой",
+    "category": "Basic"
+  },
+  "balance": {
+    "translation": "Баланс",
+    "category": "Basic"
+  },
+  "spin": {
+    "translation": "спин",
+    "category": "Basic"
+  },
+  "arrange": {
+    "translation": "Расположить",
+    "category": "Basic"
+  },
+  "adjust": {
+    "translation": "исправить",
+    "category": "Basic"
+  },
+  "shift": {
+    "translation": "смена",
+    "category": "Basic"
+  },
+  "tie": {
+    "translation": "затягивать",
+    "category": "Basic"
+  },
+  "untie": {
+    "translation": "Раз",
+    "category": "Basic"
+  },
+  "wrap": {
+    "translation": "обернуть",
+    "category": "Basic"
+  },
+  "unwrap": {
+    "translation": "открыть",
+    "category": "Basic"
+  },
+  "fold": {
+    "translation": "свернуть",
+    "category": "Basic"
+  },
+  "unfold": {
+    "translation": "разворачивать",
+    "category": "Basic"
+  },
+  "pack": {
+    "translation": "Пакет",
+    "category": "Basic"
+  },
+  "unpack": {
+    "translation": "овать",
+    "category": "Basic"
+  },
+  "be": {
+    "translation": "быть",
+    "category": "Basic"
+  },
+  "become": {
+    "translation": "стать",
+    "category": "Basic"
+  },
+  "seem": {
+    "translation": "па",
+    "category": "Basic"
+  },
+  "appear": {
+    "translation": "являться",
+    "category": "Basic"
+  },
+  "remain": {
+    "translation": "остаться",
+    "category": "Basic"
+  },
+  "stay": {
+    "translation": "остаться",
+    "category": "Basic"
+  },
+  "exist": {
+    "translation": "существовать",
+    "category": "Basic"
+  },
+  "happen": {
+    "translation": "случиться",
+    "category": "Basic"
+  },
+  "occur": {
+    "translation": "происходить",
+    "category": "Basic"
+  },
+  "change": {
+    "translation": "изменение",
+    "category": "Basic"
+  },
+  "improve": {
+    "translation": "улучшить",
+    "category": "Basic"
+  },
+  "decline": {
+    "translation": "отказаться",
+    "category": "Basic"
+  },
+  "continue": {
+    "translation": "продолжать",
+    "category": "Basic"
+  },
+  "stop": {
+    "translation": "стоп",
+    "category": "Basic"
+  },
+  "begin": {
+    "translation": "начать",
+    "category": "Basic"
+  },
+  "end": {
+    "translation": "конец",
+    "category": "Basic"
+  },
+  "last": {
+    "translation": "последний",
+    "category": "Basic"
+  },
+  "wake": {
+    "translation": "будить",
+    "category": "Daily Routine"
+  },
+  "get up": {
+    "translation": "Встать",
+    "category": "Daily Routine"
+  },
+  "wash": {
+    "translation": "мыть",
+    "category": "Daily Routine"
+  },
+  "shower": {
+    "translation": "душ",
+    "category": "Daily Routine"
+  },
+  "bathe": {
+    "translation": "погрузиться",
+    "category": "Daily Routine"
+  },
+  "brush": {
+    "translation": "кисть",
+    "category": "Daily Routine"
+  },
+  "comb": {
+    "translation": "чёска",
+    "category": "Daily Routine"
+  },
+  "dress": {
+    "translation": "платье",
+    "category": "Daily Routine"
+  },
+  "eat": {
+    "translation": "есть",
+    "category": "Daily Routine"
+  },
+  "drink": {
+    "translation": "напиток",
+    "category": "Daily Routine"
+  },
+  "snack": {
+    "translation": "перекус",
+    "category": "Daily Routine"
+  },
+  "cook": {
+    "translation": "Повар",
+    "category": "Daily Routine"
+  },
+  "bake": {
+    "translation": "Выпекать",
+    "category": "Daily Routine"
+  },
+  "reheat": {
+    "translation": "пережаривать",
+    "category": "Daily Routine"
+  },
+  "clean": {
+    "translation": "Чистый",
+    "category": "Daily Routine"
+  },
+  "tidy": {
+    "translation": "У",
+    "category": "Daily Routine"
+  },
+  "organize": {
+    "translation": "организовать",
+    "category": "Daily Routine"
+  },
+  "vacuum": {
+    "translation": "вакуум",
+    "category": "Daily Routine"
+  },
+  "sweep": {
+    "translation": "Пылесосить",
+    "category": "Daily Routine"
+  },
+  "mop": {
+    "translation": "скобка",
+    "category": "Daily Routine"
+  },
+  "dust": {
+    "translation": "пыль",
+    "category": "Daily Routine"
+  },
+  "wash dishes": {
+    "translation": "Стирать",
+    "category": "Daily Routine"
+  },
+  "rinse": {
+    "translation": "се",
+    "category": "Daily Routine"
+  },
+  "wipe": {
+    "translation": "отереть",
+    "category": "Daily Routine"
+  },
+  "scrub": {
+    "translation": "скребок",
+    "category": "Daily Routine"
+  },
+  "dry": {
+    "translation": "сухой",
+    "category": "Daily Routine"
+  },
+  "shop": {
+    "translation": "магазин",
+    "category": "Daily Routine"
+  },
+  "refill": {
+    "translation": "Заправка",
+    "category": "Daily Routine"
+  },
+  "charge": {
+    "translation": "Заряд",
+    "category": "Daily Routine"
+  },
+  "relax": {
+    "translation": "Отдохнуть",
+    "category": "Daily Routine"
+  },
+  "nap": {
+    "translation": "дневной",
+    "category": "Daily Routine"
+  },
+  "sleep": {
+    "translation": "спать",
+    "category": "Daily Routine"
+  },
+  "prepare": {
+    "translation": "Подготовить",
+    "category": "Daily Routine"
+  },
+  "schedule": {
+    "translation": "расписание",
+    "category": "Daily Routine"
+  },
+  "cancel": {
+    "translation": "Отменить",
+    "category": "Daily Routine"
+  },
+  "check": {
+    "translation": "Чек",
+    "category": "Daily Routine"
+  },
+  "monitor": {
+    "translation": "монитор",
+    "category": "Daily Routine"
+  },
+  "plan": {
+    "translation": "план",
+    "category": "Daily Routine"
+  },
+  "wait": {
+    "translation": "Ждите",
+    "category": "Daily Routine"
+  },
+  "search": {
+    "translation": "поиск",
+    "category": "Daily Routine"
+  },
+  "find": {
+    "translation": "найти",
+    "category": "Daily Routine"
+  },
+  "lose": {
+    "translation": "потерять",
+    "category": "Daily Routine"
+  },
+  "replace": {
+    "translation": "Заменить",
+    "category": "Daily Routine"
+  },
+  "think": {
+    "translation": "думать",
+    "category": "Mental"
+  },
+  "know": {
+    "translation": "знать",
+    "category": "Mental"
+  },
+  "believe": {
+    "translation": "верить",
+    "category": "Mental"
+  },
+  "consider": {
+    "translation": "Рассмотреть",
+    "category": "Mental"
+  },
+  "imagine": {
+    "translation": "вообразить",
+    "category": "Mental"
+  },
+  "wonder": {
+    "translation": "Чудо",
+    "category": "Mental"
+  },
+  "remember": {
+    "translation": "помнить",
+    "category": "Mental"
+  },
+  "forget": {
+    "translation": "забыть",
+    "category": "Mental"
+  },
+  "realize": {
+    "translation": "реализовать",
+    "category": "Mental"
+  },
+  "guess": {
+    "translation": "предполагать",
+    "category": "Mental"
+  },
+  "predict": {
+    "translation": "прогнозировать",
+    "category": "Mental"
+  },
+  "expect": {
+    "translation": "Ожидать",
+    "category": "Mental"
+  },
+  "recognize": {
+    "translation": "распознать",
+    "category": "Mental"
+  },
+  "notice": {
+    "translation": "Уведомление",
+    "category": "Mental"
+  },
+  "focus": {
+    "translation": "фокус",
+    "category": "Mental"
+  },
+  "concentrate": {
+    "translation": "концентрат",
+    "category": "Mental"
+  },
+  "decide": {
+    "translation": "решать",
+    "category": "Mental"
+  },
+  "choose": {
+    "translation": "выбирать",
+    "category": "Mental"
+  },
+  "compare": {
+    "translation": "сравнить",
+    "category": "Mental"
+  },
+  "analyze": {
+    "translation": "анализировать",
+    "category": "Mental"
+  },
+  "evaluate": {
+    "translation": "Оценить",
+    "category": "Mental"
+  },
+  "estimate": {
+    "translation": "оценка",
+    "category": "Mental"
+  },
+  "solve": {
+    "translation": "решить",
+    "category": "Mental"
+  },
+  "question": {
+    "translation": "вопрос",
+    "category": "Mental"
+  },
+  "suspect": {
+    "translation": "подозреваемый",
+    "category": "Mental"
+  },
+  "doubt": {
+    "translation": "сомневаться",
+    "category": "Mental"
+  },
+  "learn": {
+    "translation": "учиться",
+    "category": "Mental"
+  },
+  "study": {
+    "translation": "учеба",
+    "category": "Mental"
+  },
+  "memorize": {
+    "translation": "запомнить",
+    "category": "Mental"
+  },
+  "calculate": {
+    "translation": "вычислить",
+    "category": "Mental"
+  },
+  "reflect": {
+    "translation": "отразить",
+    "category": "Mental"
+  },
+  "understand": {
+    "translation": "понимать",
+    "category": "Mental"
+  },
+  "like": {
+    "translation": "похожий",
+    "category": "Mental"
+  },
+  "love": {
+    "translation": "любовь",
+    "category": "Mental"
+  },
+  "hate": {
+    "translation": "ненавидеть",
+    "category": "Mental"
+  },
+  "enjoy": {
+    "translation": "наслаждаться",
+    "category": "Mental"
+  },
+  "prefer": {
+    "translation": "предпочитать",
+    "category": "Mental"
+  },
+  "want": {
+    "translation": "хочу",
+    "category": "Mental"
+  },
+  "need": {
+    "translation": "нужда",
+    "category": "Mental"
+  },
+  "miss": {
+    "translation": "пропустить",
+    "category": "Mental"
+  },
+  "care": {
+    "translation": "Уход",
+    "category": "Mental"
+  },
+  "worry": {
+    "translation": "Озабоченность",
+    "category": "Mental"
+  },
+  "fear": {
+    "translation": "страх",
+    "category": "Mental"
+  },
+  "panic": {
+    "translation": "паника",
+    "category": "Mental"
+  },
+  "stress": {
+    "translation": "Стресс",
+    "category": "Mental"
+  },
+  "calm": {
+    "translation": "спокойный",
+    "category": "Mental"
+  },
+  "appreciate": {
+    "translation": "Цени",
+    "category": "Mental"
+  },
+  "value": {
+    "translation": "Значение",
+    "category": "Mental"
+  },
+  "respect": {
+    "translation": "Уважение",
+    "category": "Mental"
+  },
+  "dislike": {
+    "translation": "недолюбливание",
+    "category": "Mental"
+  },
+  "regret": {
+    "translation": "Рег",
+    "category": "Mental"
+  },
+  "hope": {
+    "translation": "Надежда",
+    "category": "Mental"
+  },
+  "trust": {
+    "translation": "доверие",
+    "category": "Mental"
+  },
+  "surprise": {
+    "translation": "сюрприз",
+    "category": "Mental"
+  },
+  "shock": {
+    "translation": "Шок",
+    "category": "Mental"
+  },
+  "annoy": {
+    "translation": "маливать",
+    "category": "Mental"
+  },
+  "bother": {
+    "translation": "бесп",
+    "category": "Mental"
+  },
+  "confuse": {
+    "translation": "загодить",
+    "category": "Mental"
+  },
+  "embarrass": {
+    "translation": "Опозорить",
+    "category": "Mental"
+  },
+  "frustrate": {
+    "translation": "разочаровать",
+    "category": "Mental"
+  },
+  "satisfy": {
+    "translation": "удовлетворить",
+    "category": "Mental"
+  },
+  "comfort": {
+    "translation": "Утешение",
+    "category": "Mental"
+  },
+  "cheer": {
+    "translation": "радость",
+    "category": "Mental"
+  },
+  "say": {
+    "translation": "сказать",
+    "category": "Communication"
+  },
+  "tell": {
+    "translation": "сказать",
+    "category": "Communication"
+  },
+  "talk": {
+    "translation": "разговор",
+    "category": "Communication"
+  },
+  "speak": {
+    "translation": "говорить",
+    "category": "Communication"
+  },
+  "discuss": {
+    "translation": "Обсудить",
+    "category": "Communication"
+  },
+  "chat": {
+    "translation": "Чат",
+    "category": "Communication"
+  },
+  "explain": {
+    "translation": "объяснять",
+    "category": "Communication"
+  },
+  "describe": {
+    "translation": "описать",
+    "category": "Communication"
+  },
+  "announce": {
+    "translation": "объявить",
+    "category": "Communication"
+  },
+  "report": {
+    "translation": "Отчет",
+    "category": "Communication"
+  },
+  "reply": {
+    "translation": "Ответить",
+    "category": "Communication"
+  },
+  "answer": {
+    "translation": "Ответ",
+    "category": "Communication"
+  },
+  "ask": {
+    "translation": "спрашивать",
+    "category": "Communication"
+  },
+  "interrupt": {
+    "translation": "прервать",
+    "category": "Communication"
+  },
+  "suggest": {
+    "translation": "предложить",
+    "category": "Communication"
+  },
+  "recommend": {
+    "translation": "рекомендовать",
+    "category": "Communication"
+  },
+  "complain": {
+    "translation": "претендовать",
+    "category": "Communication"
+  },
+  "argue": {
+    "translation": "ссориться",
+    "category": "Communication"
+  },
+  "debate": {
+    "translation": "дебаты",
+    "category": "Communication"
+  },
+  "whisper": {
+    "translation": "шепот",
+    "category": "Communication"
+  },
+  "shout": {
+    "translation": "кричать",
+    "category": "Communication"
+  },
+  "yell": {
+    "translation": "кричать",
+    "category": "Communication"
+  },
+  "mention": {
+    "translation": "Упоминание",
+    "category": "Communication"
+  },
+  "remind": {
+    "translation": "напомнить",
+    "category": "Communication"
+  },
+  "warn": {
+    "translation": "Предупредить",
+    "category": "Communication"
+  },
+  "advise": {
+    "translation": "советовать",
+    "category": "Communication"
+  },
+  "encourage": {
+    "translation": "поощрять",
+    "category": "Communication"
+  },
+  "persuade": {
+    "translation": "у",
+    "category": "Communication"
+  },
+  "invite": {
+    "translation": "приглашать",
+    "category": "Communication"
+  },
+  "respond": {
+    "translation": "Ответить",
+    "category": "Communication"
+  },
+  "translate": {
+    "translation": "перевести",
+    "category": "Communication"
+  },
+  "inform": {
+    "translation": "информировать",
+    "category": "Communication"
+  },
+  "comment": {
+    "translation": "комментарий",
+    "category": "Communication"
+  },
+  "confirm": {
+    "translation": "Потвердить",
+    "category": "Communication"
+  },
+  "deny": {
+    "translation": "отрицать",
+    "category": "Communication"
+  },
+  "admit": {
+    "translation": "признать",
+    "category": "Communication"
+  },
+  "meet": {
+    "translation": "встречать",
+    "category": "Social"
+  },
+  "greet": {
+    "translation": "приветствовать",
+    "category": "Social"
+  },
+  "welcome": {
+    "translation": "пожаловать",
+    "category": "Social"
+  },
+  "visit": {
+    "translation": "Посещение",
+    "category": "Social"
+  },
+  "host": {
+    "translation": "гость",
+    "category": "Social"
+  },
+  "join": {
+    "translation": "присоединиться",
+    "category": "Social"
+  },
+  "help": {
+    "translation": "помощь",
+    "category": "Social"
+  },
+  "support": {
+    "translation": "Поддержка",
+    "category": "Social"
+  },
+  "assist": {
+    "translation": "помочь",
+    "category": "Social"
+  },
+  "share": {
+    "translation": "деля",
+    "category": "Social"
+  },
+  "care for": {
+    "translation": "Ухаживать",
+    "category": "Social"
+  },
+  "hug": {
+    "translation": "обнять",
+    "category": "Social"
+  },
+  "kiss": {
+    "translation": "Поцелуй",
+    "category": "Social"
+  },
+  "hold hands": {
+    "translation": "держать",
+    "category": "Social"
+  },
+  "date": {
+    "translation": "дата",
+    "category": "Social"
+  },
+  "marry": {
+    "translation": "жениться",
+    "category": "Social"
+  },
+  "befriend": {
+    "translation": "покорить",
+    "category": "Social"
+  },
+  "follow": {
+    "translation": "следовать",
+    "category": "Social"
+  },
+  "lead": {
+    "translation": "Лидер",
+    "category": "Social"
+  },
+  "guide": {
+    "translation": "руководство",
+    "category": "Social"
+  },
+  "introduce": {
+    "translation": "одить",
+    "category": "Social"
+  },
+  "cooperate": {
+    "translation": "сотрудничать",
+    "category": "Social"
+  },
+  "protect": {
+    "translation": "Защита",
+    "category": "Social"
+  },
+  "include": {
+    "translation": "включать",
+    "category": "Social"
+  },
+  "exclude": {
+    "translation": "исключать",
+    "category": "Social"
+  },
+  "work": {
+    "translation": "работа",
+    "category": "Work"
+  },
+  "write": {
+    "translation": "писать",
+    "category": "Work"
+  },
+  "read": {
+    "translation": "читать",
+    "category": "Work"
+  },
+  "edit": {
+    "translation": "редактировать",
+    "category": "Work"
+  },
+  "revise": {
+    "translation": "ировать",
+    "category": "Work"
+  },
+  "review": {
+    "translation": "обзор",
+    "category": "Work"
+  },
+  "inspect": {
+    "translation": "инспектировать",
+    "category": "Work"
+  },
+  "complete": {
+    "translation": "полный",
+    "category": "Work"
+  },
+  "submit": {
+    "translation": "сдать",
+    "category": "Work"
+  },
+  "create": {
+    "translation": "создавать",
+    "category": "Work"
+  },
+  "design": {
+    "translation": "Проектирование",
+    "category": "Work"
+  },
+  "build": {
+    "translation": "строить",
+    "category": "Work"
+  },
+  "assemble": {
+    "translation": "собирать",
+    "category": "Work"
+  },
+  "debug": {
+    "translation": "отладка",
+    "category": "Work"
+  },
+  "research": {
+    "translation": "исследование",
+    "category": "Work"
+  },
+  "document": {
+    "translation": "документ",
+    "category": "Work"
+  },
+  "train": {
+    "translation": "Поезд",
+    "category": "Work"
+  },
+  "teach": {
+    "translation": "учить",
+    "category": "Work"
+  },
+  "update": {
+    "translation": "Обновление",
+    "category": "Work"
+  },
+  "upload": {
+    "translation": "Загрузить",
+    "category": "Work"
+  },
+  "download": {
+    "translation": "Загрузка",
+    "category": "Work"
+  },
+  "print": {
+    "translation": "печатать",
+    "category": "Work"
+  },
+  "scan": {
+    "translation": "скан",
+    "category": "Work"
+  },
+  "record": {
+    "translation": "запись",
+    "category": "Work"
+  },
+  "track": {
+    "translation": "трек",
+    "category": "Work"
+  },
+  "manage": {
+    "translation": "Управлять",
+    "category": "Work"
+  },
+  "supervise": {
+    "translation": "наблюдать",
+    "category": "Work"
+  },
+  "go": {
+    "translation": "идти",
+    "category": "Travel"
+  },
+  "come": {
+    "translation": "прийти",
+    "category": "Travel"
+  },
+  "move": {
+    "translation": "Переместить",
+    "category": "Travel"
+  },
+  "leave": {
+    "translation": "Покинуть",
+    "category": "Travel"
+  },
+  "arrive": {
+    "translation": "прибыть",
+    "category": "Travel"
+  },
+  "enter": {
+    "translation": "Войти",
+    "category": "Travel"
+  },
+  "exit": {
+    "translation": "выход",
+    "category": "Travel"
+  },
+  "travel": {
+    "translation": "путешествие",
+    "category": "Travel"
+  },
+  "fly": {
+    "translation": "летать",
+    "category": "Travel"
+  },
+  "drive": {
+    "translation": "водить",
+    "category": "Travel"
+  },
+  "ride": {
+    "translation": "Поездка",
+    "category": "Travel"
+  },
+  "board": {
+    "translation": "доска",
+    "category": "Travel"
+  },
+  "land": {
+    "translation": "земля",
+    "category": "Travel"
+  },
+  "park": {
+    "translation": "парк",
+    "category": "Travel"
+  },
+  "accelerate": {
+    "translation": "ускорить",
+    "category": "Travel"
+  },
+  "reverse": {
+    "translation": "обратный",
+    "category": "Travel"
+  },
+  "cross": {
+    "translation": "крест",
+    "category": "Travel"
+  },
+  "wander": {
+    "translation": "бродить",
+    "category": "Travel"
+  },
+  "explore": {
+    "translation": "эксплорировать",
+    "category": "Travel"
+  },
+  "return": {
+    "translation": "возвращение",
+    "category": "Travel"
+  },
+  "rush": {
+    "translation": "Бросок",
+    "category": "Travel"
+  },
+  "hurry": {
+    "translation": "Скорее",
+    "category": "Travel"
+  },
+  "navigate": {
+    "translation": "навигировать",
+    "category": "Travel"
+  },
+  "sanitize": {
+    "translation": "Стерилизовать",
+    "category": "Household"
+  },
+  "iron": {
+    "translation": "железо",
+    "category": "Household"
+  },
+  "store": {
+    "translation": "магазин",
+    "category": "Household"
+  },
+  "repair": {
+    "translation": "ремонт",
+    "category": "Household"
+  },
+  "fix": {
+    "translation": "ремонт",
+    "category": "Household"
+  },
+  "disassemble": {
+    "translation": "разобрать",
+    "category": "Household"
+  },
+  "install": {
+    "translation": "установить",
+    "category": "Household"
+  },
+  "uninstall": {
+    "translation": "отключить",
+    "category": "Household"
+  },
+  "remove": {
+    "translation": "удалить",
+    "category": "Household"
+  },
+  "connect": {
+    "translation": "подключить",
+    "category": "Household"
+  },
+  "disconnect": {
+    "translation": "Отключить",
+    "category": "Household"
+  },
+  "lock": {
+    "translation": "ключ",
+    "category": "Household"
+  },
+  "unlock": {
+    "translation": "Открыть",
+    "category": "Household"
+  },
+  "decorate": {
+    "translation": "украшать",
+    "category": "Household"
+  },
+  "polish": {
+    "translation": "Польский",
+    "category": "Household"
+  },
+  "hammer": {
+    "translation": "Молоток",
+    "category": "Household"
+  },
+  "saw": {
+    "translation": "ножницы",
+    "category": "Household"
+  },
+  "glue": {
+    "translation": "клей",
+    "category": "Household"
+  },
+  "buy": {
+    "translation": "купить",
+    "category": "Money"
+  },
+  "sell": {
+    "translation": "продать",
+    "category": "Money"
+  },
+  "pay": {
+    "translation": "оплатить",
+    "category": "Money"
+  },
+  "owe": {
+    "translation": "Задолжать",
+    "category": "Money"
+  },
+  "borrow": {
+    "translation": "Брать",
+    "category": "Money"
+  },
+  "lend": {
+    "translation": "сдать",
+    "category": "Money"
+  },
+  "rent": {
+    "translation": "аренда",
+    "category": "Money"
+  },
+  "save": {
+    "translation": "Сохранить",
+    "category": "Money"
+  },
+  "spend": {
+    "translation": "проводить",
+    "category": "Money"
+  },
+  "invest": {
+    "translation": "инвестиции",
+    "category": "Money"
+  },
+  "earn": {
+    "translation": "заработать",
+    "category": "Money"
+  },
+  "refund": {
+    "translation": "возврат",
+    "category": "Money"
+  },
+  "exchange": {
+    "translation": "Обмен",
+    "category": "Money"
+  },
+  "order": {
+    "translation": "Заказ",
+    "category": "Money"
+  },
+  "select": {
+    "translation": "выбрать",
+    "category": "Money"
+  },
+  "withdraw": {
+    "translation": "ировать",
+    "category": "Money"
+  },
+  "deposit": {
+    "translation": "Предоплата",
+    "category": "Money"
+  },
+  "budget": {
+    "translation": "бюджет",
+    "category": "Money"
+  },
+  "fry": {
+    "translation": "жарить",
+    "category": "Food"
+  },
+  "grill": {
+    "translation": "барбекю",
+    "category": "Food"
+  },
+  "boil": {
+    "translation": "кипятить",
+    "category": "Food"
+  },
+  "steam": {
+    "translation": "пар",
+    "category": "Food"
+  },
+  "slice": {
+    "translation": null,
+    "category": "Food",
+    "failed": true
+  },
+  "cut": {
+    "translation": "вырезать",
+    "category": "Food"
+  },
+  "chop": {
+    "translation": "Чоп",
+    "category": "Food"
+  },
+  "mix": {
+    "translation": "мешать",
+    "category": "Food"
+  },
+  "stir": {
+    "translation": "ать",
+    "category": "Food"
+  },
+  "pour": {
+    "translation": "лить",
+    "category": "Food"
+  },
+  "serve": {
+    "translation": "служить",
+    "category": "Food"
+  },
+  "taste": {
+    "translation": "Вкус",
+    "category": "Food"
+  },
+  "season": {
+    "translation": "сезон",
+    "category": "Food"
+  },
+  "marinate": {
+    "translation": "иновать",
+    "category": "Food"
+  },
+  "chew": {
+    "translation": "жевать",
+    "category": "Food"
+  },
+  "swallow": {
+    "translation": "Поймать",
+    "category": "Food"
+  },
+  "deliver": {
+    "translation": "Доставать",
+    "category": "Food"
+  },
+  "digest": {
+    "translation": "жеванье",
+    "category": "Food"
+  },
+  "rain": {
+    "translation": "дождь",
+    "category": "Nature"
+  },
+  "snow": {
+    "translation": "снег",
+    "category": "Nature"
+  },
+  "hail": {
+    "translation": "Ливень",
+    "category": "Nature"
+  },
+  "sleet": {
+    "translation": "ледяной",
+    "category": "Nature"
+  },
+  "freeze": {
+    "translation": "Заморозить",
+    "category": "Nature"
+  },
+  "melt": {
+    "translation": "плавиться",
+    "category": "Nature"
+  },
+  "shine": {
+    "translation": "сиять",
+    "category": "Nature"
+  },
+  "blow": {
+    "translation": "дуть",
+    "category": "Nature"
+  },
+  "grow": {
+    "translation": "рост",
+    "category": "Nature"
+  },
+  "bloom": {
+    "translation": "цветение",
+    "category": "Nature"
+  },
+  "wither": {
+    "translation": "Засыхать",
+    "category": "Nature"
+  },
+  "sprout": {
+    "translation": "заростание",
+    "category": "Nature"
+  },
+  "fall": {
+    "translation": "Осень",
+    "category": "Nature"
+  },
+  "quake": {
+    "translation": "Катаклизм",
+    "category": "Nature"
+  },
+  "erode": {
+    "translation": "эрозировать",
+    "category": "Nature"
+  },
+  "burn": {
+    "translation": "запечь",
+    "category": "Nature"
+  },
+  "flood": {
+    "translation": "зат",
+    "category": "Nature"
+  },
+  "float": {
+    "translation": "плавать",
+    "category": "Nature"
+  },
+  "sink": {
+    "translation": "столкнулся",
+    "category": "Nature"
+  },
+  "rise": {
+    "translation": "Встать",
+    "category": "Nature"
+  },
+  "set": {
+    "translation": "сет",
+    "category": "Nature"
+  },
+  "breathe": {
+    "translation": "дышать",
+    "category": "Health"
+  },
+  "inhale": {
+    "translation": "вдох",
+    "category": "Health"
+  },
+  "exhale": {
+    "translation": "выдыхать",
+    "category": "Health"
+  },
+  "cough": {
+    "translation": "кашель",
+    "category": "Health"
+  },
+  "sneeze": {
+    "translation": "кашель",
+    "category": "Health"
+  },
+  "sweat": {
+    "translation": "пот",
+    "category": "Health"
+  },
+  "bleed": {
+    "translation": "потекать",
+    "category": "Health"
+  },
+  "heal": {
+    "translation": "лечение",
+    "category": "Health"
+  },
+  "recover": {
+    "translation": "восстановиться",
+    "category": "Health"
+  },
+  "ache": {
+    "translation": "болит",
+    "category": "Health"
+  },
+  "hurt": {
+    "translation": "ранить",
+    "category": "Health"
+  },
+  "strain": {
+    "translation": "нагрузка",
+    "category": "Health"
+  },
+  "exercise": {
+    "translation": "Упражнение",
+    "category": "Health"
+  },
+  "faint": {
+    "translation": "Померкнуть",
+    "category": "Health"
+  },
+  "vomit": {
+    "translation": "вы",
+    "category": "Health"
+  },
+  "blink": {
+    "translation": "моргание",
+    "category": "Health"
+  },
+  "squint": {
+    "translation": "смотреть",
+    "category": "Health"
+  },
+  "tremble": {
+    "translation": "дрожать",
+    "category": "Health"
+  },
+  "click": {
+    "translation": "Клик",
+    "category": "Technology"
+  },
+  "tap": {
+    "translation": "кран",
+    "category": "Technology"
+  },
+  "scroll": {
+    "translation": "прокрутка",
+    "category": "Technology"
+  },
+  "swipe": {
+    "translation": "П",
+    "category": "Technology"
+  },
+  "browse": {
+    "translation": "пересматривать",
+    "category": "Technology"
+  },
+  "upgrade": {
+    "translation": "Обновление",
+    "category": "Technology"
+  },
+  "copy": {
+    "translation": "Копия",
+    "category": "Technology"
+  },
+  "paste": {
+    "translation": "вставить",
+    "category": "Technology"
+  },
+  "delete": {
+    "translation": "удалить",
+    "category": "Technology"
+  },
+  "reset": {
+    "translation": "Перезагрузка",
+    "category": "Technology"
+  },
+  "restart": {
+    "translation": "перезапустить",
+    "category": "Technology"
+  },
+  "log in": {
+    "translation": "систему",
+    "category": "Technology"
+  },
+  "log out": {
+    "translation": "аккаунта",
+    "category": "Technology"
+  },
+  "sync": {
+    "translation": "синхронизация",
+    "category": "Technology"
+  },
+  "stream": {
+    "translation": "река",
+    "category": "Technology"
+  },
+  "encrypt": {
+    "translation": "Шифровать",
+    "category": "Technology"
+  },
+  "backup": {
+    "translation": "копирование",
+    "category": "Technology"
+  }
+}

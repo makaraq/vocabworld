@@ -1,0 +1,1562 @@
+{
+  "walk": {
+    "translation": "Groun",
+    "category": "Basic"
+  },
+  "run": {
+    "translation": "Lëtzebuergesch Lëtzen",
+    "category": "Basic"
+  },
+  "jump": {
+    "translation": "Springer",
+    "category": "Basic"
+  },
+  "hop": {
+    "translation": "Hoppeln",
+    "category": "Basic"
+  },
+  "skip": {
+    "translation": "Skippen",
+    "category": "Basic"
+  },
+  "crawl": {
+    "translation": "Gëllebe",
+    "category": "Basic"
+  },
+  "climb": {
+    "translation": "Eidner",
+    "category": "Basic"
+  },
+  "slide": {
+    "translation": "Schlëppen",
+    "category": "Basic"
+  },
+  "swing": {
+    "translation": "Schwingen",
+    "category": "Basic"
+  },
+  "stretch": {
+    "translation": "Estrecken",
+    "category": "Basic"
+  },
+  "bend": {
+    "translation": "Beng",
+    "category": "Basic"
+  },
+  "lift": {
+    "translation": "Aufschieß-génièt",
+    "category": "Basic"
+  },
+  "carry": {
+    "translation": "Traggen",
+    "category": "Basic"
+  },
+  "drag": {
+    "translation": "Drawergen",
+    "category": "Basic"
+  },
+  "push": {
+    "translation": "Treppen",
+    "category": "Basic"
+  },
+  "pull": {
+    "translation": "Poull",
+    "category": "Basic"
+  },
+  "hold": {
+    "translation": "Héld",
+    "category": "Basic"
+  },
+  "grab": {
+    "translation": "Gërferz",
+    "category": "Basic"
+  },
+  "drop": {
+    "translation": "Gëscht",
+    "category": "Basic"
+  },
+  "throw": {
+    "translation": "Wéi",
+    "category": "Basic"
+  },
+  "catch": {
+    "translation": "Gëscht",
+    "category": "Basic"
+  },
+  "kick": {
+    "translation": "Tschick",
+    "category": "Basic"
+  },
+  "hit": {
+    "translation": "Schlag",
+    "category": "Basic"
+  },
+  "press": {
+    "translation": "Presse",
+    "category": "Basic"
+  },
+  "twist": {
+    "translation": "Drengen",
+    "category": "Basic"
+  },
+  "turn": {
+    "translation": "Wendern",
+    "category": "Basic"
+  },
+  "rotate": {
+    "translation": "Rotieren",
+    "category": "Basic"
+  },
+  "flip": {
+    "translation": "Flippen",
+    "category": "Basic"
+  },
+  "shake": {
+    "translation": "Schinken",
+    "category": "Basic"
+  },
+  "wave": {
+    "translation": "Wéi",
+    "category": "Basic"
+  },
+  "reach": {
+    "translation": "Ettignen",
+    "category": "Basic"
+  },
+  "lean": {
+    "translation": "Leen",
+    "category": "Basic"
+  },
+  "rest": {
+    "translation": "Rëst",
+    "category": "Basic"
+  },
+  "balance": {
+    "translation": "Gewichtsverhältnis",
+    "category": "Basic"
+  },
+  "spin": {
+    "translation": "Spinn",
+    "category": "Basic"
+  },
+  "arrange": {
+    "translation": "Organiseer",
+    "category": "Basic"
+  },
+  "adjust": {
+    "translation": "Ajusten",
+    "category": "Basic"
+  },
+  "shift": {
+    "translation": "Schift",
+    "category": "Basic"
+  },
+  "tie": {
+    "translation": "Bund",
+    "category": "Basic"
+  },
+  "untie": {
+    "translation": "Bënden",
+    "category": "Basic"
+  },
+  "wrap": {
+    "translation": "Wrapp",
+    "category": "Basic"
+  },
+  "unwrap": {
+    "translation": "Unerweergen",
+    "category": "Basic"
+  },
+  "fold": {
+    "translation": "Falt",
+    "category": "Basic"
+  },
+  "unfold": {
+    "translation": "Auffaulen",
+    "category": "Basic"
+  },
+  "pack": {
+    "translation": "Pakket",
+    "category": "Basic"
+  },
+  "unpack": {
+    "translation": "Unerweern",
+    "category": "Basic"
+  },
+  "be": {
+    "translation": "sein",
+    "category": "Basic"
+  },
+  "become": {
+    "translation": "werden",
+    "category": "Basic"
+  },
+  "seem": {
+    "translation": "scheenen",
+    "category": "Basic"
+  },
+  "appear": {
+    "translation": "Auwerzen",
+    "category": "Basic"
+  },
+  "remain": {
+    "translation": "Resten",
+    "category": "Basic"
+  },
+  "stay": {
+    "translation": "bleiwe",
+    "category": "Basic"
+  },
+  "exist": {
+    "translation": "Existieren",
+    "category": "Basic"
+  },
+  "happen": {
+    "translation": "passen",
+    "category": "Basic"
+  },
+  "occur": {
+    "translation": "Eignen",
+    "category": "Basic"
+  },
+  "change": {
+    "translation": "Aänderen",
+    "category": "Basic"
+  },
+  "improve": {
+    "translation": "esserënde",
+    "category": "Basic"
+  },
+  "decline": {
+    "translation": "Abfall",
+    "category": "Basic"
+  },
+  "continue": {
+    "translation": "Fortsetzé",
+    "category": "Basic"
+  },
+  "stop": {
+    "translation": "Stopp",
+    "category": "Basic"
+  },
+  "begin": {
+    "translation": "Beginnen",
+    "category": "Basic"
+  },
+  "end": {
+    "translation": "Ende",
+    "category": "Basic"
+  },
+  "last": {
+    "translation": "Letze",
+    "category": "Basic"
+  },
+  "wake": {
+    "translation": "Wéi",
+    "category": "Daily Routine"
+  },
+  "get up": {
+    "translation": "Aufrëtt",
+    "category": "Daily Routine"
+  },
+  "wash": {
+    "translation": "Waschen",
+    "category": "Daily Routine"
+  },
+  "shower": {
+    "translation": "Dusche",
+    "category": "Daily Routine"
+  },
+  "bathe": {
+    "translation": "Baden",
+    "category": "Daily Routine"
+  },
+  "brush": {
+    "translation": "Büschel",
+    "category": "Daily Routine"
+  },
+  "comb": {
+    "translation": "Koom",
+    "category": "Daily Routine"
+  },
+  "dress": {
+    "translation": "Kleid",
+    "category": "Daily Routine"
+  },
+  "eat": {
+    "translation": "Essen",
+    "category": "Daily Routine"
+  },
+  "drink": {
+    "translation": "Getrëffern",
+    "category": "Daily Routine"
+  },
+  "snack": {
+    "translation": "Snak",
+    "category": "Daily Routine"
+  },
+  "cook": {
+    "translation": "Gueich",
+    "category": "Daily Routine"
+  },
+  "bake": {
+    "translation": "Bäckern",
+    "category": "Daily Routine"
+  },
+  "reheat": {
+    "translation": "Wärkstelle",
+    "category": "Daily Routine"
+  },
+  "clean": {
+    "translation": "Rein",
+    "category": "Daily Routine"
+  },
+  "tidy": {
+    "translation": "Sauber",
+    "category": "Daily Routine"
+  },
+  "organize": {
+    "translation": "Organisieren",
+    "category": "Daily Routine"
+  },
+  "vacuum": {
+    "translation": "Leer",
+    "category": "Daily Routine"
+  },
+  "sweep": {
+    "translation": "Schiëtt",
+    "category": "Daily Routine"
+  },
+  "mop": {
+    "translation": "Mopp",
+    "category": "Daily Routine"
+  },
+  "dust": {
+    "translation": "Stoss",
+    "category": "Daily Routine"
+  },
+  "wash dishes": {
+    "translation": "Wescheln",
+    "category": "Daily Routine"
+  },
+  "rinse": {
+    "translation": "Wescheln",
+    "category": "Daily Routine"
+  },
+  "wipe": {
+    "translation": "Schmieren",
+    "category": "Daily Routine"
+  },
+  "scrub": {
+    "translation": "Schluemmer",
+    "category": "Daily Routine"
+  },
+  "dry": {
+    "translation": "Getriger",
+    "category": "Daily Routine"
+  },
+  "shop": {
+    "translation": "Gëwë",
+    "category": "Daily Routine"
+  },
+  "refill": {
+    "translation": "Aufgëngan",
+    "category": "Daily Routine"
+  },
+  "charge": {
+    "translation": "Ladung",
+    "category": "Daily Routine"
+  },
+  "relax": {
+    "translation": "Entspann",
+    "category": "Daily Routine"
+  },
+  "nap": {
+    "translation": "Napen",
+    "category": "Daily Routine"
+  },
+  "sleep": {
+    "translation": "Schlëcht",
+    "category": "Daily Routine"
+  },
+  "prepare": {
+    "translation": "Präppen",
+    "category": "Daily Routine"
+  },
+  "schedule": {
+    "translation": "Termeskarten",
+    "category": "Daily Routine"
+  },
+  "cancel": {
+    "translation": "Abzellefen",
+    "category": "Daily Routine"
+  },
+  "check": {
+    "translation": "Prüg",
+    "category": "Daily Routine"
+  },
+  "monitor": {
+    "translation": "Wëskercht",
+    "category": "Daily Routine"
+  },
+  "plan": {
+    "translation": "Planen",
+    "category": "Daily Routine"
+  },
+  "wait": {
+    "translation": "Wëißen",
+    "category": "Daily Routine"
+  },
+  "search": {
+    "translation": "Sécht",
+    "category": "Daily Routine"
+  },
+  "find": {
+    "translation": "Finden",
+    "category": "Daily Routine"
+  },
+  "lose": {
+    "translation": "Lësse",
+    "category": "Daily Routine"
+  },
+  "replace": {
+    "translation": "Eitréidprar",
+    "category": "Daily Routine"
+  },
+  "think": {
+    "translation": "Denken",
+    "category": "Mental"
+  },
+  "know": {
+    "translation": "wuonnéi",
+    "category": "Mental"
+  },
+  "believe": {
+    "translation": "Glauben",
+    "category": "Mental"
+  },
+  "consider": {
+    "translation": "Betrachteoten",
+    "category": "Mental"
+  },
+  "imagine": {
+    "translation": "Imaginen",
+    "category": "Mental"
+  },
+  "wonder": {
+    "translation": "Wënder",
+    "category": "Mental"
+  },
+  "remember": {
+    "translation": "Erinnereoten",
+    "category": "Mental"
+  },
+  "forget": {
+    "translation": "Gësser",
+    "category": "Mental"
+  },
+  "realize": {
+    "translation": "Realisierënte",
+    "category": "Mental"
+  },
+  "guess": {
+    "translation": "Gëss",
+    "category": "Mental"
+  },
+  "predict": {
+    "translation": "Préduik",
+    "category": "Mental"
+  },
+  "expect": {
+    "translation": "Erwënten",
+    "category": "Mental"
+  },
+  "recognize": {
+    "translation": "Anerknen",
+    "category": "Mental"
+  },
+  "notice": {
+    "translation": "Notiz",
+    "category": "Mental"
+  },
+  "focus": {
+    "translation": "Fouks",
+    "category": "Mental"
+  },
+  "concentrate": {
+    "translation": "Konzentriert",
+    "category": "Mental"
+  },
+  "decide": {
+    "translation": "beschleden",
+    "category": "Mental"
+  },
+  "choose": {
+    "translation": "wëscht",
+    "category": "Mental"
+  },
+  "compare": {
+    "translation": "Gëlletervu",
+    "category": "Mental"
+  },
+  "analyze": {
+    "translation": "Analysen",
+    "category": "Mental"
+  },
+  "evaluate": {
+    "translation": "Evaluëieren",
+    "category": "Mental"
+  },
+  "estimate": {
+    "translation": "Schätzen",
+    "category": "Mental"
+  },
+  "solve": {
+    "translation": "Lösen",
+    "category": "Mental"
+  },
+  "question": {
+    "translation": "Frage",
+    "category": "Mental"
+  },
+  "suspect": {
+    "translation": "Suspek",
+    "category": "Mental"
+  },
+  "doubt": {
+    "translation": "Zoube",
+    "category": "Mental"
+  },
+  "learn": {
+    "translation": "Lërnen",
+    "category": "Mental"
+  },
+  "study": {
+    "translation": "Lëschen",
+    "category": "Mental"
+  },
+  "memorize": {
+    "translation": "Gedachnetzewerken",
+    "category": "Mental"
+  },
+  "calculate": {
+    "translation": "Rechnen",
+    "category": "Mental"
+  },
+  "reflect": {
+    "translation": "Reflekté",
+    "category": "Mental"
+  },
+  "understand": {
+    "translation": "Verstënden",
+    "category": "Mental"
+  },
+  "like": {
+    "translation": "gët",
+    "category": "Mental"
+  },
+  "love": {
+    "translation": "Léi",
+    "category": "Mental"
+  },
+  "hate": {
+    "translation": "Haat",
+    "category": "Mental"
+  },
+  "enjoy": {
+    "translation": "geniessen",
+    "category": "Mental"
+  },
+  "prefer": {
+    "translation": "Prëferénte",
+    "category": "Mental"
+  },
+  "want": {
+    "translation": "Wënten",
+    "category": "Mental"
+  },
+  "need": {
+    "translation": "Bedarf",
+    "category": "Mental"
+  },
+  "miss": {
+    "translation": "Mission",
+    "category": "Mental"
+  },
+  "care": {
+    "translation": "Sorg",
+    "category": "Mental"
+  },
+  "worry": {
+    "translation": "Sorg",
+    "category": "Mental"
+  },
+  "fear": {
+    "translation": "Féer",
+    "category": "Mental"
+  },
+  "panic": {
+    "translation": "Pënhikne",
+    "category": "Mental"
+  },
+  "stress": {
+    "translation": "Stressen",
+    "category": "Mental"
+  },
+  "calm": {
+    "translation": "Rauk",
+    "category": "Mental"
+  },
+  "appreciate": {
+    "translation": "Wertwenne",
+    "category": "Mental"
+  },
+  "value": {
+    "translation": "Wert",
+    "category": "Mental"
+  },
+  "respect": {
+    "translation": "Respekt",
+    "category": "Mental"
+  },
+  "dislike": {
+    "translation": "Missen",
+    "category": "Mental"
+  },
+  "regret": {
+    "translation": "Regecht",
+    "category": "Mental"
+  },
+  "hope": {
+    "translation": "Hoop",
+    "category": "Mental"
+  },
+  "trust": {
+    "translation": "Glaubenswert",
+    "category": "Mental"
+  },
+  "surprise": {
+    "translation": "Surprìsese",
+    "category": "Mental"
+  },
+  "shock": {
+    "translation": "Schokk",
+    "category": "Mental"
+  },
+  "annoy": {
+    "translation": "Unnöggern",
+    "category": "Mental"
+  },
+  "bother": {
+    "translation": "Gemmerk",
+    "category": "Mental"
+  },
+  "confuse": {
+    "translation": "Verwirren",
+    "category": "Mental"
+  },
+  "embarrass": {
+    "translation": "Schämmen",
+    "category": "Mental"
+  },
+  "frustrate": {
+    "translation": "Verderber",
+    "category": "Mental"
+  },
+  "satisfy": {
+    "translation": "Befriedigen",
+    "category": "Mental"
+  },
+  "comfort": {
+    "translation": "Gemachlichkeit",
+    "category": "Mental"
+  },
+  "cheer": {
+    "translation": "Gézelligheit",
+    "category": "Mental"
+  },
+  "say": {
+    "translation": "Séi",
+    "category": "Communication"
+  },
+  "tell": {
+    "translation": "Séi",
+    "category": "Communication"
+  },
+  "talk": {
+    "translation": "Gëlleffzig",
+    "category": "Communication"
+  },
+  "speak": {
+    "translation": "Sprëchprarbe",
+    "category": "Communication"
+  },
+  "discuss": {
+    "translation": "Diskutéieren",
+    "category": "Communication"
+  },
+  "chat": {
+    "translation": "Chassé",
+    "category": "Communication"
+  },
+  "explain": {
+    "translation": "Erklärengen",
+    "category": "Communication"
+  },
+  "describe": {
+    "translation": "Beschreibe",
+    "category": "Communication"
+  },
+  "announce": {
+    "translation": "Annonzé",
+    "category": "Communication"
+  },
+  "report": {
+    "translation": "Bericht",
+    "category": "Communication"
+  },
+  "reply": {
+    "translation": "Richecen",
+    "category": "Communication"
+  },
+  "answer": {
+    "translation": "Antwort",
+    "category": "Communication"
+  },
+  "ask": {
+    "translation": "Frage",
+    "category": "Communication"
+  },
+  "interrupt": {
+    "translation": "Auffhörëngen",
+    "category": "Communication"
+  },
+  "suggest": {
+    "translation": "Vëljetzwidewidewi",
+    "category": "Communication"
+  },
+  "recommend": {
+    "translation": "Empfoenoten",
+    "category": "Communication"
+  },
+  "complain": {
+    "translation": "Géiwerdern",
+    "category": "Communication"
+  },
+  "argue": {
+    "translation": "diskutéieren",
+    "category": "Communication"
+  },
+  "debate": {
+    "translation": "Diskussion",
+    "category": "Communication"
+  },
+  "whisper": {
+    "translation": "Flüter",
+    "category": "Communication"
+  },
+  "shout": {
+    "translation": "Schreëll",
+    "category": "Communication"
+  },
+  "yell": {
+    "translation": "Schreig",
+    "category": "Communication"
+  },
+  "mention": {
+    "translation": "Mentionieren",
+    "category": "Communication"
+  },
+  "remind": {
+    "translation": "Erinnern",
+    "category": "Communication"
+  },
+  "warn": {
+    "translation": "Awarne",
+    "category": "Communication"
+  },
+  "advise": {
+    "translation": "Berätte",
+    "category": "Communication"
+  },
+  "encourage": {
+    "translation": "Anmoove",
+    "category": "Communication"
+  },
+  "persuade": {
+    "translation": "Perswéid",
+    "category": "Communication"
+  },
+  "invite": {
+    "translation": "Gëwënnern",
+    "category": "Communication"
+  },
+  "respond": {
+    "translation": "Ameren",
+    "category": "Communication"
+  },
+  "translate": {
+    "translation": "Übersëttewohnen",
+    "category": "Communication"
+  },
+  "inform": {
+    "translation": "Informieren",
+    "category": "Communication"
+  },
+  "comment": {
+    "translation": "Kommentärgenie",
+    "category": "Communication"
+  },
+  "confirm": {
+    "translation": "Bestätign",
+    "category": "Communication"
+  },
+  "deny": {
+    "translation": "Abweigern",
+    "category": "Communication"
+  },
+  "admit": {
+    "translation": "Eingeseiwen",
+    "category": "Communication"
+  },
+  "meet": {
+    "translation": "Meißen",
+    "category": "Social"
+  },
+  "greet": {
+    "translation": "Gëschtten",
+    "category": "Social"
+  },
+  "welcome": {
+    "translation": "Willkommen",
+    "category": "Social"
+  },
+  "visit": {
+    "translation": "Besuchen",
+    "category": "Social"
+  },
+  "host": {
+    "translation": "Wéi",
+    "category": "Social"
+  },
+  "join": {
+    "translation": "Gënschlosser",
+    "category": "Social"
+  },
+  "help": {
+    "translation": "Hëllept",
+    "category": "Social"
+  },
+  "support": {
+    "translation": "Souten",
+    "category": "Social"
+  },
+  "assist": {
+    "translation": "Aidēn",
+    "category": "Social"
+  },
+  "share": {
+    "translation": "Gëscht",
+    "category": "Social"
+  },
+  "care for": {
+    "translation": "Sorgern",
+    "category": "Social"
+  },
+  "hug": {
+    "translation": "Emmer",
+    "category": "Social"
+  },
+  "kiss": {
+    "translation": "Tschépp",
+    "category": "Social"
+  },
+  "hold hands": {
+    "translation": "Hénn hållt",
+    "category": "Social"
+  },
+  "date": {
+    "translation": "Dat",
+    "category": "Social"
+  },
+  "marry": {
+    "translation": "verheirachten",
+    "category": "Social"
+  },
+  "befriend": {
+    "translation": "Gëwënnern",
+    "category": "Social"
+  },
+  "follow": {
+    "translation": "Folgro",
+    "category": "Social"
+  },
+  "lead": {
+    "translation": "Leed",
+    "category": "Social"
+  },
+  "guide": {
+    "translation": "Féiter",
+    "category": "Social"
+  },
+  "introduce": {
+    "translation": "Einfen",
+    "category": "Social"
+  },
+  "cooperate": {
+    "translation": "Këmmeren",
+    "category": "Social"
+  },
+  "protect": {
+    "translation": "Schüttel",
+    "category": "Social"
+  },
+  "include": {
+    "translation": "Einlecke",
+    "category": "Social"
+  },
+  "exclude": {
+    "translation": "Exkludër",
+    "category": "Social"
+  },
+  "work": {
+    "translation": "Arbeit",
+    "category": "Work"
+  },
+  "write": {
+    "translation": "schreëtt",
+    "category": "Work"
+  },
+  "read": {
+    "translation": "Lese",
+    "category": "Work"
+  },
+  "edit": {
+    "translation": "Redeigne",
+    "category": "Work"
+  },
+  "revise": {
+    "translation": "Rëvidier",
+    "category": "Work"
+  },
+  "review": {
+    "translation": "Übersecht",
+    "category": "Work"
+  },
+  "inspect": {
+    "translation": "Prüffen",
+    "category": "Work"
+  },
+  "complete": {
+    "translation": "Gëlle",
+    "category": "Work"
+  },
+  "submit": {
+    "translation": "Einreichen",
+    "category": "Work"
+  },
+  "create": {
+    "translation": "ëschaffé",
+    "category": "Work"
+  },
+  "design": {
+    "translation": "Designen",
+    "category": "Work"
+  },
+  "build": {
+    "translation": "Bëlgern",
+    "category": "Work"
+  },
+  "assemble": {
+    "translation": "Gëscheidprarbecht",
+    "category": "Work"
+  },
+  "debug": {
+    "translation": "Debuggen",
+    "category": "Work"
+  },
+  "research": {
+    "translation": "Forscht",
+    "category": "Work"
+  },
+  "document": {
+    "translation": "Dokument",
+    "category": "Work"
+  },
+  "train": {
+    "translation": "Zoulet",
+    "category": "Work"
+  },
+  "teach": {
+    "translation": "Leere",
+    "category": "Work"
+  },
+  "update": {
+    "translation": "Auffèrscht",
+    "category": "Work"
+  },
+  "upload": {
+    "translation": "Aufgeladen",
+    "category": "Work"
+  },
+  "download": {
+    "translation": "Donnerwéi",
+    "category": "Work"
+  },
+  "print": {
+    "translation": "Druck",
+    "category": "Work"
+  },
+  "scan": {
+    "translation": "Skaner",
+    "category": "Work"
+  },
+  "record": {
+    "translation": "Reggêt",
+    "category": "Work"
+  },
+  "track": {
+    "translation": "Spur",
+    "category": "Work"
+  },
+  "manage": {
+    "translation": "Verwalten",
+    "category": "Work"
+  },
+  "supervise": {
+    "translation": "Überwëssen",
+    "category": "Work"
+  },
+  "go": {
+    "translation": "Gëlle",
+    "category": "Travel"
+  },
+  "come": {
+    "translation": "Komme",
+    "category": "Travel"
+  },
+  "move": {
+    "translation": "Bewegel",
+    "category": "Travel"
+  },
+  "leave": {
+    "translation": "Gëllebe",
+    "category": "Travel"
+  },
+  "arrive": {
+    "translation": "Anreech",
+    "category": "Travel"
+  },
+  "enter": {
+    "translation": "Eintreten",
+    "category": "Travel"
+  },
+  "exit": {
+    "translation": "Ausgang",
+    "category": "Travel"
+  },
+  "travel": {
+    "translation": "Reisen",
+    "category": "Travel"
+  },
+  "fly": {
+    "translation": "Fliegg",
+    "category": "Travel"
+  },
+  "drive": {
+    "translation": "Froussen",
+    "category": "Travel"
+  },
+  "ride": {
+    "translation": "Reise",
+    "category": "Travel"
+  },
+  "board": {
+    "translation": "Boart",
+    "category": "Travel"
+  },
+  "land": {
+    "translation": "Landen",
+    "category": "Travel"
+  },
+  "park": {
+    "translation": "Gartenergarten",
+    "category": "Travel"
+  },
+  "accelerate": {
+    "translation": "Accëlsieren",
+    "category": "Travel"
+  },
+  "reverse": {
+    "translation": "Reversë",
+    "category": "Travel"
+  },
+  "cross": {
+    "translation": "Kruoss",
+    "category": "Travel"
+  },
+  "wander": {
+    "translation": "Wandre",
+    "category": "Travel"
+  },
+  "explore": {
+    "translation": "Erkner",
+    "category": "Travel"
+  },
+  "return": {
+    "translation": "Rückënterwenng",
+    "category": "Travel"
+  },
+  "rush": {
+    "translation": "Rüsch",
+    "category": "Travel"
+  },
+  "hurry": {
+    "translation": "Eilig",
+    "category": "Travel"
+  },
+  "navigate": {
+    "translation": "Navigéieren",
+    "category": "Travel"
+  },
+  "sanitize": {
+    "translation": "Klärn",
+    "category": "Household"
+  },
+  "iron": {
+    "translation": "Eisner",
+    "category": "Household"
+  },
+  "store": {
+    "translation": "Gëscht",
+    "category": "Household"
+  },
+  "repair": {
+    "translation": "Réppéi",
+    "category": "Household"
+  },
+  "fix": {
+    "translation": "Répari",
+    "category": "Household"
+  },
+  "disassemble": {
+    "translation": "Abbaanzen",
+    "category": "Household"
+  },
+  "install": {
+    "translation": "Installieren",
+    "category": "Household"
+  },
+  "uninstall": {
+    "translation": "Deinstaller",
+    "category": "Household"
+  },
+  "remove": {
+    "translation": "Entferne",
+    "category": "Household"
+  },
+  "connect": {
+    "translation": "inden",
+    "category": "Household"
+  },
+  "disconnect": {
+    "translation": "Abstiegen",
+    "category": "Household"
+  },
+  "lock": {
+    "translation": "Schluß",
+    "category": "Household"
+  },
+  "unlock": {
+    "translation": "Ongliemen",
+    "category": "Household"
+  },
+  "decorate": {
+    "translation": "dekoreerprar",
+    "category": "Household"
+  },
+  "polish": {
+    "translation": "Polnisch",
+    "category": "Household"
+  },
+  "hammer": {
+    "translation": "Mädder",
+    "category": "Household"
+  },
+  "saw": {
+    "translation": "Sawt",
+    "category": "Household"
+  },
+  "glue": {
+    "translation": "Baar",
+    "category": "Household"
+  },
+  "buy": {
+    "translation": "Kämmen",
+    "category": "Money"
+  },
+  "sell": {
+    "translation": "Verkäfscht",
+    "category": "Money"
+  },
+  "pay": {
+    "translation": "Bezahlen",
+    "category": "Money"
+  },
+  "owe": {
+    "translation": "Schéngel",
+    "category": "Money"
+  },
+  "borrow": {
+    "translation": "Leihen",
+    "category": "Money"
+  },
+  "lend": {
+    "translation": "Leen",
+    "category": "Money"
+  },
+  "rent": {
+    "translation": "Lëtzebuergesch Léngen",
+    "category": "Money"
+  },
+  "save": {
+    "translation": "Sauve",
+    "category": "Money"
+  },
+  "spend": {
+    "translation": "Verzengen",
+    "category": "Money"
+  },
+  "invest": {
+    "translation": "Investeren",
+    "category": "Money"
+  },
+  "earn": {
+    "translation": "Oësen",
+    "category": "Money"
+  },
+  "refund": {
+    "translation": "Rückgeld",
+    "category": "Money"
+  },
+  "exchange": {
+    "translation": "Tausch",
+    "category": "Money"
+  },
+  "order": {
+    "translation": "Bestellanje",
+    "category": "Money"
+  },
+  "select": {
+    "translation": "Auswëlzen",
+    "category": "Money"
+  },
+  "withdraw": {
+    "translation": "Ziehen",
+    "category": "Money"
+  },
+  "deposit": {
+    "translation": "Deposiet",
+    "category": "Money"
+  },
+  "budget": {
+    "translation": "Budjet",
+    "category": "Money"
+  },
+  "fry": {
+    "translation": "Frits",
+    "category": "Food"
+  },
+  "grill": {
+    "translation": "Grillen",
+    "category": "Food"
+  },
+  "boil": {
+    "translation": "Kocher",
+    "category": "Food"
+  },
+  "steam": {
+    "translation": "Dampf",
+    "category": "Food"
+  },
+  "slice": {
+    "translation": "Sleife",
+    "category": "Food"
+  },
+  "cut": {
+    "translation": "Cuttén",
+    "category": "Food"
+  },
+  "chop": {
+    "translation": "Schlag",
+    "category": "Food"
+  },
+  "mix": {
+    "translation": "Mëzzen",
+    "category": "Food"
+  },
+  "stir": {
+    "translation": "Gemischt",
+    "category": "Food"
+  },
+  "pour": {
+    "translation": "Gëlle",
+    "category": "Food"
+  },
+  "serve": {
+    "translation": "Dien",
+    "category": "Food"
+  },
+  "taste": {
+    "translation": "Geschmack",
+    "category": "Food"
+  },
+  "season": {
+    "translation": "Sëson",
+    "category": "Food"
+  },
+  "marinate": {
+    "translation": "Marineren",
+    "category": "Food"
+  },
+  "chew": {
+    "translation": "Gruen",
+    "category": "Food"
+  },
+  "swallow": {
+    "translation": "Schwalb",
+    "category": "Food"
+  },
+  "deliver": {
+    "translation": "Liefere",
+    "category": "Food"
+  },
+  "digest": {
+    "translation": "Dëggest",
+    "category": "Food"
+  },
+  "rain": {
+    "translation": "Regen",
+    "category": "Nature"
+  },
+  "snow": {
+    "translation": "Schnee",
+    "category": "Nature"
+  },
+  "hail": {
+    "translation": "Gëwë",
+    "category": "Nature"
+  },
+  "sleet": {
+    "translation": "Snurz",
+    "category": "Nature"
+  },
+  "freeze": {
+    "translation": "Eisner",
+    "category": "Nature"
+  },
+  "melt": {
+    "translation": "Schmelz",
+    "category": "Nature"
+  },
+  "shine": {
+    "translation": "Lëtzebuergesch Léi",
+    "category": "Nature"
+  },
+  "blow": {
+    "translation": "Blou",
+    "category": "Nature"
+  },
+  "grow": {
+    "translation": "wachen",
+    "category": "Nature"
+  },
+  "bloom": {
+    "translation": "Blommi",
+    "category": "Nature"
+  },
+  "wither": {
+    "translation": "Gëmmern",
+    "category": "Nature"
+  },
+  "sprout": {
+    "translation": "Grommert",
+    "category": "Nature"
+  },
+  "fall": {
+    "translation": "Fallenner",
+    "category": "Nature"
+  },
+  "quake": {
+    "translation": "Schéike",
+    "category": "Nature"
+  },
+  "erode": {
+    "translation": "Erodë",
+    "category": "Nature"
+  },
+  "burn": {
+    "translation": "Bréngen",
+    "category": "Nature"
+  },
+  "flood": {
+    "translation": "Überschwemmung",
+    "category": "Nature"
+  },
+  "float": {
+    "translation": "Flotté",
+    "category": "Nature"
+  },
+  "sink": {
+    "translation": "Sinn",
+    "category": "Nature"
+  },
+  "rise": {
+    "translation": "Aufrise",
+    "category": "Nature"
+  },
+  "set": {
+    "translation": "Setz",
+    "category": "Nature"
+  },
+  "breathe": {
+    "translation": "Atmen",
+    "category": "Health"
+  },
+  "inhale": {
+    "translation": "Atmen",
+    "category": "Health"
+  },
+  "exhale": {
+    "translation": "Aushaue",
+    "category": "Health"
+  },
+  "cough": {
+    "translation": "Rüppen",
+    "category": "Health"
+  },
+  "sneeze": {
+    "translation": "Schmupf",
+    "category": "Health"
+  },
+  "sweat": {
+    "translation": "Glied",
+    "category": "Health"
+  },
+  "bleed": {
+    "translation": "Blëddt",
+    "category": "Health"
+  },
+  "heal": {
+    "translation": "Guëssen",
+    "category": "Health"
+  },
+  "recover": {
+    "translation": "Rekéiweren",
+    "category": "Health"
+  },
+  "ache": {
+    "translation": "Schéißen",
+    "category": "Health"
+  },
+  "hurt": {
+    "translation": "Gësscht",
+    "category": "Health"
+  },
+  "strain": {
+    "translation": "Stein",
+    "category": "Health"
+  },
+  "exercise": {
+    "translation": "Übërgang",
+    "category": "Health"
+  },
+  "faint": {
+    "translation": "Gwisk",
+    "category": "Health"
+  },
+  "vomit": {
+    "translation": "Wütt",
+    "category": "Health"
+  },
+  "blink": {
+    "translation": "Augenfunnk",
+    "category": "Health"
+  },
+  "squint": {
+    "translation": "Schluengen",
+    "category": "Health"
+  },
+  "tremble": {
+    "translation": "Zittern",
+    "category": "Health"
+  },
+  "click": {
+    "translation": "Klick",
+    "category": "Technology"
+  },
+  "tap": {
+    "translation": "Treppe",
+    "category": "Technology"
+  },
+  "scroll": {
+    "translation": "Schrool",
+    "category": "Technology"
+  },
+  "swipe": {
+    "translation": "Schlëpp",
+    "category": "Technology"
+  },
+  "browse": {
+    "translation": "Blouwen",
+    "category": "Technology"
+  },
+  "upgrade": {
+    "translation": "Auffgrangern",
+    "category": "Technology"
+  },
+  "copy": {
+    "translation": "Kopie",
+    "category": "Technology"
+  },
+  "paste": {
+    "translation": "Pesten",
+    "category": "Technology"
+  },
+  "delete": {
+    "translation": "Löschen",
+    "category": "Technology"
+  },
+  "reset": {
+    "translation": "Rüseten",
+    "category": "Technology"
+  },
+  "restart": {
+    "translation": "Reestar",
+    "category": "Technology"
+  },
+  "log in": {
+    "translation": "Einloggen",
+    "category": "Technology"
+  },
+  "log out": {
+    "translation": "Abmelden",
+    "category": "Technology"
+  },
+  "sync": {
+    "translation": "Syncronisieren",
+    "category": "Technology"
+  },
+  "stream": {
+    "translation": "Fluss",
+    "category": "Technology"
+  },
+  "encrypt": {
+    "translation": "Verschlüsseln",
+    "category": "Technology"
+  },
+  "backup": {
+    "translation": "Rücksicherung",
+    "category": "Technology"
+  }
+}

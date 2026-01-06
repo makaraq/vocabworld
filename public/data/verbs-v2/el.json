@@ -1,0 +1,1562 @@
+{
+  "walk": {
+    "translation": "περάσω",
+    "category": "Basic"
+  },
+  "run": {
+    "translation": "πορευται",
+    "category": "Basic"
+  },
+  "jump": {
+    "translation": "ος",
+    "category": "Basic"
+  },
+  "hop": {
+    "translation": "κώμιζω",
+    "category": "Basic"
+  },
+  "skip": {
+    "translation": "καθίζω",
+    "category": "Basic"
+  },
+  "crawl": {
+    "translation": "κρύζω",
+    "category": "Basic"
+  },
+  "climb": {
+    "translation": "αναβημπτόμαι",
+    "category": "Basic"
+  },
+  "slide": {
+    "translation": "σκληρός",
+    "category": "Basic"
+  },
+  "swing": {
+    "translation": "κάντα",
+    "category": "Basic"
+  },
+  "stretch": {
+    "translation": "στραβώ",
+    "category": "Basic"
+  },
+  "bend": {
+    "translation": "κάμψη",
+    "category": "Basic"
+  },
+  "lift": {
+    "translation": "εγκύμων",
+    "category": "Basic"
+  },
+  "carry": {
+    "translation": "Βασάνιζω",
+    "category": "Basic"
+  },
+  "drag": {
+    "translation": "τρέχω",
+    "category": "Basic"
+  },
+  "push": {
+    "translation": "πίσω",
+    "category": "Basic"
+  },
+  "pull": {
+    "translation": "ορω",
+    "category": "Basic"
+  },
+  "hold": {
+    "translation": "τηρέω",
+    "category": "Basic"
+  },
+  "grab": {
+    "translation": "κραββάτι",
+    "category": "Basic"
+  },
+  "drop": {
+    "translation": "χαμηλότητα",
+    "category": "Basic"
+  },
+  "throw": {
+    "translation": "βάλλω",
+    "category": "Basic"
+  },
+  "catch": {
+    "translation": "κατάσχω",
+    "category": "Basic"
+  },
+  "kick": {
+    "translation": "ξεκίνημα",
+    "category": "Basic"
+  },
+  "hit": {
+    "translation": "πατώ",
+    "category": "Basic"
+  },
+  "press": {
+    "translation": "πίσσα",
+    "category": "Basic"
+  },
+  "twist": {
+    "translation": "κάμψη",
+    "category": "Basic"
+  },
+  "turn": {
+    "translation": "περιστρέφω",
+    "category": "Basic"
+  },
+  "rotate": {
+    "translation": "περιστρέφω",
+    "category": "Basic"
+  },
+  "flip": {
+    "translation": "πτησμός",
+    "category": "Basic"
+  },
+  "shake": {
+    "translation": "τ",
+    "category": "Basic"
+  },
+  "wave": {
+    "translation": "λάμβανος",
+    "category": "Basic"
+  },
+  "reach": {
+    "translation": "επιτεύξω",
+    "category": "Basic"
+  },
+  "lean": {
+    "translation": "κατάπλευση",
+    "category": "Basic"
+  },
+  "rest": {
+    "translation": "σκεύος",
+    "category": "Basic"
+  },
+  "balance": {
+    "translation": "ελευθερίας",
+    "category": "Basic"
+  },
+  "spin": {
+    "translation": "στρέβλωση",
+    "category": "Basic"
+  },
+  "arrange": {
+    "translation": "στροφεύω",
+    "category": "Basic"
+  },
+  "adjust": {
+    "translation": "επανάρθρωση",
+    "category": "Basic"
+  },
+  "shift": {
+    "translation": "μεταβολή",
+    "category": "Basic"
+  },
+  "tie": {
+    "translation": "τείων",
+    "category": "Basic"
+  },
+  "untie": {
+    "translation": "ποδεσμόω",
+    "category": "Basic"
+  },
+  "wrap": {
+    "translation": "καλύπτω",
+    "category": "Basic"
+  },
+  "unwrap": {
+    "translation": "εξορίσω",
+    "category": "Basic"
+  },
+  "fold": {
+    "translation": "πλεκτήρ",
+    "category": "Basic"
+  },
+  "unfold": {
+    "translation": "εξευρίπδισμα",
+    "category": "Basic"
+  },
+  "pack": {
+    "translation": "πακ",
+    "category": "Basic"
+  },
+  "unpack": {
+    "translation": "εξαντλώ",
+    "category": "Basic"
+  },
+  "be": {
+    "translation": "μί",
+    "category": "Basic"
+  },
+  "become": {
+    "translation": "γίνομαι",
+    "category": "Basic"
+  },
+  "seem": {
+    "translation": "δοκε",
+    "category": "Basic"
+  },
+  "appear": {
+    "translation": "εμφανιζόμαι",
+    "category": "Basic"
+  },
+  "remain": {
+    "translation": "μένει",
+    "category": "Basic"
+  },
+  "stay": {
+    "translation": "μένω",
+    "category": "Basic"
+  },
+  "exist": {
+    "translation": "είναι",
+    "category": "Basic"
+  },
+  "happen": {
+    "translation": "γίνεται",
+    "category": "Basic"
+  },
+  "occur": {
+    "translation": "γίνεσθαι",
+    "category": "Basic"
+  },
+  "change": {
+    "translation": "μεταβολή",
+    "category": "Basic"
+  },
+  "improve": {
+    "translation": "Καλύτερος",
+    "category": "Basic"
+  },
+  "decline": {
+    "translation": "πατάσσω",
+    "category": "Basic"
+  },
+  "continue": {
+    "translation": "συντέθειν",
+    "category": "Basic"
+  },
+  "stop": {
+    "translation": "σταμάτηση",
+    "category": "Basic"
+  },
+  "begin": {
+    "translation": "ρχάω",
+    "category": "Basic"
+  },
+  "end": {
+    "translation": "νδειξ",
+    "category": "Basic"
+  },
+  "last": {
+    "translation": "σχατος",
+    "category": "Basic"
+  },
+  "wake": {
+    "translation": "γρηγορήματι",
+    "category": "Daily Routine"
+  },
+  "get up": {
+    "translation": "εγερθεί",
+    "category": "Daily Routine"
+  },
+  "wash": {
+    "translation": "λούειν",
+    "category": "Daily Routine"
+  },
+  "shower": {
+    "translation": "λουστρον",
+    "category": "Daily Routine"
+  },
+  "bathe": {
+    "translation": "ταπεινώω",
+    "category": "Daily Routine"
+  },
+  "brush": {
+    "translation": "καμπυλόστροβον",
+    "category": "Daily Routine"
+  },
+  "comb": {
+    "translation": "κομπός",
+    "category": "Daily Routine"
+  },
+  "dress": {
+    "translation": "δ",
+    "category": "Daily Routine"
+  },
+  "eat": {
+    "translation": "τρώγω",
+    "category": "Daily Routine"
+  },
+  "drink": {
+    "translation": "πίνω",
+    "category": "Daily Routine"
+  },
+  "snack": {
+    "translation": "τραπαζίσμα",
+    "category": "Daily Routine"
+  },
+  "cook": {
+    "translation": "κουχίζω",
+    "category": "Daily Routine"
+  },
+  "bake": {
+    "translation": "καθαρίζω",
+    "category": "Daily Routine"
+  },
+  "reheat": {
+    "translation": "αναθερμαντώση",
+    "category": "Daily Routine"
+  },
+  "clean": {
+    "translation": "καθαρός",
+    "category": "Daily Routine"
+  },
+  "tidy": {
+    "translation": "Κλεκτικός",
+    "category": "Daily Routine"
+  },
+  "organize": {
+    "translation": "εγκαταστάσεις",
+    "category": "Daily Routine"
+  },
+  "vacuum": {
+    "translation": "στενός",
+    "category": "Daily Routine"
+  },
+  "sweep": {
+    "translation": "σκορπίζω",
+    "category": "Daily Routine"
+  },
+  "mop": {
+    "translation": "σκορπίος",
+    "category": "Daily Routine"
+  },
+  "dust": {
+    "translation": "ποίρινο",
+    "category": "Daily Routine"
+  },
+  "wash dishes": {
+    "translation": "Λοχαγάω",
+    "category": "Daily Routine"
+  },
+  "rinse": {
+    "translation": "ρίνζω",
+    "category": "Daily Routine"
+  },
+  "wipe": {
+    "translation": "σχολαρίζω",
+    "category": "Daily Routine"
+  },
+  "scrub": {
+    "translation": "κορύφωμα",
+    "category": "Daily Routine"
+  },
+  "dry": {
+    "translation": "Χίμαρος",
+    "category": "Daily Routine"
+  },
+  "shop": {
+    "translation": "καταστήμα",
+    "category": "Daily Routine"
+  },
+  "refill": {
+    "translation": "πληκτρολόγισμα",
+    "category": "Daily Routine"
+  },
+  "charge": {
+    "translation": "ζαργόν",
+    "category": "Daily Routine"
+  },
+  "relax": {
+    "translation": "σαρκοπνίζω",
+    "category": "Daily Routine"
+  },
+  "nap": {
+    "translation": "Σιάνκληση",
+    "category": "Daily Routine"
+  },
+  "sleep": {
+    "translation": "Σπασμός",
+    "category": "Daily Routine"
+  },
+  "prepare": {
+    "translation": "παραθώμαι",
+    "category": "Daily Routine"
+  },
+  "schedule": {
+    "translation": "Σχεδιασμός",
+    "category": "Daily Routine"
+  },
+  "cancel": {
+    "translation": "κανελός",
+    "category": "Daily Routine"
+  },
+  "check": {
+    "translation": "κάλυμνίσιμο",
+    "category": "Daily Routine"
+  },
+  "monitor": {
+    "translation": "παρακολουθητής",
+    "category": "Daily Routine"
+  },
+  "plan": {
+    "translation": "πλάνος",
+    "category": "Daily Routine"
+  },
+  "wait": {
+    "translation": "περιμένω",
+    "category": "Daily Routine"
+  },
+  "search": {
+    "translation": "ζήτημα",
+    "category": "Daily Routine"
+  },
+  "find": {
+    "translation": "ρίσκω",
+    "category": "Daily Routine"
+  },
+  "lose": {
+    "translation": "πορθμός",
+    "category": "Daily Routine"
+  },
+  "replace": {
+    "translation": "ντιτίθημι",
+    "category": "Daily Routine"
+  },
+  "think": {
+    "translation": "πειστεύω",
+    "category": "Mental"
+  },
+  "know": {
+    "translation": "γινώσκω",
+    "category": "Mental"
+  },
+  "believe": {
+    "translation": "πιστεύω",
+    "category": "Mental"
+  },
+  "consider": {
+    "translation": "Περιεξάδεσθαι",
+    "category": "Mental"
+  },
+  "imagine": {
+    "translation": "νομίστε",
+    "category": "Mental"
+  },
+  "wonder": {
+    "translation": "θώμα",
+    "category": "Mental"
+  },
+  "remember": {
+    "translation": "μνημονεύω",
+    "category": "Mental"
+  },
+  "forget": {
+    "translation": "μεμνηστικός",
+    "category": "Mental"
+  },
+  "realize": {
+    "translation": "γνωρίζειν",
+    "category": "Mental"
+  },
+  "guess": {
+    "translation": "κατάληψις",
+    "category": "Mental"
+  },
+  "predict": {
+    "translation": "προβλεπω",
+    "category": "Mental"
+  },
+  "expect": {
+    "translation": "Περασμένο",
+    "category": "Mental"
+  },
+  "recognize": {
+    "translation": "καταγνωρίζω",
+    "category": "Mental"
+  },
+  "notice": {
+    "translation": "νότιση",
+    "category": "Mental"
+  },
+  "focus": {
+    "translation": "κεντροποιηση",
+    "category": "Mental"
+  },
+  "concentrate": {
+    "translation": "κεντριστής",
+    "category": "Mental"
+  },
+  "decide": {
+    "translation": "διακρίνω",
+    "category": "Mental"
+  },
+  "choose": {
+    "translation": "εκλέγω",
+    "category": "Mental"
+  },
+  "compare": {
+    "translation": "σώνομαι",
+    "category": "Mental"
+  },
+  "analyze": {
+    "translation": "ναλύειν",
+    "category": "Mental"
+  },
+  "evaluate": {
+    "translation": "κατανομάζω",
+    "category": "Mental"
+  },
+  "estimate": {
+    "translation": "κατάργηση",
+    "category": "Mental"
+  },
+  "solve": {
+    "translation": "Συμπεριφέρω",
+    "category": "Mental"
+  },
+  "question": {
+    "translation": "προσκύνησις",
+    "category": "Mental"
+  },
+  "suspect": {
+    "translation": "οδρόμος",
+    "category": "Mental"
+  },
+  "doubt": {
+    "translation": "πορία",
+    "category": "Mental"
+  },
+  "learn": {
+    "translation": "μάθημα",
+    "category": "Mental"
+  },
+  "study": {
+    "translation": "μάθημα",
+    "category": "Mental"
+  },
+  "memorize": {
+    "translation": "μνημονεύω",
+    "category": "Mental"
+  },
+  "calculate": {
+    "translation": "ναρθάζω",
+    "category": "Mental"
+  },
+  "reflect": {
+    "translation": "επαντικαλύπτω",
+    "category": "Mental"
+  },
+  "understand": {
+    "translation": "καταλαβάναι",
+    "category": "Mental"
+  },
+  "like": {
+    "translation": "μοιος",
+    "category": "Mental"
+  },
+  "love": {
+    "translation": "Φιλία",
+    "category": "Mental"
+  },
+  "hate": {
+    "translation": "Ημερώδης",
+    "category": "Mental"
+  },
+  "enjoy": {
+    "translation": "είμαστε",
+    "category": "Mental"
+  },
+  "prefer": {
+    "translation": "προτιμώ",
+    "category": "Mental"
+  },
+  "want": {
+    "translation": "θέλω",
+    "category": "Mental"
+  },
+  "need": {
+    "translation": "χρεία",
+    "category": "Mental"
+  },
+  "miss": {
+    "translation": "μέσσα",
+    "category": "Mental"
+  },
+  "care": {
+    "translation": "Φροσηγορία",
+    "category": "Mental"
+  },
+  "worry": {
+    "translation": "Πονηρία",
+    "category": "Mental"
+  },
+  "fear": {
+    "translation": "φόβος",
+    "category": "Mental"
+  },
+  "panic": {
+    "translation": "Πανικός",
+    "category": "Mental"
+  },
+  "stress": {
+    "translation": "στρεςς",
+    "category": "Mental"
+  },
+  "calm": {
+    "translation": "Σεβας",
+    "category": "Mental"
+  },
+  "appreciate": {
+    "translation": "Εκτιμάω",
+    "category": "Mental"
+  },
+  "value": {
+    "translation": "ήξεια",
+    "category": "Mental"
+  },
+  "respect": {
+    "translation": "καταστολή",
+    "category": "Mental"
+  },
+  "dislike": {
+    "translation": "μισος",
+    "category": "Mental"
+  },
+  "regret": {
+    "translation": "πεκλασία",
+    "category": "Mental"
+  },
+  "hope": {
+    "translation": "Ελπίδα",
+    "category": "Mental"
+  },
+  "trust": {
+    "translation": "Πίστη",
+    "category": "Mental"
+  },
+  "surprise": {
+    "translation": "Σέληνος",
+    "category": "Mental"
+  },
+  "shock": {
+    "translation": "Σέληνος",
+    "category": "Mental"
+  },
+  "annoy": {
+    "translation": "νόσφιρος",
+    "category": "Mental"
+  },
+  "bother": {
+    "translation": "Σκοταδίζω",
+    "category": "Mental"
+  },
+  "confuse": {
+    "translation": "Παρεξημάτιση",
+    "category": "Mental"
+  },
+  "embarrass": {
+    "translation": "σχεδόν",
+    "category": "Mental"
+  },
+  "frustrate": {
+    "translation": "διαμαρτύρομαι",
+    "category": "Mental"
+  },
+  "satisfy": {
+    "translation": "συντάξειν",
+    "category": "Mental"
+  },
+  "comfort": {
+    "translation": "Συναισθημα",
+    "category": "Mental"
+  },
+  "cheer": {
+    "translation": "ευχαριστος",
+    "category": "Mental"
+  },
+  "say": {
+    "translation": "ειπώ",
+    "category": "Communication"
+  },
+  "tell": {
+    "translation": "λέγω",
+    "category": "Communication"
+  },
+  "talk": {
+    "translation": "λόγος",
+    "category": "Communication"
+  },
+  "speak": {
+    "translation": "λέγω",
+    "category": "Communication"
+  },
+  "discuss": {
+    "translation": "διατρίβω",
+    "category": "Communication"
+  },
+  "chat": {
+    "translation": "χάταν",
+    "category": "Communication"
+  },
+  "explain": {
+    "translation": "εξηγέω",
+    "category": "Communication"
+  },
+  "describe": {
+    "translation": "τελειώσω",
+    "category": "Communication"
+  },
+  "announce": {
+    "translation": "ακολουθήσω",
+    "category": "Communication"
+  },
+  "report": {
+    "translation": "εισηγημένο",
+    "category": "Communication"
+  },
+  "reply": {
+    "translation": "απάντηση",
+    "category": "Communication"
+  },
+  "answer": {
+    "translation": "ποκρίσις",
+    "category": "Communication"
+  },
+  "ask": {
+    "translation": "παρακαλέω",
+    "category": "Communication"
+  },
+  "interrupt": {
+    "translation": "κάθισα",
+    "category": "Communication"
+  },
+  "suggest": {
+    "translation": "πρότεινω",
+    "category": "Communication"
+  },
+  "recommend": {
+    "translation": "προτάσεις",
+    "category": "Communication"
+  },
+  "complain": {
+    "translation": "λυπούμαι",
+    "category": "Communication"
+  },
+  "argue": {
+    "translation": "διατρίβω",
+    "category": "Communication"
+  },
+  "debate": {
+    "translation": "διατρίβη",
+    "category": "Communication"
+  },
+  "whisper": {
+    "translation": "Πιεσμός",
+    "category": "Communication"
+  },
+  "shout": {
+    "translation": "κράζω",
+    "category": "Communication"
+  },
+  "yell": {
+    "translation": "κράζω",
+    "category": "Communication"
+  },
+  "mention": {
+    "translation": "αναφέρεις",
+    "category": "Communication"
+  },
+  "remind": {
+    "translation": "Μεμνέστω",
+    "category": "Communication"
+  },
+  "warn": {
+    "translation": "ειρηνεύω",
+    "category": "Communication"
+  },
+  "advise": {
+    "translation": "Προτάσεις",
+    "category": "Communication"
+  },
+  "encourage": {
+    "translation": "εκαλέω",
+    "category": "Communication"
+  },
+  "persuade": {
+    "translation": "επείνασαι",
+    "category": "Communication"
+  },
+  "invite": {
+    "translation": "εκθροπολώ",
+    "category": "Communication"
+  },
+  "respond": {
+    "translation": "ποκρίνεσθαι",
+    "category": "Communication"
+  },
+  "translate": {
+    "translation": "μεταφέρω",
+    "category": "Communication"
+  },
+  "inform": {
+    "translation": "ειδοποιητής",
+    "category": "Communication"
+  },
+  "comment": {
+    "translation": "σχόλιο",
+    "category": "Communication"
+  },
+  "confirm": {
+    "translation": "επιβεβαιώνω",
+    "category": "Communication"
+  },
+  "deny": {
+    "translation": "ρνέομαι",
+    "category": "Communication"
+  },
+  "admit": {
+    "translation": "δέχομαι",
+    "category": "Communication"
+  },
+  "meet": {
+    "translation": "μείνω",
+    "category": "Social"
+  },
+  "greet": {
+    "translation": "χαίρειν",
+    "category": "Social"
+  },
+  "welcome": {
+    "translation": "Ειρήνη",
+    "category": "Social"
+  },
+  "visit": {
+    "translation": "περισκοπέω",
+    "category": "Social"
+  },
+  "host": {
+    "translation": "ξένος",
+    "category": "Social"
+  },
+  "join": {
+    "translation": "ζευγνύω",
+    "category": "Social"
+  },
+  "help": {
+    "translation": "Βοήθεια",
+    "category": "Social"
+  },
+  "support": {
+    "translation": "Στήριξη",
+    "category": "Social"
+  },
+  "assist": {
+    "translation": "Βοηθάω",
+    "category": "Social"
+  },
+  "share": {
+    "translation": "κομμάτι",
+    "category": "Social"
+  },
+  "care for": {
+    "translation": "Φροντίδα",
+    "category": "Social"
+  },
+  "hug": {
+    "translation": "περιστερνάω",
+    "category": "Social"
+  },
+  "kiss": {
+    "translation": "Κίσσος",
+    "category": "Social"
+  },
+  "hold hands": {
+    "translation": "χορηγείται",
+    "category": "Social"
+  },
+  "date": {
+    "translation": "Ημέρα",
+    "category": "Social"
+  },
+  "marry": {
+    "translation": "γγαμβρίζω",
+    "category": "Social"
+  },
+  "befriend": {
+    "translation": "Φιλέω",
+    "category": "Social"
+  },
+  "follow": {
+    "translation": "ΕΙΝ",
+    "category": "Social"
+  },
+  "lead": {
+    "translation": "χάλαν",
+    "category": "Social"
+  },
+  "guide": {
+    "translation": "Προηγείς",
+    "category": "Social"
+  },
+  "introduce": {
+    "translation": "ξενιστήρια",
+    "category": "Social"
+  },
+  "cooperate": {
+    "translation": "κοινωνείν",
+    "category": "Social"
+  },
+  "protect": {
+    "translation": "προτεκτώ",
+    "category": "Social"
+  },
+  "include": {
+    "translation": "συμπεριλαμβάνω",
+    "category": "Social"
+  },
+  "exclude": {
+    "translation": "εξαιρέω",
+    "category": "Social"
+  },
+  "work": {
+    "translation": "ργον",
+    "category": "Work"
+  },
+  "write": {
+    "translation": "γράφω",
+    "category": "Work"
+  },
+  "read": {
+    "translation": "Βιβλίον",
+    "category": "Work"
+  },
+  "edit": {
+    "translation": "Επεξεργασία",
+    "category": "Work"
+  },
+  "revise": {
+    "translation": "καθοδηγείν",
+    "category": "Work"
+  },
+  "review": {
+    "translation": "εξαντλημένος",
+    "category": "Work"
+  },
+  "inspect": {
+    "translation": "εξετάστρει",
+    "category": "Work"
+  },
+  "complete": {
+    "translation": "τελικό",
+    "category": "Work"
+  },
+  "submit": {
+    "translation": "ποτάσσω",
+    "category": "Work"
+  },
+  "create": {
+    "translation": "κτίσαι",
+    "category": "Work"
+  },
+  "design": {
+    "translation": "τέχνη",
+    "category": "Work"
+  },
+  "build": {
+    "translation": "κτίσαι",
+    "category": "Work"
+  },
+  "assemble": {
+    "translation": "συνασχετώ",
+    "category": "Work"
+  },
+  "debug": {
+    "translation": "εξετασμός",
+    "category": "Work"
+  },
+  "research": {
+    "translation": "ζήτησις",
+    "category": "Work"
+  },
+  "document": {
+    "translation": "δικτύωμα",
+    "category": "Work"
+  },
+  "train": {
+    "translation": "τροχός",
+    "category": "Work"
+  },
+  "teach": {
+    "translation": "διδάσκω",
+    "category": "Work"
+  },
+  "update": {
+    "translation": "κατάρτιση",
+    "category": "Work"
+  },
+  "upload": {
+    "translation": "ανεβάσματος",
+    "category": "Work"
+  },
+  "download": {
+    "translation": "καταγράφη",
+    "category": "Work"
+  },
+  "print": {
+    "translation": "τύπος",
+    "category": "Work"
+  },
+  "scan": {
+    "translation": "σανναμείγνυμι",
+    "category": "Work"
+  },
+  "record": {
+    "translation": "γραμματικός",
+    "category": "Work"
+  },
+  "track": {
+    "translation": "σήληνος",
+    "category": "Work"
+  },
+  "manage": {
+    "translation": "κυβερνάω",
+    "category": "Work"
+  },
+  "supervise": {
+    "translation": "κυβερνάω",
+    "category": "Work"
+  },
+  "go": {
+    "translation": "πορεύω",
+    "category": "Travel"
+  },
+  "come": {
+    "translation": "ερχόμαι",
+    "category": "Travel"
+  },
+  "move": {
+    "translation": "Βιβλίον",
+    "category": "Travel"
+  },
+  "leave": {
+    "translation": "παραλίσταση",
+    "category": "Travel"
+  },
+  "arrive": {
+    "translation": "φροντίσω",
+    "category": "Travel"
+  },
+  "enter": {
+    "translation": "είσω",
+    "category": "Travel"
+  },
+  "exit": {
+    "translation": "εξίτηση",
+    "category": "Travel"
+  },
+  "travel": {
+    "translation": "πλείν",
+    "category": "Travel"
+  },
+  "fly": {
+    "translation": "πτερνός",
+    "category": "Travel"
+  },
+  "drive": {
+    "translation": "πτησμός",
+    "category": "Travel"
+  },
+  "ride": {
+    "translation": "πεττάω",
+    "category": "Travel"
+  },
+  "board": {
+    "translation": "πρόβολον",
+    "category": "Travel"
+  },
+  "land": {
+    "translation": "γη",
+    "category": "Travel"
+  },
+  "park": {
+    "translation": "πάρκο",
+    "category": "Travel"
+  },
+  "accelerate": {
+    "translation": "επιταχύνω",
+    "category": "Travel"
+  },
+  "reverse": {
+    "translation": "ντίτεχνος",
+    "category": "Travel"
+  },
+  "cross": {
+    "translation": "σταυρός",
+    "category": "Travel"
+  },
+  "wander": {
+    "translation": "περιπατέω",
+    "category": "Travel"
+  },
+  "explore": {
+    "translation": "εξερευνάω",
+    "category": "Travel"
+  },
+  "return": {
+    "translation": "προστρέφω",
+    "category": "Travel"
+  },
+  "rush": {
+    "translation": "στρέφω",
+    "category": "Travel"
+  },
+  "hurry": {
+    "translation": "Σπίτι",
+    "category": "Travel"
+  },
+  "navigate": {
+    "translation": "Ναυτιλείων",
+    "category": "Travel"
+  },
+  "sanitize": {
+    "translation": "εξανθεμάτιση",
+    "category": "Household"
+  },
+  "iron": {
+    "translation": "σιδηρός",
+    "category": "Household"
+  },
+  "store": {
+    "translation": "κατάστημα",
+    "category": "Household"
+  },
+  "repair": {
+    "translation": "κατασκευάζω",
+    "category": "Household"
+  },
+  "fix": {
+    "translation": "καθεστώση",
+    "category": "Household"
+  },
+  "disassemble": {
+    "translation": "διαλύσειν",
+    "category": "Household"
+  },
+  "install": {
+    "translation": "κερδίσω",
+    "category": "Household"
+  },
+  "uninstall": {
+    "translation": "αποσυνέχθηκε",
+    "category": "Household"
+  },
+  "remove": {
+    "translation": "κβαλ",
+    "category": "Household"
+  },
+  "connect": {
+    "translation": "συνδέω",
+    "category": "Household"
+  },
+  "disconnect": {
+    "translation": "αποσυ",
+    "category": "Household"
+  },
+  "lock": {
+    "translation": "κλείδι",
+    "category": "Household"
+  },
+  "unlock": {
+    "translation": "κατελείψω",
+    "category": "Household"
+  },
+  "decorate": {
+    "translation": "κοσμείω",
+    "category": "Household"
+  },
+  "polish": {
+    "translation": "πολιστός",
+    "category": "Household"
+  },
+  "hammer": {
+    "translation": "μάχαιρα",
+    "category": "Household"
+  },
+  "saw": {
+    "translation": "σκεύος",
+    "category": "Household"
+  },
+  "glue": {
+    "translation": "μαστίξ",
+    "category": "Household"
+  },
+  "buy": {
+    "translation": "πειθ",
+    "category": "Money"
+  },
+  "sell": {
+    "translation": "πουλάω",
+    "category": "Money"
+  },
+  "pay": {
+    "translation": "πληρώω",
+    "category": "Money"
+  },
+  "owe": {
+    "translation": "φείλω",
+    "category": "Money"
+  },
+  "borrow": {
+    "translation": "βορρών",
+    "category": "Money"
+  },
+  "lend": {
+    "translation": "δοντίζω",
+    "category": "Money"
+  },
+  "rent": {
+    "translation": "λευκτηρία",
+    "category": "Money"
+  },
+  "save": {
+    "translation": "σώζω",
+    "category": "Money"
+  },
+  "spend": {
+    "translation": "χρονίζω",
+    "category": "Money"
+  },
+  "invest": {
+    "translation": "διαθέσω",
+    "category": "Money"
+  },
+  "earn": {
+    "translation": "κερδάμαι",
+    "category": "Money"
+  },
+  "refund": {
+    "translation": "έπιστροφή",
+    "category": "Money"
+  },
+  "exchange": {
+    "translation": "τραπέζι",
+    "category": "Money"
+  },
+  "order": {
+    "translation": "τάξι",
+    "category": "Money"
+  },
+  "select": {
+    "translation": "Εκλέγω",
+    "category": "Money"
+  },
+  "withdraw": {
+    "translation": "εξαλείψω",
+    "category": "Money"
+  },
+  "deposit": {
+    "translation": "προ",
+    "category": "Money"
+  },
+  "budget": {
+    "translation": "ϋπολογισμός",
+    "category": "Money"
+  },
+  "fry": {
+    "translation": "ψάριον",
+    "category": "Food"
+  },
+  "grill": {
+    "translation": "βραστός",
+    "category": "Food"
+  },
+  "boil": {
+    "translation": "βολίζω",
+    "category": "Food"
+  },
+  "steam": {
+    "translation": "νεφέλη",
+    "category": "Food"
+  },
+  "slice": {
+    "translation": "κομπιότης",
+    "category": "Food"
+  },
+  "cut": {
+    "translation": "κοπε",
+    "category": "Food"
+  },
+  "chop": {
+    "translation": "τέσσερις",
+    "category": "Food"
+  },
+  "mix": {
+    "translation": "μίξης",
+    "category": "Food"
+  },
+  "stir": {
+    "translation": "Θερμαντίζω",
+    "category": "Food"
+  },
+  "pour": {
+    "translation": "κχέω",
+    "category": "Food"
+  },
+  "serve": {
+    "translation": "διακονείω",
+    "category": "Food"
+  },
+  "taste": {
+    "translation": "Τύχη",
+    "category": "Food"
+  },
+  "season": {
+    "translation": "σεζόν",
+    "category": "Food"
+  },
+  "marinate": {
+    "translation": "μαρινάτω",
+    "category": "Food"
+  },
+  "chew": {
+    "translation": "πεύκω",
+    "category": "Food"
+  },
+  "swallow": {
+    "translation": "Στρουβίλος",
+    "category": "Food"
+  },
+  "deliver": {
+    "translation": "διαστρέφω",
+    "category": "Food"
+  },
+  "digest": {
+    "translation": "διαγείτων",
+    "category": "Food"
+  },
+  "rain": {
+    "translation": "πρόσκλησις",
+    "category": "Nature"
+  },
+  "snow": {
+    "translation": "σταυρός",
+    "category": "Nature"
+  },
+  "hail": {
+    "translation": "Χιμερός",
+    "category": "Nature"
+  },
+  "sleet": {
+    "translation": "ρομφαία",
+    "category": "Nature"
+  },
+  "freeze": {
+    "translation": "κρύον",
+    "category": "Nature"
+  },
+  "melt": {
+    "translation": "μελτάω",
+    "category": "Nature"
+  },
+  "shine": {
+    "translation": "Φωτίζειν",
+    "category": "Nature"
+  },
+  "blow": {
+    "translation": "πνεύμα",
+    "category": "Nature"
+  },
+  "grow": {
+    "translation": "κορυφάω",
+    "category": "Nature"
+  },
+  "bloom": {
+    "translation": "Φωτιά",
+    "category": "Nature"
+  },
+  "wither": {
+    "translation": "ξηραίνω",
+    "category": "Nature"
+  },
+  "sprout": {
+    "translation": "επιγείωμα",
+    "category": "Nature"
+  },
+  "fall": {
+    "translation": "πέθανε",
+    "category": "Nature"
+  },
+  "quake": {
+    "translation": "τρίβων",
+    "category": "Nature"
+  },
+  "erode": {
+    "translation": "ερώτω",
+    "category": "Nature"
+  },
+  "burn": {
+    "translation": "πικρίζω",
+    "category": "Nature"
+  },
+  "flood": {
+    "translation": "πληγκτήριον",
+    "category": "Nature"
+  },
+  "float": {
+    "translation": "άω",
+    "category": "Nature"
+  },
+  "sink": {
+    "translation": "κατάπινξη",
+    "category": "Nature"
+  },
+  "rise": {
+    "translation": "εγερθώ",
+    "category": "Nature"
+  },
+  "set": {
+    "translation": "σύνοδος",
+    "category": "Nature"
+  },
+  "breathe": {
+    "translation": "πνεύμα",
+    "category": "Health"
+  },
+  "inhale": {
+    "translation": "πιπνε",
+    "category": "Health"
+  },
+  "exhale": {
+    "translation": "εκπιβάλω",
+    "category": "Health"
+  },
+  "cough": {
+    "translation": "κουχος",
+    "category": "Health"
+  },
+  "sneeze": {
+    "translation": "χιστείζω",
+    "category": "Health"
+  },
+  "sweat": {
+    "translation": "πνεύμονας",
+    "category": "Health"
+  },
+  "bleed": {
+    "translation": "χυμός",
+    "category": "Health"
+  },
+  "heal": {
+    "translation": "θεραπεύω",
+    "category": "Health"
+  },
+  "recover": {
+    "translation": "κατάσθενος",
+    "category": "Health"
+  },
+  "ache": {
+    "translation": "πόνος",
+    "category": "Health"
+  },
+  "hurt": {
+    "translation": "παροξύνω",
+    "category": "Health"
+  },
+  "strain": {
+    "translation": "στρείλη",
+    "category": "Health"
+  },
+  "exercise": {
+    "translation": "Εκσητροπή",
+    "category": "Health"
+  },
+  "faint": {
+    "translation": "Μακρυνδρομέω",
+    "category": "Health"
+  },
+  "vomit": {
+    "translation": "εκχέω",
+    "category": "Health"
+  },
+  "blink": {
+    "translation": "μυώ",
+    "category": "Health"
+  },
+  "squint": {
+    "translation": "Μπλίντα",
+    "category": "Health"
+  },
+  "tremble": {
+    "translation": "ιν",
+    "category": "Health"
+  },
+  "click": {
+    "translation": "κλικ",
+    "category": "Technology"
+  },
+  "tap": {
+    "translation": "τρυπανός",
+    "category": "Technology"
+  },
+  "scroll": {
+    "translation": "σκληρόν",
+    "category": "Technology"
+  },
+  "swipe": {
+    "translation": "πάτημα",
+    "category": "Technology"
+  },
+  "browse": {
+    "translation": "επιβλέψω",
+    "category": "Technology"
+  },
+  "upgrade": {
+    "translation": "επιβελτίστωση",
+    "category": "Technology"
+  },
+  "copy": {
+    "translation": "τεκμηρίωμα",
+    "category": "Technology"
+  },
+  "paste": {
+    "translation": "παστής",
+    "category": "Technology"
+  },
+  "delete": {
+    "translation": "αποθεριστεί",
+    "category": "Technology"
+  },
+  "reset": {
+    "translation": "νακατασκευάζω",
+    "category": "Technology"
+  },
+  "restart": {
+    "translation": "ανακοινωμένως",
+    "category": "Technology"
+  },
+  "log in": {
+    "translation": "Εισεγραφείτε",
+    "category": "Technology"
+  },
+  "log out": {
+    "translation": "εκτοποσύνδεση",
+    "category": "Technology"
+  },
+  "sync": {
+    "translation": "συνχρονισμός",
+    "category": "Technology"
+  },
+  "stream": {
+    "translation": "ποταμός",
+    "category": "Technology"
+  },
+  "encrypt": {
+    "translation": "κρυπτόω",
+    "category": "Technology"
+  },
+  "backup": {
+    "translation": "κάτοπτρον",
+    "category": "Technology"
+  }
+}

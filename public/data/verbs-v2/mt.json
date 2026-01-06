@@ -1,0 +1,1562 @@
+{
+  "walk": {
+    "translation": "Għadid",
+    "category": "Basic"
+  },
+  "run": {
+    "translation": "Ħalq Xuqbali",
+    "category": "Basic"
+  },
+  "jump": {
+    "translation": "saltu",
+    "category": "Basic"
+  },
+  "hop": {
+    "translation": "Hop in Maltese is għadid",
+    "category": "Basic"
+  },
+  "skip": {
+    "translation": "Skipsu",
+    "category": "Basic"
+  },
+  "crawl": {
+    "translation": "Għalpqil",
+    "category": "Basic"
+  },
+  "climb": {
+    "translation": "Għalpqawi",
+    "category": "Basic"
+  },
+  "slide": {
+    "translation": "SliedŻ",
+    "category": "Basic"
+  },
+  "swing": {
+    "translation": "Swiebġ",
+    "category": "Basic"
+  },
+  "stretch": {
+    "translation": "Talġa",
+    "category": "Basic"
+  },
+  "bend": {
+    "translation": "Għadra",
+    "category": "Basic"
+  },
+  "lift": {
+    "translation": "Lift in Maltese is lifto",
+    "category": "Basic"
+  },
+  "carry": {
+    "translation": "Talġa",
+    "category": "Basic"
+  },
+  "drag": {
+    "translation": "Talbietija",
+    "category": "Basic"
+  },
+  "push": {
+    "translation": "Tgall",
+    "category": "Basic"
+  },
+  "pull": {
+    "translation": "Talġa",
+    "category": "Basic"
+  },
+  "hold": {
+    "translation": "Talmaġiż",
+    "category": "Basic"
+  },
+  "grab": {
+    "translation": "Għadra",
+    "category": "Basic"
+  },
+  "drop": {
+    "translation": "ġalma",
+    "category": "Basic"
+  },
+  "throw": {
+    "translation": "Talqos",
+    "category": "Basic"
+  },
+  "catch": {
+    "translation": "Għażzu",
+    "category": "Basic"
+  },
+  "kick": {
+    "translation": "Tgall",
+    "category": "Basic"
+  },
+  "hit": {
+    "translation": "Tgall",
+    "category": "Basic"
+  },
+  "press": {
+    "translation": "presz",
+    "category": "Basic"
+  },
+  "twist": {
+    "translation": "Tintiża",
+    "category": "Basic"
+  },
+  "turn": {
+    "translation": "Tiek",
+    "category": "Basic"
+  },
+  "rotate": {
+    "translation": "Rotliġa",
+    "category": "Basic"
+  },
+  "flip": {
+    "translation": "Flġa",
+    "category": "Basic"
+  },
+  "shake": {
+    "translation": "Sċiegħ",
+    "category": "Basic"
+  },
+  "wave": {
+    "translation": "welja",
+    "category": "Basic"
+  },
+  "reach": {
+    "translation": "Tgall",
+    "category": "Basic"
+  },
+  "lean": {
+    "translation": "Liegħa",
+    "category": "Basic"
+  },
+  "rest": {
+    "translation": "Reġaħ",
+    "category": "Basic"
+  },
+  "balance": {
+    "translation": "Balans",
+    "category": "Basic"
+  },
+  "spin": {
+    "translation": "Spintra",
+    "category": "Basic"
+  },
+  "arrange": {
+    "translation": "Konsidera",
+    "category": "Basic"
+  },
+  "adjust": {
+    "translation": "Attalxawija",
+    "category": "Basic"
+  },
+  "shift": {
+    "translation": "Skifta",
+    "category": "Basic"
+  },
+  "tie": {
+    "translation": "Bontegħġa",
+    "category": "Basic"
+  },
+  "untie": {
+    "translation": "IELMIX",
+    "category": "Basic"
+  },
+  "wrap": {
+    "translation": "Baskafta",
+    "category": "Basic"
+  },
+  "unwrap": {
+    "translation": "Lempillija",
+    "category": "Basic"
+  },
+  "fold": {
+    "translation": "Fold in Maltese is tippux",
+    "category": "Basic"
+  },
+  "unfold": {
+    "translation": "Iseberrasawi",
+    "category": "Basic"
+  },
+  "pack": {
+    "translation": "Paxiema",
+    "category": "Basic"
+  },
+  "unpack": {
+    "translation": "Disċarġa",
+    "category": "Basic"
+  },
+  "be": {
+    "translation": "ċa",
+    "category": "Basic"
+  },
+  "become": {
+    "translation": "ċika",
+    "category": "Basic"
+  },
+  "seem": {
+    "translation": "tiegħa",
+    "category": "Basic"
+  },
+  "appear": {
+    "translation": "ċiedu",
+    "category": "Basic"
+  },
+  "remain": {
+    "translation": "rimaġnija",
+    "category": "Basic"
+  },
+  "stay": {
+    "translation": "Tiegħa",
+    "category": "Basic"
+  },
+  "exist": {
+    "translation": "EXIST in Maltese is tixex",
+    "category": "Basic"
+  },
+  "happen": {
+    "translation": "Ħappiem",
+    "category": "Basic"
+  },
+  "occur": {
+    "translation": "ċiewa",
+    "category": "Basic"
+  },
+  "change": {
+    "translation": "ċiedu",
+    "category": "Basic"
+  },
+  "improve": {
+    "translation": "Imbjektu",
+    "category": "Basic"
+  },
+  "decline": {
+    "translation": "Dankoloni",
+    "category": "Basic"
+  },
+  "continue": {
+    "translation": "tiegħa",
+    "category": "Basic"
+  },
+  "stop": {
+    "translation": "Tiegħi",
+    "category": "Basic"
+  },
+  "begin": {
+    "translation": "ġħaqaqa",
+    "category": "Basic"
+  },
+  "end": {
+    "translation": "Għadża",
+    "category": "Basic"
+  },
+  "last": {
+    "translation": "ġejj",
+    "category": "Basic"
+  },
+  "wake": {
+    "translation": "Ħaluka",
+    "category": "Daily Routine"
+  },
+  "get up": {
+    "translation": "Ħalpqan",
+    "category": "Daily Routine"
+  },
+  "wash": {
+    "translation": "Lauwaħ",
+    "category": "Daily Routine"
+  },
+  "shower": {
+    "translation": "ġanija",
+    "category": "Daily Routine"
+  },
+  "bathe": {
+    "translation": "Biega",
+    "category": "Daily Routine"
+  },
+  "brush": {
+    "translation": "Biebija",
+    "category": "Daily Routine"
+  },
+  "comb": {
+    "translation": "Kombija",
+    "category": "Daily Routine"
+  },
+  "dress": {
+    "translation": "KTIEĠ",
+    "category": "Daily Routine"
+  },
+  "eat": {
+    "translation": "ġieb",
+    "category": "Daily Routine"
+  },
+  "drink": {
+    "translation": "Birra",
+    "category": "Daily Routine"
+  },
+  "snack": {
+    "translation": "ġejtent",
+    "category": "Daily Routine"
+  },
+  "cook": {
+    "translation": "Kokkija",
+    "category": "Daily Routine"
+  },
+  "bake": {
+    "translation": "Bniesawi",
+    "category": "Daily Routine"
+  },
+  "reheat": {
+    "translation": "Reġenerħa",
+    "category": "Daily Routine"
+  },
+  "clean": {
+    "translation": "Tiegħekkija",
+    "category": "Daily Routine"
+  },
+  "tidy": {
+    "translation": "tiddies",
+    "category": "Daily Routine"
+  },
+  "organize": {
+    "translation": "Organizza",
+    "category": "Daily Routine"
+  },
+  "vacuum": {
+    "translation": "vuqo",
+    "category": "Daily Routine"
+  },
+  "sweep": {
+    "translation": "Siegħa",
+    "category": "Daily Routine"
+  },
+  "mop": {
+    "translation": "Mqabba",
+    "category": "Daily Routine"
+  },
+  "dust": {
+    "translation": "Għadid",
+    "category": "Daily Routine"
+  },
+  "wash dishes": {
+    "translation": "lauwaġġ",
+    "category": "Daily Routine"
+  },
+  "rinse": {
+    "translation": "Ridik",
+    "category": "Daily Routine"
+  },
+  "wipe": {
+    "translation": "Tidġal",
+    "category": "Daily Routine"
+  },
+  "scrub": {
+    "translation": "Talbietija",
+    "category": "Daily Routine"
+  },
+  "dry": {
+    "translation": "ċiewa",
+    "category": "Daily Routine"
+  },
+  "shop": {
+    "translation": "ċasaf",
+    "category": "Daily Routine"
+  },
+  "refill": {
+    "translation": "Reġista",
+    "category": "Daily Routine"
+  },
+  "charge": {
+    "translation": "Talġa",
+    "category": "Daily Routine"
+  },
+  "relax": {
+    "translation": "Ligġija",
+    "category": "Daily Routine"
+  },
+  "nap": {
+    "translation": "sieni",
+    "category": "Daily Routine"
+  },
+  "sleep": {
+    "translation": "Sliem",
+    "category": "Daily Routine"
+  },
+  "prepare": {
+    "translation": "praparawi",
+    "category": "Daily Routine"
+  },
+  "schedule": {
+    "translation": "Kalendarju",
+    "category": "Daily Routine"
+  },
+  "cancel": {
+    "translation": "IEġuħtiqa",
+    "category": "Daily Routine"
+  },
+  "check": {
+    "translation": "Kasa",
+    "category": "Daily Routine"
+  },
+  "monitor": {
+    "translation": "taswirġ",
+    "category": "Daily Routine"
+  },
+  "plan": {
+    "translation": "Plan in Maltese is plana",
+    "category": "Daily Routine"
+  },
+  "wait": {
+    "translation": "ċidu",
+    "category": "Daily Routine"
+  },
+  "search": {
+    "translation": "ċerka",
+    "category": "Daily Routine"
+  },
+  "find": {
+    "translation": "Talġa",
+    "category": "Daily Routine"
+  },
+  "lose": {
+    "translation": "ħalpqiem",
+    "category": "Daily Routine"
+  },
+  "replace": {
+    "translation": "Substitute",
+    "category": "Daily Routine"
+  },
+  "think": {
+    "translation": "għadra",
+    "category": "Mental"
+  },
+  "know": {
+    "translation": "KNċuŻġ",
+    "category": "Mental"
+  },
+  "believe": {
+    "translation": "Għalix",
+    "category": "Mental"
+  },
+  "consider": {
+    "translation": "Konsidera",
+    "category": "Mental"
+  },
+  "imagine": {
+    "translation": "Imaginġi",
+    "category": "Mental"
+  },
+  "wonder": {
+    "translation": "Mirak",
+    "category": "Mental"
+  },
+  "remember": {
+    "translation": "Remember riemġnu",
+    "category": "Mental"
+  },
+  "forget": {
+    "translation": "Irġuva",
+    "category": "Mental"
+  },
+  "realize": {
+    "translation": "Realizzjoni",
+    "category": "Mental"
+  },
+  "guess": {
+    "translation": "Talbieti",
+    "category": "Mental"
+  },
+  "predict": {
+    "translation": "Proġnozzişe",
+    "category": "Mental"
+  },
+  "expect": {
+    "translation": "tista",
+    "category": "Mental"
+  },
+  "recognize": {
+    "translation": "Izzjiexiswa",
+    "category": "Mental"
+  },
+  "notice": {
+    "translation": "Talbietija",
+    "category": "Mental"
+  },
+  "focus": {
+    "translation": "Fokussografiska",
+    "category": "Mental"
+  },
+  "concentrate": {
+    "translation": "Konċentrizzja",
+    "category": "Mental"
+  },
+  "decide": {
+    "translation": "ċidizza",
+    "category": "Mental"
+  },
+  "choose": {
+    "translation": "Seleċtu",
+    "category": "Mental"
+  },
+  "compare": {
+    "translation": "Komparu",
+    "category": "Mental"
+  },
+  "analyze": {
+    "translation": "Analizza",
+    "category": "Mental"
+  },
+  "evaluate": {
+    "translation": "Evaluata",
+    "category": "Mental"
+  },
+  "estimate": {
+    "translation": "Tal-luxuriġa",
+    "category": "Mental"
+  },
+  "solve": {
+    "translation": "SolverŻada",
+    "category": "Mental"
+  },
+  "question": {
+    "translation": "Pregjeda",
+    "category": "Mental"
+  },
+  "suspect": {
+    "translation": "Sibġa",
+    "category": "Mental"
+  },
+  "doubt": {
+    "translation": "Dikkja",
+    "category": "Mental"
+  },
+  "learn": {
+    "translation": "ċieħ",
+    "category": "Mental"
+  },
+  "study": {
+    "translation": "studju",
+    "category": "Mental"
+  },
+  "memorize": {
+    "translation": "Koliki",
+    "category": "Mental"
+  },
+  "calculate": {
+    "translation": "Kalkuliżġa",
+    "category": "Mental"
+  },
+  "reflect": {
+    "translation": "Refleksjon",
+    "category": "Mental"
+  },
+  "understand": {
+    "translation": "Intilija",
+    "category": "Mental"
+  },
+  "like": {
+    "translation": "Il-kif",
+    "category": "Mental"
+  },
+  "love": {
+    "translation": "Ġejtu",
+    "category": "Mental"
+  },
+  "hate": {
+    "translation": "Ġieb",
+    "category": "Mental"
+  },
+  "enjoy": {
+    "translation": "ġejj",
+    "category": "Mental"
+  },
+  "prefer": {
+    "translation": "Prefermu",
+    "category": "Mental"
+  },
+  "want": {
+    "translation": "ċiema",
+    "category": "Mental"
+  },
+  "need": {
+    "translation": "Ħiżża",
+    "category": "Mental"
+  },
+  "miss": {
+    "translation": "Miss in Maltese is missa",
+    "category": "Mental"
+  },
+  "care": {
+    "translation": "Kemmisa",
+    "category": "Mental"
+  },
+  "worry": {
+    "translation": "Kippi",
+    "category": "Mental"
+  },
+  "fear": {
+    "translation": "Afġan",
+    "category": "Mental"
+  },
+  "panic": {
+    "translation": "Pankuja",
+    "category": "Mental"
+  },
+  "stress": {
+    "translation": "pressu",
+    "category": "Mental"
+  },
+  "calm": {
+    "translation": "Tal bied",
+    "category": "Mental"
+  },
+  "appreciate": {
+    "translation": "Koljoniska",
+    "category": "Mental"
+  },
+  "value": {
+    "translation": "Ġebħa",
+    "category": "Mental"
+  },
+  "respect": {
+    "translation": "Respekt",
+    "category": "Mental"
+  },
+  "dislike": {
+    "translation": "Mqittu",
+    "category": "Mental"
+  },
+  "regret": {
+    "translation": "Talbieda",
+    "category": "Mental"
+  },
+  "hope": {
+    "translation": "Speranza",
+    "category": "Mental"
+  },
+  "trust": {
+    "translation": "Kredjivytà",
+    "category": "Mental"
+  },
+  "surprise": {
+    "translation": "Surpresa",
+    "category": "Mental"
+  },
+  "shock": {
+    "translation": "Talbietija",
+    "category": "Mental"
+  },
+  "annoy": {
+    "translation": "Fgura",
+    "category": "Mental"
+  },
+  "bother": {
+    "translation": "Tiegħa",
+    "category": "Mental"
+  },
+  "confuse": {
+    "translation": "Tiegħed dawnra",
+    "category": "Mental"
+  },
+  "embarrass": {
+    "translation": "Tidġan",
+    "category": "Mental"
+  },
+  "frustrate": {
+    "translation": "ġebillawi",
+    "category": "Mental"
+  },
+  "satisfy": {
+    "translation": "Siegħa",
+    "category": "Mental"
+  },
+  "comfort": {
+    "translation": "Lġawa",
+    "category": "Mental"
+  },
+  "cheer": {
+    "translation": "Bniet",
+    "category": "Mental"
+  },
+  "say": {
+    "translation": "ċaqa",
+    "category": "Communication"
+  },
+  "tell": {
+    "translation": "ċieħ",
+    "category": "Communication"
+  },
+  "talk": {
+    "translation": "-talk",
+    "category": "Communication"
+  },
+  "speak": {
+    "translation": "ċita",
+    "category": "Communication"
+  },
+  "discuss": {
+    "translation": "diskutu",
+    "category": "Communication"
+  },
+  "chat": {
+    "translation": "Chatto",
+    "category": "Communication"
+  },
+  "explain": {
+    "translation": "IELQOS",
+    "category": "Communication"
+  },
+  "describe": {
+    "translation": "tasnida",
+    "category": "Communication"
+  },
+  "announce": {
+    "translation": "Anġluħos",
+    "category": "Communication"
+  },
+  "report": {
+    "translation": "Rapportamentopardu",
+    "category": "Communication"
+  },
+  "reply": {
+    "translation": "Talġa",
+    "category": "Communication"
+  },
+  "answer": {
+    "translation": "Jewġa",
+    "category": "Communication"
+  },
+  "ask": {
+    "translation": "Domanda",
+    "category": "Communication"
+  },
+  "interrupt": {
+    "translation": "Interruzione",
+    "category": "Communication"
+  },
+  "suggest": {
+    "translation": "Sugġedżt",
+    "category": "Communication"
+  },
+  "recommend": {
+    "translation": "taddebbajża",
+    "category": "Communication"
+  },
+  "complain": {
+    "translation": "ċaġriġ",
+    "category": "Communication"
+  },
+  "argue": {
+    "translation": "disċusŝi",
+    "category": "Communication"
+  },
+  "debate": {
+    "translation": "Debata",
+    "category": "Communication"
+  },
+  "whisper": {
+    "translation": "Bfalġ",
+    "category": "Communication"
+  },
+  "shout": {
+    "translation": "Talġa",
+    "category": "Communication"
+  },
+  "yell": {
+    "translation": "Għadra",
+    "category": "Communication"
+  },
+  "mention": {
+    "translation": "Talbieda",
+    "category": "Communication"
+  },
+  "remind": {
+    "translation": "Munġu",
+    "category": "Communication"
+  },
+  "warn": {
+    "translation": "Aġġornanza",
+    "category": "Communication"
+  },
+  "advise": {
+    "translation": "TalbiediT",
+    "category": "Communication"
+  },
+  "encourage": {
+    "translation": "Injienċiare",
+    "category": "Communication"
+  },
+  "persuade": {
+    "translation": "Inżekju",
+    "category": "Communication"
+  },
+  "invite": {
+    "translation": "Invitata",
+    "category": "Communication"
+  },
+  "respond": {
+    "translation": "Replika",
+    "category": "Communication"
+  },
+  "translate": {
+    "translation": "Tridu",
+    "category": "Communication"
+  },
+  "inform": {
+    "translation": "Informatajon",
+    "category": "Communication"
+  },
+  "comment": {
+    "translation": "Kommentar",
+    "category": "Communication"
+  },
+  "confirm": {
+    "translation": "Konfirmġa",
+    "category": "Communication"
+  },
+  "deny": {
+    "translation": "Niedu",
+    "category": "Communication"
+  },
+  "admit": {
+    "translation": "Kokonċ",
+    "category": "Communication"
+  },
+  "meet": {
+    "translation": "Liegħa",
+    "category": "Social"
+  },
+  "greet": {
+    "translation": "Bissont",
+    "category": "Social"
+  },
+  "welcome": {
+    "translation": "ġħaspi",
+    "category": "Social"
+  },
+  "visit": {
+    "translation": "Visitata",
+    "category": "Social"
+  },
+  "host": {
+    "translation": "Hostess",
+    "category": "Social"
+  },
+  "join": {
+    "translation": "IngħażŻera",
+    "category": "Social"
+  },
+  "help": {
+    "translation": "ċaġrī",
+    "category": "Social"
+  },
+  "support": {
+    "translation": "ġejj",
+    "category": "Social"
+  },
+  "assist": {
+    "translation": "Attallena",
+    "category": "Social"
+  },
+  "share": {
+    "translation": "Sharġ",
+    "category": "Social"
+  },
+  "care for": {
+    "translation": "Għadda",
+    "category": "Social"
+  },
+  "hug": {
+    "translation": "Bieb Żgħat",
+    "category": "Social"
+  },
+  "kiss": {
+    "translation": "Bniet",
+    "category": "Social"
+  },
+  "hold hands": {
+    "translation": "Talbiera",
+    "category": "Social"
+  },
+  "date": {
+    "translation": "ħaddiya",
+    "category": "Social"
+  },
+  "marry": {
+    "translation": "ċiedu",
+    "category": "Social"
+  },
+  "befriend": {
+    "translation": "Koliki",
+    "category": "Social"
+  },
+  "follow": {
+    "translation": "Segui",
+    "category": "Social"
+  },
+  "lead": {
+    "translation": "Lija",
+    "category": "Social"
+  },
+  "guide": {
+    "translation": "Guida",
+    "category": "Social"
+  },
+  "introduce": {
+    "translation": "Intodukta",
+    "category": "Social"
+  },
+  "cooperate": {
+    "translation": "Kollabrażoni",
+    "category": "Social"
+  },
+  "protect": {
+    "translation": "SħiedŻAQ",
+    "category": "Social"
+  },
+  "include": {
+    "translation": "inclutħa",
+    "category": "Social"
+  },
+  "exclude": {
+    "translation": "Exkludew",
+    "category": "Social"
+  },
+  "work": {
+    "translation": "Il-ġieb",
+    "category": "Work"
+  },
+  "write": {
+    "translation": "Skribt",
+    "category": "Work"
+  },
+  "read": {
+    "translation": "Liegħa",
+    "category": "Work"
+  },
+  "edit": {
+    "translation": "ieduzza",
+    "category": "Work"
+  },
+  "revise": {
+    "translation": "Reġista",
+    "category": "Work"
+  },
+  "review": {
+    "translation": "REVUE",
+    "category": "Work"
+  },
+  "inspect": {
+    "translation": "Inspeċtġa",
+    "category": "Work"
+  },
+  "complete": {
+    "translation": "Komplettija",
+    "category": "Work"
+  },
+  "submit": {
+    "translation": "Sibgħa",
+    "category": "Work"
+  },
+  "create": {
+    "translation": "Krejci",
+    "category": "Work"
+  },
+  "design": {
+    "translation": "designa",
+    "category": "Work"
+  },
+  "build": {
+    "translation": "iegħedŻ",
+    "category": "Work"
+  },
+  "assemble": {
+    "translation": "Skonti",
+    "category": "Work"
+  },
+  "debug": {
+    "translation": "Debugġa",
+    "category": "Work"
+  },
+  "research": {
+    "translation": "rikżont",
+    "category": "Work"
+  },
+  "document": {
+    "translation": "Dokument",
+    "category": "Work"
+  },
+  "train": {
+    "translation": "TrenURT Sabha",
+    "category": "Work"
+  },
+  "teach": {
+    "translation": "Ibtexġa",
+    "category": "Work"
+  },
+  "update": {
+    "translation": "Tal-xogħla",
+    "category": "Work"
+  },
+  "upload": {
+    "translation": "TalbutĊas",
+    "category": "Work"
+  },
+  "download": {
+    "translation": "Tal-xogħol",
+    "category": "Work"
+  },
+  "print": {
+    "translation": "ċiedu",
+    "category": "Work"
+  },
+  "scan": {
+    "translation": "Scantra",
+    "category": "Work"
+  },
+  "record": {
+    "translation": "rekord dwar malti",
+    "category": "Work"
+  },
+  "track": {
+    "translation": "trakka",
+    "category": "Work"
+  },
+  "manage": {
+    "translation": "Kontrolla",
+    "category": "Work"
+  },
+  "supervise": {
+    "translation": "Supervizzjoni",
+    "category": "Work"
+  },
+  "go": {
+    "translation": "wentru",
+    "category": "Travel"
+  },
+  "come": {
+    "translation": "ġejża",
+    "category": "Travel"
+  },
+  "move": {
+    "translation": "Talaket",
+    "category": "Travel"
+  },
+  "leave": {
+    "translation": "Ħalba",
+    "category": "Travel"
+  },
+  "arrive": {
+    "translation": "Tiek",
+    "category": "Travel"
+  },
+  "enter": {
+    "translation": "Enti",
+    "category": "Travel"
+  },
+  "exit": {
+    "translation": "ixtixġa",
+    "category": "Travel"
+  },
+  "travel": {
+    "translation": "Tal-ġejj",
+    "category": "Travel"
+  },
+  "fly": {
+    "translation": "ġieb",
+    "category": "Travel"
+  },
+  "drive": {
+    "translation": "drivwa",
+    "category": "Travel"
+  },
+  "ride": {
+    "translation": "Ġejtu",
+    "category": "Travel"
+  },
+  "board": {
+    "translation": "Bohta",
+    "category": "Travel"
+  },
+  "land": {
+    "translation": "terra",
+    "category": "Travel"
+  },
+  "park": {
+    "translation": "Ġbġa",
+    "category": "Travel"
+  },
+  "accelerate": {
+    "translation": "Kemmġie",
+    "category": "Travel"
+  },
+  "reverse": {
+    "translation": "għadid",
+    "category": "Travel"
+  },
+  "cross": {
+    "translation": "Korsa",
+    "category": "Travel"
+  },
+  "wander": {
+    "translation": "Għadid",
+    "category": "Travel"
+  },
+  "explore": {
+    "translation": "IESSIEinati",
+    "category": "Travel"
+  },
+  "return": {
+    "translation": "tiek",
+    "category": "Travel"
+  },
+  "rush": {
+    "translation": "ġejxa",
+    "category": "Travel"
+  },
+  "hurry": {
+    "translation": "Ħidu",
+    "category": "Travel"
+  },
+  "navigate": {
+    "translation": "Navigħu",
+    "category": "Travel"
+  },
+  "sanitize": {
+    "translation": "Ilsienaqiswa",
+    "category": "Household"
+  },
+  "iron": {
+    "translation": "Ferro",
+    "category": "Household"
+  },
+  "store": {
+    "translation": "Ġejtiskaħorta",
+    "category": "Household"
+  },
+  "repair": {
+    "translation": "repairi",
+    "category": "Household"
+  },
+  "fix": {
+    "translation": "ċidagiġ",
+    "category": "Household"
+  },
+  "disassemble": {
+    "translation": "disassamble",
+    "category": "Household"
+  },
+  "install": {
+    "translation": "Installu",
+    "category": "Household"
+  },
+  "uninstall": {
+    "translation": "Tċiqa",
+    "category": "Household"
+  },
+  "remove": {
+    "translation": "Tibgħa",
+    "category": "Household"
+  },
+  "connect": {
+    "translation": "Konnectġa",
+    "category": "Household"
+  },
+  "disconnect": {
+    "translation": "Tgall",
+    "category": "Household"
+  },
+  "lock": {
+    "translation": "luġa",
+    "category": "Household"
+  },
+  "unlock": {
+    "translation": "IELQIXXEWNUKOS",
+    "category": "Household"
+  },
+  "decorate": {
+    "translation": "Ibġaġlija",
+    "category": "Household"
+  },
+  "polish": {
+    "translation": "tagħżel",
+    "category": "Household"
+  },
+  "hammer": {
+    "translation": "Maltiħmer",
+    "category": "Household"
+  },
+  "saw": {
+    "translation": "Xieħża",
+    "category": "Household"
+  },
+  "glue": {
+    "translation": "ġdid",
+    "category": "Household"
+  },
+  "buy": {
+    "translation": "Kbira",
+    "category": "Money"
+  },
+  "sell": {
+    "translation": "Sewġa",
+    "category": "Money"
+  },
+  "pay": {
+    "translation": "Paga",
+    "category": "Money"
+  },
+  "owe": {
+    "translation": "Tistaferenza",
+    "category": "Money"
+  },
+  "borrow": {
+    "translation": "Kollija",
+    "category": "Money"
+  },
+  "lend": {
+    "translation": "Kienċ",
+    "category": "Money"
+  },
+  "rent": {
+    "translation": "Ġejtu",
+    "category": "Money"
+  },
+  "save": {
+    "translation": "Salvu",
+    "category": "Money"
+  },
+  "spend": {
+    "translation": "ġebu",
+    "category": "Money"
+  },
+  "invest": {
+    "translation": "Investġa",
+    "category": "Money"
+  },
+  "earn": {
+    "translation": "Għadda",
+    "category": "Money"
+  },
+  "refund": {
+    "translation": "Restituzione",
+    "category": "Money"
+  },
+  "exchange": {
+    "translation": "Talbietija",
+    "category": "Money"
+  },
+  "order": {
+    "translation": "ORDERTI",
+    "category": "Money"
+  },
+  "select": {
+    "translation": "Selektġa",
+    "category": "Money"
+  },
+  "withdraw": {
+    "translation": "Tibgħa",
+    "category": "Money"
+  },
+  "deposit": {
+    "translation": "Deposito",
+    "category": "Money"
+  },
+  "budget": {
+    "translation": "budżet",
+    "category": "Money"
+  },
+  "fry": {
+    "translation": "Fragħxa",
+    "category": "Food"
+  },
+  "grill": {
+    "translation": "Għajnija",
+    "category": "Food"
+  },
+  "boil": {
+    "translation": "Birgħa",
+    "category": "Food"
+  },
+  "steam": {
+    "translation": "Linja",
+    "category": "Food"
+  },
+  "slice": {
+    "translation": "tappġa",
+    "category": "Food"
+  },
+  "cut": {
+    "translation": "Ciepiesa",
+    "category": "Food"
+  },
+  "chop": {
+    "translation": "CappuŻENNO",
+    "category": "Food"
+  },
+  "mix": {
+    "translation": "Mistagħturi",
+    "category": "Food"
+  },
+  "stir": {
+    "translation": "Tidur",
+    "category": "Food"
+  },
+  "pour": {
+    "translation": "Għalpqesta",
+    "category": "Food"
+  },
+  "serve": {
+    "translation": "servu",
+    "category": "Food"
+  },
+  "taste": {
+    "translation": "Talġa",
+    "category": "Food"
+  },
+  "season": {
+    "translation": "sesjon",
+    "category": "Food"
+  },
+  "marinate": {
+    "translation": "Kemmexġa",
+    "category": "Food"
+  },
+  "chew": {
+    "translation": "Għadra",
+    "category": "Food"
+  },
+  "swallow": {
+    "translation": "Tignuġ",
+    "category": "Food"
+  },
+  "deliver": {
+    "translation": "Tiek",
+    "category": "Food"
+  },
+  "digest": {
+    "translation": "Digġa",
+    "category": "Food"
+  },
+  "rain": {
+    "translation": "Rain in Maltese is ġeww",
+    "category": "Nature"
+  },
+  "snow": {
+    "translation": "ġaswat",
+    "category": "Nature"
+  },
+  "hail": {
+    "translation": "Ħal",
+    "category": "Nature"
+  },
+  "sleet": {
+    "translation": "Għarġuratha",
+    "category": "Nature"
+  },
+  "freeze": {
+    "translation": "freez Zamknutsa",
+    "category": "Nature"
+  },
+  "melt": {
+    "translation": "Maltieli",
+    "category": "Nature"
+  },
+  "shine": {
+    "translation": "Luġa",
+    "category": "Nature"
+  },
+  "blow": {
+    "translation": "Fgura",
+    "category": "Nature"
+  },
+  "grow": {
+    "translation": "ċiedu",
+    "category": "Nature"
+  },
+  "bloom": {
+    "translation": "Biera",
+    "category": "Nature"
+  },
+  "wither": {
+    "translation": "Attellix",
+    "category": "Nature"
+  },
+  "sprout": {
+    "translation": "Ħidpa",
+    "category": "Nature"
+  },
+  "fall": {
+    "translation": "ċippu",
+    "category": "Nature"
+  },
+  "quake": {
+    "translation": "tigalxffffffff",
+    "category": "Nature"
+  },
+  "erode": {
+    "translation": "Erodien",
+    "category": "Nature"
+  },
+  "burn": {
+    "translation": "Bniet",
+    "category": "Nature"
+  },
+  "flood": {
+    "translation": "Fodda",
+    "category": "Nature"
+  },
+  "float": {
+    "translation": "floġġa",
+    "category": "Nature"
+  },
+  "sink": {
+    "translation": "ċappuġġiu",
+    "category": "Nature"
+  },
+  "rise": {
+    "translation": "iegħed",
+    "category": "Nature"
+  },
+  "set": {
+    "translation": "sett",
+    "category": "Nature"
+  },
+  "breathe": {
+    "translation": "Respira",
+    "category": "Health"
+  },
+  "inhale": {
+    "translation": "ġasħli",
+    "category": "Health"
+  },
+  "exhale": {
+    "translation": "Eħġaġ",
+    "category": "Health"
+  },
+  "cough": {
+    "translation": "Kbira",
+    "category": "Health"
+  },
+  "sneeze": {
+    "translation": "Kbira",
+    "category": "Health"
+  },
+  "sweat": {
+    "translation": "Għadid",
+    "category": "Health"
+  },
+  "bleed": {
+    "translation": "Għadra",
+    "category": "Health"
+  },
+  "heal": {
+    "translation": "ċureġ",
+    "category": "Health"
+  },
+  "recover": {
+    "translation": "Reġista",
+    "category": "Health"
+  },
+  "ache": {
+    "translation": "ħidup",
+    "category": "Health"
+  },
+  "hurt": {
+    "translation": "ċidu",
+    "category": "Health"
+  },
+  "strain": {
+    "translation": "Talbiera",
+    "category": "Health"
+  },
+  "exercise": {
+    "translation": "Ejerciċi",
+    "category": "Health"
+  },
+  "faint": {
+    "translation": "Sienra",
+    "category": "Health"
+  },
+  "vomit": {
+    "translation": "Ietfalva",
+    "category": "Health"
+  },
+  "blink": {
+    "translation": "twinku",
+    "category": "Health"
+  },
+  "squint": {
+    "translation": "Għanġarża",
+    "category": "Health"
+  },
+  "tremble": {
+    "translation": "ġiebawi",
+    "category": "Health"
+  },
+  "click": {
+    "translation": "Klik",
+    "category": "Technology"
+  },
+  "tap": {
+    "translation": "ċappu",
+    "category": "Technology"
+  },
+  "scroll": {
+    "translation": "Lewgħa",
+    "category": "Technology"
+  },
+  "swipe": {
+    "translation": "Sewri",
+    "category": "Technology"
+  },
+  "browse": {
+    "translation": "Għadru",
+    "category": "Technology"
+  },
+  "upgrade": {
+    "translation": "Għaddena",
+    "category": "Technology"
+  },
+  "copy": {
+    "translation": "Kopja",
+    "category": "Technology"
+  },
+  "paste": {
+    "translation": "Pastedura",
+    "category": "Technology"
+  },
+  "delete": {
+    "translation": "Tċiqa",
+    "category": "Technology"
+  },
+  "reset": {
+    "translation": "Reġista",
+    "category": "Technology"
+  },
+  "restart": {
+    "translation": "Reġista",
+    "category": "Technology"
+  },
+  "log in": {
+    "translation": "Iċċedija",
+    "category": "Technology"
+  },
+  "log out": {
+    "translation": "Iqtibas",
+    "category": "Technology"
+  },
+  "sync": {
+    "translation": "sinċ",
+    "category": "Technology"
+  },
+  "stream": {
+    "translation": "ħilwa",
+    "category": "Technology"
+  },
+  "encrypt": {
+    "translation": "Kriptografa",
+    "category": "Technology"
+  },
+  "backup": {
+    "translation": "Kopiesa",
+    "category": "Technology"
+  }
+}

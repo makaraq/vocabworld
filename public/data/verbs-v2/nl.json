@@ -1,0 +1,1563 @@
+{
+  "walk": {
+    "translation": "lopen",
+    "category": "Basic"
+  },
+  "run": {
+    "translation": "rennen",
+    "category": "Basic"
+  },
+  "jump": {
+    "translation": "springen",
+    "category": "Basic"
+  },
+  "hop": {
+    "translation": "hops",
+    "category": "Basic"
+  },
+  "skip": {
+    "translation": "sprinten",
+    "category": "Basic"
+  },
+  "crawl": {
+    "translation": "kruipen",
+    "category": "Basic"
+  },
+  "climb": {
+    "translation": "klimmen",
+    "category": "Basic"
+  },
+  "slide": {
+    "translation": "sleiden",
+    "category": "Basic"
+  },
+  "swing": {
+    "translation": "swing",
+    "category": "Basic"
+  },
+  "stretch": {
+    "translation": "streven",
+    "category": "Basic"
+  },
+  "bend": {
+    "translation": "buiging",
+    "category": "Basic"
+  },
+  "lift": {
+    "translation": "liftischief",
+    "category": "Basic"
+  },
+  "carry": {
+    "translation": "dragen",
+    "category": "Basic"
+  },
+  "drag": {
+    "translation": "Draf",
+    "category": "Basic"
+  },
+  "push": {
+    "translation": "duwen",
+    "category": "Basic"
+  },
+  "pull": {
+    "translation": "trek",
+    "category": "Basic"
+  },
+  "hold": {
+    "translation": "houden",
+    "category": "Basic"
+  },
+  "grab": {
+    "translation": "pakken",
+    "category": "Basic"
+  },
+  "drop": {
+    "translation": "-drop",
+    "category": "Basic"
+  },
+  "throw": {
+    "translation": "gooien",
+    "category": "Basic"
+  },
+  "catch": {
+    "translation": "vangen",
+    "category": "Basic"
+  },
+  "kick": {
+    "translation": "kicks",
+    "category": "Basic"
+  },
+  "hit": {
+    "translation": "slaan",
+    "category": "Basic"
+  },
+  "press": {
+    "translation": "pers",
+    "category": "Basic"
+  },
+  "twist": {
+    "translation": "wending",
+    "category": "Basic"
+  },
+  "turn": {
+    "translation": "keer",
+    "category": "Basic"
+  },
+  "rotate": {
+    "translation": "verteren",
+    "category": "Basic"
+  },
+  "flip": {
+    "translation": "Flip",
+    "category": "Basic"
+  },
+  "shake": {
+    "translation": "schudden",
+    "category": "Basic"
+  },
+  "wave": {
+    "translation": "waaier",
+    "category": "Basic"
+  },
+  "reach": {
+    "translation": "bereiken",
+    "category": "Basic"
+  },
+  "lean": {
+    "translation": "leunen",
+    "category": "Basic"
+  },
+  "rest": {
+    "translation": "rust",
+    "category": "Basic"
+  },
+  "balance": {
+    "translation": "balans",
+    "category": "Basic"
+  },
+  "spin": {
+    "translation": "spinnen",
+    "category": "Basic"
+  },
+  "arrange": {
+    "translation": "Regelieren",
+    "category": "Basic"
+  },
+  "adjust": {
+    "translation": "Aanpassen",
+    "category": "Basic"
+  },
+  "shift": {
+    "translation": "schift",
+    "category": "Basic"
+  },
+  "tie": {
+    "translation": "das",
+    "category": "Basic"
+  },
+  "untie": {
+    "translation": "Ontbinden",
+    "category": "Basic"
+  },
+  "wrap": {
+    "translation": "verpakken",
+    "category": "Basic"
+  },
+  "unwrap": {
+    "translation": "Ontrollen",
+    "category": "Basic"
+  },
+  "fold": {
+    "translation": "vouwen",
+    "category": "Basic"
+  },
+  "unfold": {
+    "translation": "ontvouwen",
+    "category": "Basic"
+  },
+  "pack": {
+    "translation": "pakket",
+    "category": "Basic"
+  },
+  "unpack": {
+    "translation": "ontpakken",
+    "category": "Basic"
+  },
+  "be": {
+    "translation": "zijn",
+    "category": "Basic"
+  },
+  "become": {
+    "translation": "ige",
+    "category": "Basic"
+  },
+  "seem": {
+    "translation": "zien",
+    "category": "Basic"
+  },
+  "appear": {
+    "translation": "verschenen",
+    "category": "Basic"
+  },
+  "remain": {
+    "translation": "blijven",
+    "category": "Basic"
+  },
+  "stay": {
+    "translation": "blijven",
+    "category": "Basic"
+  },
+  "exist": {
+    "translation": "bestaan",
+    "category": "Basic"
+  },
+  "happen": {
+    "translation": "gebeuren",
+    "category": "Basic"
+  },
+  "occur": {
+    "translation": "voorkomen",
+    "category": "Basic"
+  },
+  "change": {
+    "translation": "veranderen",
+    "category": "Basic"
+  },
+  "improve": {
+    "translation": "eteren",
+    "category": "Basic"
+  },
+  "decline": {
+    "translation": "afwijzing",
+    "category": "Basic"
+  },
+  "continue": {
+    "translation": "doorgaan",
+    "category": "Basic"
+  },
+  "stop": {
+    "translation": "stoppen",
+    "category": "Basic"
+  },
+  "begin": {
+    "translation": "beginnen",
+    "category": "Basic"
+  },
+  "end": {
+    "translation": "einde",
+    "category": "Basic"
+  },
+  "last": {
+    "translation": "laatste",
+    "category": "Basic"
+  },
+  "wake": {
+    "translation": "wakker",
+    "category": "Daily Routine"
+  },
+  "get up": {
+    "translation": "opstaan",
+    "category": "Daily Routine"
+  },
+  "wash": {
+    "translation": "wassen",
+    "category": "Daily Routine"
+  },
+  "shower": {
+    "translation": "doucheschower",
+    "category": "Daily Routine"
+  },
+  "bathe": {
+    "translation": "baden",
+    "category": "Daily Routine"
+  },
+  "brush": {
+    "translation": "paasje",
+    "category": "Daily Routine"
+  },
+  "comb": {
+    "translation": "combin",
+    "category": "Daily Routine"
+  },
+  "dress": {
+    "translation": "jurk",
+    "category": "Daily Routine"
+  },
+  "eat": {
+    "translation": "eten",
+    "category": "Daily Routine"
+  },
+  "drink": {
+    "translation": "drinken",
+    "category": "Daily Routine"
+  },
+  "snack": {
+    "translation": "snackbijtje",
+    "category": "Daily Routine"
+  },
+  "cook": {
+    "translation": "kok",
+    "category": "Daily Routine"
+  },
+  "bake": {
+    "translation": "bakken",
+    "category": "Daily Routine"
+  },
+  "reheat": {
+    "translation": "Herhitten",
+    "category": "Daily Routine"
+  },
+  "clean": {
+    "translation": "zuiver",
+    "category": "Daily Routine"
+  },
+  "tidy": {
+    "translation": "ordelijk",
+    "category": "Daily Routine"
+  },
+  "organize": {
+    "translation": "organiseren",
+    "category": "Daily Routine"
+  },
+  "vacuum": {
+    "translation": "vacuum in Dutch is vacuüm",
+    "category": "Daily Routine"
+  },
+  "sweep": {
+    "translation": "vegen",
+    "category": "Daily Routine"
+  },
+  "mop": {
+    "translation": "mep",
+    "category": "Daily Routine"
+  },
+  "dust": {
+    "translation": "Stof",
+    "category": "Daily Routine"
+  },
+  "wash dishes": {
+    "translation": "Wassen",
+    "category": "Daily Routine"
+  },
+  "rinse": {
+    "translation": "Rinsen",
+    "category": "Daily Routine"
+  },
+  "wipe": {
+    "translation": "doek",
+    "category": "Daily Routine"
+  },
+  "scrub": {
+    "translation": "borstel",
+    "category": "Daily Routine"
+  },
+  "dry": {
+    "translation": "droog",
+    "category": "Daily Routine"
+  },
+  "shop": {
+    "translation": "winkel",
+    "category": "Daily Routine"
+  },
+  "refill": {
+    "translation": "Verversen",
+    "category": "Daily Routine"
+  },
+  "charge": {
+    "translation": "laden",
+    "category": "Daily Routine"
+  },
+  "relax": {
+    "translation": "relaxeren",
+    "category": "Daily Routine"
+  },
+  "nap": {
+    "translation": "dutse",
+    "category": "Daily Routine"
+  },
+  "sleep": {
+    "translation": "slaap",
+    "category": "Daily Routine"
+  },
+  "prepare": {
+    "translation": "bereiden",
+    "category": "Daily Routine"
+  },
+  "schedule": {
+    "translation": "agenda",
+    "category": "Daily Routine"
+  },
+  "cancel": {
+    "translation": "annuleren",
+    "category": "Daily Routine"
+  },
+  "check": {
+    "translation": "controle",
+    "category": "Daily Routine"
+  },
+  "monitor": {
+    "translation": "monitoren",
+    "category": "Daily Routine"
+  },
+  "plan": {
+    "translation": "plan",
+    "category": "Daily Routine"
+  },
+  "wait": {
+    "translation": "wachten",
+    "category": "Daily Routine"
+  },
+  "search": {
+    "translation": "zoeken",
+    "category": "Daily Routine"
+  },
+  "find": {
+    "translation": "vinden",
+    "category": "Daily Routine"
+  },
+  "lose": {
+    "translation": "verliezen",
+    "category": "Daily Routine"
+  },
+  "replace": {
+    "translation": "vervangen",
+    "category": "Daily Routine"
+  },
+  "think": {
+    "translation": "denken",
+    "category": "Mental"
+  },
+  "know": {
+    "translation": "weten",
+    "category": "Mental"
+  },
+  "believe": {
+    "translation": "geloven",
+    "category": "Mental"
+  },
+  "consider": {
+    "translation": "overwegen",
+    "category": "Mental"
+  },
+  "imagine": {
+    "translation": "Imagineer",
+    "category": "Mental"
+  },
+  "wonder": {
+    "translation": "WONDER",
+    "category": "Mental"
+  },
+  "remember": {
+    "translation": "herinneren",
+    "category": "Mental"
+  },
+  "forget": {
+    "translation": "vergeten",
+    "category": "Mental"
+  },
+  "realize": {
+    "translation": "realiseren",
+    "category": "Mental"
+  },
+  "guess": {
+    "translation": "Gissen",
+    "category": "Mental"
+  },
+  "predict": {
+    "translation": "Voorspellen",
+    "category": "Mental"
+  },
+  "expect": {
+    "translation": "expectscheiden",
+    "category": "Mental"
+  },
+  "recognize": {
+    "translation": "herkennen",
+    "category": "Mental"
+  },
+  "notice": {
+    "translation": "Opmerking",
+    "category": "Mental"
+  },
+  "focus": {
+    "translation": "Focus",
+    "category": "Mental"
+  },
+  "concentrate": {
+    "translation": "Concentreer",
+    "category": "Mental"
+  },
+  "decide": {
+    "translation": "beslissen",
+    "category": "Mental"
+  },
+  "choose": {
+    "translation": "kies",
+    "category": "Mental"
+  },
+  "compare": {
+    "translation": "Vergelijken",
+    "category": "Mental"
+  },
+  "analyze": {
+    "translation": "analyseren",
+    "category": "Mental"
+  },
+  "evaluate": {
+    "translation": "beoordelen",
+    "category": "Mental"
+  },
+  "estimate": {
+    "translation": "Schätzung",
+    "category": "Mental"
+  },
+  "solve": {
+    "translation": "oplossen",
+    "category": "Mental"
+  },
+  "question": {
+    "translation": "vraag",
+    "category": "Mental"
+  },
+  "suspect": {
+    "translation": "verdachte",
+    "category": "Mental"
+  },
+  "doubt": {
+    "translation": "twijfel",
+    "category": "Mental"
+  },
+  "learn": {
+    "translation": "leren",
+    "category": "Mental"
+  },
+  "study": {
+    "translation": "studie",
+    "category": "Mental"
+  },
+  "memorize": {
+    "translation": "herinneren",
+    "category": "Mental"
+  },
+  "calculate": {
+    "translation": "rekenen",
+    "category": "Mental"
+  },
+  "reflect": {
+    "translation": "refleteren",
+    "category": "Mental"
+  },
+  "understand": {
+    "translation": "Begrijpen",
+    "category": "Mental"
+  },
+  "like": {
+    "translation": "net zoals",
+    "category": "Mental"
+  },
+  "love": {
+    "translation": "liefde",
+    "category": "Mental"
+  },
+  "hate": {
+    "translation": "haat",
+    "category": "Mental"
+  },
+  "enjoy": {
+    "translation": "genieten",
+    "category": "Mental"
+  },
+  "prefer": {
+    "translation": "prefereer",
+    "category": "Mental"
+  },
+  "want": {
+    "translation": "wanter",
+    "category": "Mental"
+  },
+  "need": {
+    "translation": "nodig",
+    "category": "Mental"
+  },
+  "miss": {
+    "translation": "mis",
+    "category": "Mental"
+  },
+  "care": {
+    "translation": "zorg",
+    "category": "Mental"
+  },
+  "worry": {
+    "translation": "zorgen",
+    "category": "Mental"
+  },
+  "fear": {
+    "translation": "Angst",
+    "category": "Mental"
+  },
+  "panic": {
+    "translation": "paniek",
+    "category": "Mental"
+  },
+  "stress": {
+    "translation": "stress",
+    "category": "Mental"
+  },
+  "calm": {
+    "translation": "kalme",
+    "category": "Mental"
+  },
+  "appreciate": {
+    "translation": "waarderen",
+    "category": "Mental"
+  },
+  "value": {
+    "translation": "waarde",
+    "category": "Mental"
+  },
+  "respect": {
+    "translation": "Eerlijkheid",
+    "category": "Mental"
+  },
+  "dislike": {
+    "translation": "onbevriendheid",
+    "category": "Mental"
+  },
+  "regret": {
+    "translation": "spijt",
+    "category": "Mental"
+  },
+  "hope": {
+    "translation": "hoop",
+    "category": "Mental"
+  },
+  "trust": {
+    "translation": "trouw",
+    "category": "Mental"
+  },
+  "surprise": {
+    "translation": "surprijzen or surprisie",
+    "category": "Mental"
+  },
+  "shock": {
+    "translation": "schok",
+    "category": "Mental"
+  },
+  "annoy": {
+    "translation": "bespelen",
+    "category": "Mental"
+  },
+  "bother": {
+    "translation": "KeyPress",
+    "category": "Mental"
+  },
+  "confuse": {
+    "translation": "verwarren",
+    "category": "Mental"
+  },
+  "embarrass": {
+    "translation": "beschaamd",
+    "category": "Mental"
+  },
+  "frustrate": {
+    "translation": "teleurstellen",
+    "category": "Mental"
+  },
+  "satisfy": {
+    "translation": "voldoen",
+    "category": "Mental"
+  },
+  "comfort": {
+    "translation": "Comfort in Dutch is gemak",
+    "category": "Mental"
+  },
+  "cheer": {
+    "translation": "joeluk",
+    "category": "Mental"
+  },
+  "say": {
+    "translation": "zeg",
+    "category": "Communication"
+  },
+  "tell": {
+    "translation": "zeggen",
+    "category": "Communication"
+  },
+  "talk": {
+    "translation": "praten",
+    "category": "Communication"
+  },
+  "speak": {
+    "translation": "zeggen",
+    "category": "Communication"
+  },
+  "discuss": {
+    "translation": "bespreken",
+    "category": "Communication"
+  },
+  "chat": {
+    "translation": "klets",
+    "category": "Communication"
+  },
+  "explain": {
+    "translation": "verklaren",
+    "category": "Communication"
+  },
+  "describe": {
+    "translation": "beschrijven",
+    "category": "Communication"
+  },
+  "announce": {
+    "translation": "anencenten",
+    "category": "Communication"
+  },
+  "report": {
+    "translation": "rapport",
+    "category": "Communication"
+  },
+  "reply": {
+    "translation": "antwoord",
+    "category": "Communication"
+  },
+  "answer": {
+    "translation": "antwoord",
+    "category": "Communication"
+  },
+  "ask": {
+    "translation": "vragen",
+    "category": "Communication"
+  },
+  "interrupt": {
+    "translation": "Storeteer",
+    "category": "Communication"
+  },
+  "suggest": {
+    "translation": "stellen",
+    "category": "Communication"
+  },
+  "recommend": {
+    "translation": "beëindigen",
+    "category": "Communication"
+  },
+  "complain": {
+    "translation": "complaining",
+    "category": "Communication"
+  },
+  "argue": {
+    "translation": "argumenteren",
+    "category": "Communication"
+  },
+  "debate": {
+    "translation": "debate",
+    "category": "Communication"
+  },
+  "whisper": {
+    "translation": "ispersen",
+    "category": "Communication"
+  },
+  "shout": {
+    "translation": "schreeuwen",
+    "category": "Communication"
+  },
+  "yell": {
+    "translation": "janken",
+    "category": "Communication"
+  },
+  "mention": {
+    "translation": "melding",
+    "category": "Communication"
+  },
+  "remind": {
+    "translation": "herinneren",
+    "category": "Communication"
+  },
+  "warn": {
+    "translation": "waarschuwen",
+    "category": "Communication"
+  },
+  "advise": {
+    "translation": "advies",
+    "category": "Communication"
+  },
+  "encourage": {
+    "translation": "beperk",
+    "category": "Communication"
+  },
+  "persuade": {
+    "translation": "overtuigen",
+    "category": "Communication"
+  },
+  "invite": {
+    "translation": "innemen",
+    "category": "Communication"
+  },
+  "respond": {
+    "translation": "reacteren",
+    "category": "Communication"
+  },
+  "translate": {
+    "translation": "vertalen",
+    "category": "Communication"
+  },
+  "inform": {
+    "translation": "informatie",
+    "category": "Communication"
+  },
+  "comment": {
+    "translation": "Commentaar",
+    "category": "Communication"
+  },
+  "confirm": {
+    "translation": "bevestigen",
+    "category": "Communication"
+  },
+  "deny": {
+    "translation": "Ontkennen",
+    "category": "Communication"
+  },
+  "admit": {
+    "translation": "bekennen",
+    "category": "Communication"
+  },
+  "meet": {
+    "translation": "meeten",
+    "category": "Social"
+  },
+  "greet": {
+    "translation": "groeten",
+    "category": "Social"
+  },
+  "welcome": {
+    "translation": "Welkom",
+    "category": "Social"
+  },
+  "visit": {
+    "translation": "bezoek",
+    "category": "Social"
+  },
+  "host": {
+    "translation": "gast",
+    "category": "Social"
+  },
+  "join": {
+    "translation": "meedoen",
+    "category": "Social"
+  },
+  "help": {
+    "translation": "helpen",
+    "category": "Social"
+  },
+  "support": {
+    "translation": "steun",
+    "category": "Social"
+  },
+  "assist": {
+    "translation": "helpen",
+    "category": "Social"
+  },
+  "share": {
+    "translation": "deel",
+    "category": "Social"
+  },
+  "care for": {
+    "translation": "zorgen",
+    "category": "Social"
+  },
+  "hug": {
+    "translation": "omhelzing",
+    "category": "Social"
+  },
+  "kiss": {
+    "translation": "kus",
+    "category": "Social"
+  },
+  "hold hands": {
+    "translation": "Hand in hand",
+    "category": "Social"
+  },
+  "date": {
+    "translation": "datum",
+    "category": "Social"
+  },
+  "marry": {
+    "translation": "huwen",
+    "category": "Social"
+  },
+  "befriend": {
+    "translation": "verzoenen",
+    "category": "Social"
+  },
+  "follow": {
+    "translation": "volgen",
+    "category": "Social"
+  },
+  "lead": {
+    "translation": "leiden",
+    "category": "Social"
+  },
+  "guide": {
+    "translation": "gids",
+    "category": "Social"
+  },
+  "introduce": {
+    "translation": null,
+    "category": "Social",
+    "failed": true
+  },
+  "cooperate": {
+    "translation": "samenwerken",
+    "category": "Social"
+  },
+  "protect": {
+    "translation": "beschermen",
+    "category": "Social"
+  },
+  "include": {
+    "translation": "inclullen",
+    "category": "Social"
+  },
+  "exclude": {
+    "translation": "excludef or uitsluiten",
+    "category": "Social"
+  },
+  "work": {
+    "translation": "werk",
+    "category": "Work"
+  },
+  "write": {
+    "translation": "schrijven",
+    "category": "Work"
+  },
+  "read": {
+    "translation": "lezen",
+    "category": "Work"
+  },
+  "edit": {
+    "translation": "bewerken",
+    "category": "Work"
+  },
+  "revise": {
+    "translation": "herstellen",
+    "category": "Work"
+  },
+  "review": {
+    "translation": "herkennen",
+    "category": "Work"
+  },
+  "inspect": {
+    "translation": "inspecteren",
+    "category": "Work"
+  },
+  "complete": {
+    "translation": "volledig",
+    "category": "Work"
+  },
+  "submit": {
+    "translation": "indienen",
+    "category": "Work"
+  },
+  "create": {
+    "translation": "creëren",
+    "category": "Work"
+  },
+  "design": {
+    "translation": "ontwerp",
+    "category": "Work"
+  },
+  "build": {
+    "translation": "bouwen",
+    "category": "Work"
+  },
+  "assemble": {
+    "translation": "Samenvoegen",
+    "category": "Work"
+  },
+  "debug": {
+    "translation": "debuggen",
+    "category": "Work"
+  },
+  "research": {
+    "translation": "onderzoek",
+    "category": "Work"
+  },
+  "document": {
+    "translation": "documentaire",
+    "category": "Work"
+  },
+  "train": {
+    "translation": "trein",
+    "category": "Work"
+  },
+  "teach": {
+    "translation": "leren",
+    "category": "Work"
+  },
+  "update": {
+    "translation": "bijwerken",
+    "category": "Work"
+  },
+  "upload": {
+    "translation": "uploaden",
+    "category": "Work"
+  },
+  "download": {
+    "translation": "downloaden",
+    "category": "Work"
+  },
+  "print": {
+    "translation": "printen",
+    "category": "Work"
+  },
+  "scan": {
+    "translation": "scanne",
+    "category": "Work"
+  },
+  "record": {
+    "translation": "recordieverhaal",
+    "category": "Work"
+  },
+  "track": {
+    "translation": "spoor",
+    "category": "Work"
+  },
+  "manage": {
+    "translation": "beheersen",
+    "category": "Work"
+  },
+  "supervise": {
+    "translation": "overwaken",
+    "category": "Work"
+  },
+  "go": {
+    "translation": "ga",
+    "category": "Travel"
+  },
+  "come": {
+    "translation": "komen",
+    "category": "Travel"
+  },
+  "move": {
+    "translation": "verplaats",
+    "category": "Travel"
+  },
+  "leave": {
+    "translation": "vertrek",
+    "category": "Travel"
+  },
+  "arrive": {
+    "translation": "aankomen",
+    "category": "Travel"
+  },
+  "enter": {
+    "translation": "invoeren",
+    "category": "Travel"
+  },
+  "exit": {
+    "translation": "uitgang",
+    "category": "Travel"
+  },
+  "travel": {
+    "translation": "reizen",
+    "category": "Travel"
+  },
+  "fly": {
+    "translation": "vliegen",
+    "category": "Travel"
+  },
+  "drive": {
+    "translation": "rijden",
+    "category": "Travel"
+  },
+  "ride": {
+    "translation": "rijden",
+    "category": "Travel"
+  },
+  "board": {
+    "translation": "bord",
+    "category": "Travel"
+  },
+  "land": {
+    "translation": "land",
+    "category": "Travel"
+  },
+  "park": {
+    "translation": "park",
+    "category": "Travel"
+  },
+  "accelerate": {
+    "translation": "versnellen",
+    "category": "Travel"
+  },
+  "reverse": {
+    "translation": "omkeren",
+    "category": "Travel"
+  },
+  "cross": {
+    "translation": "kruis",
+    "category": "Travel"
+  },
+  "wander": {
+    "translation": "wandern",
+    "category": "Travel"
+  },
+  "explore": {
+    "translation": "onderzoeken",
+    "category": "Travel"
+  },
+  "return": {
+    "translation": "terug",
+    "category": "Travel"
+  },
+  "rush": {
+    "translation": "haast",
+    "category": "Travel"
+  },
+  "hurry": {
+    "translation": "haast",
+    "category": "Travel"
+  },
+  "navigate": {
+    "translation": "navigator",
+    "category": "Travel"
+  },
+  "sanitize": {
+    "translation": "steriliseren",
+    "category": "Household"
+  },
+  "iron": {
+    "translation": "ijzer",
+    "category": "Household"
+  },
+  "store": {
+    "translation": "winkel",
+    "category": "Household"
+  },
+  "repair": {
+    "translation": "repareren",
+    "category": "Household"
+  },
+  "fix": {
+    "translation": "vastzetten",
+    "category": "Household"
+  },
+  "disassemble": {
+    "translation": "ont elkaar losmaken",
+    "category": "Household"
+  },
+  "install": {
+    "translation": "installeren",
+    "category": "Household"
+  },
+  "uninstall": {
+    "translation": "ontzetten",
+    "category": "Household"
+  },
+  "remove": {
+    "translation": "verwijderen",
+    "category": "Household"
+  },
+  "connect": {
+    "translation": "inden",
+    "category": "Household"
+  },
+  "disconnect": {
+    "translation": "Afsluiten",
+    "category": "Household"
+  },
+  "lock": {
+    "translation": "slot",
+    "category": "Household"
+  },
+  "unlock": {
+    "translation": "ontgrendelen",
+    "category": "Household"
+  },
+  "decorate": {
+    "translation": "versieren",
+    "category": "Household"
+  },
+  "polish": {
+    "translation": "polish",
+    "category": "Household"
+  },
+  "hammer": {
+    "translation": "hamer",
+    "category": "Household"
+  },
+  "saw": {
+    "translation": "zagen",
+    "category": "Household"
+  },
+  "glue": {
+    "translation": "lijm",
+    "category": "Household"
+  },
+  "buy": {
+    "translation": "kopen",
+    "category": "Money"
+  },
+  "sell": {
+    "translation": "verkopen",
+    "category": "Money"
+  },
+  "pay": {
+    "translation": "betalen",
+    "category": "Money"
+  },
+  "owe": {
+    "translation": "schuldigen",
+    "category": "Money"
+  },
+  "borrow": {
+    "translation": "lenen",
+    "category": "Money"
+  },
+  "lend": {
+    "translation": "lenen",
+    "category": "Money"
+  },
+  "rent": {
+    "translation": "huur",
+    "category": "Money"
+  },
+  "save": {
+    "translation": "besparen",
+    "category": "Money"
+  },
+  "spend": {
+    "translation": "besteden",
+    "category": "Money"
+  },
+  "invest": {
+    "translation": "Investeer",
+    "category": "Money"
+  },
+  "earn": {
+    "translation": "verdienen",
+    "category": "Money"
+  },
+  "refund": {
+    "translation": "terugbetaling",
+    "category": "Money"
+  },
+  "exchange": {
+    "translation": "uitwisselen",
+    "category": "Money"
+  },
+  "order": {
+    "translation": "Bestel",
+    "category": "Money"
+  },
+  "select": {
+    "translation": "selecteer",
+    "category": "Money"
+  },
+  "withdraw": {
+    "translation": "trek weg",
+    "category": "Money"
+  },
+  "deposit": {
+    "translation": "Depositum",
+    "category": "Money"
+  },
+  "budget": {
+    "translation": "budget",
+    "category": "Money"
+  },
+  "fry": {
+    "translation": "friten",
+    "category": "Food"
+  },
+  "grill": {
+    "translation": "gegrilPushMatrix",
+    "category": "Food"
+  },
+  "boil": {
+    "translation": "koken",
+    "category": "Food"
+  },
+  "steam": {
+    "translation": "schaambeeld",
+    "category": "Food"
+  },
+  "slice": {
+    "translation": "scheut",
+    "category": "Food"
+  },
+  "cut": {
+    "translation": "scheuren",
+    "category": "Food"
+  },
+  "chop": {
+    "translation": "choppen",
+    "category": "Food"
+  },
+  "mix": {
+    "translation": "mixt",
+    "category": "Food"
+  },
+  "stir": {
+    "translation": "roeren",
+    "category": "Food"
+  },
+  "pour": {
+    "translation": "gieten",
+    "category": "Food"
+  },
+  "serve": {
+    "translation": "dienen",
+    "category": "Food"
+  },
+  "taste": {
+    "translation": "TASTE smaak",
+    "category": "Food"
+  },
+  "season": {
+    "translation": "seizoen",
+    "category": "Food"
+  },
+  "marinate": {
+    "translation": "Marineren",
+    "category": "Food"
+  },
+  "chew": {
+    "translation": "kauwen",
+    "category": "Food"
+  },
+  "swallow": {
+    "translation": "zwaluw",
+    "category": "Food"
+  },
+  "deliver": {
+    "translation": "bezorgen",
+    "category": "Food"
+  },
+  "digest": {
+    "translation": "Digestief",
+    "category": "Food"
+  },
+  "rain": {
+    "translation": "regen",
+    "category": "Nature"
+  },
+  "snow": {
+    "translation": "sneeuw",
+    "category": "Nature"
+  },
+  "hail": {
+    "translation": "Buien",
+    "category": "Nature"
+  },
+  "sleet": {
+    "translation": "Sneeuwregen",
+    "category": "Nature"
+  },
+  "freeze": {
+    "translation": "ijsberen",
+    "category": "Nature"
+  },
+  "melt": {
+    "translation": "melt in Dutch is smelten",
+    "category": "Nature"
+  },
+  "shine": {
+    "translation": "schijnen",
+    "category": "Nature"
+  },
+  "blow": {
+    "translation": "blazen",
+    "category": "Nature"
+  },
+  "grow": {
+    "translation": "groei",
+    "category": "Nature"
+  },
+  "bloom": {
+    "translation": "bloem",
+    "category": "Nature"
+  },
+  "wither": {
+    "translation": "verschillen",
+    "category": "Nature"
+  },
+  "sprout": {
+    "translation": "uitkomen",
+    "category": "Nature"
+  },
+  "fall": {
+    "translation": "valLENteerde",
+    "category": "Nature"
+  },
+  "quake": {
+    "translation": "beek",
+    "category": "Nature"
+  },
+  "erode": {
+    "translation": "eroeien",
+    "category": "Nature"
+  },
+  "burn": {
+    "translation": "branden",
+    "category": "Nature"
+  },
+  "flood": {
+    "translation": "stroming",
+    "category": "Nature"
+  },
+  "float": {
+    "translation": "drijven",
+    "category": "Nature"
+  },
+  "sink": {
+    "translation": "zink",
+    "category": "Nature"
+  },
+  "rise": {
+    "translation": "opstaan",
+    "category": "Nature"
+  },
+  "set": {
+    "translation": "zet",
+    "category": "Nature"
+  },
+  "breathe": {
+    "translation": "ademen",
+    "category": "Health"
+  },
+  "inhale": {
+    "translation": "ademen",
+    "category": "Health"
+  },
+  "exhale": {
+    "translation": "ademen uit",
+    "category": "Health"
+  },
+  "cough": {
+    "translation": "kouwen",
+    "category": "Health"
+  },
+  "sneeze": {
+    "translation": "hoesten",
+    "category": "Health"
+  },
+  "sweat": {
+    "translation": "zweet",
+    "category": "Health"
+  },
+  "bleed": {
+    "translation": "bleed in Dutch is bloeden",
+    "category": "Health"
+  },
+  "heal": {
+    "translation": "heilen",
+    "category": "Health"
+  },
+  "recover": {
+    "translation": "herstellen",
+    "category": "Health"
+  },
+  "ache": {
+    "translation": "pijn",
+    "category": "Health"
+  },
+  "hurt": {
+    "translation": "pijn",
+    "category": "Health"
+  },
+  "strain": {
+    "translation": "Spanningte",
+    "category": "Health"
+  },
+  "exercise": {
+    "translation": "oefening",
+    "category": "Health"
+  },
+  "faint": {
+    "translation": "flauw",
+    "category": "Health"
+  },
+  "vomit": {
+    "translation": "wijven",
+    "category": "Health"
+  },
+  "blink": {
+    "translation": "knipper",
+    "category": "Health"
+  },
+  "squint": {
+    "translation": "knipper",
+    "category": "Health"
+  },
+  "tremble": {
+    "translation": "beven",
+    "category": "Health"
+  },
+  "click": {
+    "translation": "klik",
+    "category": "Technology"
+  },
+  "tap": {
+    "translation": "kraan",
+    "category": "Technology"
+  },
+  "scroll": {
+    "translation": "rol",
+    "category": "Technology"
+  },
+  "swipe": {
+    "translation": "schuiven",
+    "category": "Technology"
+  },
+  "browse": {
+    "translation": "surveilen",
+    "category": "Technology"
+  },
+  "upgrade": {
+    "translation": "bijwerken",
+    "category": "Technology"
+  },
+  "copy": {
+    "translation": "kopie",
+    "category": "Technology"
+  },
+  "paste": {
+    "translation": "plakker",
+    "category": "Technology"
+  },
+  "delete": {
+    "translation": "verwijderen",
+    "category": "Technology"
+  },
+  "reset": {
+    "translation": "Resetten",
+    "category": "Technology"
+  },
+  "restart": {
+    "translation": "herstart",
+    "category": "Technology"
+  },
+  "log in": {
+    "translation": "inloggen",
+    "category": "Technology"
+  },
+  "log out": {
+    "translation": "uitloggen",
+    "category": "Technology"
+  },
+  "sync": {
+    "translation": "synchonisatie",
+    "category": "Technology"
+  },
+  "stream": {
+    "translation": "straatweg",
+    "category": "Technology"
+  },
+  "encrypt": {
+    "translation": "versleutelen",
+    "category": "Technology"
+  },
+  "backup": {
+    "translation": "backup",
+    "category": "Technology"
+  }
+}

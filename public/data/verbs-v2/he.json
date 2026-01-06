@@ -1,0 +1,1572 @@
+{
+  "walk": {
+    "translation": null,
+    "category": "Basic",
+    "failed": true
+  },
+  "run": {
+    "translation": "רץ",
+    "category": "Basic"
+  },
+  "jump": {
+    "translation": "סס",
+    "category": "Basic"
+  },
+  "hop": {
+    "translation": "ה",
+    "category": "Basic"
+  },
+  "skip": {
+    "translation": "קפוץ",
+    "category": "Basic"
+  },
+  "crawl": {
+    "translation": "להלום",
+    "category": "Basic"
+  },
+  "climb": {
+    "translation": "לעוף",
+    "category": "Basic"
+  },
+  "slide": {
+    "translation": "ל",
+    "category": "Basic"
+  },
+  "swing": {
+    "translation": "עברית",
+    "category": "Basic"
+  },
+  "stretch": {
+    "translation": "משוך",
+    "category": "Basic"
+  },
+  "bend": {
+    "translation": "כפף",
+    "category": "Basic"
+  },
+  "lift": {
+    "translation": "הרים",
+    "category": "Basic"
+  },
+  "carry": {
+    "translation": "לה",
+    "category": "Basic"
+  },
+  "drag": {
+    "translation": "משוך",
+    "category": "Basic"
+  },
+  "push": {
+    "translation": "תופס",
+    "category": "Basic"
+  },
+  "pull": {
+    "translation": "משוך",
+    "category": "Basic"
+  },
+  "hold": {
+    "translation": "החזיק",
+    "category": "Basic"
+  },
+  "grab": {
+    "translation": "לכוד",
+    "category": "Basic"
+  },
+  "drop": {
+    "translation": "דופק",
+    "category": "Basic"
+  },
+  "throw": {
+    "translation": "לך",
+    "category": "Basic"
+  },
+  "catch": {
+    "translation": "ן",
+    "category": "Basic"
+  },
+  "kick": {
+    "translation": "הצמד",
+    "category": "Basic"
+  },
+  "hit": {
+    "translation": "הכין",
+    "category": "Basic"
+  },
+  "press": {
+    "translation": null,
+    "category": "Basic",
+    "failed": true
+  },
+  "twist": {
+    "translation": "כפל",
+    "category": "Basic"
+  },
+  "turn": {
+    "translation": "פָּנוּ",
+    "category": "Basic"
+  },
+  "rotate": {
+    "translation": "פָּגַע",
+    "category": "Basic"
+  },
+  "flip": {
+    "translation": "פיפל",
+    "category": "Basic"
+  },
+  "shake": {
+    "translation": "הצטמרר",
+    "category": "Basic"
+  },
+  "wave": {
+    "translation": "גל",
+    "category": "Basic"
+  },
+  "reach": {
+    "translation": null,
+    "category": "Basic",
+    "failed": true
+  },
+  "lean": {
+    "translation": "לן",
+    "category": "Basic"
+  },
+  "rest": {
+    "translation": "שֵׁבֶט",
+    "category": "Basic"
+  },
+  "balance": {
+    "translation": "מְחַיֵּב",
+    "category": "Basic"
+  },
+  "spin": {
+    "translation": "ס",
+    "category": "Basic"
+  },
+  "arrange": {
+    "translation": "מארגן",
+    "category": "Basic"
+  },
+  "adjust": {
+    "translation": "הר",
+    "category": "Basic"
+  },
+  "shift": {
+    "translation": "ש",
+    "category": "Basic"
+  },
+  "tie": {
+    "translation": "כבל",
+    "category": "Basic"
+  },
+  "untie": {
+    "translation": "לאלץ",
+    "category": "Basic"
+  },
+  "wrap": {
+    "translation": "לאת",
+    "category": "Basic"
+  },
+  "unwrap": {
+    "translation": null,
+    "category": "Basic",
+    "failed": true
+  },
+  "fold": {
+    "translation": "לעטוף",
+    "category": "Basic"
+  },
+  "unfold": {
+    "translation": "פ",
+    "category": "Basic"
+  },
+  "pack": {
+    "translation": "תיבה",
+    "category": "Basic"
+  },
+  "unpack": {
+    "translation": "לולק",
+    "category": "Basic"
+  },
+  "be": {
+    "translation": "הוּא",
+    "category": "Basic"
+  },
+  "become": {
+    "translation": "היה",
+    "category": "Basic"
+  },
+  "seem": {
+    "translation": "הראות",
+    "category": "Basic"
+  },
+  "appear": {
+    "translation": "ראות",
+    "category": "Basic"
+  },
+  "remain": {
+    "translation": "הישאר",
+    "category": "Basic"
+  },
+  "stay": {
+    "translation": "ישאר",
+    "category": "Basic"
+  },
+  "exist": {
+    "translation": "לָבֹא",
+    "category": "Basic"
+  },
+  "happen": {
+    "translation": "קרה",
+    "category": "Basic"
+  },
+  "occur": {
+    "translation": null,
+    "category": "Basic",
+    "failed": true
+  },
+  "change": {
+    "translation": "שינוי",
+    "category": "Basic"
+  },
+  "improve": {
+    "translation": "להתיהר",
+    "category": "Basic"
+  },
+  "decline": {
+    "translation": "הסירה",
+    "category": "Basic"
+  },
+  "continue": {
+    "translation": "ור",
+    "category": "Basic"
+  },
+  "stop": {
+    "translation": "הסתיו",
+    "category": "Basic"
+  },
+  "begin": {
+    "translation": "התחל",
+    "category": "Basic"
+  },
+  "end": {
+    "translation": "ץן",
+    "category": "Basic"
+  },
+  "last": {
+    "translation": "אחרון",
+    "category": "Basic"
+  },
+  "wake": {
+    "translation": "תעורר",
+    "category": "Daily Routine"
+  },
+  "get up": {
+    "translation": "קוות",
+    "category": "Daily Routine"
+  },
+  "wash": {
+    "translation": "רחץ",
+    "category": "Daily Routine"
+  },
+  "shower": {
+    "translation": "ש",
+    "category": "Daily Routine"
+  },
+  "bathe": {
+    "translation": "ב",
+    "category": "Daily Routine"
+  },
+  "brush": {
+    "translation": "מברק",
+    "category": "Daily Routine"
+  },
+  "comb": {
+    "translation": "כובד",
+    "category": "Daily Routine"
+  },
+  "dress": {
+    "translation": "כובע",
+    "category": "Daily Routine"
+  },
+  "eat": {
+    "translation": "אכל",
+    "category": "Daily Routine"
+  },
+  "drink": {
+    "translation": "שתיה",
+    "category": "Daily Routine"
+  },
+  "snack": {
+    "translation": "ציפס",
+    "category": "Daily Routine"
+  },
+  "cook": {
+    "translation": "כ",
+    "category": "Daily Routine"
+  },
+  "bake": {
+    "translation": "ל",
+    "category": "Daily Routine"
+  },
+  "reheat": {
+    "translation": "לתחמם",
+    "category": "Daily Routine"
+  },
+  "clean": {
+    "translation": "טָהוֹר",
+    "category": "Daily Routine"
+  },
+  "tidy": {
+    "translation": "מ",
+    "category": "Daily Routine"
+  },
+  "organize": {
+    "translation": "לארגן",
+    "category": "Daily Routine"
+  },
+  "vacuum": {
+    "translation": "חדר",
+    "category": "Daily Routine"
+  },
+  "sweep": {
+    "translation": "ספוג",
+    "category": "Daily Routine"
+  },
+  "mop": {
+    "translation": "מ",
+    "category": "Daily Routine"
+  },
+  "dust": {
+    "translation": "דשא",
+    "category": "Daily Routine"
+  },
+  "wash dishes": {
+    "translation": "הצלחות",
+    "category": "Daily Routine"
+  },
+  "rinse": {
+    "translation": "רחץ",
+    "category": "Daily Routine"
+  },
+  "wipe": {
+    "translation": "כין",
+    "category": "Daily Routine"
+  },
+  "scrub": {
+    "translation": "מברך",
+    "category": "Daily Routine"
+  },
+  "dry": {
+    "translation": "רענן",
+    "category": "Daily Routine"
+  },
+  "shop": {
+    "translation": "מכולת",
+    "category": "Daily Routine"
+  },
+  "refill": {
+    "translation": "איפוס",
+    "category": "Daily Routine"
+  },
+  "charge": {
+    "translation": "טעון",
+    "category": "Daily Routine"
+  },
+  "relax": {
+    "translation": "שקט",
+    "category": "Daily Routine"
+  },
+  "nap": {
+    "translation": "נִיחוֹשׁ",
+    "category": "Daily Routine"
+  },
+  "sleep": {
+    "translation": "שינה",
+    "category": "Daily Routine"
+  },
+  "prepare": {
+    "translation": "לכין",
+    "category": "Daily Routine"
+  },
+  "schedule": {
+    "translation": "תורדמָה",
+    "category": "Daily Routine"
+  },
+  "cancel": {
+    "translation": "בטל",
+    "category": "Daily Routine"
+  },
+  "check": {
+    "translation": "כף",
+    "category": "Daily Routine"
+  },
+  "monitor": {
+    "translation": "מוניטור",
+    "category": "Daily Routine"
+  },
+  "plan": {
+    "translation": "תוכנית",
+    "category": "Daily Routine"
+  },
+  "wait": {
+    "translation": "מתן",
+    "category": "Daily Routine"
+  },
+  "search": {
+    "translation": "חיפש",
+    "category": "Daily Routine"
+  },
+  "find": {
+    "translation": "מצא",
+    "category": "Daily Routine"
+  },
+  "lose": {
+    "translation": "הפסיד",
+    "category": "Daily Routine"
+  },
+  "replace": {
+    "translation": "שלאהו",
+    "category": "Daily Routine"
+  },
+  "think": {
+    "translation": "תחשוב",
+    "category": "Mental"
+  },
+  "know": {
+    "translation": "אָדַע",
+    "category": "Mental"
+  },
+  "believe": {
+    "translation": "אָמַן",
+    "category": "Mental"
+  },
+  "consider": {
+    "translation": "בצערתי",
+    "category": "Mental"
+  },
+  "imagine": {
+    "translation": "דמיין",
+    "category": "Mental"
+  },
+  "wonder": {
+    "translation": "פלא",
+    "category": "Mental"
+  },
+  "remember": {
+    "translation": "זכור",
+    "category": "Mental"
+  },
+  "forget": {
+    "translation": "שכח",
+    "category": "Mental"
+  },
+  "realize": {
+    "translation": "הכירו",
+    "category": "Mental"
+  },
+  "guess": {
+    "translation": "הימנעות",
+    "category": "Mental"
+  },
+  "predict": {
+    "translation": "לעשות",
+    "category": "Mental"
+  },
+  "expect": {
+    "translation": "ה",
+    "category": "Mental"
+  },
+  "recognize": {
+    "translation": "לזהות",
+    "category": "Mental"
+  },
+  "notice": {
+    "translation": "הערה",
+    "category": "Mental"
+  },
+  "focus": {
+    "translation": "פִּקְוֶה",
+    "category": "Mental"
+  },
+  "concentrate": {
+    "translation": null,
+    "category": "Mental",
+    "failed": true
+  },
+  "decide": {
+    "translation": "לחליט",
+    "category": "Mental"
+  },
+  "choose": {
+    "translation": "בחר",
+    "category": "Mental"
+  },
+  "compare": {
+    "translation": "לבדוק",
+    "category": "Mental"
+  },
+  "analyze": {
+    "translation": "לנתח",
+    "category": "Mental"
+  },
+  "evaluate": {
+    "translation": "לנתח",
+    "category": "Mental"
+  },
+  "estimate": {
+    "translation": "תנאי",
+    "category": "Mental"
+  },
+  "solve": {
+    "translation": "לפתות",
+    "category": "Mental"
+  },
+  "question": {
+    "translation": "שאלה",
+    "category": "Mental"
+  },
+  "suspect": {
+    "translation": "שוכף",
+    "category": "Mental"
+  },
+  "doubt": {
+    "translation": "דָּבַט",
+    "category": "Mental"
+  },
+  "learn": {
+    "translation": "למד",
+    "category": "Mental"
+  },
+  "study": {
+    "translation": "לומד",
+    "category": "Mental"
+  },
+  "memorize": {
+    "translation": "להתאים",
+    "category": "Mental"
+  },
+  "calculate": {
+    "translation": "לעשות",
+    "category": "Mental"
+  },
+  "reflect": {
+    "translation": "הת",
+    "category": "Mental"
+  },
+  "understand": {
+    "translation": "הבין",
+    "category": "Mental"
+  },
+  "like": {
+    "translation": "כמ",
+    "category": "Mental"
+  },
+  "love": {
+    "translation": "אהבה",
+    "category": "Mental"
+  },
+  "hate": {
+    "translation": "חָמָס",
+    "category": "Mental"
+  },
+  "enjoy": {
+    "translation": "היה",
+    "category": "Mental"
+  },
+  "prefer": {
+    "translation": "לעדכן",
+    "category": "Mental"
+  },
+  "want": {
+    "translation": "חפץ",
+    "category": "Mental"
+  },
+  "need": {
+    "translation": "צריך",
+    "category": "Mental"
+  },
+  "miss": {
+    "translation": "חלום",
+    "category": "Mental"
+  },
+  "care": {
+    "translation": "הֶחְיָת",
+    "category": "Mental"
+  },
+  "worry": {
+    "translation": "כעס",
+    "category": "Mental"
+  },
+  "fear": {
+    "translation": "פחד",
+    "category": "Mental"
+  },
+  "panic": {
+    "translation": "ה",
+    "category": "Mental"
+  },
+  "stress": {
+    "translation": "תסכול",
+    "category": "Mental"
+  },
+  "calm": {
+    "translation": "שקט",
+    "category": "Mental"
+  },
+  "appreciate": {
+    "translation": "אכפתי",
+    "category": "Mental"
+  },
+  "value": {
+    "translation": "ערך",
+    "category": "Mental"
+  },
+  "respect": {
+    "translation": "הערכה",
+    "category": "Mental"
+  },
+  "dislike": {
+    "translation": "לאהוב",
+    "category": "Mental"
+  },
+  "regret": {
+    "translation": "חָלְמִי",
+    "category": "Mental"
+  },
+  "hope": {
+    "translation": "תקווה",
+    "category": "Mental"
+  },
+  "trust": {
+    "translation": "אמונה",
+    "category": "Mental"
+  },
+  "surprise": {
+    "translation": "הפתעה",
+    "category": "Mental"
+  },
+  "shock": {
+    "translation": "חֲשׂוֹק",
+    "category": "Mental"
+  },
+  "annoy": {
+    "translation": "סבך",
+    "category": "Mental"
+  },
+  "bother": {
+    "translation": "טרם",
+    "category": "Mental"
+  },
+  "confuse": {
+    "translation": "לבלבל",
+    "category": "Mental"
+  },
+  "embarrass": {
+    "translation": "כָלֵס",
+    "category": "Mental"
+  },
+  "frustrate": {
+    "translation": "הפריע",
+    "category": "Mental"
+  },
+  "satisfy": {
+    "translation": "שבע",
+    "category": "Mental"
+  },
+  "comfort": {
+    "translation": "חֵן",
+    "category": "Mental"
+  },
+  "cheer": {
+    "translation": "שמחה",
+    "category": "Mental"
+  },
+  "say": {
+    "translation": "אמר",
+    "category": "Communication"
+  },
+  "tell": {
+    "translation": "ספר",
+    "category": "Communication"
+  },
+  "talk": {
+    "translation": "דיבר",
+    "category": "Communication"
+  },
+  "speak": {
+    "translation": "דָּבֵר",
+    "category": "Communication"
+  },
+  "discuss": {
+    "translation": "דיבר",
+    "category": "Communication"
+  },
+  "chat": {
+    "translation": "חטף",
+    "category": "Communication"
+  },
+  "explain": {
+    "translation": "לפתוח",
+    "category": "Communication"
+  },
+  "describe": {
+    "translation": "לתאר",
+    "category": "Communication"
+  },
+  "announce": {
+    "translation": "להודיע",
+    "category": "Communication"
+  },
+  "report": {
+    "translation": "דווח",
+    "category": "Communication"
+  },
+  "reply": {
+    "translation": "תשובה",
+    "category": "Communication"
+  },
+  "answer": {
+    "translation": "תשובה",
+    "category": "Communication"
+  },
+  "ask": {
+    "translation": "שאול",
+    "category": "Communication"
+  },
+  "interrupt": {
+    "translation": "הפריע",
+    "category": "Communication"
+  },
+  "suggest": {
+    "translation": "לעשות",
+    "category": "Communication"
+  },
+  "recommend": {
+    "translation": "להמליץ",
+    "category": "Communication"
+  },
+  "complain": {
+    "translation": "ב",
+    "category": "Communication"
+  },
+  "argue": {
+    "translation": "למרות",
+    "category": "Communication"
+  },
+  "debate": {
+    "translation": "בִּדְבַטֵּא",
+    "category": "Communication"
+  },
+  "whisper": {
+    "translation": "מ",
+    "category": "Communication"
+  },
+  "shout": {
+    "translation": "צעוק",
+    "category": "Communication"
+  },
+  "yell": {
+    "translation": "הילל",
+    "category": "Communication"
+  },
+  "mention": {
+    "translation": "להזכיר",
+    "category": "Communication"
+  },
+  "remind": {
+    "translation": "זיכרון",
+    "category": "Communication"
+  },
+  "warn": {
+    "translation": "אזהר",
+    "category": "Communication"
+  },
+  "advise": {
+    "translation": "המליץ",
+    "category": "Communication"
+  },
+  "encourage": {
+    "translation": "להניע",
+    "category": "Communication"
+  },
+  "persuade": {
+    "translation": "לחוות",
+    "category": "Communication"
+  },
+  "invite": {
+    "translation": "הזמין",
+    "category": "Communication"
+  },
+  "respond": {
+    "translation": "התשובה",
+    "category": "Communication"
+  },
+  "translate": {
+    "translation": "תרגם",
+    "category": "Communication"
+  },
+  "inform": {
+    "translation": "אינפורם",
+    "category": "Communication"
+  },
+  "comment": {
+    "translation": "כ",
+    "category": "Communication"
+  },
+  "confirm": {
+    "translation": "אומדן",
+    "category": "Communication"
+  },
+  "deny": {
+    "translation": "לאמר",
+    "category": "Communication"
+  },
+  "admit": {
+    "translation": null,
+    "category": "Communication",
+    "failed": true
+  },
+  "meet": {
+    "translation": "פגש",
+    "category": "Social"
+  },
+  "greet": {
+    "translation": "שלום",
+    "category": "Social"
+  },
+  "welcome": {
+    "translation": "ברוך",
+    "category": "Social"
+  },
+  "visit": {
+    "translation": "בַּעַרְתָּה",
+    "category": "Social"
+  },
+  "host": {
+    "translation": "הסיע",
+    "category": "Social"
+  },
+  "join": {
+    "translation": "יָרַד",
+    "category": "Social"
+  },
+  "help": {
+    "translation": "הצלה",
+    "category": "Social"
+  },
+  "support": {
+    "translation": "תמיכה",
+    "category": "Social"
+  },
+  "assist": {
+    "translation": "לעזור",
+    "category": "Social"
+  },
+  "share": {
+    "translation": "חלק",
+    "category": "Social"
+  },
+  "care for": {
+    "translation": "ה",
+    "category": "Social"
+  },
+  "hug": {
+    "translation": "להתקרר",
+    "category": "Social"
+  },
+  "kiss": {
+    "translation": "נשמה",
+    "category": "Social"
+  },
+  "hold hands": {
+    "translation": "יד",
+    "category": "Social"
+  },
+  "date": {
+    "translation": "תאריך",
+    "category": "Social"
+  },
+  "marry": {
+    "translation": "לנישא",
+    "category": "Social"
+  },
+  "befriend": {
+    "translation": "להת",
+    "category": "Social"
+  },
+  "follow": {
+    "translation": "בעברית",
+    "category": "Social"
+  },
+  "lead": {
+    "translation": "לד",
+    "category": "Social"
+  },
+  "guide": {
+    "translation": "מדריך",
+    "category": "Social"
+  },
+  "introduce": {
+    "translation": "הציג",
+    "category": "Social"
+  },
+  "cooperate": {
+    "translation": "לעבוד",
+    "category": "Social"
+  },
+  "protect": {
+    "translation": "הגן",
+    "category": "Social"
+  },
+  "include": {
+    "translation": "כולל",
+    "category": "Social"
+  },
+  "exclude": {
+    "translation": "להינקל",
+    "category": "Social"
+  },
+  "work": {
+    "translation": "עבודה",
+    "category": "Work"
+  },
+  "write": {
+    "translation": "לכתוב",
+    "category": "Work"
+  },
+  "read": {
+    "translation": "אִשַּׁרְתָּ",
+    "category": "Work"
+  },
+  "edit": {
+    "translation": "ערוך",
+    "category": "Work"
+  },
+  "revise": {
+    "translation": "לערוך",
+    "category": "Work"
+  },
+  "review": {
+    "translation": "איסור",
+    "category": "Work"
+  },
+  "inspect": {
+    "translation": "לבדוק",
+    "category": "Work"
+  },
+  "complete": {
+    "translation": "ת",
+    "category": "Work"
+  },
+  "submit": {
+    "translation": "הסכים",
+    "category": "Work"
+  },
+  "create": {
+    "translation": "בָּר",
+    "category": "Work"
+  },
+  "design": {
+    "translation": "עיצוב",
+    "category": "Work"
+  },
+  "build": {
+    "translation": "בנין",
+    "category": "Work"
+  },
+  "assemble": {
+    "translation": "זל",
+    "category": "Work"
+  },
+  "debug": {
+    "translation": "דיבג",
+    "category": "Work"
+  },
+  "research": {
+    "translation": "מחקר",
+    "category": "Work"
+  },
+  "document": {
+    "translation": "מסמך",
+    "category": "Work"
+  },
+  "train": {
+    "translation": "רכבת",
+    "category": "Work"
+  },
+  "teach": {
+    "translation": "לימוד",
+    "category": "Work"
+  },
+  "update": {
+    "translation": "עדכון",
+    "category": "Work"
+  },
+  "upload": {
+    "translation": "וד",
+    "category": "Work"
+  },
+  "download": {
+    "translation": "הורד",
+    "category": "Work"
+  },
+  "print": {
+    "translation": "דפוס",
+    "category": "Work"
+  },
+  "scan": {
+    "translation": "סריקה",
+    "category": "Work"
+  },
+  "record": {
+    "translation": "רשימה",
+    "category": "Work"
+  },
+  "track": {
+    "translation": "ה",
+    "category": "Work"
+  },
+  "manage": {
+    "translation": "לנהל",
+    "category": "Work"
+  },
+  "supervise": {
+    "translation": "להטיל",
+    "category": "Work"
+  },
+  "go": {
+    "translation": "היה",
+    "category": "Travel"
+  },
+  "come": {
+    "translation": "בוא",
+    "category": "Travel"
+  },
+  "move": {
+    "translation": "תנועה",
+    "category": "Travel"
+  },
+  "leave": {
+    "translation": "הילך",
+    "category": "Travel"
+  },
+  "arrive": {
+    "translation": "הגיע",
+    "category": "Travel"
+  },
+  "enter": {
+    "translation": "כנס",
+    "category": "Travel"
+  },
+  "exit": {
+    "translation": "יציאה",
+    "category": "Travel"
+  },
+  "travel": {
+    "translation": "טיול",
+    "category": "Travel"
+  },
+  "fly": {
+    "translation": "נץ",
+    "category": "Travel"
+  },
+  "drive": {
+    "translation": "ת",
+    "category": "Travel"
+  },
+  "ride": {
+    "translation": "רכב",
+    "category": "Travel"
+  },
+  "board": {
+    "translation": "לוח",
+    "category": "Travel"
+  },
+  "land": {
+    "translation": "ארץ",
+    "category": "Travel"
+  },
+  "park": {
+    "translation": "פארק",
+    "category": "Travel"
+  },
+  "accelerate": {
+    "translation": "לעשות",
+    "category": "Travel"
+  },
+  "reverse": {
+    "translation": "הפוך",
+    "category": "Travel"
+  },
+  "cross": {
+    "translation": "קֶרֶשׁ",
+    "category": "Travel"
+  },
+  "wander": {
+    "translation": "לנוע",
+    "category": "Travel"
+  },
+  "explore": {
+    "translation": "לחקות",
+    "category": "Travel"
+  },
+  "return": {
+    "translation": "שׁוב",
+    "category": "Travel"
+  },
+  "rush": {
+    "translation": "ח",
+    "category": "Travel"
+  },
+  "hurry": {
+    "translation": "חזרה",
+    "category": "Travel"
+  },
+  "navigate": {
+    "translation": "ניוו",
+    "category": "Travel"
+  },
+  "sanitize": {
+    "translation": "לכבות",
+    "category": "Household"
+  },
+  "iron": {
+    "translation": "חומץ",
+    "category": "Household"
+  },
+  "store": {
+    "translation": "מכולת",
+    "category": "Household"
+  },
+  "repair": {
+    "translation": "ה",
+    "category": "Household"
+  },
+  "fix": {
+    "translation": "שׁוּב",
+    "category": "Household"
+  },
+  "disassemble": {
+    "translation": "לפרק",
+    "category": "Household"
+  },
+  "install": {
+    "translation": "נ",
+    "category": "Household"
+  },
+  "uninstall": {
+    "translation": "למחוק",
+    "category": "Household"
+  },
+  "remove": {
+    "translation": "למחוק",
+    "category": "Household"
+  },
+  "connect": {
+    "translation": "לנתק",
+    "category": "Household"
+  },
+  "disconnect": {
+    "translation": "לנתק",
+    "category": "Household"
+  },
+  "lock": {
+    "translation": "שַׁבָט",
+    "category": "Household"
+  },
+  "unlock": {
+    "translation": "פתח",
+    "category": "Household"
+  },
+  "decorate": {
+    "translation": "לצבוע",
+    "category": "Household"
+  },
+  "polish": {
+    "translation": "לטפל",
+    "category": "Household"
+  },
+  "hammer": {
+    "translation": "מ",
+    "category": "Household"
+  },
+  "saw": {
+    "translation": "שחטת",
+    "category": "Household"
+  },
+  "glue": {
+    "translation": "טבַעְלָה",
+    "category": "Household"
+  },
+  "buy": {
+    "translation": null,
+    "category": "Money",
+    "failed": true
+  },
+  "sell": {
+    "translation": "מכור",
+    "category": "Money"
+  },
+  "pay": {
+    "translation": "תשלום",
+    "category": "Money"
+  },
+  "owe": {
+    "translation": "עָשֵׁר",
+    "category": "Money"
+  },
+  "borrow": {
+    "translation": "לור",
+    "category": "Money"
+  },
+  "lend": {
+    "translation": "ל",
+    "category": "Money"
+  },
+  "rent": {
+    "translation": "תשלום",
+    "category": "Money"
+  },
+  "save": {
+    "translation": "שמור",
+    "category": "Money"
+  },
+  "spend": {
+    "translation": null,
+    "category": "Money",
+    "failed": true
+  },
+  "invest": {
+    "translation": "זקן",
+    "category": "Money"
+  },
+  "earn": {
+    "translation": "לזכות",
+    "category": "Money"
+  },
+  "refund": {
+    "translation": "חזרה",
+    "category": "Money"
+  },
+  "exchange": {
+    "translation": "תמורה",
+    "category": "Money"
+  },
+  "order": {
+    "translation": "סדר",
+    "category": "Money"
+  },
+  "select": {
+    "translation": "בחר",
+    "category": "Money"
+  },
+  "withdraw": {
+    "translation": "יִסְתַּלק",
+    "category": "Money"
+  },
+  "deposit": {
+    "translation": "תשלום",
+    "category": "Money"
+  },
+  "budget": {
+    "translation": "בְּדֻגְעֶת",
+    "category": "Money"
+  },
+  "fry": {
+    "translation": "פִּרְיוֹת",
+    "category": "Food"
+  },
+  "grill": {
+    "translation": "גריל",
+    "category": "Food"
+  },
+  "boil": {
+    "translation": "בשלים",
+    "category": "Food"
+  },
+  "steam": {
+    "translation": "ליבת",
+    "category": "Food"
+  },
+  "slice": {
+    "translation": "כיתר",
+    "category": "Food"
+  },
+  "cut": {
+    "translation": "חָרַשׁ",
+    "category": "Food"
+  },
+  "chop": {
+    "translation": "חתוך",
+    "category": "Food"
+  },
+  "mix": {
+    "translation": "וֹפֵר",
+    "category": "Food"
+  },
+  "stir": {
+    "translation": "ש",
+    "category": "Food"
+  },
+  "pour": {
+    "translation": "לפושט",
+    "category": "Food"
+  },
+  "serve": {
+    "translation": "שירות",
+    "category": "Food"
+  },
+  "taste": {
+    "translation": "טעם",
+    "category": "Food"
+  },
+  "season": {
+    "translation": "עונה",
+    "category": "Food"
+  },
+  "marinate": {
+    "translation": "מרינטת",
+    "category": "Food"
+  },
+  "chew": {
+    "translation": "ל",
+    "category": "Food"
+  },
+  "swallow": {
+    "translation": "תנורית",
+    "category": "Food"
+  },
+  "deliver": {
+    "translation": "לדתור",
+    "category": "Food"
+  },
+  "digest": {
+    "translation": "יר",
+    "category": "Food"
+  },
+  "rain": {
+    "translation": "גשם",
+    "category": "Nature"
+  },
+  "snow": {
+    "translation": "ברד",
+    "category": "Nature"
+  },
+  "hail": {
+    "translation": "ה",
+    "category": "Nature"
+  },
+  "sleet": {
+    "translation": "שלאה",
+    "category": "Nature"
+  },
+  "freeze": {
+    "translation": "ח",
+    "category": "Nature"
+  },
+  "melt": {
+    "translation": "לט",
+    "category": "Nature"
+  },
+  "shine": {
+    "translation": "לֵהוֹן",
+    "category": "Nature"
+  },
+  "blow": {
+    "translation": "לנפוח",
+    "category": "Nature"
+  },
+  "grow": {
+    "translation": "צומח",
+    "category": "Nature"
+  },
+  "bloom": {
+    "translation": "פרח",
+    "category": "Nature"
+  },
+  "wither": {
+    "translation": "צָלַח",
+    "category": "Nature"
+  },
+  "sprout": {
+    "translation": "תכלת",
+    "category": "Nature"
+  },
+  "fall": {
+    "translation": "פָּלָה",
+    "category": "Nature"
+  },
+  "quake": {
+    "translation": "תסונת",
+    "category": "Nature"
+  },
+  "erode": {
+    "translation": "אבדון",
+    "category": "Nature"
+  },
+  "burn": {
+    "translation": "אשׁוּם",
+    "category": "Nature"
+  },
+  "flood": {
+    "translation": "פֶּדַע",
+    "category": "Nature"
+  },
+  "float": {
+    "translation": "נופל",
+    "category": "Nature"
+  },
+  "sink": {
+    "translation": "מקלחת",
+    "category": "Nature"
+  },
+  "rise": {
+    "translation": "אֲרַ",
+    "category": "Nature"
+  },
+  "set": {
+    "translation": null,
+    "category": "Nature",
+    "failed": true
+  },
+  "breathe": {
+    "translation": "נשׁה",
+    "category": "Health"
+  },
+  "inhale": {
+    "translation": "הושיט",
+    "category": "Health"
+  },
+  "exhale": {
+    "translation": "נשא",
+    "category": "Health"
+  },
+  "cough": {
+    "translation": "קָלֶה",
+    "category": "Health"
+  },
+  "sneeze": {
+    "translation": "כ",
+    "category": "Health"
+  },
+  "sweat": {
+    "translation": "דשא",
+    "category": "Health"
+  },
+  "bleed": {
+    "translation": "נפוח",
+    "category": "Health"
+  },
+  "heal": {
+    "translation": "ברחב",
+    "category": "Health"
+  },
+  "recover": {
+    "translation": "פָּחַד",
+    "category": "Health"
+  },
+  "ache": {
+    "translation": "אכא",
+    "category": "Health"
+  },
+  "hurt": {
+    "translation": "בַּד",
+    "category": "Health"
+  },
+  "strain": {
+    "translation": "שומץ",
+    "category": "Health"
+  },
+  "exercise": {
+    "translation": "תרגול",
+    "category": "Health"
+  },
+  "faint": {
+    "translation": "כבד",
+    "category": "Health"
+  },
+  "vomit": {
+    "translation": "הצטער",
+    "category": "Health"
+  },
+  "blink": {
+    "translation": "עינית",
+    "category": "Health"
+  },
+  "squint": {
+    "translation": "עיוורון",
+    "category": "Health"
+  },
+  "tremble": {
+    "translation": "יק",
+    "category": "Health"
+  },
+  "click": {
+    "translation": "טיפל",
+    "category": "Technology"
+  },
+  "tap": {
+    "translation": "כפתור",
+    "category": "Technology"
+  },
+  "scroll": {
+    "translation": "מגמה",
+    "category": "Technology"
+  },
+  "swipe": {
+    "translation": "עפף",
+    "category": "Technology"
+  },
+  "browse": {
+    "translation": "גלולת",
+    "category": "Technology"
+  },
+  "upgrade": {
+    "translation": "ממשל",
+    "category": "Technology"
+  },
+  "copy": {
+    "translation": "דיפא",
+    "category": "Technology"
+  },
+  "paste": {
+    "translation": "ליפת",
+    "category": "Technology"
+  },
+  "delete": {
+    "translation": "מחוק",
+    "category": "Technology"
+  },
+  "reset": {
+    "translation": "איפוס",
+    "category": "Technology"
+  },
+  "restart": {
+    "translation": "חזרה",
+    "category": "Technology"
+  },
+  "log in": {
+    "translation": "לכניסה",
+    "category": "Technology"
+  },
+  "log out": {
+    "translation": "מהחשבון",
+    "category": "Technology"
+  },
+  "sync": {
+    "translation": "סינכרוניזציה",
+    "category": "Technology"
+  },
+  "stream": {
+    "translation": "נהר",
+    "category": "Technology"
+  },
+  "encrypt": {
+    "translation": "לצפן",
+    "category": "Technology"
+  },
+  "backup": {
+    "translation": "האחסון",
+    "category": "Technology"
+  }
+}

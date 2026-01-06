@@ -1,0 +1,1566 @@
+{
+  "walk": {
+    "translation": "lógás",
+    "category": "Basic"
+  },
+  "run": {
+    "translation": "futtatnia",
+    "category": "Basic"
+  },
+  "jump": {
+    "translation": "száll",
+    "category": "Basic"
+  },
+  "hop": {
+    "translation": "kacsan",
+    "category": "Basic"
+  },
+  "skip": {
+    "translation": "kippelenős",
+    "category": "Basic"
+  },
+  "crawl": {
+    "translation": "kakarott",
+    "category": "Basic"
+  },
+  "climb": {
+    "translation": "nyújtania",
+    "category": "Basic"
+  },
+  "slide": {
+    "translation": "szalma",
+    "category": "Basic"
+  },
+  "swing": {
+    "translation": "csillaghalom",
+    "category": "Basic"
+  },
+  "stretch": {
+    "translation": "nyújt",
+    "category": "Basic"
+  },
+  "bend": {
+    "translation": "curva",
+    "category": "Basic"
+  },
+  "lift": {
+    "translation": "győztes",
+    "category": "Basic"
+  },
+  "carry": {
+    "translation": "tartana",
+    "category": "Basic"
+  },
+  "drag": {
+    "translation": "tartóztatás",
+    "category": "Basic"
+  },
+  "push": {
+    "translation": "nyomtatás",
+    "category": "Basic"
+  },
+  "pull": {
+    "translation": "nyomtatni",
+    "category": "Basic"
+  },
+  "hold": {
+    "translation": "tenni",
+    "category": "Basic"
+  },
+  "grab": {
+    "translation": "vesz",
+    "category": "Basic"
+  },
+  "drop": {
+    "translation": "doboz",
+    "category": "Basic"
+  },
+  "throw": {
+    "translation": "tosszť",
+    "category": "Basic"
+  },
+  "catch": {
+    "translation": "kapcsolódni",
+    "category": "Basic"
+  },
+  "kick": {
+    "translation": "kapcsolódik",
+    "category": "Basic"
+  },
+  "hit": {
+    "translation": "Állomány-break",
+    "category": "Basic"
+  },
+  "press": {
+    "translation": "nyomtatás",
+    "category": "Basic"
+  },
+  "twist": {
+    "translation": "forgásték",
+    "category": "Basic"
+  },
+  "turn": {
+    "translation": "fordítani",
+    "category": "Basic"
+  },
+  "rotate": {
+    "translation": "fordítana",
+    "category": "Basic"
+  },
+  "flip": {
+    "translation": "fliplő",
+    "category": "Basic"
+  },
+  "shake": {
+    "translation": "vigál",
+    "category": "Basic"
+  },
+  "wave": {
+    "translation": "szell",
+    "category": "Basic"
+  },
+  "reach": {
+    "translation": "érézkedni",
+    "category": "Basic"
+  },
+  "lean": {
+    "translation": "légnagyobb",
+    "category": "Basic"
+  },
+  "rest": {
+    "translation": "vihar",
+    "category": "Basic"
+  },
+  "balance": {
+    "translation": "gyengézet",
+    "category": "Basic"
+  },
+  "spin": {
+    "translation": "fényképezés",
+    "category": "Basic"
+  },
+  "arrange": {
+    "translation": "rendezősítő",
+    "category": "Basic"
+  },
+  "adjust": {
+    "translation": "eltervez",
+    "category": "Basic"
+  },
+  "shift": {
+    "translation": "módosítás",
+    "category": "Basic"
+  },
+  "tie": {
+    "translation": "köteles",
+    "category": "Basic"
+  },
+  "untie": {
+    "translation": "megnyitnia",
+    "category": "Basic"
+  },
+  "wrap": {
+    "translation": "usztrafézetősítőkulcs",
+    "category": "Basic"
+  },
+  "unwrap": {
+    "translation": "megnyitni",
+    "category": "Basic"
+  },
+  "fold": {
+    "translation": "szórtatás",
+    "category": "Basic"
+  },
+  "unfold": {
+    "translation": "megfújás",
+    "category": "Basic"
+  },
+  "pack": {
+    "translation": "Csomag",
+    "category": "Basic"
+  },
+  "unpack": {
+    "translation": "megnyitás",
+    "category": "Basic"
+  },
+  "be": {
+    "translation": "lennék",
+    "category": "Basic"
+  },
+  "become": {
+    "translation": "VERNÉK",
+    "category": "Basic"
+  },
+  "seem": {
+    "translation": "tűnik",
+    "category": "Basic"
+  },
+  "appear": {
+    "translation": "fordulnak",
+    "category": "Basic"
+  },
+  "remain": {
+    "translation": "maradnak",
+    "category": "Basic"
+  },
+  "stay": {
+    "translation": "maradnia",
+    "category": "Basic"
+  },
+  "exist": {
+    "translation": "létezni",
+    "category": "Basic"
+  },
+  "happen": {
+    "translation": "fordulnak",
+    "category": "Basic"
+  },
+  "occur": {
+    "translation": "fordulnak",
+    "category": "Basic"
+  },
+  "change": {
+    "translation": "változás",
+    "category": "Basic"
+  },
+  "improve": {
+    "translation": "javítani",
+    "category": "Basic"
+  },
+  "decline": {
+    "translation": "elutasítnia",
+    "category": "Basic"
+  },
+  "continue": {
+    "translation": "folytatni",
+    "category": "Basic"
+  },
+  "stop": {
+    "translation": null,
+    "category": "Basic",
+    "failed": true
+  },
+  "begin": {
+    "translation": "kezdőzetlen",
+    "category": "Basic"
+  },
+  "end": {
+    "translation": "vég",
+    "category": "Basic"
+  },
+  "last": {
+    "translation": "utolsó",
+    "category": "Basic"
+  },
+  "wake": {
+    "translation": "húzás",
+    "category": "Daily Routine"
+  },
+  "get up": {
+    "translation": "Felkelős",
+    "category": "Daily Routine"
+  },
+  "wash": {
+    "translation": "megy",
+    "category": "Daily Routine"
+  },
+  "shower": {
+    "translation": "showershower",
+    "category": "Daily Routine"
+  },
+  "bathe": {
+    "translation": "kapcsolódni",
+    "category": "Daily Routine"
+  },
+  "brush": {
+    "translation": "csomorításztár",
+    "category": "Daily Routine"
+  },
+  "comb": {
+    "translation": "csomag",
+    "category": "Daily Routine"
+  },
+  "dress": {
+    "translation": "szlachetőszerkesztés",
+    "category": "Daily Routine"
+  },
+  "eat": {
+    "translation": null,
+    "category": "Daily Routine",
+    "failed": true
+  },
+  "drink": {
+    "translation": "ítényező",
+    "category": "Daily Routine"
+  },
+  "snack": {
+    "translation": "szóltészteszték",
+    "category": "Daily Routine"
+  },
+  "cook": {
+    "translation": "kúgylásztó",
+    "category": "Daily Routine"
+  },
+  "bake": {
+    "translation": "bakománytatás",
+    "category": "Daily Routine"
+  },
+  "reheat": {
+    "translation": "Melegítőztetés",
+    "category": "Daily Routine"
+  },
+  "clean": {
+    "translation": "Csíkzet",
+    "category": "Daily Routine"
+  },
+  "tidy": {
+    "translation": "tisztességű",
+    "category": "Daily Routine"
+  },
+  "organize": {
+    "translation": "összeállítani",
+    "category": "Daily Routine"
+  },
+  "vacuum": {
+    "translation": "hengerész",
+    "category": "Daily Routine"
+  },
+  "sweep": {
+    "translation": "csúszik",
+    "category": "Daily Routine"
+  },
+  "mop": {
+    "translation": "mop in Hungarian is húr",
+    "category": "Daily Routine"
+  },
+  "dust": {
+    "translation": "szén",
+    "category": "Daily Routine"
+  },
+  "wash dishes": {
+    "translation": "megyem a tárgyaláshoz",
+    "category": "Daily Routine"
+  },
+  "rinse": {
+    "translation": "megyészteni",
+    "category": "Daily Routine"
+  },
+  "wipe": {
+    "translation": "szállítás",
+    "category": "Daily Routine"
+  },
+  "scrub": {
+    "translation": "kiszedő",
+    "category": "Daily Routine"
+  },
+  "dry": {
+    "translation": "csökkentett",
+    "category": "Daily Routine"
+  },
+  "shop": {
+    "translation": "bolt",
+    "category": "Daily Routine"
+  },
+  "refill": {
+    "translation": "Felvinni",
+    "category": "Daily Routine"
+  },
+  "charge": {
+    "translation": "betegység",
+    "category": "Daily Routine"
+  },
+  "relax": {
+    "translation": "Szabadító",
+    "category": "Daily Routine"
+  },
+  "nap": {
+    "translation": "veszteszőlő",
+    "category": "Daily Routine"
+  },
+  "sleep": {
+    "translation": "sleepsztúrok",
+    "category": "Daily Routine"
+  },
+  "prepare": {
+    "translation": "készítő",
+    "category": "Daily Routine"
+  },
+  "schedule": {
+    "translation": "rendszerezetteményező",
+    "category": "Daily Routine"
+  },
+  "cancel": {
+    "translation": "Bekelés",
+    "category": "Daily Routine"
+  },
+  "check": {
+    "translation": "ellenőrizz",
+    "category": "Daily Routine"
+  },
+  "monitor": {
+    "translation": "monitortésztelet",
+    "category": "Daily Routine"
+  },
+  "plan": {
+    "translation": "terv",
+    "category": "Daily Routine"
+  },
+  "wait": {
+    "translation": "várjon",
+    "category": "Daily Routine"
+  },
+  "search": {
+    "translation": "keresés",
+    "category": "Daily Routine"
+  },
+  "find": {
+    "translation": "találni",
+    "category": "Daily Routine"
+  },
+  "lose": {
+    "translation": "veszteni",
+    "category": "Daily Routine"
+  },
+  "replace": {
+    "translation": "cserép",
+    "category": "Daily Routine"
+  },
+  "think": {
+    "translation": "gondolnak",
+    "category": "Mental"
+  },
+  "know": {
+    "translation": "tudnak",
+    "category": "Mental"
+  },
+  "believe": {
+    "translation": "igen",
+    "category": "Mental"
+  },
+  "consider": {
+    "translation": "Fontold",
+    "category": "Mental"
+  },
+  "imagine": {
+    "translation": "képzelni",
+    "category": "Mental"
+  },
+  "wonder": {
+    "translation": "Marvel",
+    "category": "Mental"
+  },
+  "remember": {
+    "translation": "Ember",
+    "category": "Mental"
+  },
+  "forget": {
+    "translation": "Forgotten  elítélni",
+    "category": "Mental"
+  },
+  "realize": {
+    "translation": "érzékelni",
+    "category": "Mental"
+  },
+  "guess": {
+    "translation": "gondolat",
+    "category": "Mental"
+  },
+  "predict": {
+    "translation": "elődolgozás",
+    "category": "Mental"
+  },
+  "expect": {
+    "translation": "várni",
+    "category": "Mental"
+  },
+  "recognize": {
+    "translation": "szignificálni",
+    "category": "Mental"
+  },
+  "notice": {
+    "translation": "Megjegyzés",
+    "category": "Mental"
+  },
+  "focus": {
+    "translation": "fókuszt",
+    "category": "Mental"
+  },
+  "concentrate": {
+    "translation": "koncentráló",
+    "category": "Mental"
+  },
+  "decide": {
+    "translation": "döntés",
+    "category": "Mental"
+  },
+  "choose": {
+    "translation": "kiválasztani",
+    "category": "Mental"
+  },
+  "compare": {
+    "translation": "comparálás",
+    "category": "Mental"
+  },
+  "analyze": {
+    "translation": "analizálős",
+    "category": "Mental"
+  },
+  "evaluate": {
+    "translation": "évaluezik",
+    "category": "Mental"
+  },
+  "estimate": {
+    "translation": "esztimate",
+    "category": "Mental"
+  },
+  "solve": {
+    "translation": "solve in Hungarian is old",
+    "category": "Mental"
+  },
+  "question": {
+    "translation": "kérdés",
+    "category": "Mental"
+  },
+  "suspect": {
+    "translation": "dolgozóztatott",
+    "category": "Mental"
+  },
+  "doubt": {
+    "translation": "döntelőzetős",
+    "category": "Mental"
+  },
+  "learn": {
+    "translation": "tanulni",
+    "category": "Mental"
+  },
+  "study": {
+    "translation": "tanulás",
+    "category": "Mental"
+  },
+  "memorize": {
+    "translation": "megjegyezni",
+    "category": "Mental"
+  },
+  "calculate": {
+    "translation": "számítani",
+    "category": "Mental"
+  },
+  "reflect": {
+    "translation": "meglátogatni",
+    "category": "Mental"
+  },
+  "understand": {
+    "translation": "értenek",
+    "category": "Mental"
+  },
+  "like": {
+    "translation": "Mint",
+    "category": "Mental"
+  },
+  "love": {
+    "translation": "szerecsen",
+    "category": "Mental"
+  },
+  "hate": {
+    "translation": "Emberősítés",
+    "category": "Mental"
+  },
+  "enjoy": {
+    "translation": "előnyben van",
+    "category": "Mental"
+  },
+  "prefer": {
+    "translation": "kellényezkedni",
+    "category": "Mental"
+  },
+  "want": {
+    "translation": "szeretni",
+    "category": "Mental"
+  },
+  "need": {
+    "translation": "szükség",
+    "category": "Mental"
+  },
+  "miss": {
+    "translation": "hibára",
+    "category": "Mental"
+  },
+  "care": {
+    "translation": "TAKE",
+    "category": "Mental"
+  },
+  "worry": {
+    "translation": "semblies bénéficie",
+    "category": "Mental"
+  },
+  "fear": {
+    "translation": "Lefaj",
+    "category": "Mental"
+  },
+  "panic": {
+    "translation": "panik",
+    "category": "Mental"
+  },
+  "stress": {
+    "translation": "nyomorúság",
+    "category": "Mental"
+  },
+  "calm": {
+    "translation": "Dobromlós",
+    "category": "Mental"
+  },
+  "appreciate": {
+    "translation": "értékelni",
+    "category": "Mental"
+  },
+  "value": {
+    "translation": "érték",
+    "category": "Mental"
+  },
+  "respect": {
+    "translation": "hogyannos",
+    "category": "Mental"
+  },
+  "dislike": {
+    "translation": "elényezés",
+    "category": "Mental"
+  },
+  "regret": {
+    "translation": "repentíményez",
+    "category": "Mental"
+  },
+  "hope": {
+    "translation": "nyomorúság",
+    "category": "Mental"
+  },
+  "trust": {
+    "translation": "személyzetmegőzés",
+    "category": "Mental"
+  },
+  "surprise": {
+    "translation": "Megyasztás",
+    "category": "Mental"
+  },
+  "shock": {
+    "translation": "szokás",
+    "category": "Mental"
+  },
+  "annoy": {
+    "translation": "megérdemli",
+    "category": "Mental"
+  },
+  "bother": {
+    "translation": "megállapodás",
+    "category": "Mental"
+  },
+  "confuse": {
+    "translation": "befúltatnia",
+    "category": "Mental"
+  },
+  "embarrass": {
+    "translation": "megyőrzéscsenség",
+    "category": "Mental"
+  },
+  "frustrate": {
+    "translation": "megemeli",
+    "category": "Mental"
+  },
+  "satisfy": {
+    "translation": "szabályozni",
+    "category": "Mental"
+  },
+  "comfort": {
+    "translation": "komfort",
+    "category": "Mental"
+  },
+  "cheer": {
+    "translation": "harcítás",
+    "category": "Mental"
+  },
+  "say": {
+    "translation": "mondanál",
+    "category": "Communication"
+  },
+  "tell": {
+    "translation": "mondtak",
+    "category": "Communication"
+  },
+  "talk": {
+    "translation": "beszélgetés",
+    "category": "Communication"
+  },
+  "speak": {
+    "translation": "mondanom",
+    "category": "Communication"
+  },
+  "discuss": {
+    "translation": "beszélni",
+    "category": "Communication"
+  },
+  "chat": {
+    "translation": "chattan",
+    "category": "Communication"
+  },
+  "explain": {
+    "translation": "megbeszéld",
+    "category": "Communication"
+  },
+  "describe": {
+    "translation": "leírni",
+    "category": "Communication"
+  },
+  "announce": {
+    "translation": "köszönni",
+    "category": "Communication"
+  },
+  "report": {
+    "translation": "jelentés",
+    "category": "Communication"
+  },
+  "reply": {
+    "translation": "válasz",
+    "category": "Communication"
+  },
+  "answer": {
+    "translation": "válasz",
+    "category": "Communication"
+  },
+  "ask": {
+    "translation": "kérdezni",
+    "category": "Communication"
+  },
+  "interrupt": {
+    "translation": "szakadés",
+    "category": "Communication"
+  },
+  "suggest": {
+    "translation": "javasol",
+    "category": "Communication"
+  },
+  "recommend": {
+    "translation": "javasol",
+    "category": "Communication"
+  },
+  "complain": {
+    "translation": "elmosolyodni",
+    "category": "Communication"
+  },
+  "argue": {
+    "translation": "szállítani",
+    "category": "Communication"
+  },
+  "debate": {
+    "translation": "débat",
+    "category": "Communication"
+  },
+  "whisper": {
+    "translation": "sziszmitter",
+    "category": "Communication"
+  },
+  "shout": {
+    "translation": "kiáltás",
+    "category": "Communication"
+  },
+  "yell": {
+    "translation": "kiáltó",
+    "category": "Communication"
+  },
+  "mention": {
+    "translation": "említés",
+    "category": "Communication"
+  },
+  "remind": {
+    "translation": "mondanyszámukaránszabás",
+    "category": "Communication"
+  },
+  "warn": {
+    "translation": "figyelmeztetős",
+    "category": "Communication"
+  },
+  "advise": {
+    "translation": "tancsitő",
+    "category": "Communication"
+  },
+  "encourage": {
+    "translation": "beszédszeményez",
+    "category": "Communication"
+  },
+  "persuade": {
+    "translation": "beszélgetni",
+    "category": "Communication"
+  },
+  "invite": {
+    "translation": "itedWidgetItem",
+    "category": "Communication"
+  },
+  "respond": {
+    "translation": "válaszolős",
+    "category": "Communication"
+  },
+  "translate": {
+    "translation": "Fordítás",
+    "category": "Communication"
+  },
+  "inform": {
+    "translation": "informálni",
+    "category": "Communication"
+  },
+  "comment": {
+    "translation": "komment",
+    "category": "Communication"
+  },
+  "confirm": {
+    "translation": "meghatározni",
+    "category": "Communication"
+  },
+  "deny": {
+    "translation": "megtagadnia",
+    "category": "Communication"
+  },
+  "admit": {
+    "translation": "engedélyezni",
+    "category": "Communication"
+  },
+  "meet": {
+    "translation": "mehetős",
+    "category": "Social"
+  },
+  "greet": {
+    "translation": "Üdvözli",
+    "category": "Social"
+  },
+  "welcome": {
+    "translation": "Üdvözleténk van",
+    "category": "Social"
+  },
+  "visit": {
+    "translation": "vizítálás",
+    "category": "Social"
+  },
+  "host": {
+    "translation": "gazda",
+    "category": "Social"
+  },
+  "join": {
+    "translation": "csatlakozik",
+    "category": "Social"
+  },
+  "help": {
+    "translation": "segítség",
+    "category": "Social"
+  },
+  "support": {
+    "translation": "támogatás",
+    "category": "Social"
+  },
+  "assist": {
+    "translation": "segíteni",
+    "category": "Social"
+  },
+  "share": {
+    "translation": "osztályozni",
+    "category": "Social"
+  },
+  "care for": {
+    "translation": "TAKEksaményelése",
+    "category": "Social"
+  },
+  "hug": {
+    "translation": "félenyhet",
+    "category": "Social"
+  },
+  "kiss": {
+    "translation": "üzenet",
+    "category": "Social"
+  },
+  "hold hands": {
+    "translation": "Holdózni",
+    "category": "Social"
+  },
+  "date": {
+    "translation": "dátum",
+    "category": "Social"
+  },
+  "marry": {
+    "translation": "evel",
+    "category": "Social"
+  },
+  "befriend": {
+    "translation": "könyedelmezősítő",
+    "category": "Social"
+  },
+  "follow": {
+    "translation": "követeni",
+    "category": "Social"
+  },
+  "lead": {
+    "translation": "vezető",
+    "category": "Social"
+  },
+  "guide": {
+    "translation": "útmutató",
+    "category": "Social"
+  },
+  "introduce": {
+    "translation": "beijelenteni",
+    "category": "Social"
+  },
+  "cooperate": {
+    "translation": "munkaügyesedés",
+    "category": "Social"
+  },
+  "protect": {
+    "translation": "védő",
+    "category": "Social"
+  },
+  "include": {
+    "translation": "összevonnia",
+    "category": "Social"
+  },
+  "exclude": {
+    "translation": "exkludáljon",
+    "category": "Social"
+  },
+  "work": {
+    "translation": "munka",
+    "category": "Work"
+  },
+  "write": {
+    "translation": "írni",
+    "category": "Work"
+  },
+  "read": {
+    "translation": "olvasnak",
+    "category": "Work"
+  },
+  "edit": {
+    "translation": "szerkesztő",
+    "category": "Work"
+  },
+  "revise": {
+    "translation": "reviselősítő",
+    "category": "Work"
+  },
+  "review": {
+    "translation": "igiennéződések",
+    "category": "Work"
+  },
+  "inspect": {
+    "translation": "ellenőrizni",
+    "category": "Work"
+  },
+  "complete": {
+    "translation": "teljes",
+    "category": "Work"
+  },
+  "submit": {
+    "translation": "megküldeni",
+    "category": "Work"
+  },
+  "create": {
+    "translation": "létrehozás",
+    "category": "Work"
+  },
+  "design": {
+    "translation": "szabadság",
+    "category": "Work"
+  },
+  "build": {
+    "translation": "építeni",
+    "category": "Work"
+  },
+  "assemble": {
+    "translation": "szablonosüzemi",
+    "category": "Work"
+  },
+  "debug": {
+    "translation": "hajtoztatás",
+    "category": "Work"
+  },
+  "research": {
+    "translation": "Kutatás",
+    "category": "Work"
+  },
+  "document": {
+    "translation": "dokumentum",
+    "category": "Work"
+  },
+  "train": {
+    "translation": "továbbijelentés",
+    "category": "Work"
+  },
+  "teach": {
+    "translation": "tanítani",
+    "category": "Work"
+  },
+  "update": {
+    "translation": "frissítés",
+    "category": "Work"
+  },
+  "upload": {
+    "translation": "feltiram",
+    "category": "Work"
+  },
+  "download": {
+    "translation": "Letöltés",
+    "category": "Work"
+  },
+  "print": {
+    "translation": "kiadás",
+    "category": "Work"
+  },
+  "scan": {
+    "translation": "scannalősítés",
+    "category": "Work"
+  },
+  "record": {
+    "translation": "záznam",
+    "category": "Work"
+  },
+  "track": {
+    "translation": "út",
+    "category": "Work"
+  },
+  "manage": {
+    "translation": "kezelő",
+    "category": "Work"
+  },
+  "supervise": {
+    "translation": "összehasználata",
+    "category": "Work"
+  },
+  "go": {
+    "translation": "Ment",
+    "category": "Travel"
+  },
+  "come": {
+    "translation": "jönni",
+    "category": "Travel"
+  },
+  "move": {
+    "translation": "mozgatnia",
+    "category": "Travel"
+  },
+  "leave": {
+    "translation": "Háziút",
+    "category": "Travel"
+  },
+  "arrive": {
+    "translation": "érkezzen",
+    "category": "Travel"
+  },
+  "enter": {
+    "translation": "bejönnél",
+    "category": "Travel"
+  },
+  "exit": {
+    "translation": "kilépés",
+    "category": "Travel"
+  },
+  "travel": {
+    "translation": "útkaholnak",
+    "category": "Travel"
+  },
+  "fly": {
+    "translation": "falúti",
+    "category": "Travel"
+  },
+  "drive": {
+    "translation": "dríver",
+    "category": "Travel"
+  },
+  "ride": {
+    "translation": "uszásztás",
+    "category": "Travel"
+  },
+  "board": {
+    "translation": "lapéta",
+    "category": "Travel"
+  },
+  "land": {
+    "translation": "teredény",
+    "category": "Travel"
+  },
+  "park": {
+    "translation": "parkó",
+    "category": "Travel"
+  },
+  "accelerate": {
+    "translation": "gyorsítani",
+    "category": "Travel"
+  },
+  "reverse": {
+    "translation": "fordítás",
+    "category": "Travel"
+  },
+  "cross": {
+    "translation": "crúszás",
+    "category": "Travel"
+  },
+  "wander": {
+    "translation": "szervetlenkedni",
+    "category": "Travel"
+  },
+  "explore": {
+    "translation": "kutatni",
+    "category": "Travel"
+  },
+  "return": {
+    "translation": "vissza",
+    "category": "Travel"
+  },
+  "rush": {
+    "translation": "szarazősólni",
+    "category": "Travel"
+  },
+  "hurry": {
+    "translation": "szikra",
+    "category": "Travel"
+  },
+  "navigate": {
+    "translation": "navigálni",
+    "category": "Travel"
+  },
+  "sanitize": {
+    "translation": "szinonimázás",
+    "category": "Household"
+  },
+  "iron": {
+    "translation": "szík",
+    "category": "Household"
+  },
+  "store": {
+    "translation": "tárgyiút",
+    "category": "Household"
+  },
+  "repair": {
+    "translation": "javítás",
+    "category": "Household"
+  },
+  "fix": {
+    "translation": "szoldatás",
+    "category": "Household"
+  },
+  "disassemble": {
+    "translation": "romlik",
+    "category": "Household"
+  },
+  "install": {
+    "translation": "telepíteni",
+    "category": "Household"
+  },
+  "uninstall": {
+    "translation": "bezárás",
+    "category": "Household"
+  },
+  "remove": {
+    "translation": "Torreszteni",
+    "category": "Household"
+  },
+  "connect": {
+    "translation": "kapcsolódni",
+    "category": "Household"
+  },
+  "disconnect": {
+    "translation": "Megszakítás",
+    "category": "Household"
+  },
+  "lock": {
+    "translation": "lock in Hungarian is zár",
+    "category": "Household"
+  },
+  "unlock": {
+    "translation": "megnyitni",
+    "category": "Household"
+  },
+  "decorate": {
+    "translation": "dekorálni",
+    "category": "Household"
+  },
+  "polish": {
+    "translation": "huős",
+    "category": "Household"
+  },
+  "hammer": {
+    "translation": "mára",
+    "category": "Household"
+  },
+  "saw": {
+    "translation": "Háromszög",
+    "category": "Household"
+  },
+  "glue": {
+    "translation": "vasútállomás",
+    "category": "Household"
+  },
+  "buy": {
+    "translation": "vásárolnia",
+    "category": "Money"
+  },
+  "sell": {
+    "translation": "-elennie",
+    "category": "Money"
+  },
+  "pay": {
+    "translation": "fizetni",
+    "category": "Money"
+  },
+  "owe": {
+    "translation": "szövet",
+    "category": "Money"
+  },
+  "borrow": {
+    "translation": "kölcsönztetni",
+    "category": "Money"
+  },
+  "lend": {
+    "translation": "kérdőjelesít",
+    "category": "Money"
+  },
+  "rent": {
+    "translation": "boltészlet",
+    "category": "Money"
+  },
+  "save": {
+    "translation": "mentés",
+    "category": "Money"
+  },
+  "spend": {
+    "translation": "előfizetni",
+    "category": "Money"
+  },
+  "invest": {
+    "translation": "invertész",
+    "category": "Money"
+  },
+  "earn": {
+    "translation": "nyerésztőzetlenül",
+    "category": "Money"
+  },
+  "refund": {
+    "translation": "visszatérítés",
+    "category": "Money"
+  },
+  "exchange": {
+    "translation": "cserép",
+    "category": "Money"
+  },
+  "order": {
+    "translation": "rend",
+    "category": "Money"
+  },
+  "select": {
+    "translation": "kiválasztó",
+    "category": "Money"
+  },
+  "withdraw": {
+    "translation": "Megvinni",
+    "category": "Money"
+  },
+  "deposit": {
+    "translation": "depositum",
+    "category": "Money"
+  },
+  "budget": {
+    "translation": "egyeztetés",
+    "category": "Money"
+  },
+  "fry": {
+    "translation": "panírni",
+    "category": "Food"
+  },
+  "grill": {
+    "translation": "barbecue",
+    "category": "Food"
+  },
+  "boil": {
+    "translation": "fúrni",
+    "category": "Food"
+  },
+  "steam": {
+    "translation": "parányészteszt",
+    "category": "Food"
+  },
+  "slice": {
+    "translation": "licerék",
+    "category": "Food"
+  },
+  "cut": {
+    "translation": "kiss",
+    "category": "Food"
+  },
+  "chop": {
+    "translation": "Csárdás",
+    "category": "Food"
+  },
+  "mix": {
+    "translation": "míx",
+    "category": "Food"
+  },
+  "stir": {
+    "translation": "megorulni",
+    "category": "Food"
+  },
+  "pour": {
+    "translation": "vigadozás",
+    "category": "Food"
+  },
+  "serve": {
+    "translation": "szolgál",
+    "category": "Food"
+  },
+  "taste": {
+    "translation": null,
+    "category": "Food",
+    "failed": true
+  },
+  "season": {
+    "translation": "szónálmosztány",
+    "category": "Food"
+  },
+  "marinate": {
+    "translation": "macskaablakolás",
+    "category": "Food"
+  },
+  "chew": {
+    "translation": "zavarozni",
+    "category": "Food"
+  },
+  "swallow": {
+    "translation": "Szalma",
+    "category": "Food"
+  },
+  "deliver": {
+    "translation": "eldönteni",
+    "category": "Food"
+  },
+  "digest": {
+    "translation": "digéz",
+    "category": "Food"
+  },
+  "rain": {
+    "translation": "húcsavaró",
+    "category": "Nature"
+  },
+  "snow": {
+    "translation": "SNOW in Hungarian is csík",
+    "category": "Nature"
+  },
+  "hail": {
+    "translation": "Csillagút",
+    "category": "Nature"
+  },
+  "sleet": {
+    "translation": "Háromszög",
+    "category": "Nature"
+  },
+  "freeze": {
+    "translation": "fogyasztana",
+    "category": "Nature"
+  },
+  "melt": {
+    "translation": "meltenyi",
+    "category": "Nature"
+  },
+  "shine": {
+    "translation": "fényeskedik",
+    "category": "Nature"
+  },
+  "blow": {
+    "translation": "dönteni",
+    "category": "Nature"
+  },
+  "grow": {
+    "translation": "nőgni",
+    "category": "Nature"
+  },
+  "bloom": {
+    "translation": "földöröm",
+    "category": "Nature"
+  },
+  "wither": {
+    "translation": "forgonyulás",
+    "category": "Nature"
+  },
+  "sprout": {
+    "translation": "földögész",
+    "category": "Nature"
+  },
+  "fall": {
+    "translation": "Hátrahálik",
+    "category": "Nature"
+  },
+  "quake": {
+    "translation": "szemetés",
+    "category": "Nature"
+  },
+  "erode": {
+    "translation": "okoztat",
+    "category": "Nature"
+  },
+  "burn": {
+    "translation": "fúrni",
+    "category": "Nature"
+  },
+  "flood": {
+    "translation": "vízavatás",
+    "category": "Nature"
+  },
+  "float": {
+    "translation": "folyó",
+    "category": "Nature"
+  },
+  "sink": {
+    "translation": "vasútállomás",
+    "category": "Nature"
+  },
+  "rise": {
+    "translation": "futás",
+    "category": "Nature"
+  },
+  "set": {
+    "translation": "halmaz",
+    "category": "Nature"
+  },
+  "breathe": {
+    "translation": "Tookalyzed",
+    "category": "Health"
+  },
+  "inhale": {
+    "translation": "befúrni",
+    "category": "Health"
+  },
+  "exhale": {
+    "translation": "átvinni",
+    "category": "Health"
+  },
+  "cough": {
+    "translation": "győzelemző",
+    "category": "Health"
+  },
+  "sneeze": {
+    "translation": "Réznyomás",
+    "category": "Health"
+  },
+  "sweat": {
+    "translation": "sweat in Hungarian is hid",
+    "category": "Health"
+  },
+  "bleed": {
+    "translation": "nyújt",
+    "category": "Health"
+  },
+  "heal": {
+    "translation": "gyógyítani",
+    "category": "Health"
+  },
+  "recover": {
+    "translation": "visszaérnyezkedés",
+    "category": "Health"
+  },
+  "ache": {
+    "translation": "félenyhetőség",
+    "category": "Health"
+  },
+  "hurt": {
+    "translation": "doboz",
+    "category": "Health"
+  },
+  "strain": {
+    "translation": "nyomtatás",
+    "category": "Health"
+  },
+  "exercise": {
+    "translation": "felszereltségényés",
+    "category": "Health"
+  },
+  "faint": {
+    "translation": "csúcsomor",
+    "category": "Health"
+  },
+  "vomit": {
+    "translation": null,
+    "category": "Health",
+    "failed": true
+  },
+  "blink": {
+    "translation": "ivities",
+    "category": "Health"
+  },
+  "squint": {
+    "translation": "szörnyűzemlés",
+    "category": "Health"
+  },
+  "tremble": {
+    "translation": "szemben",
+    "category": "Health"
+  },
+  "click": {
+    "translation": "klikkelős",
+    "category": "Technology"
+  },
+  "tap": {
+    "translation": "nyomtatás",
+    "category": "Technology"
+  },
+  "scroll": {
+    "translation": "fákkuződés",
+    "category": "Technology"
+  },
+  "swipe": {
+    "translation": "nyomtatás",
+    "category": "Technology"
+  },
+  "browse": {
+    "translation": "megtekinteni",
+    "category": "Technology"
+  },
+  "upgrade": {
+    "translation": "frissítés",
+    "category": "Technology"
+  },
+  "copy": {
+    "translation": "módszer",
+    "category": "Technology"
+  },
+  "paste": {
+    "translation": "leptető",
+    "category": "Technology"
+  },
+  "delete": {
+    "translation": "törlés",
+    "category": "Technology"
+  },
+  "reset": {
+    "translation": "Réstart",
+    "category": "Technology"
+  },
+  "restart": {
+    "translation": "indul újra",
+    "category": "Technology"
+  },
+  "log in": {
+    "translation": "Bejelentkezés",
+    "category": "Technology"
+  },
+  "log out": {
+    "translation": "kilépés",
+    "category": "Technology"
+  },
+  "sync": {
+    "translation": "szinkron",
+    "category": "Technology"
+  },
+  "stream": {
+    "translation": "folyam",
+    "category": "Technology"
+  },
+  "encrypt": {
+    "translation": "viffelni",
+    "category": "Technology"
+  },
+  "backup": {
+    "translation": "szállítás",
+    "category": "Technology"
+  }
+}

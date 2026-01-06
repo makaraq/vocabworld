@@ -1,0 +1,1562 @@
+{
+  "walk": {
+    "translation": "дастани",
+    "category": "Basic"
+  },
+  "run": {
+    "translation": "беги",
+    "category": "Basic"
+  },
+  "jump": {
+    "translation": "прескок",
+    "category": "Basic"
+  },
+  "hop": {
+    "translation": "прескок",
+    "category": "Basic"
+  },
+  "skip": {
+    "translation": "Пропусни",
+    "category": "Basic"
+  },
+  "crawl": {
+    "translation": "зголемување",
+    "category": "Basic"
+  },
+  "climb": {
+    "translation": "лази",
+    "category": "Basic"
+  },
+  "slide": {
+    "translation": "плетене",
+    "category": "Basic"
+  },
+  "swing": {
+    "translation": "плескавина",
+    "category": "Basic"
+  },
+  "stretch": {
+    "translation": "Растојање",
+    "category": "Basic"
+  },
+  "bend": {
+    "translation": "Пуштина",
+    "category": "Basic"
+  },
+  "lift": {
+    "translation": "подиум",
+    "category": "Basic"
+  },
+  "carry": {
+    "translation": "носити",
+    "category": "Basic"
+  },
+  "drag": {
+    "translation": "Тащити",
+    "category": "Basic"
+  },
+  "push": {
+    "translation": "натиснувам",
+    "category": "Basic"
+  },
+  "pull": {
+    "translation": "взема",
+    "category": "Basic"
+  },
+  "hold": {
+    "translation": "Држава",
+    "category": "Basic"
+  },
+  "grab": {
+    "translation": "захвати",
+    "category": "Basic"
+  },
+  "drop": {
+    "translation": "опадаина",
+    "category": "Basic"
+  },
+  "throw": {
+    "translation": "број",
+    "category": "Basic"
+  },
+  "catch": {
+    "translation": "Пойманија",
+    "category": "Basic"
+  },
+  "kick": {
+    "translation": "бика",
+    "category": "Basic"
+  },
+  "hit": {
+    "translation": "Донеси",
+    "category": "Basic"
+  },
+  "press": {
+    "translation": "Преса",
+    "category": "Basic"
+  },
+  "twist": {
+    "translation": "преврт",
+    "category": "Basic"
+  },
+  "turn": {
+    "translation": "превземање",
+    "category": "Basic"
+  },
+  "rotate": {
+    "translation": "поворот",
+    "category": "Basic"
+  },
+  "flip": {
+    "translation": "Превртеди",
+    "category": "Basic"
+  },
+  "shake": {
+    "translation": "шаткнувам",
+    "category": "Basic"
+  },
+  "wave": {
+    "translation": "волна",
+    "category": "Basic"
+  },
+  "reach": {
+    "translation": "достигнув",
+    "category": "Basic"
+  },
+  "lean": {
+    "translation": "слизнат",
+    "category": "Basic"
+  },
+  "rest": {
+    "translation": "покое",
+    "category": "Basic"
+  },
+  "balance": {
+    "translation": "баланс",
+    "category": "Basic"
+  },
+  "spin": {
+    "translation": "Пиното",
+    "category": "Basic"
+  },
+  "arrange": {
+    "translation": "организира",
+    "category": "Basic"
+  },
+  "adjust": {
+    "translation": "настројување",
+    "category": "Basic"
+  },
+  "shift": {
+    "translation": "Промена",
+    "category": "Basic"
+  },
+  "tie": {
+    "translation": "трева",
+    "category": "Basic"
+  },
+  "untie": {
+    "translation": "разбивачи",
+    "category": "Basic"
+  },
+  "wrap": {
+    "translation": "Обавлка",
+    "category": "Basic"
+  },
+  "unwrap": {
+    "translation": "разбира",
+    "category": "Basic"
+  },
+  "fold": {
+    "translation": "Слопнување",
+    "category": "Basic"
+  },
+  "unfold": {
+    "translation": "разворачање",
+    "category": "Basic"
+  },
+  "pack": {
+    "translation": "Пакет",
+    "category": "Basic"
+  },
+  "unpack": {
+    "translation": "разбирање",
+    "category": "Basic"
+  },
+  "be": {
+    "translation": "бујќи",
+    "category": "Basic"
+  },
+  "become": {
+    "translation": "стати",
+    "category": "Basic"
+  },
+  "seem": {
+    "translation": "изгледа",
+    "category": "Basic"
+  },
+  "appear": {
+    "translation": "появја",
+    "category": "Basic"
+  },
+  "remain": {
+    "translation": "остава",
+    "category": "Basic"
+  },
+  "stay": {
+    "translation": "остава",
+    "category": "Basic"
+  },
+  "exist": {
+    "translation": "сушта",
+    "category": "Basic"
+  },
+  "happen": {
+    "translation": "случи",
+    "category": "Basic"
+  },
+  "occur": {
+    "translation": "случи",
+    "category": "Basic"
+  },
+  "change": {
+    "translation": "промена",
+    "category": "Basic"
+  },
+  "improve": {
+    "translation": "додека",
+    "category": "Basic"
+  },
+  "decline": {
+    "translation": "опадајќи",
+    "category": "Basic"
+  },
+  "continue": {
+    "translation": "Продолжава",
+    "category": "Basic"
+  },
+  "stop": {
+    "translation": "зголеми",
+    "category": "Basic"
+  },
+  "begin": {
+    "translation": "почети",
+    "category": "Basic"
+  },
+  "end": {
+    "translation": "край",
+    "category": "Basic"
+  },
+  "last": {
+    "translation": "последен",
+    "category": "Basic"
+  },
+  "wake": {
+    "translation": "бужди",
+    "category": "Daily Routine"
+  },
+  "get up": {
+    "translation": "встанај",
+    "category": "Daily Routine"
+  },
+  "wash": {
+    "translation": "чистиње",
+    "category": "Daily Routine"
+  },
+  "shower": {
+    "translation": "Душ",
+    "category": "Daily Routine"
+  },
+  "bathe": {
+    "translation": "вапнити",
+    "category": "Daily Routine"
+  },
+  "brush": {
+    "translation": "Кретче",
+    "category": "Daily Routine"
+  },
+  "comb": {
+    "translation": "комб",
+    "category": "Daily Routine"
+  },
+  "dress": {
+    "translation": "одежда",
+    "category": "Daily Routine"
+  },
+  "eat": {
+    "translation": "едиња",
+    "category": "Daily Routine"
+  },
+  "drink": {
+    "translation": "пилење",
+    "category": "Daily Routine"
+  },
+  "snack": {
+    "translation": "закуска",
+    "category": "Daily Routine"
+  },
+  "cook": {
+    "translation": "кучар",
+    "category": "Daily Routine"
+  },
+  "bake": {
+    "translation": "печати",
+    "category": "Daily Routine"
+  },
+  "reheat": {
+    "translation": "повторно",
+    "category": "Daily Routine"
+  },
+  "clean": {
+    "translation": "Чист",
+    "category": "Daily Routine"
+  },
+  "tidy": {
+    "translation": "пореден",
+    "category": "Daily Routine"
+  },
+  "organize": {
+    "translation": "организирам",
+    "category": "Daily Routine"
+  },
+  "vacuum": {
+    "translation": "вакуум",
+    "category": "Daily Routine"
+  },
+  "sweep": {
+    "translation": "Пречистување",
+    "category": "Daily Routine"
+  },
+  "mop": {
+    "translation": "моп",
+    "category": "Daily Routine"
+  },
+  "dust": {
+    "translation": "пуша",
+    "category": "Daily Routine"
+  },
+  "wash dishes": {
+    "translation": "Почињување",
+    "category": "Daily Routine"
+  },
+  "rinse": {
+    "translation": "плеснување",
+    "category": "Daily Routine"
+  },
+  "wipe": {
+    "translation": "отицина",
+    "category": "Daily Routine"
+  },
+  "scrub": {
+    "translation": "Чисто",
+    "category": "Daily Routine"
+  },
+  "dry": {
+    "translation": "сух",
+    "category": "Daily Routine"
+  },
+  "shop": {
+    "translation": "шоп",
+    "category": "Daily Routine"
+  },
+  "refill": {
+    "translation": "заправа",
+    "category": "Daily Routine"
+  },
+  "charge": {
+    "translation": "Нападак",
+    "category": "Daily Routine"
+  },
+  "relax": {
+    "translation": "релаксирам",
+    "category": "Daily Routine"
+  },
+  "nap": {
+    "translation": "дневен",
+    "category": "Daily Routine"
+  },
+  "sleep": {
+    "translation": "спомледен",
+    "category": "Daily Routine"
+  },
+  "prepare": {
+    "translation": "предаставам",
+    "category": "Daily Routine"
+  },
+  "schedule": {
+    "translation": "програма",
+    "category": "Daily Routine"
+  },
+  "cancel": {
+    "translation": "откажување",
+    "category": "Daily Routine"
+  },
+  "check": {
+    "translation": "Проверка",
+    "category": "Daily Routine"
+  },
+  "monitor": {
+    "translation": "надзор",
+    "category": "Daily Routine"
+  },
+  "plan": {
+    "translation": "план",
+    "category": "Daily Routine"
+  },
+  "wait": {
+    "translation": "очекувам",
+    "category": "Daily Routine"
+  },
+  "search": {
+    "translation": "пребарување",
+    "category": "Daily Routine"
+  },
+  "find": {
+    "translation": "најдам",
+    "category": "Daily Routine"
+  },
+  "lose": {
+    "translation": "Губи",
+    "category": "Daily Routine"
+  },
+  "replace": {
+    "translation": "заменети",
+    "category": "Daily Routine"
+  },
+  "think": {
+    "translation": "Мислење",
+    "category": "Mental"
+  },
+  "know": {
+    "translation": "Знаам",
+    "category": "Mental"
+  },
+  "believe": {
+    "translation": "верува",
+    "category": "Mental"
+  },
+  "consider": {
+    "translation": "Размислувам",
+    "category": "Mental"
+  },
+  "imagine": {
+    "translation": "ирање",
+    "category": "Mental"
+  },
+  "wonder": {
+    "translation": "чудо",
+    "category": "Mental"
+  },
+  "remember": {
+    "translation": "поминати",
+    "category": "Mental"
+  },
+  "forget": {
+    "translation": "заборавам",
+    "category": "Mental"
+  },
+  "realize": {
+    "translation": "разбирање",
+    "category": "Mental"
+  },
+  "guess": {
+    "translation": "пропозиција",
+    "category": "Mental"
+  },
+  "predict": {
+    "translation": "пресмета",
+    "category": "Mental"
+  },
+  "expect": {
+    "translation": "увам",
+    "category": "Mental"
+  },
+  "recognize": {
+    "translation": "познавање",
+    "category": "Mental"
+  },
+  "notice": {
+    "translation": "обичка",
+    "category": "Mental"
+  },
+  "focus": {
+    "translation": "фокус",
+    "category": "Mental"
+  },
+  "concentrate": {
+    "translation": "Концентрирање",
+    "category": "Mental"
+  },
+  "decide": {
+    "translation": "одреди",
+    "category": "Mental"
+  },
+  "choose": {
+    "translation": "избирање",
+    "category": "Mental"
+  },
+  "compare": {
+    "translation": "Сравни",
+    "category": "Mental"
+  },
+  "analyze": {
+    "translation": "анализирање",
+    "category": "Mental"
+  },
+  "evaluate": {
+    "translation": "оценивање",
+    "category": "Mental"
+  },
+  "estimate": {
+    "translation": "Оценка",
+    "category": "Mental"
+  },
+  "solve": {
+    "translation": "решава",
+    "category": "Mental"
+  },
+  "question": {
+    "translation": "Питање",
+    "category": "Mental"
+  },
+  "suspect": {
+    "translation": "Подозреник",
+    "category": "Mental"
+  },
+  "doubt": {
+    "translation": "сомнение",
+    "category": "Mental"
+  },
+  "learn": {
+    "translation": "ава",
+    "category": "Mental"
+  },
+  "study": {
+    "translation": "учење",
+    "category": "Mental"
+  },
+  "memorize": {
+    "translation": "паметувати",
+    "category": "Mental"
+  },
+  "calculate": {
+    "translation": "рачуна",
+    "category": "Mental"
+  },
+  "reflect": {
+    "translation": "осветлување",
+    "category": "Mental"
+  },
+  "understand": {
+    "translation": "разбирање",
+    "category": "Mental"
+  },
+  "like": {
+    "translation": "као",
+    "category": "Mental"
+  },
+  "love": {
+    "translation": "любов",
+    "category": "Mental"
+  },
+  "hate": {
+    "translation": "ненависть",
+    "category": "Mental"
+  },
+  "enjoy": {
+    "translation": "Пријаво",
+    "category": "Mental"
+  },
+  "prefer": {
+    "translation": "Предлажам",
+    "category": "Mental"
+  },
+  "want": {
+    "translation": "желаење",
+    "category": "Mental"
+  },
+  "need": {
+    "translation": "потреба",
+    "category": "Mental"
+  },
+  "miss": {
+    "translation": "Пропуснувам",
+    "category": "Mental"
+  },
+  "care": {
+    "translation": "Одржување",
+    "category": "Mental"
+  },
+  "worry": {
+    "translation": "страничкување",
+    "category": "Mental"
+  },
+  "fear": {
+    "translation": "страх",
+    "category": "Mental"
+  },
+  "panic": {
+    "translation": "паника",
+    "category": "Mental"
+  },
+  "stress": {
+    "translation": "стрес",
+    "category": "Mental"
+  },
+  "calm": {
+    "translation": "Спокоен",
+    "category": "Mental"
+  },
+  "appreciate": {
+    "translation": "априцирати",
+    "category": "Mental"
+  },
+  "value": {
+    "translation": "вредност",
+    "category": "Mental"
+  },
+  "respect": {
+    "translation": "чеќа",
+    "category": "Mental"
+  },
+  "dislike": {
+    "translation": "непријателство",
+    "category": "Mental"
+  },
+  "regret": {
+    "translation": "репка",
+    "category": "Mental"
+  },
+  "hope": {
+    "translation": "Надежда",
+    "category": "Mental"
+  },
+  "trust": {
+    "translation": "Веројатност",
+    "category": "Mental"
+  },
+  "surprise": {
+    "translation": "удиво",
+    "category": "Mental"
+  },
+  "shock": {
+    "translation": "Шок",
+    "category": "Mental"
+  },
+  "annoy": {
+    "translation": "досети",
+    "category": "Mental"
+  },
+  "bother": {
+    "translation": "Поранкување",
+    "category": "Mental"
+  },
+  "confuse": {
+    "translation": "загубување",
+    "category": "Mental"
+  },
+  "embarrass": {
+    "translation": "бесеѓување",
+    "category": "Mental"
+  },
+  "frustrate": {
+    "translation": "озлобувати",
+    "category": "Mental"
+  },
+  "satisfy": {
+    "translation": "задоволи",
+    "category": "Mental"
+  },
+  "comfort": {
+    "translation": "Поканство",
+    "category": "Mental"
+  },
+  "cheer": {
+    "translation": "Поздрав",
+    "category": "Mental"
+  },
+  "say": {
+    "translation": "каза",
+    "category": "Communication"
+  },
+  "tell": {
+    "translation": "речи",
+    "category": "Communication"
+  },
+  "talk": {
+    "translation": "говор",
+    "category": "Communication"
+  },
+  "speak": {
+    "translation": "говори",
+    "category": "Communication"
+  },
+  "discuss": {
+    "translation": "дискутирам",
+    "category": "Communication"
+  },
+  "chat": {
+    "translation": "Чат",
+    "category": "Communication"
+  },
+  "explain": {
+    "translation": "објасни",
+    "category": "Communication"
+  },
+  "describe": {
+    "translation": "опишување",
+    "category": "Communication"
+  },
+  "announce": {
+    "translation": "објави",
+    "category": "Communication"
+  },
+  "report": {
+    "translation": "Изјава",
+    "category": "Communication"
+  },
+  "reply": {
+    "translation": "отговара",
+    "category": "Communication"
+  },
+  "answer": {
+    "translation": "Одговор",
+    "category": "Communication"
+  },
+  "ask": {
+    "translation": "питање",
+    "category": "Communication"
+  },
+  "interrupt": {
+    "translation": "Прекупување",
+    "category": "Communication"
+  },
+  "suggest": {
+    "translation": "предлажам",
+    "category": "Communication"
+  },
+  "recommend": {
+    "translation": "предлажам",
+    "category": "Communication"
+  },
+  "complain": {
+    "translation": "претрагување",
+    "category": "Communication"
+  },
+  "argue": {
+    "translation": "спореди",
+    "category": "Communication"
+  },
+  "debate": {
+    "translation": "дебатирање",
+    "category": "Communication"
+  },
+  "whisper": {
+    "translation": "шепнување",
+    "category": "Communication"
+  },
+  "shout": {
+    "translation": "вик",
+    "category": "Communication"
+  },
+  "yell": {
+    "translation": "викнување",
+    "category": "Communication"
+  },
+  "mention": {
+    "translation": "Означен",
+    "category": "Communication"
+  },
+  "remind": {
+    "translation": "напоменување",
+    "category": "Communication"
+  },
+  "warn": {
+    "translation": "предупреждање",
+    "category": "Communication"
+  },
+  "advise": {
+    "translation": "советувати",
+    "category": "Communication"
+  },
+  "encourage": {
+    "translation": "бодеси",
+    "category": "Communication"
+  },
+  "persuade": {
+    "translation": "пресуди",
+    "category": "Communication"
+  },
+  "invite": {
+    "translation": "пријавити",
+    "category": "Communication"
+  },
+  "respond": {
+    "translation": "одговори",
+    "category": "Communication"
+  },
+  "translate": {
+    "translation": "превод",
+    "category": "Communication"
+  },
+  "inform": {
+    "translation": "Информирам",
+    "category": "Communication"
+  },
+  "comment": {
+    "translation": "коментар",
+    "category": "Communication"
+  },
+  "confirm": {
+    "translation": "Потврди",
+    "category": "Communication"
+  },
+  "deny": {
+    "translation": "отрича",
+    "category": "Communication"
+  },
+  "admit": {
+    "translation": "Признавајќи",
+    "category": "Communication"
+  },
+  "meet": {
+    "translation": "встрети",
+    "category": "Social"
+  },
+  "greet": {
+    "translation": "приветствување",
+    "category": "Social"
+  },
+  "welcome": {
+    "translation": "дојдоате",
+    "category": "Social"
+  },
+  "visit": {
+    "translation": "навесте",
+    "category": "Social"
+  },
+  "host": {
+    "translation": "гост",
+    "category": "Social"
+  },
+  "join": {
+    "translation": "Присоедини",
+    "category": "Social"
+  },
+  "help": {
+    "translation": "помош",
+    "category": "Social"
+  },
+  "support": {
+    "translation": "Помош",
+    "category": "Social"
+  },
+  "assist": {
+    "translation": "поможу",
+    "category": "Social"
+  },
+  "share": {
+    "translation": "дели",
+    "category": "Social"
+  },
+  "care for": {
+    "translation": "општети",
+    "category": "Social"
+  },
+  "hug": {
+    "translation": "облога",
+    "category": "Social"
+  },
+  "kiss": {
+    "translation": "пцелуј",
+    "category": "Social"
+  },
+  "hold hands": {
+    "translation": "земаат",
+    "category": "Social"
+  },
+  "date": {
+    "translation": "даток",
+    "category": "Social"
+  },
+  "marry": {
+    "translation": "седење",
+    "category": "Social"
+  },
+  "befriend": {
+    "translation": "пријателите",
+    "category": "Social"
+  },
+  "follow": {
+    "translation": "Следува",
+    "category": "Social"
+  },
+  "lead": {
+    "translation": "ведеро",
+    "category": "Social"
+  },
+  "guide": {
+    "translation": "ведник",
+    "category": "Social"
+  },
+  "introduce": {
+    "translation": "представи",
+    "category": "Social"
+  },
+  "cooperate": {
+    "translation": "сотрудирање",
+    "category": "Social"
+  },
+  "protect": {
+    "translation": "заштити",
+    "category": "Social"
+  },
+  "include": {
+    "translation": "вклучува",
+    "category": "Social"
+  },
+  "exclude": {
+    "translation": "Изключување",
+    "category": "Social"
+  },
+  "work": {
+    "translation": "Работа",
+    "category": "Work"
+  },
+  "write": {
+    "translation": "писати",
+    "category": "Work"
+  },
+  "read": {
+    "translation": "читање",
+    "category": "Work"
+  },
+  "edit": {
+    "translation": "редагирање",
+    "category": "Work"
+  },
+  "revise": {
+    "translation": "дизаверсувати",
+    "category": "Work"
+  },
+  "review": {
+    "translation": "преглед",
+    "category": "Work"
+  },
+  "inspect": {
+    "translation": "инспектирање",
+    "category": "Work"
+  },
+  "complete": {
+    "translation": "полно",
+    "category": "Work"
+  },
+  "submit": {
+    "translation": "Предади",
+    "category": "Work"
+  },
+  "create": {
+    "translation": "создати",
+    "category": "Work"
+  },
+  "design": {
+    "translation": "Дизајн",
+    "category": "Work"
+  },
+  "build": {
+    "translation": "Строиње",
+    "category": "Work"
+  },
+  "assemble": {
+    "translation": "Собраније",
+    "category": "Work"
+  },
+  "debug": {
+    "translation": "дебагирање",
+    "category": "Work"
+  },
+  "research": {
+    "translation": "истражување",
+    "category": "Work"
+  },
+  "document": {
+    "translation": "речник",
+    "category": "Work"
+  },
+  "train": {
+    "translation": "в",
+    "category": "Work"
+  },
+  "teach": {
+    "translation": "наставува",
+    "category": "Work"
+  },
+  "update": {
+    "translation": "речник",
+    "category": "Work"
+  },
+  "upload": {
+    "translation": "отгрупирање",
+    "category": "Work"
+  },
+  "download": {
+    "translation": "наставање",
+    "category": "Work"
+  },
+  "print": {
+    "translation": "печатна",
+    "category": "Work"
+  },
+  "scan": {
+    "translation": "сканирање",
+    "category": "Work"
+  },
+  "record": {
+    "translation": "записак",
+    "category": "Work"
+  },
+  "track": {
+    "translation": "трака",
+    "category": "Work"
+  },
+  "manage": {
+    "translation": "управувам",
+    "category": "Work"
+  },
+  "supervise": {
+    "translation": "надзорување",
+    "category": "Work"
+  },
+  "go": {
+    "translation": "иди",
+    "category": "Travel"
+  },
+  "come": {
+    "translation": "иди",
+    "category": "Travel"
+  },
+  "move": {
+    "translation": "Покажување",
+    "category": "Travel"
+  },
+  "leave": {
+    "translation": "Остава",
+    "category": "Travel"
+  },
+  "arrive": {
+    "translation": "пристиша",
+    "category": "Travel"
+  },
+  "enter": {
+    "translation": "влезнување",
+    "category": "Travel"
+  },
+  "exit": {
+    "translation": "Изход",
+    "category": "Travel"
+  },
+  "travel": {
+    "translation": "путув",
+    "category": "Travel"
+  },
+  "fly": {
+    "translation": "лет",
+    "category": "Travel"
+  },
+  "drive": {
+    "translation": "води",
+    "category": "Travel"
+  },
+  "ride": {
+    "translation": "Караколиба",
+    "category": "Travel"
+  },
+  "board": {
+    "translation": "Доса",
+    "category": "Travel"
+  },
+  "land": {
+    "translation": "Земја",
+    "category": "Travel"
+  },
+  "park": {
+    "translation": "парк",
+    "category": "Travel"
+  },
+  "accelerate": {
+    "translation": "ускорија",
+    "category": "Travel"
+  },
+  "reverse": {
+    "translation": "обратен",
+    "category": "Travel"
+  },
+  "cross": {
+    "translation": "крст",
+    "category": "Travel"
+  },
+  "wander": {
+    "translation": "пребарувам",
+    "category": "Travel"
+  },
+  "explore": {
+    "translation": "исследување",
+    "category": "Travel"
+  },
+  "return": {
+    "translation": "врати",
+    "category": "Travel"
+  },
+  "rush": {
+    "translation": "Беготина",
+    "category": "Travel"
+  },
+  "hurry": {
+    "translation": "Срекну",
+    "category": "Travel"
+  },
+  "navigate": {
+    "translation": "наводи",
+    "category": "Travel"
+  },
+  "sanitize": {
+    "translation": "санициранија",
+    "category": "Household"
+  },
+  "iron": {
+    "translation": "желово",
+    "category": "Household"
+  },
+  "store": {
+    "translation": "штудија",
+    "category": "Household"
+  },
+  "repair": {
+    "translation": "Исправување",
+    "category": "Household"
+  },
+  "fix": {
+    "translation": "Исправување",
+    "category": "Household"
+  },
+  "disassemble": {
+    "translation": "разбирање",
+    "category": "Household"
+  },
+  "install": {
+    "translation": "установи",
+    "category": "Household"
+  },
+  "uninstall": {
+    "translation": "десеталично",
+    "category": "Household"
+  },
+  "remove": {
+    "translation": "убави",
+    "category": "Household"
+  },
+  "connect": {
+    "translation": "рти",
+    "category": "Household"
+  },
+  "disconnect": {
+    "translation": "откочув",
+    "category": "Household"
+  },
+  "lock": {
+    "translation": "Заклучок",
+    "category": "Household"
+  },
+  "unlock": {
+    "translation": "откриј",
+    "category": "Household"
+  },
+  "decorate": {
+    "translation": "украшувам",
+    "category": "Household"
+  },
+  "polish": {
+    "translation": "полски",
+    "category": "Household"
+  },
+  "hammer": {
+    "translation": "батаран",
+    "category": "Household"
+  },
+  "saw": {
+    "translation": "нож",
+    "category": "Household"
+  },
+  "glue": {
+    "translation": "згив",
+    "category": "Household"
+  },
+  "buy": {
+    "translation": "ам",
+    "category": "Money"
+  },
+  "sell": {
+    "translation": "продава",
+    "category": "Money"
+  },
+  "pay": {
+    "translation": "плати",
+    "category": "Money"
+  },
+  "owe": {
+    "translation": "македонски",
+    "category": "Money"
+  },
+  "borrow": {
+    "translation": "Принеќи",
+    "category": "Money"
+  },
+  "lend": {
+    "translation": "оддаде",
+    "category": "Money"
+  },
+  "rent": {
+    "translation": "Платба",
+    "category": "Money"
+  },
+  "save": {
+    "translation": "Охранија",
+    "category": "Money"
+  },
+  "spend": {
+    "translation": "преплати",
+    "category": "Money"
+  },
+  "invest": {
+    "translation": "инвестирам",
+    "category": "Money"
+  },
+  "earn": {
+    "translation": "додирати",
+    "category": "Money"
+  },
+  "refund": {
+    "translation": "поврати",
+    "category": "Money"
+  },
+  "exchange": {
+    "translation": "Промена",
+    "category": "Money"
+  },
+  "order": {
+    "translation": "поредба",
+    "category": "Money"
+  },
+  "select": {
+    "translation": "избирање",
+    "category": "Money"
+  },
+  "withdraw": {
+    "translation": "Откажува",
+    "category": "Money"
+  },
+  "deposit": {
+    "translation": "Пополнување",
+    "category": "Money"
+  },
+  "budget": {
+    "translation": "бюджет",
+    "category": "Money"
+  },
+  "fry": {
+    "translation": "фрија",
+    "category": "Food"
+  },
+  "grill": {
+    "translation": "грил",
+    "category": "Food"
+  },
+  "boil": {
+    "translation": "варилња",
+    "category": "Food"
+  },
+  "steam": {
+    "translation": "пар",
+    "category": "Food"
+  },
+  "slice": {
+    "translation": "река",
+    "category": "Food"
+  },
+  "cut": {
+    "translation": "реза",
+    "category": "Food"
+  },
+  "chop": {
+    "translation": "Чоп",
+    "category": "Food"
+  },
+  "mix": {
+    "translation": "мешање",
+    "category": "Food"
+  },
+  "stir": {
+    "translation": "штабина",
+    "category": "Food"
+  },
+  "pour": {
+    "translation": "Плив",
+    "category": "Food"
+  },
+  "serve": {
+    "translation": "служба",
+    "category": "Food"
+  },
+  "taste": {
+    "translation": "Вкус",
+    "category": "Food"
+  },
+  "season": {
+    "translation": "сезон",
+    "category": "Food"
+  },
+  "marinate": {
+    "translation": "маринира",
+    "category": "Food"
+  },
+  "chew": {
+    "translation": "кушувам",
+    "category": "Food"
+  },
+  "swallow": {
+    "translation": "Чоче",
+    "category": "Food"
+  },
+  "deliver": {
+    "translation": "достави",
+    "category": "Food"
+  },
+  "digest": {
+    "translation": "Преварување",
+    "category": "Food"
+  },
+  "rain": {
+    "translation": "дожд",
+    "category": "Nature"
+  },
+  "snow": {
+    "translation": "снег",
+    "category": "Nature"
+  },
+  "hail": {
+    "translation": "Пливот",
+    "category": "Nature"
+  },
+  "sleet": {
+    "translation": "леден",
+    "category": "Nature"
+  },
+  "freeze": {
+    "translation": "застохнувам",
+    "category": "Nature"
+  },
+  "melt": {
+    "translation": "треснувачи",
+    "category": "Nature"
+  },
+  "shine": {
+    "translation": "Светлија",
+    "category": "Nature"
+  },
+  "blow": {
+    "translation": "дунав",
+    "category": "Nature"
+  },
+  "grow": {
+    "translation": "ити",
+    "category": "Nature"
+  },
+  "bloom": {
+    "translation": "Цвека",
+    "category": "Nature"
+  },
+  "wither": {
+    "translation": "сушити",
+    "category": "Nature"
+  },
+  "sprout": {
+    "translation": "квасница",
+    "category": "Nature"
+  },
+  "fall": {
+    "translation": "опада",
+    "category": "Nature"
+  },
+  "quake": {
+    "translation": "Трескот",
+    "category": "Nature"
+  },
+  "erode": {
+    "translation": "еродира",
+    "category": "Nature"
+  },
+  "burn": {
+    "translation": "горе",
+    "category": "Nature"
+  },
+  "flood": {
+    "translation": "затопување",
+    "category": "Nature"
+  },
+  "float": {
+    "translation": "плитка",
+    "category": "Nature"
+  },
+  "sink": {
+    "translation": "виница",
+    "category": "Nature"
+  },
+  "rise": {
+    "translation": "возиња",
+    "category": "Nature"
+  },
+  "set": {
+    "translation": "Назад",
+    "category": "Nature"
+  },
+  "breathe": {
+    "translation": "дышање",
+    "category": "Health"
+  },
+  "inhale": {
+    "translation": "додирати",
+    "category": "Health"
+  },
+  "exhale": {
+    "translation": "исхале",
+    "category": "Health"
+  },
+  "cough": {
+    "translation": "кафан",
+    "category": "Health"
+  },
+  "sneeze": {
+    "translation": "закашање",
+    "category": "Health"
+  },
+  "sweat": {
+    "translation": "поклон",
+    "category": "Health"
+  },
+  "bleed": {
+    "translation": "краде",
+    "category": "Health"
+  },
+  "heal": {
+    "translation": "лекувати",
+    "category": "Health"
+  },
+  "recover": {
+    "translation": "вратија",
+    "category": "Health"
+  },
+  "ache": {
+    "translation": "болба",
+    "category": "Health"
+  },
+  "hurt": {
+    "translation": "блејд",
+    "category": "Health"
+  },
+  "strain": {
+    "translation": "Притисок",
+    "category": "Health"
+  },
+  "exercise": {
+    "translation": "Упражнение",
+    "category": "Health"
+  },
+  "faint": {
+    "translation": "Смркнув",
+    "category": "Health"
+  },
+  "vomit": {
+    "translation": "вопити",
+    "category": "Health"
+  },
+  "blink": {
+    "translation": "моркнување",
+    "category": "Health"
+  },
+  "squint": {
+    "translation": "сквинт",
+    "category": "Health"
+  },
+  "tremble": {
+    "translation": "држати",
+    "category": "Health"
+  },
+  "click": {
+    "translation": "клик",
+    "category": "Technology"
+  },
+  "tap": {
+    "translation": "Капа",
+    "category": "Technology"
+  },
+  "scroll": {
+    "translation": "проклето",
+    "category": "Technology"
+  },
+  "swipe": {
+    "translation": "Покрик",
+    "category": "Technology"
+  },
+  "browse": {
+    "translation": "Прегледај",
+    "category": "Technology"
+  },
+  "upgrade": {
+    "translation": "обнова",
+    "category": "Technology"
+  },
+  "copy": {
+    "translation": "копи",
+    "category": "Technology"
+  },
+  "paste": {
+    "translation": "Презимка",
+    "category": "Technology"
+  },
+  "delete": {
+    "translation": "избришувам",
+    "category": "Technology"
+  },
+  "reset": {
+    "translation": "резет",
+    "category": "Technology"
+  },
+  "restart": {
+    "translation": "резетарстрава",
+    "category": "Technology"
+  },
+  "log in": {
+    "translation": "влез",
+    "category": "Technology"
+  },
+  "log out": {
+    "translation": "излез",
+    "category": "Technology"
+  },
+  "sync": {
+    "translation": "синхронизација",
+    "category": "Technology"
+  },
+  "stream": {
+    "translation": "река",
+    "category": "Technology"
+  },
+  "encrypt": {
+    "translation": "шифрување",
+    "category": "Technology"
+  },
+  "backup": {
+    "translation": "резервна",
+    "category": "Technology"
+  }
+}

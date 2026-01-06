@@ -1,0 +1,1566 @@
+{
+  "walk": {
+    "translation": "paseig",
+    "category": "Basic"
+  },
+  "run": {
+    "translation": "correr",
+    "category": "Basic"
+  },
+  "jump": {
+    "translation": "salta",
+    "category": "Basic"
+  },
+  "hop": {
+    "translation": "saltejar",
+    "category": "Basic"
+  },
+  "skip": {
+    "translation": "saltar",
+    "category": "Basic"
+  },
+  "crawl": {
+    "translation": "rampar",
+    "category": "Basic"
+  },
+  "climb": {
+    "translation": "subir",
+    "category": "Basic"
+  },
+  "slide": {
+    "translation": "deslizament",
+    "category": "Basic"
+  },
+  "swing": {
+    "translation": "carrereta",
+    "category": "Basic"
+  },
+  "stretch": {
+    "translation": "estirar",
+    "category": "Basic"
+  },
+  "bend": {
+    "translation": "cursa",
+    "category": "Basic"
+  },
+  "lift": {
+    "translation": "ascensor",
+    "category": "Basic"
+  },
+  "carry": {
+    "translation": "portar",
+    "category": "Basic"
+  },
+  "drag": {
+    "translation": "dretar",
+    "category": "Basic"
+  },
+  "push": {
+    "translation": "empujar",
+    "category": "Basic"
+  },
+  "pull": {
+    "translation": "sorollir",
+    "category": "Basic"
+  },
+  "hold": {
+    "translation": "portar",
+    "category": "Basic"
+  },
+  "grab": {
+    "translation": "atrenc",
+    "category": "Basic"
+  },
+  "drop": {
+    "translation": "gota",
+    "category": "Basic"
+  },
+  "throw": {
+    "translation": "lançar",
+    "category": "Basic"
+  },
+  "catch": {
+    "translation": "cogera",
+    "category": "Basic"
+  },
+  "kick": {
+    "translation": "patar",
+    "category": "Basic"
+  },
+  "hit": {
+    "translation": "batir",
+    "category": "Basic"
+  },
+  "press": {
+    "translation": "premer",
+    "category": "Basic"
+  },
+  "twist": {
+    "translation": "girar",
+    "category": "Basic"
+  },
+  "turn": {
+    "translation": "gir",
+    "category": "Basic"
+  },
+  "rotate": {
+    "translation": "rotar",
+    "category": "Basic"
+  },
+  "flip": {
+    "translation": "carrerar",
+    "category": "Basic"
+  },
+  "shake": {
+    "translation": "agitjar",
+    "category": "Basic"
+  },
+  "wave": {
+    "translation": "ola",
+    "category": "Basic"
+  },
+  "reach": {
+    "translation": "arribar",
+    "category": "Basic"
+  },
+  "lean": {
+    "translation": "encombrar",
+    "category": "Basic"
+  },
+  "rest": {
+    "translation": "repos",
+    "category": "Basic"
+  },
+  "balance": {
+    "translation": "equilibri",
+    "category": "Basic"
+  },
+  "spin": {
+    "translation": "spinneret",
+    "category": "Basic"
+  },
+  "arrange": {
+    "translation": "disposar",
+    "category": "Basic"
+  },
+  "adjust": {
+    "translation": "ajustar",
+    "category": "Basic"
+  },
+  "shift": {
+    "translation": "llotja",
+    "category": "Basic"
+  },
+  "tie": {
+    "translation": "empatitat",
+    "category": "Basic"
+  },
+  "untie": {
+    "translation": "desatar",
+    "category": "Basic"
+  },
+  "wrap": {
+    "translation": "enrollar",
+    "category": "Basic"
+  },
+  "unwrap": {
+    "translation": "desenvolupar",
+    "category": "Basic"
+  },
+  "fold": {
+    "translation": "doblar",
+    "category": "Basic"
+  },
+  "unfold": {
+    "translation": "desdoblar",
+    "category": "Basic"
+  },
+  "pack": {
+    "translation": "paquet",
+    "category": "Basic"
+  },
+  "unpack": {
+    "translation": "desempacar",
+    "category": "Basic"
+  },
+  "be": {
+    "translation": "és",
+    "category": "Basic"
+  },
+  "become": {
+    "translation": "venir",
+    "category": "Basic"
+  },
+  "seem": {
+    "translation": "parèixer",
+    "category": "Basic"
+  },
+  "appear": {
+    "translation": "aparir",
+    "category": "Basic"
+  },
+  "remain": {
+    "translation": "restar",
+    "category": "Basic"
+  },
+  "stay": {
+    "translation": "restar",
+    "category": "Basic"
+  },
+  "exist": {
+    "translation": "existeix",
+    "category": "Basic"
+  },
+  "happen": {
+    "translation": "passar",
+    "category": "Basic"
+  },
+  "occur": {
+    "translation": "ocurrir",
+    "category": "Basic"
+  },
+  "change": {
+    "translation": "canviar",
+    "category": "Basic"
+  },
+  "improve": {
+    "translation": "millorar",
+    "category": "Basic"
+  },
+  "decline": {
+    "translation": "Declinar",
+    "category": "Basic"
+  },
+  "continue": {
+    "translation": "continua",
+    "category": "Basic"
+  },
+  "stop": {
+    "translation": "parar",
+    "category": "Basic"
+  },
+  "begin": {
+    "translation": "començar",
+    "category": "Basic"
+  },
+  "end": {
+    "translation": "final",
+    "category": "Basic"
+  },
+  "last": {
+    "translation": "últim",
+    "category": "Basic"
+  },
+  "wake": {
+    "translation": "despertar",
+    "category": "Daily Routine"
+  },
+  "get up": {
+    "translation": "levantar-se",
+    "category": "Daily Routine"
+  },
+  "wash": {
+    "translation": "lavar",
+    "category": "Daily Routine"
+  },
+  "shower": {
+    "translation": "ducha",
+    "category": "Daily Routine"
+  },
+  "bathe": {
+    "translation": "bathing or baixar",
+    "category": "Daily Routine"
+  },
+  "brush": {
+    "translation": "pincel",
+    "category": "Daily Routine"
+  },
+  "comb": {
+    "translation": "combfusta",
+    "category": "Daily Routine"
+  },
+  "dress": {
+    "translation": "truitalla",
+    "category": "Daily Routine"
+  },
+  "eat": {
+    "translation": "comer",
+    "category": "Daily Routine"
+  },
+  "drink": {
+    "translation": "beixar",
+    "category": "Daily Routine"
+  },
+  "snack": {
+    "translation": "cagaïtza",
+    "category": "Daily Routine"
+  },
+  "cook": {
+    "translation": "cocinador",
+    "category": "Daily Routine"
+  },
+  "bake": {
+    "translation": "Focatar",
+    "category": "Daily Routine"
+  },
+  "reheat": {
+    "translation": "Reenfarar",
+    "category": "Daily Routine"
+  },
+  "clean": {
+    "translation": "netejar",
+    "category": "Daily Routine"
+  },
+  "tidy": {
+    "translation": "ordenat",
+    "category": "Daily Routine"
+  },
+  "organize": {
+    "translation": "organitzar",
+    "category": "Daily Routine"
+  },
+  "vacuum": {
+    "translation": "vàcuol",
+    "category": "Daily Routine"
+  },
+  "sweep": {
+    "translation": "llubí",
+    "category": "Daily Routine"
+  },
+  "mop": {
+    "translation": "paüll",
+    "category": "Daily Routine"
+  },
+  "dust": {
+    "translation": null,
+    "category": "Daily Routine",
+    "failed": true
+  },
+  "wash dishes": {
+    "translation": "Raspar plats",
+    "category": "Daily Routine"
+  },
+  "rinse": {
+    "translation": "Rinçar",
+    "category": "Daily Routine"
+  },
+  "wipe": {
+    "translation": "esfregar",
+    "category": "Daily Routine"
+  },
+  "scrub": {
+    "translation": "esfregar",
+    "category": "Daily Routine"
+  },
+  "dry": {
+    "translation": "sec",
+    "category": "Daily Routine"
+  },
+  "shop": {
+    "translation": "botiguer",
+    "category": "Daily Routine"
+  },
+  "refill": {
+    "translation": "recarregar",
+    "category": "Daily Routine"
+  },
+  "charge": {
+    "translation": "càrrega",
+    "category": "Daily Routine"
+  },
+  "relax": {
+    "translation": "Relaxar",
+    "category": "Daily Routine"
+  },
+  "nap": {
+    "translation": "napa",
+    "category": "Daily Routine"
+  },
+  "sleep": {
+    "translation": "dormir",
+    "category": "Daily Routine"
+  },
+  "prepare": {
+    "translation": "preparar",
+    "category": "Daily Routine"
+  },
+  "schedule": {
+    "translation": "programa",
+    "category": "Daily Routine"
+  },
+  "cancel": {
+    "translation": null,
+    "category": "Daily Routine",
+    "failed": true
+  },
+  "check": {
+    "translation": "control",
+    "category": "Daily Routine"
+  },
+  "monitor": {
+    "translation": "monitoritzador",
+    "category": "Daily Routine"
+  },
+  "plan": {
+    "translation": "plani",
+    "category": "Daily Routine"
+  },
+  "wait": {
+    "translation": "esperar",
+    "category": "Daily Routine"
+  },
+  "search": {
+    "translation": "cercar",
+    "category": "Daily Routine"
+  },
+  "find": {
+    "translation": "trobar",
+    "category": "Daily Routine"
+  },
+  "lose": {
+    "translation": "perdrir",
+    "category": "Daily Routine"
+  },
+  "replace": {
+    "translation": "Substituir",
+    "category": "Daily Routine"
+  },
+  "think": {
+    "translation": "Pensar",
+    "category": "Mental"
+  },
+  "know": {
+    "translation": "conèixer",
+    "category": "Mental"
+  },
+  "believe": {
+    "translation": "creuï",
+    "category": "Mental"
+  },
+  "consider": {
+    "translation": "Considerar",
+    "category": "Mental"
+  },
+  "imagine": {
+    "translation": "Imaginar",
+    "category": "Mental"
+  },
+  "wonder": {
+    "translation": "maravilha",
+    "category": "Mental"
+  },
+  "remember": {
+    "translation": "recordar",
+    "category": "Mental"
+  },
+  "forget": {
+    "translation": "forgettable",
+    "category": "Mental"
+  },
+  "realize": {
+    "translation": "realitzar",
+    "category": "Mental"
+  },
+  "guess": {
+    "translation": "adivina",
+    "category": "Mental"
+  },
+  "predict": {
+    "translation": "predir",
+    "category": "Mental"
+  },
+  "expect": {
+    "translation": "esperar",
+    "category": "Mental"
+  },
+  "recognize": {
+    "translation": "reconèixer",
+    "category": "Mental"
+  },
+  "notice": {
+    "translation": "notícia",
+    "category": "Mental"
+  },
+  "focus": {
+    "translation": "enfoque",
+    "category": "Mental"
+  },
+  "concentrate": {
+    "translation": "concentrar",
+    "category": "Mental"
+  },
+  "decide": {
+    "translation": "decidir",
+    "category": "Mental"
+  },
+  "choose": {
+    "translation": "elegir",
+    "category": "Mental"
+  },
+  "compare": {
+    "translation": "comparar",
+    "category": "Mental"
+  },
+  "analyze": {
+    "translation": "analitzar",
+    "category": "Mental"
+  },
+  "evaluate": {
+    "translation": "avaluar",
+    "category": "Mental"
+  },
+  "estimate": {
+    "translation": "estimativa",
+    "category": "Mental"
+  },
+  "solve": {
+    "translation": "resolució",
+    "category": "Mental"
+  },
+  "question": {
+    "translation": "questió",
+    "category": "Mental"
+  },
+  "suspect": {
+    "translation": "sospitiu",
+    "category": "Mental"
+  },
+  "doubt": {
+    "translation": "duda",
+    "category": "Mental"
+  },
+  "learn": {
+    "translation": "aprendre",
+    "category": "Mental"
+  },
+  "study": {
+    "translation": "estudiar",
+    "category": "Mental"
+  },
+  "memorize": {
+    "translation": "memoritzar",
+    "category": "Mental"
+  },
+  "calculate": {
+    "translation": "calcular",
+    "category": "Mental"
+  },
+  "reflect": {
+    "translation": "refletir",
+    "category": "Mental"
+  },
+  "understand": {
+    "translation": "comprendre",
+    "category": "Mental"
+  },
+  "like": {
+    "translation": "gustar",
+    "category": "Mental"
+  },
+  "love": {
+    "translation": "amor",
+    "category": "Mental"
+  },
+  "hate": {
+    "translation": "odí",
+    "category": "Mental"
+  },
+  "enjoy": {
+    "translation": "disfrutar",
+    "category": "Mental"
+  },
+  "prefer": {
+    "translation": "preferir",
+    "category": "Mental"
+  },
+  "want": {
+    "translation": "volprar",
+    "category": "Mental"
+  },
+  "need": {
+    "translation": "necessitat",
+    "category": "Mental"
+  },
+  "miss": {
+    "translation": "Missatge",
+    "category": "Mental"
+  },
+  "care": {
+    "translation": "cuidat",
+    "category": "Mental"
+  },
+  "worry": {
+    "translation": "preocupació",
+    "category": "Mental"
+  },
+  "fear": {
+    "translation": "pavor",
+    "category": "Mental"
+  },
+  "panic": {
+    "translation": "panico",
+    "category": "Mental"
+  },
+  "stress": {
+    "translation": "estress",
+    "category": "Mental"
+  },
+  "calm": {
+    "translation": "silenci",
+    "category": "Mental"
+  },
+  "appreciate": {
+    "translation": "apreciar",
+    "category": "Mental"
+  },
+  "value": {
+    "translation": "valor",
+    "category": "Mental"
+  },
+  "respect": {
+    "translation": "respete",
+    "category": "Mental"
+  },
+  "dislike": {
+    "translation": "desplacament",
+    "category": "Mental"
+  },
+  "regret": {
+    "translation": "remor-te",
+    "category": "Mental"
+  },
+  "hope": {
+    "translation": "Esperança",
+    "category": "Mental"
+  },
+  "trust": {
+    "translation": "Fièr",
+    "category": "Mental"
+  },
+  "surprise": {
+    "translation": "Surprisa",
+    "category": "Mental"
+  },
+  "shock": {
+    "translation": "soroll",
+    "category": "Mental"
+  },
+  "annoy": {
+    "translation": "enojar",
+    "category": "Mental"
+  },
+  "bother": {
+    "translation": "perturbar",
+    "category": "Mental"
+  },
+  "confuse": {
+    "translation": "confusar",
+    "category": "Mental"
+  },
+  "embarrass": {
+    "translation": "embarassar",
+    "category": "Mental"
+  },
+  "frustrate": {
+    "translation": "frustar",
+    "category": "Mental"
+  },
+  "satisfy": {
+    "translation": "satisfer",
+    "category": "Mental"
+  },
+  "comfort": {
+    "translation": "confort",
+    "category": "Mental"
+  },
+  "cheer": {
+    "translation": "esmorzar",
+    "category": "Mental"
+  },
+  "say": {
+    "translation": "dir",
+    "category": "Communication"
+  },
+  "tell": {
+    "translation": "dir",
+    "category": "Communication"
+  },
+  "talk": {
+    "translation": "parlar",
+    "category": "Communication"
+  },
+  "speak": {
+    "translation": "parlar",
+    "category": "Communication"
+  },
+  "discuss": {
+    "translation": "discutir",
+    "category": "Communication"
+  },
+  "chat": {
+    "translation": "gat",
+    "category": "Communication"
+  },
+  "explain": {
+    "translation": "explicar",
+    "category": "Communication"
+  },
+  "describe": {
+    "translation": "descriure",
+    "category": "Communication"
+  },
+  "announce": {
+    "translation": "anunciar",
+    "category": "Communication"
+  },
+  "report": {
+    "translation": "Informe",
+    "category": "Communication"
+  },
+  "reply": {
+    "translation": "resposta",
+    "category": "Communication"
+  },
+  "answer": {
+    "translation": "resposta",
+    "category": "Communication"
+  },
+  "ask": {
+    "translation": "preguntar",
+    "category": "Communication"
+  },
+  "interrupt": {
+    "translation": "interrompre",
+    "category": "Communication"
+  },
+  "suggest": {
+    "translation": "suggerir",
+    "category": "Communication"
+  },
+  "recommend": {
+    "translation": "recomanar",
+    "category": "Communication"
+  },
+  "complain": {
+    "translation": "reclamar",
+    "category": "Communication"
+  },
+  "argue": {
+    "translation": "discutir",
+    "category": "Communication"
+  },
+  "debate": {
+    "translation": "debate",
+    "category": "Communication"
+  },
+  "whisper": {
+    "translation": "susurracrastina",
+    "category": "Communication"
+  },
+  "shout": {
+    "translation": "gritar",
+    "category": "Communication"
+  },
+  "yell": {
+    "translation": "ullengrair",
+    "category": "Communication"
+  },
+  "mention": {
+    "translation": "mentió",
+    "category": "Communication"
+  },
+  "remind": {
+    "translation": "recordar",
+    "category": "Communication"
+  },
+  "warn": {
+    "translation": "avertir",
+    "category": "Communication"
+  },
+  "advise": {
+    "translation": "conseixença",
+    "category": "Communication"
+  },
+  "encourage": {
+    "translation": "incentivar",
+    "category": "Communication"
+  },
+  "persuade": {
+    "translation": "persuadir",
+    "category": "Communication"
+  },
+  "invite": {
+    "translation": "invitar",
+    "category": "Communication"
+  },
+  "respond": {
+    "translation": "respondre",
+    "category": "Communication"
+  },
+  "translate": {
+    "translation": "traduir",
+    "category": "Communication"
+  },
+  "inform": {
+    "translation": "informar",
+    "category": "Communication"
+  },
+  "comment": {
+    "translation": "comentari",
+    "category": "Communication"
+  },
+  "confirm": {
+    "translation": "confirmar",
+    "category": "Communication"
+  },
+  "deny": {
+    "translation": "negar",
+    "category": "Communication"
+  },
+  "admit": {
+    "translation": "admetindre",
+    "category": "Communication"
+  },
+  "meet": {
+    "translation": "reunir",
+    "category": "Social"
+  },
+  "greet": {
+    "translation": "salut",
+    "category": "Social"
+  },
+  "welcome": {
+    "translation": "Benvingut",
+    "category": "Social"
+  },
+  "visit": {
+    "translation": "visita",
+    "category": "Social"
+  },
+  "host": {
+    "translation": "anfitrió",
+    "category": "Social"
+  },
+  "join": {
+    "translation": "joindre",
+    "category": "Social"
+  },
+  "help": {
+    "translation": "ajuda",
+    "category": "Social"
+  },
+  "support": {
+    "translation": "suport",
+    "category": "Social"
+  },
+  "assist": {
+    "translation": "Assistir",
+    "category": "Social"
+  },
+  "share": {
+    "translation": "partir",
+    "category": "Social"
+  },
+  "care for": {
+    "translation": "cuidar",
+    "category": "Social"
+  },
+  "hug": {
+    "translation": "abraçar",
+    "category": "Social"
+  },
+  "kiss": {
+    "translation": "besos",
+    "category": "Social"
+  },
+  "hold hands": {
+    "translation": "Manejar mans",
+    "category": "Social"
+  },
+  "date": {
+    "translation": "data",
+    "category": "Social"
+  },
+  "marry": {
+    "translation": "moure",
+    "category": "Social"
+  },
+  "befriend": {
+    "translation": "amistrar",
+    "category": "Social"
+  },
+  "follow": {
+    "translation": "segueix",
+    "category": "Social"
+  },
+  "lead": {
+    "translation": "lladprés",
+    "category": "Social"
+  },
+  "guide": {
+    "translation": "guia",
+    "category": "Social"
+  },
+  "introduce": {
+    "translation": "Introduir",
+    "category": "Social"
+  },
+  "cooperate": {
+    "translation": "Cooperar",
+    "category": "Social"
+  },
+  "protect": {
+    "translation": "protegeix",
+    "category": "Social"
+  },
+  "include": {
+    "translation": "incloure",
+    "category": "Social"
+  },
+  "exclude": {
+    "translation": "excloure",
+    "category": "Social"
+  },
+  "work": {
+    "translation": "treball",
+    "category": "Work"
+  },
+  "write": {
+    "translation": "escriure",
+    "category": "Work"
+  },
+  "read": {
+    "translation": "Llegir",
+    "category": "Work"
+  },
+  "edit": {
+    "translation": "editar",
+    "category": "Work"
+  },
+  "revise": {
+    "translation": "revisar",
+    "category": "Work"
+  },
+  "review": {
+    "translation": "revisió",
+    "category": "Work"
+  },
+  "inspect": {
+    "translation": "inspecció",
+    "category": "Work"
+  },
+  "complete": {
+    "translation": "complet",
+    "category": "Work"
+  },
+  "submit": {
+    "translation": null,
+    "category": "Work",
+    "failed": true
+  },
+  "create": {
+    "translation": "crear",
+    "category": "Work"
+  },
+  "design": {
+    "translation": "diseny",
+    "category": "Work"
+  },
+  "build": {
+    "translation": "construir",
+    "category": "Work"
+  },
+  "assemble": {
+    "translation": "assegllar",
+    "category": "Work"
+  },
+  "debug": {
+    "translation": "debuguet",
+    "category": "Work"
+  },
+  "research": {
+    "translation": "investigació",
+    "category": "Work"
+  },
+  "document": {
+    "translation": "document",
+    "category": "Work"
+  },
+  "train": {
+    "translation": "tren",
+    "category": "Work"
+  },
+  "teach": {
+    "translation": "docir",
+    "category": "Work"
+  },
+  "update": {
+    "translation": "actualitzar",
+    "category": "Work"
+  },
+  "upload": {
+    "translation": "subir",
+    "category": "Work"
+  },
+  "download": {
+    "translation": "Baixar",
+    "category": "Work"
+  },
+  "print": {
+    "translation": "impressió",
+    "category": "Work"
+  },
+  "scan": {
+    "translation": "escanejar",
+    "category": "Work"
+  },
+  "record": {
+    "translation": "registre",
+    "category": "Work"
+  },
+  "track": {
+    "translation": "traiçó",
+    "category": "Work"
+  },
+  "manage": {
+    "translation": "Gerir",
+    "category": "Work"
+  },
+  "supervise": {
+    "translation": "supervisar",
+    "category": "Work"
+  },
+  "go": {
+    "translation": "anar",
+    "category": "Travel"
+  },
+  "come": {
+    "translation": "venir",
+    "category": "Travel"
+  },
+  "move": {
+    "translation": "moure",
+    "category": "Travel"
+  },
+  "leave": {
+    "translation": "deixar",
+    "category": "Travel"
+  },
+  "arrive": {
+    "translation": "arribar",
+    "category": "Travel"
+  },
+  "enter": {
+    "translation": "entrar",
+    "category": "Travel"
+  },
+  "exit": {
+    "translation": "SORTIDA",
+    "category": "Travel"
+  },
+  "travel": {
+    "translation": "viajar",
+    "category": "Travel"
+  },
+  "fly": {
+    "translation": "volar",
+    "category": "Travel"
+  },
+  "drive": {
+    "translation": "dirigir",
+    "category": "Travel"
+  },
+  "ride": {
+    "translation": "cursa",
+    "category": "Travel"
+  },
+  "board": {
+    "translation": "placa",
+    "category": "Travel"
+  },
+  "land": {
+    "translation": "terra",
+    "category": "Travel"
+  },
+  "park": {
+    "translation": "parc",
+    "category": "Travel"
+  },
+  "accelerate": {
+    "translation": "acCELERAR",
+    "category": "Travel"
+  },
+  "reverse": {
+    "translation": "reversar",
+    "category": "Travel"
+  },
+  "cross": {
+    "translation": "croç",
+    "category": "Travel"
+  },
+  "wander": {
+    "translation": "caminar",
+    "category": "Travel"
+  },
+  "explore": {
+    "translation": "explorar",
+    "category": "Travel"
+  },
+  "return": {
+    "translation": "devolució",
+    "category": "Travel"
+  },
+  "rush": {
+    "translation": "enjalac",
+    "category": "Travel"
+  },
+  "hurry": {
+    "translation": "pressa",
+    "category": "Travel"
+  },
+  "navigate": {
+    "translation": "navegar",
+    "category": "Travel"
+  },
+  "sanitize": {
+    "translation": "Sanititzar",
+    "category": "Household"
+  },
+  "iron": {
+    "translation": "ferInternalServerError",
+    "category": "Household"
+  },
+  "store": {
+    "translation": "magatzem",
+    "category": "Household"
+  },
+  "repair": {
+    "translation": "reparar",
+    "category": "Household"
+  },
+  "fix": {
+    "translation": "reparar",
+    "category": "Household"
+  },
+  "disassemble": {
+    "translation": "desmontar",
+    "category": "Household"
+  },
+  "install": {
+    "translation": "instalar",
+    "category": "Household"
+  },
+  "uninstall": {
+    "translation": null,
+    "category": "Household",
+    "failed": true
+  },
+  "remove": {
+    "translation": "retirar",
+    "category": "Household"
+  },
+  "connect": {
+    "translation": "conectar",
+    "category": "Household"
+  },
+  "disconnect": {
+    "translation": "desconeixença",
+    "category": "Household"
+  },
+  "lock": {
+    "translation": "llàtiga",
+    "category": "Household"
+  },
+  "unlock": {
+    "translation": "desbloquejar",
+    "category": "Household"
+  },
+  "decorate": {
+    "translation": "decorar",
+    "category": "Household"
+  },
+  "polish": {
+    "translation": "polsès",
+    "category": "Household"
+  },
+  "hammer": {
+    "translation": "martí",
+    "category": "Household"
+  },
+  "saw": {
+    "translation": "serra",
+    "category": "Household"
+  },
+  "glue": {
+    "translation": "glue in Catalan is cola",
+    "category": "Household"
+  },
+  "buy": {
+    "translation": "comprar",
+    "category": "Money"
+  },
+  "sell": {
+    "translation": "vendre",
+    "category": "Money"
+  },
+  "pay": {
+    "translation": "pagar",
+    "category": "Money"
+  },
+  "owe": {
+    "translation": "devo",
+    "category": "Money"
+  },
+  "borrow": {
+    "translation": "prenguer",
+    "category": "Money"
+  },
+  "lend": {
+    "translation": "prestar",
+    "category": "Money"
+  },
+  "rent": {
+    "translation": "alquiler",
+    "category": "Money"
+  },
+  "save": {
+    "translation": "guardar",
+    "category": "Money"
+  },
+  "spend": {
+    "translation": "gastar",
+    "category": "Money"
+  },
+  "invest": {
+    "translation": "Investir",
+    "category": "Money"
+  },
+  "earn": {
+    "translation": "guanyar",
+    "category": "Money"
+  },
+  "refund": {
+    "translation": "devolució",
+    "category": "Money"
+  },
+  "exchange": {
+    "translation": "intercanvi",
+    "category": "Money"
+  },
+  "order": {
+    "translation": "orden",
+    "category": "Money"
+  },
+  "select": {
+    "translation": "seleccionar",
+    "category": "Money"
+  },
+  "withdraw": {
+    "translation": "retirar",
+    "category": "Money"
+  },
+  "deposit": {
+    "translation": "depositatori",
+    "category": "Money"
+  },
+  "budget": {
+    "translation": "-budgete-",
+    "category": "Money"
+  },
+  "fry": {
+    "translation": "fritar",
+    "category": "Food"
+  },
+  "grill": {
+    "translation": "plancha",
+    "category": "Food"
+  },
+  "boil": {
+    "translation": "bullir",
+    "category": "Food"
+  },
+  "steam": {
+    "translation": "vapò",
+    "category": "Food"
+  },
+  "slice": {
+    "translation": "cortesa",
+    "category": "Food"
+  },
+  "cut": {
+    "translation": "cortar",
+    "category": "Food"
+  },
+  "chop": {
+    "translation": "cuitar",
+    "category": "Food"
+  },
+  "mix": {
+    "translation": "mesclar",
+    "category": "Food"
+  },
+  "stir": {
+    "translation": "remolinar",
+    "category": "Food"
+  },
+  "pour": {
+    "translation": "versar",
+    "category": "Food"
+  },
+  "serve": {
+    "translation": "servir",
+    "category": "Food"
+  },
+  "taste": {
+    "translation": "gust",
+    "category": "Food"
+  },
+  "season": {
+    "translation": "temporetón",
+    "category": "Food"
+  },
+  "marinate": {
+    "translation": "marinatge",
+    "category": "Food"
+  },
+  "chew": {
+    "translation": "masticar",
+    "category": "Food"
+  },
+  "swallow": {
+    "translation": "Vernassa",
+    "category": "Food"
+  },
+  "deliver": {
+    "translation": "entregar",
+    "category": "Food"
+  },
+  "digest": {
+    "translation": "digeste",
+    "category": "Food"
+  },
+  "rain": {
+    "translation": "pluja",
+    "category": "Nature"
+  },
+  "snow": {
+    "translation": "-neig",
+    "category": "Nature"
+  },
+  "hail": {
+    "translation": "gelinya",
+    "category": "Nature"
+  },
+  "sleet": {
+    "translation": "niebla gelada",
+    "category": "Nature"
+  },
+  "freeze": {
+    "translation": "glenir",
+    "category": "Nature"
+  },
+  "melt": {
+    "translation": "derretir",
+    "category": "Nature"
+  },
+  "shine": {
+    "translation": "brillar",
+    "category": "Nature"
+  },
+  "blow": {
+    "translation": "sopar",
+    "category": "Nature"
+  },
+  "grow": {
+    "translation": "crec",
+    "category": "Nature"
+  },
+  "bloom": {
+    "translation": "flor",
+    "category": "Nature"
+  },
+  "wither": {
+    "translation": "amarillir",
+    "category": "Nature"
+  },
+  "sprout": {
+    "translation": "germà",
+    "category": "Nature"
+  },
+  "fall": {
+    "translation": "caiguda",
+    "category": "Nature"
+  },
+  "quake": {
+    "translation": "síquència",
+    "category": "Nature"
+  },
+  "erode": {
+    "translation": "Erosionar",
+    "category": "Nature"
+  },
+  "burn": {
+    "translation": "lluitar",
+    "category": "Nature"
+  },
+  "flood": {
+    "translation": "inundació",
+    "category": "Nature"
+  },
+  "float": {
+    "translation": "flotar",
+    "category": "Nature"
+  },
+  "sink": {
+    "translation": "fons",
+    "category": "Nature"
+  },
+  "rise": {
+    "translation": "subir",
+    "category": "Nature"
+  },
+  "set": {
+    "translation": "establir",
+    "category": "Nature"
+  },
+  "breathe": {
+    "translation": "respirar",
+    "category": "Health"
+  },
+  "inhale": {
+    "translation": "Inspirente",
+    "category": "Health"
+  },
+  "exhale": {
+    "translation": "expirar",
+    "category": "Health"
+  },
+  "cough": {
+    "translation": "Tos",
+    "category": "Health"
+  },
+  "sneeze": {
+    "translation": "esnofar",
+    "category": "Health"
+  },
+  "sweat": {
+    "translation": "sudor",
+    "category": "Health"
+  },
+  "bleed": {
+    "translation": "sangrir",
+    "category": "Health"
+  },
+  "heal": {
+    "translation": "curar",
+    "category": "Health"
+  },
+  "recover": {
+    "translation": "reconèixer",
+    "category": "Health"
+  },
+  "ache": {
+    "translation": "dolor",
+    "category": "Health"
+  },
+  "hurt": {
+    "translation": "dolor",
+    "category": "Health"
+  },
+  "strain": {
+    "translation": "estirar",
+    "category": "Health"
+  },
+  "exercise": {
+    "translation": "ejercici",
+    "category": "Health"
+  },
+  "faint": {
+    "translation": "fetga",
+    "category": "Health"
+  },
+  "vomit": {
+    "translation": "vómit",
+    "category": "Health"
+  },
+  "blink": {
+    "translation": "parpadejar",
+    "category": "Health"
+  },
+  "squint": {
+    "translation": "mirar de banda",
+    "category": "Health"
+  },
+  "tremble": {
+    "translation": "TREMbler",
+    "category": "Health"
+  },
+  "click": {
+    "translation": "clic",
+    "category": "Technology"
+  },
+  "tap": {
+    "translation": "cagaò",
+    "category": "Technology"
+  },
+  "scroll": {
+    "translation": "rollo",
+    "category": "Technology"
+  },
+  "swipe": {
+    "translation": "Deslizament",
+    "category": "Technology"
+  },
+  "browse": {
+    "translation": "navegar",
+    "category": "Technology"
+  },
+  "upgrade": {
+    "translation": "actualitzar",
+    "category": "Technology"
+  },
+  "copy": {
+    "translation": "còpia",
+    "category": "Technology"
+  },
+  "paste": {
+    "translation": "pasta",
+    "category": "Technology"
+  },
+  "delete": {
+    "translation": "borrar",
+    "category": "Technology"
+  },
+  "reset": {
+    "translation": "reiniciar",
+    "category": "Technology"
+  },
+  "restart": {
+    "translation": "reiniciar",
+    "category": "Technology"
+  },
+  "log in": {
+    "translation": "enrere",
+    "category": "Technology"
+  },
+  "log out": {
+    "translation": "sortir",
+    "category": "Technology"
+  },
+  "sync": {
+    "translation": "Sincòn",
+    "category": "Technology"
+  },
+  "stream": {
+    "translation": "riu",
+    "category": "Technology"
+  },
+  "encrypt": {
+    "translation": "encriptar",
+    "category": "Technology"
+  },
+  "backup": {
+    "translation": "copia de seguretat",
+    "category": "Technology"
+  }
+}

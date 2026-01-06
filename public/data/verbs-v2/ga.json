@@ -1,0 +1,1565 @@
+{
+  "walk": {
+    "translation": "camacht",
+    "category": "Basic"
+  },
+  "run": {
+    "translation": "rún",
+    "category": "Basic"
+  },
+  "jump": {
+    "translation": "jump in Irish is",
+    "category": "Basic"
+  },
+  "hop": {
+    "translation": "copan",
+    "category": "Basic"
+  },
+  "skip": {
+    "translation": "Scoileadh",
+    "category": "Basic"
+  },
+  "crawl": {
+    "translation": "craobh",
+    "category": "Basic"
+  },
+  "climb": {
+    "translation": "climb in Irish is",
+    "category": "Basic"
+  },
+  "slide": {
+    "translation": "slíodadh",
+    "category": "Basic"
+  },
+  "swing": {
+    "translation": "swing in Irish is",
+    "category": "Basic"
+  },
+  "stretch": {
+    "translation": "Dhál",
+    "category": "Basic"
+  },
+  "bend": {
+    "translation": "bender",
+    "category": "Basic"
+  },
+  "lift": {
+    "translation": "cabin",
+    "category": "Basic"
+  },
+  "carry": {
+    "translation": "Tábhachtadh",
+    "category": "Basic"
+  },
+  "drag": {
+    "translation": "Draíochtar",
+    "category": "Basic"
+  },
+  "push": {
+    "translation": "push in Irish is",
+    "category": "Basic"
+  },
+  "pull": {
+    "translation": "pol",
+    "category": "Basic"
+  },
+  "hold": {
+    "translation": "áltógadh",
+    "category": "Basic"
+  },
+  "grab": {
+    "translation": "Cóip",
+    "category": "Basic"
+  },
+  "drop": {
+    "translation": "dp úr",
+    "category": "Basic"
+  },
+  "throw": {
+    "translation": "fhorbair",
+    "category": "Basic"
+  },
+  "catch": {
+    "translation": "Céim",
+    "category": "Basic"
+  },
+  "kick": {
+    "translation": "kick in Irish is",
+    "category": "Basic"
+  },
+  "hit": {
+    "translation": "Troid",
+    "category": "Basic"
+  },
+  "press": {
+    "translation": "press in Irish is",
+    "category": "Basic"
+  },
+  "twist": {
+    "translation": "twist in Irish is",
+    "category": "Basic"
+  },
+  "turn": {
+    "translation": "Tuigh",
+    "category": "Basic"
+  },
+  "rotate": {
+    "translation": "áltainen",
+    "category": "Basic"
+  },
+  "flip": {
+    "translation": "Flip in Irish is fliap",
+    "category": "Basic"
+  },
+  "shake": {
+    "translation": "shake in Irish is",
+    "category": "Basic"
+  },
+  "wave": {
+    "translation": "wave in Irish is",
+    "category": "Basic"
+  },
+  "reach": {
+    "translation": null,
+    "category": "Basic",
+    "failed": true
+  },
+  "lean": {
+    "translation": "Leananselige",
+    "category": "Basic"
+  },
+  "rest": {
+    "translation": "ród",
+    "category": "Basic"
+  },
+  "balance": {
+    "translation": "Seilbh",
+    "category": "Basic"
+  },
+  "spin": {
+    "translation": "spin in Irish is",
+    "category": "Basic"
+  },
+  "arrange": {
+    "translation": "Aránnez",
+    "category": "Basic"
+  },
+  "adjust": {
+    "translation": "Adhstoil",
+    "category": "Basic"
+  },
+  "shift": {
+    "translation": "áltrecht",
+    "category": "Basic"
+  },
+  "tie": {
+    "translation": "tie in Irish is",
+    "category": "Basic"
+  },
+  "untie": {
+    "translation": "Cliceadh",
+    "category": "Basic"
+  },
+  "wrap": {
+    "translation": "wrap in Irish is",
+    "category": "Basic"
+  },
+  "unwrap": {
+    "translation": "Dhearcáil",
+    "category": "Basic"
+  },
+  "fold": {
+    "translation": "teampaíocht",
+    "category": "Basic"
+  },
+  "unfold": {
+    "translation": "Andtúr",
+    "category": "Basic"
+  },
+  "pack": {
+    "translation": "Pacadh",
+    "category": "Basic"
+  },
+  "unpack": {
+    "translation": "Céim både",
+    "category": "Basic"
+  },
+  "be": {
+    "translation": "Is",
+    "category": "Basic"
+  },
+  "become": {
+    "translation": "níor thigigh",
+    "category": "Basic"
+  },
+  "seem": {
+    "translation": "séamas",
+    "category": "Basic"
+  },
+  "appear": {
+    "translation": "appear in Irish is",
+    "category": "Basic"
+  },
+  "remain": {
+    "translation": "Táimid",
+    "category": "Basic"
+  },
+  "stay": {
+    "translation": "Táisteál",
+    "category": "Basic"
+  },
+  "exist": {
+    "translation": "Is dócha",
+    "category": "Basic"
+  },
+  "happen": {
+    "translation": "bhainthníocht",
+    "category": "Basic"
+  },
+  "occur": {
+    "translation": "áilcona",
+    "category": "Basic"
+  },
+  "change": {
+    "translation": "Céim",
+    "category": "Basic"
+  },
+  "improve": {
+    "translation": "improve in Irish is",
+    "category": "Basic"
+  },
+  "decline": {
+    "translation": "decline in Irish is",
+    "category": "Basic"
+  },
+  "continue": {
+    "translation": "Táinigmiseoir",
+    "category": "Basic"
+  },
+  "stop": {
+    "translation": "stop in Irish is",
+    "category": "Basic"
+  },
+  "begin": {
+    "translation": "céim",
+    "category": "Basic"
+  },
+  "end": {
+    "translation": "céad",
+    "category": "Basic"
+  },
+  "last": {
+    "translation": "Ult",
+    "category": "Basic"
+  },
+  "wake": {
+    "translation": "wake in Irish is",
+    "category": "Daily Routine"
+  },
+  "get up": {
+    "translation": "Leisceacht",
+    "category": "Daily Routine"
+  },
+  "wash": {
+    "translation": "Wasach",
+    "category": "Daily Routine"
+  },
+  "shower": {
+    "translation": "saothar",
+    "category": "Daily Routine"
+  },
+  "bathe": {
+    "translation": "faoiseamh",
+    "category": "Daily Routine"
+  },
+  "brush": {
+    "translation": "brush in Irish is",
+    "category": "Daily Routine"
+  },
+  "comb": {
+    "translation": "cúl",
+    "category": "Daily Routine"
+  },
+  "dress": {
+    "translation": "dress in Irish is",
+    "category": "Daily Routine"
+  },
+  "eat": {
+    "translation": "comhromacht",
+    "category": "Daily Routine"
+  },
+  "drink": {
+    "translation": "páirce",
+    "category": "Daily Routine"
+  },
+  "snack": {
+    "translation": "ceap",
+    "category": "Daily Routine"
+  },
+  "cook": {
+    "translation": "cook in Irish is",
+    "category": "Daily Routine"
+  },
+  "bake": {
+    "translation": "Bain",
+    "category": "Daily Routine"
+  },
+  "reheat": {
+    "translation": "Céim både",
+    "category": "Daily Routine"
+  },
+  "clean": {
+    "translation": "céad",
+    "category": "Daily Routine"
+  },
+  "tidy": {
+    "translation": "Tidíocht",
+    "category": "Daily Routine"
+  },
+  "organize": {
+    "translation": "organáigh",
+    "category": "Daily Routine"
+  },
+  "vacuum": {
+    "translation": "vacuum in Irish is",
+    "category": "Daily Routine"
+  },
+  "sweep": {
+    "translation": "sweep in Irish is",
+    "category": "Daily Routine"
+  },
+  "mop": {
+    "translation": "mop in Irish is spóir",
+    "category": "Daily Routine"
+  },
+  "dust": {
+    "translation": "Tuíocht",
+    "category": "Daily Routine"
+  },
+  "wash dishes": {
+    "translation": "Cliceadh ceannaithe",
+    "category": "Daily Routine"
+  },
+  "rinse": {
+    "translation": "Ríonál",
+    "category": "Daily Routine"
+  },
+  "wipe": {
+    "translation": "sgrúgaíocht",
+    "category": "Daily Routine"
+  },
+  "scrub": {
+    "translation": "Scrúb",
+    "category": "Daily Routine"
+  },
+  "dry": {
+    "translation": "dry in Irish is",
+    "category": "Daily Routine"
+  },
+  "shop": {
+    "translation": "shopáil",
+    "category": "Daily Routine"
+  },
+  "refill": {
+    "translation": "Ríomh",
+    "category": "Daily Routine"
+  },
+  "charge": {
+    "translation": "Céim",
+    "category": "Daily Routine"
+  },
+  "relax": {
+    "translation": "Leasa",
+    "category": "Daily Routine"
+  },
+  "nap": {
+    "translation": "nap in Irish is",
+    "category": "Daily Routine"
+  },
+  "sleep": {
+    "translation": "Sleacht",
+    "category": "Daily Routine"
+  },
+  "prepare": {
+    "translation": "Bain",
+    "category": "Daily Routine"
+  },
+  "schedule": {
+    "translation": "Calender",
+    "category": "Daily Routine"
+  },
+  "cancel": {
+    "translation": "cancel in Irish is",
+    "category": "Daily Routine"
+  },
+  "check": {
+    "translation": "chech",
+    "category": "Daily Routine"
+  },
+  "monitor": {
+    "translation": "monitor in Irish is",
+    "category": "Daily Routine"
+  },
+  "plan": {
+    "translation": "plán",
+    "category": "Daily Routine"
+  },
+  "wait": {
+    "translation": "céad",
+    "category": "Daily Routine"
+  },
+  "search": {
+    "translation": "ród",
+    "category": "Daily Routine"
+  },
+  "find": {
+    "translation": "Troid",
+    "category": "Daily Routine"
+  },
+  "lose": {
+    "translation": "áltintColor",
+    "category": "Daily Routine"
+  },
+  "replace": {
+    "translation": "neamhspleáchadh",
+    "category": "Daily Routine"
+  },
+  "think": {
+    "translation": "thought",
+    "category": "Mental"
+  },
+  "know": {
+    "translation": "iscleacht",
+    "category": "Mental"
+  },
+  "believe": {
+    "translation": "Cleachtadh",
+    "category": "Mental"
+  },
+  "consider": {
+    "translation": "Consider consideráil",
+    "category": "Mental"
+  },
+  "imagine": {
+    "translation": "Imigh",
+    "category": "Mental"
+  },
+  "wonder": {
+    "translation": "wonder in Irish is",
+    "category": "Mental"
+  },
+  "remember": {
+    "translation": "remeas",
+    "category": "Mental"
+  },
+  "forget": {
+    "translation": "forget in Irish is",
+    "category": "Mental"
+  },
+  "realize": {
+    "translation": "bainistriú",
+    "category": "Mental"
+  },
+  "guess": {
+    "translation": "Cumas",
+    "category": "Mental"
+  },
+  "predict": {
+    "translation": null,
+    "category": "Mental",
+    "failed": true
+  },
+  "expect": {
+    "translation": "Céim",
+    "category": "Mental"
+  },
+  "recognize": {
+    "translation": "Recognise",
+    "category": "Mental"
+  },
+  "notice": {
+    "translation": "notice in Irish is",
+    "category": "Mental"
+  },
+  "focus": {
+    "translation": "focus in Irish is",
+    "category": "Mental"
+  },
+  "concentrate": {
+    "translation": "fógraíocht",
+    "category": "Mental"
+  },
+  "decide": {
+    "translation": "dathú",
+    "category": "Mental"
+  },
+  "choose": {
+    "translation": "áltár",
+    "category": "Mental"
+  },
+  "compare": {
+    "translation": "compare in Irish is",
+    "category": "Mental"
+  },
+  "analyze": {
+    "translation": "Analúisis",
+    "category": "Mental"
+  },
+  "evaluate": {
+    "translation": "Evaluáid",
+    "category": "Mental"
+  },
+  "estimate": {
+    "translation": "Cumas",
+    "category": "Mental"
+  },
+  "solve": {
+    "translation": "Solve in Irish is bhéim",
+    "category": "Mental"
+  },
+  "question": {
+    "translation": "untas-Trumpoíocht",
+    "category": "Mental"
+  },
+  "suspect": {
+    "translation": "sospóid",
+    "category": "Mental"
+  },
+  "doubt": {
+    "translation": "Dúr",
+    "category": "Mental"
+  },
+  "learn": {
+    "translation": "Leanúint",
+    "category": "Mental"
+  },
+  "study": {
+    "translation": "coimhdeirg",
+    "category": "Mental"
+  },
+  "memorize": {
+    "translation": "céim",
+    "category": "Mental"
+  },
+  "calculate": {
+    "translation": "cáiligh",
+    "category": "Mental"
+  },
+  "reflect": {
+    "translation": "Céim",
+    "category": "Mental"
+  },
+  "understand": {
+    "translation": "Comraíocht",
+    "category": "Mental"
+  },
+  "like": {
+    "translation": "Is bénéficie le rá",
+    "category": "Mental"
+  },
+  "love": {
+    "translation": "aisteoireacht",
+    "category": "Mental"
+  },
+  "hate": {
+    "translation": "hate in Irish is",
+    "category": "Mental"
+  },
+  "enjoy": {
+    "translation": "Tábhacht",
+    "category": "Mental"
+  },
+  "prefer": {
+    "translation": "fhearr",
+    "category": "Mental"
+  },
+  "want": {
+    "translation": "ród",
+    "category": "Mental"
+  },
+  "need": {
+    "translation": "Tábhacht",
+    "category": "Mental"
+  },
+  "miss": {
+    "translation": "Peann",
+    "category": "Mental"
+  },
+  "care": {
+    "translation": "Cuid",
+    "category": "Mental"
+  },
+  "worry": {
+    "translation": "Ólaim",
+    "category": "Mental"
+  },
+  "fear": {
+    "translation": "fearr",
+    "category": "Mental"
+  },
+  "panic": {
+    "translation": "Panacáil",
+    "category": "Mental"
+  },
+  "stress": {
+    "translation": "stress in Irish is",
+    "category": "Mental"
+  },
+  "calm": {
+    "translation": "Calm tionscal",
+    "category": "Mental"
+  },
+  "appreciate": {
+    "translation": "Aisteoir",
+    "category": "Mental"
+  },
+  "value": {
+    "translation": "áiteán",
+    "category": "Mental"
+  },
+  "respect": {
+    "translation": "Aisteoir",
+    "category": "Mental"
+  },
+  "dislike": {
+    "translation": "dislike in Irish is nasc",
+    "category": "Mental"
+  },
+  "regret": {
+    "translation": "Láine",
+    "category": "Mental"
+  },
+  "hope": {
+    "translation": "oibrigh",
+    "category": "Mental"
+  },
+  "trust": {
+    "translation": "Tionchar",
+    "category": "Mental"
+  },
+  "surprise": {
+    "translation": "surpriséal",
+    "category": "Mental"
+  },
+  "shock": {
+    "translation": "shock in Irish is",
+    "category": "Mental"
+  },
+  "annoy": {
+    "translation": "Dhracal",
+    "category": "Mental"
+  },
+  "bother": {
+    "translation": "Céad",
+    "category": "Mental"
+  },
+  "confuse": {
+    "translation": "bogus",
+    "category": "Mental"
+  },
+  "embarrass": {
+    "translation": "Críochán",
+    "category": "Mental"
+  },
+  "frustrate": {
+    "translation": "fhruasthar",
+    "category": "Mental"
+  },
+  "satisfy": {
+    "translation": "Skeapaidh",
+    "category": "Mental"
+  },
+  "comfort": {
+    "translation": "comfort in Irish is",
+    "category": "Mental"
+  },
+  "cheer": {
+    "translation": "cheer in Irish is",
+    "category": "Mental"
+  },
+  "say": {
+    "translation": "Díriodh",
+    "category": "Communication"
+  },
+  "tell": {
+    "translation": "ícónnacht",
+    "category": "Communication"
+  },
+  "talk": {
+    "translation": "bais",
+    "category": "Communication"
+  },
+  "speak": {
+    "translation": "ábhair",
+    "category": "Communication"
+  },
+  "discuss": {
+    "translation": "dearcroidhníocht",
+    "category": "Communication"
+  },
+  "chat": {
+    "translation": "ceap",
+    "category": "Communication"
+  },
+  "explain": {
+    "translation": "dearcroidadh",
+    "category": "Communication"
+  },
+  "describe": {
+    "translation": "deskribeadh",
+    "category": "Communication"
+  },
+  "announce": {
+    "translation": "anú",
+    "category": "Communication"
+  },
+  "report": {
+    "translation": "Ceisteanna",
+    "category": "Communication"
+  },
+  "reply": {
+    "translation": "-reply",
+    "category": "Communication"
+  },
+  "answer": {
+    "translation": "díchliceać",
+    "category": "Communication"
+  },
+  "ask": {
+    "translation": "numel",
+    "category": "Communication"
+  },
+  "interrupt": {
+    "translation": "Céim",
+    "category": "Communication"
+  },
+  "suggest": {
+    "translation": "Sugán",
+    "category": "Communication"
+  },
+  "recommend": {
+    "translation": "rathúlacht",
+    "category": "Communication"
+  },
+  "complain": {
+    "translation": "comhshaol",
+    "category": "Communication"
+  },
+  "argue": {
+    "translation": "díchraitheadh",
+    "category": "Communication"
+  },
+  "debate": {
+    "translation": "déabhtain",
+    "category": "Communication"
+  },
+  "whisper": {
+    "translation": "súilewithíd",
+    "category": "Communication"
+  },
+  "shout": {
+    "translation": "shout in Irish is",
+    "category": "Communication"
+  },
+  "yell": {
+    "translation": "screo",
+    "category": "Communication"
+  },
+  "mention": {
+    "translation": "mention in Irish is",
+    "category": "Communication"
+  },
+  "remind": {
+    "translation": "Ceannaradh",
+    "category": "Communication"
+  },
+  "warn": {
+    "translation": "Céim",
+    "category": "Communication"
+  },
+  "advise": {
+    "translation": "raíseadh",
+    "category": "Communication"
+  },
+  "encourage": {
+    "translation": "Cuidigh",
+    "category": "Communication"
+  },
+  "persuade": {
+    "translation": "imirt",
+    "category": "Communication"
+  },
+  "invite": {
+    "translation": "iontráil",
+    "category": "Communication"
+  },
+  "respond": {
+    "translation": "Céim",
+    "category": "Communication"
+  },
+  "translate": {
+    "translation": "fhoiltílteoir",
+    "category": "Communication"
+  },
+  "inform": {
+    "translation": "inneall",
+    "category": "Communication"
+  },
+  "comment": {
+    "translation": "comhghleacadh",
+    "category": "Communication"
+  },
+  "confirm": {
+    "translation": "Confimhar",
+    "category": "Communication"
+  },
+  "deny": {
+    "translation": "Deny in Irish is ionradh",
+    "category": "Communication"
+  },
+  "admit": {
+    "translation": "Aimigh",
+    "category": "Communication"
+  },
+  "meet": {
+    "translation": "Meastá",
+    "category": "Social"
+  },
+  "greet": {
+    "translation": "Sláinte",
+    "category": "Social"
+  },
+  "welcome": {
+    "translation": "welcome in Irish is",
+    "category": "Social"
+  },
+  "visit": {
+    "translation": "goileáil",
+    "category": "Social"
+  },
+  "host": {
+    "translation": "An chosaint",
+    "category": "Social"
+  },
+  "join": {
+    "translation": "ród",
+    "category": "Social"
+  },
+  "help": {
+    "translation": "Helps",
+    "category": "Social"
+  },
+  "support": {
+    "translation": "Support in Irish is suim",
+    "category": "Social"
+  },
+  "assist": {
+    "translation": "assist in Irish is athasú",
+    "category": "Social"
+  },
+  "share": {
+    "translation": "dúshlá",
+    "category": "Social"
+  },
+  "care for": {
+    "translation": "Cuid",
+    "category": "Social"
+  },
+  "hug": {
+    "translation": "The Irish word for hug is",
+    "category": "Social"
+  },
+  "kiss": {
+    "translation": "kiss in Irish is",
+    "category": "Social"
+  },
+  "hold hands": {
+    "translation": "Céadamh",
+    "category": "Social"
+  },
+  "date": {
+    "translation": "dáta",
+    "category": "Social"
+  },
+  "marry": {
+    "translation": "cónaí",
+    "category": "Social"
+  },
+  "befriend": {
+    "translation": "cúram",
+    "category": "Social"
+  },
+  "follow": {
+    "translation": "follow in Irish is",
+    "category": "Social"
+  },
+  "lead": {
+    "translation": "Leas",
+    "category": "Social"
+  },
+  "guide": {
+    "translation": "guide in Irish is",
+    "category": "Social"
+  },
+  "introduce": {
+    "translation": "Introdúcáil",
+    "category": "Social"
+  },
+  "cooperate": {
+    "translation": "coimeádadh",
+    "category": "Social"
+  },
+  "protect": {
+    "translation": "ródadh",
+    "category": "Social"
+  },
+  "include": {
+    "translation": "inclúid",
+    "category": "Social"
+  },
+  "exclude": {
+    "translation": "Dearcraochadh",
+    "category": "Social"
+  },
+  "work": {
+    "translation": "work in Irish is",
+    "category": "Work"
+  },
+  "write": {
+    "translation": "scríobh",
+    "category": "Work"
+  },
+  "read": {
+    "translation": "leabharlgait",
+    "category": "Work"
+  },
+  "edit": {
+    "translation": "Ceisteáil",
+    "category": "Work"
+  },
+  "revise": {
+    "translation": "Céim",
+    "category": "Work"
+  },
+  "review": {
+    "translation": "rathúlacht",
+    "category": "Work"
+  },
+  "inspect": {
+    "translation": "Inspeacht",
+    "category": "Work"
+  },
+  "complete": {
+    "translation": "complete in Irish is",
+    "category": "Work"
+  },
+  "submit": {
+    "translation": "Súmiladh",
+    "category": "Work"
+  },
+  "create": {
+    "translation": "créateoir",
+    "category": "Work"
+  },
+  "design": {
+    "translation": "design in Irish is",
+    "category": "Work"
+  },
+  "build": {
+    "translation": "Builds",
+    "category": "Work"
+  },
+  "assemble": {
+    "translation": "aimighiecthq",
+    "category": "Work"
+  },
+  "debug": {
+    "translation": "Díagnose",
+    "category": "Work"
+  },
+  "research": {
+    "translation": "Investigation",
+    "category": "Work"
+  },
+  "document": {
+    "translation": "docúmentHotéis",
+    "category": "Work"
+  },
+  "train": {
+    "translation": "geilís",
+    "category": "Work"
+  },
+  "teach": {
+    "translation": "teachadh",
+    "category": "Work"
+  },
+  "update": {
+    "translation": "Céim",
+    "category": "Work"
+  },
+  "upload": {
+    "translation": "An",
+    "category": "Work"
+  },
+  "download": {
+    "translation": "Descarga",
+    "category": "Work"
+  },
+  "print": {
+    "translation": "friantaigh",
+    "category": "Work"
+  },
+  "scan": {
+    "translation": "scan in Irish is",
+    "category": "Work"
+  },
+  "record": {
+    "translation": "cúrsaónacht",
+    "category": "Work"
+  },
+  "track": {
+    "translation": "páirc",
+    "category": "Work"
+  },
+  "manage": {
+    "translation": "imiristiú",
+    "category": "Work"
+  },
+  "supervise": {
+    "translation": "Síneadh",
+    "category": "Work"
+  },
+  "go": {
+    "translation": "goût",
+    "category": "Travel"
+  },
+  "come": {
+    "translation": "came",
+    "category": "Travel"
+  },
+  "move": {
+    "translation": "móint",
+    "category": "Travel"
+  },
+  "leave": {
+    "translation": "Déan",
+    "category": "Travel"
+  },
+  "arrive": {
+    "translation": "áiluinighet",
+    "category": "Travel"
+  },
+  "enter": {
+    "translation": "enter in Irish is",
+    "category": "Travel"
+  },
+  "exit": {
+    "translation": "exit in Irish is",
+    "category": "Travel"
+  },
+  "travel": {
+    "translation": "áil bådeú",
+    "category": "Travel"
+  },
+  "fly": {
+    "translation": "fliú",
+    "category": "Travel"
+  },
+  "drive": {
+    "translation": "dríobacht",
+    "category": "Travel"
+  },
+  "ride": {
+    "translation": null,
+    "category": "Travel",
+    "failed": true
+  },
+  "board": {
+    "translation": "Boord",
+    "category": "Travel"
+  },
+  "land": {
+    "translation": "Tír",
+    "category": "Travel"
+  },
+  "park": {
+    "translation": "park in Irish is",
+    "category": "Travel"
+  },
+  "accelerate": {
+    "translation": "accelerate in Irish is",
+    "category": "Travel"
+  },
+  "reverse": {
+    "translation": "Céim",
+    "category": "Travel"
+  },
+  "cross": {
+    "translation": "croisé",
+    "category": "Travel"
+  },
+  "wander": {
+    "translation": "roinnt",
+    "category": "Travel"
+  },
+  "explore": {
+    "translation": "explore in Irish is",
+    "category": "Travel"
+  },
+  "return": {
+    "translation": "córas",
+    "category": "Travel"
+  },
+  "rush": {
+    "translation": "rush in Irish is",
+    "category": "Travel"
+  },
+  "hurry": {
+    "translation": "Súilewith",
+    "category": "Travel"
+  },
+  "navigate": {
+    "translation": "navigáil",
+    "category": "Travel"
+  },
+  "sanitize": {
+    "translation": "Cliceáil",
+    "category": "Household"
+  },
+  "iron": {
+    "translation": "cúilín",
+    "category": "Household"
+  },
+  "store": {
+    "translation": "An stóra",
+    "category": "Household"
+  },
+  "repair": {
+    "translation": "Taispeáintríocht",
+    "category": "Household"
+  },
+  "fix": {
+    "translation": "ceannach",
+    "category": "Household"
+  },
+  "disassemble": {
+    "translation": "Fógraíocht",
+    "category": "Household"
+  },
+  "install": {
+    "translation": "install in Irish is",
+    "category": "Household"
+  },
+  "uninstall": {
+    "translation": "uninstall in Irish is",
+    "category": "Household"
+  },
+  "remove": {
+    "translation": "remove in Irish is",
+    "category": "Household"
+  },
+  "connect": {
+    "translation": "Connéctáil",
+    "category": "Household"
+  },
+  "disconnect": {
+    "translation": "Fógraíocht",
+    "category": "Household"
+  },
+  "lock": {
+    "translation": "lock in Irish is",
+    "category": "Household"
+  },
+  "unlock": {
+    "translation": "Bealach",
+    "category": "Household"
+  },
+  "decorate": {
+    "translation": "decorate in Irish is",
+    "category": "Household"
+  },
+  "polish": {
+    "translation": "polish in Irish is",
+    "category": "Household"
+  },
+  "hammer": {
+    "translation": "máine",
+    "category": "Household"
+  },
+  "saw": {
+    "translation": "cailín",
+    "category": "Household"
+  },
+  "glue": {
+    "translation": "glue in Irish is",
+    "category": "Household"
+  },
+  "buy": {
+    "translation": "Caim både",
+    "category": "Money"
+  },
+  "sell": {
+    "translation": "sell in Irish is",
+    "category": "Money"
+  },
+  "pay": {
+    "translation": "Paidír",
+    "category": "Money"
+  },
+  "owe": {
+    "translation": "déanamh an choinne",
+    "category": "Money"
+  },
+  "borrow": {
+    "translation": "Céim",
+    "category": "Money"
+  },
+  "lend": {
+    "translation": "cionn",
+    "category": "Money"
+  },
+  "rent": {
+    "translation": "róin",
+    "category": "Money"
+  },
+  "save": {
+    "translation": "Saothar",
+    "category": "Money"
+  },
+  "spend": {
+    "translation": "innessernín",
+    "category": "Money"
+  },
+  "invest": {
+    "translation": "Investíocht",
+    "category": "Money"
+  },
+  "earn": {
+    "translation": "fhorbair",
+    "category": "Money"
+  },
+  "refund": {
+    "translation": "Ceap både",
+    "category": "Money"
+  },
+  "exchange": {
+    "translation": "Traidisiún",
+    "category": "Money"
+  },
+  "order": {
+    "translation": "ord",
+    "category": "Money"
+  },
+  "select": {
+    "translation": "áltintColor",
+    "category": "Money"
+  },
+  "withdraw": {
+    "translation": "withdraw in Irish is fág",
+    "category": "Money"
+  },
+  "deposit": {
+    "translation": "deposit in Irish is",
+    "category": "Money"
+  },
+  "budget": {
+    "translation": "budget in Irish is",
+    "category": "Money"
+  },
+  "fry": {
+    "translation": "fry in Irish is",
+    "category": "Food"
+  },
+  "grill": {
+    "translation": "grill in Irish is",
+    "category": "Food"
+  },
+  "boil": {
+    "translation": "boil in Irish is",
+    "category": "Food"
+  },
+  "steam": {
+    "translation": "úsád",
+    "category": "Food"
+  },
+  "slice": {
+    "translation": "slice in Irish is",
+    "category": "Food"
+  },
+  "cut": {
+    "translation": "Cúirit",
+    "category": "Food"
+  },
+  "chop": {
+    "translation": "ceapa",
+    "category": "Food"
+  },
+  "mix": {
+    "translation": "mix in Irish is",
+    "category": "Food"
+  },
+  "stir": {
+    "translation": "bain både ann",
+    "category": "Food"
+  },
+  "pour": {
+    "translation": "páir",
+    "category": "Food"
+  },
+  "serve": {
+    "translation": "cúrsa",
+    "category": "Food"
+  },
+  "taste": {
+    "translation": "taste in Irish is",
+    "category": "Food"
+  },
+  "season": {
+    "translation": "Seasónnacht",
+    "category": "Food"
+  },
+  "marinate": {
+    "translation": "meatáil",
+    "category": "Food"
+  },
+  "chew": {
+    "translation": "dhrách",
+    "category": "Food"
+  },
+  "swallow": {
+    "translation": "Saothar",
+    "category": "Food"
+  },
+  "deliver": {
+    "translation": "dúrstaíthesize",
+    "category": "Food"
+  },
+  "digest": {
+    "translation": "Digestuigh",
+    "category": "Food"
+  },
+  "rain": {
+    "translation": "Ailisaid",
+    "category": "Nature"
+  },
+  "snow": {
+    "translation": "snow in Irish is sníomhan",
+    "category": "Nature"
+  },
+  "hail": {
+    "translation": "Sláinte",
+    "category": "Nature"
+  },
+  "sleet": {
+    "translation": "sleet in Irish is slíte",
+    "category": "Nature"
+  },
+  "freeze": {
+    "translation": "freeze in Irish is",
+    "category": "Nature"
+  },
+  "melt": {
+    "translation": "Mliú",
+    "category": "Nature"
+  },
+  "shine": {
+    "translation": "shine in Irish is",
+    "category": "Nature"
+  },
+  "blow": {
+    "translation": "bhloí",
+    "category": "Nature"
+  },
+  "grow": {
+    "translation": "móráigh",
+    "category": "Nature"
+  },
+  "bloom": {
+    "translation": "Bloom in Irish is fola",
+    "category": "Nature"
+  },
+  "wither": {
+    "translation": "Cromadh",
+    "category": "Nature"
+  },
+  "sprout": {
+    "translation": "ceannaimh",
+    "category": "Nature"
+  },
+  "fall": {
+    "translation": "foinighet",
+    "category": "Nature"
+  },
+  "quake": {
+    "translation": "ceacadh",
+    "category": "Nature"
+  },
+  "erode": {
+    "translation": "Céim",
+    "category": "Nature"
+  },
+  "burn": {
+    "translation": "Troid",
+    "category": "Nature"
+  },
+  "flood": {
+    "translation": "Fogair",
+    "category": "Nature"
+  },
+  "float": {
+    "translation": "float in Irish is",
+    "category": "Nature"
+  },
+  "sink": {
+    "translation": "sink in Irish is",
+    "category": "Nature"
+  },
+  "rise": {
+    "translation": "irse",
+    "category": "Nature"
+  },
+  "set": {
+    "translation": "establish",
+    "category": "Nature"
+  },
+  "breathe": {
+    "translation": "breathú",
+    "category": "Health"
+  },
+  "inhale": {
+    "translation": "ionannaim",
+    "category": "Health"
+  },
+  "exhale": {
+    "translation": "Pheachadh",
+    "category": "Health"
+  },
+  "cough": {
+    "translation": "cough in Irish is",
+    "category": "Health"
+  },
+  "sneeze": {
+    "translation": "sneeze in Irish is",
+    "category": "Health"
+  },
+  "sweat": {
+    "translation": "sweat in Irish is",
+    "category": "Health"
+  },
+  "bleed": {
+    "translation": "cuidheacht",
+    "category": "Health"
+  },
+  "heal": {
+    "translation": "Heil",
+    "category": "Health"
+  },
+  "recover": {
+    "translation": "Craoi",
+    "category": "Health"
+  },
+  "ache": {
+    "translation": "ache in Irish is",
+    "category": "Health"
+  },
+  "hurt": {
+    "translation": "dorcha",
+    "category": "Health"
+  },
+  "strain": {
+    "translation": "Craic",
+    "category": "Health"
+  },
+  "exercise": {
+    "translation": "exercise in Irish is",
+    "category": "Health"
+  },
+  "faint": {
+    "translation": "Faoihte",
+    "category": "Health"
+  },
+  "vomit": {
+    "translation": "vomit in Irish is",
+    "category": "Health"
+  },
+  "blink": {
+    "translation": "bliainnteamhlitheid",
+    "category": "Health"
+  },
+  "squint": {
+    "translation": "Súil bhiartha",
+    "category": "Health"
+  },
+  "tremble": {
+    "translation": "Treo",
+    "category": "Health"
+  },
+  "click": {
+    "translation": "click in Irish is",
+    "category": "Technology"
+  },
+  "tap": {
+    "translation": "tap in Irish is",
+    "category": "Technology"
+  },
+  "scroll": {
+    "translation": "-scrolláin",
+    "category": "Technology"
+  },
+  "swipe": {
+    "translation": "Sliotar",
+    "category": "Technology"
+  },
+  "browse": {
+    "translation": "Fogain",
+    "category": "Technology"
+  },
+  "upgrade": {
+    "translation": "Uplevel",
+    "category": "Technology"
+  },
+  "copy": {
+    "translation": "Cóip",
+    "category": "Technology"
+  },
+  "paste": {
+    "translation": "paste in Irish is",
+    "category": "Technology"
+  },
+  "delete": {
+    "translation": "deiligh",
+    "category": "Technology"
+  },
+  "reset": {
+    "translation": "Ríostar",
+    "category": "Technology"
+  },
+  "restart": {
+    "translation": "Againnó",
+    "category": "Technology"
+  },
+  "log in": {
+    "translation": "Beoínigh",
+    "category": "Technology"
+  },
+  "log out": {
+    "translation": "cinn bådeirid",
+    "category": "Technology"
+  },
+  "sync": {
+    "translation": "Sínc",
+    "category": "Technology"
+  },
+  "stream": {
+    "translation": "stream in Irish is",
+    "category": "Technology"
+  },
+  "encrypt": {
+    "translation": "Criptíodóicht",
+    "category": "Technology"
+  },
+  "backup": {
+    "translation": "cúpla fíoraimseasacht",
+    "category": "Technology"
+  }
+}

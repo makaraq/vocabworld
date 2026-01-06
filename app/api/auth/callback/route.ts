@@ -7,44 +7,90 @@ export async function GET(request: NextRequest) {
   const code = requestUrl.searchParams.get('code')
   const error = requestUrl.searchParams.get('error')
   const errorDescription = requestUrl.searchParams.get('error_description')
-  
-  // Get the origin for redirects - use the request URL's origin
-  const origin = requestUrl.origin
 
-  // Handle OAuth errors
   if (error) {
     console.error('OAuth error:', error, errorDescription)
     return NextResponse.redirect(
-      `${origin}/auth/error?error=${encodeURIComponent(errorDescription || error)}`
+      new URL(`/auth/error?error=${encodeURIComponent(error)}&description=${encodeURIComponent(errorDescription || '')}`, requestUrl.origin)
     )
   }
 
   if (code) {
-    const cookieStore = cookies()
-    const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
+    const supabase = createRouteHandlerClient({ cookies })
     
     try {
-      const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
+      const { data, error } = await supabase.auth.exchangeCodeForSession(code)
       
-      if (exchangeError) {
-        console.error('Code exchange error:', exchangeError)
+      if (error) {
+        console.error('Session exchange error:', error)
         return NextResponse.redirect(
-          `${origin}/auth/error?error=${encodeURIComponent(exchangeError.message)}`
+          new URL(`/auth/error?error=${encodeURIComponent(error.message)}`, requestUrl.origin)
         )
       }
-      
-      console.log('✅ Auth successful for user:', data.user?.email)
-      
-      // Redirect to home page on success
-      return NextResponse.redirect(`${origin}/`)
+
+      if (data.session) {
+        // Check if user profile exists, create if not
+        const { data: profile, error: profileError } = await supabase
+          .from('user_profiles')
+          .select('*')
+          .eq('auth_user_id', data.session.user.id)
+          .single()
+
+        if (profileError && profileError.code === 'PGRST116') {
+          // Profile doesn't exist, create it
+          const providerData = getProviderInfo(data.session.user)
+          
+          const { error: insertError } = await supabase
+            .from('user_profiles')
+            .insert({
+              auth_user_id: data.session.user.id,
+              email: data.session.user.email,
+              full_name: data.session.user.user_metadata?.full_name || data.session.user.user_metadata?.name || null,
+              avatar_url: data.session.user.user_metadata?.avatar_url || data.session.user.user_metadata?.picture || null,
+              provider: providerData.provider,
+              provider_id: providerData.provider_id,
+              preferred_language: 'en',
+              learning_languages: [],
+              subscription_status: 'free'
+            })
+
+          if (insertError) {
+            console.error('Error creating user profile:', insertError)
+          }
+        }
+
+        // Redirect to the app
+        return NextResponse.redirect(new URL('/', requestUrl.origin))
+      }
     } catch (error) {
       console.error('Auth callback error:', error)
       return NextResponse.redirect(
-        `${origin}/auth/error?error=${encodeURIComponent('Authentication failed')}`
+        new URL(`/auth/error?error=${encodeURIComponent('Authentication failed')}`, requestUrl.origin)
       )
     }
   }
 
-  // No code provided - redirect to home
-  return NextResponse.redirect(`${origin}/`)
+  // No code or error, redirect to home
+  return NextResponse.redirect(new URL('/', requestUrl.origin))
+}
+
+function getProviderInfo(authUser: any): { provider: 'google' | 'apple' | 'email', provider_id: string | null } {
+  if (authUser.app_metadata?.provider === 'google') {
+    return {
+      provider: 'google',
+      provider_id: authUser.user_metadata?.sub || authUser.user_metadata?.provider_id || null
+    }
+  }
+  
+  if (authUser.app_metadata?.provider === 'apple') {
+    return {
+      provider: 'apple',
+      provider_id: authUser.user_metadata?.sub || authUser.user_metadata?.provider_id || null
+    }
+  }
+
+  return {
+    provider: 'email',
+    provider_id: null
+  }
 }

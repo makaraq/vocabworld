@@ -1,0 +1,1562 @@
+{
+  "walk": {
+    "translation": "lauzt",
+    "category": "Basic"
+  },
+  "run": {
+    "translation": "-iepiedoties",
+    "category": "Basic"
+  },
+  "jump": {
+    "translation": "springstiņš",
+    "category": "Basic"
+  },
+  "hop": {
+    "translation": "springāt",
+    "category": "Basic"
+  },
+  "skip": {
+    "translation": "satiksmeņīt",
+    "category": "Basic"
+  },
+  "crawl": {
+    "translation": "kāpējet",
+    "category": "Basic"
+  },
+  "climb": {
+    "translation": "ievadīties",
+    "category": "Basic"
+  },
+  "slide": {
+    "translation": "slīds",
+    "category": "Basic"
+  },
+  "swing": {
+    "translation": "tukšņa",
+    "category": "Basic"
+  },
+  "stretch": {
+    "translation": "uzlūkstēt",
+    "category": "Basic"
+  },
+  "bend": {
+    "translation": "lauzums",
+    "category": "Basic"
+  },
+  "lift": {
+    "translation": "ievadīt",
+    "category": "Basic"
+  },
+  "carry": {
+    "translation": "ievadīt",
+    "category": "Basic"
+  },
+  "drag": {
+    "translation": "atrags",
+    "category": "Basic"
+  },
+  "push": {
+    "translation": "ietilpties",
+    "category": "Basic"
+  },
+  "pull": {
+    "translation": "atrīt",
+    "category": "Basic"
+  },
+  "hold": {
+    "translation": "ņemt",
+    "category": "Basic"
+  },
+  "grab": {
+    "translation": "ņemt",
+    "category": "Basic"
+  },
+  "drop": {
+    "translation": "piekšņa",
+    "category": "Basic"
+  },
+  "throw": {
+    "translation": "izaicināt",
+    "category": "Basic"
+  },
+  "catch": {
+    "translation": "atrīt",
+    "category": "Basic"
+  },
+  "kick": {
+    "translation": "dotsēdzēt",
+    "category": "Basic"
+  },
+  "hit": {
+    "translation": "trīt",
+    "category": "Basic"
+  },
+  "press": {
+    "translation": "pressions",
+    "category": "Basic"
+  },
+  "twist": {
+    "translation": "savīkšņa",
+    "category": "Basic"
+  },
+  "turn": {
+    "translation": "ietērpt",
+    "category": "Basic"
+  },
+  "rotate": {
+    "translation": "Rotātēlis",
+    "category": "Basic"
+  },
+  "flip": {
+    "translation": "flipsņūdzēt",
+    "category": "Basic"
+  },
+  "shake": {
+    "translation": "Wigstēt",
+    "category": "Basic"
+  },
+  "wave": {
+    "translation": "lūga",
+    "category": "Basic"
+  },
+  "reach": {
+    "translation": "dzīst",
+    "category": "Basic"
+  },
+  "lean": {
+    "translation": "lēns",
+    "category": "Basic"
+  },
+  "rest": {
+    "translation": "ienesējis",
+    "category": "Basic"
+  },
+  "balance": {
+    "translation": "balansēt",
+    "category": "Basic"
+  },
+  "spin": {
+    "translation": "Spin in Latvian is spīns",
+    "category": "Basic"
+  },
+  "arrange": {
+    "translation": "Izveidošana",
+    "category": "Basic"
+  },
+  "adjust": {
+    "translation": "Adaptēt",
+    "category": "Basic"
+  },
+  "shift": {
+    "translation": "pāreja",
+    "category": "Basic"
+  },
+  "tie": {
+    "translation": "tīrs",
+    "category": "Basic"
+  },
+  "untie": {
+    "translation": "Atīties",
+    "category": "Basic"
+  },
+  "wrap": {
+    "translation": "pakalpiņš",
+    "category": "Basic"
+  },
+  "unwrap": {
+    "translation": "Atvert",
+    "category": "Basic"
+  },
+  "fold": {
+    "translation": "plesti",
+    "category": "Basic"
+  },
+  "unfold": {
+    "translation": "Atvert",
+    "category": "Basic"
+  },
+  "pack": {
+    "translation": "pakts",
+    "category": "Basic"
+  },
+  "unpack": {
+    "translation": "Atvert",
+    "category": "Basic"
+  },
+  "be": {
+    "translation": "būt",
+    "category": "Basic"
+  },
+  "become": {
+    "translation": "aptrzēties",
+    "category": "Basic"
+  },
+  "seem": {
+    "translation": "parādīties",
+    "category": "Basic"
+  },
+  "appear": {
+    "translation": "atvert",
+    "category": "Basic"
+  },
+  "remain": {
+    "translation": "palikt",
+    "category": "Basic"
+  },
+  "stay": {
+    "translation": "palikt",
+    "category": "Basic"
+  },
+  "exist": {
+    "translation": "eksistēt",
+    "category": "Basic"
+  },
+  "happen": {
+    "translation": "noticēt",
+    "category": "Basic"
+  },
+  "occur": {
+    "translation": "notikties",
+    "category": "Basic"
+  },
+  "change": {
+    "translation": "mainīšanās",
+    "category": "Basic"
+  },
+  "improve": {
+    "translation": "labāt",
+    "category": "Basic"
+  },
+  "decline": {
+    "translation": "Atkarptība",
+    "category": "Basic"
+  },
+  "continue": {
+    "translation": "savākšņa",
+    "category": "Basic"
+  },
+  "stop": {
+    "translation": "ietērpusi",
+    "category": "Basic"
+  },
+  "begin": {
+    "translation": "Sākt",
+    "category": "Basic"
+  },
+  "end": {
+    "translation": "endsWith",
+    "category": "Basic"
+  },
+  "last": {
+    "translation": "pēdējais",
+    "category": "Basic"
+  },
+  "wake": {
+    "translation": "brisīt",
+    "category": "Daily Routine"
+  },
+  "get up": {
+    "translation": "NOPĒCOT",
+    "category": "Daily Routine"
+  },
+  "wash": {
+    "translation": "savādīt",
+    "category": "Daily Routine"
+  },
+  "shower": {
+    "translation": "duša",
+    "category": "Daily Routine"
+  },
+  "bathe": {
+    "translation": "spriechties",
+    "category": "Daily Routine"
+  },
+  "brush": {
+    "translation": "kāršņa",
+    "category": "Daily Routine"
+  },
+  "comb": {
+    "translation": "comb in Latvian is kābele",
+    "category": "Daily Routine"
+  },
+  "dress": {
+    "translation": "dress in Latvian is šķīde",
+    "category": "Daily Routine"
+  },
+  "eat": {
+    "translation": "ietēkt",
+    "category": "Daily Routine"
+  },
+  "drink": {
+    "translation": "dževis",
+    "category": "Daily Routine"
+  },
+  "snack": {
+    "translation": "pečļava",
+    "category": "Daily Routine"
+  },
+  "cook": {
+    "translation": "satnis",
+    "category": "Daily Routine"
+  },
+  "bake": {
+    "translation": "grāmatēt",
+    "category": "Daily Routine"
+  },
+  "reheat": {
+    "translation": "Pārgrāmatīt",
+    "category": "Daily Routine"
+  },
+  "clean": {
+    "translation": "Tīrs",
+    "category": "Daily Routine"
+  },
+  "tidy": {
+    "translation": "tīds",
+    "category": "Daily Routine"
+  },
+  "organize": {
+    "translation": "organizēt",
+    "category": "Daily Routine"
+  },
+  "vacuum": {
+    "translation": "vačums",
+    "category": "Daily Routine"
+  },
+  "sweep": {
+    "translation": "meklēt",
+    "category": "Daily Routine"
+  },
+  "mop": {
+    "translation": "dzelzskaķis",
+    "category": "Daily Routine"
+  },
+  "dust": {
+    "translation": "Dushta",
+    "category": "Daily Routine"
+  },
+  "wash dishes": {
+    "translation": "lavinni",
+    "category": "Daily Routine"
+  },
+  "rinse": {
+    "translation": "Rinšana",
+    "category": "Daily Routine"
+  },
+  "wipe": {
+    "translation": "izmazgt",
+    "category": "Daily Routine"
+  },
+  "scrub": {
+    "translation": "spēle",
+    "category": "Daily Routine"
+  },
+  "dry": {
+    "translation": "dry in Latvian is secs",
+    "category": "Daily Routine"
+  },
+  "shop": {
+    "translation": "māja",
+    "category": "Daily Routine"
+  },
+  "refill": {
+    "translation": "Pildīt",
+    "category": "Daily Routine"
+  },
+  "charge": {
+    "translation": "Ladīt",
+    "category": "Daily Routine"
+  },
+  "relax": {
+    "translation": "Ērtīt",
+    "category": "Daily Routine"
+  },
+  "nap": {
+    "translation": "dzēriņš",
+    "category": "Daily Routine"
+  },
+  "sleep": {
+    "translation": "leeps",
+    "category": "Daily Routine"
+  },
+  "prepare": {
+    "translation": "apprēķināties",
+    "category": "Daily Routine"
+  },
+  "schedule": {
+    "translation": "Kalendārs",
+    "category": "Daily Routine"
+  },
+  "cancel": {
+    "translation": "Atcelt",
+    "category": "Daily Routine"
+  },
+  "check": {
+    "translation": "Chek",
+    "category": "Daily Routine"
+  },
+  "monitor": {
+    "translation": "-monitoruss",
+    "category": "Daily Routine"
+  },
+  "plan": {
+    "translation": "plāns",
+    "category": "Daily Routine"
+  },
+  "wait": {
+    "translation": "wait in Latvian is gaidīt",
+    "category": "Daily Routine"
+  },
+  "search": {
+    "translation": "meklēt",
+    "category": "Daily Routine"
+  },
+  "find": {
+    "translation": "atrast",
+    "category": "Daily Routine"
+  },
+  "lose": {
+    "translation": "ietilpties",
+    "category": "Daily Routine"
+  },
+  "replace": {
+    "translation": "Pārveidot",
+    "category": "Daily Routine"
+  },
+  "think": {
+    "translation": "domāt",
+    "category": "Mental"
+  },
+  "know": {
+    "translation": "zināt",
+    "category": "Mental"
+  },
+  "believe": {
+    "translation": "ievēlēties",
+    "category": "Mental"
+  },
+  "consider": {
+    "translation": "pieliet",
+    "category": "Mental"
+  },
+  "imagine": {
+    "translation": "Imaginēt",
+    "category": "Mental"
+  },
+  "wonder": {
+    "translation": "mirklis",
+    "category": "Mental"
+  },
+  "remember": {
+    "translation": "ievadīties",
+    "category": "Mental"
+  },
+  "forget": {
+    "translation": "Atvert",
+    "category": "Mental"
+  },
+  "realize": {
+    "translation": "Realizēties",
+    "category": "Mental"
+  },
+  "guess": {
+    "translation": "DOMĀT",
+    "category": "Mental"
+  },
+  "predict": {
+    "translation": "ievēlēties",
+    "category": "Mental"
+  },
+  "expect": {
+    "translation": "edomāties",
+    "category": "Mental"
+  },
+  "recognize": {
+    "translation": "atzīmēt",
+    "category": "Mental"
+  },
+  "notice": {
+    "translation": "atzīmes",
+    "category": "Mental"
+  },
+  "focus": {
+    "translation": "Fokus",
+    "category": "Mental"
+  },
+  "concentrate": {
+    "translation": "Centrēties",
+    "category": "Mental"
+  },
+  "decide": {
+    "translation": "ņemt",
+    "category": "Mental"
+  },
+  "choose": {
+    "translation": "ievēlēties",
+    "category": "Mental"
+  },
+  "compare": {
+    "translation": "-comparedēt",
+    "category": "Mental"
+  },
+  "analyze": {
+    "translation": "Analizēt",
+    "category": "Mental"
+  },
+  "evaluate": {
+    "translation": "Evaluēt",
+    "category": "Mental"
+  },
+  "estimate": {
+    "translation": "apgāds",
+    "category": "Mental"
+  },
+  "solve": {
+    "translation": "atzīt",
+    "category": "Mental"
+  },
+  "question": {
+    "translation": "Cena",
+    "category": "Mental"
+  },
+  "suspect": {
+    "translation": "Suspekts",
+    "category": "Mental"
+  },
+  "doubt": {
+    "translation": "Zaudējums",
+    "category": "Mental"
+  },
+  "learn": {
+    "translation": "mācīties",
+    "category": "Mental"
+  },
+  "study": {
+    "translation": "studijas",
+    "category": "Mental"
+  },
+  "memorize": {
+    "translation": "ievadīties",
+    "category": "Mental"
+  },
+  "calculate": {
+    "translation": "ievēlēties",
+    "category": "Mental"
+  },
+  "reflect": {
+    "translation": "atvert",
+    "category": "Mental"
+  },
+  "understand": {
+    "translation": "ievadīties",
+    "category": "Mental"
+  },
+  "like": {
+    "translation": "īstens",
+    "category": "Mental"
+  },
+  "love": {
+    "translation": "Āds",
+    "category": "Mental"
+  },
+  "hate": {
+    "translation": "dzinējs",
+    "category": "Mental"
+  },
+  "enjoy": {
+    "translation": "lūkstelēt",
+    "category": "Mental"
+  },
+  "prefer": {
+    "translation": "prefers",
+    "category": "Mental"
+  },
+  "want": {
+    "translation": "savēt",
+    "category": "Mental"
+  },
+  "need": {
+    "translation": "iens",
+    "category": "Mental"
+  },
+  "miss": {
+    "translation": "ņūdzēties",
+    "category": "Mental"
+  },
+  "care": {
+    "translation": "ieriņa",
+    "category": "Mental"
+  },
+  "worry": {
+    "translation": "beidriņš",
+    "category": "Mental"
+  },
+  "fear": {
+    "translation": "Afraid",
+    "category": "Mental"
+  },
+  "panic": {
+    "translation": "paniks",
+    "category": "Mental"
+  },
+  "stress": {
+    "translation": "stresss",
+    "category": "Mental"
+  },
+  "calm": {
+    "translation": "CALMSAFE",
+    "category": "Mental"
+  },
+  "appreciate": {
+    "translation": "atzīmēt",
+    "category": "Mental"
+  },
+  "value": {
+    "translation": "vērtība",
+    "category": "Mental"
+  },
+  "respect": {
+    "translation": "Nope",
+    "category": "Mental"
+  },
+  "dislike": {
+    "translation": "nepatīkamums",
+    "category": "Mental"
+  },
+  "regret": {
+    "translation": "lūkums",
+    "category": "Mental"
+  },
+  "hope": {
+    "translation": "Ēda",
+    "category": "Mental"
+  },
+  "trust": {
+    "translation": "Ērts",
+    "category": "Mental"
+  },
+  "surprise": {
+    "translation": "izmirkums",
+    "category": "Mental"
+  },
+  "shock": {
+    "translation": "šok",
+    "category": "Mental"
+  },
+  "annoy": {
+    "translation": "irgāt",
+    "category": "Mental"
+  },
+  "bother": {
+    "translation": "-iepaids",
+    "category": "Mental"
+  },
+  "confuse": {
+    "translation": "pārdomāties",
+    "category": "Mental"
+  },
+  "embarrass": {
+    "translation": "brīdināt",
+    "category": "Mental"
+  },
+  "frustrate": {
+    "translation": "izprast",
+    "category": "Mental"
+  },
+  "satisfy": {
+    "translation": "Ievadīt",
+    "category": "Mental"
+  },
+  "comfort": {
+    "translation": "Komforts",
+    "category": "Mental"
+  },
+  "cheer": {
+    "translation": "Sniegs",
+    "category": "Mental"
+  },
+  "say": {
+    "translation": "sakāt",
+    "category": "Communication"
+  },
+  "tell": {
+    "translation": "ievērot",
+    "category": "Communication"
+  },
+  "talk": {
+    "translation": "runāt",
+    "category": "Communication"
+  },
+  "speak": {
+    "translation": "speak in Latvian is runāt",
+    "category": "Communication"
+  },
+  "discuss": {
+    "translation": "diskutēt",
+    "category": "Communication"
+  },
+  "chat": {
+    "translation": "chats",
+    "category": "Communication"
+  },
+  "explain": {
+    "translation": "ievērot",
+    "category": "Communication"
+  },
+  "describe": {
+    "translation": "aprakstīt",
+    "category": "Communication"
+  },
+  "announce": {
+    "translation": "IEDZEROatego",
+    "category": "Communication"
+  },
+  "report": {
+    "translation": "atbilde",
+    "category": "Communication"
+  },
+  "reply": {
+    "translation": "Atbilde",
+    "category": "Communication"
+  },
+  "answer": {
+    "translation": "atbilde",
+    "category": "Communication"
+  },
+  "ask": {
+    "translation": "ieskaidrot",
+    "category": "Communication"
+  },
+  "interrupt": {
+    "translation": "ņemt seiksmi",
+    "category": "Communication"
+  },
+  "suggest": {
+    "translation": "sasniegt",
+    "category": "Communication"
+  },
+  "recommend": {
+    "translation": "pielēmāties",
+    "category": "Communication"
+  },
+  "complain": {
+    "translation": "lūkāties",
+    "category": "Communication"
+  },
+  "argue": {
+    "translation": "disputēt",
+    "category": "Communication"
+  },
+  "debate": {
+    "translation": "debatesiens",
+    "category": "Communication"
+  },
+  "whisper": {
+    "translation": "susurris",
+    "category": "Communication"
+  },
+  "shout": {
+    "translation": "šķērdelt",
+    "category": "Communication"
+  },
+  "yell": {
+    "translation": "šķēlties",
+    "category": "Communication"
+  },
+  "mention": {
+    "translation": "mentīšana",
+    "category": "Communication"
+  },
+  "remind": {
+    "translation": "atzīmīt",
+    "category": "Communication"
+  },
+  "warn": {
+    "translation": "atzīmēt",
+    "category": "Communication"
+  },
+  "advise": {
+    "translation": "saviesīt",
+    "category": "Communication"
+  },
+  "encourage": {
+    "translation": "pakalpināt",
+    "category": "Communication"
+  },
+  "persuade": {
+    "translation": "ievēršana",
+    "category": "Communication"
+  },
+  "invite": {
+    "translation": "-invēt-",
+    "category": "Communication"
+  },
+  "respond": {
+    "translation": "Atbilde",
+    "category": "Communication"
+  },
+  "translate": {
+    "translation": "Pārveidošana",
+    "category": "Communication"
+  },
+  "inform": {
+    "translation": "Informēt",
+    "category": "Communication"
+  },
+  "comment": {
+    "translation": "Kommentārs",
+    "category": "Communication"
+  },
+  "confirm": {
+    "translation": "-confirmēt",
+    "category": "Communication"
+  },
+  "deny": {
+    "translation": "Atzīmēt negājumu",
+    "category": "Communication"
+  },
+  "admit": {
+    "translation": "Pieņemt",
+    "category": "Communication"
+  },
+  "meet": {
+    "translation": "meetēties",
+    "category": "Social"
+  },
+  "greet": {
+    "translation": "Sveicināties",
+    "category": "Social"
+  },
+  "welcome": {
+    "translation": "Ēsāt priecīgs or",
+    "category": "Social"
+  },
+  "visit": {
+    "translation": "ieriķīt",
+    "category": "Social"
+  },
+  "host": {
+    "translation": "Hospitalis",
+    "category": "Social"
+  },
+  "join": {
+    "translation": "drukt",
+    "category": "Social"
+  },
+  "help": {
+    "translation": "palīdzēt",
+    "category": "Social"
+  },
+  "support": {
+    "translation": "Atbalsts",
+    "category": "Social"
+  },
+  "assist": {
+    "translation": "atbalstīt",
+    "category": "Social"
+  },
+  "share": {
+    "translation": "dalīties",
+    "category": "Social"
+  },
+  "care for": {
+    "translation": "pārvaldīt",
+    "category": "Social"
+  },
+  "hug": {
+    "translation": "lūgšana",
+    "category": "Social"
+  },
+  "kiss": {
+    "translation": "apticēt",
+    "category": "Social"
+  },
+  "hold hands": {
+    "translation": "savienot dārziņus",
+    "category": "Social"
+  },
+  "date": {
+    "translation": "datums",
+    "category": "Social"
+  },
+  "marry": {
+    "translation": "ievadīties brīvo laiku",
+    "category": "Social"
+  },
+  "befriend": {
+    "translation": "atzīt",
+    "category": "Social"
+  },
+  "follow": {
+    "translation": "sekot",
+    "category": "Social"
+  },
+  "lead": {
+    "translation": "ievadīt",
+    "category": "Social"
+  },
+  "guide": {
+    "translation": "ievadītājs",
+    "category": "Social"
+  },
+  "introduce": {
+    "translation": "Introdus",
+    "category": "Social"
+  },
+  "cooperate": {
+    "translation": "collaborēt",
+    "category": "Social"
+  },
+  "protect": {
+    "translation": "Ārstēt",
+    "category": "Social"
+  },
+  "include": {
+    "translation": "inclūdēt",
+    "category": "Social"
+  },
+  "exclude": {
+    "translation": "izkludināt",
+    "category": "Social"
+  },
+  "work": {
+    "translation": "Darbs",
+    "category": "Work"
+  },
+  "write": {
+    "translation": "ievadīt",
+    "category": "Work"
+  },
+  "read": {
+    "translation": "lasīt",
+    "category": "Work"
+  },
+  "edit": {
+    "translation": "rediģēt",
+    "category": "Work"
+  },
+  "revise": {
+    "translation": "atvert",
+    "category": "Work"
+  },
+  "review": {
+    "translation": "pārbaudīt",
+    "category": "Work"
+  },
+  "inspect": {
+    "translation": "Inspektēt",
+    "category": "Work"
+  },
+  "complete": {
+    "translation": "pabeigt",
+    "category": "Work"
+  },
+  "submit": {
+    "translation": "ievadīt",
+    "category": "Work"
+  },
+  "create": {
+    "translation": "izveidot",
+    "category": "Work"
+  },
+  "design": {
+    "translation": "Projekts",
+    "category": "Work"
+  },
+  "build": {
+    "translation": "veikt",
+    "category": "Work"
+  },
+  "assemble": {
+    "translation": "sadalītintage",
+    "category": "Work"
+  },
+  "debug": {
+    "translation": "Diagnosticēšana",
+    "category": "Work"
+  },
+  "research": {
+    "translation": "meklējums",
+    "category": "Work"
+  },
+  "document": {
+    "translation": "dokuments",
+    "category": "Work"
+  },
+  "train": {
+    "translation": "-iepižs",
+    "category": "Work"
+  },
+  "teach": {
+    "translation": "Uzticēt",
+    "category": "Work"
+  },
+  "update": {
+    "translation": "Atualizācija",
+    "category": "Work"
+  },
+  "upload": {
+    "translation": "Augšlaidīt",
+    "category": "Work"
+  },
+  "download": {
+    "translation": "atmācība",
+    "category": "Work"
+  },
+  "print": {
+    "translation": "izdrukāt",
+    "category": "Work"
+  },
+  "scan": {
+    "translation": "scānēt",
+    "category": "Work"
+  },
+  "record": {
+    "translation": "rekords",
+    "category": "Work"
+  },
+  "track": {
+    "translation": "trakts",
+    "category": "Work"
+  },
+  "manage": {
+    "translation": "Sprādztīt",
+    "category": "Work"
+  },
+  "supervise": {
+    "translation": "pārvaldyt",
+    "category": "Work"
+  },
+  "go": {
+    "translation": "iet",
+    "category": "Travel"
+  },
+  "come": {
+    "translation": "iet",
+    "category": "Travel"
+  },
+  "move": {
+    "translation": "iet",
+    "category": "Travel"
+  },
+  "leave": {
+    "translation": "Ielākties",
+    "category": "Travel"
+  },
+  "arrive": {
+    "translation": "iet",
+    "category": "Travel"
+  },
+  "enter": {
+    "translation": "ievadīties",
+    "category": "Travel"
+  },
+  "exit": {
+    "translation": "izdzīvošanās",
+    "category": "Travel"
+  },
+  "travel": {
+    "translation": "saturs",
+    "category": "Travel"
+  },
+  "fly": {
+    "translation": "fliesimbus",
+    "category": "Travel"
+  },
+  "drive": {
+    "translation": "ievadīt",
+    "category": "Travel"
+  },
+  "ride": {
+    "translation": "jūtībā",
+    "category": "Travel"
+  },
+  "board": {
+    "translation": "bords",
+    "category": "Travel"
+  },
+  "land": {
+    "translation": "zemē Cena",
+    "category": "Travel"
+  },
+  "park": {
+    "translation": "parks",
+    "category": "Travel"
+  },
+  "accelerate": {
+    "translation": "celešanās",
+    "category": "Travel"
+  },
+  "reverse": {
+    "translation": "atbalstītiska",
+    "category": "Travel"
+  },
+  "cross": {
+    "translation": "krasts",
+    "category": "Travel"
+  },
+  "wander": {
+    "translation": "lauzties",
+    "category": "Travel"
+  },
+  "explore": {
+    "translation": "izprast",
+    "category": "Travel"
+  },
+  "return": {
+    "translation": "atbilde",
+    "category": "Travel"
+  },
+  "rush": {
+    "translation": "šķidrinos",
+    "category": "Travel"
+  },
+  "hurry": {
+    "translation": "Sniegt",
+    "category": "Travel"
+  },
+  "navigate": {
+    "translation": "navigātē",
+    "category": "Travel"
+  },
+  "sanitize": {
+    "translation": "Sanitizēt",
+    "category": "Household"
+  },
+  "iron": {
+    "translation": "ķīds",
+    "category": "Household"
+  },
+  "store": {
+    "translation": "tirdzniecības punkts",
+    "category": "Household"
+  },
+  "repair": {
+    "translation": "izģēršanās",
+    "category": "Household"
+  },
+  "fix": {
+    "translation": "izlabot",
+    "category": "Household"
+  },
+  "disassemble": {
+    "translation": "Atvert",
+    "category": "Household"
+  },
+  "install": {
+    "translation": "Instalēt",
+    "category": "Household"
+  },
+  "uninstall": {
+    "translation": "Atbilstēt",
+    "category": "Household"
+  },
+  "remove": {
+    "translation": "ņemt",
+    "category": "Household"
+  },
+  "connect": {
+    "translation": "SATURS",
+    "category": "Household"
+  },
+  "disconnect": {
+    "translation": "Atsaukt",
+    "category": "Household"
+  },
+  "lock": {
+    "translation": "dzelzsietis",
+    "category": "Household"
+  },
+  "unlock": {
+    "translation": "Atverēt",
+    "category": "Household"
+  },
+  "decorate": {
+    "translation": "izdebesčit",
+    "category": "Household"
+  },
+  "polish": {
+    "translation": "polīsis",
+    "category": "Household"
+  },
+  "hammer": {
+    "translation": "ķermenis",
+    "category": "Household"
+  },
+  "saw": {
+    "translation": "ķieģis",
+    "category": "Household"
+  },
+  "glue": {
+    "translation": "glue in Latvian is smarža",
+    "category": "Household"
+  },
+  "buy": {
+    "translation": "kupīt",
+    "category": "Money"
+  },
+  "sell": {
+    "translation": "ietilpties",
+    "category": "Money"
+  },
+  "pay": {
+    "translation": "maksāt",
+    "category": "Money"
+  },
+  "owe": {
+    "translation": "dzīties",
+    "category": "Money"
+  },
+  "borrow": {
+    "translation": "ņemt",
+    "category": "Money"
+  },
+  "lend": {
+    "translation": "Darīt kredītu",
+    "category": "Money"
+  },
+  "rent": {
+    "translation": "izmaksas",
+    "category": "Money"
+  },
+  "save": {
+    "translation": "saglabāt",
+    "category": "Money"
+  },
+  "spend": {
+    "translation": "izdzīvot",
+    "category": "Money"
+  },
+  "invest": {
+    "translation": "-invēstīt",
+    "category": "Money"
+  },
+  "earn": {
+    "translation": "izveidot",
+    "category": "Money"
+  },
+  "refund": {
+    "translation": "atbilde",
+    "category": "Money"
+  },
+  "exchange": {
+    "translation": "veikals",
+    "category": "Money"
+  },
+  "order": {
+    "translation": "-orders",
+    "category": "Money"
+  },
+  "select": {
+    "translation": "atlasīt",
+    "category": "Money"
+  },
+  "withdraw": {
+    "translation": "ņemt",
+    "category": "Money"
+  },
+  "deposit": {
+    "translation": "deponāts",
+    "category": "Money"
+  },
+  "budget": {
+    "translation": "budžets",
+    "category": "Money"
+  },
+  "fry": {
+    "translation": "pigrināt",
+    "category": "Food"
+  },
+  "grill": {
+    "translation": "brašķis",
+    "category": "Food"
+  },
+  "boil": {
+    "translation": "kustēties",
+    "category": "Food"
+  },
+  "steam": {
+    "translation": "duods",
+    "category": "Food"
+  },
+  "slice": {
+    "translation": "ķīda",
+    "category": "Food"
+  },
+  "cut": {
+    "translation": "cietēt",
+    "category": "Food"
+  },
+  "chop": {
+    "translation": "ķiešanās",
+    "category": "Food"
+  },
+  "mix": {
+    "translation": "ķīmijs",
+    "category": "Food"
+  },
+  "stir": {
+    "translation": "stīrīt",
+    "category": "Food"
+  },
+  "pour": {
+    "translation": "piepildīt",
+    "category": "Food"
+  },
+  "serve": {
+    "translation": "servēt",
+    "category": "Food"
+  },
+  "taste": {
+    "translation": "savība",
+    "category": "Food"
+  },
+  "season": {
+    "translation": "savashta",
+    "category": "Food"
+  },
+  "marinate": {
+    "translation": "marinācijas",
+    "category": "Food"
+  },
+  "chew": {
+    "translation": "dzirksti",
+    "category": "Food"
+  },
+  "swallow": {
+    "translation": "Zilis",
+    "category": "Food"
+  },
+  "deliver": {
+    "translation": "ievadīt",
+    "category": "Food"
+  },
+  "digest": {
+    "translation": "Digestis",
+    "category": "Food"
+  },
+  "rain": {
+    "translation": "rain in Latvian is plūdms",
+    "category": "Nature"
+  },
+  "snow": {
+    "translation": "snow in Latvian is sniegs",
+    "category": "Nature"
+  },
+  "hail": {
+    "translation": "salds",
+    "category": "Nature"
+  },
+  "sleet": {
+    "translation": "sniegsniegs",
+    "category": "Nature"
+  },
+  "freeze": {
+    "translation": "zaudēt kontu",
+    "category": "Nature"
+  },
+  "melt": {
+    "translation": "meltēt",
+    "category": "Nature"
+  },
+  "shine": {
+    "translation": "svētīties",
+    "category": "Nature"
+  },
+  "blow": {
+    "translation": "duods",
+    "category": "Nature"
+  },
+  "grow": {
+    "translation": "augt",
+    "category": "Nature"
+  },
+  "bloom": {
+    "translation": "bloķs",
+    "category": "Nature"
+  },
+  "wither": {
+    "translation": "sauklieties",
+    "category": "Nature"
+  },
+  "sprout": {
+    "translation": "zarb",
+    "category": "Nature"
+  },
+  "fall": {
+    "translation": "Mappings",
+    "category": "Nature"
+  },
+  "quake": {
+    "translation": "Ģeja",
+    "category": "Nature"
+  },
+  "erode": {
+    "translation": "erodēt",
+    "category": "Nature"
+  },
+  "burn": {
+    "translation": "augsti",
+    "category": "Nature"
+  },
+  "flood": {
+    "translation": "plūdums",
+    "category": "Nature"
+  },
+  "float": {
+    "translation": "flotēt",
+    "category": "Nature"
+  },
+  "sink": {
+    "translation": "zāle",
+    "category": "Nature"
+  },
+  "rise": {
+    "translation": "augsts",
+    "category": "Nature"
+  },
+  "set": {
+    "translation": "Saturs",
+    "category": "Nature"
+  },
+  "breathe": {
+    "translation": "dresnīt",
+    "category": "Health"
+  },
+  "inhale": {
+    "translation": "ievākties",
+    "category": "Health"
+  },
+  "exhale": {
+    "translation": "Dzirkstēt",
+    "category": "Health"
+  },
+  "cough": {
+    "translation": "kaujas",
+    "category": "Health"
+  },
+  "sneeze": {
+    "translation": "Sniegs",
+    "category": "Health"
+  },
+  "sweat": {
+    "translation": "sweat in Latvian is pirks",
+    "category": "Health"
+  },
+  "bleed": {
+    "translation": "iepaidsīties",
+    "category": "Health"
+  },
+  "heal": {
+    "translation": "īstēties",
+    "category": "Health"
+  },
+  "recover": {
+    "translation": "atkāpties",
+    "category": "Health"
+  },
+  "ache": {
+    "translation": "dabūt",
+    "category": "Health"
+  },
+  "hurt": {
+    "translation": "ņūdēties",
+    "category": "Health"
+  },
+  "strain": {
+    "translation": "stresns",
+    "category": "Health"
+  },
+  "exercise": {
+    "translation": "izpildījums",
+    "category": "Health"
+  },
+  "faint": {
+    "translation": "svēpņa",
+    "category": "Health"
+  },
+  "vomit": {
+    "translation": "Piepūst",
+    "category": "Health"
+  },
+  "blink": {
+    "translation": "izrēķinus",
+    "category": "Health"
+  },
+  "squint": {
+    "translation": "krīpe",
+    "category": "Health"
+  },
+  "tremble": {
+    "translation": "tremēt",
+    "category": "Health"
+  },
+  "click": {
+    "translation": "klīks",
+    "category": "Technology"
+  },
+  "tap": {
+    "translation": "tappeņ",
+    "category": "Technology"
+  },
+  "scroll": {
+    "translation": "rolīte",
+    "category": "Technology"
+  },
+  "swipe": {
+    "translation": "dotie",
+    "category": "Technology"
+  },
+  "browse": {
+    "translation": "pārskatīt",
+    "category": "Technology"
+  },
+  "upgrade": {
+    "translation": "Pārtaidīt",
+    "category": "Technology"
+  },
+  "copy": {
+    "translation": "kopija",
+    "category": "Technology"
+  },
+  "paste": {
+    "translation": "veseļība",
+    "category": "Technology"
+  },
+  "delete": {
+    "translation": "Dzēst",
+    "category": "Technology"
+  },
+  "reset": {
+    "translation": "Atbilde",
+    "category": "Technology"
+  },
+  "restart": {
+    "translation": "Atbilde",
+    "category": "Technology"
+  },
+  "log in": {
+    "translation": "IEPAUDOT",
+    "category": "Technology"
+  },
+  "log out": {
+    "translation": "Izlogoties",
+    "category": "Technology"
+  },
+  "sync": {
+    "translation": "Sinhronizācija",
+    "category": "Technology"
+  },
+  "stream": {
+    "translation": "izrāde",
+    "category": "Technology"
+  },
+  "encrypt": {
+    "translation": "šifrēt",
+    "category": "Technology"
+  },
+  "backup": {
+    "translation": "kopijas",
+    "category": "Technology"
+  }
+}

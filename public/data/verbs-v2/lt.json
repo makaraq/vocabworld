@@ -1,0 +1,1562 @@
+{
+  "walk": {
+    "translation": "pasikėlija",
+    "category": "Basic"
+  },
+  "run": {
+    "translation": "ėdzioti",
+    "category": "Basic"
+  },
+  "jump": {
+    "translation": "skoti",
+    "category": "Basic"
+  },
+  "hop": {
+    "translation": "kaukti",
+    "category": "Basic"
+  },
+  "skip": {
+    "translation": "paskipinti",
+    "category": "Basic"
+  },
+  "crawl": {
+    "translation": "kriaužius",
+    "category": "Basic"
+  },
+  "climb": {
+    "translation": "kelias",
+    "category": "Basic"
+  },
+  "slide": {
+    "translation": "ėžė",
+    "category": "Basic"
+  },
+  "swing": {
+    "translation": "ėžas",
+    "category": "Basic"
+  },
+  "stretch": {
+    "translation": "degti",
+    "category": "Basic"
+  },
+  "bend": {
+    "translation": "kurkėti",
+    "category": "Basic"
+  },
+  "lift": {
+    "translation": "liftas",
+    "category": "Basic"
+  },
+  "carry": {
+    "translation": "transportuoti",
+    "category": "Basic"
+  },
+  "drag": {
+    "translation": "traukoti",
+    "category": "Basic"
+  },
+  "push": {
+    "translation": "turėti",
+    "category": "Basic"
+  },
+  "pull": {
+    "translation": "traukti",
+    "category": "Basic"
+  },
+  "hold": {
+    "translation": "įvertinti",
+    "category": "Basic"
+  },
+  "grab": {
+    "translation": "pasipirkti",
+    "category": "Basic"
+  },
+  "drop": {
+    "translation": "puska",
+    "category": "Basic"
+  },
+  "throw": {
+    "translation": "šaukti",
+    "category": "Basic"
+  },
+  "catch": {
+    "translation": "atrapti",
+    "category": "Basic"
+  },
+  "kick": {
+    "translation": "dekštas",
+    "category": "Basic"
+  },
+  "hit": {
+    "translation": "užtrukti",
+    "category": "Basic"
+  },
+  "press": {
+    "translation": "prensa",
+    "category": "Basic"
+  },
+  "twist": {
+    "translation": "kilnys",
+    "category": "Basic"
+  },
+  "turn": {
+    "translation": "Pasikartoti",
+    "category": "Basic"
+  },
+  "rotate": {
+    "translation": "palaikti",
+    "category": "Basic"
+  },
+  "flip": {
+    "translation": "Pasipriešinimas",
+    "category": "Basic"
+  },
+  "shake": {
+    "translation": "altiesiT",
+    "category": "Basic"
+  },
+  "wave": {
+    "translation": "wavė",
+    "category": "Basic"
+  },
+  "reach": {
+    "translation": "atmėti",
+    "category": "Basic"
+  },
+  "lean": {
+    "translation": "lengvus",
+    "category": "Basic"
+  },
+  "rest": {
+    "translation": "restas",
+    "category": "Basic"
+  },
+  "balance": {
+    "translation": "Balansas",
+    "category": "Basic"
+  },
+  "spin": {
+    "translation": "Spinas",
+    "category": "Basic"
+  },
+  "arrange": {
+    "translation": "Parengti",
+    "category": "Basic"
+  },
+  "adjust": {
+    "translation": "Apdoroti",
+    "category": "Basic"
+  },
+  "shift": {
+    "translation": "perveikti",
+    "category": "Basic"
+  },
+  "tie": {
+    "translation": "tėva",
+    "category": "Basic"
+  },
+  "untie": {
+    "translation": "Atištinti",
+    "category": "Basic"
+  },
+  "wrap": {
+    "translation": "paklaida",
+    "category": "Basic"
+  },
+  "unwrap": {
+    "translation": "Atsijauti",
+    "category": "Basic"
+  },
+  "fold": {
+    "translation": "pleisti",
+    "category": "Basic"
+  },
+  "unfold": {
+    "translation": "atskaišyti",
+    "category": "Basic"
+  },
+  "pack": {
+    "translation": "pakas",
+    "category": "Basic"
+  },
+  "unpack": {
+    "translation": "Atsijungti",
+    "category": "Basic"
+  },
+  "be": {
+    "translation": "buvo",
+    "category": "Basic"
+  },
+  "become": {
+    "translation": "bus",
+    "category": "Basic"
+  },
+  "seem": {
+    "translation": "parašyti",
+    "category": "Basic"
+  },
+  "appear": {
+    "translation": "parodėsi",
+    "category": "Basic"
+  },
+  "remain": {
+    "translation": "Palapti",
+    "category": "Basic"
+  },
+  "stay": {
+    "translation": "Paleisti",
+    "category": "Basic"
+  },
+  "exist": {
+    "translation": "egzistuoju",
+    "category": "Basic"
+  },
+  "happen": {
+    "translation": "normalas",
+    "category": "Basic"
+  },
+  "occur": {
+    "translation": "šilys",
+    "category": "Basic"
+  },
+  "change": {
+    "translation": "Pakeisti",
+    "category": "Basic"
+  },
+  "improve": {
+    "translation": "patobulinti",
+    "category": "Basic"
+  },
+  "decline": {
+    "translation": "Atimti",
+    "category": "Basic"
+  },
+  "continue": {
+    "translation": "tęsti",
+    "category": "Basic"
+  },
+  "stop": {
+    "translation": "šaltinis",
+    "category": "Basic"
+  },
+  "begin": {
+    "translation": "pradeti",
+    "category": "Basic"
+  },
+  "end": {
+    "translation": "errals",
+    "category": "Basic"
+  },
+  "last": {
+    "translation": "paskutinis",
+    "category": "Basic"
+  },
+  "wake": {
+    "translation": "vigilėti",
+    "category": "Daily Routine"
+  },
+  "get up": {
+    "translation": "atsisakyti",
+    "category": "Daily Routine"
+  },
+  "wash": {
+    "translation": "wesėti",
+    "category": "Daily Routine"
+  },
+  "shower": {
+    "translation": "duona",
+    "category": "Daily Routine"
+  },
+  "bathe": {
+    "translation": "laukti",
+    "category": "Daily Routine"
+  },
+  "brush": {
+    "translation": "kūdainis",
+    "category": "Daily Routine"
+  },
+  "comb": {
+    "translation": "kaušėlis",
+    "category": "Daily Routine"
+  },
+  "dress": {
+    "translation": "šalvė",
+    "category": "Daily Routine"
+  },
+  "eat": {
+    "translation": "kurti",
+    "category": "Daily Routine"
+  },
+  "drink": {
+    "translation": "kiekis",
+    "category": "Daily Routine"
+  },
+  "snack": {
+    "translation": "pekelė",
+    "category": "Daily Routine"
+  },
+  "cook": {
+    "translation": "kūnas",
+    "category": "Daily Routine"
+  },
+  "bake": {
+    "translation": "užginti",
+    "category": "Daily Routine"
+  },
+  "reheat": {
+    "translation": "Pakrėpti",
+    "category": "Daily Routine"
+  },
+  "clean": {
+    "translation": "šlėgti",
+    "category": "Daily Routine"
+  },
+  "tidy": {
+    "translation": "pakankamai užtikrinamas",
+    "category": "Daily Routine"
+  },
+  "organize": {
+    "translation": "Organizuoti",
+    "category": "Daily Routine"
+  },
+  "vacuum": {
+    "translation": "vakuatas",
+    "category": "Daily Routine"
+  },
+  "sweep": {
+    "translation": "sukrėti",
+    "category": "Daily Routine"
+  },
+  "mop": {
+    "translation": "šnakštė",
+    "category": "Daily Routine"
+  },
+  "dust": {
+    "translation": "Draugas",
+    "category": "Daily Routine"
+  },
+  "wash dishes": {
+    "translation": "Nušyti vaikas",
+    "category": "Daily Routine"
+  },
+  "rinse": {
+    "translation": "Nušyti",
+    "category": "Daily Routine"
+  },
+  "wipe": {
+    "translation": "nuveikti",
+    "category": "Daily Routine"
+  },
+  "scrub": {
+    "translation": "sriuba",
+    "category": "Daily Routine"
+  },
+  "dry": {
+    "translation": "šiltas",
+    "category": "Daily Routine"
+  },
+  "shop": {
+    "translation": "parduotuvė",
+    "category": "Daily Routine"
+  },
+  "refill": {
+    "translation": "Pildyti",
+    "category": "Daily Routine"
+  },
+  "charge": {
+    "translation": "Būgnas",
+    "category": "Daily Routine"
+  },
+  "relax": {
+    "translation": "pakrauti",
+    "category": "Daily Routine"
+  },
+  "nap": {
+    "translation": "pauslas",
+    "category": "Daily Routine"
+  },
+  "sleep": {
+    "translation": "Žiūra",
+    "category": "Daily Routine"
+  },
+  "prepare": {
+    "translation": "prižiūrėti",
+    "category": "Daily Routine"
+  },
+  "schedule": {
+    "translation": "Kalendorius",
+    "category": "Daily Routine"
+  },
+  "cancel": {
+    "translation": "Atšaukti",
+    "category": "Daily Routine"
+  },
+  "check": {
+    "translation": "Chek",
+    "category": "Daily Routine"
+  },
+  "monitor": {
+    "translation": "monitörius",
+    "category": "Daily Routine"
+  },
+  "plan": {
+    "translation": "planas",
+    "category": "Daily Routine"
+  },
+  "wait": {
+    "translation": "errals",
+    "category": "Daily Routine"
+  },
+  "search": {
+    "translation": "vykti",
+    "category": "Daily Routine"
+  },
+  "find": {
+    "translation": "rasti",
+    "category": "Daily Routine"
+  },
+  "lose": {
+    "translation": "uosėti",
+    "category": "Daily Routine"
+  },
+  "replace": {
+    "translation": "Pakeisti",
+    "category": "Daily Routine"
+  },
+  "think": {
+    "translation": "domėti",
+    "category": "Mental"
+  },
+  "know": {
+    "translation": "Žinoti",
+    "category": "Mental"
+  },
+  "believe": {
+    "translation": "auginti",
+    "category": "Mental"
+  },
+  "consider": {
+    "translation": "Pensiuoti",
+    "category": "Mental"
+  },
+  "imagine": {
+    "translation": "Paimti",
+    "category": "Mental"
+  },
+  "wonder": {
+    "translation": "žinutė",
+    "category": "Mental"
+  },
+  "remember": {
+    "translation": "Atsiprašau",
+    "category": "Mental"
+  },
+  "forget": {
+    "translation": "pamiršti",
+    "category": "Mental"
+  },
+  "realize": {
+    "translation": "realizėti",
+    "category": "Mental"
+  },
+  "guess": {
+    "translation": "palasėti",
+    "category": "Mental"
+  },
+  "predict": {
+    "translation": "prognozuoti",
+    "category": "Mental"
+  },
+  "expect": {
+    "translation": "egzepkti",
+    "category": "Mental"
+  },
+  "recognize": {
+    "translation": "prieinamąsti",
+    "category": "Mental"
+  },
+  "notice": {
+    "translation": "Pazymis",
+    "category": "Mental"
+  },
+  "focus": {
+    "translation": "-focusinis",
+    "category": "Mental"
+  },
+  "concentrate": {
+    "translation": "Koncentruoti",
+    "category": "Mental"
+  },
+  "decide": {
+    "translation": "įvertinti",
+    "category": "Mental"
+  },
+  "choose": {
+    "translation": "pasirinkti",
+    "category": "Mental"
+  },
+  "compare": {
+    "translation": "komparuoju",
+    "category": "Mental"
+  },
+  "analyze": {
+    "translation": "Analiziu",
+    "category": "Mental"
+  },
+  "evaluate": {
+    "translation": "Evaluoti",
+    "category": "Mental"
+  },
+  "estimate": {
+    "translation": "štimuluoti",
+    "category": "Mental"
+  },
+  "solve": {
+    "translation": "solvesti",
+    "category": "Mental"
+  },
+  "question": {
+    "translation": "apykla",
+    "category": "Mental"
+  },
+  "suspect": {
+    "translation": "suskentas",
+    "category": "Mental"
+  },
+  "doubt": {
+    "translation": "-Trumpinos",
+    "category": "Mental"
+  },
+  "learn": {
+    "translation": "mokytis",
+    "category": "Mental"
+  },
+  "study": {
+    "translation": "studijos",
+    "category": "Mental"
+  },
+  "memorize": {
+    "translation": "paminėti",
+    "category": "Mental"
+  },
+  "calculate": {
+    "translation": "skaičiuoti",
+    "category": "Mental"
+  },
+  "reflect": {
+    "translation": "atlikti",
+    "category": "Mental"
+  },
+  "understand": {
+    "translation": "įvertinti",
+    "category": "Mental"
+  },
+  "like": {
+    "translation": "similaras",
+    "category": "Mental"
+  },
+  "love": {
+    "translation": "balėti",
+    "category": "Mental"
+  },
+  "hate": {
+    "translation": "žaliosios",
+    "category": "Mental"
+  },
+  "enjoy": {
+    "translation": "laikytis",
+    "category": "Mental"
+  },
+  "prefer": {
+    "translation": "praeitė",
+    "category": "Mental"
+  },
+  "want": {
+    "translation": "norėti",
+    "category": "Mental"
+  },
+  "need": {
+    "translation": "pardarbia",
+    "category": "Mental"
+  },
+  "miss": {
+    "translation": "įsivaizduoti",
+    "category": "Mental"
+  },
+  "care": {
+    "translation": "Grayti",
+    "category": "Mental"
+  },
+  "worry": {
+    "translation": "-Trumpėti",
+    "category": "Mental"
+  },
+  "fear": {
+    "translation": "Banga",
+    "category": "Mental"
+  },
+  "panic": {
+    "translation": "paklaida",
+    "category": "Mental"
+  },
+  "stress": {
+    "translation": "stresas",
+    "category": "Mental"
+  },
+  "calm": {
+    "translation": "Kalmas",
+    "category": "Mental"
+  },
+  "appreciate": {
+    "translation": "atkreipti dėmesį",
+    "category": "Mental"
+  },
+  "value": {
+    "translation": "reikšmė",
+    "category": "Mental"
+  },
+  "respect": {
+    "translation": "atidurti",
+    "category": "Mental"
+  },
+  "dislike": {
+    "translation": "nešvaisti",
+    "category": "Mental"
+  },
+  "regret": {
+    "translation": "Atsiprašymas",
+    "category": "Mental"
+  },
+  "hope": {
+    "translation": "Naria",
+    "category": "Mental"
+  },
+  "trust": {
+    "translation": "traukimas",
+    "category": "Mental"
+  },
+  "surprise": {
+    "translation": "Surprize",
+    "category": "Mental"
+  },
+  "shock": {
+    "translation": "šokas",
+    "category": "Mental"
+  },
+  "annoy": {
+    "translation": "neteisingas",
+    "category": "Mental"
+  },
+  "bother": {
+    "translation": "truksta",
+    "category": "Mental"
+  },
+  "confuse": {
+    "translation": "paklausti",
+    "category": "Mental"
+  },
+  "embarrass": {
+    "translation": "skambinti",
+    "category": "Mental"
+  },
+  "frustrate": {
+    "translation": "nusivylėti",
+    "category": "Mental"
+  },
+  "satisfy": {
+    "translation": "pakelti",
+    "category": "Mental"
+  },
+  "comfort": {
+    "translation": "pagrūdžiusią",
+    "category": "Mental"
+  },
+  "cheer": {
+    "translation": "Trumpėlis",
+    "category": "Mental"
+  },
+  "say": {
+    "translation": "-ignore context-",
+    "category": "Communication"
+  },
+  "tell": {
+    "translation": "pasakoti",
+    "category": "Communication"
+  },
+  "talk": {
+    "translation": "kelis",
+    "category": "Communication"
+  },
+  "speak": {
+    "translation": "įsakyti",
+    "category": "Communication"
+  },
+  "discuss": {
+    "translation": "diskutuoti",
+    "category": "Communication"
+  },
+  "chat": {
+    "translation": "Chatus",
+    "category": "Communication"
+  },
+  "explain": {
+    "translation": "iblingas",
+    "category": "Communication"
+  },
+  "describe": {
+    "translation": "aprašyti",
+    "category": "Communication"
+  },
+  "announce": {
+    "translation": "apsilankant",
+    "category": "Communication"
+  },
+  "report": {
+    "translation": "ataskaita",
+    "category": "Communication"
+  },
+  "reply": {
+    "translation": "Atsakymas",
+    "category": "Communication"
+  },
+  "answer": {
+    "translation": "Atsakymas",
+    "category": "Communication"
+  },
+  "ask": {
+    "translation": "apykviesti",
+    "category": "Communication"
+  },
+  "interrupt": {
+    "translation": "Interruptas",
+    "category": "Communication"
+  },
+  "suggest": {
+    "translation": "pateikti sugestiją",
+    "category": "Communication"
+  },
+  "recommend": {
+    "translation": "rekomenduoju",
+    "category": "Communication"
+  },
+  "complain": {
+    "translation": "gyvenčių",
+    "category": "Communication"
+  },
+  "argue": {
+    "translation": "skargytis",
+    "category": "Communication"
+  },
+  "debate": {
+    "translation": "debatas",
+    "category": "Communication"
+  },
+  "whisper": {
+    "translation": "šisipalai",
+    "category": "Communication"
+  },
+  "shout": {
+    "translation": "šokėti",
+    "category": "Communication"
+  },
+  "yell": {
+    "translation": "šveikinti",
+    "category": "Communication"
+  },
+  "mention": {
+    "translation": "mentyti",
+    "category": "Communication"
+  },
+  "remind": {
+    "translation": "atmineti",
+    "category": "Communication"
+  },
+  "warn": {
+    "translation": "pasitenkinėti",
+    "category": "Communication"
+  },
+  "advise": {
+    "translation": "pajauti",
+    "category": "Communication"
+  },
+  "encourage": {
+    "translation": "pajukti",
+    "category": "Communication"
+  },
+  "persuade": {
+    "translation": "pervadinti",
+    "category": "Communication"
+  },
+  "invite": {
+    "translation": "-invitė",
+    "category": "Communication"
+  },
+  "respond": {
+    "translation": "Atsakyti",
+    "category": "Communication"
+  },
+  "translate": {
+    "translation": "Perrašyti",
+    "category": "Communication"
+  },
+  "inform": {
+    "translation": "Informavimas",
+    "category": "Communication"
+  },
+  "comment": {
+    "translation": "komentaras",
+    "category": "Communication"
+  },
+  "confirm": {
+    "translation": "patvirtinti",
+    "category": "Communication"
+  },
+  "deny": {
+    "translation": "atm Mirbos",
+    "category": "Communication"
+  },
+  "admit": {
+    "translation": "pardarius",
+    "category": "Communication"
+  },
+  "meet": {
+    "translation": "meetėsi",
+    "category": "Social"
+  },
+  "greet": {
+    "translation": "Sveikinti",
+    "category": "Social"
+  },
+  "welcome": {
+    "translation": "Žmona",
+    "category": "Social"
+  },
+  "visit": {
+    "translation": "egzistoti",
+    "category": "Social"
+  },
+  "host": {
+    "translation": "Gostis",
+    "category": "Social"
+  },
+  "join": {
+    "translation": "įjungti",
+    "category": "Social"
+  },
+  "help": {
+    "translation": "palūkti",
+    "category": "Social"
+  },
+  "support": {
+    "translation": "palaikti",
+    "category": "Social"
+  },
+  "assist": {
+    "translation": "paliauoti",
+    "category": "Social"
+  },
+  "share": {
+    "translation": "dalintis",
+    "category": "Social"
+  },
+  "care for": {
+    "translation": "Grayti",
+    "category": "Social"
+  },
+  "hug": {
+    "translation": "pakrautė",
+    "category": "Social"
+  },
+  "kiss": {
+    "translation": "šaltis",
+    "category": "Social"
+  },
+  "hold hands": {
+    "translation": "paklausytės",
+    "category": "Social"
+  },
+  "date": {
+    "translation": "Data",
+    "category": "Social"
+  },
+  "marry": {
+    "translation": "vystyti",
+    "category": "Social"
+  },
+  "befriend": {
+    "translation": "priežiūrėti",
+    "category": "Social"
+  },
+  "follow": {
+    "translation": "Sekti",
+    "category": "Social"
+  },
+  "lead": {
+    "translation": "įrankis",
+    "category": "Social"
+  },
+  "guide": {
+    "translation": "Žiūrėk",
+    "category": "Social"
+  },
+  "introduce": {
+    "translation": "Introdukti",
+    "category": "Social"
+  },
+  "cooperate": {
+    "translation": "kooperuoti",
+    "category": "Social"
+  },
+  "protect": {
+    "translation": "APOGRIĖTI",
+    "category": "Social"
+  },
+  "include": {
+    "translation": "įtraukti",
+    "category": "Social"
+  },
+  "exclude": {
+    "translation": "Išskirti",
+    "category": "Social"
+  },
+  "work": {
+    "translation": "Darbas",
+    "category": "Work"
+  },
+  "write": {
+    "translation": "urgasti",
+    "category": "Work"
+  },
+  "read": {
+    "translation": "įrankštas",
+    "category": "Work"
+  },
+  "edit": {
+    "translation": "redaguoti",
+    "category": "Work"
+  },
+  "revise": {
+    "translation": "pakeisti",
+    "category": "Work"
+  },
+  "review": {
+    "translation": "priežiūra",
+    "category": "Work"
+  },
+  "inspect": {
+    "translation": "inspektuoti",
+    "category": "Work"
+  },
+  "complete": {
+    "translation": "pakankamas",
+    "category": "Work"
+  },
+  "submit": {
+    "translation": "Pateikti",
+    "category": "Work"
+  },
+  "create": {
+    "translation": "Sukurti",
+    "category": "Work"
+  },
+  "design": {
+    "translation": "ėžutė",
+    "category": "Work"
+  },
+  "build": {
+    "translation": "įveikti",
+    "category": "Work"
+  },
+  "assemble": {
+    "translation": "Sukurti",
+    "category": "Work"
+  },
+  "debug": {
+    "translation": "BUGIŲKLINTIS",
+    "category": "Work"
+  },
+  "research": {
+    "translation": "tyrimas",
+    "category": "Work"
+  },
+  "document": {
+    "translation": "dokumentas",
+    "category": "Work"
+  },
+  "train": {
+    "translation": "vagonas",
+    "category": "Work"
+  },
+  "teach": {
+    "translation": "instruoti",
+    "category": "Work"
+  },
+  "update": {
+    "translation": "Atnaujinimas",
+    "category": "Work"
+  },
+  "upload": {
+    "translation": "įkelti",
+    "category": "Work"
+  },
+  "download": {
+    "translation": "atmėti",
+    "category": "Work"
+  },
+  "print": {
+    "translation": "druckenė",
+    "category": "Work"
+  },
+  "scan": {
+    "translation": "skanėti",
+    "category": "Work"
+  },
+  "record": {
+    "translation": "Žaidimas",
+    "category": "Work"
+  },
+  "track": {
+    "translation": "įlankėlis",
+    "category": "Work"
+  },
+  "manage": {
+    "translation": "valdyti",
+    "category": "Work"
+  },
+  "supervise": {
+    "translation": "supervizuoti",
+    "category": "Work"
+  },
+  "go": {
+    "translation": "IUŽAUSTI",
+    "category": "Travel"
+  },
+  "come": {
+    "translation": "Palaukti",
+    "category": "Travel"
+  },
+  "move": {
+    "translation": "peršvyrti",
+    "category": "Travel"
+  },
+  "leave": {
+    "translation": "Atlikti",
+    "category": "Travel"
+  },
+  "arrive": {
+    "translation": "paruošti",
+    "category": "Travel"
+  },
+  "enter": {
+    "translation": "įvesti",
+    "category": "Travel"
+  },
+  "exit": {
+    "translation": "išeitis",
+    "category": "Travel"
+  },
+  "travel": {
+    "translation": "parduoti",
+    "category": "Travel"
+  },
+  "fly": {
+    "translation": "žaisliukas",
+    "category": "Travel"
+  },
+  "drive": {
+    "translation": "Automasuoti",
+    "category": "Travel"
+  },
+  "ride": {
+    "translation": "šokėti",
+    "category": "Travel"
+  },
+  "board": {
+    "translation": "plankas",
+    "category": "Travel"
+  },
+  "land": {
+    "translation": "Žemė",
+    "category": "Travel"
+  },
+  "park": {
+    "translation": "parkas",
+    "category": "Travel"
+  },
+  "accelerate": {
+    "translation": "gyvinti",
+    "category": "Travel"
+  },
+  "reverse": {
+    "translation": "atvirkštinis",
+    "category": "Travel"
+  },
+  "cross": {
+    "translation": "Kreško",
+    "category": "Travel"
+  },
+  "wander": {
+    "translation": "aukštintis",
+    "category": "Travel"
+  },
+  "explore": {
+    "translation": "eksploruoti",
+    "category": "Travel"
+  },
+  "return": {
+    "translation": "grįžti",
+    "category": "Travel"
+  },
+  "rush": {
+    "translation": "švelnyti",
+    "category": "Travel"
+  },
+  "hurry": {
+    "translation": "Švelkėsistė",
+    "category": "Travel"
+  },
+  "navigate": {
+    "translation": "naviguoti",
+    "category": "Travel"
+  },
+  "sanitize": {
+    "translation": "Sanitizavimas",
+    "category": "Household"
+  },
+  "iron": {
+    "translation": "šaltis",
+    "category": "Household"
+  },
+  "store": {
+    "translation": "magazinas",
+    "category": "Household"
+  },
+  "repair": {
+    "translation": "reparavimas",
+    "category": "Household"
+  },
+  "fix": {
+    "translation": "įrankinti",
+    "category": "Household"
+  },
+  "disassemble": {
+    "translation": "Atsiplėtėti",
+    "category": "Household"
+  },
+  "install": {
+    "translation": "-installuoti",
+    "category": "Household"
+  },
+  "uninstall": {
+    "translation": "Atsijunkti",
+    "category": "Household"
+  },
+  "remove": {
+    "translation": "Atimti",
+    "category": "Household"
+  },
+  "connect": {
+    "translation": "prisijungti",
+    "category": "Household"
+  },
+  "disconnect": {
+    "translation": "Atsijungti",
+    "category": "Household"
+  },
+  "lock": {
+    "translation": "įmokytas",
+    "category": "Household"
+  },
+  "unlock": {
+    "translation": "Atsijungti",
+    "category": "Household"
+  },
+  "decorate": {
+    "translation": "dekoruoti",
+    "category": "Household"
+  },
+  "polish": {
+    "translation": "polskis",
+    "category": "Household"
+  },
+  "hammer": {
+    "translation": "kauja",
+    "category": "Household"
+  },
+  "saw": {
+    "translation": "šaltis",
+    "category": "Household"
+  },
+  "glue": {
+    "translation": "kiepuolė",
+    "category": "Household"
+  },
+  "buy": {
+    "translation": "kupoti",
+    "category": "Money"
+  },
+  "sell": {
+    "translation": "pabandyti parduoti",
+    "category": "Money"
+  },
+  "pay": {
+    "translation": "platyciù",
+    "category": "Money"
+  },
+  "owe": {
+    "translation": "lygti",
+    "category": "Money"
+  },
+  "borrow": {
+    "translation": "užimti",
+    "category": "Money"
+  },
+  "lend": {
+    "translation": "užpildyti",
+    "category": "Money"
+  },
+  "rent": {
+    "translation": "pajauta",
+    "category": "Money"
+  },
+  "save": {
+    "translation": "įsivaizduoti",
+    "category": "Money"
+  },
+  "spend": {
+    "translation": "Pasinaudoti",
+    "category": "Money"
+  },
+  "invest": {
+    "translation": "Investicijuoti",
+    "category": "Money"
+  },
+  "earn": {
+    "translation": "gauti",
+    "category": "Money"
+  },
+  "refund": {
+    "translation": "Atsiskaitymas",
+    "category": "Money"
+  },
+  "exchange": {
+    "translation": "Pasirinkimas",
+    "category": "Money"
+  },
+  "order": {
+    "translation": "ėlaipnas",
+    "category": "Money"
+  },
+  "select": {
+    "translation": "Pasirinkti",
+    "category": "Money"
+  },
+  "withdraw": {
+    "translation": "Atsijungti",
+    "category": "Money"
+  },
+  "deposit": {
+    "translation": "deponetas",
+    "category": "Money"
+  },
+  "budget": {
+    "translation": "budžetas",
+    "category": "Money"
+  },
+  "fry": {
+    "translation": "priprikti",
+    "category": "Food"
+  },
+  "grill": {
+    "translation": "grilis",
+    "category": "Food"
+  },
+  "boil": {
+    "translation": "kilti",
+    "category": "Food"
+  },
+  "steam": {
+    "translation": "auksus",
+    "category": "Food"
+  },
+  "slice": {
+    "translation": "šiltis",
+    "category": "Food"
+  },
+  "cut": {
+    "translation": "kirpa",
+    "category": "Food"
+  },
+  "chop": {
+    "translation": "kelti",
+    "category": "Food"
+  },
+  "mix": {
+    "translation": "užmigti",
+    "category": "Food"
+  },
+  "stir": {
+    "translation": "pilti",
+    "category": "Food"
+  },
+  "pour": {
+    "translation": "pora",
+    "category": "Food"
+  },
+  "serve": {
+    "translation": "Paslaugoti",
+    "category": "Food"
+  },
+  "taste": {
+    "translation": "Žiūra",
+    "category": "Food"
+  },
+  "season": {
+    "translation": "sezonas",
+    "category": "Food"
+  },
+  "marinate": {
+    "translation": "marinuoti",
+    "category": "Food"
+  },
+  "chew": {
+    "translation": "žiūrintei",
+    "category": "Food"
+  },
+  "swallow": {
+    "translation": "svajonė",
+    "category": "Food"
+  },
+  "deliver": {
+    "translation": "dalyvauti",
+    "category": "Food"
+  },
+  "digest": {
+    "translation": "digestavimas",
+    "category": "Food"
+  },
+  "rain": {
+    "translation": "plaukti",
+    "category": "Nature"
+  },
+  "snow": {
+    "translation": "SNIEGAS",
+    "category": "Nature"
+  },
+  "hail": {
+    "translation": "Medainiai",
+    "category": "Nature"
+  },
+  "sleet": {
+    "translation": "graupel",
+    "category": "Nature"
+  },
+  "freeze": {
+    "translation": "Žiūra",
+    "category": "Nature"
+  },
+  "melt": {
+    "translation": "melči",
+    "category": "Nature"
+  },
+  "shine": {
+    "translation": "šilti",
+    "category": "Nature"
+  },
+  "blow": {
+    "translation": "-Trumpėsti",
+    "category": "Nature"
+  },
+  "grow": {
+    "translation": "augti",
+    "category": "Nature"
+  },
+  "bloom": {
+    "translation": "blokas",
+    "category": "Nature"
+  },
+  "wither": {
+    "translation": "sunogėti",
+    "category": "Nature"
+  },
+  "sprout": {
+    "translation": "žiobris",
+    "category": "Nature"
+  },
+  "fall": {
+    "translation": "pusėties",
+    "category": "Nature"
+  },
+  "quake": {
+    "translation": "šešis",
+    "category": "Nature"
+  },
+  "erode": {
+    "translation": "erodinti",
+    "category": "Nature"
+  },
+  "burn": {
+    "translation": "užkrauti",
+    "category": "Nature"
+  },
+  "flood": {
+    "translation": "Užkrautis",
+    "category": "Nature"
+  },
+  "float": {
+    "translation": "FLTė",
+    "category": "Nature"
+  },
+  "sink": {
+    "translation": "Žalys",
+    "category": "Nature"
+  },
+  "rise": {
+    "translation": "įklaidė",
+    "category": "Nature"
+  },
+  "set": {
+    "translation": "pasirinkti",
+    "category": "Nature"
+  },
+  "breathe": {
+    "translation": "uosėti",
+    "category": "Health"
+  },
+  "inhale": {
+    "translation": "įspėsti",
+    "category": "Health"
+  },
+  "exhale": {
+    "translation": "vykšti",
+    "category": "Health"
+  },
+  "cough": {
+    "translation": "kupė",
+    "category": "Health"
+  },
+  "sneeze": {
+    "translation": "sneržėti",
+    "category": "Health"
+  },
+  "sweat": {
+    "translation": "piedrykas",
+    "category": "Health"
+  },
+  "bleed": {
+    "translation": "šlėgti",
+    "category": "Health"
+  },
+  "heal": {
+    "translation": "įlakšti",
+    "category": "Health"
+  },
+  "recover": {
+    "translation": "atkurti",
+    "category": "Health"
+  },
+  "ache": {
+    "translation": "įlūžius",
+    "category": "Health"
+  },
+  "hurt": {
+    "translation": "sulkti",
+    "category": "Health"
+  },
+  "strain": {
+    "translation": "nuskaitymas",
+    "category": "Health"
+  },
+  "exercise": {
+    "translation": "Užklausa",
+    "category": "Health"
+  },
+  "faint": {
+    "translation": "-iepsėti",
+    "category": "Health"
+  },
+  "vomit": {
+    "translation": "ėjimas",
+    "category": "Health"
+  },
+  "blink": {
+    "translation": "ūsis",
+    "category": "Health"
+  },
+  "squint": {
+    "translation": "-Trumpelyti",
+    "category": "Health"
+  },
+  "tremble": {
+    "translation": "tremėti",
+    "category": "Health"
+  },
+  "click": {
+    "translation": "Klipimas",
+    "category": "Technology"
+  },
+  "tap": {
+    "translation": "puska",
+    "category": "Technology"
+  },
+  "scroll": {
+    "translation": "speronas",
+    "category": "Technology"
+  },
+  "swipe": {
+    "translation": "Pasikeisti",
+    "category": "Technology"
+  },
+  "browse": {
+    "translation": "peržiūrėti",
+    "category": "Technology"
+  },
+  "upgrade": {
+    "translation": "Atnaujinimas",
+    "category": "Technology"
+  },
+  "copy": {
+    "translation": "kopija",
+    "category": "Technology"
+  },
+  "paste": {
+    "translation": "pasto",
+    "category": "Technology"
+  },
+  "delete": {
+    "translation": "Ištrinti",
+    "category": "Technology"
+  },
+  "reset": {
+    "translation": "Atstatymas",
+    "category": "Technology"
+  },
+  "restart": {
+    "translation": "pradėti užnaujinti",
+    "category": "Technology"
+  },
+  "log in": {
+    "translation": "prisijungti",
+    "category": "Technology"
+  },
+  "log out": {
+    "translation": "atsijungti",
+    "category": "Technology"
+  },
+  "sync": {
+    "translation": "Sinckimas",
+    "category": "Technology"
+  },
+  "stream": {
+    "translation": "Žalys",
+    "category": "Technology"
+  },
+  "encrypt": {
+    "translation": "Šifruoti",
+    "category": "Technology"
+  },
+  "backup": {
+    "translation": "reserves",
+    "category": "Technology"
+  }
+}

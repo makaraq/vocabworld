@@ -1,0 +1,1564 @@
+{
+  "walk": {
+    "translation": "gwylfa",
+    "category": "Basic"
+  },
+  "run": {
+    "translation": "gwyddon",
+    "category": "Basic"
+  },
+  "jump": {
+    "translation": "cychwyn",
+    "category": "Basic"
+  },
+  "hop": {
+    "translation": "copwyn",
+    "category": "Basic"
+  },
+  "skip": {
+    "translation": "cymryd gwyllt",
+    "category": "Basic"
+  },
+  "crawl": {
+    "translation": "crawf",
+    "category": "Basic"
+  },
+  "climb": {
+    "translation": "cylchwyn",
+    "category": "Basic"
+  },
+  "slide": {
+    "translation": "glideiddiad",
+    "category": "Basic"
+  },
+  "swing": {
+    "translation": "cymryd rhan",
+    "category": "Basic"
+  },
+  "stretch": {
+    "translation": "lenwi",
+    "category": "Basic"
+  },
+  "bend": {
+    "translation": "cylch",
+    "category": "Basic"
+  },
+  "lift": {
+    "translation": "cylch",
+    "category": "Basic"
+  },
+  "carry": {
+    "translation": "cyffwrdd",
+    "category": "Basic"
+  },
+  "drag": {
+    "translation": "-ddrogiwyn",
+    "category": "Basic"
+  },
+  "push": {
+    "translation": "ddwyafod",
+    "category": "Basic"
+  },
+  "pull": {
+    "translation": "-dduwn",
+    "category": "Basic"
+  },
+  "hold": {
+    "translation": "Cyffwrdd",
+    "category": "Basic"
+  },
+  "grab": {
+    "translation": "gwobrw",
+    "category": "Basic"
+  },
+  "drop": {
+    "translation": "dro",
+    "category": "Basic"
+  },
+  "throw": {
+    "translation": "tirio",
+    "category": "Basic"
+  },
+  "catch": {
+    "translation": "gwobrw",
+    "category": "Basic"
+  },
+  "kick": {
+    "translation": "gicu",
+    "category": "Basic"
+  },
+  "hit": {
+    "translation": "Gwyddowyd",
+    "category": "Basic"
+  },
+  "press": {
+    "translation": "presedd",
+    "category": "Basic"
+  },
+  "twist": {
+    "translation": "gwerthefyrddiad",
+    "category": "Basic"
+  },
+  "turn": {
+    "translation": "Cyfnododd",
+    "category": "Basic"
+  },
+  "rotate": {
+    "translation": "Rotwynasu",
+    "category": "Basic"
+  },
+  "flip": {
+    "translation": "flic",
+    "category": "Basic"
+  },
+  "shake": {
+    "translation": "tacwyn",
+    "category": "Basic"
+  },
+  "wave": {
+    "translation": "LLwyd",
+    "category": "Basic"
+  },
+  "reach": {
+    "translation": "Cyffwrdd",
+    "category": "Basic"
+  },
+  "lean": {
+    "translation": "llainedd",
+    "category": "Basic"
+  },
+  "rest": {
+    "translation": "wymparu",
+    "category": "Basic"
+  },
+  "balance": {
+    "translation": "Bwysigrwydd",
+    "category": "Basic"
+  },
+  "spin": {
+    "translation": "spin in Welsh is",
+    "category": "Basic"
+  },
+  "arrange": {
+    "translation": "Cyfathrebu",
+    "category": "Basic"
+  },
+  "adjust": {
+    "translation": "Cyfathrebu",
+    "category": "Basic"
+  },
+  "shift": {
+    "translation": "ychydig",
+    "category": "Basic"
+  },
+  "tie": {
+    "translation": "gwyddowyd",
+    "category": "Basic"
+  },
+  "untie": {
+    "translation": "Lefanwyn",
+    "category": "Basic"
+  },
+  "wrap": {
+    "translation": "Gwrapi",
+    "category": "Basic"
+  },
+  "unwrap": {
+    "translation": "Tystiolaasu",
+    "category": "Basic"
+  },
+  "fold": {
+    "translation": "llafod",
+    "category": "Basic"
+  },
+  "unfold": {
+    "translation": "gydaeni",
+    "category": "Basic"
+  },
+  "pack": {
+    "translation": "parch",
+    "category": "Basic"
+  },
+  "unpack": {
+    "translation": "Tystiolaasu",
+    "category": "Basic"
+  },
+  "be": {
+    "translation": "wyddon",
+    "category": "Basic"
+  },
+  "become": {
+    "translation": "gwneud",
+    "category": "Basic"
+  },
+  "seem": {
+    "translation": "wybod",
+    "category": "Basic"
+  },
+  "appear": {
+    "translation": "cyfnodio",
+    "category": "Basic"
+  },
+  "remain": {
+    "translation": "adrodd",
+    "category": "Basic"
+  },
+  "stay": {
+    "translation": "adrodd",
+    "category": "Basic"
+  },
+  "exist": {
+    "translation": "wyddonwg",
+    "category": "Basic"
+  },
+  "happen": {
+    "translation": "gwneud",
+    "category": "Basic"
+  },
+  "occur": {
+    "translation": "wyddonasu",
+    "category": "Basic"
+  },
+  "change": {
+    "translation": "Cyflog",
+    "category": "Basic"
+  },
+  "improve": {
+    "translation": "Cyffwrdd",
+    "category": "Basic"
+  },
+  "decline": {
+    "translation": "Gwblhau",
+    "category": "Basic"
+  },
+  "continue": {
+    "translation": "cyfnodio",
+    "category": "Basic"
+  },
+  "stop": {
+    "translation": "dddwod",
+    "category": "Basic"
+  },
+  "begin": {
+    "translation": "Cyfnodwyd",
+    "category": "Basic"
+  },
+  "end": {
+    "translation": "wythnos",
+    "category": "Basic"
+  },
+  "last": {
+    "translation": "ychwanegol",
+    "category": "Basic"
+  },
+  "wake": {
+    "translation": "Gŵyl",
+    "category": "Daily Routine"
+  },
+  "get up": {
+    "translation": "ystod",
+    "category": "Daily Routine"
+  },
+  "wash": {
+    "translation": "gwch",
+    "category": "Daily Routine"
+  },
+  "shower": {
+    "translation": "dddelwedd",
+    "category": "Daily Routine"
+  },
+  "bathe": {
+    "translation": "gwch",
+    "category": "Daily Routine"
+  },
+  "brush": {
+    "translation": "cychwyn",
+    "category": "Daily Routine"
+  },
+  "comb": {
+    "translation": "combeddydd",
+    "category": "Daily Routine"
+  },
+  "dress": {
+    "translation": "dirt",
+    "category": "Daily Routine"
+  },
+  "eat": {
+    "translation": "wyd",
+    "category": "Daily Routine"
+  },
+  "drink": {
+    "translation": "gwblwyn",
+    "category": "Daily Routine"
+  },
+  "snack": {
+    "translation": "cwtch",
+    "category": "Daily Routine"
+  },
+  "cook": {
+    "translation": "Gwyddor",
+    "category": "Daily Routine"
+  },
+  "bake": {
+    "translation": "Bwyllowyd",
+    "category": "Daily Routine"
+  },
+  "reheat": {
+    "translation": "Cychwynnu",
+    "category": "Daily Routine"
+  },
+  "clean": {
+    "translation": "Trawsowydywych",
+    "category": "Daily Routine"
+  },
+  "tidy": {
+    "translation": "Tidyn",
+    "category": "Daily Routine"
+  },
+  "organize": {
+    "translation": "organise",
+    "category": "Daily Routine"
+  },
+  "vacuum": {
+    "translation": "tacwyn",
+    "category": "Daily Routine"
+  },
+  "sweep": {
+    "translation": "Sŵn",
+    "category": "Daily Routine"
+  },
+  "mop": {
+    "translation": "cloc",
+    "category": "Daily Routine"
+  },
+  "dust": {
+    "translation": "Llwyd",
+    "category": "Daily Routine"
+  },
+  "wash dishes": {
+    "translation": "gwchodd yr haws",
+    "category": "Daily Routine"
+  },
+  "rinse": {
+    "translation": "Rhosnwng",
+    "category": "Daily Routine"
+  },
+  "wipe": {
+    "translation": "gwipio",
+    "category": "Daily Routine"
+  },
+  "scrub": {
+    "translation": "craf",
+    "category": "Daily Routine"
+  },
+  "dry": {
+    "translation": "Trawsaf",
+    "category": "Daily Routine"
+  },
+  "shop": {
+    "translation": "cydweithio",
+    "category": "Daily Routine"
+  },
+  "refill": {
+    "translation": "gwblhau",
+    "category": "Daily Routine"
+  },
+  "charge": {
+    "translation": "Gocher",
+    "category": "Daily Routine"
+  },
+  "relax": {
+    "translation": "gwleidyddio",
+    "category": "Daily Routine"
+  },
+  "nap": {
+    "translation": "cwtch",
+    "category": "Daily Routine"
+  },
+  "sleep": {
+    "translation": "droedd",
+    "category": "Daily Routine"
+  },
+  "prepare": {
+    "translation": "Cyffwrdd",
+    "category": "Daily Routine"
+  },
+  "schedule": {
+    "translation": "Timetable",
+    "category": "Daily Routine"
+  },
+  "cancel": {
+    "translation": "Annilysioni",
+    "category": "Daily Routine"
+  },
+  "check": {
+    "translation": "chwarae",
+    "category": "Daily Routine"
+  },
+  "monitor": {
+    "translation": "Tystyswr",
+    "category": "Daily Routine"
+  },
+  "plan": {
+    "translation": "gwneud",
+    "category": "Daily Routine"
+  },
+  "wait": {
+    "translation": "Cyffwrw",
+    "category": "Daily Routine"
+  },
+  "search": {
+    "translation": "cytun",
+    "category": "Daily Routine"
+  },
+  "find": {
+    "translation": "gwneud",
+    "category": "Daily Routine"
+  },
+  "lose": {
+    "translation": "Lluas",
+    "category": "Daily Routine"
+  },
+  "replace": {
+    "translation": "Cyfateiliad replace",
+    "category": "Daily Routine"
+  },
+  "think": {
+    "translation": "fynnu",
+    "category": "Mental"
+  },
+  "know": {
+    "translation": "gwneud",
+    "category": "Mental"
+  },
+  "believe": {
+    "translation": "Credu",
+    "category": "Mental"
+  },
+  "consider": {
+    "translation": "Ychwanegon",
+    "category": "Mental"
+  },
+  "imagine": {
+    "translation": "Imaginindre",
+    "category": "Mental"
+  },
+  "wonder": {
+    "translation": "Wareiddien",
+    "category": "Mental"
+  },
+  "remember": {
+    "translation": "Ymniniawns",
+    "category": "Mental"
+  },
+  "forget": {
+    "translation": "forgettable",
+    "category": "Mental"
+  },
+  "realize": {
+    "translation": "Cyflwyno",
+    "category": "Mental"
+  },
+  "guess": {
+    "translation": "gwahaniaeth",
+    "category": "Mental"
+  },
+  "predict": {
+    "translation": "adroddiad",
+    "category": "Mental"
+  },
+  "expect": {
+    "translation": "GWYDDIQYD",
+    "category": "Mental"
+  },
+  "recognize": {
+    "translation": "Ydyn",
+    "category": "Mental"
+  },
+  "notice": {
+    "translation": "Cyffredinol",
+    "category": "Mental"
+  },
+  "focus": {
+    "translation": "Focws",
+    "category": "Mental"
+  },
+  "concentrate": {
+    "translation": "Gyda",
+    "category": "Mental"
+  },
+  "decide": {
+    "translation": "Cyflwyno Cyffwrdd",
+    "category": "Mental"
+  },
+  "choose": {
+    "translation": "gweld",
+    "category": "Mental"
+  },
+  "compare": {
+    "translation": "cyfathrebu",
+    "category": "Mental"
+  },
+  "analyze": {
+    "translation": "Ymwybyddio",
+    "category": "Mental"
+  },
+  "evaluate": {
+    "translation": "Ychwanegu",
+    "category": "Mental"
+  },
+  "estimate": {
+    "translation": "Cyffredinol",
+    "category": "Mental"
+  },
+  "solve": {
+    "translation": "Cyflwyno",
+    "category": "Mental"
+  },
+  "question": {
+    "translation": "Cwestiwn",
+    "category": "Mental"
+  },
+  "suspect": {
+    "translation": "Suswniadwr",
+    "category": "Mental"
+  },
+  "doubt": {
+    "translation": "Dyddiad",
+    "category": "Mental"
+  },
+  "learn": {
+    "translation": "gwyddon",
+    "category": "Mental"
+  },
+  "study": {
+    "translation": "cymryd y cyfathrebu",
+    "category": "Mental"
+  },
+  "memorize": {
+    "translation": "memoriâu",
+    "category": "Mental"
+  },
+  "calculate": {
+    "translation": "calcwlâu",
+    "category": "Mental"
+  },
+  "reflect": {
+    "translation": "reflictwch",
+    "category": "Mental"
+  },
+  "understand": {
+    "translation": "Cyffwrdd",
+    "category": "Mental"
+  },
+  "like": {
+    "translation": "gwych",
+    "category": "Mental"
+  },
+  "love": {
+    "translation": "Yma Wales",
+    "category": "Mental"
+  },
+  "hate": {
+    "translation": "Gwyllt",
+    "category": "Mental"
+  },
+  "enjoy": {
+    "translation": "gwneud",
+    "category": "Mental"
+  },
+  "prefer": {
+    "translation": "prefersawns",
+    "category": "Mental"
+  },
+  "want": {
+    "translation": "chweddaf",
+    "category": "Mental"
+  },
+  "need": {
+    "translation": "gwneud",
+    "category": "Mental"
+  },
+  "miss": {
+    "translation": "Missed",
+    "category": "Mental"
+  },
+  "care": {
+    "translation": "caredawi",
+    "category": "Mental"
+  },
+  "worry": {
+    "translation": "Ychwanegol",
+    "category": "Mental"
+  },
+  "fear": {
+    "translation": "Fawr",
+    "category": "Mental"
+  },
+  "panic": {
+    "translation": "Gwblwynedd",
+    "category": "Mental"
+  },
+  "stress": {
+    "translation": "Presedd",
+    "category": "Mental"
+  },
+  "calm": {
+    "translation": "Cyffwrd",
+    "category": "Mental"
+  },
+  "appreciate": {
+    "translation": "Gwyddon",
+    "category": "Mental"
+  },
+  "value": {
+    "translation": "Gwerth",
+    "category": "Mental"
+  },
+  "respect": {
+    "translation": "ysgariad",
+    "category": "Mental"
+  },
+  "dislike": {
+    "translation": "Dysgwyl",
+    "category": "Mental"
+  },
+  "regret": {
+    "translation": "Rhagfyr",
+    "category": "Mental"
+  },
+  "hope": {
+    "translation": "Cydaf",
+    "category": "Mental"
+  },
+  "trust": {
+    "translation": "Gwyddon",
+    "category": "Mental"
+  },
+  "surprise": {
+    "translation": "SurprisefWI",
+    "category": "Mental"
+  },
+  "shock": {
+    "translation": "Bws",
+    "category": "Mental"
+  },
+  "annoy": {
+    "translation": "Ynysaf",
+    "category": "Mental"
+  },
+  "bother": {
+    "translation": "Cymrydd",
+    "category": "Mental"
+  },
+  "confuse": {
+    "translation": "gwblharfod",
+    "category": "Mental"
+  },
+  "embarrass": {
+    "translation": "Cymryd lliantinoedd",
+    "category": "Mental"
+  },
+  "frustrate": {
+    "translation": "Gwblhau",
+    "category": "Mental"
+  },
+  "satisfy": {
+    "translation": "gwneud yn gyfforddus",
+    "category": "Mental"
+  },
+  "comfort": {
+    "translation": "Cyffredin",
+    "category": "Mental"
+  },
+  "cheer": {
+    "translation": "cheer in Welsh is",
+    "category": "Mental"
+  },
+  "say": {
+    "translation": "gwneud",
+    "category": "Communication"
+  },
+  "tell": {
+    "translation": "gweld",
+    "category": "Communication"
+  },
+  "talk": {
+    "translation": "gwahardd",
+    "category": "Communication"
+  },
+  "speak": {
+    "translation": "gwnewch",
+    "category": "Communication"
+  },
+  "discuss": {
+    "translation": "gwneud y cyd",
+    "category": "Communication"
+  },
+  "chat": {
+    "translation": "chwtal",
+    "category": "Communication"
+  },
+  "explain": {
+    "translation": "cyfieithu",
+    "category": "Communication"
+  },
+  "describe": {
+    "translation": "cyfieithu",
+    "category": "Communication"
+  },
+  "announce": {
+    "translation": "annonasu",
+    "category": "Communication"
+  },
+  "report": {
+    "translation": "gwaith",
+    "category": "Communication"
+  },
+  "reply": {
+    "translation": "Ynwyn",
+    "category": "Communication"
+  },
+  "answer": {
+    "translation": "Ynwyn",
+    "category": "Communication"
+  },
+  "ask": {
+    "translation": "gwneud",
+    "category": "Communication"
+  },
+  "interrupt": {
+    "translation": "Cyffwrdd",
+    "category": "Communication"
+  },
+  "suggest": {
+    "translation": "Cyfeirio",
+    "category": "Communication"
+  },
+  "recommend": {
+    "translation": "Ychwanegu",
+    "category": "Communication"
+  },
+  "complain": {
+    "translation": "cymryd y cydnabod",
+    "category": "Communication"
+  },
+  "argue": {
+    "translation": "cwrwedd",
+    "category": "Communication"
+  },
+  "debate": {
+    "translation": "Cyffredinol",
+    "category": "Communication"
+  },
+  "whisper": {
+    "translation": "Gwydr",
+    "category": "Communication"
+  },
+  "shout": {
+    "translation": "Crymod",
+    "category": "Communication"
+  },
+  "yell": {
+    "translation": "cylchwyn",
+    "category": "Communication"
+  },
+  "mention": {
+    "translation": "Mwyafynnodd",
+    "category": "Communication"
+  },
+  "remind": {
+    "translation": "Ynwyn",
+    "category": "Communication"
+  },
+  "warn": {
+    "translation": "Cymryd cais",
+    "category": "Communication"
+  },
+  "advise": {
+    "translation": "Cyfiathrebu",
+    "category": "Communication"
+  },
+  "encourage": {
+    "translation": "Cymryd",
+    "category": "Communication"
+  },
+  "persuade": {
+    "translation": "Cyfeiriad",
+    "category": "Communication"
+  },
+  "invite": {
+    "translation": "Cyfarwydduwon",
+    "category": "Communication"
+  },
+  "respond": {
+    "translation": "Ynwyn",
+    "category": "Communication"
+  },
+  "translate": {
+    "translation": "Ysgrifennu",
+    "category": "Communication"
+  },
+  "inform": {
+    "translation": "Cyfieithu",
+    "category": "Communication"
+  },
+  "comment": {
+    "translation": "coment",
+    "category": "Communication"
+  },
+  "confirm": {
+    "translation": "Cyffwrdd",
+    "category": "Communication"
+  },
+  "deny": {
+    "translation": "Deny in Welsh is denu",
+    "category": "Communication"
+  },
+  "admit": {
+    "translation": "Cyflwyno",
+    "category": "Communication"
+  },
+  "meet": {
+    "translation": "Gyda",
+    "category": "Social"
+  },
+  "greet": {
+    "translation": "Bwyllgor",
+    "category": "Social"
+  },
+  "welcome": {
+    "translation": "Boredaeth",
+    "category": "Social"
+  },
+  "visit": {
+    "translation": "Cyfarwyddyd",
+    "category": "Social"
+  },
+  "host": {
+    "translation": "Gwddf",
+    "category": "Social"
+  },
+  "join": {
+    "translation": "gwneud",
+    "category": "Social"
+  },
+  "help": {
+    "translation": "cymorth",
+    "category": "Social"
+  },
+  "support": {
+    "translation": null,
+    "category": "Social",
+    "failed": true
+  },
+  "assist": {
+    "translation": "ddechrau",
+    "category": "Social"
+  },
+  "share": {
+    "translation": "ddarpariad",
+    "category": "Social"
+  },
+  "care for": {
+    "translation": "Cafodd ei gynnal",
+    "category": "Social"
+  },
+  "hug": {
+    "translation": "Cycwyn",
+    "category": "Social"
+  },
+  "kiss": {
+    "translation": "Penysaf",
+    "category": "Social"
+  },
+  "hold hands": {
+    "translation": "Cysylltu yn ddiwrnod",
+    "category": "Social"
+  },
+  "date": {
+    "translation": "datwyn",
+    "category": "Social"
+  },
+  "marry": {
+    "translation": "gwyrddasu",
+    "category": "Social"
+  },
+  "befriend": {
+    "translation": "Gwyddon",
+    "category": "Social"
+  },
+  "follow": {
+    "translation": "gweld",
+    "category": "Social"
+  },
+  "lead": {
+    "translation": "Llwyd",
+    "category": "Social"
+  },
+  "guide": {
+    "translation": "Gwyddor",
+    "category": "Social"
+  },
+  "introduce": {
+    "translation": "Introddwyd",
+    "category": "Social"
+  },
+  "cooperate": {
+    "translation": "cyflogwydwyd",
+    "category": "Social"
+  },
+  "protect": {
+    "translation": "Cymryddiad",
+    "category": "Social"
+  },
+  "include": {
+    "translation": "cynnwys",
+    "category": "Social"
+  },
+  "exclude": {
+    "translation": "Cydnabod",
+    "category": "Social"
+  },
+  "work": {
+    "translation": "gwybod",
+    "category": "Work"
+  },
+  "write": {
+    "translation": "Gyfraith",
+    "category": "Work"
+  },
+  "read": {
+    "translation": "ddychwelyd",
+    "category": "Work"
+  },
+  "edit": {
+    "translation": "edi",
+    "category": "Work"
+  },
+  "revise": {
+    "translation": "Cyfathrebu",
+    "category": "Work"
+  },
+  "review": {
+    "translation": "Cyflogiad",
+    "category": "Work"
+  },
+  "inspect": {
+    "translation": null,
+    "category": "Work",
+    "failed": true
+  },
+  "complete": {
+    "translation": "Cyffredin",
+    "category": "Work"
+  },
+  "submit": {
+    "translation": "Cyflwyno",
+    "category": "Work"
+  },
+  "create": {
+    "translation": "Cyrraedd",
+    "category": "Work"
+  },
+  "design": {
+    "translation": "cymdideddwylliadol",
+    "category": "Work"
+  },
+  "build": {
+    "translation": "Cyflwyno or Byw",
+    "category": "Work"
+  },
+  "assemble": {
+    "translation": "Cyflwyno",
+    "category": "Work"
+  },
+  "debug": {
+    "translation": "Gwyddonio",
+    "category": "Work"
+  },
+  "research": {
+    "translation": "Cyfathrebu",
+    "category": "Work"
+  },
+  "document": {
+    "translation": "dairnwng",
+    "category": "Work"
+  },
+  "train": {
+    "translation": "locomotif",
+    "category": "Work"
+  },
+  "teach": {
+    "translation": "cyfiathrebu",
+    "category": "Work"
+  },
+  "update": {
+    "translation": "Ymddihefyd",
+    "category": "Work"
+  },
+  "upload": {
+    "translation": "wynebu",
+    "category": "Work"
+  },
+  "download": {
+    "translation": "Cyfieithu",
+    "category": "Work"
+  },
+  "print": {
+    "translation": "druckiad",
+    "category": "Work"
+  },
+  "scan": {
+    "translation": "scanfwydd",
+    "category": "Work"
+  },
+  "record": {
+    "translation": "gyfraith",
+    "category": "Work"
+  },
+  "track": {
+    "translation": "tyroedd",
+    "category": "Work"
+  },
+  "manage": {
+    "translation": "Cyflwyno",
+    "category": "Work"
+  },
+  "supervise": {
+    "translation": "Cyflwyno",
+    "category": "Work"
+  },
+  "go": {
+    "translation": "Gyda",
+    "category": "Travel"
+  },
+  "come": {
+    "translation": "ychydig",
+    "category": "Travel"
+  },
+  "move": {
+    "translation": "Cyflog",
+    "category": "Travel"
+  },
+  "leave": {
+    "translation": "Lluas",
+    "category": "Travel"
+  },
+  "arrive": {
+    "translation": "Cyrraedd",
+    "category": "Travel"
+  },
+  "enter": {
+    "translation": "Cyfeillgar",
+    "category": "Travel"
+  },
+  "exit": {
+    "translation": "wythnos",
+    "category": "Travel"
+  },
+  "travel": {
+    "translation": "cyfarwyddyd",
+    "category": "Travel"
+  },
+  "fly": {
+    "translation": "gwyllowydd",
+    "category": "Travel"
+  },
+  "drive": {
+    "translation": "gwynnedd",
+    "category": "Travel"
+  },
+  "ride": {
+    "translation": "gyrhu",
+    "category": "Travel"
+  },
+  "board": {
+    "translation": "bord",
+    "category": "Travel"
+  },
+  "land": {
+    "translation": "Teyrnon",
+    "category": "Travel"
+  },
+  "park": {
+    "translation": "pwll",
+    "category": "Travel"
+  },
+  "accelerate": {
+    "translation": "Cymryd cwydradd",
+    "category": "Travel"
+  },
+  "reverse": {
+    "translation": "Trawsbedd",
+    "category": "Travel"
+  },
+  "cross": {
+    "translation": "croesor",
+    "category": "Travel"
+  },
+  "wander": {
+    "translation": "gweldyr",
+    "category": "Travel"
+  },
+  "explore": {
+    "translation": "gweldaf",
+    "category": "Travel"
+  },
+  "return": {
+    "translation": "adrodd",
+    "category": "Travel"
+  },
+  "rush": {
+    "translation": "rush in Welsh is",
+    "category": "Travel"
+  },
+  "hurry": {
+    "translation": "chwilio",
+    "category": "Travel"
+  },
+  "navigate": {
+    "translation": "navigo",
+    "category": "Travel"
+  },
+  "sanitize": {
+    "translation": "Cysylltdddoedaf",
+    "category": "Household"
+  },
+  "iron": {
+    "translation": "Llyd",
+    "category": "Household"
+  },
+  "store": {
+    "translation": "cydweydwyd",
+    "category": "Household"
+  },
+  "repair": {
+    "translation": "gwared",
+    "category": "Household"
+  },
+  "fix": {
+    "translation": "ddyweddaf",
+    "category": "Household"
+  },
+  "disassemble": {
+    "translation": "Llenwi",
+    "category": "Household"
+  },
+  "install": {
+    "translation": "Cyflwyno",
+    "category": "Household"
+  },
+  "uninstall": {
+    "translation": "drafod",
+    "category": "Household"
+  },
+  "remove": {
+    "translation": "Cyrraedd",
+    "category": "Household"
+  },
+  "connect": {
+    "translation": "cymunedawi",
+    "category": "Household"
+  },
+  "disconnect": {
+    "translation": "Tystiolaâu",
+    "category": "Household"
+  },
+  "lock": {
+    "translation": "Llwydowydd",
+    "category": "Household"
+  },
+  "unlock": {
+    "translation": "Trafod",
+    "category": "Household"
+  },
+  "decorate": {
+    "translation": "Cofio",
+    "category": "Household"
+  },
+  "polish": {
+    "translation": "Cycloaf",
+    "category": "Household"
+  },
+  "hammer": {
+    "translation": "maenol",
+    "category": "Household"
+  },
+  "saw": {
+    "translation": "gwddf",
+    "category": "Household"
+  },
+  "glue": {
+    "translation": "gwylidydd",
+    "category": "Household"
+  },
+  "buy": {
+    "translation": "Gwobrwyniwch",
+    "category": "Money"
+  },
+  "sell": {
+    "translation": "gwyneddaf",
+    "category": "Money"
+  },
+  "pay": {
+    "translation": "gwneud yn gyfforddus",
+    "category": "Money"
+  },
+  "owe": {
+    "translation": "ddewiindreidd",
+    "category": "Money"
+  },
+  "borrow": {
+    "translation": "Gwyddo",
+    "category": "Money"
+  },
+  "lend": {
+    "translation": "Dysgudden",
+    "category": "Money"
+  },
+  "rent": {
+    "translation": "Gŵyr",
+    "category": "Money"
+  },
+  "save": {
+    "translation": "cyrraedd",
+    "category": "Money"
+  },
+  "spend": {
+    "translation": "gwneud",
+    "category": "Money"
+  },
+  "invest": {
+    "translation": "cymorthwydd",
+    "category": "Money"
+  },
+  "earn": {
+    "translation": "gwneud",
+    "category": "Money"
+  },
+  "refund": {
+    "translation": "Tystiolaeth",
+    "category": "Money"
+  },
+  "exchange": {
+    "translation": "Trafod",
+    "category": "Money"
+  },
+  "order": {
+    "translation": "wyneb",
+    "category": "Money"
+  },
+  "select": {
+    "translation": "Cyfathrebu",
+    "category": "Money"
+  },
+  "withdraw": {
+    "translation": "Cyrraedd",
+    "category": "Money"
+  },
+  "deposit": {
+    "translation": "ddeddfwyd",
+    "category": "Money"
+  },
+  "budget": {
+    "translation": "cyflog",
+    "category": "Money"
+  },
+  "fry": {
+    "translation": "Fwyd",
+    "category": "Food"
+  },
+  "grill": {
+    "translation": "Barwyf",
+    "category": "Food"
+  },
+  "boil": {
+    "translation": "blwyddyn",
+    "category": "Food"
+  },
+  "steam": {
+    "translation": "ddewišeg",
+    "category": "Food"
+  },
+  "slice": {
+    "translation": "sliciad",
+    "category": "Food"
+  },
+  "cut": {
+    "translation": "cwydd",
+    "category": "Food"
+  },
+  "chop": {
+    "translation": "Trafod",
+    "category": "Food"
+  },
+  "mix": {
+    "translation": "gwblwynn",
+    "category": "Food"
+  },
+  "stir": {
+    "translation": "gwddfasu",
+    "category": "Food"
+  },
+  "pour": {
+    "translation": "blamwyn",
+    "category": "Food"
+  },
+  "serve": {
+    "translation": "Gosau",
+    "category": "Food"
+  },
+  "taste": {
+    "translation": "gwair",
+    "category": "Food"
+  },
+  "season": {
+    "translation": "Cyfnod",
+    "category": "Food"
+  },
+  "marinate": {
+    "translation": "cymarwng",
+    "category": "Food"
+  },
+  "chew": {
+    "translation": "gwblafodd",
+    "category": "Food"
+  },
+  "swallow": {
+    "translation": "Tystie",
+    "category": "Food"
+  },
+  "deliver": {
+    "translation": "Cyflwyno",
+    "category": "Food"
+  },
+  "digest": {
+    "translation": "Cyflog",
+    "category": "Food"
+  },
+  "rain": {
+    "translation": "wythnos",
+    "category": "Nature"
+  },
+  "snow": {
+    "translation": "Gwyngwl",
+    "category": "Nature"
+  },
+  "hail": {
+    "translation": "Gwyllt",
+    "category": "Nature"
+  },
+  "sleet": {
+    "translation": "Llied",
+    "category": "Nature"
+  },
+  "freeze": {
+    "translation": "cydymud",
+    "category": "Nature"
+  },
+  "melt": {
+    "translation": "gwblafodd",
+    "category": "Nature"
+  },
+  "shine": {
+    "translation": "Glan",
+    "category": "Nature"
+  },
+  "blow": {
+    "translation": "blows",
+    "category": "Nature"
+  },
+  "grow": {
+    "translation": "gwneud",
+    "category": "Nature"
+  },
+  "bloom": {
+    "translation": "Gŵyl",
+    "category": "Nature"
+  },
+  "wither": {
+    "translation": "gweler",
+    "category": "Nature"
+  },
+  "sprout": {
+    "translation": "blodau",
+    "category": "Nature"
+  },
+  "fall": {
+    "translation": "awlroperties",
+    "category": "Nature"
+  },
+  "quake": {
+    "translation": "cychwyn",
+    "category": "Nature"
+  },
+  "erode": {
+    "translation": "Eiraodd",
+    "category": "Nature"
+  },
+  "burn": {
+    "translation": "Burnau",
+    "category": "Nature"
+  },
+  "flood": {
+    "translation": "Dŵr",
+    "category": "Nature"
+  },
+  "float": {
+    "translation": "gwbleni",
+    "category": "Nature"
+  },
+  "sink": {
+    "translation": "ffordd",
+    "category": "Nature"
+  },
+  "rise": {
+    "translation": "Cyffwrn",
+    "category": "Nature"
+  },
+  "set": {
+    "translation": "Gyda",
+    "category": "Nature"
+  },
+  "breathe": {
+    "translation": "-ddychwiôn",
+    "category": "Health"
+  },
+  "inhale": {
+    "translation": "rhainasu",
+    "category": "Health"
+  },
+  "exhale": {
+    "translation": "wydamwyn",
+    "category": "Health"
+  },
+  "cough": {
+    "translation": "ccoed",
+    "category": "Health"
+  },
+  "sneeze": {
+    "translation": "Prydych",
+    "category": "Health"
+  },
+  "sweat": {
+    "translation": "Gwedi",
+    "category": "Health"
+  },
+  "bleed": {
+    "translation": "gwyddiol",
+    "category": "Health"
+  },
+  "heal": {
+    "translation": "Heilweddio",
+    "category": "Health"
+  },
+  "recover": {
+    "translation": "cyrraedd",
+    "category": "Health"
+  },
+  "ache": {
+    "translation": "gwblafodd",
+    "category": "Health"
+  },
+  "hurt": {
+    "translation": "gwblafodd",
+    "category": "Health"
+  },
+  "strain": {
+    "translation": "cymryd y sgrin",
+    "category": "Health"
+  },
+  "exercise": {
+    "translation": "gyrhoeddydd",
+    "category": "Health"
+  },
+  "faint": {
+    "translation": "gwblafodd",
+    "category": "Health"
+  },
+  "vomit": {
+    "translation": "wynedd",
+    "category": "Health"
+  },
+  "blink": {
+    "translation": "Closseni",
+    "category": "Health"
+  },
+  "squint": {
+    "translation": "Cwbl",
+    "category": "Health"
+  },
+  "tremble": {
+    "translation": "Trafod",
+    "category": "Health"
+  },
+  "click": {
+    "translation": "Clic",
+    "category": "Technology"
+  },
+  "tap": {
+    "translation": "ddŵr",
+    "category": "Technology"
+  },
+  "scroll": {
+    "translation": "Scroll in Welsh is gyflog",
+    "category": "Technology"
+  },
+  "swipe": {
+    "translation": "Gwysaf",
+    "category": "Technology"
+  },
+  "browse": {
+    "translation": "gwanderfalu",
+    "category": "Technology"
+  },
+  "upgrade": {
+    "translation": "Ymgyrchwydd",
+    "category": "Technology"
+  },
+  "copy": {
+    "translation": "Copïa",
+    "category": "Technology"
+  },
+  "paste": {
+    "translation": "gwblafodd",
+    "category": "Technology"
+  },
+  "delete": {
+    "translation": "Ddelasu",
+    "category": "Technology"
+  },
+  "reset": {
+    "translation": "gyson",
+    "category": "Technology"
+  },
+  "restart": {
+    "translation": "Cyfrifogi",
+    "category": "Technology"
+  },
+  "log in": {
+    "translation": "Cyntafasu",
+    "category": "Technology"
+  },
+  "log out": {
+    "translation": "Cychwyniad",
+    "category": "Technology"
+  },
+  "sync": {
+    "translation": "Synchrowyn",
+    "category": "Technology"
+  },
+  "stream": {
+    "translation": "Ffwrdd",
+    "category": "Technology"
+  },
+  "encrypt": {
+    "translation": "Grymudwyddio",
+    "category": "Technology"
+  },
+  "backup": {
+    "translation": "COPY",
+    "category": "Technology"
+  }
+}

@@ -1,0 +1,1564 @@
+{
+  "walk": {
+    "translation": "chodŽ",
+    "category": "Basic"
+  },
+  "run": {
+    "translation": "běhova",
+    "category": "Basic"
+  },
+  "jump": {
+    "translation": "skočiť",
+    "category": "Basic"
+  },
+  "hop": {
+    "translation": "hopá",
+    "category": "Basic"
+  },
+  "skip": {
+    "translation": "preskočiť",
+    "category": "Basic"
+  },
+  "crawl": {
+    "translation": "križiť",
+    "category": "Basic"
+  },
+  "climb": {
+    "translation": "vystúpiť",
+    "category": "Basic"
+  },
+  "slide": {
+    "translation": "plytka",
+    "category": "Basic"
+  },
+  "swing": {
+    "translation": "hodinováuraa",
+    "category": "Basic"
+  },
+  "stretch": {
+    "translation": "vzdĺžať",
+    "category": "Basic"
+  },
+  "bend": {
+    "translation": "presnúť",
+    "category": "Basic"
+  },
+  "lift": {
+    "translation": "výtah",
+    "category": "Basic"
+  },
+  "carry": {
+    "translation": "nosiť",
+    "category": "Basic"
+  },
+  "drag": {
+    "translation": "váha",
+    "category": "Basic"
+  },
+  "push": {
+    "translation": "tlačiť",
+    "category": "Basic"
+  },
+  "pull": {
+    "translation": "Ťhať",
+    "category": "Basic"
+  },
+  "hold": {
+    "translation": "držať",
+    "category": "Basic"
+  },
+  "grab": {
+    "translation": "Ťahnu",
+    "category": "Basic"
+  },
+  "drop": {
+    "translation": "ropať",
+    "category": "Basic"
+  },
+  "throw": {
+    "translation": "hodit",
+    "category": "Basic"
+  },
+  "catch": {
+    "translation": "catchať",
+    "category": "Basic"
+  },
+  "kick": {
+    "translation": "dotak",
+    "category": "Basic"
+  },
+  "hit": {
+    "translation": "uhrtiT",
+    "category": "Basic"
+  },
+  "press": {
+    "translation": "Ťahadlo",
+    "category": "Basic"
+  },
+  "twist": {
+    "translation": "Ťahniť",
+    "category": "Basic"
+  },
+  "turn": {
+    "translation": "otočiť",
+    "category": "Basic"
+  },
+  "rotate": {
+    "translation": "rotate in Slovak is",
+    "category": "Basic"
+  },
+  "flip": {
+    "translation": "flipusta",
+    "category": "Basic"
+  },
+  "shake": {
+    "translation": "tremielovať",
+    "category": "Basic"
+  },
+  "wave": {
+    "translation": "vlna",
+    "category": "Basic"
+  },
+  "reach": {
+    "translation": "dosiahnuť",
+    "category": "Basic"
+  },
+  "lean": {
+    "translation": "Ťahat",
+    "category": "Basic"
+  },
+  "rest": {
+    "translation": "Ťažba",
+    "category": "Basic"
+  },
+  "balance": {
+    "translation": "bilancium",
+    "category": "Basic"
+  },
+  "spin": {
+    "translation": "vrtanie",
+    "category": "Basic"
+  },
+  "arrange": {
+    "translation": "Rozvrhovať",
+    "category": "Basic"
+  },
+  "adjust": {
+    "translation": "riadžiť",
+    "category": "Basic"
+  },
+  "shift": {
+    "translation": "Ťaháň",
+    "category": "Basic"
+  },
+  "tie": {
+    "translation": "pádži",
+    "category": "Basic"
+  },
+  "untie": {
+    "translation": "rozvázavať",
+    "category": "Basic"
+  },
+  "wrap": {
+    "translation": "obalovať",
+    "category": "Basic"
+  },
+  "unwrap": {
+    "translation": "rozbalovať",
+    "category": "Basic"
+  },
+  "fold": {
+    "translation": "pleťaćisko",
+    "category": "Basic"
+  },
+  "unfold": {
+    "translation": "rozviesť",
+    "category": "Basic"
+  },
+  "pack": {
+    "translation": "päk",
+    "category": "Basic"
+  },
+  "unpack": {
+    "translation": "rozbalovať",
+    "category": "Basic"
+  },
+  "be": {
+    "translation": "byť",
+    "category": "Basic"
+  },
+  "become": {
+    "translation": "stáť",
+    "category": "Basic"
+  },
+  "seem": {
+    "translation": "vyzerať",
+    "category": "Basic"
+  },
+  "appear": {
+    "translation": "vystúpiť",
+    "category": "Basic"
+  },
+  "remain": {
+    "translation": "zostáva",
+    "category": "Basic"
+  },
+  "stay": {
+    "translation": "stanúť",
+    "category": "Basic"
+  },
+  "exist": {
+    "translation": "existovať",
+    "category": "Basic"
+  },
+  "happen": {
+    "translation": "stať",
+    "category": "Basic"
+  },
+  "occur": {
+    "translation": "stiahnuť sa",
+    "category": "Basic"
+  },
+  "change": {
+    "translation": "Zmena",
+    "category": "Basic"
+  },
+  "improve": {
+    "translation": "lepšiť",
+    "category": "Basic"
+  },
+  "decline": {
+    "translation": "zameranie",
+    "category": "Basic"
+  },
+  "continue": {
+    "translation": "Pokračovať",
+    "category": "Basic"
+  },
+  "stop": {
+    "translation": "stlačiT",
+    "category": "Basic"
+  },
+  "begin": {
+    "translation": "začať",
+    "category": "Basic"
+  },
+  "end": {
+    "translation": "Koniec",
+    "category": "Basic"
+  },
+  "last": {
+    "translation": "posledný",
+    "category": "Basic"
+  },
+  "wake": {
+    "translation": "budívať",
+    "category": "Daily Routine"
+  },
+  "get up": {
+    "translation": "vstaňť",
+    "category": "Daily Routine"
+  },
+  "wash": {
+    "translation": "voda",
+    "category": "Daily Routine"
+  },
+  "shower": {
+    "translation": "dusíňa",
+    "category": "Daily Routine"
+  },
+  "bathe": {
+    "translation": "vychutnať",
+    "category": "Daily Routine"
+  },
+  "brush": {
+    "translation": "kreslička",
+    "category": "Daily Routine"
+  },
+  "comb": {
+    "translation": "čmpák",
+    "category": "Daily Routine"
+  },
+  "dress": {
+    "translation": "šaty",
+    "category": "Daily Routine"
+  },
+  "eat": {
+    "translation": "jeść",
+    "category": "Daily Routine"
+  },
+  "drink": {
+    "translation": "piňajť",
+    "category": "Daily Routine"
+  },
+  "snack": {
+    "translation": "pečivo",
+    "category": "Daily Routine"
+  },
+  "cook": {
+    "translation": "Pohádzať",
+    "category": "Daily Routine"
+  },
+  "bake": {
+    "translation": "pečať",
+    "category": "Daily Routine"
+  },
+  "reheat": {
+    "translation": "Ponechovať",
+    "category": "Daily Routine"
+  },
+  "clean": {
+    "translation": "Čistý",
+    "category": "Daily Routine"
+  },
+  "tidy": {
+    "translation": "Čistý",
+    "category": "Daily Routine"
+  },
+  "organize": {
+    "translation": "organizovať",
+    "category": "Daily Routine"
+  },
+  "vacuum": {
+    "translation": "váhuň",
+    "category": "Daily Routine"
+  },
+  "sweep": {
+    "translation": "vysobovať",
+    "category": "Daily Routine"
+  },
+  "mop": {
+    "translation": "vyschoveň",
+    "category": "Daily Routine"
+  },
+  "dust": {
+    "translation": "plynulej polohy prach",
+    "category": "Daily Routine"
+  },
+  "wash dishes": {
+    "translation": "Vychudba",
+    "category": "Daily Routine"
+  },
+  "rinse": {
+    "translation": "Rinšenie",
+    "category": "Daily Routine"
+  },
+  "wipe": {
+    "translation": "vycieradlo",
+    "category": "Daily Routine"
+  },
+  "scrub": {
+    "translation": "vysycháňisko",
+    "category": "Daily Routine"
+  },
+  "dry": {
+    "translation": "suchý",
+    "category": "Daily Routine"
+  },
+  "shop": {
+    "translation": "obchod",
+    "category": "Daily Routine"
+  },
+  "refill": {
+    "translation": "naplnenie",
+    "category": "Daily Routine"
+  },
+  "charge": {
+    "translation": "Nahradenie",
+    "category": "Daily Routine"
+  },
+  "relax": {
+    "translation": "rádsky",
+    "category": "Daily Routine"
+  },
+  "nap": {
+    "translation": "spoň",
+    "category": "Daily Routine"
+  },
+  "sleep": {
+    "translation": "späť",
+    "category": "Daily Routine"
+  },
+  "prepare": {
+    "translation": "Pripraviť",
+    "category": "Daily Routine"
+  },
+  "schedule": {
+    "translation": "Rozvrh",
+    "category": "Daily Routine"
+  },
+  "cancel": {
+    "translation": "Zrušiť",
+    "category": "Daily Routine"
+  },
+  "check": {
+    "translation": "kontrola",
+    "category": "Daily Routine"
+  },
+  "monitor": {
+    "translation": "monitorovať",
+    "category": "Daily Routine"
+  },
+  "plan": {
+    "translation": "plán",
+    "category": "Daily Routine"
+  },
+  "wait": {
+    "translation": "Čakaj",
+    "category": "Daily Routine"
+  },
+  "search": {
+    "translation": "hľadať",
+    "category": "Daily Routine"
+  },
+  "find": {
+    "translation": "Nájsť",
+    "category": "Daily Routine"
+  },
+  "lose": {
+    "translation": "stratit",
+    "category": "Daily Routine"
+  },
+  "replace": {
+    "translation": "Zastupiť",
+    "category": "Daily Routine"
+  },
+  "think": {
+    "translation": "mysliť",
+    "category": "Mental"
+  },
+  "know": {
+    "translation": "vedieť",
+    "category": "Mental"
+  },
+  "believe": {
+    "translation": "veríť",
+    "category": "Mental"
+  },
+  "consider": {
+    "translation": "Rozvažovať",
+    "category": "Mental"
+  },
+  "imagine": {
+    "translation": "predstavovať",
+    "category": "Mental"
+  },
+  "wonder": {
+    "translation": "Wunder",
+    "category": "Mental"
+  },
+  "remember": {
+    "translation": "pamäta",
+    "category": "Mental"
+  },
+  "forget": {
+    "translation": "ďahnu",
+    "category": "Mental"
+  },
+  "realize": {
+    "translation": "realizovať",
+    "category": "Mental"
+  },
+  "guess": {
+    "translation": "uhádnyť",
+    "category": "Mental"
+  },
+  "predict": {
+    "translation": "predpovedať",
+    "category": "Mental"
+  },
+  "expect": {
+    "translation": "čakáť",
+    "category": "Mental"
+  },
+  "recognize": {
+    "translation": "poznávať",
+    "category": "Mental"
+  },
+  "notice": {
+    "translation": "Poznámka",
+    "category": "Mental"
+  },
+  "focus": {
+    "translation": "fokus",
+    "category": "Mental"
+  },
+  "concentrate": {
+    "translation": "Koncentrácia",
+    "category": "Mental"
+  },
+  "decide": {
+    "translation": "rozhodnúť",
+    "category": "Mental"
+  },
+  "choose": {
+    "translation": "vybrať",
+    "category": "Mental"
+  },
+  "compare": {
+    "translation": "Porovnať",
+    "category": "Mental"
+  },
+  "analyze": {
+    "translation": "analizovať",
+    "category": "Mental"
+  },
+  "evaluate": {
+    "translation": "Hodíť",
+    "category": "Mental"
+  },
+  "estimate": {
+    "translation": "ocena",
+    "category": "Mental"
+  },
+  "solve": {
+    "translation": "Riešiť",
+    "category": "Mental"
+  },
+  "question": {
+    "translation": "otázka",
+    "category": "Mental"
+  },
+  "suspect": {
+    "translation": "podezrielaný",
+    "category": "Mental"
+  },
+  "doubt": {
+    "translation": "Ťúdubo",
+    "category": "Mental"
+  },
+  "learn": {
+    "translation": "účiť sa",
+    "category": "Mental"
+  },
+  "study": {
+    "translation": "študia",
+    "category": "Mental"
+  },
+  "memorize": {
+    "translation": "zapamätať",
+    "category": "Mental"
+  },
+  "calculate": {
+    "translation": "vypočítať",
+    "category": "Mental"
+  },
+  "reflect": {
+    "translation": "-reflektovať",
+    "category": "Mental"
+  },
+  "understand": {
+    "translation": "rozumieť",
+    "category": "Mental"
+  },
+  "like": {
+    "translation": "obľúbený",
+    "category": "Mental"
+  },
+  "love": {
+    "translation": "ľubovoď",
+    "category": "Mental"
+  },
+  "hate": {
+    "translation": "detest",
+    "category": "Mental"
+  },
+  "enjoy": {
+    "translation": "ľúčiť sa",
+    "category": "Mental"
+  },
+  "prefer": {
+    "translation": "preferovať",
+    "category": "Mental"
+  },
+  "want": {
+    "translation": "chtieť",
+    "category": "Mental"
+  },
+  "need": {
+    "translation": "potreba",
+    "category": "Mental"
+  },
+  "miss": {
+    "translation": "Ťaša",
+    "category": "Mental"
+  },
+  "care": {
+    "translation": "starovať",
+    "category": "Mental"
+  },
+  "worry": {
+    "translation": "Staratenie",
+    "category": "Mental"
+  },
+  "fear": {
+    "translation": "Strach",
+    "category": "Mental"
+  },
+  "panic": {
+    "translation": "Pánica",
+    "category": "Mental"
+  },
+  "stress": {
+    "translation": "stres",
+    "category": "Mental"
+  },
+  "calm": {
+    "translation": "hladký",
+    "category": "Mental"
+  },
+  "appreciate": {
+    "translation": "Ďakovať",
+    "category": "Mental"
+  },
+  "value": {
+    "translation": "hodnota",
+    "category": "Mental"
+  },
+  "respect": {
+    "translation": "Úctoľ",
+    "category": "Mental"
+  },
+  "dislike": {
+    "translation": "Neslušnosť",
+    "category": "Mental"
+  },
+  "regret": {
+    "translation": "Žal",
+    "category": "Mental"
+  },
+  "hope": {
+    "translation": "Naděja",
+    "category": "Mental"
+  },
+  "trust": {
+    "translation": "Dôvera",
+    "category": "Mental"
+  },
+  "surprise": {
+    "translation": "divočanie",
+    "category": "Mental"
+  },
+  "shock": {
+    "translation": "šok",
+    "category": "Mental"
+  },
+  "annoy": {
+    "translation": "nepokojuje",
+    "category": "Mental"
+  },
+  "bother": {
+    "translation": "tráva",
+    "category": "Mental"
+  },
+  "confuse": {
+    "translation": "zneuhanie",
+    "category": "Mental"
+  },
+  "embarrass": {
+    "translation": "starýť",
+    "category": "Mental"
+  },
+  "frustrate": {
+    "translation": "rozhoďovať",
+    "category": "Mental"
+  },
+  "satisfy": {
+    "translation": "zanosť",
+    "category": "Mental"
+  },
+  "comfort": {
+    "translation": "Pohodlí",
+    "category": "Mental"
+  },
+  "cheer": {
+    "translation": "-radost",
+    "category": "Mental"
+  },
+  "say": {
+    "translation": "povedať",
+    "category": "Communication"
+  },
+  "tell": {
+    "translation": "povedať",
+    "category": "Communication"
+  },
+  "talk": {
+    "translation": "rozhovor",
+    "category": "Communication"
+  },
+  "speak": {
+    "translation": "mlačiť",
+    "category": "Communication"
+  },
+  "discuss": {
+    "translation": "diskutovať",
+    "category": "Communication"
+  },
+  "chat": {
+    "translation": "chata",
+    "category": "Communication"
+  },
+  "explain": {
+    "translation": "vysvetliť",
+    "category": "Communication"
+  },
+  "describe": {
+    "translation": "opísat",
+    "category": "Communication"
+  },
+  "announce": {
+    "translation": "vypovedať",
+    "category": "Communication"
+  },
+  "report": {
+    "translation": "správa",
+    "category": "Communication"
+  },
+  "reply": {
+    "translation": "Odpoveď",
+    "category": "Communication"
+  },
+  "answer": {
+    "translation": "Odpoveď",
+    "category": "Communication"
+  },
+  "ask": {
+    "translation": "zeptaťseiteň",
+    "category": "Communication"
+  },
+  "interrupt": {
+    "translation": "Rušiť",
+    "category": "Communication"
+  },
+  "suggest": {
+    "translation": "navrhnúť",
+    "category": "Communication"
+  },
+  "recommend": {
+    "translation": "vporadneť",
+    "category": "Communication"
+  },
+  "complain": {
+    "translation": "plácať",
+    "category": "Communication"
+  },
+  "argue": {
+    "translation": "spierať",
+    "category": "Communication"
+  },
+  "debate": {
+    "translation": "diskusia",
+    "category": "Communication"
+  },
+  "whisper": {
+    "translation": "šeptať",
+    "category": "Communication"
+  },
+  "shout": {
+    "translation": "výkřik",
+    "category": "Communication"
+  },
+  "yell": {
+    "translation": "viťažovať",
+    "category": "Communication"
+  },
+  "mention": {
+    "translation": "menšenie",
+    "category": "Communication"
+  },
+  "remind": {
+    "translation": "Pripomienka",
+    "category": "Communication"
+  },
+  "warn": {
+    "translation": "varniť",
+    "category": "Communication"
+  },
+  "advise": {
+    "translation": "radovať",
+    "category": "Communication"
+  },
+  "encourage": {
+    "translation": "podporovať",
+    "category": "Communication"
+  },
+  "persuade": {
+    "translation": "uveďť",
+    "category": "Communication"
+  },
+  "invite": {
+    "translation": "Zvidednúť",
+    "category": "Communication"
+  },
+  "respond": {
+    "translation": "odpovedať",
+    "category": "Communication"
+  },
+  "translate": {
+    "translation": "prekladať",
+    "category": "Communication"
+  },
+  "inform": {
+    "translation": "informovať",
+    "category": "Communication"
+  },
+  "comment": {
+    "translation": "komentár",
+    "category": "Communication"
+  },
+  "confirm": {
+    "translation": "Potvrdiť",
+    "category": "Communication"
+  },
+  "deny": {
+    "translation": "zavieteľovať",
+    "category": "Communication"
+  },
+  "admit": {
+    "translation": "pripustiť",
+    "category": "Communication"
+  },
+  "meet": {
+    "translation": "setkať sa",
+    "category": "Social"
+  },
+  "greet": {
+    "translation": "Pozdraviť",
+    "category": "Social"
+  },
+  "welcome": {
+    "translation": "víteajúci",
+    "category": "Social"
+  },
+  "visit": {
+    "translation": "návšteva",
+    "category": "Social"
+  },
+  "host": {
+    "translation": "hostitel",
+    "category": "Social"
+  },
+  "join": {
+    "translation": "spojiť",
+    "category": "Social"
+  },
+  "help": {
+    "translation": "Pomoc",
+    "category": "Social"
+  },
+  "support": {
+    "translation": "podpora",
+    "category": "Social"
+  },
+  "assist": {
+    "translation": "pomôcť",
+    "category": "Social"
+  },
+  "share": {
+    "translation": "dzieliť",
+    "category": "Social"
+  },
+  "care for": {
+    "translation": "starovať sa",
+    "category": "Social"
+  },
+  "hug": {
+    "translation": "úplňok",
+    "category": "Social"
+  },
+  "kiss": {
+    "translation": "políta",
+    "category": "Social"
+  },
+  "hold hands": {
+    "translation": "Ruky sa držať",
+    "category": "Social"
+  },
+  "date": {
+    "translation": "dátum",
+    "category": "Social"
+  },
+  "marry": {
+    "translation": "výbavenie",
+    "category": "Social"
+  },
+  "befriend": {
+    "translation": "pripriateľovať",
+    "category": "Social"
+  },
+  "follow": {
+    "translation": "sledovať",
+    "category": "Social"
+  },
+  "lead": {
+    "translation": "vedúci",
+    "category": "Social"
+  },
+  "guide": {
+    "translation": "průvodce",
+    "category": "Social"
+  },
+  "introduce": {
+    "translation": "vvedieť",
+    "category": "Social"
+  },
+  "cooperate": {
+    "translation": "spolupracovať",
+    "category": "Social"
+  },
+  "protect": {
+    "translation": "chrániť",
+    "category": "Social"
+  },
+  "include": {
+    "translation": "vkladáť",
+    "category": "Social"
+  },
+  "exclude": {
+    "translation": "vylúčiť",
+    "category": "Social"
+  },
+  "work": {
+    "translation": "práca",
+    "category": "Work"
+  },
+  "write": {
+    "translation": "pisť",
+    "category": "Work"
+  },
+  "read": {
+    "translation": "čítať",
+    "category": "Work"
+  },
+  "edit": {
+    "translation": "Úprava",
+    "category": "Work"
+  },
+  "revise": {
+    "translation": "revisovať",
+    "category": "Work"
+  },
+  "review": {
+    "translation": "prehľad",
+    "category": "Work"
+  },
+  "inspect": {
+    "translation": "Inspektorovať",
+    "category": "Work"
+  },
+  "complete": {
+    "translation": "plútený",
+    "category": "Work"
+  },
+  "submit": {
+    "translation": "predložiť",
+    "category": "Work"
+  },
+  "create": {
+    "translation": "vytvoriť",
+    "category": "Work"
+  },
+  "design": {
+    "translation": "Návrh",
+    "category": "Work"
+  },
+  "build": {
+    "translation": "stavba",
+    "category": "Work"
+  },
+  "assemble": {
+    "translation": "sobrasť",
+    "category": "Work"
+  },
+  "debug": {
+    "translation": "debugging",
+    "category": "Work"
+  },
+  "research": {
+    "translation": "výskum",
+    "category": "Work"
+  },
+  "document": {
+    "translation": "dokument",
+    "category": "Work"
+  },
+  "train": {
+    "translation": "vlak",
+    "category": "Work"
+  },
+  "teach": {
+    "translation": "učiť",
+    "category": "Work"
+  },
+  "update": {
+    "translation": "aktualizácia",
+    "category": "Work"
+  },
+  "upload": {
+    "translation": "Nahradenie",
+    "category": "Work"
+  },
+  "download": {
+    "translation": "stiahnuť",
+    "category": "Work"
+  },
+  "print": {
+    "translation": "tisknite",
+    "category": "Work"
+  },
+  "scan": {
+    "translation": "skanovať",
+    "category": "Work"
+  },
+  "record": {
+    "translation": "záznam",
+    "category": "Work"
+  },
+  "track": {
+    "translation": "strela",
+    "category": "Work"
+  },
+  "manage": {
+    "translation": "spravovať",
+    "category": "Work"
+  },
+  "supervise": {
+    "translation": "nadzorovať",
+    "category": "Work"
+  },
+  "go": {
+    "translation": "idi",
+    "category": "Travel"
+  },
+  "come": {
+    "translation": "Prijďť",
+    "category": "Travel"
+  },
+  "move": {
+    "translation": "presunúť",
+    "category": "Travel"
+  },
+  "leave": {
+    "translation": "Odejít",
+    "category": "Travel"
+  },
+  "arrive": {
+    "translation": "dosiahnuť",
+    "category": "Travel"
+  },
+  "enter": {
+    "translation": "vstúpiť",
+    "category": "Travel"
+  },
+  "exit": {
+    "translation": "východisko",
+    "category": "Travel"
+  },
+  "travel": {
+    "translation": "cestovať",
+    "category": "Travel"
+  },
+  "fly": {
+    "translation": "holub",
+    "category": "Travel"
+  },
+  "drive": {
+    "translation": "jazda",
+    "category": "Travel"
+  },
+  "ride": {
+    "translation": "jazda",
+    "category": "Travel"
+  },
+  "board": {
+    "translation": "Plocha",
+    "category": "Travel"
+  },
+  "land": {
+    "translation": "zemňa",
+    "category": "Travel"
+  },
+  "park": {
+    "translation": "parkovať",
+    "category": "Travel"
+  },
+  "accelerate": {
+    "translation": "Akcelerovať",
+    "category": "Travel"
+  },
+  "reverse": {
+    "translation": "oproti",
+    "category": "Travel"
+  },
+  "cross": {
+    "translation": "kríž",
+    "category": "Travel"
+  },
+  "wander": {
+    "translation": "lesknúť",
+    "category": "Travel"
+  },
+  "explore": {
+    "translation": "explorovať",
+    "category": "Travel"
+  },
+  "return": {
+    "translation": "vrátenie",
+    "category": "Travel"
+  },
+  "rush": {
+    "translation": "běhoteľstvo",
+    "category": "Travel"
+  },
+  "hurry": {
+    "translation": "Škôrsta",
+    "category": "Travel"
+  },
+  "navigate": {
+    "translation": "navigovať",
+    "category": "Travel"
+  },
+  "sanitize": {
+    "translation": "Sterilizovať",
+    "category": "Household"
+  },
+  "iron": {
+    "translation": "želízko",
+    "category": "Household"
+  },
+  "store": {
+    "translation": "obchod",
+    "category": "Household"
+  },
+  "repair": {
+    "translation": "reparovať",
+    "category": "Household"
+  },
+  "fix": {
+    "translation": "Opravovať",
+    "category": "Household"
+  },
+  "disassemble": {
+    "translation": "rozmontovať",
+    "category": "Household"
+  },
+  "install": {
+    "translation": "nainstallovať",
+    "category": "Household"
+  },
+  "uninstall": {
+    "translation": "Odinštalovať",
+    "category": "Household"
+  },
+  "remove": {
+    "translation": "odstrániť",
+    "category": "Household"
+  },
+  "connect": {
+    "translation": "pripojíť",
+    "category": "Household"
+  },
+  "disconnect": {
+    "translation": "rozpojiť",
+    "category": "Household"
+  },
+  "lock": {
+    "translation": "zámek",
+    "category": "Household"
+  },
+  "unlock": {
+    "translation": "odbločovať",
+    "category": "Household"
+  },
+  "decorate": {
+    "translation": "dekovaliť",
+    "category": "Household"
+  },
+  "polish": {
+    "translation": "polský",
+    "category": "Household"
+  },
+  "hammer": {
+    "translation": "máčok",
+    "category": "Household"
+  },
+  "saw": {
+    "translation": "nůžoky",
+    "category": "Household"
+  },
+  "glue": {
+    "translation": "vlákno",
+    "category": "Household"
+  },
+  "buy": {
+    "translation": "kúpiť",
+    "category": "Money"
+  },
+  "sell": {
+    "translation": "prodávať",
+    "category": "Money"
+  },
+  "pay": {
+    "translation": "platit",
+    "category": "Money"
+  },
+  "owe": {
+    "translation": "dátť",
+    "category": "Money"
+  },
+  "borrow": {
+    "translation": "vznieść",
+    "category": "Money"
+  },
+  "lend": {
+    "translation": "dať",
+    "category": "Money"
+  },
+  "rent": {
+    "translation": "nájem",
+    "category": "Money"
+  },
+  "save": {
+    "translation": "uložiť",
+    "category": "Money"
+  },
+  "spend": {
+    "translation": "vytrázit",
+    "category": "Money"
+  },
+  "invest": {
+    "translation": "inverziovať",
+    "category": "Money"
+  },
+  "earn": {
+    "translation": "získavať",
+    "category": "Money"
+  },
+  "refund": {
+    "translation": "vrátenie",
+    "category": "Money"
+  },
+  "exchange": {
+    "translation": "tradenie",
+    "category": "Money"
+  },
+  "order": {
+    "translation": "riadok",
+    "category": "Money"
+  },
+  "select": {
+    "translation": "vybrať",
+    "category": "Money"
+  },
+  "withdraw": {
+    "translation": "Zdolať",
+    "category": "Money"
+  },
+  "deposit": {
+    "translation": "depozit",
+    "category": "Money"
+  },
+  "budget": {
+    "translation": "budžet",
+    "category": "Money"
+  },
+  "fry": {
+    "translation": "pofritovať",
+    "category": "Food"
+  },
+  "grill": {
+    "translation": "pláta",
+    "category": "Food"
+  },
+  "boil": {
+    "translation": "kvača",
+    "category": "Food"
+  },
+  "steam": {
+    "translation": "parografia",
+    "category": "Food"
+  },
+  "slice": {
+    "translation": "Ňarča",
+    "category": "Food"
+  },
+  "cut": {
+    "translation": "ťaž",
+    "category": "Food"
+  },
+  "chop": {
+    "translation": "chopať",
+    "category": "Food"
+  },
+  "mix": {
+    "translation": "priečasťuvajť",
+    "category": "Food"
+  },
+  "stir": {
+    "translation": "viborčiak",
+    "category": "Food"
+  },
+  "pour": {
+    "translation": "vylačiť",
+    "category": "Food"
+  },
+  "serve": {
+    "translation": "slúžiť",
+    "category": "Food"
+  },
+  "taste": {
+    "translation": "vážiť",
+    "category": "Food"
+  },
+  "season": {
+    "translation": "sezóna",
+    "category": "Food"
+  },
+  "marinate": {
+    "translation": "Marínačiť",
+    "category": "Food"
+  },
+  "chew": {
+    "translation": "kúpať",
+    "category": "Food"
+  },
+  "swallow": {
+    "translation": "muchňa",
+    "category": "Food"
+  },
+  "deliver": {
+    "translation": "doručiť",
+    "category": "Food"
+  },
+  "digest": {
+    "translation": "zpracovať",
+    "category": "Food"
+  },
+  "rain": {
+    "translation": "rádina",
+    "category": "Nature"
+  },
+  "snow": {
+    "translation": "SNÍH",
+    "category": "Nature"
+  },
+  "hail": {
+    "translation": "Ľúdiki",
+    "category": "Nature"
+  },
+  "sleet": {
+    "translation": "Hádďa",
+    "category": "Nature"
+  },
+  "freeze": {
+    "translation": "zmrznúť",
+    "category": "Nature"
+  },
+  "melt": {
+    "translation": null,
+    "category": "Nature",
+    "failed": true
+  },
+  "shine": {
+    "translation": "svetlý",
+    "category": "Nature"
+  },
+  "blow": {
+    "translation": "dýchať",
+    "category": "Nature"
+  },
+  "grow": {
+    "translation": "rosteť",
+    "category": "Nature"
+  },
+  "bloom": {
+    "translation": "kvet",
+    "category": "Nature"
+  },
+  "wither": {
+    "translation": "zaparhávať",
+    "category": "Nature"
+  },
+  "sprout": {
+    "translation": "vrcholkáč",
+    "category": "Nature"
+  },
+  "fall": {
+    "translation": "padenie",
+    "category": "Nature"
+  },
+  "quake": {
+    "translation": "tremor",
+    "category": "Nature"
+  },
+  "erode": {
+    "translation": "eroďovať",
+    "category": "Nature"
+  },
+  "burn": {
+    "translation": "páhnutť",
+    "category": "Nature"
+  },
+  "flood": {
+    "translation": "vodopád",
+    "category": "Nature"
+  },
+  "float": {
+    "translation": "flotovať",
+    "category": "Nature"
+  },
+  "sink": {
+    "translation": "záchodek",
+    "category": "Nature"
+  },
+  "rise": {
+    "translation": "vstanúť",
+    "category": "Nature"
+  },
+  "set": {
+    "translation": "Nastaviť",
+    "category": "Nature"
+  },
+  "breathe": {
+    "translation": "dýchať",
+    "category": "Health"
+  },
+  "inhale": {
+    "translation": "Dýchnúť",
+    "category": "Health"
+  },
+  "exhale": {
+    "translation": "dýchnúť",
+    "category": "Health"
+  },
+  "cough": {
+    "translation": null,
+    "category": "Health",
+    "failed": true
+  },
+  "sneeze": {
+    "translation": "knúsniť",
+    "category": "Health"
+  },
+  "sweat": {
+    "translation": "Poteva",
+    "category": "Health"
+  },
+  "bleed": {
+    "translation": "pliesť",
+    "category": "Health"
+  },
+  "heal": {
+    "translation": "ĺíčiť",
+    "category": "Health"
+  },
+  "recover": {
+    "translation": "vynášiť",
+    "category": "Health"
+  },
+  "ache": {
+    "translation": "ache in Slovak is boleæie",
+    "category": "Health"
+  },
+  "hurt": {
+    "translation": "bolí",
+    "category": "Health"
+  },
+  "strain": {
+    "translation": "náťahovať",
+    "category": "Health"
+  },
+  "exercise": {
+    "translation": "účinkovať",
+    "category": "Health"
+  },
+  "faint": {
+    "translation": "mňouka",
+    "category": "Health"
+  },
+  "vomit": {
+    "translation": "vylítať",
+    "category": "Health"
+  },
+  "blink": {
+    "translation": "bliknutie",
+    "category": "Health"
+  },
+  "squint": {
+    "translation": "Squint in Slovak is mrzák",
+    "category": "Health"
+  },
+  "tremble": {
+    "translation": "tremúvať",
+    "category": "Health"
+  },
+  "click": {
+    "translation": "klik",
+    "category": "Technology"
+  },
+  "tap": {
+    "translation": "zmrška",
+    "category": "Technology"
+  },
+  "scroll": {
+    "translation": "poskrobiť",
+    "category": "Technology"
+  },
+  "swipe": {
+    "translation": "Dotknutie",
+    "category": "Technology"
+  },
+  "browse": {
+    "translation": "prošielť",
+    "category": "Technology"
+  },
+  "upgrade": {
+    "translation": "aktualizovať",
+    "category": "Technology"
+  },
+  "copy": {
+    "translation": "Kopie",
+    "category": "Technology"
+  },
+  "paste": {
+    "translation": "vložiť",
+    "category": "Technology"
+  },
+  "delete": {
+    "translation": "Vymazať",
+    "category": "Technology"
+  },
+  "reset": {
+    "translation": "Resetovať",
+    "category": "Technology"
+  },
+  "restart": {
+    "translation": "reštartovať",
+    "category": "Technology"
+  },
+  "log in": {
+    "translation": "Prihlásiť sa",
+    "category": "Technology"
+  },
+  "log out": {
+    "translation": "Odhlásenie",
+    "category": "Technology"
+  },
+  "sync": {
+    "translation": "synchronizovať",
+    "category": "Technology"
+  },
+  "stream": {
+    "translation": "stúdium",
+    "category": "Technology"
+  },
+  "encrypt": {
+    "translation": "šifrovať",
+    "category": "Technology"
+  },
+  "backup": {
+    "translation": "záloha",
+    "category": "Technology"
+  }
+}

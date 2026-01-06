@@ -1,0 +1,1562 @@
+{
+  "walk": {
+    "translation": "განივრდნება",
+    "category": "Basic"
+  },
+  "run": {
+    "translation": "ში",
+    "category": "Basic"
+  },
+  "jump": {
+    "translation": "გამოსვლა",
+    "category": "Basic"
+  },
+  "hop": {
+    "translation": "ხუმი",
+    "category": "Basic"
+  },
+  "skip": {
+    "translation": "ვაშლისმენი",
+    "category": "Basic"
+  },
+  "crawl": {
+    "translation": "გებრისვლა",
+    "category": "Basic"
+  },
+  "climb": {
+    "translation": "ნაკლიბება",
+    "category": "Basic"
+  },
+  "slide": {
+    "translation": "გადავლისურება",
+    "category": "Basic"
+  },
+  "swing": {
+    "translation": "კაცვალი",
+    "category": "Basic"
+  },
+  "stretch": {
+    "translation": "გასვლა",
+    "category": "Basic"
+  },
+  "bend": {
+    "translation": "გამკეთვა",
+    "category": "Basic"
+  },
+  "lift": {
+    "translation": "კარგი",
+    "category": "Basic"
+  },
+  "carry": {
+    "translation": "გადავტანება",
+    "category": "Basic"
+  },
+  "drag": {
+    "translation": "ქარ",
+    "category": "Basic"
+  },
+  "push": {
+    "translation": "ჩამოტვირთვა",
+    "category": "Basic"
+  },
+  "pull": {
+    "translation": "დატაცოთ",
+    "category": "Basic"
+  },
+  "hold": {
+    "translation": "ტანწევრი",
+    "category": "Basic"
+  },
+  "grab": {
+    "translation": "კაპი",
+    "category": "Basic"
+  },
+  "drop": {
+    "translation": "დაჭერა",
+    "category": "Basic"
+  },
+  "throw": {
+    "translation": "გადაცემა",
+    "category": "Basic"
+  },
+  "catch": {
+    "translation": "დაკეშირვა",
+    "category": "Basic"
+  },
+  "kick": {
+    "translation": "ჩამოტანა",
+    "category": "Basic"
+  },
+  "hit": {
+    "translation": "დაკარგული",
+    "category": "Basic"
+  },
+  "press": {
+    "translation": "დაჭერი",
+    "category": "Basic"
+  },
+  "twist": {
+    "translation": "გამრთველი",
+    "category": "Basic"
+  },
+  "turn": {
+    "translation": "გადარკვევილება",
+    "category": "Basic"
+  },
+  "rotate": {
+    "translation": "გამრთველობ",
+    "category": "Basic"
+  },
+  "flip": {
+    "translation": "ქართ",
+    "category": "Basic"
+  },
+  "shake": {
+    "translation": "ვებულო",
+    "category": "Basic"
+  },
+  "wave": {
+    "translation": "რივენ",
+    "category": "Basic"
+  },
+  "reach": {
+    "translation": "ქ",
+    "category": "Basic"
+  },
+  "lean": {
+    "translation": "ნახევრავა",
+    "category": "Basic"
+  },
+  "rest": {
+    "translation": "რისტმა",
+    "category": "Basic"
+  },
+  "balance": {
+    "translation": "თანაბრ",
+    "category": "Basic"
+  },
+  "spin": {
+    "translation": "შივა",
+    "category": "Basic"
+  },
+  "arrange": {
+    "translation": "მოწოდებულია",
+    "category": "Basic"
+  },
+  "adjust": {
+    "translation": "რეცენტული",
+    "category": "Basic"
+  },
+  "shift": {
+    "translation": "გადასვლა",
+    "category": "Basic"
+  },
+  "tie": {
+    "translation": "კეტი",
+    "category": "Basic"
+  },
+  "untie": {
+    "translation": "გამოსვლა",
+    "category": "Basic"
+  },
+  "wrap": {
+    "translation": "დახურვა",
+    "category": "Basic"
+  },
+  "unwrap": {
+    "translation": "გაუმდის",
+    "category": "Basic"
+  },
+  "fold": {
+    "translation": "დახურვა",
+    "category": "Basic"
+  },
+  "unfold": {
+    "translation": "გავრცელოთ",
+    "category": "Basic"
+  },
+  "pack": {
+    "translation": "ტანქური",
+    "category": "Basic"
+  },
+  "unpack": {
+    "translation": "გადმისულება",
+    "category": "Basic"
+  },
+  "be": {
+    "translation": "არის",
+    "category": "Basic"
+  },
+  "become": {
+    "translation": "დასრულდეს",
+    "category": "Basic"
+  },
+  "seem": {
+    "translation": "გამოვიტ",
+    "category": "Basic"
+  },
+  "appear": {
+    "translation": "გამოჩენა",
+    "category": "Basic"
+  },
+  "remain": {
+    "translation": "რ",
+    "category": "Basic"
+  },
+  "stay": {
+    "translation": "დამრჩევა",
+    "category": "Basic"
+  },
+  "exist": {
+    "translation": "ცხრილადება",
+    "category": "Basic"
+  },
+  "happen": {
+    "translation": "დღება",
+    "category": "Basic"
+  },
+  "occur": {
+    "translation": "გამოხდეს",
+    "category": "Basic"
+  },
+  "change": {
+    "translation": "ცვლისმა",
+    "category": "Basic"
+  },
+  "improve": {
+    "translation": "გამრავლება",
+    "category": "Basic"
+  },
+  "decline": {
+    "translation": "დეკლინება",
+    "category": "Basic"
+  },
+  "continue": {
+    "translation": "გაჩერება",
+    "category": "Basic"
+  },
+  "stop": {
+    "translation": "დასჭირდით",
+    "category": "Basic"
+  },
+  "begin": {
+    "translation": "შეწყვიტად",
+    "category": "Basic"
+  },
+  "end": {
+    "translation": "დამთავრება",
+    "category": "Basic"
+  },
+  "last": {
+    "translation": "ბოლო",
+    "category": "Basic"
+  },
+  "wake": {
+    "translation": "განაშვება",
+    "category": "Daily Routine"
+  },
+  "get up": {
+    "translation": "დასვლელი",
+    "category": "Daily Routine"
+  },
+  "wash": {
+    "translation": "ვიბრულება",
+    "category": "Daily Routine"
+  },
+  "shower": {
+    "translation": "შ",
+    "category": "Daily Routine"
+  },
+  "bathe": {
+    "translation": "ბათიშვილება",
+    "category": "Daily Routine"
+  },
+  "brush": {
+    "translation": "მწკრივი",
+    "category": "Daily Routine"
+  },
+  "comb": {
+    "translation": "კერძი",
+    "category": "Daily Routine"
+  },
+  "dress": {
+    "translation": "ქალაქუტი",
+    "category": "Daily Routine"
+  },
+  "eat": {
+    "translation": "იგრავით",
+    "category": "Daily Routine"
+  },
+  "drink": {
+    "translation": "გამჭვირება",
+    "category": "Daily Routine"
+  },
+  "snack": {
+    "translation": "გამჭვირება",
+    "category": "Daily Routine"
+  },
+  "cook": {
+    "translation": "ქურავი",
+    "category": "Daily Routine"
+  },
+  "bake": {
+    "translation": "გამოტარდეს",
+    "category": "Daily Routine"
+  },
+  "reheat": {
+    "translation": "გახსნადებ",
+    "category": "Daily Routine"
+  },
+  "clean": {
+    "translation": "გარკვეული",
+    "category": "Daily Routine"
+  },
+  "tidy": {
+    "translation": "მართკვილი",
+    "category": "Daily Routine"
+  },
+  "organize": {
+    "translation": "ორგანიზებული",
+    "category": "Daily Routine"
+  },
+  "vacuum": {
+    "translation": "გამოსაშვები",
+    "category": "Daily Routine"
+  },
+  "sweep": {
+    "translation": "ხატვირთვა",
+    "category": "Daily Routine"
+  },
+  "mop": {
+    "translation": "მუნიკა",
+    "category": "Daily Routine"
+  },
+  "dust": {
+    "translation": "დუსტი",
+    "category": "Daily Routine"
+  },
+  "wash dishes": {
+    "translation": "ვიბრახსება",
+    "category": "Daily Routine"
+  },
+  "rinse": {
+    "translation": "გახსნა",
+    "category": "Daily Routine"
+  },
+  "wipe": {
+    "translation": "ნახევრავა",
+    "category": "Daily Routine"
+  },
+  "scrub": {
+    "translation": "ხარისხი",
+    "category": "Daily Routine"
+  },
+  "dry": {
+    "translation": "კიშენი",
+    "category": "Daily Routine"
+  },
+  "shop": {
+    "translation": "ღიამდებარე",
+    "category": "Daily Routine"
+  },
+  "refill": {
+    "translation": "რეფილ",
+    "category": "Daily Routine"
+  },
+  "charge": {
+    "translation": "გი",
+    "category": "Daily Routine"
+  },
+  "relax": {
+    "translation": "უფროდეს",
+    "category": "Daily Routine"
+  },
+  "nap": {
+    "translation": "ნაპისტვენი",
+    "category": "Daily Routine"
+  },
+  "sleep": {
+    "translation": "სნური",
+    "category": "Daily Routine"
+  },
+  "prepare": {
+    "translation": "ვარისტებდეთ",
+    "category": "Daily Routine"
+  },
+  "schedule": {
+    "translation": "სკედული",
+    "category": "Daily Routine"
+  },
+  "cancel": {
+    "translation": "ანუქმნება",
+    "category": "Daily Routine"
+  },
+  "check": {
+    "translation": "ჩექი",
+    "category": "Daily Routine"
+  },
+  "monitor": {
+    "translation": "მონიტორ",
+    "category": "Daily Routine"
+  },
+  "plan": {
+    "translation": "ორგანიზაცია",
+    "category": "Daily Routine"
+  },
+  "wait": {
+    "translation": "დეგა",
+    "category": "Daily Routine"
+  },
+  "search": {
+    "translation": "ძებნა",
+    "category": "Daily Routine"
+  },
+  "find": {
+    "translation": "ვიპორცია",
+    "category": "Daily Routine"
+  },
+  "lose": {
+    "translation": "დაარცმა",
+    "category": "Daily Routine"
+  },
+  "replace": {
+    "translation": "ჩავწერის",
+    "category": "Daily Routine"
+  },
+  "think": {
+    "translation": "დ",
+    "category": "Mental"
+  },
+  "know": {
+    "translation": "ცნობილი",
+    "category": "Mental"
+  },
+  "believe": {
+    "translation": "ვფიქრობ",
+    "category": "Mental"
+  },
+  "consider": {
+    "translation": "ქარ",
+    "category": "Mental"
+  },
+  "imagine": {
+    "translation": "ვინახლოთ",
+    "category": "Mental"
+  },
+  "wonder": {
+    "translation": "უარისმიერობა",
+    "category": "Mental"
+  },
+  "remember": {
+    "translation": "მიხედვა",
+    "category": "Mental"
+  },
+  "forget": {
+    "translation": "დაუშვება",
+    "category": "Mental"
+  },
+  "realize": {
+    "translation": "დასრულოთ",
+    "category": "Mental"
+  },
+  "guess": {
+    "translation": "გარდაქმნა",
+    "category": "Mental"
+  },
+  "predict": {
+    "translation": "პრედიქტ",
+    "category": "Mental"
+  },
+  "expect": {
+    "translation": "ხელსაწყო",
+    "category": "Mental"
+  },
+  "recognize": {
+    "translation": "აიდენტიფიცირებ",
+    "category": "Mental"
+  },
+  "notice": {
+    "translation": "ტიცე",
+    "category": "Mental"
+  },
+  "focus": {
+    "translation": "ფუზის",
+    "category": "Mental"
+  },
+  "concentrate": {
+    "translation": "კონცენტრატი",
+    "category": "Mental"
+  },
+  "decide": {
+    "translation": "დარწმუნდეთ",
+    "category": "Mental"
+  },
+  "choose": {
+    "translation": "არჩევან",
+    "category": "Mental"
+  },
+  "compare": {
+    "translation": "დასხვავდება",
+    "category": "Mental"
+  },
+  "analyze": {
+    "translation": "ანალიზებული",
+    "category": "Mental"
+  },
+  "evaluate": {
+    "translation": "ა",
+    "category": "Mental"
+  },
+  "estimate": {
+    "translation": "ოდეტამი",
+    "category": "Mental"
+  },
+  "solve": {
+    "translation": "გადმოგება",
+    "category": "Mental"
+  },
+  "question": {
+    "translation": "კითხვა",
+    "category": "Mental"
+  },
+  "suspect": {
+    "translation": "ალბათი",
+    "category": "Mental"
+  },
+  "doubt": {
+    "translation": "დუბტი",
+    "category": "Mental"
+  },
+  "learn": {
+    "translation": "წერილობა",
+    "category": "Mental"
+  },
+  "study": {
+    "translation": "სწავლა",
+    "category": "Mental"
+  },
+  "memorize": {
+    "translation": "მემორიალობ",
+    "category": "Mental"
+  },
+  "calculate": {
+    "translation": "კალიკულება",
+    "category": "Mental"
+  },
+  "reflect": {
+    "translation": "განვიხილვა",
+    "category": "Mental"
+  },
+  "understand": {
+    "translation": "განვიხილოთ",
+    "category": "Mental"
+  },
+  "like": {
+    "translation": "ნებითალი",
+    "category": "Mental"
+  },
+  "love": {
+    "translation": "ადევიანი",
+    "category": "Mental"
+  },
+  "hate": {
+    "translation": "დაბრუნება",
+    "category": "Mental"
+  },
+  "enjoy": {
+    "translation": "გამოცდილება",
+    "category": "Mental"
+  },
+  "prefer": {
+    "translation": "პარედი",
+    "category": "Mental"
+  },
+  "want": {
+    "translation": "გსურება",
+    "category": "Mental"
+  },
+  "need": {
+    "translation": "უნდა",
+    "category": "Mental"
+  },
+  "miss": {
+    "translation": "გარემო",
+    "category": "Mental"
+  },
+  "care": {
+    "translation": "დაცვა",
+    "category": "Mental"
+  },
+  "worry": {
+    "translation": "ვარია",
+    "category": "Mental"
+  },
+  "fear": {
+    "translation": "ბენამინე",
+    "category": "Mental"
+  },
+  "panic": {
+    "translation": "დეგარმაშინება",
+    "category": "Mental"
+  },
+  "stress": {
+    "translation": "დაკვირვება",
+    "category": "Mental"
+  },
+  "calm": {
+    "translation": "მშვიდომე",
+    "category": "Mental"
+  },
+  "appreciate": {
+    "translation": "მისაღება",
+    "category": "Mental"
+  },
+  "value": {
+    "translation": "რიცხვი",
+    "category": "Mental"
+  },
+  "respect": {
+    "translation": "მიმდებარეობა",
+    "category": "Mental"
+  },
+  "dislike": {
+    "translation": "დარწმუნება",
+    "category": "Mental"
+  },
+  "regret": {
+    "translation": "ვარიამება",
+    "category": "Mental"
+  },
+  "hope": {
+    "translation": "დალგება",
+    "category": "Mental"
+  },
+  "trust": {
+    "translation": "აშვება",
+    "category": "Mental"
+  },
+  "surprise": {
+    "translation": "გარდაქმნა",
+    "category": "Mental"
+  },
+  "shock": {
+    "translation": "შოქა",
+    "category": "Mental"
+  },
+  "annoy": {
+    "translation": "დაბრუნება",
+    "category": "Mental"
+  },
+  "bother": {
+    "translation": "დავიწყო",
+    "category": "Mental"
+  },
+  "confuse": {
+    "translation": "შეკრაძება",
+    "category": "Mental"
+  },
+  "embarrass": {
+    "translation": "არქვავითულება",
+    "category": "Mental"
+  },
+  "frustrate": {
+    "translation": "დავუშვირება",
+    "category": "Mental"
+  },
+  "satisfy": {
+    "translation": "დასაქმება",
+    "category": "Mental"
+  },
+  "comfort": {
+    "translation": "თანამშრომლობა",
+    "category": "Mental"
+  },
+  "cheer": {
+    "translation": "ქარი",
+    "category": "Mental"
+  },
+  "say": {
+    "translation": "ვარდე",
+    "category": "Communication"
+  },
+  "tell": {
+    "translation": "ვიხსენო",
+    "category": "Communication"
+  },
+  "talk": {
+    "translation": "ვადება",
+    "category": "Communication"
+  },
+  "speak": {
+    "translation": "ვადებ",
+    "category": "Communication"
+  },
+  "discuss": {
+    "translation": "ვადებული",
+    "category": "Communication"
+  },
+  "chat": {
+    "translation": "ჩატ",
+    "category": "Communication"
+  },
+  "explain": {
+    "translation": "განმიტლოთ",
+    "category": "Communication"
+  },
+  "describe": {
+    "translation": "აღწერა",
+    "category": "Communication"
+  },
+  "announce": {
+    "translation": "გამოტანა",
+    "category": "Communication"
+  },
+  "report": {
+    "translation": "გამოკვლევა",
+    "category": "Communication"
+  },
+  "reply": {
+    "translation": "პასუხი",
+    "category": "Communication"
+  },
+  "answer": {
+    "translation": "პასუხი",
+    "category": "Communication"
+  },
+  "ask": {
+    "translation": "შეკითხვა",
+    "category": "Communication"
+  },
+  "interrupt": {
+    "translation": "გამოიტანება",
+    "category": "Communication"
+  },
+  "suggest": {
+    "translation": "დაგვესხმება",
+    "category": "Communication"
+  },
+  "recommend": {
+    "translation": "რეკომენდაცია",
+    "category": "Communication"
+  },
+  "complain": {
+    "translation": "ვეუბნა",
+    "category": "Communication"
+  },
+  "argue": {
+    "translation": "განსხვავდება",
+    "category": "Communication"
+  },
+  "debate": {
+    "translation": "განხილვა",
+    "category": "Communication"
+  },
+  "whisper": {
+    "translation": "მუშაობა",
+    "category": "Communication"
+  },
+  "shout": {
+    "translation": "გულისხმოვანი",
+    "category": "Communication"
+  },
+  "yell": {
+    "translation": "გულისხმოვანი",
+    "category": "Communication"
+  },
+  "mention": {
+    "translation": "ვა",
+    "category": "Communication"
+  },
+  "remind": {
+    "translation": "მიხედვა",
+    "category": "Communication"
+  },
+  "warn": {
+    "translation": "გაურთიო",
+    "category": "Communication"
+  },
+  "advise": {
+    "translation": "რეკმადება",
+    "category": "Communication"
+  },
+  "encourage": {
+    "translation": "მოხმარება",
+    "category": "Communication"
+  },
+  "persuade": {
+    "translation": "უწყობა",
+    "category": "Communication"
+  },
+  "invite": {
+    "translation": "გამიერისვა",
+    "category": "Communication"
+  },
+  "respond": {
+    "translation": "პასუხით",
+    "category": "Communication"
+  },
+  "translate": {
+    "translation": "ტრანსლატება",
+    "category": "Communication"
+  },
+  "inform": {
+    "translation": "ინფორმაცია",
+    "category": "Communication"
+  },
+  "comment": {
+    "translation": "კომენტარი",
+    "category": "Communication"
+  },
+  "confirm": {
+    "translation": "დარეგულობა",
+    "category": "Communication"
+  },
+  "deny": {
+    "translation": "დენიანობ",
+    "category": "Communication"
+  },
+  "admit": {
+    "translation": "დარუმცხვრება",
+    "category": "Communication"
+  },
+  "meet": {
+    "translation": "ეკეთება",
+    "category": "Social"
+  },
+  "greet": {
+    "translation": "გამარჯოთ",
+    "category": "Social"
+  },
+  "welcome": {
+    "translation": "გამარჯობა",
+    "category": "Social"
+  },
+  "visit": {
+    "translation": "დასერვიკა",
+    "category": "Social"
+  },
+  "host": {
+    "translation": "გამართულები",
+    "category": "Social"
+  },
+  "join": {
+    "translation": "დაერთებული",
+    "category": "Social"
+  },
+  "help": {
+    "translation": "დახმარება",
+    "category": "Social"
+  },
+  "support": {
+    "translation": "დამისცებულება",
+    "category": "Social"
+  },
+  "assist": {
+    "translation": "დახმარება",
+    "category": "Social"
+  },
+  "share": {
+    "translation": "გაყიდვა",
+    "category": "Social"
+  },
+  "care for": {
+    "translation": "ბარაკვი",
+    "category": "Social"
+  },
+  "hug": {
+    "translation": "ება",
+    "category": "Social"
+  },
+  "kiss": {
+    "translation": "კეშავი",
+    "category": "Social"
+  },
+  "hold hands": {
+    "translation": "გამოწერები",
+    "category": "Social"
+  },
+  "date": {
+    "translation": "დარები",
+    "category": "Social"
+  },
+  "marry": {
+    "translation": "მორიცხვალება",
+    "category": "Social"
+  },
+  "befriend": {
+    "translation": "დამუშავება",
+    "category": "Social"
+  },
+  "follow": {
+    "translation": "შემდეგი",
+    "category": "Social"
+  },
+  "lead": {
+    "translation": "ლიდიება",
+    "category": "Social"
+  },
+  "guide": {
+    "translation": "გუდისტი",
+    "category": "Social"
+  },
+  "introduce": {
+    "translation": "აიტროდება",
+    "category": "Social"
+  },
+  "cooperate": {
+    "translation": "კომპანირებ",
+    "category": "Social"
+  },
+  "protect": {
+    "translation": "ცუდიანამება",
+    "category": "Social"
+  },
+  "include": {
+    "translation": "ინკლუდება",
+    "category": "Social"
+  },
+  "exclude": {
+    "translation": "გამოაკვეთა",
+    "category": "Social"
+  },
+  "work": {
+    "translation": "მუშავე",
+    "category": "Work"
+  },
+  "write": {
+    "translation": "წესი",
+    "category": "Work"
+  },
+  "read": {
+    "translation": "კითხვა",
+    "category": "Work"
+  },
+  "edit": {
+    "translation": "რედაქტირება",
+    "category": "Work"
+  },
+  "revise": {
+    "translation": "რევიზირება",
+    "category": "Work"
+  },
+  "review": {
+    "translation": "გამოთვლისკენ",
+    "category": "Work"
+  },
+  "inspect": {
+    "translation": "დეტექტირება",
+    "category": "Work"
+  },
+  "complete": {
+    "translation": "დებულე",
+    "category": "Work"
+  },
+  "submit": {
+    "translation": "დაცული",
+    "category": "Work"
+  },
+  "create": {
+    "translation": "შექმენით",
+    "category": "Work"
+  },
+  "design": {
+    "translation": "დეზინება",
+    "category": "Work"
+  },
+  "build": {
+    "translation": "შექმენით",
+    "category": "Work"
+  },
+  "assemble": {
+    "translation": "ერთდასახმარო",
+    "category": "Work"
+  },
+  "debug": {
+    "translation": "დებუგირება",
+    "category": "Work"
+  },
+  "research": {
+    "translation": "ნათესურამება",
+    "category": "Work"
+  },
+  "document": {
+    "translation": "დოკუმენტი",
+    "category": "Work"
+  },
+  "train": {
+    "translation": "მშენელობა",
+    "category": "Work"
+  },
+  "teach": {
+    "translation": "წარმოგება",
+    "category": "Work"
+  },
+  "update": {
+    "translation": "განვითარება",
+    "category": "Work"
+  },
+  "upload": {
+    "translation": "ატვირთვა",
+    "category": "Work"
+  },
+  "download": {
+    "translation": "ჩამოტვირთვა",
+    "category": "Work"
+  },
+  "print": {
+    "translation": "შე",
+    "category": "Work"
+  },
+  "scan": {
+    "translation": "მიკაცება",
+    "category": "Work"
+  },
+  "record": {
+    "translation": "რეგისტრი",
+    "category": "Work"
+  },
+  "track": {
+    "translation": "გზა",
+    "category": "Work"
+  },
+  "manage": {
+    "translation": "ადება",
+    "category": "Work"
+  },
+  "supervise": {
+    "translation": "შესამუშავება",
+    "category": "Work"
+  },
+  "go": {
+    "translation": "გადასვლა",
+    "category": "Travel"
+  },
+  "come": {
+    "translation": "დასვლელი",
+    "category": "Travel"
+  },
+  "move": {
+    "translation": "გადითვა",
+    "category": "Travel"
+  },
+  "leave": {
+    "translation": "გადასვლა",
+    "category": "Travel"
+  },
+  "arrive": {
+    "translation": "დასვლელი",
+    "category": "Travel"
+  },
+  "enter": {
+    "translation": "გაიშვება",
+    "category": "Travel"
+  },
+  "exit": {
+    "translation": "გამოშვება",
+    "category": "Travel"
+  },
+  "travel": {
+    "translation": "მარშრუტი",
+    "category": "Travel"
+  },
+  "fly": {
+    "translation": "ნაგარი",
+    "category": "Travel"
+  },
+  "drive": {
+    "translation": "გამოთვლიეთ",
+    "category": "Travel"
+  },
+  "ride": {
+    "translation": "რიდა",
+    "category": "Travel"
+  },
+  "board": {
+    "translation": "ქ",
+    "category": "Travel"
+  },
+  "land": {
+    "translation": "დასერგება",
+    "category": "Travel"
+  },
+  "park": {
+    "translation": "პარკი",
+    "category": "Travel"
+  },
+  "accelerate": {
+    "translation": "უმეტება",
+    "category": "Travel"
+  },
+  "reverse": {
+    "translation": "გაუბრივება",
+    "category": "Travel"
+  },
+  "cross": {
+    "translation": "უკრაინეთი",
+    "category": "Travel"
+  },
+  "wander": {
+    "translation": "გამარტვი",
+    "category": "Travel"
+  },
+  "explore": {
+    "translation": "განხორციელება",
+    "category": "Travel"
+  },
+  "return": {
+    "translation": "დასვლელი",
+    "category": "Travel"
+  },
+  "rush": {
+    "translation": "დაბრუნება",
+    "category": "Travel"
+  },
+  "hurry": {
+    "translation": "გამეშველი",
+    "category": "Travel"
+  },
+  "navigate": {
+    "translation": "ნავიგებდა",
+    "category": "Travel"
+  },
+  "sanitize": {
+    "translation": "ცინატურისება",
+    "category": "Household"
+  },
+  "iron": {
+    "translation": "სნელი",
+    "category": "Household"
+  },
+  "store": {
+    "translation": "დამარწყვეტი",
+    "category": "Household"
+  },
+  "repair": {
+    "translation": "რეპარირებ",
+    "category": "Household"
+  },
+  "fix": {
+    "translation": "ქარდი",
+    "category": "Household"
+  },
+  "disassemble": {
+    "translation": "გაიღება",
+    "category": "Household"
+  },
+  "install": {
+    "translation": "ი",
+    "category": "Household"
+  },
+  "uninstall": {
+    "translation": "დაიბრუნება",
+    "category": "Household"
+  },
+  "remove": {
+    "translation": "გამოიტანება",
+    "category": "Household"
+  },
+  "connect": {
+    "translation": "კაპიტალი",
+    "category": "Household"
+  },
+  "disconnect": {
+    "translation": "გაკეთდება",
+    "category": "Household"
+  },
+  "lock": {
+    "translation": "ოკა",
+    "category": "Household"
+  },
+  "unlock": {
+    "translation": "განხორციელება",
+    "category": "Household"
+  },
+  "decorate": {
+    "translation": "დეკორირება",
+    "category": "Household"
+  },
+  "polish": {
+    "translation": "პოლიში",
+    "category": "Household"
+  },
+  "hammer": {
+    "translation": "მანქანა",
+    "category": "Household"
+  },
+  "saw": {
+    "translation": "ნახაზი",
+    "category": "Household"
+  },
+  "glue": {
+    "translation": "კლუი",
+    "category": "Household"
+  },
+  "buy": {
+    "translation": "ით",
+    "category": "Money"
+  },
+  "sell": {
+    "translation": "გაყიდვა",
+    "category": "Money"
+  },
+  "pay": {
+    "translation": "გა",
+    "category": "Money"
+  },
+  "owe": {
+    "translation": "ქარდო",
+    "category": "Money"
+  },
+  "borrow": {
+    "translation": "დასმენი",
+    "category": "Money"
+  },
+  "lend": {
+    "translation": "დასეხმა",
+    "category": "Money"
+  },
+  "rent": {
+    "translation": "გარემო",
+    "category": "Money"
+  },
+  "save": {
+    "translation": "შენახვა",
+    "category": "Money"
+  },
+  "spend": {
+    "translation": "გახსნა",
+    "category": "Money"
+  },
+  "invest": {
+    "translation": "ინვესტირება",
+    "category": "Money"
+  },
+  "earn": {
+    "translation": "კითხვა",
+    "category": "Money"
+  },
+  "refund": {
+    "translation": "რიბანდევულება",
+    "category": "Money"
+  },
+  "exchange": {
+    "translation": "გადასვლა",
+    "category": "Money"
+  },
+  "order": {
+    "translation": "ორდერი",
+    "category": "Money"
+  },
+  "select": {
+    "translation": "არჩევან",
+    "category": "Money"
+  },
+  "withdraw": {
+    "translation": "გამოტანა",
+    "category": "Money"
+  },
+  "deposit": {
+    "translation": "დარეკვა",
+    "category": "Money"
+  },
+  "budget": {
+    "translation": "ჯი",
+    "category": "Money"
+  },
+  "fry": {
+    "translation": "გზრულება",
+    "category": "Food"
+  },
+  "grill": {
+    "translation": "გრილი",
+    "category": "Food"
+  },
+  "boil": {
+    "translation": "გარშემოდაბუნება",
+    "category": "Food"
+  },
+  "steam": {
+    "translation": "წყალი",
+    "category": "Food"
+  },
+  "slice": {
+    "translation": "ჭირდა",
+    "category": "Food"
+  },
+  "cut": {
+    "translation": "კითხვა",
+    "category": "Food"
+  },
+  "chop": {
+    "translation": "დაჭერა",
+    "category": "Food"
+  },
+  "mix": {
+    "translation": "მიკვება",
+    "category": "Food"
+  },
+  "stir": {
+    "translation": "გარკვეული",
+    "category": "Food"
+  },
+  "pour": {
+    "translation": "ბადამავი",
+    "category": "Food"
+  },
+  "serve": {
+    "translation": "განსახილეთ",
+    "category": "Food"
+  },
+  "taste": {
+    "translation": "გარმადება",
+    "category": "Food"
+  },
+  "season": {
+    "translation": "საათები",
+    "category": "Food"
+  },
+  "marinate": {
+    "translation": "მარინებულება",
+    "category": "Food"
+  },
+  "chew": {
+    "translation": "მსხოვრადება",
+    "category": "Food"
+  },
+  "swallow": {
+    "translation": "ჩამუშა",
+    "category": "Food"
+  },
+  "deliver": {
+    "translation": "დამტკიცება",
+    "category": "Food"
+  },
+  "digest": {
+    "translation": "დამსხმევი",
+    "category": "Food"
+  },
+  "rain": {
+    "translation": "შემთხვევი",
+    "category": "Nature"
+  },
+  "snow": {
+    "translation": "ს",
+    "category": "Nature"
+  },
+  "hail": {
+    "translation": "განამძირებული",
+    "category": "Nature"
+  },
+  "sleet": {
+    "translation": "გამოსნება",
+    "category": "Nature"
+  },
+  "freeze": {
+    "translation": "გამკეთვა",
+    "category": "Nature"
+  },
+  "melt": {
+    "translation": "გებრიალური",
+    "category": "Nature"
+  },
+  "shine": {
+    "translation": "განდიშებული",
+    "category": "Nature"
+  },
+  "blow": {
+    "translation": "გა",
+    "category": "Nature"
+  },
+  "grow": {
+    "translation": "გამოი",
+    "category": "Nature"
+  },
+  "bloom": {
+    "translation": "ბლომი",
+    "category": "Nature"
+  },
+  "wither": {
+    "translation": "გაცხრილობ",
+    "category": "Nature"
+  },
+  "sprout": {
+    "translation": "გამოსხვავება",
+    "category": "Nature"
+  },
+  "fall": {
+    "translation": "გამყოფი",
+    "category": "Nature"
+  },
+  "quake": {
+    "translation": "მაძიებელი",
+    "category": "Nature"
+  },
+  "erode": {
+    "translation": "გამწვდილობა",
+    "category": "Nature"
+  },
+  "burn": {
+    "translation": "გადაცემა",
+    "category": "Nature"
+  },
+  "flood": {
+    "translation": "გამყოფი",
+    "category": "Nature"
+  },
+  "float": {
+    "translation": "ფლოტ",
+    "category": "Nature"
+  },
+  "sink": {
+    "translation": "დაჭერი",
+    "category": "Nature"
+  },
+  "rise": {
+    "translation": "ნახევრად",
+    "category": "Nature"
+  },
+  "set": {
+    "translation": "ჩასმენი",
+    "category": "Nature"
+  },
+  "breathe": {
+    "translation": "ნალისახმად",
+    "category": "Health"
+  },
+  "inhale": {
+    "translation": "ნაბიჭვი",
+    "category": "Health"
+  },
+  "exhale": {
+    "translation": "გაქვეთ",
+    "category": "Health"
+  },
+  "cough": {
+    "translation": "გექვრი",
+    "category": "Health"
+  },
+  "sneeze": {
+    "translation": "აქვებისმინდება",
+    "category": "Health"
+  },
+  "sweat": {
+    "translation": "გამცი",
+    "category": "Health"
+  },
+  "bleed": {
+    "translation": "დაუშებს",
+    "category": "Health"
+  },
+  "heal": {
+    "translation": "ნარისტულება",
+    "category": "Health"
+  },
+  "recover": {
+    "translation": "რევაული",
+    "category": "Health"
+  },
+  "ache": {
+    "translation": "დარგი",
+    "category": "Health"
+  },
+  "hurt": {
+    "translation": "დარქავა",
+    "category": "Health"
+  },
+  "strain": {
+    "translation": "განტკება",
+    "category": "Health"
+  },
+  "exercise": {
+    "translation": "განცხადება",
+    "category": "Health"
+  },
+  "faint": {
+    "translation": "განხორციელდება",
+    "category": "Health"
+  },
+  "vomit": {
+    "translation": "გერმანია",
+    "category": "Health"
+  },
+  "blink": {
+    "translation": "ბლინკა",
+    "category": "Health"
+  },
+  "squint": {
+    "translation": "გარდუშინა",
+    "category": "Health"
+  },
+  "tremble": {
+    "translation": "ვრცლად",
+    "category": "Health"
+  },
+  "click": {
+    "translation": "კლიკ",
+    "category": "Technology"
+  },
+  "tap": {
+    "translation": "ბანკი",
+    "category": "Technology"
+  },
+  "scroll": {
+    "translation": "მსგავი",
+    "category": "Technology"
+  },
+  "swipe": {
+    "translation": "გადაკეთება",
+    "category": "Technology"
+  },
+  "browse": {
+    "translation": "გავიხსენებული",
+    "category": "Technology"
+  },
+  "upgrade": {
+    "translation": "განახლება",
+    "category": "Technology"
+  },
+  "copy": {
+    "translation": "კოპია",
+    "category": "Technology"
+  },
+  "paste": {
+    "translation": "გერმანიური",
+    "category": "Technology"
+  },
+  "delete": {
+    "translation": "წაშლა",
+    "category": "Technology"
+  },
+  "reset": {
+    "translation": "გადასვლა",
+    "category": "Technology"
+  },
+  "restart": {
+    "translation": "რესტარტ",
+    "category": "Technology"
+  },
+  "log in": {
+    "translation": "დარეგისტრირ",
+    "category": "Technology"
+  },
+  "log out": {
+    "translation": "გამოშედეთ",
+    "category": "Technology"
+  },
+  "sync": {
+    "translation": "სინკრენოვაცია",
+    "category": "Technology"
+  },
+  "stream": {
+    "translation": "გზა",
+    "category": "Technology"
+  },
+  "encrypt": {
+    "translation": "შექმნა",
+    "category": "Technology"
+  },
+  "backup": {
+    "translation": "ბექა",
+    "category": "Technology"
+  }
+}

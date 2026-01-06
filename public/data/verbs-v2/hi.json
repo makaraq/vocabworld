@@ -1,0 +1,1562 @@
+{
+  "walk": {
+    "translation": "वाल्क",
+    "category": "Basic"
+  },
+  "run": {
+    "translation": "रन",
+    "category": "Basic"
+  },
+  "jump": {
+    "translation": "टा",
+    "category": "Basic"
+  },
+  "hop": {
+    "translation": "ह",
+    "category": "Basic"
+  },
+  "skip": {
+    "translation": "करना",
+    "category": "Basic"
+  },
+  "crawl": {
+    "translation": "पल्पना",
+    "category": "Basic"
+  },
+  "climb": {
+    "translation": "बिठाना",
+    "category": "Basic"
+  },
+  "slide": {
+    "translation": "स्लाइड",
+    "category": "Basic"
+  },
+  "swing": {
+    "translation": "चकचका",
+    "category": "Basic"
+  },
+  "stretch": {
+    "translation": "ना",
+    "category": "Basic"
+  },
+  "bend": {
+    "translation": "ब",
+    "category": "Basic"
+  },
+  "lift": {
+    "translation": "्ट",
+    "category": "Basic"
+  },
+  "carry": {
+    "translation": "वाहना",
+    "category": "Basic"
+  },
+  "drag": {
+    "translation": "द्राग",
+    "category": "Basic"
+  },
+  "push": {
+    "translation": "चढ़ावा",
+    "category": "Basic"
+  },
+  "pull": {
+    "translation": "परावर्तन",
+    "category": "Basic"
+  },
+  "hold": {
+    "translation": "होल्ड",
+    "category": "Basic"
+  },
+  "grab": {
+    "translation": "कपट",
+    "category": "Basic"
+  },
+  "drop": {
+    "translation": "पतला",
+    "category": "Basic"
+  },
+  "throw": {
+    "translation": "ब",
+    "category": "Basic"
+  },
+  "catch": {
+    "translation": "कैच",
+    "category": "Basic"
+  },
+  "kick": {
+    "translation": "क",
+    "category": "Basic"
+  },
+  "hit": {
+    "translation": "प",
+    "category": "Basic"
+  },
+  "press": {
+    "translation": "प्रेस",
+    "category": "Basic"
+  },
+  "twist": {
+    "translation": "कड़वा",
+    "category": "Basic"
+  },
+  "turn": {
+    "translation": "वापसी",
+    "category": "Basic"
+  },
+  "rotate": {
+    "translation": "क्रायट",
+    "category": "Basic"
+  },
+  "flip": {
+    "translation": "फ्लिप",
+    "category": "Basic"
+  },
+  "shake": {
+    "translation": "शिकार",
+    "category": "Basic"
+  },
+  "wave": {
+    "translation": "हवा",
+    "category": "Basic"
+  },
+  "reach": {
+    "translation": "आकर्षण",
+    "category": "Basic"
+  },
+  "lean": {
+    "translation": "लेना",
+    "category": "Basic"
+  },
+  "rest": {
+    "translation": "प",
+    "category": "Basic"
+  },
+  "balance": {
+    "translation": "संतुलन",
+    "category": "Basic"
+  },
+  "spin": {
+    "translation": "विश्लेषण",
+    "category": "Basic"
+  },
+  "arrange": {
+    "translation": "रखना",
+    "category": "Basic"
+  },
+  "adjust": {
+    "translation": "स्टीर",
+    "category": "Basic"
+  },
+  "shift": {
+    "translation": "सिफ्ट",
+    "category": "Basic"
+  },
+  "tie": {
+    "translation": "बाँधा",
+    "category": "Basic"
+  },
+  "untie": {
+    "translation": "बंधना",
+    "category": "Basic"
+  },
+  "wrap": {
+    "translation": "पैकअप",
+    "category": "Basic"
+  },
+  "unwrap": {
+    "translation": "खोलना",
+    "category": "Basic"
+  },
+  "fold": {
+    "translation": "सटाके",
+    "category": "Basic"
+  },
+  "unfold": {
+    "translation": "अकाढ़",
+    "category": "Basic"
+  },
+  "pack": {
+    "translation": "पैक",
+    "category": "Basic"
+  },
+  "unpack": {
+    "translation": "पकड़ना",
+    "category": "Basic"
+  },
+  "be": {
+    "translation": "है",
+    "category": "Basic"
+  },
+  "become": {
+    "translation": "होना",
+    "category": "Basic"
+  },
+  "seem": {
+    "translation": "सिमना",
+    "category": "Basic"
+  },
+  "appear": {
+    "translation": "प्रकट",
+    "category": "Basic"
+  },
+  "remain": {
+    "translation": "रहना",
+    "category": "Basic"
+  },
+  "stay": {
+    "translation": "स्थाना",
+    "category": "Basic"
+  },
+  "exist": {
+    "translation": "स्थानीय",
+    "category": "Basic"
+  },
+  "happen": {
+    "translation": "पारिश्रमिक",
+    "category": "Basic"
+  },
+  "occur": {
+    "translation": "पारिश्रमिक",
+    "category": "Basic"
+  },
+  "change": {
+    "translation": "बदलना",
+    "category": "Basic"
+  },
+  "improve": {
+    "translation": "्हान",
+    "category": "Basic"
+  },
+  "decline": {
+    "translation": "सीमा",
+    "category": "Basic"
+  },
+  "continue": {
+    "translation": "जारी",
+    "category": "Basic"
+  },
+  "stop": {
+    "translation": "रोकने",
+    "category": "Basic"
+  },
+  "begin": {
+    "translation": "शुरू",
+    "category": "Basic"
+  },
+  "end": {
+    "translation": "पंक्ति",
+    "category": "Basic"
+  },
+  "last": {
+    "translation": "अंतिम",
+    "category": "Basic"
+  },
+  "wake": {
+    "translation": "उठाना",
+    "category": "Daily Routine"
+  },
+  "get up": {
+    "translation": "उठना",
+    "category": "Daily Routine"
+  },
+  "wash": {
+    "translation": "ब्राह्मण",
+    "category": "Daily Routine"
+  },
+  "shower": {
+    "translation": "शौर्या",
+    "category": "Daily Routine"
+  },
+  "bathe": {
+    "translation": "हिंदी",
+    "category": "Daily Routine"
+  },
+  "brush": {
+    "translation": "वड़ा",
+    "category": "Daily Routine"
+  },
+  "comb": {
+    "translation": "कम्बल",
+    "category": "Daily Routine"
+  },
+  "dress": {
+    "translation": "साज़ानी",
+    "category": "Daily Routine"
+  },
+  "eat": {
+    "translation": "भन्न",
+    "category": "Daily Routine"
+  },
+  "drink": {
+    "translation": "पीना",
+    "category": "Daily Routine"
+  },
+  "snack": {
+    "translation": "चिली",
+    "category": "Daily Routine"
+  },
+  "cook": {
+    "translation": "कुक्की",
+    "category": "Daily Routine"
+  },
+  "bake": {
+    "translation": "ब",
+    "category": "Daily Routine"
+  },
+  "reheat": {
+    "translation": "पुनर्गर्मावर्तित",
+    "category": "Daily Routine"
+  },
+  "clean": {
+    "translation": "सफाई",
+    "category": "Daily Routine"
+  },
+  "tidy": {
+    "translation": "सुथरा",
+    "category": "Daily Routine"
+  },
+  "organize": {
+    "translation": "जैसकर",
+    "category": "Daily Routine"
+  },
+  "vacuum": {
+    "translation": "खोखला",
+    "category": "Daily Routine"
+  },
+  "sweep": {
+    "translation": "स्वीप",
+    "category": "Daily Routine"
+  },
+  "mop": {
+    "translation": "म",
+    "category": "Daily Routine"
+  },
+  "dust": {
+    "translation": "पानी",
+    "category": "Daily Routine"
+  },
+  "wash dishes": {
+    "translation": "करारा",
+    "category": "Daily Routine"
+  },
+  "rinse": {
+    "translation": "रिनस",
+    "category": "Daily Routine"
+  },
+  "wipe": {
+    "translation": "चम्मत",
+    "category": "Daily Routine"
+  },
+  "scrub": {
+    "translation": "स्वच्छनद",
+    "category": "Daily Routine"
+  },
+  "dry": {
+    "translation": "स",
+    "category": "Daily Routine"
+  },
+  "shop": {
+    "translation": "दुकान",
+    "category": "Daily Routine"
+  },
+  "refill": {
+    "translation": "पुनराळवकता",
+    "category": "Daily Routine"
+  },
+  "charge": {
+    "translation": "चार्ज",
+    "category": "Daily Routine"
+  },
+  "relax": {
+    "translation": "हों",
+    "category": "Daily Routine"
+  },
+  "nap": {
+    "translation": "सोया",
+    "category": "Daily Routine"
+  },
+  "sleep": {
+    "translation": "सोना",
+    "category": "Daily Routine"
+  },
+  "prepare": {
+    "translation": "जैसे",
+    "category": "Daily Routine"
+  },
+  "schedule": {
+    "translation": "सिक्युलर",
+    "category": "Daily Routine"
+  },
+  "cancel": {
+    "translation": "रद्द",
+    "category": "Daily Routine"
+  },
+  "check": {
+    "translation": "चेक",
+    "category": "Daily Routine"
+  },
+  "monitor": {
+    "translation": "प्रतीक्षा",
+    "category": "Daily Routine"
+  },
+  "plan": {
+    "translation": "प्लान",
+    "category": "Daily Routine"
+  },
+  "wait": {
+    "translation": "वाटेंट",
+    "category": "Daily Routine"
+  },
+  "search": {
+    "translation": "परीक्षण",
+    "category": "Daily Routine"
+  },
+  "find": {
+    "translation": "पाओं",
+    "category": "Daily Routine"
+  },
+  "lose": {
+    "translation": "परजीवना",
+    "category": "Daily Routine"
+  },
+  "replace": {
+    "translation": "पलटा",
+    "category": "Daily Routine"
+  },
+  "think": {
+    "translation": "सोचना",
+    "category": "Mental"
+  },
+  "know": {
+    "translation": "जानना",
+    "category": "Mental"
+  },
+  "believe": {
+    "translation": "आश्वस्त",
+    "category": "Mental"
+  },
+  "consider": {
+    "translation": "परवाना",
+    "category": "Mental"
+  },
+  "imagine": {
+    "translation": "विचार",
+    "category": "Mental"
+  },
+  "wonder": {
+    "translation": "च",
+    "category": "Mental"
+  },
+  "remember": {
+    "translation": "ोकर",
+    "category": "Mental"
+  },
+  "forget": {
+    "translation": "भूलना",
+    "category": "Mental"
+  },
+  "realize": {
+    "translation": "वाद्य",
+    "category": "Mental"
+  },
+  "guess": {
+    "translation": "फिराका",
+    "category": "Mental"
+  },
+  "predict": {
+    "translation": "निष्पत्ति",
+    "category": "Mental"
+  },
+  "expect": {
+    "translation": "प्रतीक्षा",
+    "category": "Mental"
+  },
+  "recognize": {
+    "translation": "पहचानना",
+    "category": "Mental"
+  },
+  "notice": {
+    "translation": "नोटिस",
+    "category": "Mental"
+  },
+  "focus": {
+    "translation": "फोकस",
+    "category": "Mental"
+  },
+  "concentrate": {
+    "translation": "संकलन",
+    "category": "Mental"
+  },
+  "decide": {
+    "translation": "निर्णय",
+    "category": "Mental"
+  },
+  "choose": {
+    "translation": "पकड़ना",
+    "category": "Mental"
+  },
+  "compare": {
+    "translation": "सपरने",
+    "category": "Mental"
+  },
+  "analyze": {
+    "translation": "विश्लेषण",
+    "category": "Mental"
+  },
+  "evaluate": {
+    "translation": "मूल्यांकन",
+    "category": "Mental"
+  },
+  "estimate": {
+    "translation": "आकलन",
+    "category": "Mental"
+  },
+  "solve": {
+    "translation": "समाधान",
+    "category": "Mental"
+  },
+  "question": {
+    "translation": "प्रश्न",
+    "category": "Mental"
+  },
+  "suspect": {
+    "translation": "सुप्तिकारी",
+    "category": "Mental"
+  },
+  "doubt": {
+    "translation": "दावत",
+    "category": "Mental"
+  },
+  "learn": {
+    "translation": "शिक",
+    "category": "Mental"
+  },
+  "study": {
+    "translation": "पढ़ाई",
+    "category": "Mental"
+  },
+  "memorize": {
+    "translation": "स्मरणीय",
+    "category": "Mental"
+  },
+  "calculate": {
+    "translation": "कलन",
+    "category": "Mental"
+  },
+  "reflect": {
+    "translation": "प्रतिबिम्बित",
+    "category": "Mental"
+  },
+  "understand": {
+    "translation": "समझना",
+    "category": "Mental"
+  },
+  "like": {
+    "translation": "समान",
+    "category": "Mental"
+  },
+  "love": {
+    "translation": "प्रेम",
+    "category": "Mental"
+  },
+  "hate": {
+    "translation": "दुष्प्रेम",
+    "category": "Mental"
+  },
+  "enjoy": {
+    "translation": "लागूड़",
+    "category": "Mental"
+  },
+  "prefer": {
+    "translation": "पसंद",
+    "category": "Mental"
+  },
+  "want": {
+    "translation": "चाहना",
+    "category": "Mental"
+  },
+  "need": {
+    "translation": "कीवर्ड",
+    "category": "Mental"
+  },
+  "miss": {
+    "translation": "परेशानी",
+    "category": "Mental"
+  },
+  "care": {
+    "translation": "प्यारा",
+    "category": "Mental"
+  },
+  "worry": {
+    "translation": "विस्मरणीय",
+    "category": "Mental"
+  },
+  "fear": {
+    "translation": "र्भाग्य",
+    "category": "Mental"
+  },
+  "panic": {
+    "translation": "उल्टापड़ा",
+    "category": "Mental"
+  },
+  "stress": {
+    "translation": "स्ट्रेस",
+    "category": "Mental"
+  },
+  "calm": {
+    "translation": "शांत",
+    "category": "Mental"
+  },
+  "appreciate": {
+    "translation": "सम्मानित",
+    "category": "Mental"
+  },
+  "value": {
+    "translation": "वैल्यू",
+    "category": "Mental"
+  },
+  "respect": {
+    "translation": "रिश्वत",
+    "category": "Mental"
+  },
+  "dislike": {
+    "translation": "विरोधाभास",
+    "category": "Mental"
+  },
+  "regret": {
+    "translation": "क्रूपा",
+    "category": "Mental"
+  },
+  "hope": {
+    "translation": "आशा",
+    "category": "Mental"
+  },
+  "trust": {
+    "translation": "विश्वास",
+    "category": "Mental"
+  },
+  "surprise": {
+    "translation": "चमका",
+    "category": "Mental"
+  },
+  "shock": {
+    "translation": "चमकीला",
+    "category": "Mental"
+  },
+  "annoy": {
+    "translation": "परेशानी",
+    "category": "Mental"
+  },
+  "bother": {
+    "translation": "कष्टित",
+    "category": "Mental"
+  },
+  "confuse": {
+    "translation": "समूहित",
+    "category": "Mental"
+  },
+  "embarrass": {
+    "translation": "शमना",
+    "category": "Mental"
+  },
+  "frustrate": {
+    "translation": "विफल",
+    "category": "Mental"
+  },
+  "satisfy": {
+    "translation": "संतुष्ट",
+    "category": "Mental"
+  },
+  "comfort": {
+    "translation": "सुख",
+    "category": "Mental"
+  },
+  "cheer": {
+    "translation": "चेरा",
+    "category": "Mental"
+  },
+  "say": {
+    "translation": "कहना",
+    "category": "Communication"
+  },
+  "tell": {
+    "translation": "बताओ",
+    "category": "Communication"
+  },
+  "talk": {
+    "translation": "बातचीत",
+    "category": "Communication"
+  },
+  "speak": {
+    "translation": "बोलना",
+    "category": "Communication"
+  },
+  "discuss": {
+    "translation": "करना",
+    "category": "Communication"
+  },
+  "chat": {
+    "translation": "चैट",
+    "category": "Communication"
+  },
+  "explain": {
+    "translation": "स्पष्ट",
+    "category": "Communication"
+  },
+  "describe": {
+    "translation": "रूपरेखा",
+    "category": "Communication"
+  },
+  "announce": {
+    "translation": "करना",
+    "category": "Communication"
+  },
+  "report": {
+    "translation": "परिकल्पना",
+    "category": "Communication"
+  },
+  "reply": {
+    "translation": "उत्तर",
+    "category": "Communication"
+  },
+  "answer": {
+    "translation": "उत्तर",
+    "category": "Communication"
+  },
+  "ask": {
+    "translation": "पूछना",
+    "category": "Communication"
+  },
+  "interrupt": {
+    "translation": "अनुसूचित",
+    "category": "Communication"
+  },
+  "suggest": {
+    "translation": "परिदृश्य",
+    "category": "Communication"
+  },
+  "recommend": {
+    "translation": "सुझाव",
+    "category": "Communication"
+  },
+  "complain": {
+    "translation": "काबूलीता",
+    "category": "Communication"
+  },
+  "argue": {
+    "translation": "दिे",
+    "category": "Communication"
+  },
+  "debate": {
+    "translation": "ेट",
+    "category": "Communication"
+  },
+  "whisper": {
+    "translation": "र्ड",
+    "category": "Communication"
+  },
+  "shout": {
+    "translation": "धुंधला",
+    "category": "Communication"
+  },
+  "yell": {
+    "translation": "धुंधला",
+    "category": "Communication"
+  },
+  "mention": {
+    "translation": "उल्लेख",
+    "category": "Communication"
+  },
+  "remind": {
+    "translation": "निमित्तित्व",
+    "category": "Communication"
+  },
+  "warn": {
+    "translation": "चेतावनी",
+    "category": "Communication"
+  },
+  "advise": {
+    "translation": "परामर्श",
+    "category": "Communication"
+  },
+  "encourage": {
+    "translation": "ज",
+    "category": "Communication"
+  },
+  "persuade": {
+    "translation": "मूल्यवान",
+    "category": "Communication"
+  },
+  "invite": {
+    "translation": "आमंत्रित",
+    "category": "Communication"
+  },
+  "respond": {
+    "translation": "प्रतिक्रि",
+    "category": "Communication"
+  },
+  "translate": {
+    "translation": "अनुवाद",
+    "category": "Communication"
+  },
+  "inform": {
+    "translation": "बताना",
+    "category": "Communication"
+  },
+  "comment": {
+    "translation": "कमेंट",
+    "category": "Communication"
+  },
+  "confirm": {
+    "translation": "पुष्टि",
+    "category": "Communication"
+  },
+  "deny": {
+    "translation": "नक्काशा",
+    "category": "Communication"
+  },
+  "admit": {
+    "translation": "स्वीकार",
+    "category": "Communication"
+  },
+  "meet": {
+    "translation": "सेवा",
+    "category": "Social"
+  },
+  "greet": {
+    "translation": "नमस्ते",
+    "category": "Social"
+  },
+  "welcome": {
+    "translation": "प्रार्थित",
+    "category": "Social"
+  },
+  "visit": {
+    "translation": "परिवार",
+    "category": "Social"
+  },
+  "host": {
+    "translation": "आम्ही",
+    "category": "Social"
+  },
+  "join": {
+    "translation": "संयोजन",
+    "category": "Social"
+  },
+  "help": {
+    "translation": "सहायता",
+    "category": "Social"
+  },
+  "support": {
+    "translation": "समर्थन",
+    "category": "Social"
+  },
+  "assist": {
+    "translation": "ोकरण",
+    "category": "Social"
+  },
+  "share": {
+    "translation": "साझा",
+    "category": "Social"
+  },
+  "care for": {
+    "translation": "प्यार",
+    "category": "Social"
+  },
+  "hug": {
+    "translation": "मंडाना",
+    "category": "Social"
+  },
+  "kiss": {
+    "translation": "च",
+    "category": "Social"
+  },
+  "hold hands": {
+    "translation": "मिलाना",
+    "category": "Social"
+  },
+  "date": {
+    "translation": "दिनांक",
+    "category": "Social"
+  },
+  "marry": {
+    "translation": "मिलाना",
+    "category": "Social"
+  },
+  "befriend": {
+    "translation": "सहयोग",
+    "category": "Social"
+  },
+  "follow": {
+    "translation": "पालन",
+    "category": "Social"
+  },
+  "lead": {
+    "translation": "पादों",
+    "category": "Social"
+  },
+  "guide": {
+    "translation": "गाड़ीदार",
+    "category": "Social"
+  },
+  "introduce": {
+    "translation": "प",
+    "category": "Social"
+  },
+  "cooperate": {
+    "translation": "सहयोग",
+    "category": "Social"
+  },
+  "protect": {
+    "translation": "प्रतिरक्षा",
+    "category": "Social"
+  },
+  "include": {
+    "translation": "समावेश",
+    "category": "Social"
+  },
+  "exclude": {
+    "translation": "अन्विष्ट",
+    "category": "Social"
+  },
+  "work": {
+    "translation": "काम",
+    "category": "Work"
+  },
+  "write": {
+    "translation": "लिखना",
+    "category": "Work"
+  },
+  "read": {
+    "translation": "पढ़ना",
+    "category": "Work"
+  },
+  "edit": {
+    "translation": "संपादित",
+    "category": "Work"
+  },
+  "revise": {
+    "translation": "परीक्षण",
+    "category": "Work"
+  },
+  "review": {
+    "translation": "रिव्यू",
+    "category": "Work"
+  },
+  "inspect": {
+    "translation": "अनुसन्धान",
+    "category": "Work"
+  },
+  "complete": {
+    "translation": "पूरा",
+    "category": "Work"
+  },
+  "submit": {
+    "translation": "सबमिट",
+    "category": "Work"
+  },
+  "create": {
+    "translation": "सृजन",
+    "category": "Work"
+  },
+  "design": {
+    "translation": "आरक्षण",
+    "category": "Work"
+  },
+  "build": {
+    "translation": "बनाना",
+    "category": "Work"
+  },
+  "assemble": {
+    "translation": "संगैला",
+    "category": "Work"
+  },
+  "debug": {
+    "translation": "डबग",
+    "category": "Work"
+  },
+  "research": {
+    "translation": "अनुसंधान",
+    "category": "Work"
+  },
+  "document": {
+    "translation": "पत्र",
+    "category": "Work"
+  },
+  "train": {
+    "translation": "ट्रेन",
+    "category": "Work"
+  },
+  "teach": {
+    "translation": "विद्यान्",
+    "category": "Work"
+  },
+  "update": {
+    "translation": "उपडेट",
+    "category": "Work"
+  },
+  "upload": {
+    "translation": "आपलोड",
+    "category": "Work"
+  },
+  "download": {
+    "translation": "डाउनलोड",
+    "category": "Work"
+  },
+  "print": {
+    "translation": "प्रिंट",
+    "category": "Work"
+  },
+  "scan": {
+    "translation": "स्कैन",
+    "category": "Work"
+  },
+  "record": {
+    "translation": "पत्र",
+    "category": "Work"
+  },
+  "track": {
+    "translation": "प",
+    "category": "Work"
+  },
+  "manage": {
+    "translation": "प्रबंधन",
+    "category": "Work"
+  },
+  "supervise": {
+    "translation": "अनुस",
+    "category": "Work"
+  },
+  "go": {
+    "translation": "जाओ",
+    "category": "Travel"
+  },
+  "come": {
+    "translation": "आ",
+    "category": "Travel"
+  },
+  "move": {
+    "translation": "पिणा",
+    "category": "Travel"
+  },
+  "leave": {
+    "translation": "उतार",
+    "category": "Travel"
+  },
+  "arrive": {
+    "translation": "आगमन",
+    "category": "Travel"
+  },
+  "enter": {
+    "translation": "वापसी",
+    "category": "Travel"
+  },
+  "exit": {
+    "translation": "अथवा",
+    "category": "Travel"
+  },
+  "travel": {
+    "translation": "यात्रा",
+    "category": "Travel"
+  },
+  "fly": {
+    "translation": "कूचा",
+    "category": "Travel"
+  },
+  "drive": {
+    "translation": "चालना",
+    "category": "Travel"
+  },
+  "ride": {
+    "translation": "चालना",
+    "category": "Travel"
+  },
+  "board": {
+    "translation": "बोर्ड",
+    "category": "Travel"
+  },
+  "land": {
+    "translation": "धरती",
+    "category": "Travel"
+  },
+  "park": {
+    "translation": "पार्क",
+    "category": "Travel"
+  },
+  "accelerate": {
+    "translation": "त्वरित",
+    "category": "Travel"
+  },
+  "reverse": {
+    "translation": "वापसी",
+    "category": "Travel"
+  },
+  "cross": {
+    "translation": "क्रॉस",
+    "category": "Travel"
+  },
+  "wander": {
+    "translation": "वंडर",
+    "category": "Travel"
+  },
+  "explore": {
+    "translation": "अन्वेष",
+    "category": "Travel"
+  },
+  "return": {
+    "translation": "परिवर्तन",
+    "category": "Travel"
+  },
+  "rush": {
+    "translation": "चालना",
+    "category": "Travel"
+  },
+  "hurry": {
+    "translation": "जल्दी",
+    "category": "Travel"
+  },
+  "navigate": {
+    "translation": "न",
+    "category": "Travel"
+  },
+  "sanitize": {
+    "translation": "स्वास्थ्यकर",
+    "category": "Household"
+  },
+  "iron": {
+    "translation": "सीमन",
+    "category": "Household"
+  },
+  "store": {
+    "translation": "स्टोर",
+    "category": "Household"
+  },
+  "repair": {
+    "translation": "रिपार्ट",
+    "category": "Household"
+  },
+  "fix": {
+    "translation": "रिक्स",
+    "category": "Household"
+  },
+  "disassemble": {
+    "translation": "बहाल",
+    "category": "Household"
+  },
+  "install": {
+    "translation": "इंस्टॉल",
+    "category": "Household"
+  },
+  "uninstall": {
+    "translation": "संस्थापित",
+    "category": "Household"
+  },
+  "remove": {
+    "translation": "बाहेर",
+    "category": "Household"
+  },
+  "connect": {
+    "translation": "संपर्क",
+    "category": "Household"
+  },
+  "disconnect": {
+    "translation": "वंचित",
+    "category": "Household"
+  },
+  "lock": {
+    "translation": "लॉक",
+    "category": "Household"
+  },
+  "unlock": {
+    "translation": "खोलना",
+    "category": "Household"
+  },
+  "decorate": {
+    "translation": "दृश्यमान",
+    "category": "Household"
+  },
+  "polish": {
+    "translation": "पोलिश",
+    "category": "Household"
+  },
+  "hammer": {
+    "translation": "माला",
+    "category": "Household"
+  },
+  "saw": {
+    "translation": "चाकू",
+    "category": "Household"
+  },
+  "glue": {
+    "translation": "चिपचाप",
+    "category": "Household"
+  },
+  "buy": {
+    "translation": "पर्करना",
+    "category": "Money"
+  },
+  "sell": {
+    "translation": "बेचना",
+    "category": "Money"
+  },
+  "pay": {
+    "translation": "पेया",
+    "category": "Money"
+  },
+  "owe": {
+    "translation": "देना",
+    "category": "Money"
+  },
+  "borrow": {
+    "translation": "उपहार",
+    "category": "Money"
+  },
+  "lend": {
+    "translation": "देना",
+    "category": "Money"
+  },
+  "rent": {
+    "translation": "किश्ति",
+    "category": "Money"
+  },
+  "save": {
+    "translation": "सोड़ा",
+    "category": "Money"
+  },
+  "spend": {
+    "translation": "खर्च",
+    "category": "Money"
+  },
+  "invest": {
+    "translation": "इनवेस्ट",
+    "category": "Money"
+  },
+  "earn": {
+    "translation": "कमाना",
+    "category": "Money"
+  },
+  "refund": {
+    "translation": "रिफ़ांड",
+    "category": "Money"
+  },
+  "exchange": {
+    "translation": "तस्वीर",
+    "category": "Money"
+  },
+  "order": {
+    "translation": "संरचना",
+    "category": "Money"
+  },
+  "select": {
+    "translation": "परिष्कृत",
+    "category": "Money"
+  },
+  "withdraw": {
+    "translation": "वापसी",
+    "category": "Money"
+  },
+  "deposit": {
+    "translation": "पिवारा",
+    "category": "Money"
+  },
+  "budget": {
+    "translation": "बजट",
+    "category": "Money"
+  },
+  "fry": {
+    "translation": "चिड़ना",
+    "category": "Food"
+  },
+  "grill": {
+    "translation": "चाकू",
+    "category": "Food"
+  },
+  "boil": {
+    "translation": "बाढ़",
+    "category": "Food"
+  },
+  "steam": {
+    "translation": "सिल्वर",
+    "category": "Food"
+  },
+  "slice": {
+    "translation": "काटना",
+    "category": "Food"
+  },
+  "cut": {
+    "translation": "काटना",
+    "category": "Food"
+  },
+  "chop": {
+    "translation": "चौकरा",
+    "category": "Food"
+  },
+  "mix": {
+    "translation": "मिश्रण",
+    "category": "Food"
+  },
+  "stir": {
+    "translation": "चमक्का",
+    "category": "Food"
+  },
+  "pour": {
+    "translation": "पाना",
+    "category": "Food"
+  },
+  "serve": {
+    "translation": "सेवा",
+    "category": "Food"
+  },
+  "taste": {
+    "translation": "प्यावा",
+    "category": "Food"
+  },
+  "season": {
+    "translation": "राष्ट्रीयता",
+    "category": "Food"
+  },
+  "marinate": {
+    "translation": "मिरनेट",
+    "category": "Food"
+  },
+  "chew": {
+    "translation": "च",
+    "category": "Food"
+  },
+  "swallow": {
+    "translation": "बिखरावा",
+    "category": "Food"
+  },
+  "deliver": {
+    "translation": "पहुंचाना",
+    "category": "Food"
+  },
+  "digest": {
+    "translation": "परिशालन",
+    "category": "Food"
+  },
+  "rain": {
+    "translation": "पर्वता",
+    "category": "Nature"
+  },
+  "snow": {
+    "translation": "बर्फ",
+    "category": "Nature"
+  },
+  "hail": {
+    "translation": "हवा",
+    "category": "Nature"
+  },
+  "sleet": {
+    "translation": "गेंदा",
+    "category": "Nature"
+  },
+  "freeze": {
+    "translation": "करना",
+    "category": "Nature"
+  },
+  "melt": {
+    "translation": "सीधना",
+    "category": "Nature"
+  },
+  "shine": {
+    "translation": "प्रकाशित",
+    "category": "Nature"
+  },
+  "blow": {
+    "translation": "प्रहाला",
+    "category": "Nature"
+  },
+  "grow": {
+    "translation": "उगाना",
+    "category": "Nature"
+  },
+  "bloom": {
+    "translation": "बूंद",
+    "category": "Nature"
+  },
+  "wither": {
+    "translation": "नहीं",
+    "category": "Nature"
+  },
+  "sprout": {
+    "translation": "चट्टी",
+    "category": "Nature"
+  },
+  "fall": {
+    "translation": "ना",
+    "category": "Nature"
+  },
+  "quake": {
+    "translation": "सिकुड़ाव",
+    "category": "Nature"
+  },
+  "erode": {
+    "translation": "उतारना",
+    "category": "Nature"
+  },
+  "burn": {
+    "translation": "पीड़ा",
+    "category": "Nature"
+  },
+  "flood": {
+    "translation": "बाढ़",
+    "category": "Nature"
+  },
+  "float": {
+    "translation": "फ",
+    "category": "Nature"
+  },
+  "sink": {
+    "translation": "सिंक",
+    "category": "Nature"
+  },
+  "rise": {
+    "translation": "उठना",
+    "category": "Nature"
+  },
+  "set": {
+    "translation": "सेट",
+    "category": "Nature"
+  },
+  "breathe": {
+    "translation": "साथीकरण",
+    "category": "Health"
+  },
+  "inhale": {
+    "translation": "नाड़ाना",
+    "category": "Health"
+  },
+  "exhale": {
+    "translation": "फेंकना",
+    "category": "Health"
+  },
+  "cough": {
+    "translation": "कुद्दूफा",
+    "category": "Health"
+  },
+  "sneeze": {
+    "translation": "कुदाला",
+    "category": "Health"
+  },
+  "sweat": {
+    "translation": "पुराला",
+    "category": "Health"
+  },
+  "bleed": {
+    "translation": "नादर्शित",
+    "category": "Health"
+  },
+  "heal": {
+    "translation": "चिकित्सा",
+    "category": "Health"
+  },
+  "recover": {
+    "translation": "पुनरावृत्ति",
+    "category": "Health"
+  },
+  "ache": {
+    "translation": "दर्द",
+    "category": "Health"
+  },
+  "hurt": {
+    "translation": "चिंता",
+    "category": "Health"
+  },
+  "strain": {
+    "translation": "संज्ञानात्मक",
+    "category": "Health"
+  },
+  "exercise": {
+    "translation": "आसन्नता",
+    "category": "Health"
+  },
+  "faint": {
+    "translation": "शम्खा",
+    "category": "Health"
+  },
+  "vomit": {
+    "translation": "आश्मक",
+    "category": "Health"
+  },
+  "blink": {
+    "translation": "बंदरी",
+    "category": "Health"
+  },
+  "squint": {
+    "translation": "दूवाली",
+    "category": "Health"
+  },
+  "tremble": {
+    "translation": "चक्कर",
+    "category": "Health"
+  },
+  "click": {
+    "translation": "क्लिक",
+    "category": "Technology"
+  },
+  "tap": {
+    "translation": "तप्पा",
+    "category": "Technology"
+  },
+  "scroll": {
+    "translation": "प्टा",
+    "category": "Technology"
+  },
+  "swipe": {
+    "translation": "स्वाइप",
+    "category": "Technology"
+  },
+  "browse": {
+    "translation": "परिख",
+    "category": "Technology"
+  },
+  "upgrade": {
+    "translation": "उज़ग्रेड",
+    "category": "Technology"
+  },
+  "copy": {
+    "translation": "कॉपी",
+    "category": "Technology"
+  },
+  "paste": {
+    "translation": "बिस्ता",
+    "category": "Technology"
+  },
+  "delete": {
+    "translation": "पाठ्योदय",
+    "category": "Technology"
+  },
+  "reset": {
+    "translation": "पुनर्सेट",
+    "category": "Technology"
+  },
+  "restart": {
+    "translation": "रीस्टार्ट",
+    "category": "Technology"
+  },
+  "log in": {
+    "translation": "लॉग",
+    "category": "Technology"
+  },
+  "log out": {
+    "translation": "सिक्योरिटी",
+    "category": "Technology"
+  },
+  "sync": {
+    "translation": "सिंक",
+    "category": "Technology"
+  },
+  "stream": {
+    "translation": "नदी",
+    "category": "Technology"
+  },
+  "encrypt": {
+    "translation": "्रित",
+    "category": "Technology"
+  },
+  "backup": {
+    "translation": "बैकअप",
+    "category": "Technology"
+  }
+}

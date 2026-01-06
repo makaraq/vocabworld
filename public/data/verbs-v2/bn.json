@@ -1,0 +1,1563 @@
+{
+  "walk": {
+    "translation": "ভ",
+    "category": "Basic"
+  },
+  "run": {
+    "translation": "রান্না",
+    "category": "Basic"
+  },
+  "jump": {
+    "translation": "ভাষায়",
+    "category": "Basic"
+  },
+  "hop": {
+    "translation": "হপ",
+    "category": "Basic"
+  },
+  "skip": {
+    "translation": "পাস",
+    "category": "Basic"
+  },
+  "crawl": {
+    "translation": "কাল্পা",
+    "category": "Basic"
+  },
+  "climb": {
+    "translation": "আরোহণ",
+    "category": "Basic"
+  },
+  "slide": {
+    "translation": "সলিড",
+    "category": "Basic"
+  },
+  "swing": {
+    "translation": "বাঁশি",
+    "category": "Basic"
+  },
+  "stretch": {
+    "translation": "্রিতে",
+    "category": "Basic"
+  },
+  "bend": {
+    "translation": "িতে",
+    "category": "Basic"
+  },
+  "lift": {
+    "translation": "ল",
+    "category": "Basic"
+  },
+  "carry": {
+    "translation": "পর",
+    "category": "Basic"
+  },
+  "drag": {
+    "translation": "ড্রাগ",
+    "category": "Basic"
+  },
+  "push": {
+    "translation": "প্রস্থান",
+    "category": "Basic"
+  },
+  "pull": {
+    "translation": "নেন্দ্ৰ",
+    "category": "Basic"
+  },
+  "hold": {
+    "translation": "হাস্তিংানো",
+    "category": "Basic"
+  },
+  "grab": {
+    "translation": "কাটা",
+    "category": "Basic"
+  },
+  "drop": {
+    "translation": "পানি",
+    "category": "Basic"
+  },
+  "throw": {
+    "translation": "বাঁধা",
+    "category": "Basic"
+  },
+  "catch": {
+    "translation": "কেঠোন্তি",
+    "category": "Basic"
+  },
+  "kick": {
+    "translation": "ক",
+    "category": "Basic"
+  },
+  "hit": {
+    "translation": "হমলা",
+    "category": "Basic"
+  },
+  "press": {
+    "translation": "প্রেস",
+    "category": "Basic"
+  },
+  "twist": {
+    "translation": "বাঁধা",
+    "category": "Basic"
+  },
+  "turn": {
+    "translation": "পার্থক্য",
+    "category": "Basic"
+  },
+  "rotate": {
+    "translation": "বর্তমান",
+    "category": "Basic"
+  },
+  "flip": {
+    "translation": "ফ",
+    "category": "Basic"
+  },
+  "shake": {
+    "translation": "টানা",
+    "category": "Basic"
+  },
+  "wave": {
+    "translation": "বেগুন",
+    "category": "Basic"
+  },
+  "reach": {
+    "translation": "পৌঁছা",
+    "category": "Basic"
+  },
+  "lean": {
+    "translation": "নাম্বা",
+    "category": "Basic"
+  },
+  "rest": {
+    "translation": "বাসন্ত",
+    "category": "Basic"
+  },
+  "balance": {
+    "translation": "বাংলায়",
+    "category": "Basic"
+  },
+  "spin": {
+    "translation": "স্পাইন",
+    "category": "Basic"
+  },
+  "arrange": {
+    "translation": "রান্জনা",
+    "category": "Basic"
+  },
+  "adjust": {
+    "translation": "পরিস্ফৃত",
+    "category": "Basic"
+  },
+  "shift": {
+    "translation": "পরিবর্তন",
+    "category": "Basic"
+  },
+  "tie": {
+    "translation": "কাঠা",
+    "category": "Basic"
+  },
+  "untie": {
+    "translation": "বন্ধ",
+    "category": "Basic"
+  },
+  "wrap": {
+    "translation": "বোঝা",
+    "category": "Basic"
+  },
+  "unwrap": {
+    "translation": "অপেন",
+    "category": "Basic"
+  },
+  "fold": {
+    "translation": "মোড়া",
+    "category": "Basic"
+  },
+  "unfold": {
+    "translation": "আবিষ্কার",
+    "category": "Basic"
+  },
+  "pack": {
+    "translation": "পেক্স",
+    "category": "Basic"
+  },
+  "unpack": {
+    "translation": "বিস্তারিত",
+    "category": "Basic"
+  },
+  "be": {
+    "translation": "হয়",
+    "category": "Basic"
+  },
+  "become": {
+    "translation": "না",
+    "category": "Basic"
+  },
+  "seem": {
+    "translation": "প্রতিফলিত",
+    "category": "Basic"
+  },
+  "appear": {
+    "translation": "প্রতীকার",
+    "category": "Basic"
+  },
+  "remain": {
+    "translation": "পাওনা",
+    "category": "Basic"
+  },
+  "stay": {
+    "translation": "বাসা",
+    "category": "Basic"
+  },
+  "exist": {
+    "translation": "স্থায়ী",
+    "category": "Basic"
+  },
+  "happen": {
+    "translation": "হওয়া",
+    "category": "Basic"
+  },
+  "occur": {
+    "translation": "পাওয়া",
+    "category": "Basic"
+  },
+  "change": {
+    "translation": "পরিবর্তন",
+    "category": "Basic"
+  },
+  "improve": {
+    "translation": "বাড়ানো",
+    "category": "Basic"
+  },
+  "decline": {
+    "translation": "সর",
+    "category": "Basic"
+  },
+  "continue": {
+    "translation": "জারি",
+    "category": "Basic"
+  },
+  "stop": {
+    "translation": "প্রতিহার",
+    "category": "Basic"
+  },
+  "begin": {
+    "translation": "শুরু",
+    "category": "Basic"
+  },
+  "end": {
+    "translation": "শেষ",
+    "category": "Basic"
+  },
+  "last": {
+    "translation": "সাঁচ",
+    "category": "Basic"
+  },
+  "wake": {
+    "translation": "াজ্জো",
+    "category": "Daily Routine"
+  },
+  "get up": {
+    "translation": "আ",
+    "category": "Daily Routine"
+  },
+  "wash": {
+    "translation": "ল",
+    "category": "Daily Routine"
+  },
+  "shower": {
+    "translation": "শোয়ার",
+    "category": "Daily Routine"
+  },
+  "bathe": {
+    "translation": "বান্ধা",
+    "category": "Daily Routine"
+  },
+  "brush": {
+    "translation": "বাঁশি",
+    "category": "Daily Routine"
+  },
+  "comb": {
+    "translation": "কমবালি",
+    "category": "Daily Routine"
+  },
+  "dress": {
+    "translation": "কোটি",
+    "category": "Daily Routine"
+  },
+  "eat": {
+    "translation": null,
+    "category": "Daily Routine",
+    "failed": true
+  },
+  "drink": {
+    "translation": "পিয়েন্তে",
+    "category": "Daily Routine"
+  },
+  "snack": {
+    "translation": "স্নেক",
+    "category": "Daily Routine"
+  },
+  "cook": {
+    "translation": "কুক",
+    "category": "Daily Routine"
+  },
+  "bake": {
+    "translation": "বাকে",
+    "category": "Daily Routine"
+  },
+  "reheat": {
+    "translation": "পুনরায়",
+    "category": "Daily Routine"
+  },
+  "clean": {
+    "translation": "ছুট্টা",
+    "category": "Daily Routine"
+  },
+  "tidy": {
+    "translation": "নুড়িয়েছে",
+    "category": "Daily Routine"
+  },
+  "organize": {
+    "translation": "অনুসজ্জা",
+    "category": "Daily Routine"
+  },
+  "vacuum": {
+    "translation": "বাঁকুম",
+    "category": "Daily Routine"
+  },
+  "sweep": {
+    "translation": "স্যাপ্তা",
+    "category": "Daily Routine"
+  },
+  "mop": {
+    "translation": "মুক্তা",
+    "category": "Daily Routine"
+  },
+  "dust": {
+    "translation": "পানি",
+    "category": "Daily Routine"
+  },
+  "wash dishes": {
+    "translation": "ধোয়া",
+    "category": "Daily Routine"
+  },
+  "rinse": {
+    "translation": "রিন্স",
+    "category": "Daily Routine"
+  },
+  "wipe": {
+    "translation": "ছুটানা",
+    "category": "Daily Routine"
+  },
+  "scrub": {
+    "translation": "ছুঁই",
+    "category": "Daily Routine"
+  },
+  "dry": {
+    "translation": "ছরা",
+    "category": "Daily Routine"
+  },
+  "shop": {
+    "translation": "খাঁটি",
+    "category": "Daily Routine"
+  },
+  "refill": {
+    "translation": "পুনরায়",
+    "category": "Daily Routine"
+  },
+  "charge": {
+    "translation": "্জ",
+    "category": "Daily Routine"
+  },
+  "relax": {
+    "translation": "রিলেক্স",
+    "category": "Daily Routine"
+  },
+  "nap": {
+    "translation": "নাপিৎ",
+    "category": "Daily Routine"
+  },
+  "sleep": {
+    "translation": "ঘুম",
+    "category": "Daily Routine"
+  },
+  "prepare": {
+    "translation": "সাজানো",
+    "category": "Daily Routine"
+  },
+  "schedule": {
+    "translation": "সাজেশন",
+    "category": "Daily Routine"
+  },
+  "cancel": {
+    "translation": "করা",
+    "category": "Daily Routine"
+  },
+  "check": {
+    "translation": "চেক",
+    "category": "Daily Routine"
+  },
+  "monitor": {
+    "translation": "মনিটর",
+    "category": "Daily Routine"
+  },
+  "plan": {
+    "translation": "পরিকল্পনা",
+    "category": "Daily Routine"
+  },
+  "wait": {
+    "translation": "দাঁড়াও",
+    "category": "Daily Routine"
+  },
+  "search": {
+    "translation": "খুঁজা",
+    "category": "Daily Routine"
+  },
+  "find": {
+    "translation": "নিউঠা",
+    "category": "Daily Routine"
+  },
+  "lose": {
+    "translation": "চুক্তি",
+    "category": "Daily Routine"
+  },
+  "replace": {
+    "translation": "বদলাও",
+    "category": "Daily Routine"
+  },
+  "think": {
+    "translation": "ধারণা",
+    "category": "Mental"
+  },
+  "know": {
+    "translation": "জানা",
+    "category": "Mental"
+  },
+  "believe": {
+    "translation": "বিশ্বাস",
+    "category": "Mental"
+  },
+  "consider": {
+    "translation": "পাঠ্য",
+    "category": "Mental"
+  },
+  "imagine": {
+    "translation": "প্রতিশ্রুতি",
+    "category": "Mental"
+  },
+  "wonder": {
+    "translation": "নবিদ্যা",
+    "category": "Mental"
+  },
+  "remember": {
+    "translation": "প",
+    "category": "Mental"
+  },
+  "forget": {
+    "translation": "ভুলে",
+    "category": "Mental"
+  },
+  "realize": {
+    "translation": "ঢেন",
+    "category": "Mental"
+  },
+  "guess": {
+    "translation": "নিশ্চিত",
+    "category": "Mental"
+  },
+  "predict": {
+    "translation": "প্রেডিকট",
+    "category": "Mental"
+  },
+  "expect": {
+    "translation": "অপেক্ষা",
+    "category": "Mental"
+  },
+  "recognize": {
+    "translation": "আন্তঃকরণ",
+    "category": "Mental"
+  },
+  "notice": {
+    "translation": "নোটিস",
+    "category": "Mental"
+  },
+  "focus": {
+    "translation": "ফোকাস",
+    "category": "Mental"
+  },
+  "concentrate": {
+    "translation": "সংক্ষিপ্ত",
+    "category": "Mental"
+  },
+  "decide": {
+    "translation": "নির্ণয়",
+    "category": "Mental"
+  },
+  "choose": {
+    "translation": "নির্বাচন",
+    "category": "Mental"
+  },
+  "compare": {
+    "translation": "তুলনা",
+    "category": "Mental"
+  },
+  "analyze": {
+    "translation": "যাচ্চনা",
+    "category": "Mental"
+  },
+  "evaluate": {
+    "translation": "হিসাবের",
+    "category": "Mental"
+  },
+  "estimate": {
+    "translation": "ুমান",
+    "category": "Mental"
+  },
+  "solve": {
+    "translation": "সমাধান",
+    "category": "Mental"
+  },
+  "question": {
+    "translation": "প্রশ্ন",
+    "category": "Mental"
+  },
+  "suspect": {
+    "translation": "প্রশা",
+    "category": "Mental"
+  },
+  "doubt": {
+    "translation": "সন্দেহ",
+    "category": "Mental"
+  },
+  "learn": {
+    "translation": "জানা",
+    "category": "Mental"
+  },
+  "study": {
+    "translation": "বিদ্যার",
+    "category": "Mental"
+  },
+  "memorize": {
+    "translation": "স্মরণ",
+    "category": "Mental"
+  },
+  "calculate": {
+    "translation": "কালকুলেট",
+    "category": "Mental"
+  },
+  "reflect": {
+    "translation": "প্রতীকার",
+    "category": "Mental"
+  },
+  "understand": {
+    "translation": "অর্থে",
+    "category": "Mental"
+  },
+  "like": {
+    "translation": "লাগে",
+    "category": "Mental"
+  },
+  "love": {
+    "translation": "প্রেম",
+    "category": "Mental"
+  },
+  "hate": {
+    "translation": "হ",
+    "category": "Mental"
+  },
+  "enjoy": {
+    "translation": "খুশি",
+    "category": "Mental"
+  },
+  "prefer": {
+    "translation": "পছন্দ",
+    "category": "Mental"
+  },
+  "want": {
+    "translation": "চাই",
+    "category": "Mental"
+  },
+  "need": {
+    "translation": "ধর্তব্য",
+    "category": "Mental"
+  },
+  "miss": {
+    "translation": "মাক্স",
+    "category": "Mental"
+  },
+  "care": {
+    "translation": "বাসনা",
+    "category": "Mental"
+  },
+  "worry": {
+    "translation": "ব্যাকুলিতি",
+    "category": "Mental"
+  },
+  "fear": {
+    "translation": "আমন্ত্রিত",
+    "category": "Mental"
+  },
+  "panic": {
+    "translation": "পানিক",
+    "category": "Mental"
+  },
+  "stress": {
+    "translation": "প্রেরণা",
+    "category": "Mental"
+  },
+  "calm": {
+    "translation": "শান্ত",
+    "category": "Mental"
+  },
+  "appreciate": {
+    "translation": "সম্মাননা",
+    "category": "Mental"
+  },
+  "value": {
+    "translation": "মান",
+    "category": "Mental"
+  },
+  "respect": {
+    "translation": "পুজা",
+    "category": "Mental"
+  },
+  "dislike": {
+    "translation": "বিরোধিতা",
+    "category": "Mental"
+  },
+  "regret": {
+    "translation": "ালেন",
+    "category": "Mental"
+  },
+  "hope": {
+    "translation": "আশা",
+    "category": "Mental"
+  },
+  "trust": {
+    "translation": "সন্তোষ",
+    "category": "Mental"
+  },
+  "surprise": {
+    "translation": "বাস্তুনিদর্শন",
+    "category": "Mental"
+  },
+  "shock": {
+    "translation": "বিস্ফোরণ",
+    "category": "Mental"
+  },
+  "annoy": {
+    "translation": "মুক্তিহীন",
+    "category": "Mental"
+  },
+  "bother": {
+    "translation": "অনুকরণ",
+    "category": "Mental"
+  },
+  "confuse": {
+    "translation": "ভুলানো",
+    "category": "Mental"
+  },
+  "embarrass": {
+    "translation": "ভাস্কর্য",
+    "category": "Mental"
+  },
+  "frustrate": {
+    "translation": "বঞ্চিত",
+    "category": "Mental"
+  },
+  "satisfy": {
+    "translation": "সন্তোষিত",
+    "category": "Mental"
+  },
+  "comfort": {
+    "translation": "সন্তোষ",
+    "category": "Mental"
+  },
+  "cheer": {
+    "translation": "চেরি",
+    "category": "Mental"
+  },
+  "say": {
+    "translation": "বলো",
+    "category": "Communication"
+  },
+  "tell": {
+    "translation": "বলেন",
+    "category": "Communication"
+  },
+  "talk": {
+    "translation": "বলা",
+    "category": "Communication"
+  },
+  "speak": {
+    "translation": "বলা",
+    "category": "Communication"
+  },
+  "discuss": {
+    "translation": "আলোচনা",
+    "category": "Communication"
+  },
+  "chat": {
+    "translation": "চ্যাট",
+    "category": "Communication"
+  },
+  "explain": {
+    "translation": "ব্যাখ্যা",
+    "category": "Communication"
+  },
+  "describe": {
+    "translation": "বর্ণনা",
+    "category": "Communication"
+  },
+  "announce": {
+    "translation": "প্র",
+    "category": "Communication"
+  },
+  "report": {
+    "translation": "রিপোর্ট",
+    "category": "Communication"
+  },
+  "reply": {
+    "translation": "উত্তর",
+    "category": "Communication"
+  },
+  "answer": {
+    "translation": "উত্তর",
+    "category": "Communication"
+  },
+  "ask": {
+    "translation": "আস্ক",
+    "category": "Communication"
+  },
+  "interrupt": {
+    "translation": "প্রার্থনা",
+    "category": "Communication"
+  },
+  "suggest": {
+    "translation": "বাংলায়",
+    "category": "Communication"
+  },
+  "recommend": {
+    "translation": "পরিদর্শন",
+    "category": "Communication"
+  },
+  "complain": {
+    "translation": "পকেট",
+    "category": "Communication"
+  },
+  "argue": {
+    "translation": "পরামর্শ",
+    "category": "Communication"
+  },
+  "debate": {
+    "translation": "ডিবেট",
+    "category": "Communication"
+  },
+  "whisper": {
+    "translation": "শপথ",
+    "category": "Communication"
+  },
+  "shout": {
+    "translation": "জাপ্তর",
+    "category": "Communication"
+  },
+  "yell": {
+    "translation": "জাক্রতি",
+    "category": "Communication"
+  },
+  "mention": {
+    "translation": "নাম্যকরণ",
+    "category": "Communication"
+  },
+  "remind": {
+    "translation": "বিস্মৃতি",
+    "category": "Communication"
+  },
+  "warn": {
+    "translation": "প্রেরণা",
+    "category": "Communication"
+  },
+  "advise": {
+    "translation": "পরামর্শ",
+    "category": "Communication"
+  },
+  "encourage": {
+    "translation": "প্রোত্সাহন",
+    "category": "Communication"
+  },
+  "persuade": {
+    "translation": "প্রবৃদ্ধ",
+    "category": "Communication"
+  },
+  "invite": {
+    "translation": "না",
+    "category": "Communication"
+  },
+  "respond": {
+    "translation": "বাচ্চা",
+    "category": "Communication"
+  },
+  "translate": {
+    "translation": "তুলনা",
+    "category": "Communication"
+  },
+  "inform": {
+    "translation": "বিবেচনা",
+    "category": "Communication"
+  },
+  "comment": {
+    "translation": "মন্তব্য",
+    "category": "Communication"
+  },
+  "confirm": {
+    "translation": "নিশ্চিত",
+    "category": "Communication"
+  },
+  "deny": {
+    "translation": "প্রত্যাশা",
+    "category": "Communication"
+  },
+  "admit": {
+    "translation": "স্বীকার",
+    "category": "Communication"
+  },
+  "meet": {
+    "translation": "মেতার",
+    "category": "Social"
+  },
+  "greet": {
+    "translation": "স্বাগত",
+    "category": "Social"
+  },
+  "welcome": {
+    "translation": "ম",
+    "category": "Social"
+  },
+  "visit": {
+    "translation": "পরিদর্শন",
+    "category": "Social"
+  },
+  "host": {
+    "translation": "পরিবাসী",
+    "category": "Social"
+  },
+  "join": {
+    "translation": "যোগাড়",
+    "category": "Social"
+  },
+  "help": {
+    "translation": "আ",
+    "category": "Social"
+  },
+  "support": {
+    "translation": "সমর্থন",
+    "category": "Social"
+  },
+  "assist": {
+    "translation": "অনুসরণ",
+    "category": "Social"
+  },
+  "share": {
+    "translation": "ভাষায়",
+    "category": "Social"
+  },
+  "care for": {
+    "translation": "পরিশ্রম",
+    "category": "Social"
+  },
+  "hug": {
+    "translation": "হাতীয়াংক",
+    "category": "Social"
+  },
+  "kiss": {
+    "translation": "চ",
+    "category": "Social"
+  },
+  "hold hands": {
+    "translation": "হাত",
+    "category": "Social"
+  },
+  "date": {
+    "translation": "তারিখ",
+    "category": "Social"
+  },
+  "marry": {
+    "translation": "বিয়ে",
+    "category": "Social"
+  },
+  "befriend": {
+    "translation": "বন্ধুত্ব",
+    "category": "Social"
+  },
+  "follow": {
+    "translation": "অনুসরণ",
+    "category": "Social"
+  },
+  "lead": {
+    "translation": "লিড",
+    "category": "Social"
+  },
+  "guide": {
+    "translation": "গাড়ী",
+    "category": "Social"
+  },
+  "introduce": {
+    "translation": "প",
+    "category": "Social"
+  },
+  "cooperate": {
+    "translation": "সহযোগিতা",
+    "category": "Social"
+  },
+  "protect": {
+    "translation": "প্রতিরোধ",
+    "category": "Social"
+  },
+  "include": {
+    "translation": "সংযুক্ত",
+    "category": "Social"
+  },
+  "exclude": {
+    "translation": "প্রস্তাবিত",
+    "category": "Social"
+  },
+  "work": {
+    "translation": "কাজ",
+    "category": "Work"
+  },
+  "write": {
+    "translation": "লিখতে",
+    "category": "Work"
+  },
+  "read": {
+    "translation": "নাম্পোন",
+    "category": "Work"
+  },
+  "edit": {
+    "translation": "সম্পাদনা",
+    "category": "Work"
+  },
+  "revise": {
+    "translation": "রে",
+    "category": "Work"
+  },
+  "review": {
+    "translation": "নিবেদন",
+    "category": "Work"
+  },
+  "inspect": {
+    "translation": "পরীক্ষা",
+    "category": "Work"
+  },
+  "complete": {
+    "translation": "পূর্ণ",
+    "category": "Work"
+  },
+  "submit": {
+    "translation": "সমন্তরাল",
+    "category": "Work"
+  },
+  "create": {
+    "translation": "তৈরি",
+    "category": "Work"
+  },
+  "design": {
+    "translation": "ধাপ্য",
+    "category": "Work"
+  },
+  "build": {
+    "translation": "বান্ধা",
+    "category": "Work"
+  },
+  "assemble": {
+    "translation": "সংগ্রহ",
+    "category": "Work"
+  },
+  "debug": {
+    "translation": "ডিবাগ",
+    "category": "Work"
+  },
+  "research": {
+    "translation": "অন্বেষণ",
+    "category": "Work"
+  },
+  "document": {
+    "translation": "দ",
+    "category": "Work"
+  },
+  "train": {
+    "translation": "ট্রেইন",
+    "category": "Work"
+  },
+  "teach": {
+    "translation": "শিক্ষা",
+    "category": "Work"
+  },
+  "update": {
+    "translation": "আপডেট",
+    "category": "Work"
+  },
+  "upload": {
+    "translation": "আপলোড",
+    "category": "Work"
+  },
+  "download": {
+    "translation": "ডাউনলোড",
+    "category": "Work"
+  },
+  "print": {
+    "translation": "প্রিন্ট",
+    "category": "Work"
+  },
+  "scan": {
+    "translation": "স",
+    "category": "Work"
+  },
+  "record": {
+    "translation": "পাঠ্য",
+    "category": "Work"
+  },
+  "track": {
+    "translation": "ট্র্যাক",
+    "category": "Work"
+  },
+  "manage": {
+    "translation": "কালীন",
+    "category": "Work"
+  },
+  "supervise": {
+    "translation": "নিয়ন্ত",
+    "category": "Work"
+  },
+  "go": {
+    "translation": "গেলা",
+    "category": "Travel"
+  },
+  "come": {
+    "translation": "আসুন",
+    "category": "Travel"
+  },
+  "move": {
+    "translation": "পরিষ্কার",
+    "category": "Travel"
+  },
+  "leave": {
+    "translation": "পাঠিয়ে",
+    "category": "Travel"
+  },
+  "arrive": {
+    "translation": "আসা",
+    "category": "Travel"
+  },
+  "enter": {
+    "translation": "ইন্টার",
+    "category": "Travel"
+  },
+  "exit": {
+    "translation": "বেরোনো",
+    "category": "Travel"
+  },
+  "travel": {
+    "translation": "পরিবহন",
+    "category": "Travel"
+  },
+  "fly": {
+    "translation": "বিষ",
+    "category": "Travel"
+  },
+  "drive": {
+    "translation": "চালানো",
+    "category": "Travel"
+  },
+  "ride": {
+    "translation": "চালনা",
+    "category": "Travel"
+  },
+  "board": {
+    "translation": "বোর্ড",
+    "category": "Travel"
+  },
+  "land": {
+    "translation": "ভাষাগতভাবে",
+    "category": "Travel"
+  },
+  "park": {
+    "translation": "পার্ক",
+    "category": "Travel"
+  },
+  "accelerate": {
+    "translation": "গতিবেগ",
+    "category": "Travel"
+  },
+  "reverse": {
+    "translation": "প্রতিবাদ",
+    "category": "Travel"
+  },
+  "cross": {
+    "translation": "ক",
+    "category": "Travel"
+  },
+  "wander": {
+    "translation": "পাড়ানো",
+    "category": "Travel"
+  },
+  "explore": {
+    "translation": "অন্বেষণ",
+    "category": "Travel"
+  },
+  "return": {
+    "translation": "পুনরায়",
+    "category": "Travel"
+  },
+  "rush": {
+    "translation": "র",
+    "category": "Travel"
+  },
+  "hurry": {
+    "translation": "খারাপ",
+    "category": "Travel"
+  },
+  "navigate": {
+    "translation": "নেভিগেট",
+    "category": "Travel"
+  },
+  "sanitize": {
+    "translation": "সাঁচোপনেত্রিত",
+    "category": "Household"
+  },
+  "iron": {
+    "translation": "স্তুপা",
+    "category": "Household"
+  },
+  "store": {
+    "translation": "কোম্পানি",
+    "category": "Household"
+  },
+  "repair": {
+    "translation": "সংরক্ষণ",
+    "category": "Household"
+  },
+  "fix": {
+    "translation": "র",
+    "category": "Household"
+  },
+  "disassemble": {
+    "translation": "বিস্ফোরণ",
+    "category": "Household"
+  },
+  "install": {
+    "translation": "স্থানান্তরণ",
+    "category": "Household"
+  },
+  "uninstall": {
+    "translation": "অডল্ডার",
+    "category": "Household"
+  },
+  "remove": {
+    "translation": "নাপসারণ",
+    "category": "Household"
+  },
+  "connect": {
+    "translation": "যুক্তিবদ",
+    "category": "Household"
+  },
+  "disconnect": {
+    "translation": "বন্ধ",
+    "category": "Household"
+  },
+  "lock": {
+    "translation": "লক্ষ",
+    "category": "Household"
+  },
+  "unlock": {
+    "translation": "বন্ধ",
+    "category": "Household"
+  },
+  "decorate": {
+    "translation": "অড়কান",
+    "category": "Household"
+  },
+  "polish": {
+    "translation": "পোলিশ",
+    "category": "Household"
+  },
+  "hammer": {
+    "translation": "মেরাদ",
+    "category": "Household"
+  },
+  "saw": {
+    "translation": "মাঠা",
+    "category": "Household"
+  },
+  "glue": {
+    "translation": "চিড়িয়া",
+    "category": "Household"
+  },
+  "buy": {
+    "translation": "ক",
+    "category": "Money"
+  },
+  "sell": {
+    "translation": "বিক্রি",
+    "category": "Money"
+  },
+  "pay": {
+    "translation": "পেইজানো",
+    "category": "Money"
+  },
+  "owe": {
+    "translation": "অনেক্ষুধিতা",
+    "category": "Money"
+  },
+  "borrow": {
+    "translation": "পন্তি",
+    "category": "Money"
+  },
+  "lend": {
+    "translation": "ক্ষতিগ্রস্ত",
+    "category": "Money"
+  },
+  "rent": {
+    "translation": "রেন্ট",
+    "category": "Money"
+  },
+  "save": {
+    "translation": "সংরক্ষণ",
+    "category": "Money"
+  },
+  "spend": {
+    "translation": "ব্যয়",
+    "category": "Money"
+  },
+  "invest": {
+    "translation": "অন্বেষণ",
+    "category": "Money"
+  },
+  "earn": {
+    "translation": "করা",
+    "category": "Money"
+  },
+  "refund": {
+    "translation": "ফেন্ডফ",
+    "category": "Money"
+  },
+  "exchange": {
+    "translation": "পরিবাহী",
+    "category": "Money"
+  },
+  "order": {
+    "translation": "অর্ডার",
+    "category": "Money"
+  },
+  "select": {
+    "translation": "পছন্দ",
+    "category": "Money"
+  },
+  "withdraw": {
+    "translation": "পরিবর্তন",
+    "category": "Money"
+  },
+  "deposit": {
+    "translation": "ধাপ",
+    "category": "Money"
+  },
+  "budget": {
+    "translation": "েট",
+    "category": "Money"
+  },
+  "fry": {
+    "translation": "ফরিয়াদ",
+    "category": "Food"
+  },
+  "grill": {
+    "translation": "টিক্কাকরি",
+    "category": "Food"
+  },
+  "boil": {
+    "translation": "ভালুক",
+    "category": "Food"
+  },
+  "steam": {
+    "translation": "দাপ",
+    "category": "Food"
+  },
+  "slice": {
+    "translation": "কাটা",
+    "category": "Food"
+  },
+  "cut": {
+    "translation": "কাটা",
+    "category": "Food"
+  },
+  "chop": {
+    "translation": "ছাড়ানো",
+    "category": "Food"
+  },
+  "mix": {
+    "translation": "মিক্স",
+    "category": "Food"
+  },
+  "stir": {
+    "translation": "ানো",
+    "category": "Food"
+  },
+  "pour": {
+    "translation": "পাও",
+    "category": "Food"
+  },
+  "serve": {
+    "translation": "পরিশোধনা",
+    "category": "Food"
+  },
+  "taste": {
+    "translation": "স্বাদ",
+    "category": "Food"
+  },
+  "season": {
+    "translation": "সে",
+    "category": "Food"
+  },
+  "marinate": {
+    "translation": "মরিনেট",
+    "category": "Food"
+  },
+  "chew": {
+    "translation": "চমকড়ানো",
+    "category": "Food"
+  },
+  "swallow": {
+    "translation": "বুঝি",
+    "category": "Food"
+  },
+  "deliver": {
+    "translation": "পরিশোধন",
+    "category": "Food"
+  },
+  "digest": {
+    "translation": "ধাপ্তর",
+    "category": "Food"
+  },
+  "rain": {
+    "translation": "দুর্গামী",
+    "category": "Nature"
+  },
+  "snow": {
+    "translation": "বৃষ্টি",
+    "category": "Nature"
+  },
+  "hail": {
+    "translation": "বর্ষা",
+    "category": "Nature"
+  },
+  "sleet": {
+    "translation": "বায়ু",
+    "category": "Nature"
+  },
+  "freeze": {
+    "translation": "েন",
+    "category": "Nature"
+  },
+  "melt": {
+    "translation": "ম",
+    "category": "Nature"
+  },
+  "shine": {
+    "translation": "লাগনা",
+    "category": "Nature"
+  },
+  "blow": {
+    "translation": "হাঁপাইছেন",
+    "category": "Nature"
+  },
+  "grow": {
+    "translation": "পাওয়া",
+    "category": "Nature"
+  },
+  "bloom": {
+    "translation": "প্রায়োজনীয়",
+    "category": "Nature"
+  },
+  "wither": {
+    "translation": "যাওয়া",
+    "category": "Nature"
+  },
+  "sprout": {
+    "translation": "ঝাঁপিয়ে",
+    "category": "Nature"
+  },
+  "fall": {
+    "translation": "যাওয়া",
+    "category": "Nature"
+  },
+  "quake": {
+    "translation": "ভেঙ্কা",
+    "category": "Nature"
+  },
+  "erode": {
+    "translation": "ভস্মীকরণ",
+    "category": "Nature"
+  },
+  "burn": {
+    "translation": "গুঁড়িয়ে",
+    "category": "Nature"
+  },
+  "flood": {
+    "translation": "বৃষ্টি",
+    "category": "Nature"
+  },
+  "float": {
+    "translation": "ফ",
+    "category": "Nature"
+  },
+  "sink": {
+    "translation": "সিন্ক",
+    "category": "Nature"
+  },
+  "rise": {
+    "translation": "উঠা",
+    "category": "Nature"
+  },
+  "set": {
+    "translation": "সেট",
+    "category": "Nature"
+  },
+  "breathe": {
+    "translation": "প্রশ্রায়",
+    "category": "Health"
+  },
+  "inhale": {
+    "translation": "স্বাস্থ",
+    "category": "Health"
+  },
+  "exhale": {
+    "translation": "প্রাসারণ",
+    "category": "Health"
+  },
+  "cough": {
+    "translation": "্বা",
+    "category": "Health"
+  },
+  "sneeze": {
+    "translation": "খাঁকরা",
+    "category": "Health"
+  },
+  "sweat": {
+    "translation": "পিপল",
+    "category": "Health"
+  },
+  "bleed": {
+    "translation": "বেরোনা",
+    "category": "Health"
+  },
+  "heal": {
+    "translation": "সুস্থ",
+    "category": "Health"
+  },
+  "recover": {
+    "translation": "স্বাস্থ্যবর্ধিতা",
+    "category": "Health"
+  },
+  "ache": {
+    "translation": "দুর্বলতা",
+    "category": "Health"
+  },
+  "hurt": {
+    "translation": "চিন্তা",
+    "category": "Health"
+  },
+  "strain": {
+    "translation": "চাপা",
+    "category": "Health"
+  },
+  "exercise": {
+    "translation": "অনুশীলন",
+    "category": "Health"
+  },
+  "faint": {
+    "translation": "বিশ্রাম",
+    "category": "Health"
+  },
+  "vomit": {
+    "translation": "বাঁচানো",
+    "category": "Health"
+  },
+  "blink": {
+    "translation": "অঁপা",
+    "category": "Health"
+  },
+  "squint": {
+    "translation": "অক্ষীয়",
+    "category": "Health"
+  },
+  "tremble": {
+    "translation": "তামাশা",
+    "category": "Health"
+  },
+  "click": {
+    "translation": "ক্লিক",
+    "category": "Technology"
+  },
+  "tap": {
+    "translation": "তপ্পা",
+    "category": "Technology"
+  },
+  "scroll": {
+    "translation": "স্কোল্যাস",
+    "category": "Technology"
+  },
+  "swipe": {
+    "translation": "স্বাপনা",
+    "category": "Technology"
+  },
+  "browse": {
+    "translation": "নামাজ",
+    "category": "Technology"
+  },
+  "upgrade": {
+    "translation": "আপডেট",
+    "category": "Technology"
+  },
+  "copy": {
+    "translation": "ক",
+    "category": "Technology"
+  },
+  "paste": {
+    "translation": "ভাষায়",
+    "category": "Technology"
+  },
+  "delete": {
+    "translation": "ডিলিট",
+    "category": "Technology"
+  },
+  "reset": {
+    "translation": "পুনরায়",
+    "category": "Technology"
+  },
+  "restart": {
+    "translation": "পুনরারম্ভ",
+    "category": "Technology"
+  },
+  "log in": {
+    "translation": "লগইন",
+    "category": "Technology"
+  },
+  "log out": {
+    "translation": "আউট",
+    "category": "Technology"
+  },
+  "sync": {
+    "translation": "সিন্ক",
+    "category": "Technology"
+  },
+  "stream": {
+    "translation": "প্রদীপ",
+    "category": "Technology"
+  },
+  "encrypt": {
+    "translation": "্রাকার",
+    "category": "Technology"
+  },
+  "backup": {
+    "translation": "বৈশিষ্ট্যালাপ",
+    "category": "Technology"
+  }
+}

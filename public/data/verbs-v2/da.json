@@ -1,0 +1,1564 @@
+{
+  "walk": {
+    "translation": "gang",
+    "category": "Basic"
+  },
+  "run": {
+    "translation": "laege",
+    "category": "Basic"
+  },
+  "jump": {
+    "translation": "spring",
+    "category": "Basic"
+  },
+  "hop": {
+    "translation": "hopske",
+    "category": "Basic"
+  },
+  "skip": {
+    "translation": "springer",
+    "category": "Basic"
+  },
+  "crawl": {
+    "translation": "krybe",
+    "category": "Basic"
+  },
+  "climb": {
+    "translation": "løbe op",
+    "category": "Basic"
+  },
+  "slide": {
+    "translation": "glide",
+    "category": "Basic"
+  },
+  "swing": {
+    "translation": "swingt",
+    "category": "Basic"
+  },
+  "stretch": {
+    "translation": "Stretcheningsbevægelse",
+    "category": "Basic"
+  },
+  "bend": {
+    "translation": "bøjse",
+    "category": "Basic"
+  },
+  "lift": {
+    "translation": "lifte",
+    "category": "Basic"
+  },
+  "carry": {
+    "translation": "Bære",
+    "category": "Basic"
+  },
+  "drag": {
+    "translation": "drage",
+    "category": "Basic"
+  },
+  "push": {
+    "translation": "dræb",
+    "category": "Basic"
+  },
+  "pull": {
+    "translation": "drawing",
+    "category": "Basic"
+  },
+  "hold": {
+    "translation": "holde",
+    "category": "Basic"
+  },
+  "grab": {
+    "translation": "grib",
+    "category": "Basic"
+  },
+  "drop": {
+    "translation": "dråb",
+    "category": "Basic"
+  },
+  "throw": {
+    "translation": "tirse",
+    "category": "Basic"
+  },
+  "catch": {
+    "translation": "fangte",
+    "category": "Basic"
+  },
+  "kick": {
+    "translation": "træt",
+    "category": "Basic"
+  },
+  "hit": {
+    "translation": "Træt",
+    "category": "Basic"
+  },
+  "press": {
+    "translation": "tryk",
+    "category": "Basic"
+  },
+  "twist": {
+    "translation": "Tvinde",
+    "category": "Basic"
+  },
+  "turn": {
+    "translation": "dreje",
+    "category": "Basic"
+  },
+  "rotate": {
+    "translation": "dreje",
+    "category": "Basic"
+  },
+  "flip": {
+    "translation": "Flippe",
+    "category": "Basic"
+  },
+  "shake": {
+    "translation": "ryste",
+    "category": "Basic"
+  },
+  "wave": {
+    "translation": "vave",
+    "category": "Basic"
+  },
+  "reach": {
+    "translation": "nå",
+    "category": "Basic"
+  },
+  "lean": {
+    "translation": "Lean in Danish is lade",
+    "category": "Basic"
+  },
+  "rest": {
+    "translation": "rusteof",
+    "category": "Basic"
+  },
+  "balance": {
+    "translation": "balancere",
+    "category": "Basic"
+  },
+  "spin": {
+    "translation": "Spindel",
+    "category": "Basic"
+  },
+  "arrange": {
+    "translation": "ordenøre",
+    "category": "Basic"
+  },
+  "adjust": {
+    "translation": "Justfør",
+    "category": "Basic"
+  },
+  "shift": {
+    "translation": "Skift",
+    "category": "Basic"
+  },
+  "tie": {
+    "translation": "binde",
+    "category": "Basic"
+  },
+  "untie": {
+    "translation": "nedbinde",
+    "category": "Basic"
+  },
+  "wrap": {
+    "translation": "pakke",
+    "category": "Basic"
+  },
+  "unwrap": {
+    "translation": "Udpakke",
+    "category": "Basic"
+  },
+  "fold": {
+    "translation": "folds",
+    "category": "Basic"
+  },
+  "unfold": {
+    "translation": "Udkomme",
+    "category": "Basic"
+  },
+  "pack": {
+    "translation": "pakke",
+    "category": "Basic"
+  },
+  "unpack": {
+    "translation": "Depackkke",
+    "category": "Basic"
+  },
+  "be": {
+    "translation": "Er",
+    "category": "Basic"
+  },
+  "become": {
+    "translation": "blive",
+    "category": "Basic"
+  },
+  "seem": {
+    "translation": "synes",
+    "category": "Basic"
+  },
+  "appear": {
+    "translation": "uptræde",
+    "category": "Basic"
+  },
+  "remain": {
+    "translation": "bleve",
+    "category": "Basic"
+  },
+  "stay": {
+    "translation": "bleve",
+    "category": "Basic"
+  },
+  "exist": {
+    "translation": "Ekstistere",
+    "category": "Basic"
+  },
+  "happen": {
+    "translation": "forekomme",
+    "category": "Basic"
+  },
+  "occur": {
+    "translation": "forekomsten",
+    "category": "Basic"
+  },
+  "change": {
+    "translation": "ændring",
+    "category": "Basic"
+  },
+  "improve": {
+    "translation": "Forbedre",
+    "category": "Basic"
+  },
+  "decline": {
+    "translation": "Afslå",
+    "category": "Basic"
+  },
+  "continue": {
+    "translation": "fortsætte",
+    "category": "Basic"
+  },
+  "stop": {
+    "translation": "stopp",
+    "category": "Basic"
+  },
+  "begin": {
+    "translation": "begynde",
+    "category": "Basic"
+  },
+  "end": {
+    "translation": "Slut",
+    "category": "Basic"
+  },
+  "last": {
+    "translation": "sidste",
+    "category": "Basic"
+  },
+  "wake": {
+    "translation": "vake",
+    "category": "Daily Routine"
+  },
+  "get up": {
+    "translation": "oprise",
+    "category": "Daily Routine"
+  },
+  "wash": {
+    "translation": "vask",
+    "category": "Daily Routine"
+  },
+  "shower": {
+    "translation": "dunder",
+    "category": "Daily Routine"
+  },
+  "bathe": {
+    "translation": "bad",
+    "category": "Daily Routine"
+  },
+  "brush": {
+    "translation": "børn",
+    "category": "Daily Routine"
+  },
+  "comb": {
+    "translation": "kam",
+    "category": "Daily Routine"
+  },
+  "dress": {
+    "translation": "drage",
+    "category": "Daily Routine"
+  },
+  "eat": {
+    "translation": "Spise",
+    "category": "Daily Routine"
+  },
+  "drink": {
+    "translation": "Drink in Danish is drikke",
+    "category": "Daily Routine"
+  },
+  "snack": {
+    "translation": "Pejlertårn",
+    "category": "Daily Routine"
+  },
+  "cook": {
+    "translation": "Kokker",
+    "category": "Daily Routine"
+  },
+  "bake": {
+    "translation": "Bakke",
+    "category": "Daily Routine"
+  },
+  "reheat": {
+    "translation": "Varme op",
+    "category": "Daily Routine"
+  },
+  "clean": {
+    "translation": "Sygnet",
+    "category": "Daily Routine"
+  },
+  "tidy": {
+    "translation": "ordentlig",
+    "category": "Daily Routine"
+  },
+  "organize": {
+    "translation": "organisere",
+    "category": "Daily Routine"
+  },
+  "vacuum": {
+    "translation": "vakuum",
+    "category": "Daily Routine"
+  },
+  "sweep": {
+    "translation": "svejde",
+    "category": "Daily Routine"
+  },
+  "mop": {
+    "translation": "Mopseskive",
+    "category": "Daily Routine"
+  },
+  "dust": {
+    "translation": "Suft",
+    "category": "Daily Routine"
+  },
+  "wash dishes": {
+    "translation": "Syndes",
+    "category": "Daily Routine"
+  },
+  "rinse": {
+    "translation": "raskeorgeous",
+    "category": "Daily Routine"
+  },
+  "wipe": {
+    "translation": "tøve",
+    "category": "Daily Routine"
+  },
+  "scrub": {
+    "translation": "Skrubbe",
+    "category": "Daily Routine"
+  },
+  "dry": {
+    "translation": "tættere",
+    "category": "Daily Routine"
+  },
+  "shop": {
+    "translation": "butik",
+    "category": "Daily Routine"
+  },
+  "refill": {
+    "translation": "Opplængning",
+    "category": "Daily Routine"
+  },
+  "charge": {
+    "translation": "Ladegerig",
+    "category": "Daily Routine"
+  },
+  "relax": {
+    "translation": "Relaxerer",
+    "category": "Daily Routine"
+  },
+  "nap": {
+    "translation": "Skrive",
+    "category": "Daily Routine"
+  },
+  "sleep": {
+    "translation": "Søvn",
+    "category": "Daily Routine"
+  },
+  "prepare": {
+    "translation": "Forberede",
+    "category": "Daily Routine"
+  },
+  "schedule": {
+    "translation": "Tidetable",
+    "category": "Daily Routine"
+  },
+  "cancel": {
+    "translation": "Annullere",
+    "category": "Daily Routine"
+  },
+  "check": {
+    "translation": "kontrol",
+    "category": "Daily Routine"
+  },
+  "monitor": {
+    "translation": "Overvåge",
+    "category": "Daily Routine"
+  },
+  "plan": {
+    "translation": "planlægge",
+    "category": "Daily Routine"
+  },
+  "wait": {
+    "translation": "Vent",
+    "category": "Daily Routine"
+  },
+  "search": {
+    "translation": "søger",
+    "category": "Daily Routine"
+  },
+  "find": {
+    "translation": "Finder",
+    "category": "Daily Routine"
+  },
+  "lose": {
+    "translation": "tabe",
+    "category": "Daily Routine"
+  },
+  "replace": {
+    "translation": "Erstat",
+    "category": "Daily Routine"
+  },
+  "think": {
+    "translation": "Tro",
+    "category": "Mental"
+  },
+  "know": {
+    "translation": "vide",
+    "category": "Mental"
+  },
+  "believe": {
+    "translation": "Tro",
+    "category": "Mental"
+  },
+  "consider": {
+    "translation": "Overvejende",
+    "category": "Mental"
+  },
+  "imagine": {
+    "translation": "Forvente",
+    "category": "Mental"
+  },
+  "wonder": {
+    "translation": "undervejs",
+    "category": "Mental"
+  },
+  "remember": {
+    "translation": "Husk",
+    "category": "Mental"
+  },
+  "forget": {
+    "translation": "Glede",
+    "category": "Mental"
+  },
+  "realize": {
+    "translation": "realisere",
+    "category": "Mental"
+  },
+  "guess": {
+    "translation": "Gæt",
+    "category": "Mental"
+  },
+  "predict": {
+    "translation": "Foreprognose",
+    "category": "Mental"
+  },
+  "expect": {
+    "translation": "Forventningsvis",
+    "category": "Mental"
+  },
+  "recognize": {
+    "translation": "Recognise",
+    "category": "Mental"
+  },
+  "notice": {
+    "translation": "Notat",
+    "category": "Mental"
+  },
+  "focus": {
+    "translation": "Fokus",
+    "category": "Mental"
+  },
+  "concentrate": {
+    "translation": "Koncentrere",
+    "category": "Mental"
+  },
+  "decide": {
+    "translation": "Beslutte",
+    "category": "Mental"
+  },
+  "choose": {
+    "translation": "vælge",
+    "category": "Mental"
+  },
+  "compare": {
+    "translation": "Compareten",
+    "category": "Mental"
+  },
+  "analyze": {
+    "translation": "analyserede",
+    "category": "Mental"
+  },
+  "evaluate": {
+    "translation": "Evaluere",
+    "category": "Mental"
+  },
+  "estimate": {
+    "translation": "estimation",
+    "category": "Mental"
+  },
+  "solve": {
+    "translation": "Løse",
+    "category": "Mental"
+  },
+  "question": {
+    "translation": "spørgsmål",
+    "category": "Mental"
+  },
+  "suspect": {
+    "translation": "Suspekterede",
+    "category": "Mental"
+  },
+  "doubt": {
+    "translation": "Dubbelvettingen",
+    "category": "Mental"
+  },
+  "learn": {
+    "translation": "lærer",
+    "category": "Mental"
+  },
+  "study": {
+    "translation": "studie",
+    "category": "Mental"
+  },
+  "memorize": {
+    "translation": "minde",
+    "category": "Mental"
+  },
+  "calculate": {
+    "translation": "beregne",
+    "category": "Mental"
+  },
+  "reflect": {
+    "translation": "reflektere",
+    "category": "Mental"
+  },
+  "understand": {
+    "translation": "forstå",
+    "category": "Mental"
+  },
+  "like": {
+    "translation": "som",
+    "category": "Mental"
+  },
+  "love": {
+    "translation": "Kærlighed",
+    "category": "Mental"
+  },
+  "hate": {
+    "translation": "hederskaber",
+    "category": "Mental"
+  },
+  "enjoy": {
+    "translation": "nyde",
+    "category": "Mental"
+  },
+  "prefer": {
+    "translation": "foretræde",
+    "category": "Mental"
+  },
+  "want": {
+    "translation": "vil",
+    "category": "Mental"
+  },
+  "need": {
+    "translation": "behov",
+    "category": "Mental"
+  },
+  "miss": {
+    "translation": "mislukke",
+    "category": "Mental"
+  },
+  "care": {
+    "translation": "Omsorg",
+    "category": "Mental"
+  },
+  "worry": {
+    "translation": "Sorg",
+    "category": "Mental"
+  },
+  "fear": {
+    "translation": "Frygt",
+    "category": "Mental"
+  },
+  "panic": {
+    "translation": "panic in Danish is panik",
+    "category": "Mental"
+  },
+  "stress": {
+    "translation": "stressøre",
+    "category": "Mental"
+  },
+  "calm": {
+    "translation": "Rulig",
+    "category": "Mental"
+  },
+  "appreciate": {
+    "translation": "Takke",
+    "category": "Mental"
+  },
+  "value": {
+    "translation": "Værdi",
+    "category": "Mental"
+  },
+  "respect": {
+    "translation": "Ereksjon",
+    "category": "Mental"
+  },
+  "dislike": {
+    "translation": "Missbillige",
+    "category": "Mental"
+  },
+  "regret": {
+    "translation": "Beklager",
+    "category": "Mental"
+  },
+  "hope": {
+    "translation": "Håb",
+    "category": "Mental"
+  },
+  "trust": {
+    "translation": "Tro",
+    "category": "Mental"
+  },
+  "surprise": {
+    "translation": "surprisere",
+    "category": "Mental"
+  },
+  "shock": {
+    "translation": "Shok",
+    "category": "Mental"
+  },
+  "annoy": {
+    "translation": "irriterende",
+    "category": "Mental"
+  },
+  "bother": {
+    "translation": "Stoor",
+    "category": "Mental"
+  },
+  "confuse": {
+    "translation": "forvirre",
+    "category": "Mental"
+  },
+  "embarrass": {
+    "translation": "Modtrængende",
+    "category": "Mental"
+  },
+  "frustrate": {
+    "translation": "forvirre",
+    "category": "Mental"
+  },
+  "satisfy": {
+    "translation": "tilfredse",
+    "category": "Mental"
+  },
+  "comfort": {
+    "translation": "Komfort",
+    "category": "Mental"
+  },
+  "cheer": {
+    "translation": "Jubel",
+    "category": "Mental"
+  },
+  "say": {
+    "translation": "Sige",
+    "category": "Communication"
+  },
+  "tell": {
+    "translation": "fortelle",
+    "category": "Communication"
+  },
+  "talk": {
+    "translation": "tal",
+    "category": "Communication"
+  },
+  "speak": {
+    "translation": "sige",
+    "category": "Communication"
+  },
+  "discuss": {
+    "translation": "diskutere",
+    "category": "Communication"
+  },
+  "chat": {
+    "translation": "Chateår",
+    "category": "Communication"
+  },
+  "explain": {
+    "translation": "explikere",
+    "category": "Communication"
+  },
+  "describe": {
+    "translation": "Beskrive",
+    "category": "Communication"
+  },
+  "announce": {
+    "translation": "Annoncere",
+    "category": "Communication"
+  },
+  "report": {
+    "translation": "Rapport",
+    "category": "Communication"
+  },
+  "reply": {
+    "translation": "Svar",
+    "category": "Communication"
+  },
+  "answer": {
+    "translation": "svar",
+    "category": "Communication"
+  },
+  "ask": {
+    "translation": "spørge",
+    "category": "Communication"
+  },
+  "interrupt": {
+    "translation": "Storbevirke",
+    "category": "Communication"
+  },
+  "suggest": {
+    "translation": "Anbefale",
+    "category": "Communication"
+  },
+  "recommend": {
+    "translation": "Anbefale",
+    "category": "Communication"
+  },
+  "complain": {
+    "translation": "klage",
+    "category": "Communication"
+  },
+  "argue": {
+    "translation": "diskutere",
+    "category": "Communication"
+  },
+  "debate": {
+    "translation": "Debatte",
+    "category": "Communication"
+  },
+  "whisper": {
+    "translation": "susurrum",
+    "category": "Communication"
+  },
+  "shout": {
+    "translation": "skribe",
+    "category": "Communication"
+  },
+  "yell": {
+    "translation": "skream",
+    "category": "Communication"
+  },
+  "mention": {
+    "translation": "Mentionen",
+    "category": "Communication"
+  },
+  "remind": {
+    "translation": "Indagere",
+    "category": "Communication"
+  },
+  "warn": {
+    "translation": "warn in Danish is varne",
+    "category": "Communication"
+  },
+  "advise": {
+    "translation": "Rådgive",
+    "category": "Communication"
+  },
+  "encourage": {
+    "translation": "Anmoje",
+    "category": "Communication"
+  },
+  "persuade": {
+    "translation": "overbevise",
+    "category": "Communication"
+  },
+  "invite": {
+    "translation": "Invitere",
+    "category": "Communication"
+  },
+  "respond": {
+    "translation": "Svar",
+    "category": "Communication"
+  },
+  "translate": {
+    "translation": "Overføre",
+    "category": "Communication"
+  },
+  "inform": {
+    "translation": "informere",
+    "category": "Communication"
+  },
+  "comment": {
+    "translation": "Kommentar",
+    "category": "Communication"
+  },
+  "confirm": {
+    "translation": "Bekræftende",
+    "category": "Communication"
+  },
+  "deny": {
+    "translation": "Nejwiggle",
+    "category": "Communication"
+  },
+  "admit": {
+    "translation": "Tillykke",
+    "category": "Communication"
+  },
+  "meet": {
+    "translation": "meedelte",
+    "category": "Social"
+  },
+  "greet": {
+    "translation": "Hej",
+    "category": "Social"
+  },
+  "welcome": {
+    "translation": "Velkomst",
+    "category": "Social"
+  },
+  "visit": {
+    "translation": "Besøg",
+    "category": "Social"
+  },
+  "host": {
+    "translation": "Gæstebyrger",
+    "category": "Social"
+  },
+  "join": {
+    "translation": "samlede",
+    "category": "Social"
+  },
+  "help": {
+    "translation": "hjælp",
+    "category": "Social"
+  },
+  "support": {
+    "translation": "Støtte",
+    "category": "Social"
+  },
+  "assist": {
+    "translation": "Assister",
+    "category": "Social"
+  },
+  "share": {
+    "translation": "Del",
+    "category": "Social"
+  },
+  "care for": {
+    "translation": "pleje",
+    "category": "Social"
+  },
+  "hug": {
+    "translation": "kysse",
+    "category": "Social"
+  },
+  "kiss": {
+    "translation": "Kysst",
+    "category": "Social"
+  },
+  "hold hands": {
+    "translation": "Håndholdning",
+    "category": "Social"
+  },
+  "date": {
+    "translation": "dato",
+    "category": "Social"
+  },
+  "marry": {
+    "translation": "gift",
+    "category": "Social"
+  },
+  "befriend": {
+    "translation": "Nære",
+    "category": "Social"
+  },
+  "follow": {
+    "translation": "Folge",
+    "category": "Social"
+  },
+  "lead": {
+    "translation": "ledt",
+    "category": "Social"
+  },
+  "guide": {
+    "translation": "leder",
+    "category": "Social"
+  },
+  "introduce": {
+    "translation": "Introducere",
+    "category": "Social"
+  },
+  "cooperate": {
+    "translation": "Samarbejde",
+    "category": "Social"
+  },
+  "protect": {
+    "translation": "Beskytte",
+    "category": "Social"
+  },
+  "include": {
+    "translation": "inkludeerde",
+    "category": "Social"
+  },
+  "exclude": {
+    "translation": "Udelukke",
+    "category": "Social"
+  },
+  "work": {
+    "translation": "Arbejde",
+    "category": "Work"
+  },
+  "write": {
+    "translation": "skrive",
+    "category": "Work"
+  },
+  "read": {
+    "translation": "læse",
+    "category": "Work"
+  },
+  "edit": {
+    "translation": "Rediger",
+    "category": "Work"
+  },
+  "revise": {
+    "translation": "revisionerer",
+    "category": "Work"
+  },
+  "review": {
+    "translation": "anmeldelse",
+    "category": "Work"
+  },
+  "inspect": {
+    "translation": "inspekte",
+    "category": "Work"
+  },
+  "complete": {
+    "translation": "fuld",
+    "category": "Work"
+  },
+  "submit": {
+    "translation": "Indsend",
+    "category": "Work"
+  },
+  "create": {
+    "translation": "opsættere",
+    "category": "Work"
+  },
+  "design": {
+    "translation": "designe",
+    "category": "Work"
+  },
+  "build": {
+    "translation": "bygge",
+    "category": "Work"
+  },
+  "assemble": {
+    "translation": "samle",
+    "category": "Work"
+  },
+  "debug": {
+    "translation": "Debuggen",
+    "category": "Work"
+  },
+  "research": {
+    "translation": "forskning",
+    "category": "Work"
+  },
+  "document": {
+    "translation": "dokument",
+    "category": "Work"
+  },
+  "train": {
+    "translation": "tog",
+    "category": "Work"
+  },
+  "teach": {
+    "translation": "undervise",
+    "category": "Work"
+  },
+  "update": {
+    "translation": "Opdatering",
+    "category": "Work"
+  },
+  "upload": {
+    "translation": "Opload",
+    "category": "Work"
+  },
+  "download": {
+    "translation": "Last ned",
+    "category": "Work"
+  },
+  "print": {
+    "translation": "tryk",
+    "category": "Work"
+  },
+  "scan": {
+    "translation": "Scan in Danish is scanne",
+    "category": "Work"
+  },
+  "record": {
+    "translation": "register",
+    "category": "Work"
+  },
+  "track": {
+    "translation": "spor",
+    "category": "Work"
+  },
+  "manage": {
+    "translation": "Gere",
+    "category": "Work"
+  },
+  "supervise": {
+    "translation": "Overvåge",
+    "category": "Work"
+  },
+  "go": {
+    "translation": "gang",
+    "category": "Travel"
+  },
+  "come": {
+    "translation": "kom",
+    "category": "Travel"
+  },
+  "move": {
+    "translation": "flytter",
+    "category": "Travel"
+  },
+  "leave": {
+    "translation": "Afrejse",
+    "category": "Travel"
+  },
+  "arrive": {
+    "translation": "anker",
+    "category": "Travel"
+  },
+  "enter": {
+    "translation": "ind",
+    "category": "Travel"
+  },
+  "exit": {
+    "translation": "udgang",
+    "category": "Travel"
+  },
+  "travel": {
+    "translation": "reise",
+    "category": "Travel"
+  },
+  "fly": {
+    "translation": "flyve",
+    "category": "Travel"
+  },
+  "drive": {
+    "translation": "køre",
+    "category": "Travel"
+  },
+  "ride": {
+    "translation": "rejse",
+    "category": "Travel"
+  },
+  "board": {
+    "translation": "plade",
+    "category": "Travel"
+  },
+  "land": {
+    "translation": "Land in Danish is land",
+    "category": "Travel"
+  },
+  "park": {
+    "translation": "parkere",
+    "category": "Travel"
+  },
+  "accelerate": {
+    "translation": "akselerere",
+    "category": "Travel"
+  },
+  "reverse": {
+    "translation": "moderne",
+    "category": "Travel"
+  },
+  "cross": {
+    "translation": "Krydser",
+    "category": "Travel"
+  },
+  "wander": {
+    "translation": "vandre",
+    "category": "Travel"
+  },
+  "explore": {
+    "translation": "eksplorere",
+    "category": "Travel"
+  },
+  "return": {
+    "translation": "retur",
+    "category": "Travel"
+  },
+  "rush": {
+    "translation": "rasch",
+    "category": "Travel"
+  },
+  "hurry": {
+    "translation": "Ejfarveje",
+    "category": "Travel"
+  },
+  "navigate": {
+    "translation": "Navigere",
+    "category": "Travel"
+  },
+  "sanitize": {
+    "translation": "Desinficerende",
+    "category": "Household"
+  },
+  "iron": {
+    "translation": "jern",
+    "category": "Household"
+  },
+  "store": {
+    "translation": "lager",
+    "category": "Household"
+  },
+  "repair": {
+    "translation": "Reparere",
+    "category": "Household"
+  },
+  "fix": {
+    "translation": "reparere",
+    "category": "Household"
+  },
+  "disassemble": {
+    "translation": "udmontage",
+    "category": "Household"
+  },
+  "install": {
+    "translation": "installerede",
+    "category": "Household"
+  },
+  "uninstall": {
+    "translation": "Avinstallere",
+    "category": "Household"
+  },
+  "remove": {
+    "translation": "Fjerne",
+    "category": "Household"
+  },
+  "connect": {
+    "translation": "Forbind",
+    "category": "Household"
+  },
+  "disconnect": {
+    "translation": "Afslut",
+    "category": "Household"
+  },
+  "lock": {
+    "translation": "Lås",
+    "category": "Household"
+  },
+  "unlock": {
+    "translation": "åbne",
+    "category": "Household"
+  },
+  "decorate": {
+    "translation": "dekorere",
+    "category": "Household"
+  },
+  "polish": {
+    "translation": "polsk",
+    "category": "Household"
+  },
+  "hammer": {
+    "translation": "møllekniv",
+    "category": "Household"
+  },
+  "saw": {
+    "translation": "saw in Danish is såg",
+    "category": "Household"
+  },
+  "glue": {
+    "translation": null,
+    "category": "Household",
+    "failed": true
+  },
+  "buy": {
+    "translation": "købe",
+    "category": "Money"
+  },
+  "sell": {
+    "translation": "sælge",
+    "category": "Money"
+  },
+  "pay": {
+    "translation": "Betale",
+    "category": "Money"
+  },
+  "owe": {
+    "translation": "Skyldige",
+    "category": "Money"
+  },
+  "borrow": {
+    "translation": "Lænke",
+    "category": "Money"
+  },
+  "lend": {
+    "translation": "lenne",
+    "category": "Money"
+  },
+  "rent": {
+    "translation": "Hyre",
+    "category": "Money"
+  },
+  "save": {
+    "translation": "spareiode",
+    "category": "Money"
+  },
+  "spend": {
+    "translation": "bringe",
+    "category": "Money"
+  },
+  "invest": {
+    "translation": "Investering",
+    "category": "Money"
+  },
+  "earn": {
+    "translation": "tjene",
+    "category": "Money"
+  },
+  "refund": {
+    "translation": "Indbetaling",
+    "category": "Money"
+  },
+  "exchange": {
+    "translation": "Tausk",
+    "category": "Money"
+  },
+  "order": {
+    "translation": "Bestilhed",
+    "category": "Money"
+  },
+  "select": {
+    "translation": "vælge",
+    "category": "Money"
+  },
+  "withdraw": {
+    "translation": "Trække",
+    "category": "Money"
+  },
+  "deposit": {
+    "translation": "Depositoriet",
+    "category": "Money"
+  },
+  "budget": {
+    "translation": "budgedt",
+    "category": "Money"
+  },
+  "fry": {
+    "translation": "fryde",
+    "category": "Food"
+  },
+  "grill": {
+    "translation": "Grillen",
+    "category": "Food"
+  },
+  "boil": {
+    "translation": "koke",
+    "category": "Food"
+  },
+  "steam": {
+    "translation": "Juleften",
+    "category": "Food"
+  },
+  "slice": {
+    "translation": "slicerud",
+    "category": "Food"
+  },
+  "cut": {
+    "translation": "Cæl",
+    "category": "Food"
+  },
+  "chop": {
+    "translation": "krydser",
+    "category": "Food"
+  },
+  "mix": {
+    "translation": "mixe",
+    "category": "Food"
+  },
+  "stir": {
+    "translation": "stirre",
+    "category": "Food"
+  },
+  "pour": {
+    "translation": "Sirke",
+    "category": "Food"
+  },
+  "serve": {
+    "translation": "Tjeneste",
+    "category": "Food"
+  },
+  "taste": {
+    "translation": "smag",
+    "category": "Food"
+  },
+  "season": {
+    "translation": "sæson",
+    "category": "Food"
+  },
+  "marinate": {
+    "translation": "Marinerede",
+    "category": "Food"
+  },
+  "chew": {
+    "translation": "knuste",
+    "category": "Food"
+  },
+  "swallow": {
+    "translation": "Svømme",
+    "category": "Food"
+  },
+  "deliver": {
+    "translation": "levererde",
+    "category": "Food"
+  },
+  "digest": {
+    "translation": "Genuss",
+    "category": "Food"
+  },
+  "rain": {
+    "translation": "Regn",
+    "category": "Nature"
+  },
+  "snow": {
+    "translation": "Snø",
+    "category": "Nature"
+  },
+  "hail": {
+    "translation": "Haleylet",
+    "category": "Nature"
+  },
+  "sleet": {
+    "translation": "Snøregn",
+    "category": "Nature"
+  },
+  "freeze": {
+    "translation": "isolerer",
+    "category": "Nature"
+  },
+  "melt": {
+    "translation": "melte",
+    "category": "Nature"
+  },
+  "shine": {
+    "translation": "lys",
+    "category": "Nature"
+  },
+  "blow": {
+    "translation": "træt",
+    "category": "Nature"
+  },
+  "grow": {
+    "translation": "vokse",
+    "category": "Nature"
+  },
+  "bloom": {
+    "translation": "Blomst",
+    "category": "Nature"
+  },
+  "wither": {
+    "translation": "-Wither avverde",
+    "category": "Nature"
+  },
+  "sprout": {
+    "translation": "Frø",
+    "category": "Nature"
+  },
+  "fall": {
+    "translation": "fald",
+    "category": "Nature"
+  },
+  "quake": {
+    "translation": "Kæde",
+    "category": "Nature"
+  },
+  "erode": {
+    "translation": "erodere",
+    "category": "Nature"
+  },
+  "burn": {
+    "translation": "brænde",
+    "category": "Nature"
+  },
+  "flood": {
+    "translation": "Floed",
+    "category": "Nature"
+  },
+  "float": {
+    "translation": "floater",
+    "category": "Nature"
+  },
+  "sink": {
+    "translation": "skelet",
+    "category": "Nature"
+  },
+  "rise": {
+    "translation": "Opsti",
+    "category": "Nature"
+  },
+  "set": {
+    "translation": "sat",
+    "category": "Nature"
+  },
+  "breathe": {
+    "translation": "dreje",
+    "category": "Health"
+  },
+  "inhale": {
+    "translation": "Indås",
+    "category": "Health"
+  },
+  "exhale": {
+    "translation": "Udsejfte",
+    "category": "Health"
+  },
+  "cough": {
+    "translation": "knap",
+    "category": "Health"
+  },
+  "sneeze": {
+    "translation": "Sneue",
+    "category": "Health"
+  },
+  "sweat": {
+    "translation": "Sudor",
+    "category": "Health"
+  },
+  "bleed": {
+    "translation": "bloede",
+    "category": "Health"
+  },
+  "heal": {
+    "translation": "Hele",
+    "category": "Health"
+  },
+  "recover": {
+    "translation": "Genoprvive",
+    "category": "Health"
+  },
+  "ache": {
+    "translation": "skarv",
+    "category": "Health"
+  },
+  "hurt": {
+    "translation": "smerge",
+    "category": "Health"
+  },
+  "strain": {
+    "translation": "strængne",
+    "category": "Health"
+  },
+  "exercise": {
+    "translation": "Øvelse",
+    "category": "Health"
+  },
+  "faint": {
+    "translation": "Flaske",
+    "category": "Health"
+  },
+  "vomit": {
+    "translation": "emet",
+    "category": "Health"
+  },
+  "blink": {
+    "translation": "blinka",
+    "category": "Health"
+  },
+  "squint": {
+    "translation": "Glippe",
+    "category": "Health"
+  },
+  "tremble": {
+    "translation": null,
+    "category": "Health",
+    "failed": true
+  },
+  "click": {
+    "translation": "Klik",
+    "category": "Technology"
+  },
+  "tap": {
+    "translation": "Kraneknop",
+    "category": "Technology"
+  },
+  "scroll": {
+    "translation": "Rulle",
+    "category": "Technology"
+  },
+  "swipe": {
+    "translation": "Skrive",
+    "category": "Technology"
+  },
+  "browse": {
+    "translation": "Blame",
+    "category": "Technology"
+  },
+  "upgrade": {
+    "translation": "Opgradering",
+    "category": "Technology"
+  },
+  "copy": {
+    "translation": "Kopi",
+    "category": "Technology"
+  },
+  "paste": {
+    "translation": "Glue",
+    "category": "Technology"
+  },
+  "delete": {
+    "translation": "Slette",
+    "category": "Technology"
+  },
+  "reset": {
+    "translation": "Resettet",
+    "category": "Technology"
+  },
+  "restart": {
+    "translation": "Genstart",
+    "category": "Technology"
+  },
+  "log in": {
+    "translation": "Indlogge",
+    "category": "Technology"
+  },
+  "log out": {
+    "translation": "Logge ud",
+    "category": "Technology"
+  },
+  "sync": {
+    "translation": "Synk",
+    "category": "Technology"
+  },
+  "stream": {
+    "translation": "strøm",
+    "category": "Technology"
+  },
+  "encrypt": {
+    "translation": "Kryptere",
+    "category": "Technology"
+  },
+  "backup": {
+    "translation": "Reserve",
+    "category": "Technology"
+  }
+}

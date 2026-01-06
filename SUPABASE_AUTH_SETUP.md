@@ -50,17 +50,13 @@ Make sure this URL is added to your Google OAuth client's **Authorized Redirect 
 
 ### ✅ Google Cloud Console:
 - [ ] Add `http://localhost:3002` to JavaScript Origins
-- [ ] Add `http://localhost:3002/api/auth/callback` to Redirect URIs
+- [ ] Add `http://localhost:3002/auth/callback` to Redirect URIs
 - [ ] Add `https://ripkorbuxnoljiprhlyk.supabase.co/auth/v1/callback` to Redirect URIs
-- [ ] Add `https://your-app.vercel.app` to JavaScript Origins (for production)
-- [ ] Add `https://your-app.vercel.app/api/auth/callback` to Redirect URIs (for production)
 
 ### ✅ Supabase Dashboard:
-- [ ] Set Site URL to your production URL (e.g., `https://your-app.vercel.app`)
-- [ ] Add redirect URLs for all ports and production domains
+- [ ] Set Site URL to `http://localhost:3002`
+- [ ] Add redirect URLs for all ports
 - [ ] Enable Google provider with your credentials
-
-**⚠️ IMPORTANT:** The app redirect URI is now `/api/auth/callback` (not `/auth/callback`)
 
 ## 🧪 Test After Configuration
 

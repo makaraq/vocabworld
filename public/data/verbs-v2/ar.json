@@ -1,0 +1,1565 @@
+{
+  "walk": {
+    "translation": "مشي",
+    "category": "Basic"
+  },
+  "run": {
+    "translation": "ركض",
+    "category": "Basic"
+  },
+  "jump": {
+    "translation": "قف",
+    "category": "Basic"
+  },
+  "hop": {
+    "translation": "قف",
+    "category": "Basic"
+  },
+  "skip": {
+    "translation": "تجاهل",
+    "category": "Basic"
+  },
+  "crawl": {
+    "translation": "زحف",
+    "category": "Basic"
+  },
+  "climb": {
+    "translation": "صعد",
+    "category": "Basic"
+  },
+  "slide": {
+    "translation": "سلايد",
+    "category": "Basic"
+  },
+  "swing": {
+    "translation": "مطرب",
+    "category": "Basic"
+  },
+  "stretch": {
+    "translation": "تمدد",
+    "category": "Basic"
+  },
+  "bend": {
+    "translation": "مُحَدِّث",
+    "category": "Basic"
+  },
+  "lift": {
+    "translation": "طابق",
+    "category": "Basic"
+  },
+  "carry": {
+    "translation": "حمل",
+    "category": "Basic"
+  },
+  "drag": {
+    "translation": "جراء",
+    "category": "Basic"
+  },
+  "push": {
+    "translation": "دفع",
+    "category": "Basic"
+  },
+  "pull": {
+    "translation": "جرّ",
+    "category": "Basic"
+  },
+  "hold": {
+    "translation": "الاحتفاظ",
+    "category": "Basic"
+  },
+  "grab": {
+    "translation": "جرب",
+    "category": "Basic"
+  },
+  "drop": {
+    "translation": "قطرة",
+    "category": "Basic"
+  },
+  "throw": {
+    "translation": "رمي",
+    "category": "Basic"
+  },
+  "catch": {
+    "translation": "قابض",
+    "category": "Basic"
+  },
+  "kick": {
+    "translation": "ك",
+    "category": "Basic"
+  },
+  "hit": {
+    "translation": "صفع",
+    "category": "Basic"
+  },
+  "press": {
+    "translation": "ضغط",
+    "category": "Basic"
+  },
+  "twist": {
+    "translation": "العربية",
+    "category": "Basic"
+  },
+  "turn": {
+    "translation": "ال",
+    "category": "Basic"
+  },
+  "rotate": {
+    "translation": "دوران",
+    "category": "Basic"
+  },
+  "flip": {
+    "translation": "قلب",
+    "category": "Basic"
+  },
+  "shake": {
+    "translation": "أَت",
+    "category": "Basic"
+  },
+  "wave": {
+    "translation": "موجة",
+    "category": "Basic"
+  },
+  "reach": {
+    "translation": "يَطْلُبُ",
+    "category": "Basic"
+  },
+  "lean": {
+    "translation": "العربية",
+    "category": "Basic"
+  },
+  "rest": {
+    "translation": "راحة",
+    "category": "Basic"
+  },
+  "balance": {
+    "translation": "ترول",
+    "category": "Basic"
+  },
+  "spin": {
+    "translation": "دور",
+    "category": "Basic"
+  },
+  "arrange": {
+    "translation": "ترتيب",
+    "category": "Basic"
+  },
+  "adjust": {
+    "translation": "ّق",
+    "category": "Basic"
+  },
+  "shift": {
+    "translation": "تغيير",
+    "category": "Basic"
+  },
+  "tie": {
+    "translation": "خيط",
+    "category": "Basic"
+  },
+  "untie": {
+    "translation": "حلق",
+    "category": "Basic"
+  },
+  "wrap": {
+    "translation": "غلاف",
+    "category": "Basic"
+  },
+  "unwrap": {
+    "translation": "فكك",
+    "category": "Basic"
+  },
+  "fold": {
+    "translation": "قَدْر",
+    "category": "Basic"
+  },
+  "unfold": {
+    "translation": "العربية،",
+    "category": "Basic"
+  },
+  "pack": {
+    "translation": "حقيبة",
+    "category": "Basic"
+  },
+  "unpack": {
+    "translation": "تفريغ",
+    "category": "Basic"
+  },
+  "be": {
+    "translation": "كون",
+    "category": "Basic"
+  },
+  "become": {
+    "translation": "أصبح",
+    "category": "Basic"
+  },
+  "seem": {
+    "translation": "يبدو",
+    "category": "Basic"
+  },
+  "appear": {
+    "translation": "ظهر",
+    "category": "Basic"
+  },
+  "remain": {
+    "translation": "بقى",
+    "category": "Basic"
+  },
+  "stay": {
+    "translation": null,
+    "category": "Basic",
+    "failed": true
+  },
+  "exist": {
+    "translation": "يُكْتَبِس",
+    "category": "Basic"
+  },
+  "happen": {
+    "translation": "حدث",
+    "category": "Basic"
+  },
+  "occur": {
+    "translation": "حدث",
+    "category": "Basic"
+  },
+  "change": {
+    "translation": "تغيير",
+    "category": "Basic"
+  },
+  "improve": {
+    "translation": "تحسين",
+    "category": "Basic"
+  },
+  "decline": {
+    "translation": "تقليل",
+    "category": "Basic"
+  },
+  "continue": {
+    "translation": "يستمر",
+    "category": "Basic"
+  },
+  "stop": {
+    "translation": "وقف",
+    "category": "Basic"
+  },
+  "begin": {
+    "translation": "بدأ",
+    "category": "Basic"
+  },
+  "end": {
+    "translation": "نهاية",
+    "category": "Basic"
+  },
+  "last": {
+    "translation": "آخر",
+    "category": "Basic"
+  },
+  "wake": {
+    "translation": "يقظة",
+    "category": "Daily Routine"
+  },
+  "get up": {
+    "translation": "نهض",
+    "category": "Daily Routine"
+  },
+  "wash": {
+    "translation": "غسل",
+    "category": "Daily Routine"
+  },
+  "shower": {
+    "translation": "دش",
+    "category": "Daily Routine"
+  },
+  "bathe": {
+    "translation": "غسل",
+    "category": "Daily Routine"
+  },
+  "brush": {
+    "translation": "فرشاة",
+    "category": "Daily Routine"
+  },
+  "comb": {
+    "translation": "مكواة",
+    "category": "Daily Routine"
+  },
+  "dress": {
+    "translation": "فستان",
+    "category": "Daily Routine"
+  },
+  "eat": {
+    "translation": "أكل",
+    "category": "Daily Routine"
+  },
+  "drink": {
+    "translation": "شرب",
+    "category": "Daily Routine"
+  },
+  "snack": {
+    "translation": "حلوى",
+    "category": "Daily Routine"
+  },
+  "cook": {
+    "translation": "طباخ",
+    "category": "Daily Routine"
+  },
+  "bake": {
+    "translation": "خبز",
+    "category": "Daily Routine"
+  },
+  "reheat": {
+    "translation": "إعادة",
+    "category": "Daily Routine"
+  },
+  "clean": {
+    "translation": "طاهر",
+    "category": "Daily Routine"
+  },
+  "tidy": {
+    "translation": "نظيف",
+    "category": "Daily Routine"
+  },
+  "organize": {
+    "translation": "تنظيم",
+    "category": "Daily Routine"
+  },
+  "vacuum": {
+    "translation": "صُفْر",
+    "category": "Daily Routine"
+  },
+  "sweep": {
+    "translation": "م",
+    "category": "Daily Routine"
+  },
+  "mop": {
+    "translation": "ممسحة",
+    "category": "Daily Routine"
+  },
+  "dust": {
+    "translation": "غبار",
+    "category": "Daily Routine"
+  },
+  "wash dishes": {
+    "translation": "الصحون",
+    "category": "Daily Routine"
+  },
+  "rinse": {
+    "translation": "غسل",
+    "category": "Daily Routine"
+  },
+  "wipe": {
+    "translation": "مسح",
+    "category": "Daily Routine"
+  },
+  "scrub": {
+    "translation": "فرشاة",
+    "category": "Daily Routine"
+  },
+  "dry": {
+    "translation": "جاف",
+    "category": "Daily Routine"
+  },
+  "shop": {
+    "translation": "محال",
+    "category": "Daily Routine"
+  },
+  "refill": {
+    "translation": "إعادة",
+    "category": "Daily Routine"
+  },
+  "charge": {
+    "translation": "ص",
+    "category": "Daily Routine"
+  },
+  "relax": {
+    "translation": "استرخِ",
+    "category": "Daily Routine"
+  },
+  "nap": {
+    "translation": "نوم",
+    "category": "Daily Routine"
+  },
+  "sleep": {
+    "translation": "نوم",
+    "category": "Daily Routine"
+  },
+  "prepare": {
+    "translation": "تَعَدِّي",
+    "category": "Daily Routine"
+  },
+  "schedule": {
+    "translation": "جدول",
+    "category": "Daily Routine"
+  },
+  "cancel": {
+    "translation": "لغة",
+    "category": "Daily Routine"
+  },
+  "check": {
+    "translation": "تحقق",
+    "category": "Daily Routine"
+  },
+  "monitor": {
+    "translation": "مُرَاقِب",
+    "category": "Daily Routine"
+  },
+  "plan": {
+    "translation": "خطة",
+    "category": "Daily Routine"
+  },
+  "wait": {
+    "translation": "انتظار",
+    "category": "Daily Routine"
+  },
+  "search": {
+    "translation": "بحث",
+    "category": "Daily Routine"
+  },
+  "find": {
+    "translation": "جد",
+    "category": "Daily Routine"
+  },
+  "lose": {
+    "translation": "خسر",
+    "category": "Daily Routine"
+  },
+  "replace": {
+    "translation": "استبدال",
+    "category": "Daily Routine"
+  },
+  "think": {
+    "translation": "فكر",
+    "category": "Mental"
+  },
+  "know": {
+    "translation": "علم",
+    "category": "Mental"
+  },
+  "believe": {
+    "translation": "يُؤْمِنُ",
+    "category": "Mental"
+  },
+  "consider": {
+    "translation": "يُعَلَّم",
+    "category": "Mental"
+  },
+  "imagine": {
+    "translation": "تخيل",
+    "category": "Mental"
+  },
+  "wonder": {
+    "translation": "الشكوى",
+    "category": "Mental"
+  },
+  "remember": {
+    "translation": "ذكرى",
+    "category": "Mental"
+  },
+  "forget": {
+    "translation": "نسيان",
+    "category": "Mental"
+  },
+  "realize": {
+    "translation": "إدراك",
+    "category": "Mental"
+  },
+  "guess": {
+    "translation": "تخمين",
+    "category": "Mental"
+  },
+  "predict": {
+    "translation": "يُنبئ",
+    "category": "Mental"
+  },
+  "expect": {
+    "translation": "انتظر",
+    "category": "Mental"
+  },
+  "recognize": {
+    "translation": "اعترف",
+    "category": "Mental"
+  },
+  "notice": {
+    "translation": "إشعار",
+    "category": "Mental"
+  },
+  "focus": {
+    "translation": "تركيز",
+    "category": "Mental"
+  },
+  "concentrate": {
+    "translation": "رَكِز",
+    "category": "Mental"
+  },
+  "decide": {
+    "translation": "قرر",
+    "category": "Mental"
+  },
+  "choose": {
+    "translation": "يختار",
+    "category": "Mental"
+  },
+  "compare": {
+    "translation": "مقارنة",
+    "category": "Mental"
+  },
+  "analyze": {
+    "translation": "تحليل",
+    "category": "Mental"
+  },
+  "evaluate": {
+    "translation": "تقييم",
+    "category": "Mental"
+  },
+  "estimate": {
+    "translation": "تقدير",
+    "category": "Mental"
+  },
+  "solve": {
+    "translation": "حل",
+    "category": "Mental"
+  },
+  "question": {
+    "translation": "سؤال",
+    "category": "Mental"
+  },
+  "suspect": {
+    "translation": "شكوك",
+    "category": "Mental"
+  },
+  "doubt": {
+    "translation": "شك",
+    "category": "Mental"
+  },
+  "learn": {
+    "translation": "تعلم",
+    "category": "Mental"
+  },
+  "study": {
+    "translation": "دراسة",
+    "category": "Mental"
+  },
+  "memorize": {
+    "translation": "الذاكرة",
+    "category": "Mental"
+  },
+  "calculate": {
+    "translation": "حساب",
+    "category": "Mental"
+  },
+  "reflect": {
+    "translation": "تُحَدِّث",
+    "category": "Mental"
+  },
+  "understand": {
+    "translation": "فهم",
+    "category": "Mental"
+  },
+  "like": {
+    "translation": "ك",
+    "category": "Mental"
+  },
+  "love": {
+    "translation": "حب",
+    "category": "Mental"
+  },
+  "hate": {
+    "translation": "بغض",
+    "category": "Mental"
+  },
+  "enjoy": {
+    "translation": "استمتع",
+    "category": "Mental"
+  },
+  "prefer": {
+    "translation": "يُفضِل",
+    "category": "Mental"
+  },
+  "want": {
+    "translation": "يريد",
+    "category": "Mental"
+  },
+  "need": {
+    "translation": "حاجة",
+    "category": "Mental"
+  },
+  "miss": {
+    "translation": "فقد",
+    "category": "Mental"
+  },
+  "care": {
+    "translation": "رعاية",
+    "category": "Mental"
+  },
+  "worry": {
+    "translation": "قلق",
+    "category": "Mental"
+  },
+  "fear": {
+    "translation": "خوف",
+    "category": "Mental"
+  },
+  "panic": {
+    "translation": "الذعر",
+    "category": "Mental"
+  },
+  "stress": {
+    "translation": "توتر",
+    "category": "Mental"
+  },
+  "calm": {
+    "translation": "هدوء",
+    "category": "Mental"
+  },
+  "appreciate": {
+    "translation": "تقدير",
+    "category": "Mental"
+  },
+  "value": {
+    "translation": "قيمة",
+    "category": "Mental"
+  },
+  "respect": {
+    "translation": "احترام",
+    "category": "Mental"
+  },
+  "dislike": {
+    "translation": "بغض",
+    "category": "Mental"
+  },
+  "regret": {
+    "translation": "أسف",
+    "category": "Mental"
+  },
+  "hope": {
+    "translation": "أمل",
+    "category": "Mental"
+  },
+  "trust": {
+    "translation": "ثقة",
+    "category": "Mental"
+  },
+  "surprise": {
+    "translation": "مفاجأة",
+    "category": "Mental"
+  },
+  "shock": {
+    "translation": "صدمة",
+    "category": "Mental"
+  },
+  "annoy": {
+    "translation": "إزعاج",
+    "category": "Mental"
+  },
+  "bother": {
+    "translation": "إزعاج",
+    "category": "Mental"
+  },
+  "confuse": {
+    "translation": "خلط",
+    "category": "Mental"
+  },
+  "embarrass": {
+    "translation": "حرج",
+    "category": "Mental"
+  },
+  "frustrate": {
+    "translation": "إحباط",
+    "category": "Mental"
+  },
+  "satisfy": {
+    "translation": "توفيق",
+    "category": "Mental"
+  },
+  "comfort": {
+    "translation": "راحة",
+    "category": "Mental"
+  },
+  "cheer": {
+    "translation": "فرح",
+    "category": "Mental"
+  },
+  "say": {
+    "translation": "قول",
+    "category": "Communication"
+  },
+  "tell": {
+    "translation": "قول",
+    "category": "Communication"
+  },
+  "talk": {
+    "translation": "قول",
+    "category": "Communication"
+  },
+  "speak": {
+    "translation": "قول",
+    "category": "Communication"
+  },
+  "discuss": {
+    "translation": "مناقشة",
+    "category": "Communication"
+  },
+  "chat": {
+    "translation": "محادثة",
+    "category": "Communication"
+  },
+  "explain": {
+    "translation": "شرح",
+    "category": "Communication"
+  },
+  "describe": {
+    "translation": "وصف",
+    "category": "Communication"
+  },
+  "announce": {
+    "translation": "إعلان",
+    "category": "Communication"
+  },
+  "report": {
+    "translation": "تقرير",
+    "category": "Communication"
+  },
+  "reply": {
+    "translation": "رد",
+    "category": "Communication"
+  },
+  "answer": {
+    "translation": "جواب",
+    "category": "Communication"
+  },
+  "ask": {
+    "translation": "سأله",
+    "category": "Communication"
+  },
+  "interrupt": {
+    "translation": "قطع",
+    "category": "Communication"
+  },
+  "suggest": {
+    "translation": "نصح",
+    "category": "Communication"
+  },
+  "recommend": {
+    "translation": "نصح",
+    "category": "Communication"
+  },
+  "complain": {
+    "translation": "شكوى",
+    "category": "Communication"
+  },
+  "argue": {
+    "translation": "جدّد",
+    "category": "Communication"
+  },
+  "debate": {
+    "translation": "جدل",
+    "category": "Communication"
+  },
+  "whisper": {
+    "translation": "سُبُح",
+    "category": "Communication"
+  },
+  "shout": {
+    "translation": "صرخ",
+    "category": "Communication"
+  },
+  "yell": {
+    "translation": "صرخ",
+    "category": "Communication"
+  },
+  "mention": {
+    "translation": "ذكر",
+    "category": "Communication"
+  },
+  "remind": {
+    "translation": "ذكّر",
+    "category": "Communication"
+  },
+  "warn": {
+    "translation": "تحذير",
+    "category": "Communication"
+  },
+  "advise": {
+    "translation": "شُعُور",
+    "category": "Communication"
+  },
+  "encourage": {
+    "translation": "حث",
+    "category": "Communication"
+  },
+  "persuade": {
+    "translation": "إقناع",
+    "category": "Communication"
+  },
+  "invite": {
+    "translation": "دعوة",
+    "category": "Communication"
+  },
+  "respond": {
+    "translation": "رد",
+    "category": "Communication"
+  },
+  "translate": {
+    "translation": "ترجمة",
+    "category": "Communication"
+  },
+  "inform": {
+    "translation": "إبلاغ",
+    "category": "Communication"
+  },
+  "comment": {
+    "translation": "تعليق",
+    "category": "Communication"
+  },
+  "confirm": {
+    "translation": "تاكيد",
+    "category": "Communication"
+  },
+  "deny": {
+    "translation": "نفي",
+    "category": "Communication"
+  },
+  "admit": {
+    "translation": "اعترف",
+    "category": "Communication"
+  },
+  "meet": {
+    "translation": null,
+    "category": "Social",
+    "failed": true
+  },
+  "greet": {
+    "translation": "مرحبًا",
+    "category": "Social"
+  },
+  "welcome": {
+    "translation": "مرحبا",
+    "category": "Social"
+  },
+  "visit": {
+    "translation": "زيارة",
+    "category": "Social"
+  },
+  "host": {
+    "translation": "ضيف",
+    "category": "Social"
+  },
+  "join": {
+    "translation": "انضم",
+    "category": "Social"
+  },
+  "help": {
+    "translation": "مساعدة",
+    "category": "Social"
+  },
+  "support": {
+    "translation": "دعم",
+    "category": "Social"
+  },
+  "assist": {
+    "translation": "مساعدة",
+    "category": "Social"
+  },
+  "share": {
+    "translation": "مشاركة",
+    "category": "Social"
+  },
+  "care for": {
+    "translation": "اعتنى",
+    "category": "Social"
+  },
+  "hug": {
+    "translation": "ضمة",
+    "category": "Social"
+  },
+  "kiss": {
+    "translation": "قبلة",
+    "category": "Social"
+  },
+  "hold hands": {
+    "translation": "يدك",
+    "category": "Social"
+  },
+  "date": {
+    "translation": "الدَّ",
+    "category": "Social"
+  },
+  "marry": {
+    "translation": "زوج",
+    "category": "Social"
+  },
+  "befriend": {
+    "translation": "صداقة",
+    "category": "Social"
+  },
+  "follow": {
+    "translation": "تتبع",
+    "category": "Social"
+  },
+  "lead": {
+    "translation": "قادة",
+    "category": "Social"
+  },
+  "guide": {
+    "translation": "دليل",
+    "category": "Social"
+  },
+  "introduce": {
+    "translation": "إدخال",
+    "category": "Social"
+  },
+  "cooperate": {
+    "translation": "تعاون",
+    "category": "Social"
+  },
+  "protect": {
+    "translation": "حماية",
+    "category": "Social"
+  },
+  "include": {
+    "translation": "يُشْمَل",
+    "category": "Social"
+  },
+  "exclude": {
+    "translation": "استثنى",
+    "category": "Social"
+  },
+  "work": {
+    "translation": "عمل",
+    "category": "Work"
+  },
+  "write": {
+    "translation": "كتب",
+    "category": "Work"
+  },
+  "read": {
+    "translation": "قرأ",
+    "category": "Work"
+  },
+  "edit": {
+    "translation": "تحرير",
+    "category": "Work"
+  },
+  "revise": {
+    "translation": "مراجعة",
+    "category": "Work"
+  },
+  "review": {
+    "translation": "مراجعة",
+    "category": "Work"
+  },
+  "inspect": {
+    "translation": "تفقد",
+    "category": "Work"
+  },
+  "complete": {
+    "translation": "كامل",
+    "category": "Work"
+  },
+  "submit": {
+    "translation": "سجد",
+    "category": "Work"
+  },
+  "create": {
+    "translation": "يَخْلُقُ",
+    "category": "Work"
+  },
+  "design": {
+    "translation": "تصميم",
+    "category": "Work"
+  },
+  "build": {
+    "translation": "بناء",
+    "category": "Work"
+  },
+  "assemble": {
+    "translation": "جَمِيع",
+    "category": "Work"
+  },
+  "debug": {
+    "translation": "البرمجية",
+    "category": "Work"
+  },
+  "research": {
+    "translation": "بحث",
+    "category": "Work"
+  },
+  "document": {
+    "translation": "مستند",
+    "category": "Work"
+  },
+  "train": {
+    "translation": "قطار",
+    "category": "Work"
+  },
+  "teach": {
+    "translation": "يعلم",
+    "category": "Work"
+  },
+  "update": {
+    "translation": "تحديث",
+    "category": "Work"
+  },
+  "upload": {
+    "translation": "تحميل",
+    "category": "Work"
+  },
+  "download": {
+    "translation": "تحميل",
+    "category": "Work"
+  },
+  "print": {
+    "translation": "طباعة",
+    "category": "Work"
+  },
+  "scan": {
+    "translation": "مس",
+    "category": "Work"
+  },
+  "record": {
+    "translation": "سجل",
+    "category": "Work"
+  },
+  "track": {
+    "translation": "مسار",
+    "category": "Work"
+  },
+  "manage": {
+    "translation": "إدارة",
+    "category": "Work"
+  },
+  "supervise": {
+    "translation": "مراقبة",
+    "category": "Work"
+  },
+  "go": {
+    "translation": "ذهب",
+    "category": "Travel"
+  },
+  "come": {
+    "translation": "أ",
+    "category": "Travel"
+  },
+  "move": {
+    "translation": "حركة",
+    "category": "Travel"
+  },
+  "leave": {
+    "translation": "ترك",
+    "category": "Travel"
+  },
+  "arrive": {
+    "translation": "صلت",
+    "category": "Travel"
+  },
+  "enter": {
+    "translation": "دخل",
+    "category": "Travel"
+  },
+  "exit": {
+    "translation": "خروج",
+    "category": "Travel"
+  },
+  "travel": {
+    "translation": "سَفْر",
+    "category": "Travel"
+  },
+  "fly": {
+    "translation": "طير",
+    "category": "Travel"
+  },
+  "drive": {
+    "translation": "قيادة",
+    "category": "Travel"
+  },
+  "ride": {
+    "translation": "ر",
+    "category": "Travel"
+  },
+  "board": {
+    "translation": "خشب",
+    "category": "Travel"
+  },
+  "land": {
+    "translation": "أرض",
+    "category": "Travel"
+  },
+  "park": {
+    "translation": "ك",
+    "category": "Travel"
+  },
+  "accelerate": {
+    "translation": "تسارع",
+    "category": "Travel"
+  },
+  "reverse": {
+    "translation": "عكس",
+    "category": "Travel"
+  },
+  "cross": {
+    "translation": "خشبة",
+    "category": "Travel"
+  },
+  "wander": {
+    "translation": "سافر",
+    "category": "Travel"
+  },
+  "explore": {
+    "translation": "استكشف",
+    "category": "Travel"
+  },
+  "return": {
+    "translation": "رجوع",
+    "category": "Travel"
+  },
+  "rush": {
+    "translation": "ر",
+    "category": "Travel"
+  },
+  "hurry": {
+    "translation": "عجل",
+    "category": "Travel"
+  },
+  "navigate": {
+    "translation": "ن",
+    "category": "Travel"
+  },
+  "sanitize": {
+    "translation": "تطهير",
+    "category": "Household"
+  },
+  "iron": {
+    "translation": "حديد",
+    "category": "Household"
+  },
+  "store": {
+    "translation": "مخزن",
+    "category": "Household"
+  },
+  "repair": {
+    "translation": "إصلاح",
+    "category": "Household"
+  },
+  "fix": {
+    "translation": "تصليح",
+    "category": "Household"
+  },
+  "disassemble": {
+    "translation": "فك",
+    "category": "Household"
+  },
+  "install": {
+    "translation": "تركيب",
+    "category": "Household"
+  },
+  "uninstall": {
+    "translation": "التثبيت",
+    "category": "Household"
+  },
+  "remove": {
+    "translation": "إزالة",
+    "category": "Household"
+  },
+  "connect": {
+    "translation": "ربط",
+    "category": "Household"
+  },
+  "disconnect": {
+    "translation": "قطع",
+    "category": "Household"
+  },
+  "lock": {
+    "translation": "قفل",
+    "category": "Household"
+  },
+  "unlock": {
+    "translation": "فتح",
+    "category": "Household"
+  },
+  "decorate": {
+    "translation": "زخرف",
+    "category": "Household"
+  },
+  "polish": {
+    "translation": "العربية",
+    "category": "Household"
+  },
+  "hammer": {
+    "translation": "م",
+    "category": "Household"
+  },
+  "saw": {
+    "translation": "س",
+    "category": "Household"
+  },
+  "glue": {
+    "translation": "لصق",
+    "category": "Household"
+  },
+  "buy": {
+    "translation": "شراء",
+    "category": "Money"
+  },
+  "sell": {
+    "translation": "بيع",
+    "category": "Money"
+  },
+  "pay": {
+    "translation": "دفع",
+    "category": "Money"
+  },
+  "owe": {
+    "translation": "ديون",
+    "category": "Money"
+  },
+  "borrow": {
+    "translation": "اقتراض",
+    "category": "Money"
+  },
+  "lend": {
+    "translation": "قرض",
+    "category": "Money"
+  },
+  "rent": {
+    "translation": "أيجار",
+    "category": "Money"
+  },
+  "save": {
+    "translation": "حفظ",
+    "category": "Money"
+  },
+  "spend": {
+    "translation": null,
+    "category": "Money",
+    "failed": true
+  },
+  "invest": {
+    "translation": "استثمر",
+    "category": "Money"
+  },
+  "earn": {
+    "translation": "الفوز",
+    "category": "Money"
+  },
+  "refund": {
+    "translation": "رد",
+    "category": "Money"
+  },
+  "exchange": {
+    "translation": "تبادل",
+    "category": "Money"
+  },
+  "order": {
+    "translation": "طلب",
+    "category": "Money"
+  },
+  "select": {
+    "translation": "اختار",
+    "category": "Money"
+  },
+  "withdraw": {
+    "translation": "انسحب",
+    "category": "Money"
+  },
+  "deposit": {
+    "translation": "ودائع",
+    "category": "Money"
+  },
+  "budget": {
+    "translation": "الميزانية",
+    "category": "Money"
+  },
+  "fry": {
+    "translation": "قلي",
+    "category": "Food"
+  },
+  "grill": {
+    "translation": "مشواية",
+    "category": "Food"
+  },
+  "boil": {
+    "translation": "غليان",
+    "category": "Food"
+  },
+  "steam": {
+    "translation": "بخار",
+    "category": "Food"
+  },
+  "slice": {
+    "translation": "قطع",
+    "category": "Food"
+  },
+  "cut": {
+    "translation": "قطع",
+    "category": "Food"
+  },
+  "chop": {
+    "translation": "قطع",
+    "category": "Food"
+  },
+  "mix": {
+    "translation": "خلط",
+    "category": "Food"
+  },
+  "stir": {
+    "translation": "مزج",
+    "category": "Food"
+  },
+  "pour": {
+    "translation": "سكب",
+    "category": "Food"
+  },
+  "serve": {
+    "translation": "خدم",
+    "category": "Food"
+  },
+  "taste": {
+    "translation": "طعم",
+    "category": "Food"
+  },
+  "season": {
+    "translation": "فصل",
+    "category": "Food"
+  },
+  "marinate": {
+    "translation": "مُرَنَّج",
+    "category": "Food"
+  },
+  "chew": {
+    "translation": "بلع",
+    "category": "Food"
+  },
+  "swallow": {
+    "translation": "سماك",
+    "category": "Food"
+  },
+  "deliver": {
+    "translation": "سلّم",
+    "category": "Food"
+  },
+  "digest": {
+    "translation": "معدة",
+    "category": "Food"
+  },
+  "rain": {
+    "translation": "ال",
+    "category": "Nature"
+  },
+  "snow": {
+    "translation": "ثلج",
+    "category": "Nature"
+  },
+  "hail": {
+    "translation": "حِلَق",
+    "category": "Nature"
+  },
+  "sleet": {
+    "translation": "البرد",
+    "category": "Nature"
+  },
+  "freeze": {
+    "translation": "برودة",
+    "category": "Nature"
+  },
+  "melt": {
+    "translation": "ذوب",
+    "category": "Nature"
+  },
+  "shine": {
+    "translation": "لمعان",
+    "category": "Nature"
+  },
+  "blow": {
+    "translation": "فُتْح",
+    "category": "Nature"
+  },
+  "grow": {
+    "translation": "نمو",
+    "category": "Nature"
+  },
+  "bloom": {
+    "translation": "زهور",
+    "category": "Nature"
+  },
+  "wither": {
+    "translation": "جفف",
+    "category": "Nature"
+  },
+  "sprout": {
+    "translation": "صَعِف",
+    "category": "Nature"
+  },
+  "fall": {
+    "translation": "ف",
+    "category": "Nature"
+  },
+  "quake": {
+    "translation": "الزلزال",
+    "category": "Nature"
+  },
+  "erode": {
+    "translation": "إ",
+    "category": "Nature"
+  },
+  "burn": {
+    "translation": "حرق",
+    "category": "Nature"
+  },
+  "flood": {
+    "translation": "فيضان",
+    "category": "Nature"
+  },
+  "float": {
+    "translation": "فُلِّت",
+    "category": "Nature"
+  },
+  "sink": {
+    "translation": "غسالة",
+    "category": "Nature"
+  },
+  "rise": {
+    "translation": "صعود",
+    "category": "Nature"
+  },
+  "set": {
+    "translation": "الإعداد",
+    "category": "Nature"
+  },
+  "breathe": {
+    "translation": "تنفس",
+    "category": "Health"
+  },
+  "inhale": {
+    "translation": "تنفس",
+    "category": "Health"
+  },
+  "exhale": {
+    "translation": "خارجي",
+    "category": "Health"
+  },
+  "cough": {
+    "translation": "سعال",
+    "category": "Health"
+  },
+  "sneeze": {
+    "translation": "س",
+    "category": "Health"
+  },
+  "sweat": {
+    "translation": "س",
+    "category": "Health"
+  },
+  "bleed": {
+    "translation": "نزف",
+    "category": "Health"
+  },
+  "heal": {
+    "translation": "شفي",
+    "category": "Health"
+  },
+  "recover": {
+    "translation": "استرداد",
+    "category": "Health"
+  },
+  "ache": {
+    "translation": "المؤلم",
+    "category": "Health"
+  },
+  "hurt": {
+    "translation": "جرح",
+    "category": "Health"
+  },
+  "strain": {
+    "translation": "جهد",
+    "category": "Health"
+  },
+  "exercise": {
+    "translation": "تمرين",
+    "category": "Health"
+  },
+  "faint": {
+    "translation": "غثيان",
+    "category": "Health"
+  },
+  "vomit": {
+    "translation": "قيء",
+    "category": "Health"
+  },
+  "blink": {
+    "translation": "لمسة",
+    "category": "Health"
+  },
+  "squint": {
+    "translation": "قزح",
+    "category": "Health"
+  },
+  "tremble": {
+    "translation": "يُرْتجِف",
+    "category": "Health"
+  },
+  "click": {
+    "translation": "تكتك",
+    "category": "Technology"
+  },
+  "tap": {
+    "translation": "طابق",
+    "category": "Technology"
+  },
+  "scroll": {
+    "translation": "التصفح",
+    "category": "Technology"
+  },
+  "swipe": {
+    "translation": "اللمس",
+    "category": "Technology"
+  },
+  "browse": {
+    "translation": "تصفح",
+    "category": "Technology"
+  },
+  "upgrade": {
+    "translation": "تحديث",
+    "category": "Technology"
+  },
+  "copy": {
+    "translation": "نسخة",
+    "category": "Technology"
+  },
+  "paste": {
+    "translation": "صفرة",
+    "category": "Technology"
+  },
+  "delete": {
+    "translation": "إلغاء",
+    "category": "Technology"
+  },
+  "reset": {
+    "translation": "إعادة",
+    "category": "Technology"
+  },
+  "restart": {
+    "translation": "إعادة",
+    "category": "Technology"
+  },
+  "log in": {
+    "translation": "الدخول",
+    "category": "Technology"
+  },
+  "log out": {
+    "translation": "تسجيل",
+    "category": "Technology"
+  },
+  "sync": {
+    "translation": "سنتكرون",
+    "category": "Technology"
+  },
+  "stream": {
+    "translation": "نهر",
+    "category": "Technology"
+  },
+  "encrypt": {
+    "translation": "التشفيري",
+    "category": "Technology"
+  },
+  "backup": {
+    "translation": "احتياطية",
+    "category": "Technology"
+  }
+}

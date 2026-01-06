@@ -1,0 +1,48 @@
+{
+  "walk": {
+    "translation": null,
+    "category": "Basic",
+    "failed": true
+  },
+  "run": {
+    "translation": null,
+    "category": "Basic",
+    "failed": true
+  },
+  "jump": {
+    "translation": null,
+    "category": "Basic",
+    "failed": true
+  },
+  "hop": {
+    "translation": "пружање",
+    "category": "Basic"
+  },
+  "skip": {
+    "translation": null,
+    "category": "Basic",
+    "failed": true
+  },
+  "crawl": {
+    "translation": "и",
+    "category": "Basic"
+  },
+  "climb": {
+    "translation": null,
+    "category": "Basic",
+    "failed": true
+  },
+  "slide": {
+    "translation": "слид",
+    "category": "Basic"
+  },
+  "swing": {
+    "translation": "тресање",
+    "category": "Basic"
+  },
+  "stretch": {
+    "translation": null,
+    "category": "Basic",
+    "failed": true
+  }
+}

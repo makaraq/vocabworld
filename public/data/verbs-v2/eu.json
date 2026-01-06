@@ -1,0 +1,1562 @@
+{
+  "walk": {
+    "translation": "txikitzu",
+    "category": "Basic"
+  },
+  "run": {
+    "translation": "ezinatu",
+    "category": "Basic"
+  },
+  "jump": {
+    "translation": "zaila",
+    "category": "Basic"
+  },
+  "hop": {
+    "translation": "beldur",
+    "category": "Basic"
+  },
+  "skip": {
+    "translation": "berriak",
+    "category": "Basic"
+  },
+  "crawl": {
+    "translation": "kukoitzatu",
+    "category": "Basic"
+  },
+  "climb": {
+    "translation": "Gainzet",
+    "category": "Basic"
+  },
+  "slide": {
+    "translation": "bulei",
+    "category": "Basic"
+  },
+  "swing": {
+    "translation": "gozaldegi",
+    "category": "Basic"
+  },
+  "stretch": {
+    "translation": "ezkerra",
+    "category": "Basic"
+  },
+  "bend": {
+    "translation": "berde",
+    "category": "Basic"
+  },
+  "lift": {
+    "translation": "goi",
+    "category": "Basic"
+  },
+  "carry": {
+    "translation": "Txori",
+    "category": "Basic"
+  },
+  "drag": {
+    "translation": "Txikiti",
+    "category": "Basic"
+  },
+  "push": {
+    "translation": "errepikatu",
+    "category": "Basic"
+  },
+  "pull": {
+    "translation": "ahasi",
+    "category": "Basic"
+  },
+  "hold": {
+    "translation": "Hold in Basque is garru",
+    "category": "Basic"
+  },
+  "grab": {
+    "translation": "Gehirotu",
+    "category": "Basic"
+  },
+  "drop": {
+    "translation": "txaka",
+    "category": "Basic"
+  },
+  "throw": {
+    "translation": "Txotsi",
+    "category": "Basic"
+  },
+  "catch": {
+    "translation": "Ahalizu",
+    "category": "Basic"
+  },
+  "kick": {
+    "translation": "txikatu",
+    "category": "Basic"
+  },
+  "hit": {
+    "translation": "Egokitu",
+    "category": "Basic"
+  },
+  "press": {
+    "translation": "presiozkoa",
+    "category": "Basic"
+  },
+  "twist": {
+    "translation": "Txikita",
+    "category": "Basic"
+  },
+  "turn": {
+    "translation": "Txikaritz",
+    "category": "Basic"
+  },
+  "rotate": {
+    "translation": "rotatu",
+    "category": "Basic"
+  },
+  "flip": {
+    "translation": "txikaritz",
+    "category": "Basic"
+  },
+  "shake": {
+    "translation": "sakatu",
+    "category": "Basic"
+  },
+  "wave": {
+    "translation": "txalupa",
+    "category": "Basic"
+  },
+  "reach": {
+    "translation": "jungar",
+    "category": "Basic"
+  },
+  "lean": {
+    "translation": "lehiña",
+    "category": "Basic"
+  },
+  "rest": {
+    "translation": "berri",
+    "category": "Basic"
+  },
+  "balance": {
+    "translation": "bilatu",
+    "category": "Basic"
+  },
+  "spin": {
+    "translation": "Txikitu",
+    "category": "Basic"
+  },
+  "arrange": {
+    "translation": "Zaildu",
+    "category": "Basic"
+  },
+  "adjust": {
+    "translation": "zailatu",
+    "category": "Basic"
+  },
+  "shift": {
+    "translation": "bidea",
+    "category": "Basic"
+  },
+  "tie": {
+    "translation": "bela",
+    "category": "Basic"
+  },
+  "untie": {
+    "translation": "Ebatzatu",
+    "category": "Basic"
+  },
+  "wrap": {
+    "translation": "abalaketa",
+    "category": "Basic"
+  },
+  "unwrap": {
+    "translation": "Desbaldar",
+    "category": "Basic"
+  },
+  "fold": {
+    "translation": "Berriuko batzaila",
+    "category": "Basic"
+  },
+  "unfold": {
+    "translation": "gaindozatzela",
+    "category": "Basic"
+  },
+  "pack": {
+    "translation": "buko",
+    "category": "Basic"
+  },
+  "unpack": {
+    "translation": "Desbater",
+    "category": "Basic"
+  },
+  "be": {
+    "translation": "Esta",
+    "category": "Basic"
+  },
+  "become": {
+    "translation": "egon",
+    "category": "Basic"
+  },
+  "seem": {
+    "translation": "dziakitzela",
+    "category": "Basic"
+  },
+  "appear": {
+    "translation": "aparretzu",
+    "category": "Basic"
+  },
+  "remain": {
+    "translation": "bilatu",
+    "category": "Basic"
+  },
+  "stay": {
+    "translation": "gieta",
+    "category": "Basic"
+  },
+  "exist": {
+    "translation": "egoztu",
+    "category": "Basic"
+  },
+  "happen": {
+    "translation": "izan",
+    "category": "Basic"
+  },
+  "occur": {
+    "translation": "ezeztatu",
+    "category": "Basic"
+  },
+  "change": {
+    "translation": "Txandekaratzeko",
+    "category": "Basic"
+  },
+  "improve": {
+    "translation": "Txotsi",
+    "category": "Basic"
+  },
+  "decline": {
+    "translation": "aberruztatu",
+    "category": "Basic"
+  },
+  "continue": {
+    "translation": "Jatzya",
+    "category": "Basic"
+  },
+  "stop": {
+    "translation": "gaindez",
+    "category": "Basic"
+  },
+  "begin": {
+    "translation": "izenetan",
+    "category": "Basic"
+  },
+  "end": {
+    "translation": "gain",
+    "category": "Basic"
+  },
+  "last": {
+    "translation": "ultimofoilagerra",
+    "category": "Basic"
+  },
+  "wake": {
+    "translation": "bukaizu",
+    "category": "Daily Routine"
+  },
+  "get up": {
+    "translation": "Lehazten",
+    "category": "Daily Routine"
+  },
+  "wash": {
+    "translation": "lakapena",
+    "category": "Daily Routine"
+  },
+  "shower": {
+    "translation": "izaba",
+    "category": "Daily Routine"
+  },
+  "bathe": {
+    "translation": "Batu",
+    "category": "Daily Routine"
+  },
+  "brush": {
+    "translation": "ezkerra",
+    "category": "Daily Routine"
+  },
+  "comb": {
+    "translation": "txapela",
+    "category": "Daily Routine"
+  },
+  "dress": {
+    "translation": "txapela",
+    "category": "Daily Routine"
+  },
+  "eat": {
+    "translation": "eho",
+    "category": "Daily Routine"
+  },
+  "drink": {
+    "translation": "berri",
+    "category": "Daily Routine"
+  },
+  "snack": {
+    "translation": "gazta",
+    "category": "Daily Routine"
+  },
+  "cook": {
+    "translation": "Txikitekoa",
+    "category": "Daily Routine"
+  },
+  "bake": {
+    "translation": "bakatu",
+    "category": "Daily Routine"
+  },
+  "reheat": {
+    "translation": "Berrezina",
+    "category": "Daily Routine"
+  },
+  "clean": {
+    "translation": "bihar",
+    "category": "Daily Routine"
+  },
+  "tidy": {
+    "translation": "Tidysku",
+    "category": "Daily Routine"
+  },
+  "organize": {
+    "translation": "Organizatzai",
+    "category": "Daily Routine"
+  },
+  "vacuum": {
+    "translation": "vacuum in Basque is zubia",
+    "category": "Daily Routine"
+  },
+  "sweep": {
+    "translation": "Buztintzua",
+    "category": "Daily Routine"
+  },
+  "mop": {
+    "translation": "etxejerai",
+    "category": "Daily Routine"
+  },
+  "dust": {
+    "translation": "Ere",
+    "category": "Daily Routine"
+  },
+  "wash dishes": {
+    "translation": "Hasi zudun",
+    "category": "Daily Routine"
+  },
+  "rinse": {
+    "translation": "Etxeztu",
+    "category": "Daily Routine"
+  },
+  "wipe": {
+    "translation": "ezabatu",
+    "category": "Daily Routine"
+  },
+  "scrub": {
+    "translation": "ezpeleta",
+    "category": "Daily Routine"
+  },
+  "dry": {
+    "translation": "txikia",
+    "category": "Daily Routine"
+  },
+  "shop": {
+    "translation": "goi",
+    "category": "Daily Routine"
+  },
+  "refill": {
+    "translation": "Berrezauka",
+    "category": "Daily Routine"
+  },
+  "charge": {
+    "translation": "Erautzua",
+    "category": "Daily Routine"
+  },
+  "relax": {
+    "translation": "berrespuztu",
+    "category": "Daily Routine"
+  },
+  "nap": {
+    "translation": "susto",
+    "category": "Daily Routine"
+  },
+  "sleep": {
+    "translation": "sleptu",
+    "category": "Daily Routine"
+  },
+  "prepare": {
+    "translation": "Zureztu",
+    "category": "Daily Routine"
+  },
+  "schedule": {
+    "translation": "Zerrenda",
+    "category": "Daily Routine"
+  },
+  "cancel": {
+    "translation": "Zakaratzeko",
+    "category": "Daily Routine"
+  },
+  "check": {
+    "translation": "Txikita",
+    "category": "Daily Routine"
+  },
+  "monitor": {
+    "translation": "monitorea",
+    "category": "Daily Routine"
+  },
+  "plan": {
+    "translation": "plana",
+    "category": "Daily Routine"
+  },
+  "wait": {
+    "translation": "Berriena",
+    "category": "Daily Routine"
+  },
+  "search": {
+    "translation": "bilatu",
+    "category": "Daily Routine"
+  },
+  "find": {
+    "translation": "Egiazkoa",
+    "category": "Daily Routine"
+  },
+  "lose": {
+    "translation": "Egaz",
+    "category": "Daily Routine"
+  },
+  "replace": {
+    "translation": "Ebatzatu",
+    "category": "Daily Routine"
+  },
+  "think": {
+    "translation": "Ginktu",
+    "category": "Mental"
+  },
+  "know": {
+    "translation": "zilla",
+    "category": "Mental"
+  },
+  "believe": {
+    "translation": "Ginocatzeko",
+    "category": "Mental"
+  },
+  "consider": {
+    "translation": "Eragiketu",
+    "category": "Mental"
+  },
+  "imagine": {
+    "translation": "Zientzia",
+    "category": "Mental"
+  },
+  "wonder": {
+    "translation": "Jardunak",
+    "category": "Mental"
+  },
+  "remember": {
+    "translation": "Zenbait",
+    "category": "Mental"
+  },
+  "forget": {
+    "translation": "-ignoretu",
+    "category": "Mental"
+  },
+  "realize": {
+    "translation": "Realitzatu",
+    "category": "Mental"
+  },
+  "guess": {
+    "translation": "Aukeratu",
+    "category": "Mental"
+  },
+  "predict": {
+    "translation": "Egokiatzeko",
+    "category": "Mental"
+  },
+  "expect": {
+    "translation": "ezarri",
+    "category": "Mental"
+  },
+  "recognize": {
+    "translation": "Zenbait",
+    "category": "Mental"
+  },
+  "notice": {
+    "translation": "berrialdi",
+    "category": "Mental"
+  },
+  "focus": {
+    "translation": "Egunka",
+    "category": "Mental"
+  },
+  "concentrate": {
+    "translation": "Koncentratu",
+    "category": "Mental"
+  },
+  "decide": {
+    "translation": "Egokiatzeko",
+    "category": "Mental"
+  },
+  "choose": {
+    "translation": "hauttu",
+    "category": "Mental"
+  },
+  "compare": {
+    "translation": "izan",
+    "category": "Mental"
+  },
+  "analyze": {
+    "translation": "Analizatu",
+    "category": "Mental"
+  },
+  "evaluate": {
+    "translation": "Evaluatu",
+    "category": "Mental"
+  },
+  "estimate": {
+    "translation": "Estimazio",
+    "category": "Mental"
+  },
+  "solve": {
+    "translation": "Egiazkarri",
+    "category": "Mental"
+  },
+  "question": {
+    "translation": "ezkerra",
+    "category": "Mental"
+  },
+  "suspect": {
+    "translation": "Ezberdin",
+    "category": "Mental"
+  },
+  "doubt": {
+    "translation": "Zaila",
+    "category": "Mental"
+  },
+  "learn": {
+    "translation": "Aixanda",
+    "category": "Mental"
+  },
+  "study": {
+    "translation": "ezkerra",
+    "category": "Mental"
+  },
+  "memorize": {
+    "translation": "Memoratu",
+    "category": "Mental"
+  },
+  "calculate": {
+    "translation": "Kalkulatu",
+    "category": "Mental"
+  },
+  "reflect": {
+    "translation": "reflektzatu",
+    "category": "Mental"
+  },
+  "understand": {
+    "translation": "zertaita",
+    "category": "Mental"
+  },
+  "like": {
+    "translation": "galaizua",
+    "category": "Mental"
+  },
+  "love": {
+    "translation": "Amor",
+    "category": "Mental"
+  },
+  "hate": {
+    "translation": "Ezabatu",
+    "category": "Mental"
+  },
+  "enjoy": {
+    "translation": "gozatu",
+    "category": "Mental"
+  },
+  "prefer": {
+    "translation": "preferatu",
+    "category": "Mental"
+  },
+  "want": {
+    "translation": "haitz",
+    "category": "Mental"
+  },
+  "need": {
+    "translation": "bihotza",
+    "category": "Mental"
+  },
+  "miss": {
+    "translation": "izan",
+    "category": "Mental"
+  },
+  "care": {
+    "translation": "berri",
+    "category": "Mental"
+  },
+  "worry": {
+    "translation": "Ezabatu",
+    "category": "Mental"
+  },
+  "fear": {
+    "translation": "Geldi",
+    "category": "Mental"
+  },
+  "panic": {
+    "translation": "Pikaso",
+    "category": "Mental"
+  },
+  "stress": {
+    "translation": "ezabakidze",
+    "category": "Mental"
+  },
+  "calm": {
+    "translation": "Zearra",
+    "category": "Mental"
+  },
+  "appreciate": {
+    "translation": "Jasotu",
+    "category": "Mental"
+  },
+  "value": {
+    "translation": "Garrantzitzat",
+    "category": "Mental"
+  },
+  "respect": {
+    "translation": "Ereskitu",
+    "category": "Mental"
+  },
+  "dislike": {
+    "translation": "ezduna",
+    "category": "Mental"
+  },
+  "regret": {
+    "translation": "Txori",
+    "category": "Mental"
+  },
+  "hope": {
+    "translation": "Ehun",
+    "category": "Mental"
+  },
+  "trust": {
+    "translation": "Ederduena",
+    "category": "Mental"
+  },
+  "surprise": {
+    "translation": "Txikita",
+    "category": "Mental"
+  },
+  "shock": {
+    "translation": "baskoza",
+    "category": "Mental"
+  },
+  "annoy": {
+    "translation": "Ezabatu",
+    "category": "Mental"
+  },
+  "bother": {
+    "translation": "Egokiena",
+    "category": "Mental"
+  },
+  "confuse": {
+    "translation": "abiatu",
+    "category": "Mental"
+  },
+  "embarrass": {
+    "translation": "Eztabaidua",
+    "category": "Mental"
+  },
+  "frustrate": {
+    "translation": "Eztabaidatu",
+    "category": "Mental"
+  },
+  "satisfy": {
+    "translation": "Egunka",
+    "category": "Mental"
+  },
+  "comfort": {
+    "translation": "Berri",
+    "category": "Mental"
+  },
+  "cheer": {
+    "translation": "bertsu",
+    "category": "Mental"
+  },
+  "say": {
+    "translation": "Etxe",
+    "category": "Communication"
+  },
+  "tell": {
+    "translation": "Kontzatutzi",
+    "category": "Communication"
+  },
+  "talk": {
+    "translation": "gogoratu",
+    "category": "Communication"
+  },
+  "speak": {
+    "translation": "Esku Dut",
+    "category": "Communication"
+  },
+  "discuss": {
+    "translation": "debatedu",
+    "category": "Communication"
+  },
+  "chat": {
+    "translation": "Txatua",
+    "category": "Communication"
+  },
+  "explain": {
+    "translation": "Deskribu dezaket",
+    "category": "Communication"
+  },
+  "describe": {
+    "translation": "Deskribuzu",
+    "category": "Communication"
+  },
+  "announce": {
+    "translation": "ahotsa",
+    "category": "Communication"
+  },
+  "report": {
+    "translation": "berriegoizena",
+    "category": "Communication"
+  },
+  "reply": {
+    "translation": "Berriego",
+    "category": "Communication"
+  },
+  "answer": {
+    "translation": "Egunka",
+    "category": "Communication"
+  },
+  "ask": {
+    "translation": "Esku Dut",
+    "category": "Communication"
+  },
+  "interrupt": {
+    "translation": "Interrumpir",
+    "category": "Communication"
+  },
+  "suggest": {
+    "translation": "Egokitu",
+    "category": "Communication"
+  },
+  "recommend": {
+    "translation": "Ehizaltu",
+    "category": "Communication"
+  },
+  "complain": {
+    "translation": "ezabatu",
+    "category": "Communication"
+  },
+  "argue": {
+    "translation": "izaitu",
+    "category": "Communication"
+  },
+  "debate": {
+    "translation": "Debata",
+    "category": "Communication"
+  },
+  "whisper": {
+    "translation": "susurro",
+    "category": "Communication"
+  },
+  "shout": {
+    "translation": "ahotsua",
+    "category": "Communication"
+  },
+  "yell": {
+    "translation": "ahintzatu",
+    "category": "Communication"
+  },
+  "mention": {
+    "translation": "Egazikalketa",
+    "category": "Communication"
+  },
+  "remind": {
+    "translation": "ezabatu",
+    "category": "Communication"
+  },
+  "warn": {
+    "translation": "alerta",
+    "category": "Communication"
+  },
+  "advise": {
+    "translation": "berri zenbait",
+    "category": "Communication"
+  },
+  "encourage": {
+    "translation": "biharatz",
+    "category": "Communication"
+  },
+  "persuade": {
+    "translation": "Egokitu",
+    "category": "Communication"
+  },
+  "invite": {
+    "translation": "Invitatu",
+    "category": "Communication"
+  },
+  "respond": {
+    "translation": "Egokitu",
+    "category": "Communication"
+  },
+  "translate": {
+    "translation": "Transladeztu",
+    "category": "Communication"
+  },
+  "inform": {
+    "translation": "Informedu",
+    "category": "Communication"
+  },
+  "comment": {
+    "translation": "komentzak",
+    "category": "Communication"
+  },
+  "confirm": {
+    "translation": "-confirmatu",
+    "category": "Communication"
+  },
+  "deny": {
+    "translation": "Denegatu",
+    "category": "Communication"
+  },
+  "admit": {
+    "translation": "Egiaztu",
+    "category": "Communication"
+  },
+  "meet": {
+    "translation": "itzai",
+    "category": "Social"
+  },
+  "greet": {
+    "translation": "Ezabatu",
+    "category": "Social"
+  },
+  "welcome": {
+    "translation": "Bietak",
+    "category": "Social"
+  },
+  "visit": {
+    "translation": "gozitzeko",
+    "category": "Social"
+  },
+  "host": {
+    "translation": "Hospitalua",
+    "category": "Social"
+  },
+  "join": {
+    "translation": "joan",
+    "category": "Social"
+  },
+  "help": {
+    "translation": "Auxi",
+    "category": "Social"
+  },
+  "support": {
+    "translation": "gainda",
+    "category": "Social"
+  },
+  "assist": {
+    "translation": "Kontzidera",
+    "category": "Social"
+  },
+  "share": {
+    "translation": "Txartela",
+    "category": "Social"
+  },
+  "care for": {
+    "translation": "Berriztu",
+    "category": "Social"
+  },
+  "hug": {
+    "translation": "gipuzten",
+    "category": "Social"
+  },
+  "kiss": {
+    "translation": "Ezabatua",
+    "category": "Social"
+  },
+  "hold hands": {
+    "translation": "Heldatutela",
+    "category": "Social"
+  },
+  "date": {
+    "translation": "Data",
+    "category": "Social"
+  },
+  "marry": {
+    "translation": "eheztatu",
+    "category": "Social"
+  },
+  "befriend": {
+    "translation": "Gehirotu",
+    "category": "Social"
+  },
+  "follow": {
+    "translation": "-follow-",
+    "category": "Social"
+  },
+  "lead": {
+    "translation": "Letxu",
+    "category": "Social"
+  },
+  "guide": {
+    "translation": "Gidera",
+    "category": "Social"
+  },
+  "introduce": {
+    "translation": "Intzordu",
+    "category": "Social"
+  },
+  "cooperate": {
+    "translation": "Collaboratu",
+    "category": "Social"
+  },
+  "protect": {
+    "translation": "berririk",
+    "category": "Social"
+  },
+  "include": {
+    "translation": "berriincludea",
+    "category": "Social"
+  },
+  "exclude": {
+    "translation": "eztabaida",
+    "category": "Social"
+  },
+  "work": {
+    "translation": "Txoimeneka",
+    "category": "Work"
+  },
+  "write": {
+    "translation": "Egitegia",
+    "category": "Work"
+  },
+  "read": {
+    "translation": "Lurrutuza",
+    "category": "Work"
+  },
+  "edit": {
+    "translation": "editatu",
+    "category": "Work"
+  },
+  "revise": {
+    "translation": "berrezapen",
+    "category": "Work"
+  },
+  "review": {
+    "translation": "abalaketa",
+    "category": "Work"
+  },
+  "inspect": {
+    "translation": "Inspektatua",
+    "category": "Work"
+  },
+  "complete": {
+    "translation": "Zenbat",
+    "category": "Work"
+  },
+  "submit": {
+    "translation": "Eguzkia",
+    "category": "Work"
+  },
+  "create": {
+    "translation": "-createzketa",
+    "category": "Work"
+  },
+  "design": {
+    "translation": "disenbukua",
+    "category": "Work"
+  },
+  "build": {
+    "translation": "biltxekatu",
+    "category": "Work"
+  },
+  "assemble": {
+    "translation": "Juntaspi Beschertua",
+    "category": "Work"
+  },
+  "debug": {
+    "translation": "Ezikolatu",
+    "category": "Work"
+  },
+  "research": {
+    "translation": "izkaraitzak",
+    "category": "Work"
+  },
+  "document": {
+    "translation": "dokumentua",
+    "category": "Work"
+  },
+  "train": {
+    "translation": "tren",
+    "category": "Work"
+  },
+  "teach": {
+    "translation": "Txikitzatu",
+    "category": "Work"
+  },
+  "update": {
+    "translation": "Actualizare",
+    "category": "Work"
+  },
+  "upload": {
+    "translation": "Kargatu",
+    "category": "Work"
+  },
+  "download": {
+    "translation": "Descargatu",
+    "category": "Work"
+  },
+  "print": {
+    "translation": "eskaini",
+    "category": "Work"
+  },
+  "scan": {
+    "translation": "Egutegi",
+    "category": "Work"
+  },
+  "record": {
+    "translation": "egunka",
+    "category": "Work"
+  },
+  "track": {
+    "translation": "txalupa",
+    "category": "Work"
+  },
+  "manage": {
+    "translation": "Gehizapen",
+    "category": "Work"
+  },
+  "supervise": {
+    "translation": "Egitegia",
+    "category": "Work"
+  },
+  "go": {
+    "translation": "Ezera",
+    "category": "Travel"
+  },
+  "come": {
+    "translation": "Edu",
+    "category": "Travel"
+  },
+  "move": {
+    "translation": "-move-",
+    "category": "Travel"
+  },
+  "leave": {
+    "translation": "izenetze",
+    "category": "Travel"
+  },
+  "arrive": {
+    "translation": "jungar",
+    "category": "Travel"
+  },
+  "enter": {
+    "translation": "Egoitzu",
+    "category": "Travel"
+  },
+  "exit": {
+    "translation": "sortu",
+    "category": "Travel"
+  },
+  "travel": {
+    "translation": "reisegi",
+    "category": "Travel"
+  },
+  "fly": {
+    "translation": "baltxoa",
+    "category": "Travel"
+  },
+  "drive": {
+    "translation": "EHUSTU",
+    "category": "Travel"
+  },
+  "ride": {
+    "translation": "jarri",
+    "category": "Travel"
+  },
+  "board": {
+    "translation": "bidea",
+    "category": "Travel"
+  },
+  "land": {
+    "translation": "terra",
+    "category": "Travel"
+  },
+  "park": {
+    "translation": "lehioin",
+    "category": "Travel"
+  },
+  "accelerate": {
+    "translation": "berrizkoatu",
+    "category": "Travel"
+  },
+  "reverse": {
+    "translation": "berrekin",
+    "category": "Travel"
+  },
+  "cross": {
+    "translation": "txristu",
+    "category": "Travel"
+  },
+  "wander": {
+    "translation": "bikarrotza",
+    "category": "Travel"
+  },
+  "explore": {
+    "translation": "izan",
+    "category": "Travel"
+  },
+  "return": {
+    "translation": "gain",
+    "category": "Travel"
+  },
+  "rush": {
+    "translation": "ezkatu",
+    "category": "Travel"
+  },
+  "hurry": {
+    "translation": "Urgerizego",
+    "category": "Travel"
+  },
+  "navigate": {
+    "translation": "nabarriko",
+    "category": "Travel"
+  },
+  "sanitize": {
+    "translation": "Higienizatu",
+    "category": "Household"
+  },
+  "iron": {
+    "translation": "Ezda",
+    "category": "Household"
+  },
+  "store": {
+    "translation": "berriego",
+    "category": "Household"
+  },
+  "repair": {
+    "translation": "Reparatu",
+    "category": "Household"
+  },
+  "fix": {
+    "translation": "Txikaritz",
+    "category": "Household"
+  },
+  "disassemble": {
+    "translation": "Desagutzai",
+    "category": "Household"
+  },
+  "install": {
+    "translation": "instalar",
+    "category": "Household"
+  },
+  "uninstall": {
+    "translation": "Desinstalar",
+    "category": "Household"
+  },
+  "remove": {
+    "translation": "ezabatu",
+    "category": "Household"
+  },
+  "connect": {
+    "translation": "Konertzaiiswa",
+    "category": "Household"
+  },
+  "disconnect": {
+    "translation": "Deskargatu",
+    "category": "Household"
+  },
+  "lock": {
+    "translation": "lehena",
+    "category": "Household"
+  },
+  "unlock": {
+    "translation": "Desblokeatu",
+    "category": "Household"
+  },
+  "decorate": {
+    "translation": "dezainatu",
+    "category": "Household"
+  },
+  "polish": {
+    "translation": "Politzia",
+    "category": "Household"
+  },
+  "hammer": {
+    "translation": "lehendakari",
+    "category": "Household"
+  },
+  "saw": {
+    "translation": "zubia",
+    "category": "Household"
+  },
+  "glue": {
+    "translation": "harrausta",
+    "category": "Household"
+  },
+  "buy": {
+    "translation": "Eguneratu",
+    "category": "Money"
+  },
+  "sell": {
+    "translation": "bilatu",
+    "category": "Money"
+  },
+  "pay": {
+    "translation": "pagar",
+    "category": "Money"
+  },
+  "owe": {
+    "translation": "Utzi",
+    "category": "Money"
+  },
+  "borrow": {
+    "translation": "Ikusi",
+    "category": "Money"
+  },
+  "lend": {
+    "translation": "abiatu",
+    "category": "Money"
+  },
+  "rent": {
+    "translation": "arenatzeta",
+    "category": "Money"
+  },
+  "save": {
+    "translation": "berri",
+    "category": "Money"
+  },
+  "spend": {
+    "translation": "Egin",
+    "category": "Money"
+  },
+  "invest": {
+    "translation": "Investigatu",
+    "category": "Money"
+  },
+  "earn": {
+    "translation": "garrantzitsu",
+    "category": "Money"
+  },
+  "refund": {
+    "translation": "berrabasterka",
+    "category": "Money"
+  },
+  "exchange": {
+    "translation": "bakozi",
+    "category": "Money"
+  },
+  "order": {
+    "translation": "orden",
+    "category": "Money"
+  },
+  "select": {
+    "translation": "hautatu",
+    "category": "Money"
+  },
+  "withdraw": {
+    "translation": "Sortu",
+    "category": "Money"
+  },
+  "deposit": {
+    "translation": "Depósito",
+    "category": "Money"
+  },
+  "budget": {
+    "translation": "egozu",
+    "category": "Money"
+  },
+  "fry": {
+    "translation": "Txotsi",
+    "category": "Food"
+  },
+  "grill": {
+    "translation": "Tximene",
+    "category": "Food"
+  },
+  "boil": {
+    "translation": "erromaketa",
+    "category": "Food"
+  },
+  "steam": {
+    "translation": "sote",
+    "category": "Food"
+  },
+  "slice": {
+    "translation": "Txaka",
+    "category": "Food"
+  },
+  "cut": {
+    "translation": "Txertatu",
+    "category": "Food"
+  },
+  "chop": {
+    "translation": "Txaka",
+    "category": "Food"
+  },
+  "mix": {
+    "translation": "batzar",
+    "category": "Food"
+  },
+  "stir": {
+    "translation": "Txaka Dziabiĺa",
+    "category": "Food"
+  },
+  "pour": {
+    "translation": "Etxerat",
+    "category": "Food"
+  },
+  "serve": {
+    "translation": "buruatu",
+    "category": "Food"
+  },
+  "taste": {
+    "translation": "gureztua",
+    "category": "Food"
+  },
+  "season": {
+    "translation": "ezpataztua",
+    "category": "Food"
+  },
+  "marinate": {
+    "translation": "Marinatu",
+    "category": "Food"
+  },
+  "chew": {
+    "translation": "bukatu",
+    "category": "Food"
+  },
+  "swallow": {
+    "translation": "Txopin",
+    "category": "Food"
+  },
+  "deliver": {
+    "translation": "Egizarra",
+    "category": "Food"
+  },
+  "digest": {
+    "translation": "Egunka",
+    "category": "Food"
+  },
+  "rain": {
+    "translation": "eiku",
+    "category": "Nature"
+  },
+  "snow": {
+    "translation": "snovena",
+    "category": "Nature"
+  },
+  "hail": {
+    "translation": "Geldi",
+    "category": "Nature"
+  },
+  "sleet": {
+    "translation": "Geldoa",
+    "category": "Nature"
+  },
+  "freeze": {
+    "translation": "ezabatu",
+    "category": "Nature"
+  },
+  "melt": {
+    "translation": "Txertatu",
+    "category": "Nature"
+  },
+  "shine": {
+    "translation": "ezkerra",
+    "category": "Nature"
+  },
+  "blow": {
+    "translation": "Etxe",
+    "category": "Nature"
+  },
+  "grow": {
+    "translation": "txori",
+    "category": "Nature"
+  },
+  "bloom": {
+    "translation": "bloka",
+    "category": "Nature"
+  },
+  "wither": {
+    "translation": "ezkatzeko",
+    "category": "Nature"
+  },
+  "sprout": {
+    "translation": "txotx",
+    "category": "Nature"
+  },
+  "fall": {
+    "translation": "Txiku",
+    "category": "Nature"
+  },
+  "quake": {
+    "translation": "jende",
+    "category": "Nature"
+  },
+  "erode": {
+    "translation": "ezkatu",
+    "category": "Nature"
+  },
+  "burn": {
+    "translation": "egon",
+    "category": "Nature"
+  },
+  "flood": {
+    "translation": "eguzketa",
+    "category": "Nature"
+  },
+  "float": {
+    "translation": "bulei",
+    "category": "Nature"
+  },
+  "sink": {
+    "translation": "zinkia",
+    "category": "Nature"
+  },
+  "rise": {
+    "translation": "Gainzet",
+    "category": "Nature"
+  },
+  "set": {
+    "translation": "Eguzki",
+    "category": "Nature"
+  },
+  "breathe": {
+    "translation": "inhala or exhala",
+    "category": "Health"
+  },
+  "inhale": {
+    "translation": "Jatzi",
+    "category": "Health"
+  },
+  "exhale": {
+    "translation": "Eskuza",
+    "category": "Health"
+  },
+  "cough": {
+    "translation": "Txikitza",
+    "category": "Health"
+  },
+  "sneeze": {
+    "translation": "Eskorria",
+    "category": "Health"
+  },
+  "sweat": {
+    "translation": "dziak",
+    "category": "Health"
+  },
+  "bleed": {
+    "translation": "Geldatu",
+    "category": "Health"
+  },
+  "heal": {
+    "translation": "Helatzua",
+    "category": "Health"
+  },
+  "recover": {
+    "translation": "Rekuperatu",
+    "category": "Health"
+  },
+  "ache": {
+    "translation": "ezabatu",
+    "category": "Health"
+  },
+  "hurt": {
+    "translation": "ezabatu",
+    "category": "Health"
+  },
+  "strain": {
+    "translation": "ezkerra",
+    "category": "Health"
+  },
+  "exercise": {
+    "translation": "ezerskia",
+    "category": "Health"
+  },
+  "faint": {
+    "translation": "ezabatu",
+    "category": "Health"
+  },
+  "vomit": {
+    "translation": "Ezabatu",
+    "category": "Health"
+  },
+  "blink": {
+    "translation": "izpyotatu",
+    "category": "Health"
+  },
+  "squint": {
+    "translation": "Ekinutz",
+    "category": "Health"
+  },
+  "tremble": {
+    "translation": "eskultu",
+    "category": "Health"
+  },
+  "click": {
+    "translation": "Txikote",
+    "category": "Technology"
+  },
+  "tap": {
+    "translation": "txaka",
+    "category": "Technology"
+  },
+  "scroll": {
+    "translation": "bertsu",
+    "category": "Technology"
+  },
+  "swipe": {
+    "translation": "Ezabatu",
+    "category": "Technology"
+  },
+  "browse": {
+    "translation": "gozdarazi",
+    "category": "Technology"
+  },
+  "upgrade": {
+    "translation": "Egozketa",
+    "category": "Technology"
+  },
+  "copy": {
+    "translation": "kopiatu",
+    "category": "Technology"
+  },
+  "paste": {
+    "translation": "Txakaizu",
+    "category": "Technology"
+  },
+  "delete": {
+    "translation": "Ezabatu",
+    "category": "Technology"
+  },
+  "reset": {
+    "translation": "Berrezar",
+    "category": "Technology"
+  },
+  "restart": {
+    "translation": "berartxiko",
+    "category": "Technology"
+  },
+  "log in": {
+    "translation": "Egin girişua",
+    "category": "Technology"
+  },
+  "log out": {
+    "translation": "Atzera",
+    "category": "Technology"
+  },
+  "sync": {
+    "translation": "Sincronia",
+    "category": "Technology"
+  },
+  "stream": {
+    "translation": "ezkerri",
+    "category": "Technology"
+  },
+  "encrypt": {
+    "translation": "Kriptatu",
+    "category": "Technology"
+  },
+  "backup": {
+    "translation": "kopiatu",
+    "category": "Technology"
+  }
+}

@@ -1,0 +1,474 @@
+[
+  {
+    "langCode": "ca",
+    "wordId": "2718",
+    "word": "zero",
+    "category": "Numbers",
+    "b2Path": "ca/Numbers/alnilam_2718_zero.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f109c35f2fc0a0a69_d20251203_m094245_c006_v0601002_t0019_u01764754965894"
+  },
+  {
+    "langCode": "cy",
+    "wordId": "2733",
+    "word": "fifteen",
+    "category": "Numbers",
+    "b2Path": "cy/Numbers/alnilam_2733_fifteen.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f1026ad339c0d6799_d20251203_m094246_c006_v0601001_t0008_u01764754966100"
+  },
+  {
+    "langCode": "da",
+    "wordId": "2790",
+    "word": "April",
+    "category": "Time",
+    "b2Path": "da/Time/alnilam_2790_April.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f105eb2fce1fc65fd_d20251203_m094246_c006_v0601001_t0004_u01764754966335"
+  },
+  {
+    "langCode": "da",
+    "wordId": "2794",
+    "word": "August",
+    "category": "Time",
+    "b2Path": "da/Time/alnilam_2794_August.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f103b158e4cb4197f_d20251203_m094246_c006_v0601000_t0007_u01764754966589"
+  },
+  {
+    "langCode": "da",
+    "wordId": "2795",
+    "word": "September",
+    "category": "Time",
+    "b2Path": "da/Time/alnilam_2795_September.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f1104f36ca8a9ba0e_d20251203_m094246_c006_v0601000_t0008_u01764754966877"
+  },
+  {
+    "langCode": "da",
+    "wordId": "2797",
+    "word": "November",
+    "category": "Time",
+    "b2Path": "da/Time/alnilam_2797_November.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f109c35f2fc0a0a8d_d20251203_m094247_c006_v0601002_t0008_u01764754967146"
+  },
+  {
+    "langCode": "da",
+    "wordId": "2798",
+    "word": "December",
+    "category": "Time",
+    "b2Path": "da/Time/alnilam_2798_December.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f113741bbdd0d242b_d20251203_m094247_c006_v0601002_t0032_u01764754967361"
+  },
+  {
+    "langCode": "da",
+    "wordId": "2809",
+    "word": "weekend",
+    "category": "Time",
+    "b2Path": "da/Time/alnilam_2809_weekend.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f1013d2b7aa3eceb7_d20251203_m094247_c006_v0601001_t0059_u01764754967573"
+  },
+  {
+    "langCode": "de",
+    "wordId": "2766",
+    "word": "Minute",
+    "category": "Time",
+    "b2Path": "de/Time/alnilam_2766_Minute.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f1172f95dcb087435_d20251203_m094247_c006_v0601001_t0056_u01764754967828"
+  },
+  {
+    "langCode": "de",
+    "wordId": "2790",
+    "word": "April",
+    "category": "Time",
+    "b2Path": "de/Time/alnilam_2790_April.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f118e575ee0202753_d20251203_m094248_c006_v0601001_t0025_u01764754968121"
+  },
+  {
+    "langCode": "de",
+    "wordId": "2794",
+    "word": "August",
+    "category": "Time",
+    "b2Path": "de/Time/alnilam_2794_August.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f109b46f97e66af3b_d20251203_m094248_c006_v0601001_t0046_u01764754968363"
+  },
+  {
+    "langCode": "de",
+    "wordId": "2795",
+    "word": "September",
+    "category": "Time",
+    "b2Path": "de/Time/alnilam_2795_September.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f110dfd85018df5e9_d20251203_m094248_c006_v0601001_t0010_u01764754968590"
+  },
+  {
+    "langCode": "de",
+    "wordId": "2797",
+    "word": "November",
+    "category": "Time",
+    "b2Path": "de/Time/alnilam_2797_November.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f11922f5896e1650e_d20251203_m094248_c006_v0601000_t0011_u01764754968856"
+  },
+  {
+    "langCode": "de",
+    "wordId": "2806",
+    "word": "Winter",
+    "category": "Time",
+    "b2Path": "de/Time/alnilam_2806_Winter.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f1057a60c90dac364_d20251203_m094249_c006_v0601002_t0010_u01764754969099"
+  },
+  {
+    "langCode": "et",
+    "wordId": "2747",
+    "word": "number",
+    "category": "Numbers",
+    "b2Path": "et/Numbers/alnilam_2747_number.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f1061aaf0d4c868b7_d20251203_m094249_c006_v0601000_t0017_u01764754969349"
+  },
+  {
+    "langCode": "et",
+    "wordId": "2794",
+    "word": "August",
+    "category": "Time",
+    "b2Path": "et/Time/alnilam_2794_August.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f1061aaf0d4c868bd_d20251203_m094249_c006_v0601000_t0012_u01764754969612"
+  },
+  {
+    "langCode": "et",
+    "wordId": "2795",
+    "word": "September",
+    "category": "Time",
+    "b2Path": "et/Time/alnilam_2795_September.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f11234e2d54ef8c62_d20251203_m094249_c006_v0601002_t0031_u01764754969866"
+  },
+  {
+    "langCode": "et",
+    "wordId": "2797",
+    "word": "November",
+    "category": "Time",
+    "b2Path": "et/Time/alnilam_2797_November.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f1026ad339c0d6801_d20251203_m094250_c006_v0601001_t0059_u01764754970068"
+  },
+  {
+    "langCode": "eu",
+    "wordId": "2718",
+    "word": "zero",
+    "category": "Numbers",
+    "b2Path": "eu/Numbers/alnilam_2718_zero.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f110dfd85018df62b_d20251203_m094250_c006_v0601001_t0025_u01764754970286"
+  },
+  {
+    "langCode": "fr",
+    "wordId": "2724",
+    "word": "six",
+    "category": "Numbers",
+    "b2Path": "fr/Numbers/alnilam_2724_six.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f106373be999036c0_d20251203_m094250_c006_v0601001_t0047_u01764754970498"
+  },
+  {
+    "langCode": "fr",
+    "wordId": "2735",
+    "word": "dix-sept",
+    "category": "Numbers",
+    "b2Path": "fr/Numbers/alnilam_2735_dix-sept.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f103f8f012ba2927e_d20251203_m094250_c006_v0601001_t0009_u01764754970731"
+  },
+  {
+    "langCode": "fr",
+    "wordId": "2736",
+    "word": "dix-huit",
+    "category": "Numbers",
+    "b2Path": "fr/Numbers/alnilam_2736_dix-huit.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f118cd95684b209e1_d20251203_m094250_c006_v0601002_t0015_u01764754970951"
+  },
+  {
+    "langCode": "fr",
+    "wordId": "2737",
+    "word": "dix-neuf",
+    "category": "Numbers",
+    "b2Path": "fr/Numbers/alnilam_2737_dix-neuf.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f11922f5896e16536_d20251203_m094251_c006_v0601000_t0042_u01764754971148"
+  },
+  {
+    "langCode": "fr",
+    "wordId": "2756",
+    "word": "second",
+    "category": "Time",
+    "b2Path": "fr/Time/alnilam_2756_second.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f11225534aa8a0aeb_d20251203_m094251_c006_v0601000_t0038_u01764754971364"
+  },
+  {
+    "langCode": "fr",
+    "wordId": "2766",
+    "word": "minute",
+    "category": "Time",
+    "b2Path": "fr/Time/alnilam_2766_minute.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f118cd95684b209ef_d20251203_m094251_c006_v0601002_t0035_u01764754971565"
+  },
+  {
+    "langCode": "hu",
+    "wordId": "2797",
+    "word": "november",
+    "category": "Time",
+    "b2Path": "hu/Time/alnilam_2797_november.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f109c35f2fc0a0afb_d20251203_m094251_c006_v0601002_t0005_u01764754971794"
+  },
+  {
+    "langCode": "hu",
+    "wordId": "2798",
+    "word": "December",
+    "category": "Time",
+    "b2Path": "hu/Time/alnilam_2798_December.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f112e308853f3353c_d20251203_m094252_c006_v0601001_t0032_u01764754972049"
+  },
+  {
+    "langCode": "id",
+    "wordId": "2790",
+    "word": "April",
+    "category": "Time",
+    "b2Path": "id/Time/alnilam_2790_April.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f116e17b8f41e0718_d20251203_m094252_c006_v0601002_t0042_u01764754972280"
+  },
+  {
+    "langCode": "id",
+    "wordId": "2795",
+    "word": "September",
+    "category": "Time",
+    "b2Path": "id/Time/alnilam_2795_September.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f116e17b8f41e071c_d20251203_m094252_c006_v0601002_t0046_u01764754972494"
+  },
+  {
+    "langCode": "id",
+    "wordId": "2797",
+    "word": "November",
+    "category": "Time",
+    "b2Path": "id/Time/alnilam_2797_November.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f10990b1ce5a68588_d20251203_m094252_c006_v0601000_t0029_u01764754972741"
+  },
+  {
+    "langCode": "is",
+    "wordId": "2795",
+    "word": "September",
+    "category": "Time",
+    "b2Path": "is/Time/alnilam_2795_September.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f119be74c51deb622_d20251203_m094252_c006_v0601002_t0015_u01764754972955"
+  },
+  {
+    "langCode": "it",
+    "wordId": "2718",
+    "word": "zero",
+    "category": "Numbers",
+    "b2Path": "it/Numbers/alnilam_2718_zero.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f10780e26ef789682_d20251203_m094253_c006_v0601000_t0023_u01764754973195"
+  },
+  {
+    "langCode": "it",
+    "wordId": "2809",
+    "word": "weekend",
+    "category": "Time",
+    "b2Path": "it/Time/alnilam_2809_weekend.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f111424c6fff92f14_d20251203_m094253_c006_v0601002_t0020_u01764754973401"
+  },
+  {
+    "langCode": "nl",
+    "wordId": "2777",
+    "word": "later",
+    "category": "Time",
+    "b2Path": "nl/Time/alnilam_2777_later.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f1003b428510468ba_d20251203_m094253_c006_v0601000_t0025_u01764754973635"
+  },
+  {
+    "langCode": "nl",
+    "wordId": "2790",
+    "word": "April",
+    "category": "Time",
+    "b2Path": "nl/Time/alnilam_2790_April.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f108789ccdf13b038_d20251203_m094253_c006_v0601001_t0010_u01764754973883"
+  },
+  {
+    "langCode": "nl",
+    "wordId": "2795",
+    "word": "September",
+    "category": "Time",
+    "b2Path": "nl/Time/alnilam_2795_September.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f118cd95684b20a31_d20251203_m094254_c006_v0601002_t0050_u01764754974114"
+  },
+  {
+    "langCode": "nl",
+    "wordId": "2797",
+    "word": "November",
+    "category": "Time",
+    "b2Path": "nl/Time/alnilam_2797_November.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f1104f36ca8a9babe_d20251203_m094254_c006_v0601000_t0043_u01764754974341"
+  },
+  {
+    "langCode": "nl",
+    "wordId": "2798",
+    "word": "december",
+    "category": "Time",
+    "b2Path": "nl/Time/alnilam_2798_december.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f102d48029b1e59a9_d20251203_m094254_c006_v0601002_t0022_u01764754974547"
+  },
+  {
+    "langCode": "nl",
+    "wordId": "2800",
+    "word": "week",
+    "category": "Time",
+    "b2Path": "nl/Time/alnilam_2800_week.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f11459e9daded14e8_d20251203_m094254_c006_v0601001_t0026_u01764754974754"
+  },
+  {
+    "langCode": "nl",
+    "wordId": "2806",
+    "word": "winter",
+    "category": "Time",
+    "b2Path": "nl/Time/alnilam_2806_winter.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f11225534aa8a0b3b_d20251203_m094254_c006_v0601000_t0002_u01764754974991"
+  },
+  {
+    "langCode": "nl",
+    "wordId": "2809",
+    "word": "weekend",
+    "category": "Time",
+    "b2Path": "nl/Time/alnilam_2809_weekend.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f110dfd85018df6c9_d20251203_m094255_c006_v0601001_t0030_u01764754975207"
+  },
+  {
+    "langCode": "no",
+    "wordId": "2790",
+    "word": "April",
+    "category": "Time",
+    "b2Path": "no/Time/alnilam_2790_April.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f114956f57ca09eaa_d20251203_m094255_c006_v0601002_t0006_u01764754975430"
+  },
+  {
+    "langCode": "no",
+    "wordId": "2794",
+    "word": "August",
+    "category": "Time",
+    "b2Path": "no/Time/alnilam_2794_August.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f116c012ab7979bbf_d20251203_m094255_c006_v0601001_t0038_u01764754975651"
+  },
+  {
+    "langCode": "no",
+    "wordId": "2795",
+    "word": "September",
+    "category": "Time",
+    "b2Path": "no/Time/alnilam_2795_September.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f106373be99903720_d20251203_m094255_c006_v0601001_t0055_u01764754975868"
+  },
+  {
+    "langCode": "no",
+    "wordId": "2797",
+    "word": "November",
+    "category": "Time",
+    "b2Path": "no/Time/alnilam_2797_November.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f117c4122fa0272cf_d20251203_m094256_c006_v0601000_t0001_u01764754976107"
+  },
+  {
+    "langCode": "pl",
+    "wordId": "2718",
+    "word": "zero",
+    "category": "Numbers",
+    "b2Path": "pl/Numbers/alnilam_2718_zero.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f1061aaf0d4c86941_d20251203_m094256_c006_v0601000_t0014_u01764754976347"
+  },
+  {
+    "langCode": "pl",
+    "wordId": "2809",
+    "word": "weekend",
+    "category": "Time",
+    "b2Path": "pl/Time/alnilam_2809_weekend.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f119be74c51deb66b_d20251203_m094256_c006_v0601002_t0031_u01764754976537"
+  },
+  {
+    "langCode": "pt",
+    "wordId": "2718",
+    "word": "zero",
+    "category": "Numbers",
+    "b2Path": "pt/Numbers/alnilam_2718_zero.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f11930769590d4c9c_d20251203_m094256_c006_v0601001_t0052_u01764754976814"
+  },
+  {
+    "langCode": "ro",
+    "wordId": "2718",
+    "word": "zero",
+    "category": "Numbers",
+    "b2Path": "ro/Numbers/alnilam_2718_zero.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f1112eb0b949dbfd8_d20251203_m094257_c006_v0601001_t0004_u01764754977071"
+  },
+  {
+    "langCode": "ro",
+    "wordId": "2794",
+    "word": "August",
+    "category": "Time",
+    "b2Path": "ro/Time/alnilam_2794_August.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f101c7f59ec7160df_d20251203_m094257_c006_v0601000_t0025_u01764754977303"
+  },
+  {
+    "langCode": "ro",
+    "wordId": "2809",
+    "word": "weekend",
+    "category": "Time",
+    "b2Path": "ro/Time/alnilam_2809_weekend.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f106373be99903748_d20251203_m094257_c006_v0601001_t0007_u01764754977505"
+  },
+  {
+    "langCode": "sk",
+    "wordId": "2794",
+    "word": "August",
+    "category": "Time",
+    "b2Path": "sk/Time/alnilam_2794_August.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f1067046ac3d6ffd5_d20251203_m094257_c006_v0601002_t0039_u01764754977717"
+  },
+  {
+    "langCode": "sk",
+    "wordId": "2795",
+    "word": "September",
+    "category": "Time",
+    "b2Path": "sk/Time/alnilam_2795_September.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f106373be99903754_d20251203_m094257_c006_v0601001_t0055_u01764754977926"
+  },
+  {
+    "langCode": "sk",
+    "wordId": "2797",
+    "word": "november",
+    "category": "Time",
+    "b2Path": "sk/Time/alnilam_2797_november.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f117a423f9edce1cf_d20251203_m094258_c006_v0601002_t0006_u01764754978179"
+  },
+  {
+    "langCode": "sk",
+    "wordId": "2798",
+    "word": "december",
+    "category": "Time",
+    "b2Path": "sk/Time/alnilam_2798_december.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f1013d2b7aa3ecf97_d20251203_m094258_c006_v0601001_t0011_u01764754978416"
+  },
+  {
+    "langCode": "sv",
+    "wordId": "2790",
+    "word": "April",
+    "category": "Time",
+    "b2Path": "sv/Time/alnilam_2790_April.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f101e42359a6da371_d20251203_m094258_c006_v0601002_t0021_u01764754978678"
+  },
+  {
+    "langCode": "sv",
+    "wordId": "2795",
+    "word": "September",
+    "category": "Time",
+    "b2Path": "sv/Time/alnilam_2795_September.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f11234e2d54ef8d2a_d20251203_m094258_c006_v0601002_t0012_u01764754978933"
+  },
+  {
+    "langCode": "sv",
+    "wordId": "2797",
+    "word": "November",
+    "category": "Time",
+    "b2Path": "sv/Time/alnilam_2797_November.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f113741bbdd0d25c3_d20251203_m094259_c006_v0601002_t0022_u01764754979202"
+  },
+  {
+    "langCode": "sv",
+    "wordId": "2798",
+    "word": "December",
+    "category": "Time",
+    "b2Path": "sv/Time/alnilam_2798_December.mp3",
+    "fileId": "4_zaa1d47dd5cca310593920d1c_f106373be99903772_d20251203_m094259_c006_v0601001_t0004_u01764754979444"
+  }
+]

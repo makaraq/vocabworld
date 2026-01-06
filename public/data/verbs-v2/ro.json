@@ -1,0 +1,1563 @@
+{
+  "walk": {
+    "translation": "pasăre",
+    "category": "Basic"
+  },
+  "run": {
+    "translation": "runează",
+    "category": "Basic"
+  },
+  "jump": {
+    "translation": "saltă",
+    "category": "Basic"
+  },
+  "hop": {
+    "translation": "hopă",
+    "category": "Basic"
+  },
+  "skip": {
+    "translation": "saltă",
+    "category": "Basic"
+  },
+  "crawl": {
+    "translation": "crawă",
+    "category": "Basic"
+  },
+  "climb": {
+    "translation": "călmurți",
+    "category": "Basic"
+  },
+  "slide": {
+    "translation": "slidă",
+    "category": "Basic"
+  },
+  "swing": {
+    "translation": "swingeră",
+    "category": "Basic"
+  },
+  "stretch": {
+    "translation": "estrește",
+    "category": "Basic"
+  },
+  "bend": {
+    "translation": "curbă",
+    "category": "Basic"
+  },
+  "lift": {
+    "translation": "ascensor",
+    "category": "Basic"
+  },
+  "carry": {
+    "translation": "transporta",
+    "category": "Basic"
+  },
+  "drag": {
+    "translation": "trage",
+    "category": "Basic"
+  },
+  "push": {
+    "translation": "puțe",
+    "category": "Basic"
+  },
+  "pull": {
+    "translation": "drawă",
+    "category": "Basic"
+  },
+  "hold": {
+    "translation": "ține",
+    "category": "Basic"
+  },
+  "grab": {
+    "translation": "preluați",
+    "category": "Basic"
+  },
+  "drop": {
+    "translation": "drupeț",
+    "category": "Basic"
+  },
+  "throw": {
+    "translation": "arunca",
+    "category": "Basic"
+  },
+  "catch": {
+    "translation": "captură",
+    "category": "Basic"
+  },
+  "kick": {
+    "translation": "pedeapsă",
+    "category": "Basic"
+  },
+  "hit": {
+    "translation": "pune",
+    "category": "Basic"
+  },
+  "press": {
+    "translation": "presă",
+    "category": "Basic"
+  },
+  "twist": {
+    "translation": "dulceasa",
+    "category": "Basic"
+  },
+  "turn": {
+    "translation": "întoarcere",
+    "category": "Basic"
+  },
+  "rotate": {
+    "translation": "rotată",
+    "category": "Basic"
+  },
+  "flip": {
+    "translation": "flippă",
+    "category": "Basic"
+  },
+  "shake": {
+    "translation": "tremură",
+    "category": "Basic"
+  },
+  "wave": {
+    "translation": "ondă",
+    "category": "Basic"
+  },
+  "reach": {
+    "translation": "atinge",
+    "category": "Basic"
+  },
+  "lean": {
+    "translation": "lenășuși",
+    "category": "Basic"
+  },
+  "rest": {
+    "translation": "rușină",
+    "category": "Basic"
+  },
+  "balance": {
+    "translation": "echilibrul",
+    "category": "Basic"
+  },
+  "spin": {
+    "translation": "spin",
+    "category": "Basic"
+  },
+  "arrange": {
+    "translation": "dispoziție",
+    "category": "Basic"
+  },
+  "adjust": {
+    "translation": "ajusta",
+    "category": "Basic"
+  },
+  "shift": {
+    "translation": "schimbărire",
+    "category": "Basic"
+  },
+  "tie": {
+    "translation": "țip",
+    "category": "Basic"
+  },
+  "untie": {
+    "translation": "deschiudi",
+    "category": "Basic"
+  },
+  "wrap": {
+    "translation": "-wrapă",
+    "category": "Basic"
+  },
+  "unwrap": {
+    "translation": "deschide",
+    "category": "Basic"
+  },
+  "fold": {
+    "translation": "dobânză",
+    "category": "Basic"
+  },
+  "unfold": {
+    "translation": "desfășurare",
+    "category": "Basic"
+  },
+  "pack": {
+    "translation": "pachet",
+    "category": "Basic"
+  },
+  "unpack": {
+    "translation": "desempaquetați",
+    "category": "Basic"
+  },
+  "be": {
+    "translation": "este",
+    "category": "Basic"
+  },
+  "become": {
+    "translation": "veniră",
+    "category": "Basic"
+  },
+  "seem": {
+    "translation": "pară",
+    "category": "Basic"
+  },
+  "appear": {
+    "translation": "apărea",
+    "category": "Basic"
+  },
+  "remain": {
+    "translation": "rămâne",
+    "category": "Basic"
+  },
+  "stay": {
+    "translation": "ămăgi",
+    "category": "Basic"
+  },
+  "exist": {
+    "translation": "existencează",
+    "category": "Basic"
+  },
+  "happen": {
+    "translation": "întâmplași",
+    "category": "Basic"
+  },
+  "occur": {
+    "translation": "apărea",
+    "category": "Basic"
+  },
+  "change": {
+    "translation": "schimbărea",
+    "category": "Basic"
+  },
+  "improve": {
+    "translation": "îmbunătăți",
+    "category": "Basic"
+  },
+  "decline": {
+    "translation": "declin",
+    "category": "Basic"
+  },
+  "continue": {
+    "translation": "continuați",
+    "category": "Basic"
+  },
+  "stop": {
+    "translation": "operațiune",
+    "category": "Basic"
+  },
+  "begin": {
+    "translation": "începe",
+    "category": "Basic"
+  },
+  "end": {
+    "translation": "sfârșit",
+    "category": "Basic"
+  },
+  "last": {
+    "translation": "ultimă",
+    "category": "Basic"
+  },
+  "wake": {
+    "translation": "bătut",
+    "category": "Daily Routine"
+  },
+  "get up": {
+    "translation": "ăwăstați",
+    "category": "Daily Routine"
+  },
+  "wash": {
+    "translation": "lucețe",
+    "category": "Daily Routine"
+  },
+  "shower": {
+    "translation": "dusă",
+    "category": "Daily Routine"
+  },
+  "bathe": {
+    "translation": "banătuși",
+    "category": "Daily Routine"
+  },
+  "brush": {
+    "translation": "păltuşoară",
+    "category": "Daily Routine"
+  },
+  "comb": {
+    "translation": "comădcaia",
+    "category": "Daily Routine"
+  },
+  "dress": {
+    "translation": "plăietărie",
+    "category": "Daily Routine"
+  },
+  "eat": {
+    "translation": "mâncă",
+    "category": "Daily Routine"
+  },
+  "drink": {
+    "translation": "bere",
+    "category": "Daily Routine"
+  },
+  "snack": {
+    "translation": "cucerărie",
+    "category": "Daily Routine"
+  },
+  "cook": {
+    "translation": "cucarăciună",
+    "category": "Daily Routine"
+  },
+  "bake": {
+    "translation": "Cupezi",
+    "category": "Daily Routine"
+  },
+  "reheat": {
+    "translation": "Reîmbotenișteți",
+    "category": "Daily Routine"
+  },
+  "clean": {
+    "translation": "curată",
+    "category": "Daily Routine"
+  },
+  "tidy": {
+    "translation": "Ordinată",
+    "category": "Daily Routine"
+  },
+  "organize": {
+    "translation": "organiza",
+    "category": "Daily Routine"
+  },
+  "vacuum": {
+    "translation": "vuță",
+    "category": "Daily Routine"
+  },
+  "sweep": {
+    "translation": "făcere",
+    "category": "Daily Routine"
+  },
+  "mop": {
+    "translation": "pufă",
+    "category": "Daily Routine"
+  },
+  "dust": {
+    "translation": "crupe",
+    "category": "Daily Routine"
+  },
+  "wash dishes": {
+    "translation": "lucrează discriminatoriu",
+    "category": "Daily Routine"
+  },
+  "rinse": {
+    "translation": "răsfoiește",
+    "category": "Daily Routine"
+  },
+  "wipe": {
+    "translation": "frotă",
+    "category": "Daily Routine"
+  },
+  "scrub": {
+    "translation": "cuciulă",
+    "category": "Daily Routine"
+  },
+  "dry": {
+    "translation": "secșe",
+    "category": "Daily Routine"
+  },
+  "shop": {
+    "translation": "magazin",
+    "category": "Daily Routine"
+  },
+  "refill": {
+    "translation": "Replimentare",
+    "category": "Daily Routine"
+  },
+  "charge": {
+    "translation": "chală",
+    "category": "Daily Routine"
+  },
+  "relax": {
+    "translation": "Relaxă",
+    "category": "Daily Routine"
+  },
+  "nap": {
+    "translation": "năpă",
+    "category": "Daily Routine"
+  },
+  "sleep": {
+    "translation": "sleepe",
+    "category": "Daily Routine"
+  },
+  "prepare": {
+    "translation": "pregătiți",
+    "category": "Daily Routine"
+  },
+  "schedule": {
+    "translation": "programă",
+    "category": "Daily Routine"
+  },
+  "cancel": {
+    "translation": "anulare",
+    "category": "Daily Routine"
+  },
+  "check": {
+    "translation": "verificare",
+    "category": "Daily Routine"
+  },
+  "monitor": {
+    "translation": "monitor",
+    "category": "Daily Routine"
+  },
+  "plan": {
+    "translation": "plan",
+    "category": "Daily Routine"
+  },
+  "wait": {
+    "translation": "ăsteptă",
+    "category": "Daily Routine"
+  },
+  "search": {
+    "translation": "căutare",
+    "category": "Daily Routine"
+  },
+  "find": {
+    "translation": "găsi",
+    "category": "Daily Routine"
+  },
+  "lose": {
+    "translation": "pierde",
+    "category": "Daily Routine"
+  },
+  "replace": {
+    "translation": "înlocuiți",
+    "category": "Daily Routine"
+  },
+  "think": {
+    "translation": "gândesc",
+    "category": "Mental"
+  },
+  "know": {
+    "translation": "știu",
+    "category": "Mental"
+  },
+  "believe": {
+    "translation": "credere",
+    "category": "Mental"
+  },
+  "consider": {
+    "translation": "Considerați",
+    "category": "Mental"
+  },
+  "imagine": {
+    "translation": "imagini",
+    "category": "Mental"
+  },
+  "wonder": {
+    "translation": "Miracol",
+    "category": "Mental"
+  },
+  "remember": {
+    "translation": "Ține minte",
+    "category": "Mental"
+  },
+  "forget": {
+    "translation": "forgettable",
+    "category": "Mental"
+  },
+  "realize": {
+    "translation": "realizați",
+    "category": "Mental"
+  },
+  "guess": {
+    "translation": "adivină",
+    "category": "Mental"
+  },
+  "predict": {
+    "translation": "previzualiza",
+    "category": "Mental"
+  },
+  "expect": {
+    "translation": "știină",
+    "category": "Mental"
+  },
+  "recognize": {
+    "translation": "reconizede",
+    "category": "Mental"
+  },
+  "notice": {
+    "translation": "notică",
+    "category": "Mental"
+  },
+  "focus": {
+    "translation": "focussed or focare",
+    "category": "Mental"
+  },
+  "concentrate": {
+    "translation": "concentrație",
+    "category": "Mental"
+  },
+  "decide": {
+    "translation": "decida",
+    "category": "Mental"
+  },
+  "choose": {
+    "translation": "alege",
+    "category": "Mental"
+  },
+  "compare": {
+    "translation": "compara",
+    "category": "Mental"
+  },
+  "analyze": {
+    "translation": "analiza",
+    "category": "Mental"
+  },
+  "evaluate": {
+    "translation": "evaluați",
+    "category": "Mental"
+  },
+  "estimate": {
+    "translation": "estimare",
+    "category": "Mental"
+  },
+  "solve": {
+    "translation": "resolve",
+    "category": "Mental"
+  },
+  "question": {
+    "translation": "întrebare",
+    "category": "Mental"
+  },
+  "suspect": {
+    "translation": "suspectul",
+    "category": "Mental"
+  },
+  "doubt": {
+    "translation": "Dubită",
+    "category": "Mental"
+  },
+  "learn": {
+    "translation": "apașuaște",
+    "category": "Mental"
+  },
+  "study": {
+    "translation": "studiu",
+    "category": "Mental"
+  },
+  "memorize": {
+    "translation": "memorați",
+    "category": "Mental"
+  },
+  "calculate": {
+    "translation": "calculează",
+    "category": "Mental"
+  },
+  "reflect": {
+    "translation": "reflectează",
+    "category": "Mental"
+  },
+  "understand": {
+    "translation": "comprender",
+    "category": "Mental"
+  },
+  "like": {
+    "translation": "caștigătorul",
+    "category": "Mental"
+  },
+  "love": {
+    "translation": "dragă",
+    "category": "Mental"
+  },
+  "hate": {
+    "translation": "odinăngrie",
+    "category": "Mental"
+  },
+  "enjoy": {
+    "translation": null,
+    "category": "Mental",
+    "failed": true
+  },
+  "prefer": {
+    "translation": "preferăm",
+    "category": "Mental"
+  },
+  "want": {
+    "translation": "dori",
+    "category": "Mental"
+  },
+  "need": {
+    "translation": "nevoie",
+    "category": "Mental"
+  },
+  "miss": {
+    "translation": "misează",
+    "category": "Mental"
+  },
+  "care": {
+    "translation": "cărei",
+    "category": "Mental"
+  },
+  "worry": {
+    "translation": "îngrijorare",
+    "category": "Mental"
+  },
+  "fear": {
+    "translation": "îngrijorare",
+    "category": "Mental"
+  },
+  "panic": {
+    "translation": "panică",
+    "category": "Mental"
+  },
+  "stress": {
+    "translation": "stres",
+    "category": "Mental"
+  },
+  "calm": {
+    "translation": "calmă",
+    "category": "Mental"
+  },
+  "appreciate": {
+    "translation": "apreciație",
+    "category": "Mental"
+  },
+  "value": {
+    "translation": "valoare",
+    "category": "Mental"
+  },
+  "respect": {
+    "translation": "respectăminte",
+    "category": "Mental"
+  },
+  "dislike": {
+    "translation": "displăcere",
+    "category": "Mental"
+  },
+  "regret": {
+    "translation": "răușin",
+    "category": "Mental"
+  },
+  "hope": {
+    "translation": "speranță",
+    "category": "Mental"
+  },
+  "trust": {
+    "translation": "credere",
+    "category": "Mental"
+  },
+  "surprise": {
+    "translation": "Surpriza",
+    "category": "Mental"
+  },
+  "shock": {
+    "translation": "shoc",
+    "category": "Mental"
+  },
+  "annoy": {
+    "translation": "enoajde",
+    "category": "Mental"
+  },
+  "bother": {
+    "translation": "trăma",
+    "category": "Mental"
+  },
+  "confuse": {
+    "translation": "confunda",
+    "category": "Mental"
+  },
+  "embarrass": {
+    "translation": "embarassament",
+    "category": "Mental"
+  },
+  "frustrate": {
+    "translation": "frustrează",
+    "category": "Mental"
+  },
+  "satisfy": {
+    "translation": "satisface",
+    "category": "Mental"
+  },
+  "comfort": {
+    "translation": "confort",
+    "category": "Mental"
+  },
+  "cheer": {
+    "translation": "hură",
+    "category": "Mental"
+  },
+  "say": {
+    "translation": "spune",
+    "category": "Communication"
+  },
+  "tell": {
+    "translation": "spune",
+    "category": "Communication"
+  },
+  "talk": {
+    "translation": "parlează",
+    "category": "Communication"
+  },
+  "speak": {
+    "translation": "spuneți",
+    "category": "Communication"
+  },
+  "discuss": {
+    "translation": "discuta",
+    "category": "Communication"
+  },
+  "chat": {
+    "translation": "câtalk",
+    "category": "Communication"
+  },
+  "explain": {
+    "translation": "explicați",
+    "category": "Communication"
+  },
+  "describe": {
+    "translation": "descrie",
+    "category": "Communication"
+  },
+  "announce": {
+    "translation": "anunțua",
+    "category": "Communication"
+  },
+  "report": {
+    "translation": "raport",
+    "category": "Communication"
+  },
+  "reply": {
+    "translation": "răspuns",
+    "category": "Communication"
+  },
+  "answer": {
+    "translation": "răspuns",
+    "category": "Communication"
+  },
+  "ask": {
+    "translation": "întrebați",
+    "category": "Communication"
+  },
+  "interrupt": {
+    "translation": "Interrupt",
+    "category": "Communication"
+  },
+  "suggest": {
+    "translation": "sugeră",
+    "category": "Communication"
+  },
+  "recommend": {
+    "translation": "recomanda",
+    "category": "Communication"
+  },
+  "complain": {
+    "translation": "plânge",
+    "category": "Communication"
+  },
+  "argue": {
+    "translation": "argumentați",
+    "category": "Communication"
+  },
+  "debate": {
+    "translation": "debată",
+    "category": "Communication"
+  },
+  "whisper": {
+    "translation": "susurru",
+    "category": "Communication"
+  },
+  "shout": {
+    "translation": "crie",
+    "category": "Communication"
+  },
+  "yell": {
+    "translation": "yâlna",
+    "category": "Communication"
+  },
+  "mention": {
+    "translation": "mentiune",
+    "category": "Communication"
+  },
+  "remind": {
+    "translation": "recordăți",
+    "category": "Communication"
+  },
+  "warn": {
+    "translation": "averteni",
+    "category": "Communication"
+  },
+  "advise": {
+    "translation": "conseja",
+    "category": "Communication"
+  },
+  "encourage": {
+    "translation": "incurca",
+    "category": "Communication"
+  },
+  "persuade": {
+    "translation": "persuada",
+    "category": "Communication"
+  },
+  "invite": {
+    "translation": "invitație",
+    "category": "Communication"
+  },
+  "respond": {
+    "translation": "răspunde",
+    "category": "Communication"
+  },
+  "translate": {
+    "translation": "traduce",
+    "category": "Communication"
+  },
+  "inform": {
+    "translation": "informațiune",
+    "category": "Communication"
+  },
+  "comment": {
+    "translation": "comentariu",
+    "category": "Communication"
+  },
+  "confirm": {
+    "translation": "Confirmă",
+    "category": "Communication"
+  },
+  "deny": {
+    "translation": "Deniție",
+    "category": "Communication"
+  },
+  "admit": {
+    "translation": "Admite",
+    "category": "Communication"
+  },
+  "meet": {
+    "translation": "întâlniți-se",
+    "category": "Social"
+  },
+  "greet": {
+    "translation": "bună",
+    "category": "Social"
+  },
+  "welcome": {
+    "translation": "Binevenit",
+    "category": "Social"
+  },
+  "visit": {
+    "translation": "vizită",
+    "category": "Social"
+  },
+  "host": {
+    "translation": "gospodar",
+    "category": "Social"
+  },
+  "join": {
+    "translation": "joacă",
+    "category": "Social"
+  },
+  "help": {
+    "translation": "ajutor",
+    "category": "Social"
+  },
+  "support": {
+    "translation": "susținere",
+    "category": "Social"
+  },
+  "assist": {
+    "translation": "asistățe",
+    "category": "Social"
+  },
+  "share": {
+    "translation": "parte",
+    "category": "Social"
+  },
+  "care for": {
+    "translation": "găteau",
+    "category": "Social"
+  },
+  "hug": {
+    "translation": "darăznie",
+    "category": "Social"
+  },
+  "kiss": {
+    "translation": "bătutuș",
+    "category": "Social"
+  },
+  "hold hands": {
+    "translation": "țintește",
+    "category": "Social"
+  },
+  "date": {
+    "translation": "data",
+    "category": "Social"
+  },
+  "marry": {
+    "translation": "sărutura",
+    "category": "Social"
+  },
+  "befriend": {
+    "translation": "prinde",
+    "category": "Social"
+  },
+  "follow": {
+    "translation": "urmări",
+    "category": "Social"
+  },
+  "lead": {
+    "translation": "plumbului",
+    "category": "Social"
+  },
+  "guide": {
+    "translation": "guidă",
+    "category": "Social"
+  },
+  "introduce": {
+    "translation": "introducere",
+    "category": "Social"
+  },
+  "cooperate": {
+    "translation": "cooperată",
+    "category": "Social"
+  },
+  "protect": {
+    "translation": "protectează",
+    "category": "Social"
+  },
+  "include": {
+    "translation": "include",
+    "category": "Social"
+  },
+  "exclude": {
+    "translation": "excluși",
+    "category": "Social"
+  },
+  "work": {
+    "translation": "travail",
+    "category": "Work"
+  },
+  "write": {
+    "translation": "Scrie",
+    "category": "Work"
+  },
+  "read": {
+    "translation": "CITIȚU",
+    "category": "Work"
+  },
+  "edit": {
+    "translation": "editează",
+    "category": "Work"
+  },
+  "revise": {
+    "translation": "revisă",
+    "category": "Work"
+  },
+  "review": {
+    "translation": "revizuire",
+    "category": "Work"
+  },
+  "inspect": {
+    "translation": "inspepta",
+    "category": "Work"
+  },
+  "complete": {
+    "translation": "complet",
+    "category": "Work"
+  },
+  "submit": {
+    "translation": "susține",
+    "category": "Work"
+  },
+  "create": {
+    "translation": "creați",
+    "category": "Work"
+  },
+  "design": {
+    "translation": "proiect",
+    "category": "Work"
+  },
+  "build": {
+    "translation": "construiți",
+    "category": "Work"
+  },
+  "assemble": {
+    "translation": "asamblați",
+    "category": "Work"
+  },
+  "debug": {
+    "translation": "debulişare",
+    "category": "Work"
+  },
+  "research": {
+    "translation": "cercetare",
+    "category": "Work"
+  },
+  "document": {
+    "translation": "document",
+    "category": "Work"
+  },
+  "train": {
+    "translation": "tren",
+    "category": "Work"
+  },
+  "teach": {
+    "translation": "învață",
+    "category": "Work"
+  },
+  "update": {
+    "translation": "actualizare",
+    "category": "Work"
+  },
+  "upload": {
+    "translation": "încărca",
+    "category": "Work"
+  },
+  "download": {
+    "translation": "descărcare",
+    "category": "Work"
+  },
+  "print": {
+    "translation": "imprimare",
+    "category": "Work"
+  },
+  "scan": {
+    "translation": "scanură",
+    "category": "Work"
+  },
+  "record": {
+    "translation": "record",
+    "category": "Work"
+  },
+  "track": {
+    "translation": "traseu",
+    "category": "Work"
+  },
+  "manage": {
+    "translation": "gestionați",
+    "category": "Work"
+  },
+  "supervise": {
+    "translation": "supravezi",
+    "category": "Work"
+  },
+  "go": {
+    "translation": "merge",
+    "category": "Travel"
+  },
+  "come": {
+    "translation": "veni",
+    "category": "Travel"
+  },
+  "move": {
+    "translation": "muvează",
+    "category": "Travel"
+  },
+  "leave": {
+    "translation": "plecă",
+    "category": "Travel"
+  },
+  "arrive": {
+    "translation": "arăda",
+    "category": "Travel"
+  },
+  "enter": {
+    "translation": "introduce",
+    "category": "Travel"
+  },
+  "exit": {
+    "translation": "ieșire",
+    "category": "Travel"
+  },
+  "travel": {
+    "translation": "travel",
+    "category": "Travel"
+  },
+  "fly": {
+    "translation": "vârtej",
+    "category": "Travel"
+  },
+  "drive": {
+    "translation": "ducă",
+    "category": "Travel"
+  },
+  "ride": {
+    "translation": "călătorie",
+    "category": "Travel"
+  },
+  "board": {
+    "translation": "tablă",
+    "category": "Travel"
+  },
+  "land": {
+    "translation": "teritoriu",
+    "category": "Travel"
+  },
+  "park": {
+    "translation": "parc",
+    "category": "Travel"
+  },
+  "accelerate": {
+    "translation": "acelerați",
+    "category": "Travel"
+  },
+  "reverse": {
+    "translation": "inverse",
+    "category": "Travel"
+  },
+  "cross": {
+    "translation": "crucifixuirea",
+    "category": "Travel"
+  },
+  "wander": {
+    "translation": "bucura",
+    "category": "Travel"
+  },
+  "explore": {
+    "translation": "explorați",
+    "category": "Travel"
+  },
+  "return": {
+    "translation": "întoarcere",
+    "category": "Travel"
+  },
+  "rush": {
+    "translation": "rupe",
+    "category": "Travel"
+  },
+  "hurry": {
+    "translation": "precipități",
+    "category": "Travel"
+  },
+  "navigate": {
+    "translation": "navigațiilor",
+    "category": "Travel"
+  },
+  "sanitize": {
+    "translation": "Sanitizațiune",
+    "category": "Household"
+  },
+  "iron": {
+    "translation": "fier",
+    "category": "Household"
+  },
+  "store": {
+    "translation": "magazin",
+    "category": "Household"
+  },
+  "repair": {
+    "translation": "reparare",
+    "category": "Household"
+  },
+  "fix": {
+    "translation": "reparare",
+    "category": "Household"
+  },
+  "disassemble": {
+    "translation": "desemnați",
+    "category": "Household"
+  },
+  "install": {
+    "translation": "instalațiune",
+    "category": "Household"
+  },
+  "uninstall": {
+    "translation": "deinstalare",
+    "category": "Household"
+  },
+  "remove": {
+    "translation": "eliminați",
+    "category": "Household"
+  },
+  "connect": {
+    "translation": "conectă",
+    "category": "Household"
+  },
+  "disconnect": {
+    "translation": "Dezconectare",
+    "category": "Household"
+  },
+  "lock": {
+    "translation": "blocuur",
+    "category": "Household"
+  },
+  "unlock": {
+    "translation": "Deschide",
+    "category": "Household"
+  },
+  "decorate": {
+    "translation": "decoratăm",
+    "category": "Household"
+  },
+  "polish": {
+    "translation": "polsacă",
+    "category": "Household"
+  },
+  "hammer": {
+    "translation": "marteș",
+    "category": "Household"
+  },
+  "saw": {
+    "translation": "sărbat",
+    "category": "Household"
+  },
+  "glue": {
+    "translation": "leușnic",
+    "category": "Household"
+  },
+  "buy": {
+    "translation": "cumpăra",
+    "category": "Money"
+  },
+  "sell": {
+    "translation": "vând",
+    "category": "Money"
+  },
+  "pay": {
+    "translation": "plătiți",
+    "category": "Money"
+  },
+  "owe": {
+    "translation": "trebuie",
+    "category": "Money"
+  },
+  "borrow": {
+    "translation": "Preluați",
+    "category": "Money"
+  },
+  "lend": {
+    "translation": "prinjeli",
+    "category": "Money"
+  },
+  "rent": {
+    "translation": "locuiri",
+    "category": "Money"
+  },
+  "save": {
+    "translation": "salvează",
+    "category": "Money"
+  },
+  "spend": {
+    "translation": "gastă",
+    "category": "Money"
+  },
+  "invest": {
+    "translation": "Invest",
+    "category": "Money"
+  },
+  "earn": {
+    "translation": "căutaș",
+    "category": "Money"
+  },
+  "refund": {
+    "translation": "Restituire",
+    "category": "Money"
+  },
+  "exchange": {
+    "translation": "Schimb",
+    "category": "Money"
+  },
+  "order": {
+    "translation": "ordonăție",
+    "category": "Money"
+  },
+  "select": {
+    "translation": "selectați",
+    "category": "Money"
+  },
+  "withdraw": {
+    "translation": "Retrage",
+    "category": "Money"
+  },
+  "deposit": {
+    "translation": "depoziție",
+    "category": "Money"
+  },
+  "budget": {
+    "translation": "budjet",
+    "category": "Money"
+  },
+  "fry": {
+    "translation": "friptură",
+    "category": "Food"
+  },
+  "grill": {
+    "translation": "grileasa",
+    "category": "Food"
+  },
+  "boil": {
+    "translation": "fătește",
+    "category": "Food"
+  },
+  "steam": {
+    "translation": "pară",
+    "category": "Food"
+  },
+  "slice": {
+    "translation": "slică",
+    "category": "Food"
+  },
+  "cut": {
+    "translation": "cortă",
+    "category": "Food"
+  },
+  "chop": {
+    "translation": "ciorbă",
+    "category": "Food"
+  },
+  "mix": {
+    "translation": "mixă",
+    "category": "Food"
+  },
+  "stir": {
+    "translation": "sticlă",
+    "category": "Food"
+  },
+  "pour": {
+    "translation": "pegiți",
+    "category": "Food"
+  },
+  "serve": {
+    "translation": "servire",
+    "category": "Food"
+  },
+  "taste": {
+    "translation": "tastă",
+    "category": "Food"
+  },
+  "season": {
+    "translation": "Șoarece",
+    "category": "Food"
+  },
+  "marinate": {
+    "translation": "Marinație",
+    "category": "Food"
+  },
+  "chew": {
+    "translation": "mâncură",
+    "category": "Food"
+  },
+  "swallow": {
+    "translation": "muchie",
+    "category": "Food"
+  },
+  "deliver": {
+    "translation": "transporta",
+    "category": "Food"
+  },
+  "digest": {
+    "translation": "digestiv",
+    "category": "Food"
+  },
+  "rain": {
+    "translation": "Raină",
+    "category": "Nature"
+  },
+  "snow": {
+    "translation": "nevoie",
+    "category": "Nature"
+  },
+  "hail": {
+    "translation": "hailă",
+    "category": "Nature"
+  },
+  "sleet": {
+    "translation": "Groare",
+    "category": "Nature"
+  },
+  "freeze": {
+    "translation": "gheață",
+    "category": "Nature"
+  },
+  "melt": {
+    "translation": "făcere",
+    "category": "Nature"
+  },
+  "shine": {
+    "translation": "luminează",
+    "category": "Nature"
+  },
+  "blow": {
+    "translation": "buzește",
+    "category": "Nature"
+  },
+  "grow": {
+    "translation": "crește",
+    "category": "Nature"
+  },
+  "bloom": {
+    "translation": "floare",
+    "category": "Nature"
+  },
+  "wither": {
+    "translation": "adumeteni",
+    "category": "Nature"
+  },
+  "sprout": {
+    "translation": "rațavie",
+    "category": "Nature"
+  },
+  "fall": {
+    "translation": "ouătăm",
+    "category": "Nature"
+  },
+  "quake": {
+    "translation": "secuit",
+    "category": "Nature"
+  },
+  "erode": {
+    "translation": "eroarează",
+    "category": "Nature"
+  },
+  "burn": {
+    "translation": "încălzit",
+    "category": "Nature"
+  },
+  "flood": {
+    "translation": "inundare",
+    "category": "Nature"
+  },
+  "float": {
+    "translation": "flotă",
+    "category": "Nature"
+  },
+  "sink": {
+    "translation": "lavabo",
+    "category": "Nature"
+  },
+  "rise": {
+    "translation": "alăturăte",
+    "category": "Nature"
+  },
+  "set": {
+    "translation": "Set",
+    "category": "Nature"
+  },
+  "breathe": {
+    "translation": "respire",
+    "category": "Health"
+  },
+  "inhale": {
+    "translation": "respirează",
+    "category": "Health"
+  },
+  "exhale": {
+    "translation": "respirează",
+    "category": "Health"
+  },
+  "cough": {
+    "translation": "cofarnut",
+    "category": "Health"
+  },
+  "sneeze": {
+    "translation": "sneznă",
+    "category": "Health"
+  },
+  "sweat": {
+    "translation": "dor",
+    "category": "Health"
+  },
+  "bleed": {
+    "translation": "sărbători",
+    "category": "Health"
+  },
+  "heal": {
+    "translation": "curățează",
+    "category": "Health"
+  },
+  "recover": {
+    "translation": "recupera",
+    "category": "Health"
+  },
+  "ache": {
+    "translation": "dolere",
+    "category": "Health"
+  },
+  "hurt": {
+    "translation": "douătă",
+    "category": "Health"
+  },
+  "strain": {
+    "translation": "strânștează",
+    "category": "Health"
+  },
+  "exercise": {
+    "translation": "exercițiu",
+    "category": "Health"
+  },
+  "faint": {
+    "translation": "mâncă",
+    "category": "Health"
+  },
+  "vomit": {
+    "translation": "vomăciște",
+    "category": "Health"
+  },
+  "blink": {
+    "translation": "căpătăște",
+    "category": "Health"
+  },
+  "squint": {
+    "translation": "mirosca",
+    "category": "Health"
+  },
+  "tremble": {
+    "translation": "tremură",
+    "category": "Health"
+  },
+  "click": {
+    "translation": "clic",
+    "category": "Technology"
+  },
+  "tap": {
+    "translation": "pompă",
+    "category": "Technology"
+  },
+  "scroll": {
+    "translation": "scrollă",
+    "category": "Technology"
+  },
+  "swipe": {
+    "translation": "Estrângeare",
+    "category": "Technology"
+  },
+  "browse": {
+    "translation": "navigațiilor",
+    "category": "Technology"
+  },
+  "upgrade": {
+    "translation": "actualizare",
+    "category": "Technology"
+  },
+  "copy": {
+    "translation": "copia",
+    "category": "Technology"
+  },
+  "paste": {
+    "translation": "pastă",
+    "category": "Technology"
+  },
+  "delete": {
+    "translation": "șterge",
+    "category": "Technology"
+  },
+  "reset": {
+    "translation": "Resetărire",
+    "category": "Technology"
+  },
+  "restart": {
+    "translation": "reîncetare",
+    "category": "Technology"
+  },
+  "log in": {
+    "translation": "Loginului",
+    "category": "Technology"
+  },
+  "log out": {
+    "translation": "Ieșire",
+    "category": "Technology"
+  },
+  "sync": {
+    "translation": "Sincronizare",
+    "category": "Technology"
+  },
+  "stream": {
+    "translation": "riezătar",
+    "category": "Technology"
+  },
+  "encrypt": {
+    "translation": "criptașează",
+    "category": "Technology"
+  },
+  "backup": {
+    "translation": "reserva",
+    "category": "Technology"
+  }
+}

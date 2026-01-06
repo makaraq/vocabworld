@@ -1,0 +1,1563 @@
+{
+  "walk": {
+    "translation": "alku",
+    "category": "Basic"
+  },
+  "run": {
+    "translation": "juoda",
+    "category": "Basic"
+  },
+  "jump": {
+    "translation": "salama",
+    "category": "Basic"
+  },
+  "hop": {
+    "translation": "hoopita",
+    "category": "Basic"
+  },
+  "skip": {
+    "translation": "hyppää",
+    "category": "Basic"
+  },
+  "crawl": {
+    "translation": "kukkia",
+    "category": "Basic"
+  },
+  "climb": {
+    "translation": "lasku",
+    "category": "Basic"
+  },
+  "slide": {
+    "translation": "lideri",
+    "category": "Basic"
+  },
+  "swing": {
+    "translation": "sängi",
+    "category": "Basic"
+  },
+  "stretch": {
+    "translation": "nostoa",
+    "category": "Basic"
+  },
+  "bend": {
+    "translation": "kääntää",
+    "category": "Basic"
+  },
+  "lift": {
+    "translation": "hallitus",
+    "category": "Basic"
+  },
+  "carry": {
+    "translation": "vesi",
+    "category": "Basic"
+  },
+  "drag": {
+    "translation": "sotaamaton",
+    "category": "Basic"
+  },
+  "push": {
+    "translation": "EDISTEistrate",
+    "category": "Basic"
+  },
+  "pull": {
+    "translation": "pulla",
+    "category": "Basic"
+  },
+  "hold": {
+    "translation": "haltia",
+    "category": "Basic"
+  },
+  "grab": {
+    "translation": "siskiotti",
+    "category": "Basic"
+  },
+  "drop": {
+    "translation": "jääksi",
+    "category": "Basic"
+  },
+  "throw": {
+    "translation": "heitto",
+    "category": "Basic"
+  },
+  "catch": {
+    "translation": "pysyvästi",
+    "category": "Basic"
+  },
+  "kick": {
+    "translation": "kukkaa",
+    "category": "Basic"
+  },
+  "hit": {
+    "translation": "heitto",
+    "category": "Basic"
+  },
+  "press": {
+    "translation": "painaaminen",
+    "category": "Basic"
+  },
+  "twist": {
+    "translation": "käännös",
+    "category": "Basic"
+  },
+  "turn": {
+    "translation": "kääntää",
+    "category": "Basic"
+  },
+  "rotate": {
+    "translation": "kuljetus",
+    "category": "Basic"
+  },
+  "flip": {
+    "translation": "kääntää",
+    "category": "Basic"
+  },
+  "shake": {
+    "translation": "rakastaa",
+    "category": "Basic"
+  },
+  "wave": {
+    "translation": "vety",
+    "category": "Basic"
+  },
+  "reach": {
+    "translation": "saada",
+    "category": "Basic"
+  },
+  "lean": {
+    "translation": "sulku romahtaa",
+    "category": "Basic"
+  },
+  "rest": {
+    "translation": "pausemasticeetuudenhetken",
+    "category": "Basic"
+  },
+  "balance": {
+    "translation": "tasapaino",
+    "category": "Basic"
+  },
+  "spin": {
+    "translation": "spini",
+    "category": "Basic"
+  },
+  "arrange": {
+    "translation": "Rajahmata",
+    "category": "Basic"
+  },
+  "adjust": {
+    "translation": "adjsuttaa",
+    "category": "Basic"
+  },
+  "shift": {
+    "translation": "siirtymä",
+    "category": "Basic"
+  },
+  "tie": {
+    "translation": "tieliite",
+    "category": "Basic"
+  },
+  "untie": {
+    "translation": "avaloa",
+    "category": "Basic"
+  },
+  "wrap": {
+    "translation": "pakkaus",
+    "category": "Basic"
+  },
+  "unwrap": {
+    "translation": "keskeyttää",
+    "category": "Basic"
+  },
+  "fold": {
+    "translation": "katkaista",
+    "category": "Basic"
+  },
+  "unfold": {
+    "translation": "purkaa",
+    "category": "Basic"
+  },
+  "pack": {
+    "translation": "pakka",
+    "category": "Basic"
+  },
+  "unpack": {
+    "translation": "purkaa",
+    "category": "Basic"
+  },
+  "be": {
+    "translation": "olla",
+    "category": "Basic"
+  },
+  "become": {
+    "translation": "tulla",
+    "category": "Basic"
+  },
+  "seem": {
+    "translation": "tuntua",
+    "category": "Basic"
+  },
+  "appear": {
+    "translation": "näkyä",
+    "category": "Basic"
+  },
+  "remain": {
+    "translation": "pysyvästi",
+    "category": "Basic"
+  },
+  "stay": {
+    "translation": "pysyvä",
+    "category": "Basic"
+  },
+  "exist": {
+    "translation": "olemaan",
+    "category": "Basic"
+  },
+  "happen": {
+    "translation": "sijaita",
+    "category": "Basic"
+  },
+  "occur": {
+    "translation": "sainta",
+    "category": "Basic"
+  },
+  "change": {
+    "translation": "muutos",
+    "category": "Basic"
+  },
+  "improve": {
+    "translation": "parannella",
+    "category": "Basic"
+  },
+  "decline": {
+    "translation": "vähentää",
+    "category": "Basic"
+  },
+  "continue": {
+    "translation": "jatkaa",
+    "category": "Basic"
+  },
+  "stop": {
+    "translation": "stops",
+    "category": "Basic"
+  },
+  "begin": {
+    "translation": "alkaa",
+    "category": "Basic"
+  },
+  "end": {
+    "translation": "loppu",
+    "category": "Basic"
+  },
+  "last": {
+    "translation": "viimeinen",
+    "category": "Basic"
+  },
+  "wake": {
+    "translation": "kello",
+    "category": "Daily Routine"
+  },
+  "get up": {
+    "translation": "levita",
+    "category": "Daily Routine"
+  },
+  "wash": {
+    "translation": "washi",
+    "category": "Daily Routine"
+  },
+  "shower": {
+    "translation": "šauja",
+    "category": "Daily Routine"
+  },
+  "bathe": {
+    "translation": "showu",
+    "category": "Daily Routine"
+  },
+  "brush": {
+    "translation": "brushes",
+    "category": "Daily Routine"
+  },
+  "comb": {
+    "translation": "kummeli",
+    "category": "Daily Routine"
+  },
+  "dress": {
+    "translation": "kupla",
+    "category": "Daily Routine"
+  },
+  "eat": {
+    "translation": "Syödä",
+    "category": "Daily Routine"
+  },
+  "drink": {
+    "translation": "heidäntähtäinen",
+    "category": "Daily Routine"
+  },
+  "snack": {
+    "translation": "lounas",
+    "category": "Daily Routine"
+  },
+  "cook": {
+    "translation": "puhuja",
+    "category": "Daily Routine"
+  },
+  "bake": {
+    "translation": "vaiskaa",
+    "category": "Daily Routine"
+  },
+  "reheat": {
+    "translation": "Uupusia",
+    "category": "Daily Routine"
+  },
+  "clean": {
+    "translation": "piihtää",
+    "category": "Daily Routine"
+  },
+  "tidy": {
+    "translation": "tiskaava",
+    "category": "Daily Routine"
+  },
+  "organize": {
+    "translation": "organisoida",
+    "category": "Daily Routine"
+  },
+  "vacuum": {
+    "translation": "vakuumi",
+    "category": "Daily Routine"
+  },
+  "sweep": {
+    "translation": "suojeleta",
+    "category": "Daily Routine"
+  },
+  "mop": {
+    "translation": "hiukkasiili",
+    "category": "Daily Routine"
+  },
+  "dust": {
+    "translation": "hampaä",
+    "category": "Daily Routine"
+  },
+  "wash dishes": {
+    "translation": "Vuokraa vaatteita",
+    "category": "Daily Routine"
+  },
+  "rinse": {
+    "translation": "Rinssi",
+    "category": "Daily Routine"
+  },
+  "wipe": {
+    "translation": "vihkata",
+    "category": "Daily Routine"
+  },
+  "scrub": {
+    "translation": "suklaa",
+    "category": "Daily Routine"
+  },
+  "dry": {
+    "translation": "kertynyys",
+    "category": "Daily Routine"
+  },
+  "shop": {
+    "translation": "kauppa",
+    "category": "Daily Routine"
+  },
+  "refill": {
+    "translation": "Lataa",
+    "category": "Daily Routine"
+  },
+  "charge": {
+    "translation": "Ladattaanko",
+    "category": "Daily Routine"
+  },
+  "relax": {
+    "translation": "laja",
+    "category": "Daily Routine"
+  },
+  "nap": {
+    "translation": "paiva-ilma",
+    "category": "Daily Routine"
+  },
+  "sleep": {
+    "translation": "sleeppä",
+    "category": "Daily Routine"
+  },
+  "prepare": {
+    "translation": "valmistella",
+    "category": "Daily Routine"
+  },
+  "schedule": {
+    "translation": "rotaatio",
+    "category": "Daily Routine"
+  },
+  "cancel": {
+    "translation": "peruuta",
+    "category": "Daily Routine"
+  },
+  "check": {
+    "translation": "tarkistus",
+    "category": "Daily Routine"
+  },
+  "monitor": {
+    "translation": "monITORI",
+    "category": "Daily Routine"
+  },
+  "plan": {
+    "translation": "aloite",
+    "category": "Daily Routine"
+  },
+  "wait": {
+    "translation": "Odottaa",
+    "category": "Daily Routine"
+  },
+  "search": {
+    "translation": "haku",
+    "category": "Daily Routine"
+  },
+  "find": {
+    "translation": "löytää",
+    "category": "Daily Routine"
+  },
+  "lose": {
+    "translation": "vesi",
+    "category": "Daily Routine"
+  },
+  "replace": {
+    "translation": "Vaihtaa",
+    "category": "Daily Routine"
+  },
+  "think": {
+    "translation": "ajaa",
+    "category": "Mental"
+  },
+  "know": {
+    "translation": "tiedottaa",
+    "category": "Mental"
+  },
+  "believe": {
+    "translation": "uskoa",
+    "category": "Mental"
+  },
+  "consider": {
+    "translation": "-WithConsideration-",
+    "category": "Mental"
+  },
+  "imagine": {
+    "translation": "kuvitella",
+    "category": "Mental"
+  },
+  "wonder": {
+    "translation": "Yöjaboti",
+    "category": "Mental"
+  },
+  "remember": {
+    "translation": "Muistaa",
+    "category": "Mental"
+  },
+  "forget": {
+    "translation": "Ignoretti",
+    "category": "Mental"
+  },
+  "realize": {
+    "translation": "realisoida",
+    "category": "Mental"
+  },
+  "guess": {
+    "translation": "ahdistaa",
+    "category": "Mental"
+  },
+  "predict": {
+    "translation": "ennustaa",
+    "category": "Mental"
+  },
+  "expect": {
+    "translation": "odottaa",
+    "category": "Mental"
+  },
+  "recognize": {
+    "translation": "tunnista",
+    "category": "Mental"
+  },
+  "notice": {
+    "translation": "huomio",
+    "category": "Mental"
+  },
+  "focus": {
+    "translation": "fokuusi",
+    "category": "Mental"
+  },
+  "concentrate": {
+    "translation": "keskeyttää",
+    "category": "Mental"
+  },
+  "decide": {
+    "translation": "vastata",
+    "category": "Mental"
+  },
+  "choose": {
+    "translation": "valita",
+    "category": "Mental"
+  },
+  "compare": {
+    "translation": "vertailla",
+    "category": "Mental"
+  },
+  "analyze": {
+    "translation": "analyysii",
+    "category": "Mental"
+  },
+  "evaluate": {
+    "translation": "arvioida",
+    "category": "Mental"
+  },
+  "estimate": {
+    "translation": "arviottieti",
+    "category": "Mental"
+  },
+  "solve": {
+    "translation": "ratkaista",
+    "category": "Mental"
+  },
+  "question": {
+    "translation": "kysymys",
+    "category": "Mental"
+  },
+  "suspect": {
+    "translation": "SUSpektiivi",
+    "category": "Mental"
+  },
+  "doubt": {
+    "translation": "skepticismi",
+    "category": "Mental"
+  },
+  "learn": {
+    "translation": "oppi",
+    "category": "Mental"
+  },
+  "study": {
+    "translation": "OPPILAITOS",
+    "category": "Mental"
+  },
+  "memorize": {
+    "translation": "muistaa",
+    "category": "Mental"
+  },
+  "calculate": {
+    "translation": "laskuta",
+    "category": "Mental"
+  },
+  "reflect": {
+    "translation": "reflektoida",
+    "category": "Mental"
+  },
+  "understand": {
+    "translation": "Ymmärtää",
+    "category": "Mental"
+  },
+  "like": {
+    "translation": "näinnehän",
+    "category": "Mental"
+  },
+  "love": {
+    "translation": "älyötus",
+    "category": "Mental"
+  },
+  "hate": {
+    "translation": "Häteinen",
+    "category": "Mental"
+  },
+  "enjoy": {
+    "translation": "nauttia",
+    "category": "Mental"
+  },
+  "prefer": {
+    "translation": "suosittaa",
+    "category": "Mental"
+  },
+  "want": {
+    "translation": "haluta",
+    "category": "Mental"
+  },
+  "need": {
+    "translation": "tarvitsevat",
+    "category": "Mental"
+  },
+  "miss": {
+    "translation": "heitto",
+    "category": "Mental"
+  },
+  "care": {
+    "translation": "huoli",
+    "category": "Mental"
+  },
+  "worry": {
+    "translation": "turvattu",
+    "category": "Mental"
+  },
+  "fear": {
+    "translation": "Fear in Finnish is pauri",
+    "category": "Mental"
+  },
+  "panic": {
+    "translation": "panikki",
+    "category": "Mental"
+  },
+  "stress": {
+    "translation": "stressi",
+    "category": "Mental"
+  },
+  "calm": {
+    "translation": "ruhtinas",
+    "category": "Mental"
+  },
+  "appreciate": {
+    "translation": "arvostella",
+    "category": "Mental"
+  },
+  "value": {
+    "translation": "arvo",
+    "category": "Mental"
+  },
+  "respect": {
+    "translation": "harkka",
+    "category": "Mental"
+  },
+  "dislike": {
+    "translation": "eihestituição",
+    "category": "Mental"
+  },
+  "regret": {
+    "translation": "lupaattieliatus",
+    "category": "Mental"
+  },
+  "hope": {
+    "translation": "toivo",
+    "category": "Mental"
+  },
+  "trust": {
+    "translation": "luottamus",
+    "category": "Mental"
+  },
+  "surprise": {
+    "translation": "valoitus",
+    "category": "Mental"
+  },
+  "shock": {
+    "translation": "surkea",
+    "category": "Mental"
+  },
+  "annoy": {
+    "translation": "irritoida",
+    "category": "Mental"
+  },
+  "bother": {
+    "translation": "turhia",
+    "category": "Mental"
+  },
+  "confuse": {
+    "translation": "pehmeätä",
+    "category": "Mental"
+  },
+  "embarrass": {
+    "translation": "vilttaa",
+    "category": "Mental"
+  },
+  "frustrate": {
+    "translation": "pehkeittää",
+    "category": "Mental"
+  },
+  "satisfy": {
+    "translation": "täyttää",
+    "category": "Mental"
+  },
+  "comfort": {
+    "translation": "Varmennus",
+    "category": "Mental"
+  },
+  "cheer": {
+    "translation": "juhla",
+    "category": "Mental"
+  },
+  "say": {
+    "translation": "sanoa",
+    "category": "Communication"
+  },
+  "tell": {
+    "translation": "sanoa",
+    "category": "Communication"
+  },
+  "talk": {
+    "translation": "puheeni",
+    "category": "Communication"
+  },
+  "speak": {
+    "translation": "puhua",
+    "category": "Communication"
+  },
+  "discuss": {
+    "translation": "keskustella",
+    "category": "Communication"
+  },
+  "chat": {
+    "translation": "chatti",
+    "category": "Communication"
+  },
+  "explain": {
+    "translation": "selittää",
+    "category": "Communication"
+  },
+  "describe": {
+    "translation": "kuvailla",
+    "category": "Communication"
+  },
+  "announce": {
+    "translation": "yletä",
+    "category": "Communication"
+  },
+  "report": {
+    "translation": "raportti",
+    "category": "Communication"
+  },
+  "reply": {
+    "translation": "vastaus",
+    "category": "Communication"
+  },
+  "answer": {
+    "translation": "vastaus",
+    "category": "Communication"
+  },
+  "ask": {
+    "translation": "kysy",
+    "category": "Communication"
+  },
+  "interrupt": {
+    "translation": "jaksoittaa",
+    "category": "Communication"
+  },
+  "suggest": {
+    "translation": "suositella",
+    "category": "Communication"
+  },
+  "recommend": {
+    "translation": "suositella",
+    "category": "Communication"
+  },
+  "complain": {
+    "translation": "lamenttaa",
+    "category": "Communication"
+  },
+  "argue": {
+    "translation": "riitantyä",
+    "category": "Communication"
+  },
+  "debate": {
+    "translation": "keskustelu",
+    "category": "Communication"
+  },
+  "whisper": {
+    "translation": "susimurti",
+    "category": "Communication"
+  },
+  "shout": {
+    "translation": "kriki",
+    "category": "Communication"
+  },
+  "yell": {
+    "translation": "ulohtia",
+    "category": "Communication"
+  },
+  "mention": {
+    "translation": "Mentio",
+    "category": "Communication"
+  },
+  "remind": {
+    "translation": "muistuttaa",
+    "category": "Communication"
+  },
+  "warn": {
+    "translation": "varoita",
+    "category": "Communication"
+  },
+  "advise": {
+    "translation": "suositella",
+    "category": "Communication"
+  },
+  "encourage": {
+    "translation": "tukahduttaa",
+    "category": "Communication"
+  },
+  "persuade": {
+    "translation": "suosia",
+    "category": "Communication"
+  },
+  "invite": {
+    "translation": "kutsua",
+    "category": "Communication"
+  },
+  "respond": {
+    "translation": "vastata",
+    "category": "Communication"
+  },
+  "translate": {
+    "translation": "en",
+    "category": "Communication"
+  },
+  "inform": {
+    "translation": "Informoida",
+    "category": "Communication"
+  },
+  "comment": {
+    "translation": "Kommentti",
+    "category": "Communication"
+  },
+  "confirm": {
+    "translation": "Vahvistaa",
+    "category": "Communication"
+  },
+  "deny": {
+    "translation": "piilota",
+    "category": "Communication"
+  },
+  "admit": {
+    "translation": "Sallia",
+    "category": "Communication"
+  },
+  "meet": {
+    "translation": "meidat",
+    "category": "Social"
+  },
+  "greet": {
+    "translation": "tervetulla",
+    "category": "Social"
+  },
+  "welcome": {
+    "translation": "Tervetuloa",
+    "category": "Social"
+  },
+  "visit": {
+    "translation": "vierailu",
+    "category": "Social"
+  },
+  "host": {
+    "translation": "hyväksy",
+    "category": "Social"
+  },
+  "join": {
+    "translation": "joonista",
+    "category": "Social"
+  },
+  "help": {
+    "translation": "apua",
+    "category": "Social"
+  },
+  "support": {
+    "translation": "tuke",
+    "category": "Social"
+  },
+  "assist": {
+    "translation": "avustaa",
+    "category": "Social"
+  },
+  "share": {
+    "translation": "jakaa",
+    "category": "Social"
+  },
+  "care for": {
+    "translation": "huolehtia",
+    "category": "Social"
+  },
+  "hug": {
+    "translation": "pysytyttää",
+    "category": "Social"
+  },
+  "kiss": {
+    "translation": "kissa",
+    "category": "Social"
+  },
+  "hold hands": {
+    "translation": "Siirsi kädetossed",
+    "category": "Social"
+  },
+  "date": {
+    "translation": "päivämäärä",
+    "category": "Social"
+  },
+  "marry": {
+    "translation": "huppita",
+    "category": "Social"
+  },
+  "befriend": {
+    "translation": "lähde",
+    "category": "Social"
+  },
+  "follow": {
+    "translation": "seurata",
+    "category": "Social"
+  },
+  "lead": {
+    "translation": "johto",
+    "category": "Social"
+  },
+  "guide": {
+    "translation": "opas",
+    "category": "Social"
+  },
+  "introduce": {
+    "translation": "Introducere",
+    "category": "Social"
+  },
+  "cooperate": {
+    "translation": "koordinoida",
+    "category": "Social"
+  },
+  "protect": {
+    "translation": "suojella",
+    "category": "Social"
+  },
+  "include": {
+    "translation": "sisällyttää",
+    "category": "Social"
+  },
+  "exclude": {
+    "translation": "Erottaa",
+    "category": "Social"
+  },
+  "work": {
+    "translation": "työ",
+    "category": "Work"
+  },
+  "write": {
+    "translation": "kirjoita",
+    "category": "Work"
+  },
+  "read": {
+    "translation": "lue",
+    "category": "Work"
+  },
+  "edit": {
+    "translation": "muokkaa",
+    "category": "Work"
+  },
+  "revise": {
+    "translation": "muuttaa",
+    "category": "Work"
+  },
+  "review": {
+    "translation": "arvioitus",
+    "category": "Work"
+  },
+  "inspect": {
+    "translation": "tarkastella",
+    "category": "Work"
+  },
+  "complete": {
+    "translation": "täydellinen",
+    "category": "Work"
+  },
+  "submit": {
+    "translation": "silmukkaan",
+    "category": "Work"
+  },
+  "create": {
+    "translation": "Luo",
+    "category": "Work"
+  },
+  "design": {
+    "translation": "suunnitella",
+    "category": "Work"
+  },
+  "build": {
+    "translation": "rakentaa",
+    "category": "Work"
+  },
+  "assemble": {
+    "translation": "toimistoaika",
+    "category": "Work"
+  },
+  "debug": {
+    "translation": "virheenkorjaus",
+    "category": "Work"
+  },
+  "research": {
+    "translation": "Tutkimus",
+    "category": "Work"
+  },
+  "document": {
+    "translation": "dokumentti",
+    "category": "Work"
+  },
+  "train": {
+    "translation": "juna",
+    "category": "Work"
+  },
+  "teach": {
+    "translation": "opettaa",
+    "category": "Work"
+  },
+  "update": {
+    "translation": "Päivitys",
+    "category": "Work"
+  },
+  "upload": {
+    "translation": "lähetä",
+    "category": "Work"
+  },
+  "download": {
+    "translation": "lataa",
+    "category": "Work"
+  },
+  "print": {
+    "translation": "painaus",
+    "category": "Work"
+  },
+  "scan": {
+    "translation": "scannea",
+    "category": "Work"
+  },
+  "record": {
+    "translation": "kirjaudu",
+    "category": "Work"
+  },
+  "track": {
+    "translation": "juna",
+    "category": "Work"
+  },
+  "manage": {
+    "translation": "hallita",
+    "category": "Work"
+  },
+  "supervise": {
+    "translation": "valvontaa",
+    "category": "Work"
+  },
+  "go": {
+    "translation": "meni",
+    "category": "Travel"
+  },
+  "come": {
+    "translation": "tulla",
+    "category": "Travel"
+  },
+  "move": {
+    "translation": "liikuttaa",
+    "category": "Travel"
+  },
+  "leave": {
+    "translation": "Lahetä",
+    "category": "Travel"
+  },
+  "arrive": {
+    "translation": "tulla",
+    "category": "Travel"
+  },
+  "enter": {
+    "translation": "Syöttää",
+    "category": "Travel"
+  },
+  "exit": {
+    "translation": "ulos",
+    "category": "Travel"
+  },
+  "travel": {
+    "translation": "reise",
+    "category": "Travel"
+  },
+  "fly": {
+    "translation": "lento",
+    "category": "Travel"
+  },
+  "drive": {
+    "translation": "juoda",
+    "category": "Travel"
+  },
+  "ride": {
+    "translation": "reittiopillinen",
+    "category": "Travel"
+  },
+  "board": {
+    "translation": "laulu",
+    "category": "Travel"
+  },
+  "land": {
+    "translation": "maa",
+    "category": "Travel"
+  },
+  "park": {
+    "translation": "puisto",
+    "category": "Travel"
+  },
+  "accelerate": {
+    "translation": "celero",
+    "category": "Travel"
+  },
+  "reverse": {
+    "translation": "vastenopeus",
+    "category": "Travel"
+  },
+  "cross": {
+    "translation": "kriisi",
+    "category": "Travel"
+  },
+  "wander": {
+    "translation": "roaminna",
+    "category": "Travel"
+  },
+  "explore": {
+    "translation": "tutkia",
+    "category": "Travel"
+  },
+  "return": {
+    "translation": "palauttaa",
+    "category": "Travel"
+  },
+  "rush": {
+    "translation": "hastutta",
+    "category": "Travel"
+  },
+  "hurry": {
+    "translation": "Nopeetti",
+    "category": "Travel"
+  },
+  "navigate": {
+    "translation": "Navigoida",
+    "category": "Travel"
+  },
+  "sanitize": {
+    "translation": "antisipata",
+    "category": "Household"
+  },
+  "iron": {
+    "translation": "silmukka",
+    "category": "Household"
+  },
+  "store": {
+    "translation": "kauppa",
+    "category": "Household"
+  },
+  "repair": {
+    "translation": "parhaillaan",
+    "category": "Household"
+  },
+  "fix": {
+    "translation": "parannus",
+    "category": "Household"
+  },
+  "disassemble": {
+    "translation": "montaaja",
+    "category": "Household"
+  },
+  "install": {
+    "translation": "Asenna",
+    "category": "Household"
+  },
+  "uninstall": {
+    "translation": "Poista",
+    "category": "Household"
+  },
+  "remove": {
+    "translation": "Poista",
+    "category": "Household"
+  },
+  "connect": {
+    "translation": "yhdistää",
+    "category": "Household"
+  },
+  "disconnect": {
+    "translation": "Poikkeama",
+    "category": "Household"
+  },
+  "lock": {
+    "translation": "lukkaus",
+    "category": "Household"
+  },
+  "unlock": {
+    "translation": "availla",
+    "category": "Household"
+  },
+  "decorate": {
+    "translation": "dekooroida",
+    "category": "Household"
+  },
+  "polish": {
+    "translation": "pohjanhoido",
+    "category": "Household"
+  },
+  "hammer": {
+    "translation": "malleja",
+    "category": "Household"
+  },
+  "saw": {
+    "translation": "puuhoitaja",
+    "category": "Household"
+  },
+  "glue": {
+    "translation": "vesi",
+    "category": "Household"
+  },
+  "buy": {
+    "translation": "ostaa",
+    "category": "Money"
+  },
+  "sell": {
+    "translation": "myydä",
+    "category": "Money"
+  },
+  "pay": {
+    "translation": "maksaa",
+    "category": "Money"
+  },
+  "owe": {
+    "translation": "heidän",
+    "category": "Money"
+  },
+  "borrow": {
+    "translation": "budjetoida",
+    "category": "Money"
+  },
+  "lend": {
+    "translation": "lentää",
+    "category": "Money"
+  },
+  "rent": {
+    "translation": "vero",
+    "category": "Money"
+  },
+  "save": {
+    "translation": "Tallenna",
+    "category": "Money"
+  },
+  "spend": {
+    "translation": "kulkea",
+    "category": "Money"
+  },
+  "invest": {
+    "translation": "investmentinversio",
+    "category": "Money"
+  },
+  "earn": {
+    "translation": "antaa",
+    "category": "Money"
+  },
+  "refund": {
+    "translation": "paneutusrahansiirto",
+    "category": "Money"
+  },
+  "exchange": {
+    "translation": "Vaihto",
+    "category": "Money"
+  },
+  "order": {
+    "translation": "aula",
+    "category": "Money"
+  },
+  "select": {
+    "translation": "valita",
+    "category": "Money"
+  },
+  "withdraw": {
+    "translation": "-Withdrawal",
+    "category": "Money"
+  },
+  "deposit": {
+    "translation": "pankki",
+    "category": "Money"
+  },
+  "budget": {
+    "translation": "budjetti",
+    "category": "Money"
+  },
+  "fry": {
+    "translation": "sippailla",
+    "category": "Food"
+  },
+  "grill": {
+    "translation": "paile",
+    "category": "Food"
+  },
+  "boil": {
+    "translation": "koilla",
+    "category": "Food"
+  },
+  "steam": {
+    "translation": "tuhka",
+    "category": "Food"
+  },
+  "slice": {
+    "translation": "ristetti",
+    "category": "Food"
+  },
+  "cut": {
+    "translation": "kuivetti",
+    "category": "Food"
+  },
+  "chop": {
+    "translation": "pelehtia",
+    "category": "Food"
+  },
+  "mix": {
+    "translation": null,
+    "category": "Food",
+    "failed": true
+  },
+  "stir": {
+    "translation": "pulmaa",
+    "category": "Food"
+  },
+  "pour": {
+    "translation": "poima",
+    "category": "Food"
+  },
+  "serve": {
+    "translation": "palvelu",
+    "category": "Food"
+  },
+  "taste": {
+    "translation": "taste in Finnish is rasva",
+    "category": "Food"
+  },
+  "season": {
+    "translation": "kausi",
+    "category": "Food"
+  },
+  "marinate": {
+    "translation": "savitahtoa",
+    "category": "Food"
+  },
+  "chew": {
+    "translation": "juoksi",
+    "category": "Food"
+  },
+  "swallow": {
+    "translation": "Savusauma",
+    "category": "Food"
+  },
+  "deliver": {
+    "translation": "toimittaa",
+    "category": "Food"
+  },
+  "digest": {
+    "translation": "digestyvyys",
+    "category": "Food"
+  },
+  "rain": {
+    "translation": "rain in Finnish is sorsa",
+    "category": "Nature"
+  },
+  "snow": {
+    "translation": "kakku",
+    "category": "Nature"
+  },
+  "hail": {
+    "translation": "Hiilihiiri",
+    "category": "Nature"
+  },
+  "sleet": {
+    "translation": "Leikkaus",
+    "category": "Nature"
+  },
+  "freeze": {
+    "translation": "jäädyttää",
+    "category": "Nature"
+  },
+  "melt": {
+    "translation": "murteli",
+    "category": "Nature"
+  },
+  "shine": {
+    "translation": "Yö",
+    "category": "Nature"
+  },
+  "blow": {
+    "translation": "tupakka or piilu",
+    "category": "Nature"
+  },
+  "grow": {
+    "translation": "kasvaa",
+    "category": "Nature"
+  },
+  "bloom": {
+    "translation": "blooming",
+    "category": "Nature"
+  },
+  "wither": {
+    "translation": "Kuivahtua",
+    "category": "Nature"
+  },
+  "sprout": {
+    "translation": "kukka",
+    "category": "Nature"
+  },
+  "fall": {
+    "translation": "autuustoista",
+    "category": "Nature"
+  },
+  "quake": {
+    "translation": "sota",
+    "category": "Nature"
+  },
+  "erode": {
+    "translation": "eroskia",
+    "category": "Nature"
+  },
+  "burn": {
+    "translation": "paitsi",
+    "category": "Nature"
+  },
+  "flood": {
+    "translation": "vesipääsy",
+    "category": "Nature"
+  },
+  "float": {
+    "translation": "flottaa",
+    "category": "Nature"
+  },
+  "sink": {
+    "translation": "kylmäkuivauskeskus",
+    "category": "Nature"
+  },
+  "rise": {
+    "translation": "nopea",
+    "category": "Nature"
+  },
+  "set": {
+    "translation": "asetus",
+    "category": "Nature"
+  },
+  "breathe": {
+    "translation": "respirata",
+    "category": "Health"
+  },
+  "inhale": {
+    "translation": "Inspiroida",
+    "category": "Health"
+  },
+  "exhale": {
+    "translation": "poima",
+    "category": "Health"
+  },
+  "cough": {
+    "translation": "kohuitti",
+    "category": "Health"
+  },
+  "sneeze": {
+    "translation": "snekkä",
+    "category": "Health"
+  },
+  "sweat": {
+    "translation": "paholainen",
+    "category": "Health"
+  },
+  "bleed": {
+    "translation": "suihkuudu",
+    "category": "Health"
+  },
+  "heal": {
+    "translation": "lääke",
+    "category": "Health"
+  },
+  "recover": {
+    "translation": "pulkea",
+    "category": "Health"
+  },
+  "ache": {
+    "translation": "puhuu",
+    "category": "Health"
+  },
+  "hurt": {
+    "translation": "vahingoittaa",
+    "category": "Health"
+  },
+  "strain": {
+    "translation": "painoitus",
+    "category": "Health"
+  },
+  "exercise": {
+    "translation": "harjoitus",
+    "category": "Health"
+  },
+  "faint": {
+    "translation": "Synnynnelee",
+    "category": "Health"
+  },
+  "vomit": {
+    "translation": "vomit in Finnish is vacoa",
+    "category": "Health"
+  },
+  "blink": {
+    "translation": "kykälys",
+    "category": "Health"
+  },
+  "squint": {
+    "translation": "Suoski",
+    "category": "Health"
+  },
+  "tremble": {
+    "translation": "trembellä",
+    "category": "Health"
+  },
+  "click": {
+    "translation": "klikkaa",
+    "category": "Technology"
+  },
+  "tap": {
+    "translation": "kynsi",
+    "category": "Technology"
+  },
+  "scroll": {
+    "translation": "kulta",
+    "category": "Technology"
+  },
+  "swipe": {
+    "translation": "savu",
+    "category": "Technology"
+  },
+  "browse": {
+    "translation": "surfaa",
+    "category": "Technology"
+  },
+  "upgrade": {
+    "translation": "Päivitys",
+    "category": "Technology"
+  },
+  "copy": {
+    "translation": "kopioi",
+    "category": "Technology"
+  },
+  "paste": {
+    "translation": "vesi",
+    "category": "Technology"
+  },
+  "delete": {
+    "translation": "Poista",
+    "category": "Technology"
+  },
+  "reset": {
+    "translation": "Resetto",
+    "category": "Technology"
+  },
+  "restart": {
+    "translation": "uudelleenaspita",
+    "category": "Technology"
+  },
+  "log in": {
+    "translation": "Kirjaudu",
+    "category": "Technology"
+  },
+  "log out": {
+    "translation": "Kirjaudu ulos",
+    "category": "Technology"
+  },
+  "sync": {
+    "translation": "Synkki",
+    "category": "Technology"
+  },
+  "stream": {
+    "translation": "joki",
+    "category": "Technology"
+  },
+  "encrypt": {
+    "translation": "Salaistaudu",
+    "category": "Technology"
+  },
+  "backup": {
+    "translation": "vaihtoehto",
+    "category": "Technology"
+  }
+}

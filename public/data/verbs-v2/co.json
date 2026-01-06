@@ -1,0 +1,1562 @@
+{
+  "walk": {
+    "translation": "camminu",
+    "category": "Basic"
+  },
+  "run": {
+    "translation": "corsevu",
+    "category": "Basic"
+  },
+  "jump": {
+    "translation": "saltu",
+    "category": "Basic"
+  },
+  "hop": {
+    "translation": "Saltu",
+    "category": "Basic"
+  },
+  "skip": {
+    "translation": "Saltu",
+    "category": "Basic"
+  },
+  "crawl": {
+    "translation": "Rugghjura",
+    "category": "Basic"
+  },
+  "climb": {
+    "translation": "ascendere",
+    "category": "Basic"
+  },
+  "slide": {
+    "translation": "glidu",
+    "category": "Basic"
+  },
+  "swing": {
+    "translation": "oscillu",
+    "category": "Basic"
+  },
+  "stretch": {
+    "translation": "estendi",
+    "category": "Basic"
+  },
+  "bend": {
+    "translation": "curva",
+    "category": "Basic"
+  },
+  "lift": {
+    "translation": "leva",
+    "category": "Basic"
+  },
+  "carry": {
+    "translation": "Porta",
+    "category": "Basic"
+  },
+  "drag": {
+    "translation": "Traciu",
+    "category": "Basic"
+  },
+  "push": {
+    "translation": "pintu",
+    "category": "Basic"
+  },
+  "pull": {
+    "translation": "Prendi",
+    "category": "Basic"
+  },
+  "hold": {
+    "translation": "Tenere",
+    "category": "Basic"
+  },
+  "grab": {
+    "translation": "Prendi",
+    "category": "Basic"
+  },
+  "drop": {
+    "translation": "ghezza",
+    "category": "Basic"
+  },
+  "throw": {
+    "translation": "Lanciurar",
+    "category": "Basic"
+  },
+  "catch": {
+    "translation": "Capta",
+    "category": "Basic"
+  },
+  "kick": {
+    "translation": "piedda",
+    "category": "Basic"
+  },
+  "hit": {
+    "translation": "frappu",
+    "category": "Basic"
+  },
+  "press": {
+    "translation": "pressione",
+    "category": "Basic"
+  },
+  "twist": {
+    "translation": "Tzigru",
+    "category": "Basic"
+  },
+  "turn": {
+    "translation": "tornu",
+    "category": "Basic"
+  },
+  "rotate": {
+    "translation": "ruota",
+    "category": "Basic"
+  },
+  "flip": {
+    "translation": "Flippe",
+    "category": "Basic"
+  },
+  "shake": {
+    "translation": "tintinnu",
+    "category": "Basic"
+  },
+  "wave": {
+    "translation": "Onda",
+    "category": "Basic"
+  },
+  "reach": {
+    "translation": "Arriver",
+    "category": "Basic"
+  },
+  "lean": {
+    "translation": "Ajin",
+    "category": "Basic"
+  },
+  "rest": {
+    "translation": "repos",
+    "category": "Basic"
+  },
+  "balance": {
+    "translation": "Equilibru",
+    "category": "Basic"
+  },
+  "spin": {
+    "translation": "spinu",
+    "category": "Basic"
+  },
+  "arrange": {
+    "translation": "Arrangi",
+    "category": "Basic"
+  },
+  "adjust": {
+    "translation": "Ajusta",
+    "category": "Basic"
+  },
+  "shift": {
+    "translation": "Scipu",
+    "category": "Basic"
+  },
+  "tie": {
+    "translation": "legghja",
+    "category": "Basic"
+  },
+  "untie": {
+    "translation": "Libertu",
+    "category": "Basic"
+  },
+  "wrap": {
+    "translation": "feguidda",
+    "category": "Basic"
+  },
+  "unwrap": {
+    "translation": "Desinpira",
+    "category": "Basic"
+  },
+  "fold": {
+    "translation": "Pliu",
+    "category": "Basic"
+  },
+  "unfold": {
+    "translation": "Desplier",
+    "category": "Basic"
+  },
+  "pack": {
+    "translation": "Paixu",
+    "category": "Basic"
+  },
+  "unpack": {
+    "translation": "Desempaquettare",
+    "category": "Basic"
+  },
+  "be": {
+    "translation": "Eshta",
+    "category": "Basic"
+  },
+  "become": {
+    "translation": "ficuasu",
+    "category": "Basic"
+  },
+  "seem": {
+    "translation": "Sembru",
+    "category": "Basic"
+  },
+  "appear": {
+    "translation": "apparir",
+    "category": "Basic"
+  },
+  "remain": {
+    "translation": "Resta",
+    "category": "Basic"
+  },
+  "stay": {
+    "translation": "resta",
+    "category": "Basic"
+  },
+  "exist": {
+    "translation": "Esistu",
+    "category": "Basic"
+  },
+  "happen": {
+    "translation": "Accadde",
+    "category": "Basic"
+  },
+  "occur": {
+    "translation": "avveni",
+    "category": "Basic"
+  },
+  "change": {
+    "translation": "Cambio",
+    "category": "Basic"
+  },
+  "improve": {
+    "translation": "Améliora",
+    "category": "Basic"
+  },
+  "decline": {
+    "translation": "Declinu",
+    "category": "Basic"
+  },
+  "continue": {
+    "translation": "continuasu",
+    "category": "Basic"
+  },
+  "stop": {
+    "translation": "arrêt",
+    "category": "Basic"
+  },
+  "begin": {
+    "translation": "Commencé",
+    "category": "Basic"
+  },
+  "end": {
+    "translation": "Fine",
+    "category": "Basic"
+  },
+  "last": {
+    "translation": "dernier",
+    "category": "Basic"
+  },
+  "wake": {
+    "translation": "veguu",
+    "category": "Daily Routine"
+  },
+  "get up": {
+    "translation": "Leveja",
+    "category": "Daily Routine"
+  },
+  "wash": {
+    "translation": "lava",
+    "category": "Daily Routine"
+  },
+  "shower": {
+    "translation": "douera",
+    "category": "Daily Routine"
+  },
+  "bathe": {
+    "translation": "Imbèche",
+    "category": "Daily Routine"
+  },
+  "brush": {
+    "translation": "cuìsca",
+    "category": "Daily Routine"
+  },
+  "comb": {
+    "translation": "comb in Corsican is coppa",
+    "category": "Daily Routine"
+  },
+  "dress": {
+    "translation": "truiu",
+    "category": "Daily Routine"
+  },
+  "eat": {
+    "translation": "mangia",
+    "category": "Daily Routine"
+  },
+  "drink": {
+    "translation": "ejuvu",
+    "category": "Daily Routine"
+  },
+  "snack": {
+    "translation": "casciaccu",
+    "category": "Daily Routine"
+  },
+  "cook": {
+    "translation": "Cucu",
+    "category": "Daily Routine"
+  },
+  "bake": {
+    "translation": "Forni",
+    "category": "Daily Routine"
+  },
+  "reheat": {
+    "translation": "Ristudicare",
+    "category": "Daily Routine"
+  },
+  "clean": {
+    "translation": "Pulèsu",
+    "category": "Daily Routine"
+  },
+  "tidy": {
+    "translation": "Ordinat",
+    "category": "Daily Routine"
+  },
+  "organize": {
+    "translation": "Organiser",
+    "category": "Daily Routine"
+  },
+  "vacuum": {
+    "translation": "vuçiu",
+    "category": "Daily Routine"
+  },
+  "sweep": {
+    "translation": "Rapulci",
+    "category": "Daily Routine"
+  },
+  "mop": {
+    "translation": "Pouf",
+    "category": "Daily Routine"
+  },
+  "dust": {
+    "translation": "Polçe",
+    "category": "Daily Routine"
+  },
+  "wash dishes": {
+    "translation": "Lavu ccaschina",
+    "category": "Daily Routine"
+  },
+  "rinse": {
+    "translation": "Rincidu",
+    "category": "Daily Routine"
+  },
+  "wipe": {
+    "translation": "fraschi",
+    "category": "Daily Routine"
+  },
+  "scrub": {
+    "translation": "rasu",
+    "category": "Daily Routine"
+  },
+  "dry": {
+    "translation": "asciu",
+    "category": "Daily Routine"
+  },
+  "shop": {
+    "translation": "magazju",
+    "category": "Daily Routine"
+  },
+  "refill": {
+    "translation": "Rifillus",
+    "category": "Daily Routine"
+  },
+  "charge": {
+    "translation": "Chargu",
+    "category": "Daily Routine"
+  },
+  "relax": {
+    "translation": "Rilassu",
+    "category": "Daily Routine"
+  },
+  "nap": {
+    "translation": "pèra",
+    "category": "Daily Routine"
+  },
+  "sleep": {
+    "translation": "dormi",
+    "category": "Daily Routine"
+  },
+  "prepare": {
+    "translation": "Prèpaasu",
+    "category": "Daily Routine"
+  },
+  "schedule": {
+    "translation": "Calendru",
+    "category": "Daily Routine"
+  },
+  "cancel": {
+    "translation": "Anulci",
+    "category": "Daily Routine"
+  },
+  "check": {
+    "translation": "verificu",
+    "category": "Daily Routine"
+  },
+  "monitor": {
+    "translation": "Monitoru",
+    "category": "Daily Routine"
+  },
+  "plan": {
+    "translation": "piani",
+    "category": "Daily Routine"
+  },
+  "wait": {
+    "translation": "attendi",
+    "category": "Daily Routine"
+  },
+  "search": {
+    "translation": "chercher",
+    "category": "Daily Routine"
+  },
+  "find": {
+    "translation": "Trouvèr",
+    "category": "Daily Routine"
+  },
+  "lose": {
+    "translation": "perdi",
+    "category": "Daily Routine"
+  },
+  "replace": {
+    "translation": "Remplaziere",
+    "category": "Daily Routine"
+  },
+  "think": {
+    "translation": "Pensa",
+    "category": "Mental"
+  },
+  "know": {
+    "translation": "Cunosc",
+    "category": "Mental"
+  },
+  "believe": {
+    "translation": "Credisci",
+    "category": "Mental"
+  },
+  "consider": {
+    "translation": "Pensu",
+    "category": "Mental"
+  },
+  "imagine": {
+    "translation": "Imaginu",
+    "category": "Mental"
+  },
+  "wonder": {
+    "translation": "Mirak",
+    "category": "Mental"
+  },
+  "remember": {
+    "translation": "Ricorda",
+    "category": "Mental"
+  },
+  "forget": {
+    "translation": "Oblu",
+    "category": "Mental"
+  },
+  "realize": {
+    "translation": "Réaliser",
+    "category": "Mental"
+  },
+  "guess": {
+    "translation": "Conjetura",
+    "category": "Mental"
+  },
+  "predict": {
+    "translation": "Prédìssi",
+    "category": "Mental"
+  },
+  "expect": {
+    "translation": "Credisci",
+    "category": "Mental"
+  },
+  "recognize": {
+    "translation": "Riconnèze",
+    "category": "Mental"
+  },
+  "notice": {
+    "translation": "Avvenu",
+    "category": "Mental"
+  },
+  "focus": {
+    "translation": "Fokus",
+    "category": "Mental"
+  },
+  "concentrate": {
+    "translation": "Concentra",
+    "category": "Mental"
+  },
+  "decide": {
+    "translation": "Decidu",
+    "category": "Mental"
+  },
+  "choose": {
+    "translation": "escuza",
+    "category": "Mental"
+  },
+  "compare": {
+    "translation": "Comparer",
+    "category": "Mental"
+  },
+  "analyze": {
+    "translation": "Analisi",
+    "category": "Mental"
+  },
+  "evaluate": {
+    "translation": "Évalué",
+    "category": "Mental"
+  },
+  "estimate": {
+    "translation": "Estima",
+    "category": "Mental"
+  },
+  "solve": {
+    "translation": "Résolu",
+    "category": "Mental"
+  },
+  "question": {
+    "translation": "domanda",
+    "category": "Mental"
+  },
+  "suspect": {
+    "translation": "Suspeyu",
+    "category": "Mental"
+  },
+  "doubt": {
+    "translation": "Dubitu",
+    "category": "Mental"
+  },
+  "learn": {
+    "translation": "apprendi",
+    "category": "Mental"
+  },
+  "study": {
+    "translation": "Étudiu",
+    "category": "Mental"
+  },
+  "memorize": {
+    "translation": "Ricorda",
+    "category": "Mental"
+  },
+  "calculate": {
+    "translation": "Calculus",
+    "category": "Mental"
+  },
+  "reflect": {
+    "translation": "riflette",
+    "category": "Mental"
+  },
+  "understand": {
+    "translation": "Capisci",
+    "category": "Mental"
+  },
+  "like": {
+    "translation": "Comme",
+    "category": "Mental"
+  },
+  "love": {
+    "translation": "Amour",
+    "category": "Mental"
+  },
+  "hate": {
+    "translation": "odiu",
+    "category": "Mental"
+  },
+  "enjoy": {
+    "translation": "Gozzi",
+    "category": "Mental"
+  },
+  "prefer": {
+    "translation": "Preferis",
+    "category": "Mental"
+  },
+  "want": {
+    "translation": "voli",
+    "category": "Mental"
+  },
+  "need": {
+    "translation": "néccu",
+    "category": "Mental"
+  },
+  "miss": {
+    "translation": "Manca",
+    "category": "Mental"
+  },
+  "care": {
+    "translation": "Cura",
+    "category": "Mental"
+  },
+  "worry": {
+    "translation": "precciu",
+    "category": "Mental"
+  },
+  "fear": {
+    "translation": "Paura",
+    "category": "Mental"
+  },
+  "panic": {
+    "translation": "paniku",
+    "category": "Mental"
+  },
+  "stress": {
+    "translation": "stresu",
+    "category": "Mental"
+  },
+  "calm": {
+    "translation": "pau",
+    "category": "Mental"
+  },
+  "appreciate": {
+    "translation": "Apreciu",
+    "category": "Mental"
+  },
+  "value": {
+    "translation": "valeur",
+    "category": "Mental"
+  },
+  "respect": {
+    "translation": "Resspekt",
+    "category": "Mental"
+  },
+  "dislike": {
+    "translation": "dischiu",
+    "category": "Mental"
+  },
+  "regret": {
+    "translation": "Pentimento",
+    "category": "Mental"
+  },
+  "hope": {
+    "translation": "Espoir",
+    "category": "Mental"
+  },
+  "trust": {
+    "translation": "Fidu",
+    "category": "Mental"
+  },
+  "surprise": {
+    "translation": "Surpresa",
+    "category": "Mental"
+  },
+  "shock": {
+    "translation": "Scocca",
+    "category": "Mental"
+  },
+  "annoy": {
+    "translation": "Embarassu",
+    "category": "Mental"
+  },
+  "bother": {
+    "translation": "Embarri",
+    "category": "Mental"
+  },
+  "confuse": {
+    "translation": "Erbli",
+    "category": "Mental"
+  },
+  "embarrass": {
+    "translation": "Imbarassu",
+    "category": "Mental"
+  },
+  "frustrate": {
+    "translation": "Frustrata",
+    "category": "Mental"
+  },
+  "satisfy": {
+    "translation": "Contentir",
+    "category": "Mental"
+  },
+  "comfort": {
+    "translation": "Confortu",
+    "category": "Mental"
+  },
+  "cheer": {
+    "translation": "Ciaciu",
+    "category": "Mental"
+  },
+  "say": {
+    "translation": "dire",
+    "category": "Communication"
+  },
+  "tell": {
+    "translation": "dicci",
+    "category": "Communication"
+  },
+  "talk": {
+    "translation": "Parliu",
+    "category": "Communication"
+  },
+  "speak": {
+    "translation": "parliasu",
+    "category": "Communication"
+  },
+  "discuss": {
+    "translation": "discutu",
+    "category": "Communication"
+  },
+  "chat": {
+    "translation": "chatto",
+    "category": "Communication"
+  },
+  "explain": {
+    "translation": "explica",
+    "category": "Communication"
+  },
+  "describe": {
+    "translation": "Descrípire",
+    "category": "Communication"
+  },
+  "announce": {
+    "translation": "Anuntu",
+    "category": "Communication"
+  },
+  "report": {
+    "translation": "Rapportu",
+    "category": "Communication"
+  },
+  "reply": {
+    "translation": "Rispondi",
+    "category": "Communication"
+  },
+  "answer": {
+    "translation": "Risposta",
+    "category": "Communication"
+  },
+  "ask": {
+    "translation": "chiedu",
+    "category": "Communication"
+  },
+  "interrupt": {
+    "translation": "Inturruptu",
+    "category": "Communication"
+  },
+  "suggest": {
+    "translation": "Propòs",
+    "category": "Communication"
+  },
+  "recommend": {
+    "translation": "Raccomandu",
+    "category": "Communication"
+  },
+  "complain": {
+    "translation": "plainu",
+    "category": "Communication"
+  },
+  "argue": {
+    "translation": "discutu",
+    "category": "Communication"
+  },
+  "debate": {
+    "translation": "Débat",
+    "category": "Communication"
+  },
+  "whisper": {
+    "translation": "Susurru",
+    "category": "Communication"
+  },
+  "shout": {
+    "translation": "Hurra",
+    "category": "Communication"
+  },
+  "yell": {
+    "translation": "Alaù",
+    "category": "Communication"
+  },
+  "mention": {
+    "translation": "menzionu",
+    "category": "Communication"
+  },
+  "remind": {
+    "translation": "Ricorda",
+    "category": "Communication"
+  },
+  "warn": {
+    "translation": "Averti",
+    "category": "Communication"
+  },
+  "advise": {
+    "translation": "Conseillu",
+    "category": "Communication"
+  },
+  "encourage": {
+    "translation": "Alentu",
+    "category": "Communication"
+  },
+  "persuade": {
+    "translation": "Convinca",
+    "category": "Communication"
+  },
+  "invite": {
+    "translation": "Invitare",
+    "category": "Communication"
+  },
+  "respond": {
+    "translation": "Rispondi",
+    "category": "Communication"
+  },
+  "translate": {
+    "translation": "tradurre",
+    "category": "Communication"
+  },
+  "inform": {
+    "translation": "Informare",
+    "category": "Communication"
+  },
+  "comment": {
+    "translation": "commentu",
+    "category": "Communication"
+  },
+  "confirm": {
+    "translation": "Confirmer",
+    "category": "Communication"
+  },
+  "deny": {
+    "translation": "Niau",
+    "category": "Communication"
+  },
+  "admit": {
+    "translation": "Accetta",
+    "category": "Communication"
+  },
+  "meet": {
+    "translation": "rencontrer",
+    "category": "Social"
+  },
+  "greet": {
+    "translation": "bonuçascu",
+    "category": "Social"
+  },
+  "welcome": {
+    "translation": "Benvenu",
+    "category": "Social"
+  },
+  "visit": {
+    "translation": "visita",
+    "category": "Social"
+  },
+  "host": {
+    "translation": "Maestru",
+    "category": "Social"
+  },
+  "join": {
+    "translation": "Unirsi",
+    "category": "Social"
+  },
+  "help": {
+    "translation": "ajuto",
+    "category": "Social"
+  },
+  "support": {
+    "translation": "suportu",
+    "category": "Social"
+  },
+  "assist": {
+    "translation": "Ajuttu",
+    "category": "Social"
+  },
+  "share": {
+    "translation": "partecipu",
+    "category": "Social"
+  },
+  "care for": {
+    "translation": "Aprenda",
+    "category": "Social"
+  },
+  "hug": {
+    "translation": "abbraccio",
+    "category": "Social"
+  },
+  "kiss": {
+    "translation": "Bjèssi",
+    "category": "Social"
+  },
+  "hold hands": {
+    "translation": "Tenetxe",
+    "category": "Social"
+  },
+  "date": {
+    "translation": "data",
+    "category": "Social"
+  },
+  "marry": {
+    "translation": "fidu",
+    "category": "Social"
+  },
+  "befriend": {
+    "translation": "Amicu",
+    "category": "Social"
+  },
+  "follow": {
+    "translation": "Suivre",
+    "category": "Social"
+  },
+  "lead": {
+    "translation": "pliç",
+    "category": "Social"
+  },
+  "guide": {
+    "translation": "guida",
+    "category": "Social"
+  },
+  "introduce": {
+    "translation": "Introduzi",
+    "category": "Social"
+  },
+  "cooperate": {
+    "translation": "Collaborente",
+    "category": "Social"
+  },
+  "protect": {
+    "translation": "Protecciùn",
+    "category": "Social"
+  },
+  "include": {
+    "translation": "includi",
+    "category": "Social"
+  },
+  "exclude": {
+    "translation": "Esclusu",
+    "category": "Social"
+  },
+  "work": {
+    "translation": "travailler",
+    "category": "Work"
+  },
+  "write": {
+    "translation": "Escripti",
+    "category": "Work"
+  },
+  "read": {
+    "translation": "Letta",
+    "category": "Work"
+  },
+  "edit": {
+    "translation": "Modifiçi",
+    "category": "Work"
+  },
+  "revise": {
+    "translation": "Rifazzu",
+    "category": "Work"
+  },
+  "review": {
+    "translation": "Rivuista",
+    "category": "Work"
+  },
+  "inspect": {
+    "translation": "Esaminu",
+    "category": "Work"
+  },
+  "complete": {
+    "translation": "Puni",
+    "category": "Work"
+  },
+  "submit": {
+    "translation": "Soumetti",
+    "category": "Work"
+  },
+  "create": {
+    "translation": "Crea",
+    "category": "Work"
+  },
+  "design": {
+    "translation": "Disegnu",
+    "category": "Work"
+  },
+  "build": {
+    "translation": "Fabrica",
+    "category": "Work"
+  },
+  "assemble": {
+    "translation": "Assembla",
+    "category": "Work"
+  },
+  "debug": {
+    "translation": "Debuggi",
+    "category": "Work"
+  },
+  "research": {
+    "translation": "Ricerche",
+    "category": "Work"
+  },
+  "document": {
+    "translation": "dokumentu",
+    "category": "Work"
+  },
+  "train": {
+    "translation": "trenu",
+    "category": "Work"
+  },
+  "teach": {
+    "translation": "Enseigna",
+    "category": "Work"
+  },
+  "update": {
+    "translation": "Majjuni",
+    "category": "Work"
+  },
+  "upload": {
+    "translation": "ChargeMENT",
+    "category": "Work"
+  },
+  "download": {
+    "translation": "Descarica",
+    "category": "Work"
+  },
+  "print": {
+    "translation": "impressu",
+    "category": "Work"
+  },
+  "scan": {
+    "translation": "scannu",
+    "category": "Work"
+  },
+  "record": {
+    "translation": "registru",
+    "category": "Work"
+  },
+  "track": {
+    "translation": "chemin",
+    "category": "Work"
+  },
+  "manage": {
+    "translation": "Gestione",
+    "category": "Work"
+  },
+  "supervise": {
+    "translation": "Superviser",
+    "category": "Work"
+  },
+  "go": {
+    "translation": "Alla",
+    "category": "Travel"
+  },
+  "come": {
+    "translation": "Vieni",
+    "category": "Travel"
+  },
+  "move": {
+    "translation": "muveru",
+    "category": "Travel"
+  },
+  "leave": {
+    "translation": "Partire",
+    "category": "Travel"
+  },
+  "arrive": {
+    "translation": "Arrivu",
+    "category": "Travel"
+  },
+  "enter": {
+    "translation": "Enti",
+    "category": "Travel"
+  },
+  "exit": {
+    "translation": "sortie",
+    "category": "Travel"
+  },
+  "travel": {
+    "translation": "viaggiu",
+    "category": "Travel"
+  },
+  "fly": {
+    "translation": "voli",
+    "category": "Travel"
+  },
+  "drive": {
+    "translation": "condui",
+    "category": "Travel"
+  },
+  "ride": {
+    "translation": "cascia",
+    "category": "Travel"
+  },
+  "board": {
+    "translation": "Tabu",
+    "category": "Travel"
+  },
+  "land": {
+    "translation": "Terra",
+    "category": "Travel"
+  },
+  "park": {
+    "translation": "parc",
+    "category": "Travel"
+  },
+  "accelerate": {
+    "translation": "Accelere",
+    "category": "Travel"
+  },
+  "reverse": {
+    "translation": "Reviu",
+    "category": "Travel"
+  },
+  "cross": {
+    "translation": "croisetta",
+    "category": "Travel"
+  },
+  "wander": {
+    "translation": "randare",
+    "category": "Travel"
+  },
+  "explore": {
+    "translation": "esplori",
+    "category": "Travel"
+  },
+  "return": {
+    "translation": "revenu",
+    "category": "Travel"
+  },
+  "rush": {
+    "translation": "Furz",
+    "category": "Travel"
+  },
+  "hurry": {
+    "translation": "Pressu",
+    "category": "Travel"
+  },
+  "navigate": {
+    "translation": "Naviga",
+    "category": "Travel"
+  },
+  "sanitize": {
+    "translation": "santizzu",
+    "category": "Household"
+  },
+  "iron": {
+    "translation": "ferro",
+    "category": "Household"
+  },
+  "store": {
+    "translation": "magazzu",
+    "category": "Household"
+  },
+  "repair": {
+    "translation": "Riparu",
+    "category": "Household"
+  },
+  "fix": {
+    "translation": "Fikku",
+    "category": "Household"
+  },
+  "disassemble": {
+    "translation": "Desarmar",
+    "category": "Household"
+  },
+  "install": {
+    "translation": "Installation",
+    "category": "Household"
+  },
+  "uninstall": {
+    "translation": "Disscongiunti",
+    "category": "Household"
+  },
+  "remove": {
+    "translation": "Prendi",
+    "category": "Household"
+  },
+  "connect": {
+    "translation": "Connètto",
+    "category": "Household"
+  },
+  "disconnect": {
+    "translation": "Desconnettu",
+    "category": "Household"
+  },
+  "lock": {
+    "translation": "ferma",
+    "category": "Household"
+  },
+  "unlock": {
+    "translation": "Destrappu",
+    "category": "Household"
+  },
+  "decorate": {
+    "translation": "Festu",
+    "category": "Household"
+  },
+  "polish": {
+    "translation": "Poliçe",
+    "category": "Household"
+  },
+  "hammer": {
+    "translation": "mazza",
+    "category": "Household"
+  },
+  "saw": {
+    "translation": "scàzu",
+    "category": "Household"
+  },
+  "glue": {
+    "translation": "colle",
+    "category": "Household"
+  },
+  "buy": {
+    "translation": "Achju",
+    "category": "Money"
+  },
+  "sell": {
+    "translation": "vendu",
+    "category": "Money"
+  },
+  "pay": {
+    "translation": "paghju",
+    "category": "Money"
+  },
+  "owe": {
+    "translation": "endetidda",
+    "category": "Money"
+  },
+  "borrow": {
+    "translation": "Emprèstu",
+    "category": "Money"
+  },
+  "lend": {
+    "translation": "Emprèstu",
+    "category": "Money"
+  },
+  "rent": {
+    "translation": "Loca",
+    "category": "Money"
+  },
+  "save": {
+    "translation": "salva",
+    "category": "Money"
+  },
+  "spend": {
+    "translation": "Passu",
+    "category": "Money"
+  },
+  "invest": {
+    "translation": "Investimento",
+    "category": "Money"
+  },
+  "earn": {
+    "translation": "Avin",
+    "category": "Money"
+  },
+  "refund": {
+    "translation": "Rendimentu",
+    "category": "Money"
+  },
+  "exchange": {
+    "translation": "Echangiu",
+    "category": "Money"
+  },
+  "order": {
+    "translation": "Commando",
+    "category": "Money"
+  },
+  "select": {
+    "translation": "Séleccionner",
+    "category": "Money"
+  },
+  "withdraw": {
+    "translation": "Retiri",
+    "category": "Money"
+  },
+  "deposit": {
+    "translation": "Déposit",
+    "category": "Money"
+  },
+  "budget": {
+    "translation": "-budgetu",
+    "category": "Money"
+  },
+  "fry": {
+    "translation": "Friti",
+    "category": "Food"
+  },
+  "grill": {
+    "translation": "braza",
+    "category": "Food"
+  },
+  "boil": {
+    "translation": "Fustufo",
+    "category": "Food"
+  },
+  "steam": {
+    "translation": "vai",
+    "category": "Food"
+  },
+  "slice": {
+    "translation": "fetta",
+    "category": "Food"
+  },
+  "cut": {
+    "translation": "Tagliu",
+    "category": "Food"
+  },
+  "chop": {
+    "translation": "Fessu",
+    "category": "Food"
+  },
+  "mix": {
+    "translation": "mezzi",
+    "category": "Food"
+  },
+  "stir": {
+    "translation": "Mesturar",
+    "category": "Food"
+  },
+  "pour": {
+    "translation": "versa",
+    "category": "Food"
+  },
+  "serve": {
+    "translation": "Servu",
+    "category": "Food"
+  },
+  "taste": {
+    "translation": "Gustu",
+    "category": "Food"
+  },
+  "season": {
+    "translation": "Tempu",
+    "category": "Food"
+  },
+  "marinate": {
+    "translation": "Imperzziurar",
+    "category": "Food"
+  },
+  "chew": {
+    "translation": "fischjèu",
+    "category": "Food"
+  },
+  "swallow": {
+    "translation": "Firrau",
+    "category": "Food"
+  },
+  "deliver": {
+    "translation": "portare",
+    "category": "Food"
+  },
+  "digest": {
+    "translation": "digestu",
+    "category": "Food"
+  },
+  "rain": {
+    "translation": "Pluie",
+    "category": "Nature"
+  },
+  "snow": {
+    "translation": "Njuvu",
+    "category": "Nature"
+  },
+  "hail": {
+    "translation": "Ghiaccia",
+    "category": "Nature"
+  },
+  "sleet": {
+    "translation": "Grescias",
+    "category": "Nature"
+  },
+  "freeze": {
+    "translation": "ghejhzu",
+    "category": "Nature"
+  },
+  "melt": {
+    "translation": "Fruzzu",
+    "category": "Nature"
+  },
+  "shine": {
+    "translation": "Luccia",
+    "category": "Nature"
+  },
+  "blow": {
+    "translation": "Bleu",
+    "category": "Nature"
+  },
+  "grow": {
+    "translation": "cresci",
+    "category": "Nature"
+  },
+  "bloom": {
+    "translation": "Fioru",
+    "category": "Nature"
+  },
+  "wither": {
+    "translation": "Fioru",
+    "category": "Nature"
+  },
+  "sprout": {
+    "translation": "frascatu",
+    "category": "Nature"
+  },
+  "fall": {
+    "translation": "chuvin",
+    "category": "Nature"
+  },
+  "quake": {
+    "translation": "Tremu",
+    "category": "Nature"
+  },
+  "erode": {
+    "translation": "Erosïre",
+    "category": "Nature"
+  },
+  "burn": {
+    "translation": "Furattu",
+    "category": "Nature"
+  },
+  "flood": {
+    "translation": "InCorsu",
+    "category": "Nature"
+  },
+  "float": {
+    "translation": "flotu",
+    "category": "Nature"
+  },
+  "sink": {
+    "translation": "tchinu",
+    "category": "Nature"
+  },
+  "rise": {
+    "translation": "Levare",
+    "category": "Nature"
+  },
+  "set": {
+    "translation": "estu",
+    "category": "Nature"
+  },
+  "breathe": {
+    "translation": "Respire",
+    "category": "Health"
+  },
+  "inhale": {
+    "translation": "Alçà",
+    "category": "Health"
+  },
+  "exhale": {
+    "translation": "Eschiu",
+    "category": "Health"
+  },
+  "cough": {
+    "translation": "tosso",
+    "category": "Health"
+  },
+  "sneeze": {
+    "translation": "Chisciu",
+    "category": "Health"
+  },
+  "sweat": {
+    "translation": "Pèstu",
+    "category": "Health"
+  },
+  "bleed": {
+    "translation": "Sanguinu",
+    "category": "Health"
+  },
+  "heal": {
+    "translation": "Guèriri",
+    "category": "Health"
+  },
+  "recover": {
+    "translation": "Ripristini",
+    "category": "Health"
+  },
+  "ache": {
+    "translation": "douleur",
+    "category": "Health"
+  },
+  "hurt": {
+    "translation": "Douleur",
+    "category": "Health"
+  },
+  "strain": {
+    "translation": "Fidu",
+    "category": "Health"
+  },
+  "exercise": {
+    "translation": "Esercizio",
+    "category": "Health"
+  },
+  "faint": {
+    "translation": "Fasu",
+    "category": "Health"
+  },
+  "vomit": {
+    "translation": "Rugiu",
+    "category": "Health"
+  },
+  "blink": {
+    "translation": "Scicu",
+    "category": "Health"
+  },
+  "squint": {
+    "translation": "Scurzatu",
+    "category": "Health"
+  },
+  "tremble": {
+    "translation": "tremballu",
+    "category": "Health"
+  },
+  "click": {
+    "translation": "Clic",
+    "category": "Technology"
+  },
+  "tap": {
+    "translation": "tapa",
+    "category": "Technology"
+  },
+  "scroll": {
+    "translation": "Fusconi",
+    "category": "Technology"
+  },
+  "swipe": {
+    "translation": "Scudare",
+    "category": "Technology"
+  },
+  "browse": {
+    "translation": "Navigatează",
+    "category": "Technology"
+  },
+  "upgrade": {
+    "translation": "Amplifiu",
+    "category": "Technology"
+  },
+  "copy": {
+    "translation": "copi",
+    "category": "Technology"
+  },
+  "paste": {
+    "translation": "pasta",
+    "category": "Technology"
+  },
+  "delete": {
+    "translation": "Supprimi",
+    "category": "Technology"
+  },
+  "reset": {
+    "translation": "Rézista",
+    "category": "Technology"
+  },
+  "restart": {
+    "translation": "Recomenziare",
+    "category": "Technology"
+  },
+  "log in": {
+    "translation": "Connètci",
+    "category": "Technology"
+  },
+  "log out": {
+    "translation": "Sorti",
+    "category": "Technology"
+  },
+  "sync": {
+    "translation": "Syncronu",
+    "category": "Technology"
+  },
+  "stream": {
+    "translation": "rua",
+    "category": "Technology"
+  },
+  "encrypt": {
+    "translation": "Chiffrer",
+    "category": "Technology"
+  },
+  "backup": {
+    "translation": "Reserva",
+    "category": "Technology"
+  }
+}

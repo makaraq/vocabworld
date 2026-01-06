@@ -1,0 +1,1564 @@
+{
+  "walk": {
+    "translation": "歩く",
+    "category": "Basic"
+  },
+  "run": {
+    "translation": "走る",
+    "category": "Basic"
+  },
+  "jump": {
+    "translation": "ジャンプ",
+    "category": "Basic"
+  },
+  "hop": {
+    "translation": null,
+    "category": "Basic",
+    "failed": true
+  },
+  "skip": {
+    "translation": "スキップ",
+    "category": "Basic"
+  },
+  "crawl": {
+    "translation": "這里沒有特定的單詞來表示爬行的意思",
+    "category": "Basic"
+  },
+  "climb": {
+    "translation": "登る",
+    "category": "Basic"
+  },
+  "slide": {
+    "translation": "スライド",
+    "category": "Basic"
+  },
+  "swing": {
+    "translation": "正確な単語は",
+    "category": "Basic"
+  },
+  "stretch": {
+    "translation": "延ばす",
+    "category": "Basic"
+  },
+  "bend": {
+    "translation": "曲げる",
+    "category": "Basic"
+  },
+  "lift": {
+    "translation": "リフト",
+    "category": "Basic"
+  },
+  "carry": {
+    "translation": "運ぶ",
+    "category": "Basic"
+  },
+  "drag": {
+    "translation": "引く",
+    "category": "Basic"
+  },
+  "push": {
+    "translation": "押す",
+    "category": "Basic"
+  },
+  "pull": {
+    "translation": "引く",
+    "category": "Basic"
+  },
+  "hold": {
+    "translation": "保持",
+    "category": "Basic"
+  },
+  "grab": {
+    "translation": "取る",
+    "category": "Basic"
+  },
+  "drop": {
+    "translation": "落ち",
+    "category": "Basic"
+  },
+  "throw": {
+    "translation": "投げる",
+    "category": "Basic"
+  },
+  "catch": {
+    "translation": "捕らえる",
+    "category": "Basic"
+  },
+  "kick": {
+    "translation": "蹴る",
+    "category": "Basic"
+  },
+  "hit": {
+    "translation": "打",
+    "category": "Basic"
+  },
+  "press": {
+    "translation": "押す",
+    "category": "Basic"
+  },
+  "twist": {
+    "translation": "這個詞彙可以直接寫成",
+    "category": "Basic"
+  },
+  "turn": {
+    "translation": "まわす",
+    "category": "Basic"
+  },
+  "rotate": {
+    "translation": "回転",
+    "category": "Basic"
+  },
+  "flip": {
+    "translation": "翻す",
+    "category": "Basic"
+  },
+  "shake": {
+    "translation": "振る",
+    "category": "Basic"
+  },
+  "wave": {
+    "translation": "波",
+    "category": "Basic"
+  },
+  "reach": {
+    "translation": "到着",
+    "category": "Basic"
+  },
+  "lean": {
+    "translation": "寄り靠ぐる",
+    "category": "Basic"
+  },
+  "rest": {
+    "translation": "休み",
+    "category": "Basic"
+  },
+  "balance": {
+    "translation": "平衡",
+    "category": "Basic"
+  },
+  "spin": {
+    "translation": "回転",
+    "category": "Basic"
+  },
+  "arrange": {
+    "translation": "整理",
+    "category": "Basic"
+  },
+  "adjust": {
+    "translation": "調整",
+    "category": "Basic"
+  },
+  "shift": {
+    "translation": "変更",
+    "category": "Basic"
+  },
+  "tie": {
+    "translation": "帯",
+    "category": "Basic"
+  },
+  "untie": {
+    "translation": "ほどく",
+    "category": "Basic"
+  },
+  "wrap": {
+    "translation": "包み",
+    "category": "Basic"
+  },
+  "unwrap": {
+    "translation": "解きる",
+    "category": "Basic"
+  },
+  "fold": {
+    "translation": "折る",
+    "category": "Basic"
+  },
+  "unfold": {
+    "translation": "開く",
+    "category": "Basic"
+  },
+  "pack": {
+    "translation": "パック",
+    "category": "Basic"
+  },
+  "unpack": {
+    "translation": "開ける",
+    "category": "Basic"
+  },
+  "be": {
+    "translation": "哉",
+    "category": "Basic"
+  },
+  "become": {
+    "translation": "なる",
+    "category": "Basic"
+  },
+  "seem": {
+    "translation": "見える",
+    "category": "Basic"
+  },
+  "appear": {
+    "translation": "現れる",
+    "category": "Basic"
+  },
+  "remain": {
+    "translation": "残る",
+    "category": "Basic"
+  },
+  "stay": {
+    "translation": "とどまる",
+    "category": "Basic"
+  },
+  "exist": {
+    "translation": "存在",
+    "category": "Basic"
+  },
+  "happen": {
+    "translation": "起こる",
+    "category": "Basic"
+  },
+  "occur": {
+    "translation": "はっせい",
+    "category": "Basic"
+  },
+  "change": {
+    "translation": "変化",
+    "category": "Basic"
+  },
+  "improve": {
+    "translation": "向上",
+    "category": "Basic"
+  },
+  "decline": {
+    "translation": "衰退",
+    "category": "Basic"
+  },
+  "continue": {
+    "translation": "続く",
+    "category": "Basic"
+  },
+  "stop": {
+    "translation": "止める",
+    "category": "Basic"
+  },
+  "begin": {
+    "translation": "始める",
+    "category": "Basic"
+  },
+  "end": {
+    "translation": "終わり",
+    "category": "Basic"
+  },
+  "last": {
+    "translation": "最後",
+    "category": "Basic"
+  },
+  "wake": {
+    "translation": "覚悟",
+    "category": "Daily Routine"
+  },
+  "get up": {
+    "translation": "起きる",
+    "category": "Daily Routine"
+  },
+  "wash": {
+    "translation": "洗う",
+    "category": "Daily Routine"
+  },
+  "shower": {
+    "translation": "シャワー",
+    "category": "Daily Routine"
+  },
+  "bathe": {
+    "translation": "入浴",
+    "category": "Daily Routine"
+  },
+  "brush": {
+    "translation": "筆",
+    "category": "Daily Routine"
+  },
+  "comb": {
+    "translation": "梳",
+    "category": "Daily Routine"
+  },
+  "dress": {
+    "translation": "ドレス",
+    "category": "Daily Routine"
+  },
+  "eat": {
+    "translation": "或は食べ",
+    "category": "Daily Routine"
+  },
+  "drink": {
+    "translation": "飲み物",
+    "category": "Daily Routine"
+  },
+  "snack": {
+    "translation": "お菓子",
+    "category": "Daily Routine"
+  },
+  "cook": {
+    "translation": "調理師",
+    "category": "Daily Routine"
+  },
+  "bake": {
+    "translation": "焼く",
+    "category": "Daily Routine"
+  },
+  "reheat": {
+    "translation": "加熱する",
+    "category": "Daily Routine"
+  },
+  "clean": {
+    "translation": "清潔",
+    "category": "Daily Routine"
+  },
+  "tidy": {
+    "translation": "整理",
+    "category": "Daily Routine"
+  },
+  "organize": {
+    "translation": "整理",
+    "category": "Daily Routine"
+  },
+  "vacuum": {
+    "translation": "真空",
+    "category": "Daily Routine"
+  },
+  "sweep": {
+    "translation": "掃除",
+    "category": "Daily Routine"
+  },
+  "mop": {
+    "translation": "ほうき",
+    "category": "Daily Routine"
+  },
+  "dust": {
+    "translation": "あすなろ",
+    "category": "Daily Routine"
+  },
+  "wash dishes": {
+    "translation": "洗い物をする",
+    "category": "Daily Routine"
+  },
+  "rinse": {
+    "translation": "すすぐ",
+    "category": "Daily Routine"
+  },
+  "wipe": {
+    "translation": "ふきる",
+    "category": "Daily Routine"
+  },
+  "scrub": {
+    "translation": "磨く",
+    "category": "Daily Routine"
+  },
+  "dry": {
+    "translation": "乾燥",
+    "category": "Daily Routine"
+  },
+  "shop": {
+    "translation": "店",
+    "category": "Daily Routine"
+  },
+  "refill": {
+    "translation": "補充",
+    "category": "Daily Routine"
+  },
+  "charge": {
+    "translation": "電",
+    "category": "Daily Routine"
+  },
+  "relax": {
+    "translation": "ゆるす",
+    "category": "Daily Routine"
+  },
+  "nap": {
+    "translation": "仮眠",
+    "category": "Daily Routine"
+  },
+  "sleep": {
+    "translation": "寝ます",
+    "category": "Daily Routine"
+  },
+  "prepare": {
+    "translation": "準備",
+    "category": "Daily Routine"
+  },
+  "schedule": {
+    "translation": "スケジュール",
+    "category": "Daily Routine"
+  },
+  "cancel": {
+    "translation": "取り消し",
+    "category": "Daily Routine"
+  },
+  "check": {
+    "translation": "チェック",
+    "category": "Daily Routine"
+  },
+  "monitor": {
+    "translation": "モニター",
+    "category": "Daily Routine"
+  },
+  "plan": {
+    "translation": "計画",
+    "category": "Daily Routine"
+  },
+  "wait": {
+    "translation": "待つ",
+    "category": "Daily Routine"
+  },
+  "search": {
+    "translation": "検索",
+    "category": "Daily Routine"
+  },
+  "find": {
+    "translation": "見つける",
+    "category": "Daily Routine"
+  },
+  "lose": {
+    "translation": "喪失",
+    "category": "Daily Routine"
+  },
+  "replace": {
+    "translation": "置き換える",
+    "category": "Daily Routine"
+  },
+  "think": {
+    "translation": "思う",
+    "category": "Mental"
+  },
+  "know": {
+    "translation": "知る",
+    "category": "Mental"
+  },
+  "believe": {
+    "translation": "更多用于相信某个事实或",
+    "category": "Mental"
+  },
+  "consider": {
+    "translation": "考慮",
+    "category": "Mental"
+  },
+  "imagine": {
+    "translation": "想像",
+    "category": "Mental"
+  },
+  "wonder": {
+    "translation": "如果特指感到惊奇或惊叹的感觉",
+    "category": "Mental"
+  },
+  "remember": {
+    "translation": "記憶",
+    "category": "Mental"
+  },
+  "forget": {
+    "translation": "意識を失う",
+    "category": "Mental"
+  },
+  "realize": {
+    "translation": "実化",
+    "category": "Mental"
+  },
+  "guess": {
+    "translation": "推測",
+    "category": "Mental"
+  },
+  "predict": {
+    "translation": "予想する",
+    "category": "Mental"
+  },
+  "expect": {
+    "translation": "期待",
+    "category": "Mental"
+  },
+  "recognize": {
+    "translation": "認識",
+    "category": "Mental"
+  },
+  "notice": {
+    "translation": "通知",
+    "category": "Mental"
+  },
+  "focus": {
+    "translation": "焦点",
+    "category": "Mental"
+  },
+  "concentrate": {
+    "translation": "集中",
+    "category": "Mental"
+  },
+  "decide": {
+    "translation": "決定",
+    "category": "Mental"
+  },
+  "choose": {
+    "translation": "えらぶ",
+    "category": "Mental"
+  },
+  "compare": {
+    "translation": "比較",
+    "category": "Mental"
+  },
+  "analyze": {
+    "translation": "解析する",
+    "category": "Mental"
+  },
+  "evaluate": {
+    "translation": "評価する",
+    "category": "Mental"
+  },
+  "estimate": {
+    "translation": "推定",
+    "category": "Mental"
+  },
+  "solve": {
+    "translation": "解決",
+    "category": "Mental"
+  },
+  "question": {
+    "translation": "質問",
+    "category": "Mental"
+  },
+  "suspect": {
+    "translation": "疑問者",
+    "category": "Mental"
+  },
+  "doubt": {
+    "translation": "かいぎ",
+    "category": "Mental"
+  },
+  "learn": {
+    "translation": "学ぶ",
+    "category": "Mental"
+  },
+  "study": {
+    "translation": "研究",
+    "category": "Mental"
+  },
+  "memorize": {
+    "translation": "きろくする",
+    "category": "Mental"
+  },
+  "calculate": {
+    "translation": "計算",
+    "category": "Mental"
+  },
+  "reflect": {
+    "translation": "反射",
+    "category": "Mental"
+  },
+  "understand": {
+    "translation": "理解",
+    "category": "Mental"
+  },
+  "like": {
+    "translation": "好き",
+    "category": "Mental"
+  },
+  "love": {
+    "translation": "愛",
+    "category": "Mental"
+  },
+  "hate": {
+    "translation": "憎しみ",
+    "category": "Mental"
+  },
+  "enjoy": {
+    "translation": "楽しむ",
+    "category": "Mental"
+  },
+  "prefer": {
+    "translation": "好む",
+    "category": "Mental"
+  },
+  "want": {
+    "translation": "欲しい",
+    "category": "Mental"
+  },
+  "need": {
+    "translation": "必要",
+    "category": "Mental"
+  },
+  "miss": {
+    "translation": "欠き",
+    "category": "Mental"
+  },
+  "care": {
+    "translation": null,
+    "category": "Mental",
+    "failed": true
+  },
+  "worry": {
+    "translation": "心配",
+    "category": "Mental"
+  },
+  "fear": {
+    "translation": "恐怖",
+    "category": "Mental"
+  },
+  "panic": {
+    "translation": "パニック",
+    "category": "Mental"
+  },
+  "stress": {
+    "translation": "ストレス",
+    "category": "Mental"
+  },
+  "calm": {
+    "translation": "静寂",
+    "category": "Mental"
+  },
+  "appreciate": {
+    "translation": "感謝",
+    "category": "Mental"
+  },
+  "value": {
+    "translation": "可以翻译为",
+    "category": "Mental"
+  },
+  "respect": {
+    "translation": "敬意",
+    "category": "Mental"
+  },
+  "dislike": {
+    "translation": "不喜欢",
+    "category": "Mental"
+  },
+  "regret": {
+    "translation": "抱悔",
+    "category": "Mental"
+  },
+  "hope": {
+    "translation": "希望",
+    "category": "Mental"
+  },
+  "trust": {
+    "translation": "信頼",
+    "category": "Mental"
+  },
+  "surprise": {
+    "translation": "驚き",
+    "category": "Mental"
+  },
+  "shock": {
+    "translation": "ショック",
+    "category": "Mental"
+  },
+  "annoy": {
+    "translation": "邪魔",
+    "category": "Mental"
+  },
+  "bother": {
+    "translation": "邪魔",
+    "category": "Mental"
+  },
+  "confuse": {
+    "translation": "混乱",
+    "category": "Mental"
+  },
+  "embarrass": {
+    "translation": "照れ",
+    "category": "Mental"
+  },
+  "frustrate": {
+    "translation": "挫折",
+    "category": "Mental"
+  },
+  "satisfy": {
+    "translation": "満足",
+    "category": "Mental"
+  },
+  "comfort": {
+    "translation": "安堵",
+    "category": "Mental"
+  },
+  "cheer": {
+    "translation": "クリーチ",
+    "category": "Mental"
+  },
+  "say": {
+    "translation": "言う",
+    "category": "Communication"
+  },
+  "tell": {
+    "translation": "話す",
+    "category": "Communication"
+  },
+  "talk": {
+    "translation": "話",
+    "category": "Communication"
+  },
+  "speak": {
+    "translation": "話",
+    "category": "Communication"
+  },
+  "discuss": {
+    "translation": "議論",
+    "category": "Communication"
+  },
+  "chat": {
+    "translation": "チャット",
+    "category": "Communication"
+  },
+  "explain": {
+    "translation": "説明",
+    "category": "Communication"
+  },
+  "describe": {
+    "translation": "描写",
+    "category": "Communication"
+  },
+  "announce": {
+    "translation": "告げる",
+    "category": "Communication"
+  },
+  "report": {
+    "translation": "報告",
+    "category": "Communication"
+  },
+  "reply": {
+    "translation": "返事",
+    "category": "Communication"
+  },
+  "answer": {
+    "translation": "答え",
+    "category": "Communication"
+  },
+  "ask": {
+    "translation": "尋ねる",
+    "category": "Communication"
+  },
+  "interrupt": {
+    "translation": "中断",
+    "category": "Communication"
+  },
+  "suggest": {
+    "translation": "提案",
+    "category": "Communication"
+  },
+  "recommend": {
+    "translation": "推奨",
+    "category": "Communication"
+  },
+  "complain": {
+    "translation": "嘆く",
+    "category": "Communication"
+  },
+  "argue": {
+    "translation": "争う",
+    "category": "Communication"
+  },
+  "debate": {
+    "translation": "論争",
+    "category": "Communication"
+  },
+  "whisper": {
+    "translation": "ささやき",
+    "category": "Communication"
+  },
+  "shout": {
+    "translation": "叫びる",
+    "category": "Communication"
+  },
+  "yell": {
+    "translation": "呼びかける",
+    "category": "Communication"
+  },
+  "mention": {
+    "translation": "記述",
+    "category": "Communication"
+  },
+  "remind": {
+    "translation": "思い出させる",
+    "category": "Communication"
+  },
+  "warn": {
+    "translation": "警告",
+    "category": "Communication"
+  },
+  "advise": {
+    "translation": "相談",
+    "category": "Communication"
+  },
+  "encourage": {
+    "translation": "励ます",
+    "category": "Communication"
+  },
+  "persuade": {
+    "translation": "説得",
+    "category": "Communication"
+  },
+  "invite": {
+    "translation": "招待",
+    "category": "Communication"
+  },
+  "respond": {
+    "translation": "応答",
+    "category": "Communication"
+  },
+  "translate": {
+    "translation": "翻訳",
+    "category": "Communication"
+  },
+  "inform": {
+    "translation": "通知",
+    "category": "Communication"
+  },
+  "comment": {
+    "translation": "コメント",
+    "category": "Communication"
+  },
+  "confirm": {
+    "translation": "確認",
+    "category": "Communication"
+  },
+  "deny": {
+    "translation": "否定",
+    "category": "Communication"
+  },
+  "admit": {
+    "translation": "認める",
+    "category": "Communication"
+  },
+  "meet": {
+    "translation": "会う",
+    "category": "Social"
+  },
+  "greet": {
+    "translation": "挨拶",
+    "category": "Social"
+  },
+  "welcome": {
+    "translation": "ようこそ",
+    "category": "Social"
+  },
+  "visit": {
+    "translation": "訪問",
+    "category": "Social"
+  },
+  "host": {
+    "translation": "ホスト",
+    "category": "Social"
+  },
+  "join": {
+    "translation": "参加",
+    "category": "Social"
+  },
+  "help": {
+    "translation": "助け",
+    "category": "Social"
+  },
+  "support": {
+    "translation": "支援",
+    "category": "Social"
+  },
+  "assist": {
+    "translation": "援助",
+    "category": "Social"
+  },
+  "share": {
+    "translation": "共有",
+    "category": "Social"
+  },
+  "care for": {
+    "translation": "介護",
+    "category": "Social"
+  },
+  "hug": {
+    "translation": "抱きしめる",
+    "category": "Social"
+  },
+  "kiss": {
+    "translation": "キス",
+    "category": "Social"
+  },
+  "hold hands": {
+    "translation": "手を牵く",
+    "category": "Social"
+  },
+  "date": {
+    "translation": "这个单词有几种不同的表达方式",
+    "category": "Social"
+  },
+  "marry": {
+    "translation": "視野",
+    "category": "Social"
+  },
+  "befriend": {
+    "translation": "友達になる",
+    "category": "Social"
+  },
+  "follow": {
+    "translation": "追う",
+    "category": "Social"
+  },
+  "lead": {
+    "translation": "領导",
+    "category": "Social"
+  },
+  "guide": {
+    "translation": "案内",
+    "category": "Social"
+  },
+  "introduce": {
+    "translation": "紹介",
+    "category": "Social"
+  },
+  "cooperate": {
+    "translation": "協力",
+    "category": "Social"
+  },
+  "protect": {
+    "translation": "保護",
+    "category": "Social"
+  },
+  "include": {
+    "translation": "ふくむ",
+    "category": "Social"
+  },
+  "exclude": {
+    "translation": "除外",
+    "category": "Social"
+  },
+  "work": {
+    "translation": "働き",
+    "category": "Work"
+  },
+  "write": {
+    "translation": "書く",
+    "category": "Work"
+  },
+  "read": {
+    "translation": "読み",
+    "category": "Work"
+  },
+  "edit": {
+    "translation": "編集",
+    "category": "Work"
+  },
+  "revise": {
+    "translation": "訂正",
+    "category": "Work"
+  },
+  "review": {
+    "translation": "レビュー",
+    "category": "Work"
+  },
+  "inspect": {
+    "translation": "検査",
+    "category": "Work"
+  },
+  "complete": {
+    "translation": "完",
+    "category": "Work"
+  },
+  "submit": {
+    "translation": "提出",
+    "category": "Work"
+  },
+  "create": {
+    "translation": "作る",
+    "category": "Work"
+  },
+  "design": {
+    "translation": "デザイン",
+    "category": "Work"
+  },
+  "build": {
+    "translation": "建設",
+    "category": "Work"
+  },
+  "assemble": {
+    "translation": "組み立てる",
+    "category": "Work"
+  },
+  "debug": {
+    "translation": "デバッグ",
+    "category": "Work"
+  },
+  "research": {
+    "translation": "研究",
+    "category": "Work"
+  },
+  "document": {
+    "translation": "文書",
+    "category": "Work"
+  },
+  "train": {
+    "translation": "電車",
+    "category": "Work"
+  },
+  "teach": {
+    "translation": "教える",
+    "category": "Work"
+  },
+  "update": {
+    "translation": "更新",
+    "category": "Work"
+  },
+  "upload": {
+    "translation": "アップロード",
+    "category": "Work"
+  },
+  "download": {
+    "translation": "ダウンロード",
+    "category": "Work"
+  },
+  "print": {
+    "translation": "印刷",
+    "category": "Work"
+  },
+  "scan": {
+    "translation": "スキャン",
+    "category": "Work"
+  },
+  "record": {
+    "translation": "記録",
+    "category": "Work"
+  },
+  "track": {
+    "translation": "軌道",
+    "category": "Work"
+  },
+  "manage": {
+    "translation": "管理",
+    "category": "Work"
+  },
+  "supervise": {
+    "translation": "監督",
+    "category": "Work"
+  },
+  "go": {
+    "translation": "行く",
+    "category": "Travel"
+  },
+  "come": {
+    "translation": "くる",
+    "category": "Travel"
+  },
+  "move": {
+    "translation": "動く",
+    "category": "Travel"
+  },
+  "leave": {
+    "translation": "去る",
+    "category": "Travel"
+  },
+  "arrive": {
+    "translation": "着",
+    "category": "Travel"
+  },
+  "enter": {
+    "translation": "入る",
+    "category": "Travel"
+  },
+  "exit": {
+    "translation": "出口",
+    "category": "Travel"
+  },
+  "travel": {
+    "translation": "旅行",
+    "category": "Travel"
+  },
+  "fly": {
+    "translation": "飛ぶ",
+    "category": "Travel"
+  },
+  "drive": {
+    "translation": "運転",
+    "category": "Travel"
+  },
+  "ride": {
+    "translation": "乗る",
+    "category": "Travel"
+  },
+  "board": {
+    "translation": "板",
+    "category": "Travel"
+  },
+  "land": {
+    "translation": "土地",
+    "category": "Travel"
+  },
+  "park": {
+    "translation": "公園",
+    "category": "Travel"
+  },
+  "accelerate": {
+    "translation": "加速",
+    "category": "Travel"
+  },
+  "reverse": {
+    "translation": "さかす",
+    "category": "Travel"
+  },
+  "cross": {
+    "translation": "十字",
+    "category": "Travel"
+  },
+  "wander": {
+    "translation": "散歩",
+    "category": "Travel"
+  },
+  "explore": {
+    "translation": "探求",
+    "category": "Travel"
+  },
+  "return": {
+    "translation": "戻る",
+    "category": "Travel"
+  },
+  "rush": {
+    "translation": "急ぐ",
+    "category": "Travel"
+  },
+  "hurry": {
+    "translation": "急げ",
+    "category": "Travel"
+  },
+  "navigate": {
+    "translation": "航海",
+    "category": "Travel"
+  },
+  "sanitize": {
+    "translation": "消毒",
+    "category": "Household"
+  },
+  "iron": {
+    "translation": "鉄",
+    "category": "Household"
+  },
+  "store": {
+    "translation": "店",
+    "category": "Household"
+  },
+  "repair": {
+    "translation": "修理",
+    "category": "Household"
+  },
+  "fix": {
+    "translation": "修復",
+    "category": "Household"
+  },
+  "disassemble": {
+    "translation": "分解する",
+    "category": "Household"
+  },
+  "install": {
+    "translation": "インストール",
+    "category": "Household"
+  },
+  "uninstall": {
+    "translation": "アンインストール",
+    "category": "Household"
+  },
+  "remove": {
+    "translation": "取り除く",
+    "category": "Household"
+  },
+  "connect": {
+    "translation": "むすぶ",
+    "category": "Household"
+  },
+  "disconnect": {
+    "translation": "切断",
+    "category": "Household"
+  },
+  "lock": {
+    "translation": "鍵",
+    "category": "Household"
+  },
+  "unlock": {
+    "translation": "開ける",
+    "category": "Household"
+  },
+  "decorate": {
+    "translation": "装飾",
+    "category": "Household"
+  },
+  "polish": {
+    "translation": "研ぐ",
+    "category": "Household"
+  },
+  "hammer": {
+    "translation": "锤子在日语中是ハンマー",
+    "category": "Household"
+  },
+  "saw": {
+    "translation": "切る",
+    "category": "Household"
+  },
+  "glue": {
+    "translation": "胶水在日语中是糊",
+    "category": "Household"
+  },
+  "buy": {
+    "translation": "買う",
+    "category": "Money"
+  },
+  "sell": {
+    "translation": "販売",
+    "category": "Money"
+  },
+  "pay": {
+    "translation": "支払う",
+    "category": "Money"
+  },
+  "owe": {
+    "translation": "負う",
+    "category": "Money"
+  },
+  "borrow": {
+    "translation": "借りる",
+    "category": "Money"
+  },
+  "lend": {
+    "translation": "貸す",
+    "category": "Money"
+  },
+  "rent": {
+    "translation": "賃金",
+    "category": "Money"
+  },
+  "save": {
+    "translation": "保存",
+    "category": "Money"
+  },
+  "spend": {
+    "translation": "費やす",
+    "category": "Money"
+  },
+  "invest": {
+    "translation": "投資",
+    "category": "Money"
+  },
+  "earn": {
+    "translation": "耳得",
+    "category": "Money"
+  },
+  "refund": {
+    "translation": "へんきん",
+    "category": "Money"
+  },
+  "exchange": {
+    "translation": "取引",
+    "category": "Money"
+  },
+  "order": {
+    "translation": "注文",
+    "category": "Money"
+  },
+  "select": {
+    "translation": "選択",
+    "category": "Money"
+  },
+  "withdraw": {
+    "translation": "引き出す",
+    "category": "Money"
+  },
+  "deposit": {
+    "translation": "預金",
+    "category": "Money"
+  },
+  "budget": {
+    "translation": "予算",
+    "category": "Money"
+  },
+  "fry": {
+    "translation": "揚げる",
+    "category": "Food"
+  },
+  "grill": {
+    "translation": "焼き",
+    "category": "Food"
+  },
+  "boil": {
+    "translation": "沸く",
+    "category": "Food"
+  },
+  "steam": {
+    "translation": "蒸汽的日本语是蒸気",
+    "category": "Food"
+  },
+  "slice": {
+    "translation": "切り分け",
+    "category": "Food"
+  },
+  "cut": {
+    "translation": "切る",
+    "category": "Food"
+  },
+  "chop": {
+    "translation": "切り",
+    "category": "Food"
+  },
+  "mix": {
+    "translation": "混ぜる",
+    "category": "Food"
+  },
+  "stir": {
+    "translation": "混ぜる",
+    "category": "Food"
+  },
+  "pour": {
+    "translation": "注ぐ",
+    "category": "Food"
+  },
+  "serve": {
+    "translation": "服侍",
+    "category": "Food"
+  },
+  "taste": {
+    "translation": "味",
+    "category": "Food"
+  },
+  "season": {
+    "translation": "季節",
+    "category": "Food"
+  },
+  "marinate": {
+    "translation": "腌ける",
+    "category": "Food"
+  },
+  "chew": {
+    "translation": "噛む",
+    "category": "Food"
+  },
+  "swallow": {
+    "translation": "布袋",
+    "category": "Food"
+  },
+  "deliver": {
+    "translation": "配達",
+    "category": "Food"
+  },
+  "digest": {
+    "translation": "消化",
+    "category": "Food"
+  },
+  "rain": {
+    "translation": "雨",
+    "category": "Nature"
+  },
+  "snow": {
+    "translation": "雪",
+    "category": "Nature"
+  },
+  "hail": {
+    "translation": "ひょう",
+    "category": "Nature"
+  },
+  "sleet": {
+    "translation": "凍雨",
+    "category": "Nature"
+  },
+  "freeze": {
+    "translation": "凍る",
+    "category": "Nature"
+  },
+  "melt": {
+    "translation": "溶ける",
+    "category": "Nature"
+  },
+  "shine": {
+    "translation": "輝き",
+    "category": "Nature"
+  },
+  "blow": {
+    "translation": "吹く",
+    "category": "Nature"
+  },
+  "grow": {
+    "translation": "但如果你是指植物或生物的生长",
+    "category": "Nature"
+  },
+  "bloom": {
+    "translation": "華開く",
+    "category": "Nature"
+  },
+  "wither": {
+    "translation": "萎れる",
+    "category": "Nature"
+  },
+  "sprout": {
+    "translation": "芽",
+    "category": "Nature"
+  },
+  "fall": {
+    "translation": "落ち",
+    "category": "Nature"
+  },
+  "quake": {
+    "translation": "地震",
+    "category": "Nature"
+  },
+  "erode": {
+    "translation": "腐食",
+    "category": "Nature"
+  },
+  "burn": {
+    "translation": "焼く",
+    "category": "Nature"
+  },
+  "flood": {
+    "translation": "洪水",
+    "category": "Nature"
+  },
+  "float": {
+    "translation": "这个词可以根据具体语境有不同的表达方式",
+    "category": "Nature"
+  },
+  "sink": {
+    "translation": "洗い槽",
+    "category": "Nature"
+  },
+  "rise": {
+    "translation": "昇",
+    "category": "Nature"
+  },
+  "set": {
+    "translation": "設定",
+    "category": "Nature"
+  },
+  "breathe": {
+    "translation": "呼吸する",
+    "category": "Health"
+  },
+  "inhale": {
+    "translation": "息入る",
+    "category": "Health"
+  },
+  "exhale": {
+    "translation": "息吐く",
+    "category": "Health"
+  },
+  "cough": {
+    "translation": "咳",
+    "category": "Health"
+  },
+  "sneeze": {
+    "translation": "起き缬",
+    "category": "Health"
+  },
+  "sweat": {
+    "translation": "汗",
+    "category": "Health"
+  },
+  "bleed": {
+    "translation": "流血",
+    "category": "Health"
+  },
+  "heal": {
+    "translation": "治す",
+    "category": "Health"
+  },
+  "recover": {
+    "translation": "回復",
+    "category": "Health"
+  },
+  "ache": {
+    "translation": "痛み",
+    "category": "Health"
+  },
+  "hurt": {
+    "translation": "痛い",
+    "category": "Health"
+  },
+  "strain": {
+    "translation": "負担",
+    "category": "Health"
+  },
+  "exercise": {
+    "translation": "運動",
+    "category": "Health"
+  },
+  "faint": {
+    "translation": "晕い",
+    "category": "Health"
+  },
+  "vomit": {
+    "translation": "嘔吐",
+    "category": "Health"
+  },
+  "blink": {
+    "translation": "瞬く",
+    "category": "Health"
+  },
+  "squint": {
+    "translation": "吊り目",
+    "category": "Health"
+  },
+  "tremble": {
+    "translation": "震える",
+    "category": "Health"
+  },
+  "click": {
+    "translation": "クリック",
+    "category": "Technology"
+  },
+  "tap": {
+    "translation": "水道ボタン",
+    "category": "Technology"
+  },
+  "scroll": {
+    "translation": "巻き",
+    "category": "Technology"
+  },
+  "swipe": {
+    "translation": "スワイプ",
+    "category": "Technology"
+  },
+  "browse": {
+    "translation": "閲覧",
+    "category": "Technology"
+  },
+  "upgrade": {
+    "translation": "アップグレード",
+    "category": "Technology"
+  },
+  "copy": {
+    "translation": "コピー",
+    "category": "Technology"
+  },
+  "paste": {
+    "translation": "糊",
+    "category": "Technology"
+  },
+  "delete": {
+    "translation": "削除",
+    "category": "Technology"
+  },
+  "reset": {
+    "translation": "リセット",
+    "category": "Technology"
+  },
+  "restart": {
+    "translation": "再起動",
+    "category": "Technology"
+  },
+  "log in": {
+    "translation": "ログイン",
+    "category": "Technology"
+  },
+  "log out": {
+    "translation": "ログアウト",
+    "category": "Technology"
+  },
+  "sync": {
+    "translation": "同期",
+    "category": "Technology"
+  },
+  "stream": {
+    "translation": "川",
+    "category": "Technology"
+  },
+  "encrypt": {
+    "translation": "あんごか",
+    "category": "Technology"
+  },
+  "backup": {
+    "translation": "バックアップ",
+    "category": "Technology"
+  }
+}

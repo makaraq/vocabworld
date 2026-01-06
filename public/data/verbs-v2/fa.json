@@ -1,0 +1,1563 @@
+{
+  "walk": {
+    "translation": "پیاده",
+    "category": "Basic"
+  },
+  "run": {
+    "translation": "ران",
+    "category": "Basic"
+  },
+  "jump": {
+    "translation": "پرش",
+    "category": "Basic"
+  },
+  "hop": {
+    "translation": "پرش",
+    "category": "Basic"
+  },
+  "skip": {
+    "translation": "پرش",
+    "category": "Basic"
+  },
+  "crawl": {
+    "translation": "کاشیدن",
+    "category": "Basic"
+  },
+  "climb": {
+    "translation": "برویش",
+    "category": "Basic"
+  },
+  "slide": {
+    "translation": "سیلی",
+    "category": "Basic"
+  },
+  "swing": {
+    "translation": "میوه",
+    "category": "Basic"
+  },
+  "stretch": {
+    "translation": "استراش",
+    "category": "Basic"
+  },
+  "bend": {
+    "translation": "ب",
+    "category": "Basic"
+  },
+  "lift": {
+    "translation": "بریزنشین",
+    "category": "Basic"
+  },
+  "carry": {
+    "translation": "حمل",
+    "category": "Basic"
+  },
+  "drag": {
+    "translation": "جریم",
+    "category": "Basic"
+  },
+  "push": {
+    "translation": "گیتی",
+    "category": "Basic"
+  },
+  "pull": {
+    "translation": "گرفت",
+    "category": "Basic"
+  },
+  "hold": {
+    "translation": "گرفت",
+    "category": "Basic"
+  },
+  "grab": {
+    "translation": "گرفت",
+    "category": "Basic"
+  },
+  "drop": {
+    "translation": "درد",
+    "category": "Basic"
+  },
+  "throw": {
+    "translation": "لشکر",
+    "category": "Basic"
+  },
+  "catch": {
+    "translation": "گرفت",
+    "category": "Basic"
+  },
+  "kick": {
+    "translation": "ک",
+    "category": "Basic"
+  },
+  "hit": {
+    "translation": "ضرب",
+    "category": "Basic"
+  },
+  "press": {
+    "translation": "چاپدان",
+    "category": "Basic"
+  },
+  "twist": {
+    "translation": "چرخاندن",
+    "category": "Basic"
+  },
+  "turn": {
+    "translation": "چرخیدن",
+    "category": "Basic"
+  },
+  "rotate": {
+    "translation": "چرخاندن",
+    "category": "Basic"
+  },
+  "flip": {
+    "translation": "پیل",
+    "category": "Basic"
+  },
+  "shake": {
+    "translation": "هیچ",
+    "category": "Basic"
+  },
+  "wave": {
+    "translation": "موج",
+    "category": "Basic"
+  },
+  "reach": {
+    "translation": "رساندن",
+    "category": "Basic"
+  },
+  "lean": {
+    "translation": "پاشیده",
+    "category": "Basic"
+  },
+  "rest": {
+    "translation": "راحة",
+    "category": "Basic"
+  },
+  "balance": {
+    "translation": "تراز",
+    "category": "Basic"
+  },
+  "spin": {
+    "translation": "چرخاندن",
+    "category": "Basic"
+  },
+  "arrange": {
+    "translation": "مرتب",
+    "category": "Basic"
+  },
+  "adjust": {
+    "translation": "برنامه",
+    "category": "Basic"
+  },
+  "shift": {
+    "translation": "چرخه",
+    "category": "Basic"
+  },
+  "tie": {
+    "translation": "بند",
+    "category": "Basic"
+  },
+  "untie": {
+    "translation": "کردن",
+    "category": "Basic"
+  },
+  "wrap": {
+    "translation": "بسته",
+    "category": "Basic"
+  },
+  "unwrap": {
+    "translation": "برداشتن",
+    "category": "Basic"
+  },
+  "fold": {
+    "translation": "چسبیدن",
+    "category": "Basic"
+  },
+  "unfold": {
+    "translation": "بازگشت",
+    "category": "Basic"
+  },
+  "pack": {
+    "translation": "پیک",
+    "category": "Basic"
+  },
+  "unpack": {
+    "translation": "برداشتن",
+    "category": "Basic"
+  },
+  "be": {
+    "translation": "است",
+    "category": "Basic"
+  },
+  "become": {
+    "translation": "شدن",
+    "category": "Basic"
+  },
+  "seem": {
+    "translation": "آید",
+    "category": "Basic"
+  },
+  "appear": {
+    "translation": "آمیزید",
+    "category": "Basic"
+  },
+  "remain": {
+    "translation": "ماند",
+    "category": "Basic"
+  },
+  "stay": {
+    "translation": "ماند",
+    "category": "Basic"
+  },
+  "exist": {
+    "translation": "داشتن",
+    "category": "Basic"
+  },
+  "happen": {
+    "translation": "افتد",
+    "category": "Basic"
+  },
+  "occur": {
+    "translation": "آمده",
+    "category": "Basic"
+  },
+  "change": {
+    "translation": "تغییر",
+    "category": "Basic"
+  },
+  "improve": {
+    "translation": "بیفزاید",
+    "category": "Basic"
+  },
+  "decline": {
+    "translation": "انحطاط",
+    "category": "Basic"
+  },
+  "continue": {
+    "translation": "استمرار",
+    "category": "Basic"
+  },
+  "stop": {
+    "translation": "توقف",
+    "category": "Basic"
+  },
+  "begin": {
+    "translation": "شروع",
+    "category": "Basic"
+  },
+  "end": {
+    "translation": "پایان",
+    "category": "Basic"
+  },
+  "last": {
+    "translation": "آخر",
+    "category": "Basic"
+  },
+  "wake": {
+    "translation": "يقظة",
+    "category": "Daily Routine"
+  },
+  "get up": {
+    "translation": "بیایید",
+    "category": "Daily Routine"
+  },
+  "wash": {
+    "translation": "کردن",
+    "category": "Daily Routine"
+  },
+  "shower": {
+    "translation": "ش",
+    "category": "Daily Routine"
+  },
+  "bathe": {
+    "translation": "کردن",
+    "category": "Daily Routine"
+  },
+  "brush": {
+    "translation": "فرشته",
+    "category": "Daily Routine"
+  },
+  "comb": {
+    "translation": "شمشیر",
+    "category": "Daily Routine"
+  },
+  "dress": {
+    "translation": "پیراهن",
+    "category": "Daily Routine"
+  },
+  "eat": {
+    "translation": null,
+    "category": "Daily Routine",
+    "failed": true
+  },
+  "drink": {
+    "translation": "شرب",
+    "category": "Daily Routine"
+  },
+  "snack": {
+    "translation": "حلویه",
+    "category": "Daily Routine"
+  },
+  "cook": {
+    "translation": "کوک",
+    "category": "Daily Routine"
+  },
+  "bake": {
+    "translation": "پیشانی",
+    "category": "Daily Routine"
+  },
+  "reheat": {
+    "translation": "دوباره",
+    "category": "Daily Routine"
+  },
+  "clean": {
+    "translation": "پاک",
+    "category": "Daily Routine"
+  },
+  "tidy": {
+    "translation": "نظاره",
+    "category": "Daily Routine"
+  },
+  "organize": {
+    "translation": "سازماندهی",
+    "category": "Daily Routine"
+  },
+  "vacuum": {
+    "translation": "خالی",
+    "category": "Daily Routine"
+  },
+  "sweep": {
+    "translation": "سپیداندن",
+    "category": "Daily Routine"
+  },
+  "mop": {
+    "translation": "دستهایی",
+    "category": "Daily Routine"
+  },
+  "dust": {
+    "translation": "پود",
+    "category": "Daily Routine"
+  },
+  "wash dishes": {
+    "translation": "شویی",
+    "category": "Daily Routine"
+  },
+  "rinse": {
+    "translation": "پاشیدن",
+    "category": "Daily Routine"
+  },
+  "wipe": {
+    "translation": "تیشیم",
+    "category": "Daily Routine"
+  },
+  "scrub": {
+    "translation": "چاش",
+    "category": "Daily Routine"
+  },
+  "dry": {
+    "translation": "جاف",
+    "category": "Daily Routine"
+  },
+  "shop": {
+    "translation": "فروشگاه",
+    "category": "Daily Routine"
+  },
+  "refill": {
+    "translation": "ملحق",
+    "category": "Daily Routine"
+  },
+  "charge": {
+    "translation": "شارژ",
+    "category": "Daily Routine"
+  },
+  "relax": {
+    "translation": "برسک",
+    "category": "Daily Routine"
+  },
+  "nap": {
+    "translation": "سپیدان",
+    "category": "Daily Routine"
+  },
+  "sleep": {
+    "translation": "سپیل",
+    "category": "Daily Routine"
+  },
+  "prepare": {
+    "translation": "رویی",
+    "category": "Daily Routine"
+  },
+  "schedule": {
+    "translation": "ساعتیزه",
+    "category": "Daily Routine"
+  },
+  "cancel": {
+    "translation": "انصراف",
+    "category": "Daily Routine"
+  },
+  "check": {
+    "translation": "چک",
+    "category": "Daily Routine"
+  },
+  "monitor": {
+    "translation": "مدیریت",
+    "category": "Daily Routine"
+  },
+  "plan": {
+    "translation": "پلان",
+    "category": "Daily Routine"
+  },
+  "wait": {
+    "translation": "انتظار",
+    "category": "Daily Routine"
+  },
+  "search": {
+    "translation": "جستجو",
+    "category": "Daily Routine"
+  },
+  "find": {
+    "translation": "جست",
+    "category": "Daily Routine"
+  },
+  "lose": {
+    "translation": "خسروانیدن",
+    "category": "Daily Routine"
+  },
+  "replace": {
+    "translation": "جایگزین",
+    "category": "Daily Routine"
+  },
+  "think": {
+    "translation": "گفتن",
+    "category": "Mental"
+  },
+  "know": {
+    "translation": "دانستن",
+    "category": "Mental"
+  },
+  "believe": {
+    "translation": "آمیزید",
+    "category": "Mental"
+  },
+  "consider": {
+    "translation": "نظر",
+    "category": "Mental"
+  },
+  "imagine": {
+    "translation": "تخیل",
+    "category": "Mental"
+  },
+  "wonder": {
+    "translation": "است",
+    "category": "Mental"
+  },
+  "remember": {
+    "translation": "یادداشت",
+    "category": "Mental"
+  },
+  "forget": {
+    "translation": "نادیده",
+    "category": "Mental"
+  },
+  "realize": {
+    "translation": "درک",
+    "category": "Mental"
+  },
+  "guess": {
+    "translation": "تخمين",
+    "category": "Mental"
+  },
+  "predict": {
+    "translation": "بینی",
+    "category": "Mental"
+  },
+  "expect": {
+    "translation": "انتظار",
+    "category": "Mental"
+  },
+  "recognize": {
+    "translation": "شناساندن",
+    "category": "Mental"
+  },
+  "notice": {
+    "translation": "اعلامیه",
+    "category": "Mental"
+  },
+  "focus": {
+    "translation": "فکوس",
+    "category": "Mental"
+  },
+  "concentrate": {
+    "translation": "فکر",
+    "category": "Mental"
+  },
+  "decide": {
+    "translation": "تصمیم",
+    "category": "Mental"
+  },
+  "choose": {
+    "translation": "انتخاب",
+    "category": "Mental"
+  },
+  "compare": {
+    "translation": "مقایسه",
+    "category": "Mental"
+  },
+  "analyze": {
+    "translation": "تحلیل",
+    "category": "Mental"
+  },
+  "evaluate": {
+    "translation": "ارزیابی",
+    "category": "Mental"
+  },
+  "estimate": {
+    "translation": "تقدير",
+    "category": "Mental"
+  },
+  "solve": {
+    "translation": "کردن",
+    "category": "Mental"
+  },
+  "question": {
+    "translation": "سوال",
+    "category": "Mental"
+  },
+  "suspect": {
+    "translation": "شک",
+    "category": "Mental"
+  },
+  "doubt": {
+    "translation": "درگیر",
+    "category": "Mental"
+  },
+  "learn": {
+    "translation": "دانستن",
+    "category": "Mental"
+  },
+  "study": {
+    "translation": "نگارش",
+    "category": "Mental"
+  },
+  "memorize": {
+    "translation": "کردن",
+    "category": "Mental"
+  },
+  "calculate": {
+    "translation": "محاسبه",
+    "category": "Mental"
+  },
+  "reflect": {
+    "translation": "بازتاب",
+    "category": "Mental"
+  },
+  "understand": {
+    "translation": "درک",
+    "category": "Mental"
+  },
+  "like": {
+    "translation": "مثل",
+    "category": "Mental"
+  },
+  "love": {
+    "translation": "عشق",
+    "category": "Mental"
+  },
+  "hate": {
+    "translation": "بغض",
+    "category": "Mental"
+  },
+  "enjoy": {
+    "translation": "انجمن",
+    "category": "Mental"
+  },
+  "prefer": {
+    "translation": "پ",
+    "category": "Mental"
+  },
+  "want": {
+    "translation": "خواهید",
+    "category": "Mental"
+  },
+  "need": {
+    "translation": "نیاز",
+    "category": "Mental"
+  },
+  "miss": {
+    "translation": "پریدن",
+    "category": "Mental"
+  },
+  "care": {
+    "translation": "پشتیبانی",
+    "category": "Mental"
+  },
+  "worry": {
+    "translation": "کنجکاوی",
+    "category": "Mental"
+  },
+  "fear": {
+    "translation": "خوف",
+    "category": "Mental"
+  },
+  "panic": {
+    "translation": "پانیک",
+    "category": "Mental"
+  },
+  "stress": {
+    "translation": "تو",
+    "category": "Mental"
+  },
+  "calm": {
+    "translation": "هدیه",
+    "category": "Mental"
+  },
+  "appreciate": {
+    "translation": "آمیزیدن",
+    "category": "Mental"
+  },
+  "value": {
+    "translation": "مقدار",
+    "category": "Mental"
+  },
+  "respect": {
+    "translation": "محترم",
+    "category": "Mental"
+  },
+  "dislike": {
+    "translation": "نارضایتی",
+    "category": "Mental"
+  },
+  "regret": {
+    "translation": "نداند",
+    "category": "Mental"
+  },
+  "hope": {
+    "translation": "امید",
+    "category": "Mental"
+  },
+  "trust": {
+    "translation": "امیدواری",
+    "category": "Mental"
+  },
+  "surprise": {
+    "translation": "نامهیدگی",
+    "category": "Mental"
+  },
+  "shock": {
+    "translation": "شگفتی",
+    "category": "Mental"
+  },
+  "annoy": {
+    "translation": "دردسر",
+    "category": "Mental"
+  },
+  "bother": {
+    "translation": "دردس",
+    "category": "Mental"
+  },
+  "confuse": {
+    "translation": "بیرهگری",
+    "category": "Mental"
+  },
+  "embarrass": {
+    "translation": "خسته",
+    "category": "Mental"
+  },
+  "frustrate": {
+    "translation": "تشنج",
+    "category": "Mental"
+  },
+  "satisfy": {
+    "translation": "تامین",
+    "category": "Mental"
+  },
+  "comfort": {
+    "translation": "اطمینان",
+    "category": "Mental"
+  },
+  "cheer": {
+    "translation": "حیات",
+    "category": "Mental"
+  },
+  "say": {
+    "translation": "گویند",
+    "category": "Communication"
+  },
+  "tell": {
+    "translation": "گفتن",
+    "category": "Communication"
+  },
+  "talk": {
+    "translation": "گفتگو",
+    "category": "Communication"
+  },
+  "speak": {
+    "translation": "گفتگو",
+    "category": "Communication"
+  },
+  "discuss": {
+    "translation": "بررسی",
+    "category": "Communication"
+  },
+  "chat": {
+    "translation": "چت",
+    "category": "Communication"
+  },
+  "explain": {
+    "translation": "توضیح",
+    "category": "Communication"
+  },
+  "describe": {
+    "translation": "توصیف",
+    "category": "Communication"
+  },
+  "announce": {
+    "translation": "ان",
+    "category": "Communication"
+  },
+  "report": {
+    "translation": "گزارش",
+    "category": "Communication"
+  },
+  "reply": {
+    "translation": "پاسخ",
+    "category": "Communication"
+  },
+  "answer": {
+    "translation": "پاسخ",
+    "category": "Communication"
+  },
+  "ask": {
+    "translation": "پرسیدن",
+    "category": "Communication"
+  },
+  "interrupt": {
+    "translation": "قطعه",
+    "category": "Communication"
+  },
+  "suggest": {
+    "translation": "پیشنهاد",
+    "category": "Communication"
+  },
+  "recommend": {
+    "translation": "پیشنهاد",
+    "category": "Communication"
+  },
+  "complain": {
+    "translation": "شکایت",
+    "category": "Communication"
+  },
+  "argue": {
+    "translation": "گفتگو",
+    "category": "Communication"
+  },
+  "debate": {
+    "translation": "مروری",
+    "category": "Communication"
+  },
+  "whisper": {
+    "translation": "سُبُح",
+    "category": "Communication"
+  },
+  "shout": {
+    "translation": "هیجان",
+    "category": "Communication"
+  },
+  "yell": {
+    "translation": "هیشمه",
+    "category": "Communication"
+  },
+  "mention": {
+    "translation": "ذكر",
+    "category": "Communication"
+  },
+  "remind": {
+    "translation": "ذکر",
+    "category": "Communication"
+  },
+  "warn": {
+    "translation": "اخطار",
+    "category": "Communication"
+  },
+  "advise": {
+    "translation": "پیشنهاد",
+    "category": "Communication"
+  },
+  "encourage": {
+    "translation": "حث",
+    "category": "Communication"
+  },
+  "persuade": {
+    "translation": "پ",
+    "category": "Communication"
+  },
+  "invite": {
+    "translation": "دعوت",
+    "category": "Communication"
+  },
+  "respond": {
+    "translation": "پاسخ",
+    "category": "Communication"
+  },
+  "translate": {
+    "translation": "ترجمه",
+    "category": "Communication"
+  },
+  "inform": {
+    "translation": "اطلاع",
+    "category": "Communication"
+  },
+  "comment": {
+    "translation": "توضیح",
+    "category": "Communication"
+  },
+  "confirm": {
+    "translation": "تایید",
+    "category": "Communication"
+  },
+  "deny": {
+    "translation": "نفی",
+    "category": "Communication"
+  },
+  "admit": {
+    "translation": "اعترف",
+    "category": "Communication"
+  },
+  "meet": {
+    "translation": "ملاقات",
+    "category": "Social"
+  },
+  "greet": {
+    "translation": "سلام",
+    "category": "Social"
+  },
+  "welcome": {
+    "translation": "آمدید",
+    "category": "Social"
+  },
+  "visit": {
+    "translation": "بازدید",
+    "category": "Social"
+  },
+  "host": {
+    "translation": "خادمانده",
+    "category": "Social"
+  },
+  "join": {
+    "translation": "انضم",
+    "category": "Social"
+  },
+  "help": {
+    "translation": "کمک",
+    "category": "Social"
+  },
+  "support": {
+    "translation": "پشتیبانی",
+    "category": "Social"
+  },
+  "assist": {
+    "translation": "کردن",
+    "category": "Social"
+  },
+  "share": {
+    "translation": "شار",
+    "category": "Social"
+  },
+  "care for": {
+    "translation": "اعتنای",
+    "category": "Social"
+  },
+  "hug": {
+    "translation": "گروه",
+    "category": "Social"
+  },
+  "kiss": {
+    "translation": "بازیکن",
+    "category": "Social"
+  },
+  "hold hands": {
+    "translation": "داشتن",
+    "category": "Social"
+  },
+  "date": {
+    "translation": "تاريخ",
+    "category": "Social"
+  },
+  "marry": {
+    "translation": "پیشنهاد",
+    "category": "Social"
+  },
+  "befriend": {
+    "translation": "دوستانه",
+    "category": "Social"
+  },
+  "follow": {
+    "translation": "تلاش",
+    "category": "Social"
+  },
+  "lead": {
+    "translation": "آهن",
+    "category": "Social"
+  },
+  "guide": {
+    "translation": "گ",
+    "category": "Social"
+  },
+  "introduce": {
+    "translation": "معرفی",
+    "category": "Social"
+  },
+  "cooperate": {
+    "translation": "همکاری",
+    "category": "Social"
+  },
+  "protect": {
+    "translation": "محافظت",
+    "category": "Social"
+  },
+  "include": {
+    "translation": "شامل",
+    "category": "Social"
+  },
+  "exclude": {
+    "translation": "بگذارید",
+    "category": "Social"
+  },
+  "work": {
+    "translation": "کار",
+    "category": "Work"
+  },
+  "write": {
+    "translation": "نویسید",
+    "category": "Work"
+  },
+  "read": {
+    "translation": "خواندن",
+    "category": "Work"
+  },
+  "edit": {
+    "translation": "ویرایش",
+    "category": "Work"
+  },
+  "revise": {
+    "translation": "مراجعه",
+    "category": "Work"
+  },
+  "review": {
+    "translation": "مراجعه",
+    "category": "Work"
+  },
+  "inspect": {
+    "translation": "براینده",
+    "category": "Work"
+  },
+  "complete": {
+    "translation": "کامل",
+    "category": "Work"
+  },
+  "submit": {
+    "translation": "سپرده",
+    "category": "Work"
+  },
+  "create": {
+    "translation": "سازماندهی",
+    "category": "Work"
+  },
+  "design": {
+    "translation": "طراحی",
+    "category": "Work"
+  },
+  "build": {
+    "translation": "ساخت",
+    "category": "Work"
+  },
+  "assemble": {
+    "translation": "سازماندهی",
+    "category": "Work"
+  },
+  "debug": {
+    "translation": "برداشتن",
+    "category": "Work"
+  },
+  "research": {
+    "translation": "پژوهش",
+    "category": "Work"
+  },
+  "document": {
+    "translation": "سند",
+    "category": "Work"
+  },
+  "train": {
+    "translation": "قطار",
+    "category": "Work"
+  },
+  "teach": {
+    "translation": "آموزش",
+    "category": "Work"
+  },
+  "update": {
+    "translation": "آپدیت",
+    "category": "Work"
+  },
+  "upload": {
+    "translation": "بارگذاری",
+    "category": "Work"
+  },
+  "download": {
+    "translation": "دانلود",
+    "category": "Work"
+  },
+  "print": {
+    "translation": "چاپ",
+    "category": "Work"
+  },
+  "scan": {
+    "translation": "سکن",
+    "category": "Work"
+  },
+  "record": {
+    "translation": "کارتهشت",
+    "category": "Work"
+  },
+  "track": {
+    "translation": "مسیر",
+    "category": "Work"
+  },
+  "manage": {
+    "translation": "مدیریت",
+    "category": "Work"
+  },
+  "supervise": {
+    "translation": "مداومت",
+    "category": "Work"
+  },
+  "go": {
+    "translation": "چلید",
+    "category": "Travel"
+  },
+  "come": {
+    "translation": "آمدید",
+    "category": "Travel"
+  },
+  "move": {
+    "translation": "برو",
+    "category": "Travel"
+  },
+  "leave": {
+    "translation": "برو",
+    "category": "Travel"
+  },
+  "arrive": {
+    "translation": "رساندن",
+    "category": "Travel"
+  },
+  "enter": {
+    "translation": "وارد",
+    "category": "Travel"
+  },
+  "exit": {
+    "translation": "خروج",
+    "category": "Travel"
+  },
+  "travel": {
+    "translation": "سفر",
+    "category": "Travel"
+  },
+  "fly": {
+    "translation": "فرشته",
+    "category": "Travel"
+  },
+  "drive": {
+    "translation": "رانندگی",
+    "category": "Travel"
+  },
+  "ride": {
+    "translation": "ریزیدن",
+    "category": "Travel"
+  },
+  "board": {
+    "translation": "باند",
+    "category": "Travel"
+  },
+  "land": {
+    "translation": "زمین",
+    "category": "Travel"
+  },
+  "park": {
+    "translation": "پارک",
+    "category": "Travel"
+  },
+  "accelerate": {
+    "translation": "تسریع",
+    "category": "Travel"
+  },
+  "reverse": {
+    "translation": "معکوس",
+    "category": "Travel"
+  },
+  "cross": {
+    "translation": "قاطع",
+    "category": "Travel"
+  },
+  "wander": {
+    "translation": "مردگان",
+    "category": "Travel"
+  },
+  "explore": {
+    "translation": "بررسی",
+    "category": "Travel"
+  },
+  "return": {
+    "translation": "بازگشت",
+    "category": "Travel"
+  },
+  "rush": {
+    "translation": "هرس",
+    "category": "Travel"
+  },
+  "hurry": {
+    "translation": "عجله",
+    "category": "Travel"
+  },
+  "navigate": {
+    "translation": "سفره",
+    "category": "Travel"
+  },
+  "sanitize": {
+    "translation": "اتمامی",
+    "category": "Household"
+  },
+  "iron": {
+    "translation": "آهن",
+    "category": "Household"
+  },
+  "store": {
+    "translation": "گاراژ",
+    "category": "Household"
+  },
+  "repair": {
+    "translation": "بازسازی",
+    "category": "Household"
+  },
+  "fix": {
+    "translation": "راهنمایی",
+    "category": "Household"
+  },
+  "disassemble": {
+    "translation": "باز",
+    "category": "Household"
+  },
+  "install": {
+    "translation": "تثبیت",
+    "category": "Household"
+  },
+  "uninstall": {
+    "translation": "برداشتن",
+    "category": "Household"
+  },
+  "remove": {
+    "translation": "کردن",
+    "category": "Household"
+  },
+  "connect": {
+    "translation": "پیوند",
+    "category": "Household"
+  },
+  "disconnect": {
+    "translation": "قطعیت",
+    "category": "Household"
+  },
+  "lock": {
+    "translation": "کلید",
+    "category": "Household"
+  },
+  "unlock": {
+    "translation": "بازکشید",
+    "category": "Household"
+  },
+  "decorate": {
+    "translation": "زینه",
+    "category": "Household"
+  },
+  "polish": {
+    "translation": "پلیش",
+    "category": "Household"
+  },
+  "hammer": {
+    "translation": "میوه",
+    "category": "Household"
+  },
+  "saw": {
+    "translation": "زهکش",
+    "category": "Household"
+  },
+  "glue": {
+    "translation": "چمی",
+    "category": "Household"
+  },
+  "buy": {
+    "translation": "خرید",
+    "category": "Money"
+  },
+  "sell": {
+    "translation": "فروشیدن",
+    "category": "Money"
+  },
+  "pay": {
+    "translation": "پرداخت",
+    "category": "Money"
+  },
+  "owe": {
+    "translation": "بدهی",
+    "category": "Money"
+  },
+  "borrow": {
+    "translation": "پیشنهاد",
+    "category": "Money"
+  },
+  "lend": {
+    "translation": "کنتره",
+    "category": "Money"
+  },
+  "rent": {
+    "translation": "اجاره",
+    "category": "Money"
+  },
+  "save": {
+    "translation": "ذخیره",
+    "category": "Money"
+  },
+  "spend": {
+    "translation": "گذراندن",
+    "category": "Money"
+  },
+  "invest": {
+    "translation": "استثمار",
+    "category": "Money"
+  },
+  "earn": {
+    "translation": "آوردن",
+    "category": "Money"
+  },
+  "refund": {
+    "translation": "بازپردازی",
+    "category": "Money"
+  },
+  "exchange": {
+    "translation": "گواهینامه",
+    "category": "Money"
+  },
+  "order": {
+    "translation": "چکم",
+    "category": "Money"
+  },
+  "select": {
+    "translation": "بازارگانی",
+    "category": "Money"
+  },
+  "withdraw": {
+    "translation": "انسحاب",
+    "category": "Money"
+  },
+  "deposit": {
+    "translation": "ودیعه",
+    "category": "Money"
+  },
+  "budget": {
+    "translation": "بودجه",
+    "category": "Money"
+  },
+  "fry": {
+    "translation": "پریدن",
+    "category": "Food"
+  },
+  "grill": {
+    "translation": "گیلیک",
+    "category": "Food"
+  },
+  "boil": {
+    "translation": "پویان",
+    "category": "Food"
+  },
+  "steam": {
+    "translation": "گاز",
+    "category": "Food"
+  },
+  "slice": {
+    "translation": "شیشه",
+    "category": "Food"
+  },
+  "cut": {
+    "translation": "قطع",
+    "category": "Food"
+  },
+  "chop": {
+    "translation": "چاقوب",
+    "category": "Food"
+  },
+  "mix": {
+    "translation": "مخلوط",
+    "category": "Food"
+  },
+  "stir": {
+    "translation": "میخانه",
+    "category": "Food"
+  },
+  "pour": {
+    "translation": "پ",
+    "category": "Food"
+  },
+  "serve": {
+    "translation": "خدمت",
+    "category": "Food"
+  },
+  "taste": {
+    "translation": "طعم",
+    "category": "Food"
+  },
+  "season": {
+    "translation": "ساله",
+    "category": "Food"
+  },
+  "marinate": {
+    "translation": "پرکندن",
+    "category": "Food"
+  },
+  "chew": {
+    "translation": "کشیدن",
+    "category": "Food"
+  },
+  "swallow": {
+    "translation": "هیسکل",
+    "category": "Food"
+  },
+  "deliver": {
+    "translation": "پیشنهاد",
+    "category": "Food"
+  },
+  "digest": {
+    "translation": "میمونه",
+    "category": "Food"
+  },
+  "rain": {
+    "translation": "باران",
+    "category": "Nature"
+  },
+  "snow": {
+    "translation": "س",
+    "category": "Nature"
+  },
+  "hail": {
+    "translation": "هیلیه",
+    "category": "Nature"
+  },
+  "sleet": {
+    "translation": "برد",
+    "category": "Nature"
+  },
+  "freeze": {
+    "translation": "برده",
+    "category": "Nature"
+  },
+  "melt": {
+    "translation": "ذوب",
+    "category": "Nature"
+  },
+  "shine": {
+    "translation": "پیوند",
+    "category": "Nature"
+  },
+  "blow": {
+    "translation": "ب",
+    "category": "Nature"
+  },
+  "grow": {
+    "translation": "رویت",
+    "category": "Nature"
+  },
+  "bloom": {
+    "translation": "زهره",
+    "category": "Nature"
+  },
+  "wither": {
+    "translation": "جذاب",
+    "category": "Nature"
+  },
+  "sprout": {
+    "translation": "زیب",
+    "category": "Nature"
+  },
+  "fall": {
+    "translation": "پاییز",
+    "category": "Nature"
+  },
+  "quake": {
+    "translation": "زلزله",
+    "category": "Nature"
+  },
+  "erode": {
+    "translation": "اکسیداسیون",
+    "category": "Nature"
+  },
+  "burn": {
+    "translation": "حرق",
+    "category": "Nature"
+  },
+  "flood": {
+    "translation": "ود",
+    "category": "Nature"
+  },
+  "float": {
+    "translation": "چاپ",
+    "category": "Nature"
+  },
+  "sink": {
+    "translation": "دیوار",
+    "category": "Nature"
+  },
+  "rise": {
+    "translation": "پایین",
+    "category": "Nature"
+  },
+  "set": {
+    "translation": "گذاشتن",
+    "category": "Nature"
+  },
+  "breathe": {
+    "translation": "زفير",
+    "category": "Health"
+  },
+  "inhale": {
+    "translation": "زفير",
+    "category": "Health"
+  },
+  "exhale": {
+    "translation": "ازدیا",
+    "category": "Health"
+  },
+  "cough": {
+    "translation": "یکه",
+    "category": "Health"
+  },
+  "sneeze": {
+    "translation": "خنده",
+    "category": "Health"
+  },
+  "sweat": {
+    "translation": "دیس",
+    "category": "Health"
+  },
+  "bleed": {
+    "translation": "زدایی",
+    "category": "Health"
+  },
+  "heal": {
+    "translation": "شفایی",
+    "category": "Health"
+  },
+  "recover": {
+    "translation": "بازیافت",
+    "category": "Health"
+  },
+  "ache": {
+    "translation": "درد",
+    "category": "Health"
+  },
+  "hurt": {
+    "translation": "بیاید",
+    "category": "Health"
+  },
+  "strain": {
+    "translation": "تاریک",
+    "category": "Health"
+  },
+  "exercise": {
+    "translation": "تمرين",
+    "category": "Health"
+  },
+  "faint": {
+    "translation": "پایین",
+    "category": "Health"
+  },
+  "vomit": {
+    "translation": "زوردهندن",
+    "category": "Health"
+  },
+  "blink": {
+    "translation": "کردن",
+    "category": "Health"
+  },
+  "squint": {
+    "translation": "خمکاوش",
+    "category": "Health"
+  },
+  "tremble": {
+    "translation": "میانگین",
+    "category": "Health"
+  },
+  "click": {
+    "translation": "تیک",
+    "category": "Technology"
+  },
+  "tap": {
+    "translation": "نقره",
+    "category": "Technology"
+  },
+  "scroll": {
+    "translation": "پیشکش",
+    "category": "Technology"
+  },
+  "swipe": {
+    "translation": "دریک",
+    "category": "Technology"
+  },
+  "browse": {
+    "translation": "مرور",
+    "category": "Technology"
+  },
+  "upgrade": {
+    "translation": "تحديث",
+    "category": "Technology"
+  },
+  "copy": {
+    "translation": "کپی",
+    "category": "Technology"
+  },
+  "paste": {
+    "translation": "پسته",
+    "category": "Technology"
+  },
+  "delete": {
+    "translation": "حذف",
+    "category": "Technology"
+  },
+  "reset": {
+    "translation": "بازگشت",
+    "category": "Technology"
+  },
+  "restart": {
+    "translation": "رستارتا",
+    "category": "Technology"
+  },
+  "log in": {
+    "translation": "ورود",
+    "category": "Technology"
+  },
+  "log out": {
+    "translation": "خروج",
+    "category": "Technology"
+  },
+  "sync": {
+    "translation": "زمانی",
+    "category": "Technology"
+  },
+  "stream": {
+    "translation": "پیشکش",
+    "category": "Technology"
+  },
+  "encrypt": {
+    "translation": "کدگذاری",
+    "category": "Technology"
+  },
+  "backup": {
+    "translation": "آورده",
+    "category": "Technology"
+  }
+}

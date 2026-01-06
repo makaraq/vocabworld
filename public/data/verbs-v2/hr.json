@@ -1,0 +1,1564 @@
+{
+  "walk": {
+    "translation": null,
+    "category": "Basic",
+    "failed": true
+  },
+  "run": {
+    "translation": "igrati",
+    "category": "Basic"
+  },
+  "jump": {
+    "translation": "salti",
+    "category": "Basic"
+  },
+  "hop": {
+    "translation": "skoči",
+    "category": "Basic"
+  },
+  "skip": {
+    "translation": "pći",
+    "category": "Basic"
+  },
+  "crawl": {
+    "translation": "križati",
+    "category": "Basic"
+  },
+  "climb": {
+    "translation": "ključati",
+    "category": "Basic"
+  },
+  "slide": {
+    "translation": "koturanje",
+    "category": "Basic"
+  },
+  "swing": {
+    "translation": "mješovitac",
+    "category": "Basic"
+  },
+  "stretch": {
+    "translation": "rastaviti",
+    "category": "Basic"
+  },
+  "bend": {
+    "translation": "punjar",
+    "category": "Basic"
+  },
+  "lift": {
+    "translation": "prijelaz",
+    "category": "Basic"
+  },
+  "carry": {
+    "translation": "nositi",
+    "category": "Basic"
+  },
+  "drag": {
+    "translation": "otisak",
+    "category": "Basic"
+  },
+  "push": {
+    "translation": "push in Croatian is",
+    "category": "Basic"
+  },
+  "pull": {
+    "translation": "tisniti",
+    "category": "Basic"
+  },
+  "hold": {
+    "translation": "državiti",
+    "category": "Basic"
+  },
+  "grab": {
+    "translation": "grabiti",
+    "category": "Basic"
+  },
+  "drop": {
+    "translation": "padanje",
+    "category": "Basic"
+  },
+  "throw": {
+    "translation": "baciti",
+    "category": "Basic"
+  },
+  "catch": {
+    "translation": "pravić",
+    "category": "Basic"
+  },
+  "kick": {
+    "translation": "stricak",
+    "category": "Basic"
+  },
+  "hit": {
+    "translation": "bića",
+    "category": "Basic"
+  },
+  "press": {
+    "translation": "tiskanje",
+    "category": "Basic"
+  },
+  "twist": {
+    "translation": "zavrti",
+    "category": "Basic"
+  },
+  "turn": {
+    "translation": "obrnuti",
+    "category": "Basic"
+  },
+  "rotate": {
+    "translation": "rotirati",
+    "category": "Basic"
+  },
+  "flip": {
+    "translation": "flipsanje",
+    "category": "Basic"
+  },
+  "shake": {
+    "translation": "trebati",
+    "category": "Basic"
+  },
+  "wave": {
+    "translation": "vrijez",
+    "category": "Basic"
+  },
+  "reach": {
+    "translation": "dotaknuti",
+    "category": "Basic"
+  },
+  "lean": {
+    "translation": "pokrivati",
+    "category": "Basic"
+  },
+  "rest": {
+    "translation": "pokoj",
+    "category": "Basic"
+  },
+  "balance": {
+    "translation": "stanje",
+    "category": "Basic"
+  },
+  "spin": {
+    "translation": "plesak",
+    "category": "Basic"
+  },
+  "arrange": {
+    "translation": "Naporedovati",
+    "category": "Basic"
+  },
+  "adjust": {
+    "translation": "Pristaviti",
+    "category": "Basic"
+  },
+  "shift": {
+    "translation": "pomak",
+    "category": "Basic"
+  },
+  "tie": {
+    "translation": "pogon",
+    "category": "Basic"
+  },
+  "untie": {
+    "translation": "odnijeti",
+    "category": "Basic"
+  },
+  "wrap": {
+    "translation": "obalka",
+    "category": "Basic"
+  },
+  "unwrap": {
+    "translation": "Otkriti",
+    "category": "Basic"
+  },
+  "fold": {
+    "translation": "plesti",
+    "category": "Basic"
+  },
+  "unfold": {
+    "translation": "razvijati",
+    "category": "Basic"
+  },
+  "pack": {
+    "translation": "sakijeće",
+    "category": "Basic"
+  },
+  "unpack": {
+    "translation": "razbaci",
+    "category": "Basic"
+  },
+  "be": {
+    "translation": "biti",
+    "category": "Basic"
+  },
+  "become": {
+    "translation": "postati",
+    "category": "Basic"
+  },
+  "seem": {
+    "translation": "izardsijati",
+    "category": "Basic"
+  },
+  "appear": {
+    "translation": "pojaviti se",
+    "category": "Basic"
+  },
+  "remain": {
+    "translation": "ostati",
+    "category": "Basic"
+  },
+  "stay": {
+    "translation": "ostati",
+    "category": "Basic"
+  },
+  "exist": {
+    "translation": "postojeći",
+    "category": "Basic"
+  },
+  "happen": {
+    "translation": "dogoditi",
+    "category": "Basic"
+  },
+  "occur": {
+    "translation": "dogoditi",
+    "category": "Basic"
+  },
+  "change": {
+    "translation": "promijeni",
+    "category": "Basic"
+  },
+  "improve": {
+    "translation": "povećati",
+    "category": "Basic"
+  },
+  "decline": {
+    "translation": "odustati",
+    "category": "Basic"
+  },
+  "continue": {
+    "translation": "nastaviti",
+    "category": "Basic"
+  },
+  "stop": {
+    "translation": "stani",
+    "category": "Basic"
+  },
+  "begin": {
+    "translation": "napraviti",
+    "category": "Basic"
+  },
+  "end": {
+    "translation": "kraj",
+    "category": "Basic"
+  },
+  "last": {
+    "translation": "posljednji",
+    "category": "Basic"
+  },
+  "wake": {
+    "translation": "buditi",
+    "category": "Daily Routine"
+  },
+  "get up": {
+    "translation": "staći",
+    "category": "Daily Routine"
+  },
+  "wash": {
+    "translation": "čistiti",
+    "category": "Daily Routine"
+  },
+  "shower": {
+    "translation": "dušanje",
+    "category": "Daily Routine"
+  },
+  "bathe": {
+    "translation": "kupatiti",
+    "category": "Daily Routine"
+  },
+  "brush": {
+    "translation": "koseća",
+    "category": "Daily Routine"
+  },
+  "comb": {
+    "translation": "kosečka",
+    "category": "Daily Routine"
+  },
+  "dress": {
+    "translation": "nijesna",
+    "category": "Daily Routine"
+  },
+  "eat": {
+    "translation": "eat in Croatian is jediti",
+    "category": "Daily Routine"
+  },
+  "drink": {
+    "translation": "piće",
+    "category": "Daily Routine"
+  },
+  "snack": {
+    "translation": "krenčić",
+    "category": "Daily Routine"
+  },
+  "cook": {
+    "translation": "kujarić",
+    "category": "Daily Routine"
+  },
+  "bake": {
+    "translation": "koturiti",
+    "category": "Daily Routine"
+  },
+  "reheat": {
+    "translation": "prenatrtiti",
+    "category": "Daily Routine"
+  },
+  "clean": {
+    "translation": "čišćenje",
+    "category": "Daily Routine"
+  },
+  "tidy": {
+    "translation": "Čisto",
+    "category": "Daily Routine"
+  },
+  "organize": {
+    "translation": "organizirati",
+    "category": "Daily Routine"
+  },
+  "vacuum": {
+    "translation": "vakuum",
+    "category": "Daily Routine"
+  },
+  "sweep": {
+    "translation": "čišćenje",
+    "category": "Daily Routine"
+  },
+  "mop": {
+    "translation": "prijelazak",
+    "category": "Daily Routine"
+  },
+  "dust": {
+    "translation": "paleće",
+    "category": "Daily Routine"
+  },
+  "wash dishes": {
+    "translation": "Natirati",
+    "category": "Daily Routine"
+  },
+  "rinse": {
+    "translation": "pronijeti",
+    "category": "Daily Routine"
+  },
+  "wipe": {
+    "translation": "otisak",
+    "category": "Daily Routine"
+  },
+  "scrub": {
+    "translation": "čišćenje",
+    "category": "Daily Routine"
+  },
+  "dry": {
+    "translation": "trogodan",
+    "category": "Daily Routine"
+  },
+  "shop": {
+    "translation": "trgovina",
+    "category": "Daily Routine"
+  },
+  "refill": {
+    "translation": "Ponovno punjenje",
+    "category": "Daily Routine"
+  },
+  "charge": {
+    "translation": "Brisati",
+    "category": "Daily Routine"
+  },
+  "relax": {
+    "translation": "rasponi",
+    "category": "Daily Routine"
+  },
+  "nap": {
+    "translation": "cvek",
+    "category": "Daily Routine"
+  },
+  "sleep": {
+    "translation": "spavajanje",
+    "category": "Daily Routine"
+  },
+  "prepare": {
+    "translation": "priprema",
+    "category": "Daily Routine"
+  },
+  "schedule": {
+    "translation": "nalogba",
+    "category": "Daily Routine"
+  },
+  "cancel": {
+    "translation": "Odustati",
+    "category": "Daily Routine"
+  },
+  "check": {
+    "translation": "provjeri",
+    "category": "Daily Routine"
+  },
+  "monitor": {
+    "translation": "monitoranje",
+    "category": "Daily Routine"
+  },
+  "plan": {
+    "translation": "planovi",
+    "category": "Daily Routine"
+  },
+  "wait": {
+    "translation": "Čekaj",
+    "category": "Daily Routine"
+  },
+  "search": {
+    "translation": "Tražiti",
+    "category": "Daily Routine"
+  },
+  "find": {
+    "translation": "naći",
+    "category": "Daily Routine"
+  },
+  "lose": {
+    "translation": "izgubiti",
+    "category": "Daily Routine"
+  },
+  "replace": {
+    "translation": "Zamijeni",
+    "category": "Daily Routine"
+  },
+  "think": {
+    "translation": "mislićći",
+    "category": "Mental"
+  },
+  "know": {
+    "translation": "znaći",
+    "category": "Mental"
+  },
+  "believe": {
+    "translation": "verovati",
+    "category": "Mental"
+  },
+  "consider": {
+    "translation": "Razmisliti",
+    "category": "Mental"
+  },
+  "imagine": {
+    "translation": "predviđati",
+    "category": "Mental"
+  },
+  "wonder": {
+    "translation": "marljivost",
+    "category": "Mental"
+  },
+  "remember": {
+    "translation": "pomisliti",
+    "category": "Mental"
+  },
+  "forget": {
+    "translation": "zapiti",
+    "category": "Mental"
+  },
+  "realize": {
+    "translation": "oprištidjeti",
+    "category": "Mental"
+  },
+  "guess": {
+    "translation": "pogodi",
+    "category": "Mental"
+  },
+  "predict": {
+    "translation": "predikatati",
+    "category": "Mental"
+  },
+  "expect": {
+    "translation": "čekati",
+    "category": "Mental"
+  },
+  "recognize": {
+    "translation": "poznati",
+    "category": "Mental"
+  },
+  "notice": {
+    "translation": "Pozor",
+    "category": "Mental"
+  },
+  "focus": {
+    "translation": "fokus",
+    "category": "Mental"
+  },
+  "concentrate": {
+    "translation": "koncentrirati",
+    "category": "Mental"
+  },
+  "decide": {
+    "translation": "odrediti",
+    "category": "Mental"
+  },
+  "choose": {
+    "translation": "izaberi",
+    "category": "Mental"
+  },
+  "compare": {
+    "translation": "compariće",
+    "category": "Mental"
+  },
+  "analyze": {
+    "translation": "analizirati",
+    "category": "Mental"
+  },
+  "evaluate": {
+    "translation": "ocijeniti",
+    "category": "Mental"
+  },
+  "estimate": {
+    "translation": "ocjena",
+    "category": "Mental"
+  },
+  "solve": {
+    "translation": "Riješiti",
+    "category": "Mental"
+  },
+  "question": {
+    "translation": "pitanje",
+    "category": "Mental"
+  },
+  "suspect": {
+    "translation": "Suspetak",
+    "category": "Mental"
+  },
+  "doubt": {
+    "translation": "ROKE",
+    "category": "Mental"
+  },
+  "learn": {
+    "translation": "uciti",
+    "category": "Mental"
+  },
+  "study": {
+    "translation": "udžbenik",
+    "category": "Mental"
+  },
+  "memorize": {
+    "translation": "pamtiti",
+    "category": "Mental"
+  },
+  "calculate": {
+    "translation": "računati",
+    "category": "Mental"
+  },
+  "reflect": {
+    "translation": "odražavati",
+    "category": "Mental"
+  },
+  "understand": {
+    "translation": "razumijevati",
+    "category": "Mental"
+  },
+  "like": {
+    "translation": "štođerostiliako",
+    "category": "Mental"
+  },
+  "love": {
+    "translation": "ljubavljina or ljubiti",
+    "category": "Mental"
+  },
+  "hate": {
+    "translation": "štijenić",
+    "category": "Mental"
+  },
+  "enjoy": {
+    "translation": "ljubiti",
+    "category": "Mental"
+  },
+  "prefer": {
+    "translation": "preferirati",
+    "category": "Mental"
+  },
+  "want": {
+    "translation": "Željeti",
+    "category": "Mental"
+  },
+  "need": {
+    "translation": "potreba",
+    "category": "Mental"
+  },
+  "miss": {
+    "translation": "istražujeti",
+    "category": "Mental"
+  },
+  "care": {
+    "translation": "stariti",
+    "category": "Mental"
+  },
+  "worry": {
+    "translation": "istraživanje",
+    "category": "Mental"
+  },
+  "fear": {
+    "translation": "strah",
+    "category": "Mental"
+  },
+  "panic": {
+    "translation": "panik",
+    "category": "Mental"
+  },
+  "stress": {
+    "translation": "nastojanje",
+    "category": "Mental"
+  },
+  "calm": {
+    "translation": "hladno",
+    "category": "Mental"
+  },
+  "appreciate": {
+    "translation": "ocijeniti",
+    "category": "Mental"
+  },
+  "value": {
+    "translation": "vrijednost",
+    "category": "Mental"
+  },
+  "respect": {
+    "translation": "Respekt",
+    "category": "Mental"
+  },
+  "dislike": {
+    "translation": "nevolja",
+    "category": "Mental"
+  },
+  "regret": {
+    "translation": "Žaloba",
+    "category": "Mental"
+  },
+  "hope": {
+    "translation": "Nadba",
+    "category": "Mental"
+  },
+  "trust": {
+    "translation": "vera",
+    "category": "Mental"
+  },
+  "surprise": {
+    "translation": "surpriza",
+    "category": "Mental"
+  },
+  "shock": {
+    "translation": "šok",
+    "category": "Mental"
+  },
+  "annoy": {
+    "translation": "iritira",
+    "category": "Mental"
+  },
+  "bother": {
+    "translation": "trgovititi",
+    "category": "Mental"
+  },
+  "confuse": {
+    "translation": "puziti",
+    "category": "Mental"
+  },
+  "embarrass": {
+    "translation": "Osječanije",
+    "category": "Mental"
+  },
+  "frustrate": {
+    "translation": "razočarati",
+    "category": "Mental"
+  },
+  "satisfy": {
+    "translation": "ispuniti",
+    "category": "Mental"
+  },
+  "comfort": {
+    "translation": "Ugodnost",
+    "category": "Mental"
+  },
+  "cheer": {
+    "translation": "osvježiti",
+    "category": "Mental"
+  },
+  "say": {
+    "translation": "Reći",
+    "category": "Communication"
+  },
+  "tell": {
+    "translation": "reci",
+    "category": "Communication"
+  },
+  "talk": {
+    "translation": "govor",
+    "category": "Communication"
+  },
+  "speak": {
+    "translation": "govoriti",
+    "category": "Communication"
+  },
+  "discuss": {
+    "translation": "razgovarati",
+    "category": "Communication"
+  },
+  "chat": {
+    "translation": "obavijestanje",
+    "category": "Communication"
+  },
+  "explain": {
+    "translation": "objasniti",
+    "category": "Communication"
+  },
+  "describe": {
+    "translation": "opisati",
+    "category": "Communication"
+  },
+  "announce": {
+    "translation": "objaviti",
+    "category": "Communication"
+  },
+  "report": {
+    "translation": "izvješće",
+    "category": "Communication"
+  },
+  "reply": {
+    "translation": "odgovor",
+    "category": "Communication"
+  },
+  "answer": {
+    "translation": "odgovor",
+    "category": "Communication"
+  },
+  "ask": {
+    "translation": "pitati",
+    "category": "Communication"
+  },
+  "interrupt": {
+    "translation": "ispriječiti",
+    "category": "Communication"
+  },
+  "suggest": {
+    "translation": "predlagati",
+    "category": "Communication"
+  },
+  "recommend": {
+    "translation": "prijedlog",
+    "category": "Communication"
+  },
+  "complain": {
+    "translation": "protestovati",
+    "category": "Communication"
+  },
+  "argue": {
+    "translation": "razumjeti",
+    "category": "Communication"
+  },
+  "debate": {
+    "translation": "diskusija",
+    "category": "Communication"
+  },
+  "whisper": {
+    "translation": "sisak",
+    "category": "Communication"
+  },
+  "shout": {
+    "translation": "okliči",
+    "category": "Communication"
+  },
+  "yell": {
+    "translation": "jedro",
+    "category": "Communication"
+  },
+  "mention": {
+    "translation": "mencao",
+    "category": "Communication"
+  },
+  "remind": {
+    "translation": "pomisli",
+    "category": "Communication"
+  },
+  "warn": {
+    "translation": "upozoriti",
+    "category": "Communication"
+  },
+  "advise": {
+    "translation": "raditi",
+    "category": "Communication"
+  },
+  "encourage": {
+    "translation": "podsticati",
+    "category": "Communication"
+  },
+  "persuade": {
+    "translation": "prijavi",
+    "category": "Communication"
+  },
+  "invite": {
+    "translation": "povjetrić",
+    "category": "Communication"
+  },
+  "respond": {
+    "translation": "odgovoriti",
+    "category": "Communication"
+  },
+  "translate": {
+    "translation": "prevoditi",
+    "category": "Communication"
+  },
+  "inform": {
+    "translation": "obavijestiti",
+    "category": "Communication"
+  },
+  "comment": {
+    "translation": "komentar",
+    "category": "Communication"
+  },
+  "confirm": {
+    "translation": "potvrditi",
+    "category": "Communication"
+  },
+  "deny": {
+    "translation": "odbijati",
+    "category": "Communication"
+  },
+  "admit": {
+    "translation": "prijeti",
+    "category": "Communication"
+  },
+  "meet": {
+    "translation": "smeće",
+    "category": "Social"
+  },
+  "greet": {
+    "translation": "Pozdraviti",
+    "category": "Social"
+  },
+  "welcome": {
+    "translation": "Dobrodošli",
+    "category": "Social"
+  },
+  "visit": {
+    "translation": "posjetiti",
+    "category": "Social"
+  },
+  "host": {
+    "translation": "gost",
+    "category": "Social"
+  },
+  "join": {
+    "translation": "unesi",
+    "category": "Social"
+  },
+  "help": {
+    "translation": "pomoć",
+    "category": "Social"
+  },
+  "support": {
+    "translation": "podrška",
+    "category": "Social"
+  },
+  "assist": {
+    "translation": "Pomoći",
+    "category": "Social"
+  },
+  "share": {
+    "translation": "dio",
+    "category": "Social"
+  },
+  "care for": {
+    "translation": "stariti",
+    "category": "Social"
+  },
+  "hug": {
+    "translation": null,
+    "category": "Social",
+    "failed": true
+  },
+  "kiss": {
+    "translation": "poljubak",
+    "category": "Social"
+  },
+  "hold hands": {
+    "translation": "Hladiti ruke",
+    "category": "Social"
+  },
+  "date": {
+    "translation": "datum",
+    "category": "Social"
+  },
+  "marry": {
+    "translation": "brani",
+    "category": "Social"
+  },
+  "befriend": {
+    "translation": "prijeliti",
+    "category": "Social"
+  },
+  "follow": {
+    "translation": "Slijediti",
+    "category": "Social"
+  },
+  "lead": {
+    "translation": "vodeći",
+    "category": "Social"
+  },
+  "guide": {
+    "translation": "vodič",
+    "category": "Social"
+  },
+  "introduce": {
+    "translation": "introdusirati",
+    "category": "Social"
+  },
+  "cooperate": {
+    "translation": "udružiti se",
+    "category": "Social"
+  },
+  "protect": {
+    "translation": "štiti",
+    "category": "Social"
+  },
+  "include": {
+    "translation": "uključiti",
+    "category": "Social"
+  },
+  "exclude": {
+    "translation": "izključiti",
+    "category": "Social"
+  },
+  "work": {
+    "translation": "rad",
+    "category": "Work"
+  },
+  "write": {
+    "translation": "pisati",
+    "category": "Work"
+  },
+  "read": {
+    "translation": "čitaj",
+    "category": "Work"
+  },
+  "edit": {
+    "translation": "ureći",
+    "category": "Work"
+  },
+  "revise": {
+    "translation": "revisirati",
+    "category": "Work"
+  },
+  "review": {
+    "translation": "Pregled",
+    "category": "Work"
+  },
+  "inspect": {
+    "translation": "inspektirati",
+    "category": "Work"
+  },
+  "complete": {
+    "translation": "punovit-Headers",
+    "category": "Work"
+  },
+  "submit": {
+    "translation": "predajanje",
+    "category": "Work"
+  },
+  "create": {
+    "translation": "stvoriti",
+    "category": "Work"
+  },
+  "design": {
+    "translation": "dizajn",
+    "category": "Work"
+  },
+  "build": {
+    "translation": "graditi",
+    "category": "Work"
+  },
+  "assemble": {
+    "translation": "sastaviti",
+    "category": "Work"
+  },
+  "debug": {
+    "translation": "izvršniorschitanje",
+    "category": "Work"
+  },
+  "research": {
+    "translation": "istraživanje",
+    "category": "Work"
+  },
+  "document": {
+    "translation": "dokument",
+    "category": "Work"
+  },
+  "train": {
+    "translation": "vjekovarić",
+    "category": "Work"
+  },
+  "teach": {
+    "translation": "učiti",
+    "category": "Work"
+  },
+  "update": {
+    "translation": "Ažuriranje",
+    "category": "Work"
+  },
+  "upload": {
+    "translation": "objaviti",
+    "category": "Work"
+  },
+  "download": {
+    "translation": "preuzeti",
+    "category": "Work"
+  },
+  "print": {
+    "translation": "tiskanje",
+    "category": "Work"
+  },
+  "scan": {
+    "translation": "skan",
+    "category": "Work"
+  },
+  "record": {
+    "translation": "zapisak",
+    "category": "Work"
+  },
+  "track": {
+    "translation": "putanje",
+    "category": "Work"
+  },
+  "manage": {
+    "translation": "upravljati",
+    "category": "Work"
+  },
+  "supervise": {
+    "translation": "nadzirati",
+    "category": "Work"
+  },
+  "go": {
+    "translation": "idi",
+    "category": "Travel"
+  },
+  "come": {
+    "translation": "idi",
+    "category": "Travel"
+  },
+  "move": {
+    "translation": "pomicati",
+    "category": "Travel"
+  },
+  "leave": {
+    "translation": "odijeti",
+    "category": "Travel"
+  },
+  "arrive": {
+    "translation": "doći",
+    "category": "Travel"
+  },
+  "enter": {
+    "translation": "unijeti",
+    "category": "Travel"
+  },
+  "exit": {
+    "translation": "izlaz",
+    "category": "Travel"
+  },
+  "travel": {
+    "translation": "putovanje",
+    "category": "Travel"
+  },
+  "fly": {
+    "translation": "ljeti",
+    "category": "Travel"
+  },
+  "drive": {
+    "translation": "jezgra",
+    "category": "Travel"
+  },
+  "ride": {
+    "translation": "putovanje",
+    "category": "Travel"
+  },
+  "board": {
+    "translation": "plankija",
+    "category": "Travel"
+  },
+  "land": {
+    "translation": "zemlja",
+    "category": "Travel"
+  },
+  "park": {
+    "translation": "parkirati",
+    "category": "Travel"
+  },
+  "accelerate": {
+    "translation": "akcelirati",
+    "category": "Travel"
+  },
+  "reverse": {
+    "translation": "nasuprotnići",
+    "category": "Travel"
+  },
+  "cross": {
+    "translation": "krst",
+    "category": "Travel"
+  },
+  "wander": {
+    "translation": "istraživati",
+    "category": "Travel"
+  },
+  "explore": {
+    "translation": "istraživati",
+    "category": "Travel"
+  },
+  "return": {
+    "translation": "vratića",
+    "category": "Travel"
+  },
+  "rush": {
+    "translation": "sprint",
+    "category": "Travel"
+  },
+  "hurry": {
+    "translation": "Srećno",
+    "category": "Travel"
+  },
+  "navigate": {
+    "translation": "navigirati",
+    "category": "Travel"
+  },
+  "sanitize": {
+    "translation": "Konzumirati",
+    "category": "Household"
+  },
+  "iron": {
+    "translation": "ijaza",
+    "category": "Household"
+  },
+  "store": {
+    "translation": "trgovina",
+    "category": "Household"
+  },
+  "repair": {
+    "translation": "reparirati",
+    "category": "Household"
+  },
+  "fix": {
+    "translation": "repariraj",
+    "category": "Household"
+  },
+  "disassemble": {
+    "translation": "razbiti",
+    "category": "Household"
+  },
+  "install": {
+    "translation": "instalirati",
+    "category": "Household"
+  },
+  "uninstall": {
+    "translation": "Odinstalirati",
+    "category": "Household"
+  },
+  "remove": {
+    "translation": "ukloniti",
+    "category": "Household"
+  },
+  "connect": {
+    "translation": "povezati",
+    "category": "Household"
+  },
+  "disconnect": {
+    "translation": "ispalići",
+    "category": "Household"
+  },
+  "lock": {
+    "translation": "zaključak",
+    "category": "Household"
+  },
+  "unlock": {
+    "translation": "odblokirati",
+    "category": "Household"
+  },
+  "decorate": {
+    "translation": "dekorirati",
+    "category": "Household"
+  },
+  "polish": {
+    "translation": "državljanski",
+    "category": "Household"
+  },
+  "hammer": {
+    "translation": "međa",
+    "category": "Household"
+  },
+  "saw": {
+    "translation": "sawija",
+    "category": "Household"
+  },
+  "glue": {
+    "translation": "vlakna",
+    "category": "Household"
+  },
+  "buy": {
+    "translation": "kupiti",
+    "category": "Money"
+  },
+  "sell": {
+    "translation": "prodajući",
+    "category": "Money"
+  },
+  "pay": {
+    "translation": "plaćati",
+    "category": "Money"
+  },
+  "owe": {
+    "translation": "DUŽITI",
+    "category": "Money"
+  },
+  "borrow": {
+    "translation": "odnemati",
+    "category": "Money"
+  },
+  "lend": {
+    "translation": "donijeti",
+    "category": "Money"
+  },
+  "rent": {
+    "translation": "najam",
+    "category": "Money"
+  },
+  "save": {
+    "translation": "spasi",
+    "category": "Money"
+  },
+  "spend": {
+    "translation": "-Provodići",
+    "category": "Money"
+  },
+  "invest": {
+    "translation": "investirati",
+    "category": "Money"
+  },
+  "earn": {
+    "translation": "ispiti",
+    "category": "Money"
+  },
+  "refund": {
+    "translation": "popustak",
+    "category": "Money"
+  },
+  "exchange": {
+    "translation": "Trgovina",
+    "category": "Money"
+  },
+  "order": {
+    "translation": "razredba",
+    "category": "Money"
+  },
+  "select": {
+    "translation": "odabir",
+    "category": "Money"
+  },
+  "withdraw": {
+    "translation": "Povremeti",
+    "category": "Money"
+  },
+  "deposit": {
+    "translation": "depozit",
+    "category": "Money"
+  },
+  "budget": {
+    "translation": "budžet",
+    "category": "Money"
+  },
+  "fry": {
+    "translation": "frijići",
+    "category": "Food"
+  },
+  "grill": {
+    "translation": "braćanje",
+    "category": "Food"
+  },
+  "boil": {
+    "translation": "kotroman",
+    "category": "Food"
+  },
+  "steam": {
+    "translation": "par",
+    "category": "Food"
+  },
+  "slice": {
+    "translation": "reza",
+    "category": "Food"
+  },
+  "cut": {
+    "translation": "rez",
+    "category": "Food"
+  },
+  "chop": {
+    "translation": "čepić",
+    "category": "Food"
+  },
+  "mix": {
+    "translation": "mijesati",
+    "category": "Food"
+  },
+  "stir": {
+    "translation": "Bijelićanje",
+    "category": "Food"
+  },
+  "pour": {
+    "translation": "prijavi",
+    "category": "Food"
+  },
+  "serve": {
+    "translation": "usljeđavati",
+    "category": "Food"
+  },
+  "taste": {
+    "translation": "vjekovljanskoanje",
+    "category": "Food"
+  },
+  "season": {
+    "translation": "rijec",
+    "category": "Food"
+  },
+  "marinate": {
+    "translation": "marinirati",
+    "category": "Food"
+  },
+  "chew": {
+    "translation": "jelašanje",
+    "category": "Food"
+  },
+  "swallow": {
+    "translation": "Medvjed",
+    "category": "Food"
+  },
+  "deliver": {
+    "translation": "dostaviti",
+    "category": "Food"
+  },
+  "digest": {
+    "translation": "prijelaz",
+    "category": "Food"
+  },
+  "rain": {
+    "translation": "škva",
+    "category": "Nature"
+  },
+  "snow": {
+    "translation": "SNJAJ",
+    "category": "Nature"
+  },
+  "hail": {
+    "translation": "Lijek",
+    "category": "Nature"
+  },
+  "sleet": {
+    "translation": "Lijevanje",
+    "category": "Nature"
+  },
+  "freeze": {
+    "translation": "zamrzti",
+    "category": "Nature"
+  },
+  "melt": {
+    "translation": "tropiti",
+    "category": "Nature"
+  },
+  "shine": {
+    "translation": "svjetlost",
+    "category": "Nature"
+  },
+  "blow": {
+    "translation": "vjetar",
+    "category": "Nature"
+  },
+  "grow": {
+    "translation": "rostiti",
+    "category": "Nature"
+  },
+  "bloom": {
+    "translation": "bljesk",
+    "category": "Nature"
+  },
+  "wither": {
+    "translation": "Zavijati",
+    "category": "Nature"
+  },
+  "sprout": {
+    "translation": "Žiljče",
+    "category": "Nature"
+  },
+  "fall": {
+    "translation": "padanje",
+    "category": "Nature"
+  },
+  "quake": {
+    "translation": "štoka",
+    "category": "Nature"
+  },
+  "erode": {
+    "translation": "erođivati",
+    "category": "Nature"
+  },
+  "burn": {
+    "translation": "žarić",
+    "category": "Nature"
+  },
+  "flood": {
+    "translation": "vodenica",
+    "category": "Nature"
+  },
+  "float": {
+    "translation": "flotirati",
+    "category": "Nature"
+  },
+  "sink": {
+    "translation": "vasa",
+    "category": "Nature"
+  },
+  "rise": {
+    "translation": "risi",
+    "category": "Nature"
+  },
+  "set": {
+    "translation": "postaviti",
+    "category": "Nature"
+  },
+  "breathe": {
+    "translation": "dodirujte se",
+    "category": "Health"
+  },
+  "inhale": {
+    "translation": "dahnići",
+    "category": "Health"
+  },
+  "exhale": {
+    "translation": "odvadjeti",
+    "category": "Health"
+  },
+  "cough": {
+    "translation": "kupanje",
+    "category": "Health"
+  },
+  "sneeze": {
+    "translation": "kazneniuti",
+    "category": "Health"
+  },
+  "sweat": {
+    "translation": "slijevo",
+    "category": "Health"
+  },
+  "bleed": {
+    "translation": "krvić",
+    "category": "Health"
+  },
+  "heal": {
+    "translation": "vjekoviti",
+    "category": "Health"
+  },
+  "recover": {
+    "translation": "vratiti",
+    "category": "Health"
+  },
+  "ache": {
+    "translation": "bol",
+    "category": "Health"
+  },
+  "hurt": {
+    "translation": "ranjeni",
+    "category": "Health"
+  },
+  "strain": {
+    "translation": "nastojanje",
+    "category": "Health"
+  },
+  "exercise": {
+    "translation": "nježenak",
+    "category": "Health"
+  },
+  "faint": {
+    "translation": "smanjiti",
+    "category": "Health"
+  },
+  "vomit": {
+    "translation": "Projekovati",
+    "category": "Health"
+  },
+  "blink": {
+    "translation": "mikirati",
+    "category": "Health"
+  },
+  "squint": {
+    "translation": "Blinka",
+    "category": "Health"
+  },
+  "tremble": {
+    "translation": "Titrtati",
+    "category": "Health"
+  },
+  "click": {
+    "translation": "klik",
+    "category": "Technology"
+  },
+  "tap": {
+    "translation": "kapija",
+    "category": "Technology"
+  },
+  "scroll": {
+    "translation": "-scrollarna",
+    "category": "Technology"
+  },
+  "swipe": {
+    "translation": "Poklopak",
+    "category": "Technology"
+  },
+  "browse": {
+    "translation": "pregledati",
+    "category": "Technology"
+  },
+  "upgrade": {
+    "translation": "Ažuriranje",
+    "category": "Technology"
+  },
+  "copy": {
+    "translation": "kopija",
+    "category": "Technology"
+  },
+  "paste": {
+    "translation": "istraživajte",
+    "category": "Technology"
+  },
+  "delete": {
+    "translation": "brisati",
+    "category": "Technology"
+  },
+  "reset": {
+    "translation": "Resetanje",
+    "category": "Technology"
+  },
+  "restart": {
+    "translation": "ponovno pokrenuti",
+    "category": "Technology"
+  },
+  "log in": {
+    "translation": "Prijavi se",
+    "category": "Technology"
+  },
+  "log out": {
+    "translation": "Odjavi se",
+    "category": "Technology"
+  },
+  "sync": {
+    "translation": "synk",
+    "category": "Technology"
+  },
+  "stream": {
+    "translation": "rijeka",
+    "category": "Technology"
+  },
+  "encrypt": {
+    "translation": "šifrirati",
+    "category": "Technology"
+  },
+  "backup": {
+    "translation": "izvještaj",
+    "category": "Technology"
+  }
+}

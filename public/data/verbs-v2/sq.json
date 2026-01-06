@@ -1,0 +1,1562 @@
+{
+  "walk": {
+    "translation": "pasăre",
+    "category": "Basic"
+  },
+  "run": {
+    "translation": "hripieni",
+    "category": "Basic"
+  },
+  "jump": {
+    "translation": "Skak",
+    "category": "Basic"
+  },
+  "hop": {
+    "translation": "Skoš",
+    "category": "Basic"
+  },
+  "skip": {
+    "translation": "Pulzuar",
+    "category": "Basic"
+  },
+  "crawl": {
+    "translation": "Bërthimni",
+    "category": "Basic"
+  },
+  "climb": {
+    "translation": "Bërthohet",
+    "category": "Basic"
+  },
+  "slide": {
+    "translation": "hëllëz",
+    "category": "Basic"
+  },
+  "swing": {
+    "translation": "kukës",
+    "category": "Basic"
+  },
+  "stretch": {
+    "translation": "estrejse",
+    "category": "Basic"
+  },
+  "bend": {
+    "translation": "Kurva",
+    "category": "Basic"
+  },
+  "lift": {
+    "translation": "Pikëri",
+    "category": "Basic"
+  },
+  "carry": {
+    "translation": "transportuar",
+    "category": "Basic"
+  },
+  "drag": {
+    "translation": "Dražë",
+    "category": "Basic"
+  },
+  "push": {
+    "translation": "treguar",
+    "category": "Basic"
+  },
+  "pull": {
+    "translation": "zogeri",
+    "category": "Basic"
+  },
+  "hold": {
+    "translation": "hudhë",
+    "category": "Basic"
+  },
+  "grab": {
+    "translation": "Pomoni",
+    "category": "Basic"
+  },
+  "drop": {
+    "translation": "dhrop",
+    "category": "Basic"
+  },
+  "throw": {
+    "translation": "Kacër",
+    "category": "Basic"
+  },
+  "catch": {
+    "translation": "Përshtatuar",
+    "category": "Basic"
+  },
+  "kick": {
+    "translation": "dahë",
+    "category": "Basic"
+  },
+  "hit": {
+    "translation": "Dajti",
+    "category": "Basic"
+  },
+  "press": {
+    "translation": "presioni",
+    "category": "Basic"
+  },
+  "twist": {
+    "translation": "Kuptimi",
+    "category": "Basic"
+  },
+  "turn": {
+    "translation": "Rotë",
+    "category": "Basic"
+  },
+  "rotate": {
+    "translation": "Rotuarı",
+    "category": "Basic"
+  },
+  "flip": {
+    "translation": "flipë",
+    "category": "Basic"
+  },
+  "shake": {
+    "translation": "dreq",
+    "category": "Basic"
+  },
+  "wave": {
+    "translation": "vave",
+    "category": "Basic"
+  },
+  "reach": {
+    "translation": "Dergënga",
+    "category": "Basic"
+  },
+  "lean": {
+    "translation": "zgjeruar",
+    "category": "Basic"
+  },
+  "rest": {
+    "translation": "riposojeni",
+    "category": "Basic"
+  },
+  "balance": {
+    "translation": "Përsaktojeni",
+    "category": "Basic"
+  },
+  "spin": {
+    "translation": "Spin in Albanian is spini",
+    "category": "Basic"
+  },
+  "arrange": {
+    "translation": "Rregulluar",
+    "category": "Basic"
+  },
+  "adjust": {
+    "translation": "Korriqevo",
+    "category": "Basic"
+  },
+  "shift": {
+    "translation": "përshtatje",
+    "category": "Basic"
+  },
+  "tie": {
+    "translation": "përshtatë",
+    "category": "Basic"
+  },
+  "untie": {
+    "translation": "rozoshni",
+    "category": "Basic"
+  },
+  "wrap": {
+    "translation": "Paketi",
+    "category": "Basic"
+  },
+  "unwrap": {
+    "translation": "Deshtojeni",
+    "category": "Basic"
+  },
+  "fold": {
+    "translation": "Skladništë",
+    "category": "Basic"
+  },
+  "unfold": {
+    "translation": "Rivendërishqen",
+    "category": "Basic"
+  },
+  "pack": {
+    "translation": "Baga",
+    "category": "Basic"
+  },
+  "unpack": {
+    "translation": "Desharrë",
+    "category": "Basic"
+  },
+  "be": {
+    "translation": "ësë",
+    "category": "Basic"
+  },
+  "become": {
+    "translation": "RESHETILO",
+    "category": "Basic"
+  },
+  "seem": {
+    "translation": "parsëzërprarthet",
+    "category": "Basic"
+  },
+  "appear": {
+    "translation": "hapeti",
+    "category": "Basic"
+  },
+  "remain": {
+    "translation": "përmbledhënga",
+    "category": "Basic"
+  },
+  "stay": {
+    "translation": "Po",
+    "category": "Basic"
+  },
+  "exist": {
+    "translation": "Existen",
+    "category": "Basic"
+  },
+  "happen": {
+    "translation": "shpresXHR",
+    "category": "Basic"
+  },
+  "occur": {
+    "translation": "shëndetuar",
+    "category": "Basic"
+  },
+  "change": {
+    "translation": "Ndryshim",
+    "category": "Basic"
+  },
+  "improve": {
+    "translation": "ëndrroni",
+    "category": "Basic"
+  },
+  "decline": {
+    "translation": "Shkëmbuar",
+    "category": "Basic"
+  },
+  "continue": {
+    "translation": "provoktoru",
+    "category": "Basic"
+  },
+  "stop": {
+    "translation": "Ștopte",
+    "category": "Basic"
+  },
+  "begin": {
+    "translation": "ancaşuar",
+    "category": "Basic"
+  },
+  "end": {
+    "translation": "endsWith",
+    "category": "Basic"
+  },
+  "last": {
+    "translation": "shkëlëm",
+    "category": "Basic"
+  },
+  "wake": {
+    "translation": "Budë",
+    "category": "Daily Routine"
+  },
+  "get up": {
+    "translation": "Bulë",
+    "category": "Daily Routine"
+  },
+  "wash": {
+    "translation": "washi",
+    "category": "Daily Routine"
+  },
+  "shower": {
+    "translation": "duhovenka",
+    "category": "Daily Routine"
+  },
+  "bathe": {
+    "translation": "shumëzuar",
+    "category": "Daily Routine"
+  },
+  "brush": {
+    "translation": "kuhinja",
+    "category": "Daily Routine"
+  },
+  "comb": {
+    "translation": "kombi",
+    "category": "Daily Routine"
+  },
+  "dress": {
+    "translation": "kostume",
+    "category": "Daily Routine"
+  },
+  "eat": {
+    "translation": "dhëmi",
+    "category": "Daily Routine"
+  },
+  "drink": {
+    "translation": "dryk",
+    "category": "Daily Routine"
+  },
+  "snack": {
+    "translation": "shkëmbi",
+    "category": "Daily Routine"
+  },
+  "cook": {
+    "translation": "Kuqi",
+    "category": "Daily Routine"
+  },
+  "bake": {
+    "translation": "Gjegëzjet",
+    "category": "Daily Routine"
+  },
+  "reheat": {
+    "translation": "Përdorim ngaufën",
+    "category": "Daily Routine"
+  },
+  "clean": {
+    "translation": "drye",
+    "category": "Daily Routine"
+  },
+  "tidy": {
+    "translation": "Rrethet",
+    "category": "Daily Routine"
+  },
+  "organize": {
+    "translation": "Organizuar",
+    "category": "Daily Routine"
+  },
+  "vacuum": {
+    "translation": "vakuum",
+    "category": "Daily Routine"
+  },
+  "sweep": {
+    "translation": "Rrethu",
+    "category": "Daily Routine"
+  },
+  "mop": {
+    "translation": "Pogonez",
+    "category": "Daily Routine"
+  },
+  "dust": {
+    "translation": "pulclientHeight",
+    "category": "Daily Routine"
+  },
+  "wash dishes": {
+    "translation": "rukoini",
+    "category": "Daily Routine"
+  },
+  "rinse": {
+    "translation": "Rishteni",
+    "category": "Daily Routine"
+  },
+  "wipe": {
+    "translation": "zgjedhë",
+    "category": "Daily Routine"
+  },
+  "scrub": {
+    "translation": "bregu",
+    "category": "Daily Routine"
+  },
+  "dry": {
+    "translation": "DRY in Albanian is dry",
+    "category": "Daily Routine"
+  },
+  "shop": {
+    "translation": "dova",
+    "category": "Daily Routine"
+  },
+  "refill": {
+    "translation": "Punojtuar",
+    "category": "Daily Routine"
+  },
+  "charge": {
+    "translation": "Baga",
+    "category": "Daily Routine"
+  },
+  "relax": {
+    "translation": "rrezko",
+    "category": "Daily Routine"
+  },
+  "nap": {
+    "translation": "cucak",
+    "category": "Daily Routine"
+  },
+  "sleep": {
+    "translation": "Shtyp",
+    "category": "Daily Routine"
+  },
+  "prepare": {
+    "translation": "Përdorim",
+    "category": "Daily Routine"
+  },
+  "schedule": {
+    "translation": "programi",
+    "category": "Daily Routine"
+  },
+  "cancel": {
+    "translation": "Anulluar",
+    "category": "Daily Routine"
+  },
+  "check": {
+    "translation": "kontroll",
+    "category": "Daily Routine"
+  },
+  "monitor": {
+    "translation": "-monitor",
+    "category": "Daily Routine"
+  },
+  "plan": {
+    "translation": "planë",
+    "category": "Daily Routine"
+  },
+  "wait": {
+    "translation": "përparašojeve",
+    "category": "Daily Routine"
+  },
+  "search": {
+    "translation": "Kërko",
+    "category": "Daily Routine"
+  },
+  "find": {
+    "translation": "Shënjë",
+    "category": "Daily Routine"
+  },
+  "lose": {
+    "translation": "përshtatuar",
+    "category": "Daily Routine"
+  },
+  "replace": {
+    "translation": "Zëvendëso",
+    "category": "Daily Routine"
+  },
+  "think": {
+    "translation": "pikërsar",
+    "category": "Mental"
+  },
+  "know": {
+    "translation": "Și",
+    "category": "Mental"
+  },
+  "believe": {
+    "translation": "Gjellë",
+    "category": "Mental"
+  },
+  "consider": {
+    "translation": "Konsidero",
+    "category": "Mental"
+  },
+  "imagine": {
+    "translation": "Imagjinova",
+    "category": "Mental"
+  },
+  "wonder": {
+    "translation": "Mirak",
+    "category": "Mental"
+  },
+  "remember": {
+    "translation": "Përshikoh",
+    "category": "Mental"
+  },
+  "forget": {
+    "translation": "Zabot",
+    "category": "Mental"
+  },
+  "realize": {
+    "translation": "realizoni",
+    "category": "Mental"
+  },
+  "guess": {
+    "translation": "përgjigje",
+    "category": "Mental"
+  },
+  "predict": {
+    "translation": "Predikto",
+    "category": "Mental"
+  },
+  "expect": {
+    "translation": "Ekzepktuar",
+    "category": "Mental"
+  },
+  "recognize": {
+    "translation": "Shëndetuar",
+    "category": "Mental"
+  },
+  "notice": {
+    "translation": "shëndetër",
+    "category": "Mental"
+  },
+  "focus": {
+    "translation": "Fokus",
+    "category": "Mental"
+  },
+  "concentrate": {
+    "translation": "Konsentruar",
+    "category": "Mental"
+  },
+  "decide": {
+    "translation": "detyro",
+    "category": "Mental"
+  },
+  "choose": {
+    "translation": "përcila",
+    "category": "Mental"
+  },
+  "compare": {
+    "translation": "Kompjere",
+    "category": "Mental"
+  },
+  "analyze": {
+    "translation": "Analizuar",
+    "category": "Mental"
+  },
+  "evaluate": {
+    "translation": "Evaluuar",
+    "category": "Mental"
+  },
+  "estimate": {
+    "translation": "Kestimativa",
+    "category": "Mental"
+  },
+  "solve": {
+    "translation": "Shpëtuar",
+    "category": "Mental"
+  },
+  "question": {
+    "translation": "përgjigje",
+    "category": "Mental"
+  },
+  "suspect": {
+    "translation": "Shqiptarëzetër",
+    "category": "Mental"
+  },
+  "doubt": {
+    "translation": "shqip",
+    "category": "Mental"
+  },
+  "learn": {
+    "translation": "përmbledhënga",
+    "category": "Mental"
+  },
+  "study": {
+    "translation": "shkëndimi",
+    "category": "Mental"
+  },
+  "memorize": {
+    "translation": "Përdorim",
+    "category": "Mental"
+  },
+  "calculate": {
+    "translation": "kalkuluar",
+    "category": "Mental"
+  },
+  "reflect": {
+    "translation": "Reflektuar",
+    "category": "Mental"
+  },
+  "understand": {
+    "translation": "Pahet",
+    "category": "Mental"
+  },
+  "like": {
+    "translation": "gjësër",
+    "category": "Mental"
+  },
+  "love": {
+    "translation": "qëndrim",
+    "category": "Mental"
+  },
+  "hate": {
+    "translation": "Deteste",
+    "category": "Mental"
+  },
+  "enjoy": {
+    "translation": "dhëmi",
+    "category": "Mental"
+  },
+  "prefer": {
+    "translation": "Preferuar",
+    "category": "Mental"
+  },
+  "want": {
+    "translation": "practitionër",
+    "category": "Mental"
+  },
+  "need": {
+    "translation": "repidë",
+    "category": "Mental"
+  },
+  "miss": {
+    "translation": "Proshëm",
+    "category": "Mental"
+  },
+  "care": {
+    "translation": "Kerësë",
+    "category": "Mental"
+  },
+  "worry": {
+    "translation": "Gjëndje",
+    "category": "Mental"
+  },
+  "fear": {
+    "translation": "Pështej",
+    "category": "Mental"
+  },
+  "panic": {
+    "translation": "pandemje",
+    "category": "Mental"
+  },
+  "stress": {
+    "translation": "Stres",
+    "category": "Mental"
+  },
+  "calm": {
+    "translation": "Shpini",
+    "category": "Mental"
+  },
+  "appreciate": {
+    "translation": "Këndoni",
+    "category": "Mental"
+  },
+  "value": {
+    "translation": "vlerë",
+    "category": "Mental"
+  },
+  "respect": {
+    "translation": "Respekt",
+    "category": "Mental"
+  },
+  "dislike": {
+    "translation": "Nëndërtoje",
+    "category": "Mental"
+  },
+  "regret": {
+    "translation": "Rrishtëza",
+    "category": "Mental"
+  },
+  "hope": {
+    "translation": "Esperanca",
+    "category": "Mental"
+  },
+  "trust": {
+    "translation": "Drejtim",
+    "category": "Mental"
+  },
+  "surprise": {
+    "translation": "Surpriza",
+    "category": "Mental"
+  },
+  "shock": {
+    "translation": "Shok",
+    "category": "Mental"
+  },
+  "annoy": {
+    "translation": "Njëkushaqeo",
+    "category": "Mental"
+  },
+  "bother": {
+    "translation": "Njëkohosni",
+    "category": "Mental"
+  },
+  "confuse": {
+    "translation": "përcaktoje",
+    "category": "Mental"
+  },
+  "embarrass": {
+    "translation": "Sonikë",
+    "category": "Mental"
+  },
+  "frustrate": {
+    "translation": "Disgjeruar",
+    "category": "Mental"
+  },
+  "satisfy": {
+    "translation": "Ishte",
+    "category": "Mental"
+  },
+  "comfort": {
+    "translation": "Shpesh",
+    "category": "Mental"
+  },
+  "cheer": {
+    "translation": "Hurra",
+    "category": "Mental"
+  },
+  "say": {
+    "translation": "shënu për të shënuar",
+    "category": "Communication"
+  },
+  "tell": {
+    "translation": "shpëtuar",
+    "category": "Communication"
+  },
+  "talk": {
+    "translation": "shkalla",
+    "category": "Communication"
+  },
+  "speak": {
+    "translation": "shkëmbuar",
+    "category": "Communication"
+  },
+  "discuss": {
+    "translation": "diskutuar",
+    "category": "Communication"
+  },
+  "chat": {
+    "translation": "boli",
+    "category": "Communication"
+  },
+  "explain": {
+    "translation": "juqohësi",
+    "category": "Communication"
+  },
+  "describe": {
+    "translation": "përditëso",
+    "category": "Communication"
+  },
+  "announce": {
+    "translation": "anunçoni",
+    "category": "Communication"
+  },
+  "report": {
+    "translation": "raport",
+    "category": "Communication"
+  },
+  "reply": {
+    "translation": "përgjigje",
+    "category": "Communication"
+  },
+  "answer": {
+    "translation": "përgjigje",
+    "category": "Communication"
+  },
+  "ask": {
+    "translation": "shkëmbuar",
+    "category": "Communication"
+  },
+  "interrupt": {
+    "translation": "Përshtatuar",
+    "category": "Communication"
+  },
+  "suggest": {
+    "translation": "Sugjeruar",
+    "category": "Communication"
+  },
+  "recommend": {
+    "translation": "Përdor",
+    "category": "Communication"
+  },
+  "complain": {
+    "translation": "rezervoni",
+    "category": "Communication"
+  },
+  "argue": {
+    "translation": "disputë",
+    "category": "Communication"
+  },
+  "debate": {
+    "translation": "Diskutim",
+    "category": "Communication"
+  },
+  "whisper": {
+    "translation": "Fluzi",
+    "category": "Communication"
+  },
+  "shout": {
+    "translation": "kriq",
+    "category": "Communication"
+  },
+  "yell": {
+    "translation": "Krijo",
+    "category": "Communication"
+  },
+  "mention": {
+    "translation": "Shënim",
+    "category": "Communication"
+  },
+  "remind": {
+    "translation": "pamjen",
+    "category": "Communication"
+  },
+  "warn": {
+    "translation": "Përshkëndej",
+    "category": "Communication"
+  },
+  "advise": {
+    "translation": "konzultuar",
+    "category": "Communication"
+  },
+  "encourage": {
+    "translation": "Motivuar",
+    "category": "Communication"
+  },
+  "persuade": {
+    "translation": "Pershiktoeni",
+    "category": "Communication"
+  },
+  "invite": {
+    "translation": "Shëndetërithoje",
+    "category": "Communication"
+  },
+  "respond": {
+    "translation": "Rezpondojteni",
+    "category": "Communication"
+  },
+  "translate": {
+    "translation": "translacioni",
+    "category": "Communication"
+  },
+  "inform": {
+    "translation": "Informimi",
+    "category": "Communication"
+  },
+  "comment": {
+    "translation": "Kommentar",
+    "category": "Communication"
+  },
+  "confirm": {
+    "translation": "Potvrrijuvu",
+    "category": "Communication"
+  },
+  "deny": {
+    "translation": "përdoreni",
+    "category": "Communication"
+  },
+  "admit": {
+    "translation": "Prijazname",
+    "category": "Communication"
+  },
+  "meet": {
+    "translation": "Shënc",
+    "category": "Social"
+  },
+  "greet": {
+    "translation": "bërthëni",
+    "category": "Social"
+  },
+  "welcome": {
+    "translation": "Selameti",
+    "category": "Social"
+  },
+  "visit": {
+    "translation": "vizita",
+    "category": "Social"
+  },
+  "host": {
+    "translation": "Gostor",
+    "category": "Social"
+  },
+  "join": {
+    "translation": "Shëndetet",
+    "category": "Social"
+  },
+  "help": {
+    "translation": "Ndihmë",
+    "category": "Social"
+  },
+  "support": {
+    "translation": "Dukësija",
+    "category": "Social"
+  },
+  "assist": {
+    "translation": "Ndihmojen",
+    "category": "Social"
+  },
+  "share": {
+    "translation": "Dijelovati",
+    "category": "Social"
+  },
+  "care for": {
+    "translation": "Të vrapoje",
+    "category": "Social"
+  },
+  "hug": {
+    "translation": "llojshëm",
+    "category": "Social"
+  },
+  "kiss": {
+    "translation": "Bjeshkë",
+    "category": "Social"
+  },
+  "hold hands": {
+    "translation": "hudhë të brakut të hedhur",
+    "category": "Social"
+  },
+  "date": {
+    "translation": "Data",
+    "category": "Social"
+  },
+  "marry": {
+    "translation": "këshilla",
+    "category": "Social"
+  },
+  "befriend": {
+    "translation": "përdrejte",
+    "category": "Social"
+  },
+  "follow": {
+    "translation": "faqë",
+    "category": "Social"
+  },
+  "lead": {
+    "translation": "Lidhjet",
+    "category": "Social"
+  },
+  "guide": {
+    "translation": "Vëndosje",
+    "category": "Social"
+  },
+  "introduce": {
+    "translation": "Introduktuar",
+    "category": "Social"
+  },
+  "cooperate": {
+    "translation": "Kooperuar",
+    "category": "Social"
+  },
+  "protect": {
+    "translation": "Shieldoni",
+    "category": "Social"
+  },
+  "include": {
+    "translation": "Shëndetje",
+    "category": "Social"
+  },
+  "exclude": {
+    "translation": "Ekzkludho",
+    "category": "Social"
+  },
+  "work": {
+    "translation": "shërbim",
+    "category": "Work"
+  },
+  "write": {
+    "translation": "Shkruajează",
+    "category": "Work"
+  },
+  "read": {
+    "translation": "CITIotroni",
+    "category": "Work"
+  },
+  "edit": {
+    "translation": "edytuar",
+    "category": "Work"
+  },
+  "revise": {
+    "translation": "Reviduar",
+    "category": "Work"
+  },
+  "review": {
+    "translation": "rezultim",
+    "category": "Work"
+  },
+  "inspect": {
+    "translation": "Inspektează",
+    "category": "Work"
+  },
+  "complete": {
+    "translation": "Shpëtuar",
+    "category": "Work"
+  },
+  "submit": {
+    "translation": "Detyro",
+    "category": "Work"
+  },
+  "create": {
+    "translation": "Krijoni",
+    "category": "Work"
+  },
+  "design": {
+    "translation": "Projekti",
+    "category": "Work"
+  },
+  "build": {
+    "translation": "Shpëtuar",
+    "category": "Work"
+  },
+  "assemble": {
+    "translation": "Shumëzuar",
+    "category": "Work"
+  },
+  "debug": {
+    "translation": "dhënë për debugimin",
+    "category": "Work"
+  },
+  "research": {
+    "translation": "Shkenca",
+    "category": "Work"
+  },
+  "document": {
+    "translation": "dokument",
+    "category": "Work"
+  },
+  "train": {
+    "translation": "Trein",
+    "category": "Work"
+  },
+  "teach": {
+    "translation": "oshëm",
+    "category": "Work"
+  },
+  "update": {
+    "translation": "aktualizuar",
+    "category": "Work"
+  },
+  "upload": {
+    "translation": "Poštuar",
+    "category": "Work"
+  },
+  "download": {
+    "translation": "Shkëmbimi",
+    "category": "Work"
+  },
+  "print": {
+    "translation": "druckërojen",
+    "category": "Work"
+  },
+  "scan": {
+    "translation": "Skand",
+    "category": "Work"
+  },
+  "record": {
+    "translation": "rekordi",
+    "category": "Work"
+  },
+  "track": {
+    "translation": "trajtek",
+    "category": "Work"
+  },
+  "manage": {
+    "translation": "Shëndetërojen",
+    "category": "Work"
+  },
+  "supervise": {
+    "translation": "supervizuar",
+    "category": "Work"
+  },
+  "go": {
+    "translation": "Shënukf",
+    "category": "Travel"
+  },
+  "come": {
+    "translation": "Veni",
+    "category": "Travel"
+  },
+  "move": {
+    "translation": "përdor",
+    "category": "Travel"
+  },
+  "leave": {
+    "translation": "Shkëmbi",
+    "category": "Travel"
+  },
+  "arrive": {
+    "translation": "dajti",
+    "category": "Travel"
+  },
+  "enter": {
+    "translation": "entering",
+    "category": "Travel"
+  },
+  "exit": {
+    "translation": "eksit",
+    "category": "Travel"
+  },
+  "travel": {
+    "translation": "shkëmbimi",
+    "category": "Travel"
+  },
+  "fly": {
+    "translation": "flëngjetër",
+    "category": "Travel"
+  },
+  "drive": {
+    "translation": "vheto",
+    "category": "Travel"
+  },
+  "ride": {
+    "translation": "kujdes",
+    "category": "Travel"
+  },
+  "board": {
+    "translation": "bord",
+    "category": "Travel"
+  },
+  "land": {
+    "translation": "terra",
+    "category": "Travel"
+  },
+  "park": {
+    "translation": "parkë",
+    "category": "Travel"
+  },
+  "accelerate": {
+    "translation": "akceleruar",
+    "category": "Travel"
+  },
+  "reverse": {
+    "translation": "Rezervues",
+    "category": "Travel"
+  },
+  "cross": {
+    "translation": "Kruja",
+    "category": "Travel"
+  },
+  "wander": {
+    "translation": "Lendë",
+    "category": "Travel"
+  },
+  "explore": {
+    "translation": "eksploro",
+    "category": "Travel"
+  },
+  "return": {
+    "translation": "riotë",
+    "category": "Travel"
+  },
+  "rush": {
+    "translation": "hripijtuar",
+    "category": "Travel"
+  },
+  "hurry": {
+    "translation": "Brzoa",
+    "category": "Travel"
+  },
+  "navigate": {
+    "translation": "Naviguar",
+    "category": "Travel"
+  },
+  "sanitize": {
+    "translation": "Klernë",
+    "category": "Household"
+  },
+  "iron": {
+    "translation": "gjerështi",
+    "category": "Household"
+  },
+  "store": {
+    "translation": "magazin",
+    "category": "Household"
+  },
+  "repair": {
+    "translation": "Reparuar",
+    "category": "Household"
+  },
+  "fix": {
+    "translation": "Shiktojë",
+    "category": "Household"
+  },
+  "disassemble": {
+    "translation": "Desasembull",
+    "category": "Household"
+  },
+  "install": {
+    "translation": "instalo",
+    "category": "Household"
+  },
+  "uninstall": {
+    "translation": "Deshtoj",
+    "category": "Household"
+  },
+  "remove": {
+    "translation": "haputër",
+    "category": "Household"
+  },
+  "connect": {
+    "translation": "Konektuar",
+    "category": "Household"
+  },
+  "disconnect": {
+    "translation": "Deskonectuar",
+    "category": "Household"
+  },
+  "lock": {
+    "translation": "Zgrëndërja",
+    "category": "Household"
+  },
+  "unlock": {
+    "translation": "Deshtoj",
+    "category": "Household"
+  },
+  "decorate": {
+    "translation": "dekoruar",
+    "category": "Household"
+  },
+  "polish": {
+    "translation": "puni",
+    "category": "Household"
+  },
+  "hammer": {
+    "translation": "mazza",
+    "category": "Household"
+  },
+  "saw": {
+    "translation": "shkëmbi",
+    "category": "Household"
+  },
+  "glue": {
+    "translation": "Kryeziu",
+    "category": "Household"
+  },
+  "buy": {
+    "translation": "Kuponi",
+    "category": "Money"
+  },
+  "sell": {
+    "translation": "prodaja",
+    "category": "Money"
+  },
+  "pay": {
+    "translation": "paga",
+    "category": "Money"
+  },
+  "owe": {
+    "translation": "Detyro",
+    "category": "Money"
+  },
+  "borrow": {
+    "translation": "Prajmi",
+    "category": "Money"
+  },
+  "lend": {
+    "translation": "Pristani",
+    "category": "Money"
+  },
+  "rent": {
+    "translation": "Klapi",
+    "category": "Money"
+  },
+  "save": {
+    "translation": "SHRITI",
+    "category": "Money"
+  },
+  "spend": {
+    "translation": "Shpëtuar",
+    "category": "Money"
+  },
+  "invest": {
+    "translation": "Investeruar",
+    "category": "Money"
+  },
+  "earn": {
+    "translation": "Zgjidhni",
+    "category": "Money"
+  },
+  "refund": {
+    "translation": "rimjet",
+    "category": "Money"
+  },
+  "exchange": {
+    "translation": "Zëvendësime",
+    "category": "Money"
+  },
+  "order": {
+    "translation": "Rrëndrazi",
+    "category": "Money"
+  },
+  "select": {
+    "translation": "Selektuar",
+    "category": "Money"
+  },
+  "withdraw": {
+    "translation": "Përmirri",
+    "category": "Money"
+  },
+  "deposit": {
+    "translation": "Depozit",
+    "category": "Money"
+  },
+  "budget": {
+    "translation": "budhet",
+    "category": "Money"
+  },
+  "fry": {
+    "translation": "gjelbër",
+    "category": "Food"
+  },
+  "grill": {
+    "translation": "Gjelit",
+    "category": "Food"
+  },
+  "boil": {
+    "translation": "kondër",
+    "category": "Food"
+  },
+  "steam": {
+    "translation": "Drejtori",
+    "category": "Food"
+  },
+  "slice": {
+    "translation": "Rezina",
+    "category": "Food"
+  },
+  "cut": {
+    "translation": "Rrakto",
+    "category": "Food"
+  },
+  "chop": {
+    "translation": "Rezervo",
+    "category": "Food"
+  },
+  "mix": {
+    "translation": "mikësuar",
+    "category": "Food"
+  },
+  "stir": {
+    "translation": "marrë",
+    "category": "Food"
+  },
+  "pour": {
+    "translation": "Pijë",
+    "category": "Food"
+  },
+  "serve": {
+    "translation": "Shërbejt",
+    "category": "Food"
+  },
+  "taste": {
+    "translation": "flas",
+    "category": "Food"
+  },
+  "season": {
+    "translation": "Çikësia",
+    "category": "Food"
+  },
+  "marinate": {
+    "translation": "Pomazni",
+    "category": "Food"
+  },
+  "chew": {
+    "translation": "Rrëzovërsa",
+    "category": "Food"
+  },
+  "swallow": {
+    "translation": "Papagaj",
+    "category": "Food"
+  },
+  "deliver": {
+    "translation": "detyro",
+    "category": "Food"
+  },
+  "digest": {
+    "translation": "digerimin",
+    "category": "Food"
+  },
+  "rain": {
+    "translation": "Shkëmb",
+    "category": "Nature"
+  },
+  "snow": {
+    "translation": "SNJAJ",
+    "category": "Nature"
+  },
+  "hail": {
+    "translation": "Shkurtoz",
+    "category": "Nature"
+  },
+  "sleet": {
+    "translation": "Gjakova",
+    "category": "Nature"
+  },
+  "freeze": {
+    "translation": "zharë",
+    "category": "Nature"
+  },
+  "melt": {
+    "translation": "Rozot",
+    "category": "Nature"
+  },
+  "shine": {
+    "translation": "Lumë",
+    "category": "Nature"
+  },
+  "blow": {
+    "translation": "Dhjetër",
+    "category": "Nature"
+  },
+  "grow": {
+    "translation": "qejër",
+    "category": "Nature"
+  },
+  "bloom": {
+    "translation": "Blumi",
+    "category": "Nature"
+  },
+  "wither": {
+    "translation": "Zogrim",
+    "category": "Nature"
+  },
+  "sprout": {
+    "translation": "Rrëzak",
+    "category": "Nature"
+  },
+  "fall": {
+    "translation": "pad",
+    "category": "Nature"
+  },
+  "quake": {
+    "translation": "ersh",
+    "category": "Nature"
+  },
+  "erode": {
+    "translation": "Eroziova",
+    "category": "Nature"
+  },
+  "burn": {
+    "translation": "Gjelto",
+    "category": "Nature"
+  },
+  "flood": {
+    "translation": "Vla",
+    "category": "Nature"
+  },
+  "float": {
+    "translation": "flotuar",
+    "category": "Nature"
+  },
+  "sink": {
+    "translation": "zogëria",
+    "category": "Nature"
+  },
+  "rise": {
+    "translation": "Vjeter",
+    "category": "Nature"
+  },
+  "set": {
+    "translation": "Shkëmb",
+    "category": "Nature"
+  },
+  "breathe": {
+    "translation": "Respirente",
+    "category": "Health"
+  },
+  "inhale": {
+    "translation": "Deshkurimi",
+    "category": "Health"
+  },
+  "exhale": {
+    "translation": "Dysho",
+    "category": "Health"
+  },
+  "cough": {
+    "translation": "Kupos",
+    "category": "Health"
+  },
+  "sneeze": {
+    "translation": "hjekësh",
+    "category": "Health"
+  },
+  "sweat": {
+    "translation": "društër",
+    "category": "Health"
+  },
+  "bleed": {
+    "translation": "Zgjofteni",
+    "category": "Health"
+  },
+  "heal": {
+    "translation": "Lëndër",
+    "category": "Health"
+  },
+  "recover": {
+    "translation": "rekoveruar",
+    "category": "Health"
+  },
+  "ache": {
+    "translation": "dolë",
+    "category": "Health"
+  },
+  "hurt": {
+    "translation": "bolëndi",
+    "category": "Health"
+  },
+  "strain": {
+    "translation": "stresi",
+    "category": "Health"
+  },
+  "exercise": {
+    "translation": "eshkerci",
+    "category": "Health"
+  },
+  "faint": {
+    "translation": "Shtoj",
+    "category": "Health"
+  },
+  "vomit": {
+    "translation": "Bërthim",
+    "category": "Health"
+  },
+  "blink": {
+    "translation": "Mkëndërro",
+    "category": "Health"
+  },
+  "squint": {
+    "translation": "Kukës",
+    "category": "Health"
+  },
+  "tremble": {
+    "translation": "Titër",
+    "category": "Health"
+  },
+  "click": {
+    "translation": "Klik",
+    "category": "Technology"
+  },
+  "tap": {
+    "translation": "Zgogri",
+    "category": "Technology"
+  },
+  "scroll": {
+    "translation": "Rrrolli",
+    "category": "Technology"
+  },
+  "swipe": {
+    "translation": "Pune",
+    "category": "Technology"
+  },
+  "browse": {
+    "translation": "Prokurëør",
+    "category": "Technology"
+  },
+  "upgrade": {
+    "translation": "përditësojen",
+    "category": "Technology"
+  },
+  "copy": {
+    "translation": "kopja",
+    "category": "Technology"
+  },
+  "paste": {
+    "translation": "Kruje",
+    "category": "Technology"
+  },
+  "delete": {
+    "translation": "Shashtrojmë",
+    "category": "Technology"
+  },
+  "reset": {
+    "translation": "rimițit",
+    "category": "Technology"
+  },
+  "restart": {
+    "translation": "perndryshuar",
+    "category": "Technology"
+  },
+  "log in": {
+    "translation": "Prahni",
+    "category": "Technology"
+  },
+  "log out": {
+    "translation": "Hyrja nga sistemën",
+    "category": "Technology"
+  },
+  "sync": {
+    "translation": "Sinchronizuar",
+    "category": "Technology"
+  },
+  "stream": {
+    "translation": "stream in Albanian is",
+    "category": "Technology"
+  },
+  "encrypt": {
+    "translation": "Šifroju përshkruar",
+    "category": "Technology"
+  },
+  "backup": {
+    "translation": "rezervni",
+    "category": "Technology"
+  }
+}

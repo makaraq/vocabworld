@@ -41,15 +41,12 @@ https://yourdomain.com
 
 #### **Authorized Redirect URIs:**
 ```
-http://localhost:3000/api/auth/callback
-http://localhost:3001/api/auth/callback
-http://localhost:3002/api/auth/callback
-http://localhost:3003/api/auth/callback
-https://yourdomain.com/api/auth/callback
-https://your-app.vercel.app/api/auth/callback
+http://localhost:3000/auth/callback
+http://localhost:3001/auth/callback
+http://localhost:3002/auth/callback
+http://localhost:3003/auth/callback
+https://yourdomain.com/auth/callback
 ```
-
-**⚠️ IMPORTANT:** The redirect URI MUST be `/api/auth/callback` (not `/auth/callback`)
 
 ### 6. Update Your Environment Variables
 After creating the OAuth client, copy the:
@@ -108,8 +105,7 @@ Your current configuration:
 
 ### Immediate Action Required:
 1. **Add `http://localhost:3002` to Authorized JavaScript Origins**
-2. **Add `http://localhost:3002/api/auth/callback` to Authorized Redirect URIs**
-3. **For Vercel: Add `https://your-app.vercel.app/api/auth/callback` to Authorized Redirect URIs**
+2. **Add `http://localhost:3002/auth/callback` to Authorized Redirect URIs**
 
 ## 🧪 Testing Steps
 
@@ -120,10 +116,9 @@ Your current configuration:
 
 ## 🚨 Common Issues
 
-- **Error: redirect_uri_mismatch** → Check redirect URIs match exactly (must be `/api/auth/callback`)
+- **Error: redirect_uri_mismatch** → Check redirect URIs match exactly
 - **Error: origin_mismatch** → Check JavaScript origins include your current port
 - **Error: invalid_client** → Check client ID is correct in `.env.local`
-- **Error: 400 on callback** → Make sure redirect goes to `/api/auth/callback`, not `/auth/callback`
 
 ## 🔍 Debug URLs
 
@@ -131,12 +126,8 @@ If sign-in fails, check these URLs are configured:
 
 **Current Development:**
 - Origin: `http://localhost:3002`
-- Redirect: `http://localhost:3002/api/auth/callback`
+- Redirect: `http://localhost:3002/auth/callback`
 
-**Vercel Production:**
-- Origin: `https://your-app.vercel.app`
-- Redirect: `https://your-app.vercel.app/api/auth/callback`
-
-**Custom Domain Production:**
+**Future Production:**
 - Origin: `https://yourdomain.com`
-- Redirect: `https://yourdomain.com/api/auth/callback`
+- Redirect: `https://yourdomain.com/auth/callback`

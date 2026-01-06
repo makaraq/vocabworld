@@ -1,0 +1,1568 @@
+{
+  "walk": {
+    "translation": "걷기",
+    "category": "Basic"
+  },
+  "run": {
+    "translation": "런",
+    "category": "Basic"
+  },
+  "jump": {
+    "translation": "호프",
+    "category": "Basic"
+  },
+  "hop": {
+    "translation": "호프",
+    "category": "Basic"
+  },
+  "skip": {
+    "translation": "스킵",
+    "category": "Basic"
+  },
+  "crawl": {
+    "translation": "크롤링",
+    "category": "Basic"
+  },
+  "climb": {
+    "translation": "등산",
+    "category": "Basic"
+  },
+  "slide": {
+    "translation": "슬라이드",
+    "category": "Basic"
+  },
+  "swing": {
+    "translation": "스윙",
+    "category": "Basic"
+  },
+  "stretch": {
+    "translation": "연장",
+    "category": "Basic"
+  },
+  "bend": {
+    "translation": "곡이",
+    "category": "Basic"
+  },
+  "lift": {
+    "translation": "승강기",
+    "category": "Basic"
+  },
+  "carry": {
+    "translation": "운반",
+    "category": "Basic"
+  },
+  "drag": {
+    "translation": "드래그",
+    "category": "Basic"
+  },
+  "push": {
+    "translation": null,
+    "category": "Basic",
+    "failed": true
+  },
+  "pull": {
+    "translation": "당기다",
+    "category": "Basic"
+  },
+  "hold": {
+    "translation": "보유",
+    "category": "Basic"
+  },
+  "grab": {
+    "translation": "잡다",
+    "category": "Basic"
+  },
+  "drop": {
+    "translation": "다",
+    "category": "Basic"
+  },
+  "throw": {
+    "translation": "던지다",
+    "category": "Basic"
+  },
+  "catch": {
+    "translation": "잡다",
+    "category": "Basic"
+  },
+  "kick": {
+    "translation": "차기",
+    "category": "Basic"
+  },
+  "hit": {
+    "translation": "타기",
+    "category": "Basic"
+  },
+  "press": {
+    "translation": "버튼",
+    "category": "Basic"
+  },
+  "twist": {
+    "translation": "회전",
+    "category": "Basic"
+  },
+  "turn": {
+    "translation": "회전",
+    "category": "Basic"
+  },
+  "rotate": {
+    "translation": "회전하다",
+    "category": "Basic"
+  },
+  "flip": {
+    "translation": "플리",
+    "category": "Basic"
+  },
+  "shake": {
+    "translation": null,
+    "category": "Basic",
+    "failed": true
+  },
+  "wave": {
+    "translation": "파도",
+    "category": "Basic"
+  },
+  "reach": {
+    "translation": "달성",
+    "category": "Basic"
+  },
+  "lean": {
+    "translation": "슬림",
+    "category": "Basic"
+  },
+  "rest": {
+    "translation": "휴식",
+    "category": "Basic"
+  },
+  "balance": {
+    "translation": "균형",
+    "category": "Basic"
+  },
+  "spin": {
+    "translation": "회전",
+    "category": "Basic"
+  },
+  "arrange": {
+    "translation": "배치",
+    "category": "Basic"
+  },
+  "adjust": {
+    "translation": "한국어",
+    "category": "Basic"
+  },
+  "shift": {
+    "translation": "변경",
+    "category": "Basic"
+  },
+  "tie": {
+    "translation": "대결",
+    "category": "Basic"
+  },
+  "untie": {
+    "translation": "바인딩",
+    "category": "Basic"
+  },
+  "wrap": {
+    "translation": "포장",
+    "category": "Basic"
+  },
+  "unwrap": {
+    "translation": "해제하다",
+    "category": "Basic"
+  },
+  "fold": {
+    "translation": "폴드",
+    "category": "Basic"
+  },
+  "unfold": {
+    "translation": "전개",
+    "category": "Basic"
+  },
+  "pack": {
+    "translation": "패크",
+    "category": "Basic"
+  },
+  "unpack": {
+    "translation": "해제",
+    "category": "Basic"
+  },
+  "be": {
+    "translation": "있음",
+    "category": "Basic"
+  },
+  "become": {
+    "translation": "되다",
+    "category": "Basic"
+  },
+  "seem": {
+    "translation": "보",
+    "category": "Basic"
+  },
+  "appear": {
+    "translation": "출현",
+    "category": "Basic"
+  },
+  "remain": {
+    "translation": "남아",
+    "category": "Basic"
+  },
+  "stay": {
+    "translation": null,
+    "category": "Basic",
+    "failed": true
+  },
+  "exist": {
+    "translation": "존재",
+    "category": "Basic"
+  },
+  "happen": {
+    "translation": "발생",
+    "category": "Basic"
+  },
+  "occur": {
+    "translation": "발생",
+    "category": "Basic"
+  },
+  "change": {
+    "translation": "변경",
+    "category": "Basic"
+  },
+  "improve": {
+    "translation": "개선하다",
+    "category": "Basic"
+  },
+  "decline": {
+    "translation": "거부",
+    "category": "Basic"
+  },
+  "continue": {
+    "translation": "계속",
+    "category": "Basic"
+  },
+  "stop": {
+    "translation": "정지",
+    "category": "Basic"
+  },
+  "begin": {
+    "translation": "시작",
+    "category": "Basic"
+  },
+  "end": {
+    "translation": "끝",
+    "category": "Basic"
+  },
+  "last": {
+    "translation": "마지막",
+    "category": "Basic"
+  },
+  "wake": {
+    "translation": null,
+    "category": "Daily Routine",
+    "failed": true
+  },
+  "get up": {
+    "translation": "아래",
+    "category": "Daily Routine"
+  },
+  "wash": {
+    "translation": "세척",
+    "category": "Daily Routine"
+  },
+  "shower": {
+    "translation": "샤워",
+    "category": "Daily Routine"
+  },
+  "bathe": {
+    "translation": "목욕",
+    "category": "Daily Routine"
+  },
+  "brush": {
+    "translation": "화장지",
+    "category": "Daily Routine"
+  },
+  "comb": {
+    "translation": "발지",
+    "category": "Daily Routine"
+  },
+  "dress": {
+    "translation": "드레스",
+    "category": "Daily Routine"
+  },
+  "eat": {
+    "translation": "먹다",
+    "category": "Daily Routine"
+  },
+  "drink": {
+    "translation": "음료",
+    "category": "Daily Routine"
+  },
+  "snack": {
+    "translation": "간식",
+    "category": "Daily Routine"
+  },
+  "cook": {
+    "translation": "요리사",
+    "category": "Daily Routine"
+  },
+  "bake": {
+    "translation": "굽다",
+    "category": "Daily Routine"
+  },
+  "reheat": {
+    "translation": "데우다",
+    "category": "Daily Routine"
+  },
+  "clean": {
+    "translation": "청결",
+    "category": "Daily Routine"
+  },
+  "tidy": {
+    "translation": "정리",
+    "category": "Daily Routine"
+  },
+  "organize": {
+    "translation": "조직화하다",
+    "category": "Daily Routine"
+  },
+  "vacuum": {
+    "translation": "절구",
+    "category": "Daily Routine"
+  },
+  "sweep": {
+    "translation": "청소",
+    "category": "Daily Routine"
+  },
+  "mop": {
+    "translation": "청소기",
+    "category": "Daily Routine"
+  },
+  "dust": {
+    "translation": "먼지",
+    "category": "Daily Routine"
+  },
+  "wash dishes": {
+    "translation": "이용하기는",
+    "category": "Daily Routine"
+  },
+  "rinse": {
+    "translation": "한국어",
+    "category": "Daily Routine"
+  },
+  "wipe": {
+    "translation": "닦다",
+    "category": "Daily Routine"
+  },
+  "scrub": {
+    "translation": "스크루브",
+    "category": "Daily Routine"
+  },
+  "dry": {
+    "translation": "건",
+    "category": "Daily Routine"
+  },
+  "shop": {
+    "translation": "쇼핑하기",
+    "category": "Daily Routine"
+  },
+  "refill": {
+    "translation": "한국어",
+    "category": "Daily Routine"
+  },
+  "charge": {
+    "translation": "전기",
+    "category": "Daily Routine"
+  },
+  "relax": {
+    "translation": "휴식하다",
+    "category": "Daily Routine"
+  },
+  "nap": {
+    "translation": "낮잠",
+    "category": "Daily Routine"
+  },
+  "sleep": {
+    "translation": "한국어",
+    "category": "Daily Routine"
+  },
+  "prepare": {
+    "translation": "준비",
+    "category": "Daily Routine"
+  },
+  "schedule": {
+    "translation": "스케줄",
+    "category": "Daily Routine"
+  },
+  "cancel": {
+    "translation": "취소",
+    "category": "Daily Routine"
+  },
+  "check": {
+    "translation": "검사",
+    "category": "Daily Routine"
+  },
+  "monitor": {
+    "translation": "모니터",
+    "category": "Daily Routine"
+  },
+  "plan": {
+    "translation": "플랜",
+    "category": "Daily Routine"
+  },
+  "wait": {
+    "translation": "기다리다",
+    "category": "Daily Routine"
+  },
+  "search": {
+    "translation": "검색",
+    "category": "Daily Routine"
+  },
+  "find": {
+    "translation": "발견",
+    "category": "Daily Routine"
+  },
+  "lose": {
+    "translation": "실수하기",
+    "category": "Daily Routine"
+  },
+  "replace": {
+    "translation": "대체",
+    "category": "Daily Routine"
+  },
+  "think": {
+    "translation": "생각하다",
+    "category": "Mental"
+  },
+  "know": {
+    "translation": "알다",
+    "category": "Mental"
+  },
+  "believe": {
+    "translation": "믿음",
+    "category": "Mental"
+  },
+  "consider": {
+    "translation": "고려",
+    "category": "Mental"
+  },
+  "imagine": {
+    "translation": "상상하다",
+    "category": "Mental"
+  },
+  "wonder": {
+    "translation": "위안",
+    "category": "Mental"
+  },
+  "remember": {
+    "translation": "기억하다",
+    "category": "Mental"
+  },
+  "forget": {
+    "translation": "잊다",
+    "category": "Mental"
+  },
+  "realize": {
+    "translation": "실현",
+    "category": "Mental"
+  },
+  "guess": {
+    "translation": "한국어",
+    "category": "Mental"
+  },
+  "predict": {
+    "translation": "예측",
+    "category": "Mental"
+  },
+  "expect": {
+    "translation": "예상",
+    "category": "Mental"
+  },
+  "recognize": {
+    "translation": "인식",
+    "category": "Mental"
+  },
+  "notice": {
+    "translation": "고지",
+    "category": "Mental"
+  },
+  "focus": {
+    "translation": "집중",
+    "category": "Mental"
+  },
+  "concentrate": {
+    "translation": "집중",
+    "category": "Mental"
+  },
+  "decide": {
+    "translation": "결정하다",
+    "category": "Mental"
+  },
+  "choose": {
+    "translation": "선택",
+    "category": "Mental"
+  },
+  "compare": {
+    "translation": "비교",
+    "category": "Mental"
+  },
+  "analyze": {
+    "translation": "분석하다",
+    "category": "Mental"
+  },
+  "evaluate": {
+    "translation": "평가하기",
+    "category": "Mental"
+  },
+  "estimate": {
+    "translation": "추정",
+    "category": "Mental"
+  },
+  "solve": {
+    "translation": "한국어",
+    "category": "Mental"
+  },
+  "question": {
+    "translation": "질문",
+    "category": "Mental"
+  },
+  "suspect": {
+    "translation": "추측",
+    "category": "Mental"
+  },
+  "doubt": {
+    "translation": "의심",
+    "category": "Mental"
+  },
+  "learn": {
+    "translation": "학습",
+    "category": "Mental"
+  },
+  "study": {
+    "translation": "공부",
+    "category": "Mental"
+  },
+  "memorize": {
+    "translation": "기억하다",
+    "category": "Mental"
+  },
+  "calculate": {
+    "translation": "계산",
+    "category": "Mental"
+  },
+  "reflect": {
+    "translation": "사색",
+    "category": "Mental"
+  },
+  "understand": {
+    "translation": "이해",
+    "category": "Mental"
+  },
+  "like": {
+    "translation": "호사",
+    "category": "Mental"
+  },
+  "love": {
+    "translation": "사랑",
+    "category": "Mental"
+  },
+  "hate": {
+    "translation": "좋아하지",
+    "category": "Mental"
+  },
+  "enjoy": {
+    "translation": "즐기다",
+    "category": "Mental"
+  },
+  "prefer": {
+    "translation": "선호하다",
+    "category": "Mental"
+  },
+  "want": {
+    "translation": "원해요",
+    "category": "Mental"
+  },
+  "need": {
+    "translation": "필요",
+    "category": "Mental"
+  },
+  "miss": {
+    "translation": "미",
+    "category": "Mental"
+  },
+  "care": {
+    "translation": "케어",
+    "category": "Mental"
+  },
+  "worry": {
+    "translation": "우려",
+    "category": "Mental"
+  },
+  "fear": {
+    "translation": "두려움",
+    "category": "Mental"
+  },
+  "panic": {
+    "translation": "한국어",
+    "category": "Mental"
+  },
+  "stress": {
+    "translation": "스트레스",
+    "category": "Mental"
+  },
+  "calm": {
+    "translation": "평온",
+    "category": "Mental"
+  },
+  "appreciate": {
+    "translation": "감사하다",
+    "category": "Mental"
+  },
+  "value": {
+    "translation": "가치",
+    "category": "Mental"
+  },
+  "respect": {
+    "translation": "존경",
+    "category": "Mental"
+  },
+  "dislike": {
+    "translation": "한국어",
+    "category": "Mental"
+  },
+  "regret": {
+    "translation": "미안하다",
+    "category": "Mental"
+  },
+  "hope": {
+    "translation": "희망",
+    "category": "Mental"
+  },
+  "trust": {
+    "translation": "신뢰",
+    "category": "Mental"
+  },
+  "surprise": {
+    "translation": "놀람",
+    "category": "Mental"
+  },
+  "shock": {
+    "translation": "충격",
+    "category": "Mental"
+  },
+  "annoy": {
+    "translation": "고민",
+    "category": "Mental"
+  },
+  "bother": {
+    "translation": "고민",
+    "category": "Mental"
+  },
+  "confuse": {
+    "translation": "혼란",
+    "category": "Mental"
+  },
+  "embarrass": {
+    "translation": "당황하다",
+    "category": "Mental"
+  },
+  "frustrate": {
+    "translation": "다",
+    "category": "Mental"
+  },
+  "satisfy": {
+    "translation": "만족",
+    "category": "Mental"
+  },
+  "comfort": {
+    "translation": "안식",
+    "category": "Mental"
+  },
+  "cheer": {
+    "translation": "치아기",
+    "category": "Mental"
+  },
+  "say": {
+    "translation": null,
+    "category": "Communication",
+    "failed": true
+  },
+  "tell": {
+    "translation": "말하기",
+    "category": "Communication"
+  },
+  "talk": {
+    "translation": "말하다",
+    "category": "Communication"
+  },
+  "speak": {
+    "translation": "말하다",
+    "category": "Communication"
+  },
+  "discuss": {
+    "translation": "토론하다",
+    "category": "Communication"
+  },
+  "chat": {
+    "translation": "채팅",
+    "category": "Communication"
+  },
+  "explain": {
+    "translation": "설명",
+    "category": "Communication"
+  },
+  "describe": {
+    "translation": "설명하다",
+    "category": "Communication"
+  },
+  "announce": {
+    "translation": "공지하다",
+    "category": "Communication"
+  },
+  "report": {
+    "translation": "보고서",
+    "category": "Communication"
+  },
+  "reply": {
+    "translation": "답변",
+    "category": "Communication"
+  },
+  "answer": {
+    "translation": "답변",
+    "category": "Communication"
+  },
+  "ask": {
+    "translation": "물어보다",
+    "category": "Communication"
+  },
+  "interrupt": {
+    "translation": "중단하다",
+    "category": "Communication"
+  },
+  "suggest": {
+    "translation": "제안하다",
+    "category": "Communication"
+  },
+  "recommend": {
+    "translation": "추천하다",
+    "category": "Communication"
+  },
+  "complain": {
+    "translation": "고민",
+    "category": "Communication"
+  },
+  "argue": {
+    "translation": "논쟁하다",
+    "category": "Communication"
+  },
+  "debate": {
+    "translation": "토론",
+    "category": "Communication"
+  },
+  "whisper": {
+    "translation": "스스로",
+    "category": "Communication"
+  },
+  "shout": {
+    "translation": "가다리기",
+    "category": "Communication"
+  },
+  "yell": {
+    "translation": "가라앉히다",
+    "category": "Communication"
+  },
+  "mention": {
+    "translation": "언급",
+    "category": "Communication"
+  },
+  "remind": {
+    "translation": "리마인드",
+    "category": "Communication"
+  },
+  "warn": {
+    "translation": "경고하다",
+    "category": "Communication"
+  },
+  "advise": {
+    "translation": "의사",
+    "category": "Communication"
+  },
+  "encourage": {
+    "translation": "격려",
+    "category": "Communication"
+  },
+  "persuade": {
+    "translation": "설득",
+    "category": "Communication"
+  },
+  "invite": {
+    "translation": "초대하다",
+    "category": "Communication"
+  },
+  "respond": {
+    "translation": "응답",
+    "category": "Communication"
+  },
+  "translate": {
+    "translation": "번역하다",
+    "category": "Communication"
+  },
+  "inform": {
+    "translation": "알리다",
+    "category": "Communication"
+  },
+  "comment": {
+    "translation": "댓글",
+    "category": "Communication"
+  },
+  "confirm": {
+    "translation": "확인",
+    "category": "Communication"
+  },
+  "deny": {
+    "translation": "부정하다",
+    "category": "Communication"
+  },
+  "admit": {
+    "translation": "승인",
+    "category": "Communication"
+  },
+  "meet": {
+    "translation": "만나다",
+    "category": "Social"
+  },
+  "greet": {
+    "translation": "안녕하세요",
+    "category": "Social"
+  },
+  "welcome": {
+    "translation": "환영합니다",
+    "category": "Social"
+  },
+  "visit": {
+    "translation": "방문",
+    "category": "Social"
+  },
+  "host": {
+    "translation": "호스트",
+    "category": "Social"
+  },
+  "join": {
+    "translation": "입장",
+    "category": "Social"
+  },
+  "help": {
+    "translation": "한국어",
+    "category": "Social"
+  },
+  "support": {
+    "translation": "지원",
+    "category": "Social"
+  },
+  "assist": {
+    "translation": "지원하다",
+    "category": "Social"
+  },
+  "share": {
+    "translation": "공유",
+    "category": "Social"
+  },
+  "care for": {
+    "translation": "돌보기",
+    "category": "Social"
+  },
+  "hug": {
+    "translation": "안아다리기",
+    "category": "Social"
+  },
+  "kiss": {
+    "translation": "키스",
+    "category": "Social"
+  },
+  "hold hands": {
+    "translation": "손을",
+    "category": "Social"
+  },
+  "date": {
+    "translation": "날짜",
+    "category": "Social"
+  },
+  "marry": {
+    "translation": "결혼하다",
+    "category": "Social"
+  },
+  "befriend": {
+    "translation": "친구로",
+    "category": "Social"
+  },
+  "follow": {
+    "translation": "따르다",
+    "category": "Social"
+  },
+  "lead": {
+    "translation": "주도",
+    "category": "Social"
+  },
+  "guide": {
+    "translation": "가이드",
+    "category": "Social"
+  },
+  "introduce": {
+    "translation": "소개",
+    "category": "Social"
+  },
+  "cooperate": {
+    "translation": "협력",
+    "category": "Social"
+  },
+  "protect": {
+    "translation": "보호",
+    "category": "Social"
+  },
+  "include": {
+    "translation": "포함",
+    "category": "Social"
+  },
+  "exclude": {
+    "translation": "제외",
+    "category": "Social"
+  },
+  "work": {
+    "translation": "일",
+    "category": "Work"
+  },
+  "write": {
+    "translation": "쓰기",
+    "category": "Work"
+  },
+  "read": {
+    "translation": "읽다",
+    "category": "Work"
+  },
+  "edit": {
+    "translation": "편집",
+    "category": "Work"
+  },
+  "revise": {
+    "translation": "수정",
+    "category": "Work"
+  },
+  "review": {
+    "translation": "검토",
+    "category": "Work"
+  },
+  "inspect": {
+    "translation": "검사",
+    "category": "Work"
+  },
+  "complete": {
+    "translation": "완전",
+    "category": "Work"
+  },
+  "submit": {
+    "translation": "제출",
+    "category": "Work"
+  },
+  "create": {
+    "translation": "만들다",
+    "category": "Work"
+  },
+  "design": {
+    "translation": "디자인",
+    "category": "Work"
+  },
+  "build": {
+    "translation": "빌드",
+    "category": "Work"
+  },
+  "assemble": {
+    "translation": "모으다",
+    "category": "Work"
+  },
+  "debug": {
+    "translation": "디버그",
+    "category": "Work"
+  },
+  "research": {
+    "translation": "연구",
+    "category": "Work"
+  },
+  "document": {
+    "translation": "문서",
+    "category": "Work"
+  },
+  "train": {
+    "translation": "열차",
+    "category": "Work"
+  },
+  "teach": {
+    "translation": "가르치다",
+    "category": "Work"
+  },
+  "update": {
+    "translation": "업데이트",
+    "category": "Work"
+  },
+  "upload": {
+    "translation": "업로드",
+    "category": "Work"
+  },
+  "download": {
+    "translation": "다운로드",
+    "category": "Work"
+  },
+  "print": {
+    "translation": "프린트",
+    "category": "Work"
+  },
+  "scan": {
+    "translation": "스캔",
+    "category": "Work"
+  },
+  "record": {
+    "translation": "레코드",
+    "category": "Work"
+  },
+  "track": {
+    "translation": "트랙",
+    "category": "Work"
+  },
+  "manage": {
+    "translation": "관리하다",
+    "category": "Work"
+  },
+  "supervise": {
+    "translation": "감독",
+    "category": "Work"
+  },
+  "go": {
+    "translation": "가",
+    "category": "Travel"
+  },
+  "come": {
+    "translation": "오세요",
+    "category": "Travel"
+  },
+  "move": {
+    "translation": "움직이다",
+    "category": "Travel"
+  },
+  "leave": {
+    "translation": "떠나다",
+    "category": "Travel"
+  },
+  "arrive": {
+    "translation": "도착",
+    "category": "Travel"
+  },
+  "enter": {
+    "translation": "입다",
+    "category": "Travel"
+  },
+  "exit": {
+    "translation": "출구",
+    "category": "Travel"
+  },
+  "travel": {
+    "translation": "여행",
+    "category": "Travel"
+  },
+  "fly": {
+    "translation": "비행",
+    "category": "Travel"
+  },
+  "drive": {
+    "translation": "운전",
+    "category": "Travel"
+  },
+  "ride": {
+    "translation": "타기",
+    "category": "Travel"
+  },
+  "board": {
+    "translation": "보드",
+    "category": "Travel"
+  },
+  "land": {
+    "translation": "토지",
+    "category": "Travel"
+  },
+  "park": {
+    "translation": "공원",
+    "category": "Travel"
+  },
+  "accelerate": {
+    "translation": "가속하다",
+    "category": "Travel"
+  },
+  "reverse": {
+    "translation": "역순",
+    "category": "Travel"
+  },
+  "cross": {
+    "translation": "크로스",
+    "category": "Travel"
+  },
+  "wander": {
+    "translation": "유랑",
+    "category": "Travel"
+  },
+  "explore": {
+    "translation": "한국어",
+    "category": "Travel"
+  },
+  "return": {
+    "translation": "반환",
+    "category": "Travel"
+  },
+  "rush": {
+    "translation": "급하게",
+    "category": "Travel"
+  },
+  "hurry": {
+    "translation": null,
+    "category": "Travel",
+    "failed": true
+  },
+  "navigate": {
+    "translation": "항해하다",
+    "category": "Travel"
+  },
+  "sanitize": {
+    "translation": "한국어",
+    "category": "Household"
+  },
+  "iron": {
+    "translation": "강철",
+    "category": "Household"
+  },
+  "store": {
+    "translation": "매장",
+    "category": "Household"
+  },
+  "repair": {
+    "translation": "수리",
+    "category": "Household"
+  },
+  "fix": {
+    "translation": "수리",
+    "category": "Household"
+  },
+  "disassemble": {
+    "translation": "해체하다",
+    "category": "Household"
+  },
+  "install": {
+    "translation": "설치",
+    "category": "Household"
+  },
+  "uninstall": {
+    "translation": "설치",
+    "category": "Household"
+  },
+  "remove": {
+    "translation": "제거",
+    "category": "Household"
+  },
+  "connect": {
+    "translation": "연결",
+    "category": "Household"
+  },
+  "disconnect": {
+    "translation": "절연",
+    "category": "Household"
+  },
+  "lock": {
+    "translation": "락",
+    "category": "Household"
+  },
+  "unlock": {
+    "translation": "잠금해제",
+    "category": "Household"
+  },
+  "decorate": {
+    "translation": "장식하다",
+    "category": "Household"
+  },
+  "polish": {
+    "translation": "포리시",
+    "category": "Household"
+  },
+  "hammer": {
+    "translation": "채찍",
+    "category": "Household"
+  },
+  "saw": {
+    "translation": "톱",
+    "category": "Household"
+  },
+  "glue": {
+    "translation": "접착제",
+    "category": "Household"
+  },
+  "buy": {
+    "translation": "구매",
+    "category": "Money"
+  },
+  "sell": {
+    "translation": "판매하다",
+    "category": "Money"
+  },
+  "pay": {
+    "translation": "결제",
+    "category": "Money"
+  },
+  "owe": {
+    "translation": "진",
+    "category": "Money"
+  },
+  "borrow": {
+    "translation": "대여",
+    "category": "Money"
+  },
+  "lend": {
+    "translation": "대여하다",
+    "category": "Money"
+  },
+  "rent": {
+    "translation": "임대",
+    "category": "Money"
+  },
+  "save": {
+    "translation": "저장",
+    "category": "Money"
+  },
+  "spend": {
+    "translation": "과도하다",
+    "category": "Money"
+  },
+  "invest": {
+    "translation": "투자",
+    "category": "Money"
+  },
+  "earn": {
+    "translation": "벌리다",
+    "category": "Money"
+  },
+  "refund": {
+    "translation": "한국어",
+    "category": "Money"
+  },
+  "exchange": {
+    "translation": "교환",
+    "category": "Money"
+  },
+  "order": {
+    "translation": "주문",
+    "category": "Money"
+  },
+  "select": {
+    "translation": "선택",
+    "category": "Money"
+  },
+  "withdraw": {
+    "translation": "출금",
+    "category": "Money"
+  },
+  "deposit": {
+    "translation": "예금",
+    "category": "Money"
+  },
+  "budget": {
+    "translation": "예산",
+    "category": "Money"
+  },
+  "fry": {
+    "translation": "조리기",
+    "category": "Food"
+  },
+  "grill": {
+    "translation": "구이기",
+    "category": "Food"
+  },
+  "boil": {
+    "translation": "가열",
+    "category": "Food"
+  },
+  "steam": {
+    "translation": "증기",
+    "category": "Food"
+  },
+  "slice": {
+    "translation": "슬라이스",
+    "category": "Food"
+  },
+  "cut": {
+    "translation": "자르다",
+    "category": "Food"
+  },
+  "chop": {
+    "translation": "절",
+    "category": "Food"
+  },
+  "mix": {
+    "translation": "섞다",
+    "category": "Food"
+  },
+  "stir": {
+    "translation": "스테이크는",
+    "category": "Food"
+  },
+  "pour": {
+    "translation": "주다",
+    "category": "Food"
+  },
+  "serve": {
+    "translation": "서비스",
+    "category": "Food"
+  },
+  "taste": {
+    "translation": "맛",
+    "category": "Food"
+  },
+  "season": {
+    "translation": "시즌",
+    "category": "Food"
+  },
+  "marinate": {
+    "translation": "양념",
+    "category": "Food"
+  },
+  "chew": {
+    "translation": "거",
+    "category": "Food"
+  },
+  "swallow": {
+    "translation": "설리화",
+    "category": "Food"
+  },
+  "deliver": {
+    "translation": "전달",
+    "category": "Food"
+  },
+  "digest": {
+    "translation": "소화",
+    "category": "Food"
+  },
+  "rain": {
+    "translation": "비",
+    "category": "Nature"
+  },
+  "snow": {
+    "translation": "눈",
+    "category": "Nature"
+  },
+  "hail": {
+    "translation": "설날",
+    "category": "Nature"
+  },
+  "sleet": {
+    "translation": "설날",
+    "category": "Nature"
+  },
+  "freeze": {
+    "translation": "얼어",
+    "category": "Nature"
+  },
+  "melt": {
+    "translation": "녹다",
+    "category": "Nature"
+  },
+  "shine": {
+    "translation": "빛",
+    "category": "Nature"
+  },
+  "blow": {
+    "translation": "숨기다",
+    "category": "Nature"
+  },
+  "grow": {
+    "translation": "성장",
+    "category": "Nature"
+  },
+  "bloom": {
+    "translation": "꽃",
+    "category": "Nature"
+  },
+  "wither": {
+    "translation": "시들다",
+    "category": "Nature"
+  },
+  "sprout": {
+    "translation": "순두부",
+    "category": "Nature"
+  },
+  "fall": {
+    "translation": "가을",
+    "category": "Nature"
+  },
+  "quake": {
+    "translation": "지진",
+    "category": "Nature"
+  },
+  "erode": {
+    "translation": "식히다",
+    "category": "Nature"
+  },
+  "burn": {
+    "translation": "태우다",
+    "category": "Nature"
+  },
+  "flood": {
+    "translation": "홍수",
+    "category": "Nature"
+  },
+  "float": {
+    "translation": "떠다니다",
+    "category": "Nature"
+  },
+  "sink": {
+    "translation": "수저대",
+    "category": "Nature"
+  },
+  "rise": {
+    "translation": "등승",
+    "category": "Nature"
+  },
+  "set": {
+    "translation": "설정",
+    "category": "Nature"
+  },
+  "breathe": {
+    "translation": "호흡",
+    "category": "Health"
+  },
+  "inhale": {
+    "translation": "숨",
+    "category": "Health"
+  },
+  "exhale": {
+    "translation": "호흡하다",
+    "category": "Health"
+  },
+  "cough": {
+    "translation": "기침",
+    "category": "Health"
+  },
+  "sneeze": {
+    "translation": "새기",
+    "category": "Health"
+  },
+  "sweat": {
+    "translation": "땀",
+    "category": "Health"
+  },
+  "bleed": {
+    "translation": "출혈",
+    "category": "Health"
+  },
+  "heal": {
+    "translation": "한국어",
+    "category": "Health"
+  },
+  "recover": {
+    "translation": "회복",
+    "category": "Health"
+  },
+  "ache": {
+    "translation": "한국어",
+    "category": "Health"
+  },
+  "hurt": {
+    "translation": "상처",
+    "category": "Health"
+  },
+  "strain": {
+    "translation": "스트레인",
+    "category": "Health"
+  },
+  "exercise": {
+    "translation": "운동",
+    "category": "Health"
+  },
+  "faint": {
+    "translation": "미비하다",
+    "category": "Health"
+  },
+  "vomit": {
+    "translation": "구토",
+    "category": "Health"
+  },
+  "blink": {
+    "translation": "꺼지다",
+    "category": "Health"
+  },
+  "squint": {
+    "translation": "눈",
+    "category": "Health"
+  },
+  "tremble": {
+    "translation": "떨리다",
+    "category": "Health"
+  },
+  "click": {
+    "translation": "클릭",
+    "category": "Technology"
+  },
+  "tap": {
+    "translation": "버스터지기",
+    "category": "Technology"
+  },
+  "scroll": {
+    "translation": "스크롤",
+    "category": "Technology"
+  },
+  "swipe": {
+    "translation": "스와이프",
+    "category": "Technology"
+  },
+  "browse": {
+    "translation": "검색",
+    "category": "Technology"
+  },
+  "upgrade": {
+    "translation": "업그레이드",
+    "category": "Technology"
+  },
+  "copy": {
+    "translation": "복제",
+    "category": "Technology"
+  },
+  "paste": {
+    "translation": "한국어로는",
+    "category": "Technology"
+  },
+  "delete": {
+    "translation": "삭제",
+    "category": "Technology"
+  },
+  "reset": {
+    "translation": "한국어",
+    "category": "Technology"
+  },
+  "restart": {
+    "translation": "재시작",
+    "category": "Technology"
+  },
+  "log in": {
+    "translation": "로그인",
+    "category": "Technology"
+  },
+  "log out": {
+    "translation": "로그아웃",
+    "category": "Technology"
+  },
+  "sync": {
+    "translation": "동기화",
+    "category": "Technology"
+  },
+  "stream": {
+    "translation": "천",
+    "category": "Technology"
+  },
+  "encrypt": {
+    "translation": "암호화",
+    "category": "Technology"
+  },
+  "backup": {
+    "translation": "백업",
+    "category": "Technology"
+  }
+}
