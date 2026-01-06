@@ -13,8 +13,7 @@ const supabaseAdmin = createClient(
 export async function GET(req: NextRequest) {
   const stripe = getStripe()
   try {
-    const nextCookies = await cookies()
-    const supabase = createRouteHandlerClient({ cookies: () => nextCookies })
+    const supabase = createRouteHandlerClient({ cookies })
     
     // Get authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
