@@ -1723,8 +1723,8 @@ export function LanguageSelector() {
     const loadData = async () => {
       setIsLoading(true)
       try {
-        // Load topics from JSON file instead of database to get the reordered version
-        const topicsResponse = await fetch('/data/topics.json')
+        // Load topics from API endpoint to ensure it works in production
+        const topicsResponse = await fetch('/api/topics')
         const topicsData = await topicsResponse.json()
         setTopics(topicsData)
         setDataCache(prev => ({
