@@ -113,9 +113,13 @@ export async function GET(request: NextRequest) {
       const baseUrl = request.url.split('/api/')[0];
       const csvUrl = `${baseUrl}/data/backblaze-urls-20250909-180354.csv`;
       console.log(`🔍 Fetching CSV from: ${csvUrl}`);
+      console.log(`🔍 Full request URL: ${request.url}`);
+      console.log(`🔍 Base URL extracted: ${baseUrl}`);
       
       const csvResponse = await fetch(csvUrl);
+      console.log(`🔍 CSV response status: ${csvResponse.status}`);
       if (!csvResponse.ok) {
+        console.error(`❌ CSV fetch failed: ${csvResponse.status} ${csvResponse.statusText}`);
         throw new Error(`CSV fetch failed: ${csvResponse.status}`);
       }
       
@@ -123,19 +127,26 @@ export async function GET(request: NextRequest) {
       const lines = csvContent.split('\n');
       
       console.log(`🔍 Searching main CSV: ${lines.length} entries for wordId=${wordId}, language=${audioLangCode}`);
+      console.log(`🔍 First few lines of CSV:`, lines.slice(0, 3));
 
       for (let i = 1; i < lines.length; i++) {
         const line = lines[i];
         if (!line.trim()) continue;
 
         const match = line.match(/^"([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)"$/);
-        if (!match) continue;
+        if (!match) {
+          if (i < 5) console.log(`🔍 Line ${i} no match: ${line}`);
+          continue;
+        }
 
         const [, localPath, backblazeURL, language, category, csvFileName] = match;
         
         // Existing pattern: alnilam_{id}_
         const wordIdMatch = csvFileName.match(/alnilam_(\d+)_/);
-        if (!wordIdMatch) continue;
+        if (!wordIdMatch) {
+          if (i < 5) console.log(`🔍 Line ${i} no wordId match in filename: ${csvFileName}`);
+          continue;
+        }
 
         const csvWordId = wordIdMatch[1];
         
@@ -144,6 +155,11 @@ export async function GET(request: NextRequest) {
           filePath = localPath;
           console.log(`✅ Found audio mapping (main): ${fileName} at ${filePath}`);
           break;
+        }
+        
+        // Debug first few matches
+        if (i < 5) {
+          console.log(`🔍 Line ${i} check: csvWordId=${csvWordId}, wordId=${wordId}, language=${language}, audioLangCode=${audioLangCode}, match=${csvWordId === wordId && language === audioLangCode}`);
         }
       }
     } catch (error) {
