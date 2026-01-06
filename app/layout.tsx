@@ -25,7 +25,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${spaceGrotesk.variable} antialiased`}>
       <head>
-        <script src="https://js.puter.com/v2/"></script>
       </head>
       <body className="font-sans" style={{ fontFamily: "var(--font-space-grotesk)" }}>
         <AuthProvider>
