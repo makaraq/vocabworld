@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
 
 // Universal Audio API - B2 Authenticated Access
 // Fetches audio from private B2 bucket using API credentials
@@ -106,16 +104,22 @@ export async function GET(request: NextRequest) {
     const downloadAuthData = await downloadAuthResponse.json();
     console.log('✅ Download authorization successful');
 
-    // Step 3: Find file URL from CSV (check both main CSV and verb CSV)
-    const mainCsvPath = path.join(process.cwd(), 'backblaze-urls-20250909-180354.csv');
-    const verbCsvPath = path.join(process.cwd(), 'scripts/verb-b2-urls-*.csv'); // Find latest verb CSV
-    
+    // Step 3: Find file URL from CSV (check main CSV for audio files)
     let fileName: string | null = null;
     let filePath: string | null = null;
     
-    // First check main CSV for existing audio (topics 1-40)
-    if (fs.existsSync(mainCsvPath)) {
-      const csvContent = fs.readFileSync(mainCsvPath, 'utf-8');
+    try {
+      // Fetch CSV from public directory via HTTP (works in serverless)
+      const baseUrl = request.url.split('/api/')[0];
+      const csvUrl = `${baseUrl}/data/backblaze-urls-20250909-180354.csv`;
+      console.log(`🔍 Fetching CSV from: ${csvUrl}`);
+      
+      const csvResponse = await fetch(csvUrl);
+      if (!csvResponse.ok) {
+        throw new Error(`CSV fetch failed: ${csvResponse.status}`);
+      }
+      
+      const csvContent = await csvResponse.text();
       const lines = csvContent.split('\n');
       
       console.log(`🔍 Searching main CSV: ${lines.length} entries for wordId=${wordId}, language=${audioLangCode}`);
@@ -142,13 +146,8 @@ export async function GET(request: NextRequest) {
           break;
         }
       }
-    }
-    
-    // If not found, check verb CSV for verb audio (topic 41)
-    if (!fileName) {
-      // Note: Scripts directory removed for security - verb audio no longer supported
-      console.log(`⚠️  Verb audio not available - scripts directory removed for security`);
-      // Skip verb CSV processing since scripts directory was removed
+    } catch (error) {
+      console.error('❌ Error reading CSV:', error);
     }
 
     if (!fileName || !filePath) {
