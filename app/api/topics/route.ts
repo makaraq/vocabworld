@@ -30,13 +30,13 @@ export async function GET() {
     }
     
     if (!topics) {
-      // Fallback: return basic topics structure if file not found
+      // Fallback: return basic topics structure as ARRAY (matching topics.json format)
       console.log('🔄 Using fallback topics data')
-      topics = {
-        "1": { "id": 1, "name": "Greetings", "description": "Common greetings and polite expressions", "icon": "👋", "color": "blue", "difficulty": "beginner", "wordCount": 20 },
-        "2": { "id": 2, "name": "Family", "description": "Family members and relationships", "icon": "👨‍👩‍👧‍👦", "color": "green", "difficulty": "beginner", "wordCount": 25 },
-        "3": { "id": 3, "name": "Time & Dates", "description": "Time expressions and date vocabulary", "icon": "⏰", "color": "purple", "difficulty": "beginner", "wordCount": 30 }
-      }
+      topics = [
+        { "id": 1, "name": "Greetings", "description": "Common greetings and polite expressions", "icon": "👋", "color": "blue", "difficulty": "beginner", "wordCount": 20 },
+        { "id": 2, "name": "Family", "description": "Family members and relationships", "icon": "👨‍👩‍👧‍👦", "color": "green", "difficulty": "beginner", "wordCount": 25 },
+        { "id": 3, "name": "Time & Dates", "description": "Time expressions and date vocabulary", "icon": "⏰", "color": "purple", "difficulty": "beginner", "wordCount": 30 }
+      ]
     }
     
     return NextResponse.json(topics)
