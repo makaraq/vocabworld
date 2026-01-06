@@ -1,17 +1,16 @@
 import { NextResponse } from 'next/server'
-import fs from 'fs'
-import path from 'path'
+
+// Import topics data directly instead of reading file at runtime
+import topicsData from '../../../public/data/topics.json'
 
 export async function GET() {
   try {
     console.log('🔍 Topics API called')
-    const topicsPath = path.join(process.cwd(), 'public', 'data', 'topics.json')
-    const topicsData = fs.readFileSync(topicsPath, 'utf8')
-    const topics = JSON.parse(topicsData)
+    console.log('📊 Topics data loaded:', Object.keys(topicsData).length)
     
-    return NextResponse.json(topics)
+    return NextResponse.json(topicsData)
   } catch (error) {
-    console.error('Error reading topics:', error)
+    console.error('❌ Error loading topics:', error)
     return NextResponse.json({ error: 'Failed to load topics' }, { status: 500 })
   }
 }
