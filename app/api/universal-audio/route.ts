@@ -146,65 +146,9 @@ export async function GET(request: NextRequest) {
     
     // If not found, check verb CSV for verb audio (topic 41)
     if (!fileName) {
-      // Find the latest verb CSV file
-      const scriptDir = path.join(process.cwd(), 'scripts');
-      if (fs.existsSync(scriptDir)) {
-        const files = fs.readdirSync(scriptDir);
-        const verbCsvFile = files
-          .filter(f => f.startsWith('verb-b2-urls-') && f.endsWith('.csv'))
-          .sort()
-          .pop(); // Get latest
-        
-        if (verbCsvFile) {
-          const verbCsvFullPath = path.join(scriptDir, verbCsvFile);
-          const verbCsvContent = fs.readFileSync(verbCsvFullPath, 'utf-8');
-          const verbLines = verbCsvContent.split('\n');
-          
-          console.log(`🔍 Searching verb CSV: ${verbLines.length} entries for wordId=${wordId}, language=${audioLangCode}`);
-          
-          // Need to get the verb name from database using wordId
-          const { createClient } = require('@supabase/supabase-js');
-          const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
-          
-          try {
-            const { data: wordData } = await supabase
-              .from('vocabulary')
-              .select('word_en')
-              .eq('id', parseInt(wordId))
-              .single();
-            
-            if (wordData?.word_en) {
-              const verbName = wordData.word_en;
-              console.log(`🔍 Looking for verb: ${verbName}`);
-              
-              for (let i = 1; i < verbLines.length; i++) {
-                const line = verbLines[i];
-                if (!line.trim()) continue;
-
-                const match = line.match(/^"([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)"$/);
-                if (!match) continue;
-
-                const [, localPath, backblazeURL, language, category, csvFileName] = match;
-                
-                // Verb pattern: alnilam_{verbName}_
-                const verbMatch = csvFileName.match(/alnilam_([^_]+)_/);
-                if (!verbMatch) continue;
-
-                const csvVerbName = verbMatch[1];
-                
-                if (csvVerbName === verbName && language === audioLangCode && category === 'Verbs') {
-                  fileName = csvFileName;
-                  filePath = localPath;
-                  console.log(`✅ Found verb audio mapping: ${fileName} at ${filePath}`);
-                  break;
-                }
-              }
-            }
-          } catch (dbError) {
-            console.log(`❌ Database lookup failed for wordId=${wordId}:`, dbError);
-          }
-        }
-      }
+      // Note: Scripts directory removed for security - verb audio no longer supported
+      console.log(`⚠️  Verb audio not available - scripts directory removed for security`);
+      // Skip verb CSV processing since scripts directory was removed
     }
 
     if (!fileName || !filePath) {
