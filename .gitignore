@@ -24,6 +24,16 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
+# Google Service Account Keys (CRITICAL: Never commit these!)
+*.json
+!package.json
+!package-lock.json
+!tsconfig.json
+!components.json
+!capacitor.config.json
+!vercel.json
+!next.config.json
+
 # vercel
 .vercel
 
@@ -48,6 +58,11 @@ capacitor.config.local.ts
 *.log
 .tmp/
 .cache/
+
+# Audio files and scripts (too large and contain sensitive TTS configurations)
+scripts/verb-audio-full/
+generated-audio/
+stripe-cli/
 
 # API key backup files (extra protection)
 **/api_keys.*
