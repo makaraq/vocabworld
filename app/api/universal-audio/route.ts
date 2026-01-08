@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 // Universal Audio API - B2 Authenticated Access
-// Directly constructs B2 paths and streams audio
+// Fetches audio from private B2 bucket using API credentials
 export async function GET(request: NextRequest) {
   try {
-    console.log('🔑 Universal Audio API (B2 Direct) called'); 
+    console.log('🔑 Universal Audio API (B2 Authenticated) called'); 
     const { searchParams } = new URL(request.url);
     const wordId = searchParams.get('wordId');
     const languageCode = searchParams.get('languageCode');
 
-    console.log(`🔑 Audio Request:`, { wordId, languageCode });
+    console.log(`🔑 Authenticated Audio Request:`, { wordId, languageCode });
 
     if (!wordId || !languageCode) {
       return NextResponse.json(
@@ -21,13 +21,6 @@ export async function GET(request: NextRequest) {
     // B2 credentials from environment
     const keyId = process.env.B2_APPLICATION_KEY_ID;
     const applicationKey = process.env.B2_APPLICATION_KEY;
-
-    console.log(`🔑 B2 Credentials check:`, { 
-      keyIdExists: !!keyId, 
-      appKeyExists: !!applicationKey,
-      keyIdLength: keyId?.length || 0,
-      appKeyLength: applicationKey?.length || 0 
-    });
 
     if (!keyId || !applicationKey) {
       console.log('❌ B2 credentials not found in environment');
@@ -84,7 +77,7 @@ export async function GET(request: NextRequest) {
     const authData = await authResponse.json();
     console.log('✅ B2 authorization successful');
 
-    // Step 2: Get download authorization for the bucket
+    // Step 2: Get download authorization
     console.log('🔑 Getting download authorization...');
     
     const downloadAuthResponse = await fetch(`${authData.apiUrl}/b2api/v2/b2_get_download_authorization`, {
@@ -95,7 +88,7 @@ export async function GET(request: NextRequest) {
       },
       body: JSON.stringify({
         bucketId: 'aa1d47dd5cca310593920d1c',
-        fileNamePrefix: '',
+        fileNamePrefix: `${audioLangCode}/`,
         validDurationInSeconds: 3600
       })
     });
@@ -111,82 +104,99 @@ export async function GET(request: NextRequest) {
     const downloadAuthData = await downloadAuthResponse.json();
     console.log('✅ Download authorization successful');
 
-    // Step 3: Try to find the audio file - start with most likely categories first
-    // Categories ordered by likelihood (Greetings and Numbers are most common)
-    const categories = [
-      'Greetings', 'Numbers', 'Time', 'Common_Phrases',  // Most common first
-      'Actions', 'Adjectives', 'Food', 'Home', 'Family', 'Weather',
-      'Emergency', 'Directions', 'Travel', 'Shopping', 
-      'Colors', 'Animals', 'Body', 'Health', 'Clothing', 'Work', 
-      'Education', 'Technology', 'Nature', 'Transportation', 
-      'Entertainment', 'Sports', 'Music', 'Art', 'Religion', 
-      'Politics', 'Business', 'Science', 'Emotions',
-      'Questions', 'Adverbs', 'Prepositions', 'Conjunctions',
-      'Slang', 'Formal', 'Informal'
-    ];
-
-    // Try fewer patterns first - most files use just 1-3 underscores
-    const fileExtensions = ['wav', 'mp3'];
-    const underscorePatterns = ['_', '__', '___', '____']; // Limited patterns to speed up
+    // Step 3: Find file URL from CSV (check main CSV for audio files)
+    let fileName: string | null = null;
+    let filePath: string | null = null;
     
-    let audioBuffer: ArrayBuffer | null = null;
-    let foundPath = '';
-    let contentType = 'audio/wav';
-    let attemptCount = 0;
-
-    // Try each category, extension, and pattern combination (optimized order)
-    categoryLoop: for (const category of categories) {
-      if (audioBuffer) break;
+    try {
+      // Fetch CSV from public directory via HTTP (works in serverless)
+      const baseUrl = request.url.split('/api/')[0];
+      const csvUrl = `${baseUrl}/data/backblaze-urls-20250909-180354.csv`;
+      console.log(`🔍 Fetching CSV from: ${csvUrl}`);
+      console.log(`🔍 Full request URL: ${request.url}`);
+      console.log(`🔍 Base URL extracted: ${baseUrl}`);
       
-      for (const ext of fileExtensions) {
-        if (audioBuffer) break;
+      const csvResponse = await fetch(csvUrl);
+      console.log(`🔍 CSV response status: ${csvResponse.status}`);
+      if (!csvResponse.ok) {
+        console.error(`❌ CSV fetch failed: ${csvResponse.status} ${csvResponse.statusText}`);
+        throw new Error(`CSV fetch failed: ${csvResponse.status}`);
+      }
+      
+      const csvContent = await csvResponse.text();
+      const lines = csvContent.split('\n');
+      
+      console.log(`🔍 Searching main CSV: ${lines.length} entries for wordId=${wordId}, language=${audioLangCode}`);
+      console.log(`🔍 First few lines of CSV:`, lines.slice(0, 3));
+
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i];
+        if (!line.trim()) continue;
+
+        const match = line.match(/^"([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)"$/);
+        if (!match) {
+          if (i < 5) console.log(`🔍 Line ${i} no match: ${line}`);
+          continue;
+        }
+
+        const [, localPath, backblazeURL, language, category, csvFileName] = match;
         
-        for (const pattern of underscorePatterns) {
-          attemptCount++;
-          const fileName = `alnilam_${wordId}${pattern}.${ext}`;
-          const filePath = `${audioLangCode}/${category}/${fileName}`;
-          const downloadUrl = `${authData.downloadUrl}/file/voco-audio-library/${filePath}`;
-          
-          console.log(`🔍 Attempt ${attemptCount}: Trying ${filePath}`);
-          
-          try {
-            const audioResponse = await fetch(downloadUrl, {
-              headers: {
-                'Authorization': downloadAuthData.authorizationToken
-              }
-            });
+        // Existing pattern: alnilam_{id}_
+        const wordIdMatch = csvFileName.match(/alnilam_(\d+)_/);
+        if (!wordIdMatch) {
+          if (i < 5) console.log(`🔍 Line ${i} no wordId match in filename: ${csvFileName}`);
+          continue;
+        }
 
-            console.log(`📁 ${filePath} -> ${audioResponse.status}`);
-
-            if (audioResponse.ok) {
-              audioBuffer = await audioResponse.arrayBuffer();
-              foundPath = filePath;
-              contentType = ext === 'mp3' ? 'audio/mpeg' : 'audio/wav';
-              console.log(`✅ SUCCESS! Found audio at: ${filePath} (${ext}) after ${attemptCount} attempts`);
-              break categoryLoop;
-            }
-          } catch (e) {
-            console.log(`❌ Error fetching ${filePath}:`, e);
-          }
-          
-          // Limit attempts to avoid timeout
-          if (attemptCount > 20) {
-            console.log(`⏰ Stopping search after ${attemptCount} attempts to avoid timeout`);
-            break categoryLoop;
-          }
+        const csvWordId = wordIdMatch[1];
+        
+        if (csvWordId === wordId && language === audioLangCode) {
+          fileName = csvFileName;
+          filePath = localPath;
+          console.log(`✅ Found audio mapping (main): ${fileName} at ${filePath}`);
+          break;
+        }
+        
+        // Debug first few matches
+        if (i < 5) {
+          console.log(`🔍 Line ${i} check: csvWordId=${csvWordId}, wordId=${wordId}, language=${language}, audioLangCode=${audioLangCode}, match=${csvWordId === wordId && language === audioLangCode}`);
         }
       }
+    } catch (error) {
+      console.error('❌ Error reading CSV:', error);
     }
 
-    if (!audioBuffer) {
-      console.log(`❌ Audio file not found for wordId=${wordId}, language=${audioLangCode} after ${attemptCount} attempts`);
+    if (!fileName || !filePath) {
+      console.log(`❌ Audio file not found in CSV for wordId=${wordId}, language=${audioLangCode}`);
       return NextResponse.json(
-        { error: 'Audio file not found', wordId, languageCode: audioLangCode, attempts: attemptCount },
+        { error: 'Audio file not found', wordId, languageCode: audioLangCode },
         { status: 404 }
       );
     }
 
-    console.log(`🔑 Serving audio: ${foundPath} (${audioBuffer.byteLength} bytes) found after ${attemptCount} attempts`);
+    // Step 4: Download file using authenticated URL
+    const authenticatedUrl = `${authData.downloadUrl}/file/voco-audio-library/${filePath}`;
+    console.log(`🌐 Fetching authenticated audio: ${authenticatedUrl}`);
+    
+    const audioResponse = await fetch(authenticatedUrl, {
+      headers: {
+        'Authorization': downloadAuthData.authorizationToken
+      }
+    });
+
+    if (!audioResponse.ok) {
+      console.error(`❌ Authenticated download failed: ${audioResponse.status} ${audioResponse.statusText}`);
+      return NextResponse.json(
+        { error: 'Failed to fetch audio from B2', status: audioResponse.status },
+        { status: 502 }
+      );
+    }
+
+    const audioBuffer = await audioResponse.arrayBuffer();
+    console.log(`🔑 Serving authenticated audio: ${fileName} (${audioBuffer.byteLength} bytes)`);
+
+    // Determine content type based on file extension
+    const contentType = fileName.endsWith('.mp3') ? 'audio/mpeg' : 'audio/wav';
 
     return new NextResponse(audioBuffer, {
       status: 200,
@@ -194,13 +204,15 @@ export async function GET(request: NextRequest) {
         'Content-Type': contentType,
         'Content-Length': audioBuffer.byteLength.toString(),
         'Cache-Control': 'public, max-age=31536000',
+        'Content-Disposition': `inline; filename="${fileName}"`,
         'Access-Control-Allow-Origin': '*',
-        'X-Audio-Source': 'b2-direct',
+        'X-Audio-Source': 'b2-authenticated',
+        'X-Audio-Auth': 'private-bucket',
       },
     });
 
   } catch (error) {
-    console.error('❌ Audio API Error:', error);
+    console.error('❌ Authenticated Audio API Error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

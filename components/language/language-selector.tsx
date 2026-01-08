@@ -1123,7 +1123,7 @@ export function LanguageSelector() {
               // 🔧 UNIVERSAL AUDIO ROUTING - Supports all 47 Azure languages + Alnilam
               const getAudioUrl = (wordId: string | number, languageCode: string) => {
                 console.log(`🌍 Using Universal Audio API for ${languageCode}`);
-                return `/api/universal-audio?wordId=${wordId}&languageCode=${languageCode}`;
+                return `/api/universal-audio-fast?wordId=${wordId}&languageCode=${languageCode}`;
               };
 
               // IMPROVED: Play audio with queuing to prevent browser overwhelm
