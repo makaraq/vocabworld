@@ -48,7 +48,7 @@ capacitor-cordova-android-plugins/
 capacitor-cordova-ios-plugins/
 
 # Large data files
-backblaze-urls-20250909-180354.csv
+# backblaze-urls-20250909-180354.csv - NEEDED for audio API
 
 # Git
 .git
