@@ -12,31 +12,55 @@ function CallbackHandler() {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
-        const { data, error } = await supabase.auth.getSession()
+        // Get the code from URL params for OAuth callback
+        const code = searchParams.get('code')
         
-        if (error) {
-          console.error('Auth error:', error)
-          router.push(`/auth/error?error=${encodeURIComponent(error.message)}`)
+        if (code) {
+          console.log('🔄 Processing OAuth callback with code...')
+          
+          // Exchange code for session
+          const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+          
+          if (error) {
+            console.error('❌ Code exchange error:', error)
+            router.push(`/auth/error?error=${encodeURIComponent(error.message)}`)
+            return
+          }
+
+          if (data.session) {
+            console.log('✅ Authentication successful! User:', data.user.email)
+            // Wait a bit for session to propagate
+            setTimeout(() => {
+              router.push('/')
+            }, 500)
+            return
+          }
+        }
+
+        // Fallback: check existing session
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
+        
+        if (sessionError) {
+          console.error('❌ Session check error:', sessionError)
+          router.push(`/auth/error?error=${encodeURIComponent(sessionError.message)}`)
           return
         }
 
-        if (data.session) {
-          console.log('✅ Authentication successful!')
+        if (sessionData.session) {
+          console.log('✅ Existing session found!')
           router.push('/')
         } else {
-          console.log('No session found, redirecting home')
+          console.log('ℹ️ No session found, redirecting home')
           router.push('/')
         }
       } catch (error) {
-        console.error('Callback error:', error)
+        console.error('❌ Callback error:', error)
         router.push(`/auth/error?error=${encodeURIComponent('Authentication failed')}`)
       }
     }
 
-    // Small delay to ensure auth state is properly updated
-    const timer = setTimeout(handleAuthCallback, 1000)
-    return () => clearTimeout(timer)
-  }, [router, supabase.auth])
+    handleAuthCallback()
+  }, [router, supabase.auth, searchParams])
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">

@@ -7,7 +7,11 @@ import { PRICING } from '@/lib/pricing'
 export async function POST(req: NextRequest) {
   const stripe = getStripe()
   try {
+    console.log('🔍 Headers:', Object.fromEntries(req.headers.entries()))
+    
     const cookieStore = await cookies()
+    const allCookies = cookieStore.getAll()
+    console.log('🍪 Available cookies:', allCookies.map(c => ({ name: c.name, hasValue: !!c.value })))
     
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
