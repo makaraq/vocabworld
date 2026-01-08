@@ -197,15 +197,6 @@ export function PaywallModal({ isOpen, onCloseAction, onSuccessAction }: Paywall
           </div>
         </div>
 
-        {/* Error Message */}
-        {error && (
-          <div className="px-6 pb-4">
-            <div className="bg-red-500/20 border border-red-400/40 rounded-xl p-3 text-red-200 text-sm backdrop-blur-sm">
-              {error}
-            </div>
-          </div>
-        )}
-
         {/* Subscribe Button */}
         <div className="p-6 pt-2 bg-white/5 border-t border-white/10">
           {!user ? (
