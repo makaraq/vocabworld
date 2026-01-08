@@ -45,7 +45,10 @@ export function PaywallModal({ isOpen, onCloseAction, onSuccessAction }: Paywall
           'Cache-Control': 'no-cache'
         },
         credentials: 'include',
-        body: JSON.stringify({ priceType: selectedPlan }),
+        body: JSON.stringify({ 
+          priceType: selectedPlan,
+          userId: user.id  // Include user ID for server-side validation
+        }),
       })
       
       const data = await response.json()
