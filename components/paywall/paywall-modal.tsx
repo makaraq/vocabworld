@@ -33,20 +33,30 @@ export function PaywallModal({ isOpen, onCloseAction, onSuccessAction }: Paywall
       return
     }
     
+    console.log('🔐 User authenticated, proceeding with subscription:', user.email)
     setLoading(true)
     setError(null)
     
     try {
       const response = await fetch('/api/subscription/checkout', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache'
+        },
+        credentials: 'include',
         body: JSON.stringify({ priceType: selectedPlan }),
       })
       
       const data = await response.json()
       
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to create checkout')
+        console.error('❌ API Error:', {
+          status: response.status,
+          statusText: response.statusText,
+          data
+        })
+        throw new Error(data.error || `Failed to create checkout (${response.status})`)
       }
       
       if (data.url) {
@@ -67,10 +77,13 @@ export function PaywallModal({ isOpen, onCloseAction, onSuccessAction }: Paywall
     setLoading(true)
     setError(null)
     try {
+      console.log('🔑 Starting Google sign-in flow...')
       await signInWithGoogle()
+      console.log('✅ Sign-in completed')
     } catch (err: any) {
       console.error('❌ Sign in error:', err)
       setError(err.message || 'Failed to sign in')
+    } finally {
       setLoading(false)
     }
   }

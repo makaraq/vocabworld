@@ -35,8 +35,21 @@ export async function POST(req: NextRequest) {
     // Get authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    console.log('🔍 Auth check:', { 
+      hasUser: !!user, 
+      userId: user?.id, 
+      email: user?.email,
+      authError: authError?.message 
+    })
+    
+    if (authError) {
+      console.error('❌ Auth error:', authError)
+      return NextResponse.json({ error: 'Authentication failed' }, { status: 401 })
+    }
+    
+    if (!user) {
+      console.error('❌ No user found in session')
+      return NextResponse.json({ error: 'Please sign in to continue' }, { status: 401 })
     }
     
     const { priceType } = await req.json()
