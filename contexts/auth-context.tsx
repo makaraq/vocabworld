@@ -186,9 +186,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
         console.log('🎉 Subscription just activated, refreshing with polling...')
         localStorage.removeItem('subscriptionJustActivated')
         
+        // Immediately set premium to true optimistically
+        setSubscriptionStatus(prev => ({
+          ...prev,
+          isPremium: true
+        }))
+        
         // Poll for subscription status a few times (webhook may take a moment)
         let attempts = 0
-        const maxAttempts = 5
+        const maxAttempts = 8 // Increased attempts
         
         const pollSubscription = async (): Promise<boolean> => {
           await refreshSubscription()
@@ -196,6 +202,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
           const response = await fetch('/api/subscription/status')
           const data = await response.json()
           console.log(`📊 Poll attempt ${attempts + 1}:`, data)
+          
+          if (data.isPremium) {
+            setSubscriptionStatus(data)
+          }
+          
           return data.isPremium === true
         }
         
@@ -207,13 +218,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
           }
           attempts++
           if (attempts < maxAttempts) {
-            console.log(`⏳ Waiting 2s before retry ${attempts + 1}/${maxAttempts}...`)
-            await new Promise(resolve => setTimeout(resolve, 2000))
+            console.log(`⏳ Waiting 3s before retry ${attempts + 1}/${maxAttempts}...`)
+            await new Promise(resolve => setTimeout(resolve, 3000)) // Increased delay
           }
         }
         
         if (attempts >= maxAttempts) {
-          console.log('⚠️ Subscription may still be processing, try refreshing the page')
+          console.log('⚠️ Subscription may still be processing, but access is granted')
+          // Keep optimistic premium status even if polling didn't confirm
         }
       }
     }

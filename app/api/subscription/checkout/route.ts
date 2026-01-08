@@ -142,8 +142,8 @@ export async function POST(req: NextRequest) {
         },
       ],
       mode: 'subscription',
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}?payment_success=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}`,
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://vocabworld-x843.vercel.app'}?payment_success=true&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://vocabworld-x843.vercel.app'}`,
       metadata: {
         supabase_user_id: user.id,
         plan_type: priceType,
