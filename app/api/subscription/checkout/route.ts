@@ -7,8 +7,6 @@ import { PRICING } from '@/lib/pricing'
 export async function POST(req: NextRequest) {
   const stripe = getStripe()
   try {
-    console.log('🔍 Headers:', Object.fromEntries(req.headers.entries()))
-    
     const cookieStore = await cookies()
     const allCookies = cookieStore.getAll()
     console.log('🍪 Available cookies:', allCookies.map(c => ({ name: c.name, hasValue: !!c.value })))
@@ -23,27 +21,43 @@ export async function POST(req: NextRequest) {
           },
           setAll(cookiesToSet) {
             try {
-              cookiesToSet.forEach(({ name, value, options }) =>
-                cookieStore.set(name, value, options)
-              )
-            } catch {
-              // The `setAll` method was called from a Server Component.
-              // This can be ignored if you have middleware refreshing
-              // user sessions.
+              cookiesToSet.forEach(({ name, value, options }) => {
+                cookieStore.set(name, value, {
+                  ...options,
+                  httpOnly: false,
+                  secure: process.env.NODE_ENV === 'production',
+                  sameSite: 'lax'
+                })
+              })
+            } catch (error) {
+              console.log('⚠️ Cookie setting error:', error)
             }
           },
         },
       }
     )
     
-    // Get authenticated user
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    // Get authenticated user with fallback refresh
+    let { data: { user }, error: authError } = await supabase.auth.getUser()
+    
+    // If getUser fails, try refreshing the session first
+    if (authError && authError.message.includes('JWT')) {
+      console.log('🔄 JWT error detected, attempting session refresh...')
+      const { error: refreshError } = await supabase.auth.refreshSession()
+      if (!refreshError) {
+        // Retry getting user after refresh
+        const retry = await supabase.auth.getUser()
+        user = retry.data?.user || null
+        authError = retry.error
+      }
+    }
     
     console.log('🔍 Auth check:', { 
       hasUser: !!user, 
       userId: user?.id, 
       email: user?.email,
-      authError: authError?.message 
+      authError: authError?.message,
+      cookies: allCookies.filter(c => c.name.includes('supabase')).length
     })
     
     if (authError) {

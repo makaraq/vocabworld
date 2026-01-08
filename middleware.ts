@@ -6,12 +6,13 @@ export async function middleware(req: NextRequest) {
   const res = NextResponse.next()
   const pathname = req.nextUrl.pathname
 
-  // Skip middleware for static files and API routes that don't need auth
+  // Skip middleware for static files but INCLUDE API routes that need auth
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/favicon.ico') ||
     pathname.startsWith('/api/universal-audio') ||
-    pathname.startsWith('/icons')
+    pathname.startsWith('/icons') ||
+    pathname.includes('.')  // Skip other static files
   ) {
     return res
   }
@@ -20,15 +21,20 @@ export async function middleware(req: NextRequest) {
     // Create a Supabase client configured to use cookies
     const supabase = createMiddlewareClient({ req, res })
 
-    // Refresh session if expired - required for Server Components
+    // Refresh session if expired - required for Server Components AND API routes
     const { data: { session }, error } = await supabase.auth.getSession()
     
     if (error) {
       console.log('⚠️ Middleware auth error:', error.message)
     } else if (session) {
-      console.log('✅ Middleware: User authenticated:', session.user.email)
+      console.log('✅ Middleware: User authenticated:', session.user.email, 'for', pathname)
+      
+      // For API routes, ensure session is fresh
+      if (pathname.startsWith('/api/')) {
+        await supabase.auth.refreshSession()
+      }
     } else {
-      console.log('ℹ️ Middleware: No session found')
+      console.log('ℹ️ Middleware: No session found for', pathname)
     }
 
     return res
