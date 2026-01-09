@@ -20,10 +20,6 @@ export function PaymentSuccessHandler() {
       if (paymentSuccess === 'true') {
         console.log('🎉 Payment successful! Session ID:', sessionId)
         
-        // Clear the URL parameters but keep the user signed in
-        const newUrl = window.location.pathname
-        router.replace(newUrl, { scroll: false })
-        
         // IMMEDIATELY force premium access
         forceSetPremium()
         console.log('🔥 FORCED PREMIUM ACCESS ACTIVATED')
@@ -33,23 +29,46 @@ export function PaymentSuccessHandler() {
         localStorage.setItem('paymentCompletedAt', Date.now().toString())
         localStorage.setItem('forcePremuimAccess', 'true') // Backup flag
         
-        // Clean up payment progress flags
-        localStorage.removeItem('paymentInProgress')
-        localStorage.removeItem('userIdBeforePayment')
-        localStorage.removeItem('authStateBeforePayment')
-        
         // Set cleanup timer to remove temporary flags after 10 minutes
         setTimeout(() => {
           localStorage.removeItem('forcePremuimAccess')
           console.log('🧹 Cleaned up temporary premium access flags')
         }, 600000) // 10 minutes
         
-        // Show success toast
+        // Clean up payment progress flags
+        localStorage.removeItem('paymentInProgress')
+        const urlBeforePayment = localStorage.getItem('urlBeforePayment')
+        const topicBeforePayment = localStorage.getItem('topicBeforePayment')
+        const authStateBeforePayment = localStorage.getItem('authStateBeforePayment')
+        
+        localStorage.removeItem('userIdBeforePayment')
+        localStorage.removeItem('authStateBeforePayment')
+        localStorage.removeItem('urlBeforePayment')
+        localStorage.removeItem('topicBeforePayment')
+        
+        // Show success toast first
         toast({
           title: "🎉 Payment Successful!",
           description: "Welcome to VOCO Premium! All topics are now unlocked.",
           duration: 8000,
         })
+        
+        // If we have the original URL/topic, redirect back to it
+        if (urlBeforePayment && urlBeforePayment !== '/' && urlBeforePayment !== window.location.pathname) {
+          console.log('🔄 Restoring original location:', urlBeforePayment)
+          setTimeout(() => {
+            router.push(urlBeforePayment)
+          }, 1000) // Small delay to let the toast show
+        } else if (topicBeforePayment) {
+          console.log('🔄 Restoring to topic:', topicBeforePayment)
+          setTimeout(() => {
+            router.push(`/?topic=${topicBeforePayment}`)
+          }, 1000)
+        } else {
+          // Just clear URL params and stay on current page
+          const newUrl = window.location.pathname
+          router.replace(newUrl, { scroll: false })
+        }
         
         // Force refresh subscription status immediately and multiple times
         const forceRefresh = async () => {

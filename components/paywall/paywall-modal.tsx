@@ -72,7 +72,21 @@ export function PaywallModal({ isOpen, onCloseAction, onSuccessAction }: Paywall
           timestamp: Date.now()
         }))
         
-        console.log('🔄 Redirecting to Stripe checkout...')
+        // Store the current app state to return to after payment
+        const currentUrl = window.location.pathname + window.location.search + window.location.hash
+        localStorage.setItem('urlBeforePayment', currentUrl)
+        
+        // Try to get current topic context from URL or state
+        const currentTopic = new URLSearchParams(window.location.search).get('topic')
+        if (currentTopic) {
+          localStorage.setItem('topicBeforePayment', currentTopic)
+        }
+        
+        console.log('🔄 Redirecting to Stripe checkout...', { 
+          currentUrl, 
+          currentTopic,
+          userId: user.id 
+        })
         window.location.href = data.url
       } else {
         throw new Error('No checkout URL returned')

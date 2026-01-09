@@ -77,6 +77,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
       localStorage.setItem('forcedPremiumAccess', 'true')
       localStorage.setItem('forcedPremiumAt', Date.now().toString())
       localStorage.removeItem('paymentInProgress')
+      
+      // Try to restore auth state if user got signed out
+      const authStateBeforePayment = localStorage.getItem('authStateBeforePayment')
+      if (authStateBeforePayment) {
+        try {
+          const authData = JSON.parse(authStateBeforePayment)
+          console.log('🔄 Attempting to restore auth state:', authData.email)
+          // The auth state will be handled by the payment success handler
+        } catch (error) {
+          console.error('Failed to parse auth state:', error)
+        }
+      }
     }
     
     if (forcedAccess === 'true' && forcedAt) {
