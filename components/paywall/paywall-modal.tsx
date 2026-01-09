@@ -63,8 +63,16 @@ export function PaywallModal({ isOpen, onCloseAction, onSuccessAction }: Paywall
       }
       
       if (data.url) {
-        // Store that we're about to go to payment
+        // Store that we're about to go to payment and preserve auth state
         localStorage.setItem('paymentInProgress', 'true')
+        localStorage.setItem('userIdBeforePayment', user.id)
+        localStorage.setItem('authStateBeforePayment', JSON.stringify({
+          email: user.email,
+          id: user.id,
+          timestamp: Date.now()
+        }))
+        
+        console.log('🔄 Redirecting to Stripe checkout...')
         window.location.href = data.url
       } else {
         throw new Error('No checkout URL returned')

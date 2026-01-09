@@ -72,6 +72,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if (FREE_TOPIC_IDS.includes(topicId)) {
       return true
     }
+    
+    // Check for recent payment completion (force premium access)
+    const forceAccess = localStorage.getItem('forcePremuimAccess')
+    const paymentCompletedAt = localStorage.getItem('paymentCompletedAt')
+    
+    if (forceAccess === 'true' || (paymentCompletedAt && Date.now() - parseInt(paymentCompletedAt) < 300000)) { // 5 minutes grace period
+      console.log('✅ Granting premium access due to recent payment')
+      return true
+    }
+    
     // Premium topics require subscription
     return subscriptionStatus?.isPremium ?? false
   }, [subscriptionStatus])
@@ -162,9 +172,27 @@ export function AuthProvider({ children }: AuthProviderProps) {
           setUser(currentUser)
           
           if (currentUser) {
+            // Check for recent payment to preserve subscription status
+            const paymentCompletedAt = localStorage.getItem('paymentCompletedAt')
+            const recentPayment = paymentCompletedAt && Date.now() - parseInt(paymentCompletedAt) < 300000 // 5 minutes
+            
+            if (recentPayment) {
+              console.log('🎉 Recent payment detected, maintaining premium status during auth change')
+              setSubscriptionStatus(prev => ({
+                ...prev,
+                isPremium: true
+              }))
+            }
+            
             await fetchSubscriptionStatus()
           } else {
-            setSubscriptionStatus(null)
+            // Only reset subscription if no recent payment
+            const paymentCompletedAt = localStorage.getItem('paymentCompletedAt')
+            const recentPayment = paymentCompletedAt && Date.now() - parseInt(paymentCompletedAt) < 300000
+            
+            if (!recentPayment) {
+              setSubscriptionStatus(null)
+            }
           }
           
           setLoading(false)
@@ -191,6 +219,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
           ...prev,
           isPremium: true
         }))
+        
+        console.log('🔒 Premium access granted optimistically after payment')
         
         // Poll for subscription status a few times (webhook may take a moment)
         let attempts = 0
