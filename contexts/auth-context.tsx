@@ -27,6 +27,7 @@ interface AuthContextType {
   signOut: () => Promise<void>
   refreshSubscription: () => Promise<void>
   canAccessTopic: (topicId: number) => boolean
+  forceSetPremium: () => void  // Add direct premium setter
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
@@ -48,7 +49,50 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [loading, setLoading] = useState(true)
   const [subscriptionStatus, setSubscriptionStatus] = useState<SubscriptionStatus | null>(null)
   const [subscriptionLoading, setSubscriptionLoading] = useState(false)
+  const [forcedPremium, setForcedPremium] = useState(false)  // Local premium override
   const supabase = createClientComponentClient()
+
+  // Force set premium status (for post-payment)
+  const forceSetPremium = useCallback(() => {
+    console.log('🔥 FORCING PREMIUM ACCESS')
+    setForcedPremium(true)
+    setSubscriptionStatus(prev => ({
+      ...prev,
+      isPremium: true
+    }))
+    localStorage.setItem('forcedPremiumAccess', 'true')
+    localStorage.setItem('forcedPremiumAt', Date.now().toString())
+  }, [])
+
+  // Check for forced premium access on load
+  useEffect(() => {
+    const forcedAccess = localStorage.getItem('forcedPremiumAccess')
+    const forcedAt = localStorage.getItem('forcedPremiumAt')
+    const paymentInProgress = localStorage.getItem('paymentInProgress')
+    
+    // Check if user just returned from payment (even without URL param)
+    if (paymentInProgress === 'true') {
+      console.log('🔥 User returned from payment, forcing premium access')
+      setForcedPremium(true)
+      localStorage.setItem('forcedPremiumAccess', 'true')
+      localStorage.setItem('forcedPremiumAt', Date.now().toString())
+      localStorage.removeItem('paymentInProgress')
+    }
+    
+    if (forcedAccess === 'true' && forcedAt) {
+      const timeSinceForced = Date.now() - parseInt(forcedAt)
+      if (timeSinceForced < 3600000) { // 1 hour grace period
+        console.log('🔥 Restoring forced premium access')
+        setForcedPremium(true)
+      } else {
+        localStorage.removeItem('forcedPremiumAccess')
+        localStorage.removeItem('forcedPremiumAt')
+      }
+    }
+  }, [])
+
+  // Calculate isPremium with forced override priority
+  const isPremium = forcedPremium || subscriptionStatus?.isPremium || false
 
   // Fetch subscription status
   const fetchSubscriptionStatus = useCallback(async () => {
@@ -73,6 +117,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
       return true
     }
     
+    // Check forced premium first (highest priority)
+    if (forcedPremium) {
+      console.log('✅ Access granted via forced premium')
+      return true
+    }
+    
     // Check for recent payment completion (force premium access)
     const forceAccess = localStorage.getItem('forcePremuimAccess')
     const paymentCompletedAt = localStorage.getItem('paymentCompletedAt')
@@ -83,8 +133,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
     
     // Premium topics require subscription
-    return subscriptionStatus?.isPremium ?? false
-  }, [subscriptionStatus])
+    const hasPremium = subscriptionStatus?.isPremium ?? false
+    console.log('🔍 Access check:', { topicId, hasPremium, forcedPremium })
+    return hasPremium
+  }, [subscriptionStatus, forcedPremium])
 
   // Refresh subscription (call after payment)
   const refreshSubscription = useCallback(async () => {
@@ -263,8 +315,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     checkPaymentReturn()
   }, [refreshSubscription])
 
-  const isPremium = subscriptionStatus?.isPremium ?? false
-
   return (
     <AuthContext.Provider
       value={{
@@ -278,6 +328,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         signOut,
         refreshSubscription,
         canAccessTopic,
+        forceSetPremium,
       }}
     >
       {children}

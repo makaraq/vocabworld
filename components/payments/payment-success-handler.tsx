@@ -9,7 +9,7 @@ export function PaymentSuccessHandler() {
   const { toast } = useToast()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { refreshSubscription, user } = useAuth()
+  const { refreshSubscription, user, forceSetPremium } = useAuth()
 
   // Handle payment success
   useEffect(() => {
@@ -23,6 +23,10 @@ export function PaymentSuccessHandler() {
         // Clear the URL parameters but keep the user signed in
         const newUrl = window.location.pathname
         router.replace(newUrl, { scroll: false })
+        
+        // IMMEDIATELY force premium access
+        forceSetPremium()
+        console.log('🔥 FORCED PREMIUM ACCESS ACTIVATED')
         
         // Set multiple flags for subscription activation
         localStorage.setItem('subscriptionJustActivated', 'true')
