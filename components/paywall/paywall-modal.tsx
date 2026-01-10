@@ -10,11 +10,29 @@ interface PaywallModalProps {
   isOpen: boolean
   onCloseAction: () => void
   onSuccessAction?: () => void
+  // Current language selection to preserve through payment flow
   nativeLanguageCode?: string
   targetLanguageCode?: string
 }
 
-export function PaywallModal({ isOpen, onCloseAction, onSuccessAction, nativeLanguageCode, targetLanguageCode }: PaywallModalProps) {
+/**
+ * Paywall Modal Component
+ * Handles subscription checkout with language preservation
+ * 
+ * Flow:
+ * 1. User clicks subscribe
+ * 2. Language codes are saved to localStorage
+ * 3. User redirects to Stripe
+ * 4. After payment, redirects to /subscription/success
+ * 5. Success page restores languages and redirects to app
+ */
+export function PaywallModal({ 
+  isOpen, 
+  onCloseAction, 
+  onSuccessAction, 
+  nativeLanguageCode, 
+  targetLanguageCode 
+}: PaywallModalProps) {
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('yearly')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -33,20 +51,35 @@ export function PaywallModal({ isOpen, onCloseAction, onSuccessAction, nativeLan
     setError(null)
     
     try {
-      // Check if user is logged in
+      // Validate user is logged in
       if (!user) {
         throw new Error('Please sign in to subscribe')
       }
       
-      // Get the access token from auth context
+      // Get access token
       const accessToken = await getAccessToken()
-      
       if (!accessToken) {
         throw new Error('Session expired. Please sign in again.')
       }
       
-      console.log('🔑 Got access token, calling checkout API...')
+      console.log('💳 Starting checkout...', { 
+        plan: selectedPlan,
+        nativeLanguage: nativeLanguageCode,
+        targetLanguage: targetLanguageCode 
+      })
       
+      // CRITICAL: Save language selection BEFORE redirecting to Stripe
+      if (nativeLanguageCode) {
+        localStorage.setItem('paymentLanguageNative', nativeLanguageCode)
+        console.log('💾 Saved native language:', nativeLanguageCode)
+      }
+      if (targetLanguageCode) {
+        localStorage.setItem('paymentLanguageTarget', targetLanguageCode)
+        console.log('💾 Saved target language:', targetLanguageCode)
+      }
+      localStorage.setItem('paymentInProgress', 'true')
+      
+      // Call checkout API
       const response = await fetch('/api/subscription/checkout', {
         method: 'POST',
         headers: { 
@@ -64,14 +97,7 @@ export function PaywallModal({ isOpen, onCloseAction, onSuccessAction, nativeLan
       }
       
       if (data.url) {
-        // Store payment state and language selection for restoration after payment
-        localStorage.setItem('paymentInProgress', 'true')
-        if (nativeLanguageCode) {
-          localStorage.setItem('paymentLanguageNative', nativeLanguageCode)
-        }
-        if (targetLanguageCode) {
-          localStorage.setItem('paymentLanguageTarget', targetLanguageCode)
-        }
+        // Redirect to Stripe Checkout
         window.location.href = data.url
       } else {
         throw new Error('No checkout URL returned')
@@ -80,6 +106,8 @@ export function PaywallModal({ isOpen, onCloseAction, onSuccessAction, nativeLan
       console.error('❌ Subscription error:', err)
       setError(err.message || 'Something went wrong')
       setLoading(false)
+      // Clean up on error
+      localStorage.removeItem('paymentInProgress')
     }
   }
 
@@ -200,34 +228,38 @@ export function PaywallModal({ isOpen, onCloseAction, onSuccessAction, nativeLan
 
         {/* Error Message */}
         {error && (
-          <div className="px-6 pb-4">
-            <div className="bg-red-500/20 border border-red-400/40 rounded-xl p-3 text-red-200 text-sm backdrop-blur-sm">
-              {error}
-            </div>
+          <div className="mx-6 mb-4 p-3 bg-red-500/20 border border-red-500/30 rounded-xl">
+            <p className="text-red-200 text-sm text-center">{error}</p>
           </div>
         )}
 
         {/* Subscribe Button */}
-        <div className="p-6 pt-2 bg-white/5 border-t border-white/10">
+        <div className="p-6 pt-2">
           <button
             onClick={handleSubscribe}
-            disabled={loading}
-            className="w-full py-4 bg-gradient-to-r from-green-400 to-emerald-500 hover:from-green-500 hover:to-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-2xl text-white font-semibold text-lg transition-all shadow-lg hover:shadow-xl hover:shadow-green-500/20 border border-white/20 flex items-center justify-center gap-2"
+            disabled={loading || !user}
+            className="w-full py-4 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white font-bold text-lg rounded-2xl shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {loading ? (
               <>
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                <span className="drop-shadow">Processing...</span>
+                <span>Processing...</span>
               </>
             ) : (
               <>
-                <Icon icon="solar:shield-check-bold" className="w-5 h-5 drop-shadow" />
-                <span className="drop-shadow">Subscribe Now</span>
+                <Icon icon="solar:crown-bold" className="w-5 h-5" />
+                <span>Subscribe Now</span>
               </>
             )}
           </button>
           
-          <p className="text-center text-white/50 text-xs mt-3 drop-shadow">
+          {!user && (
+            <p className="text-center text-white/60 text-sm mt-3">
+              Please sign in to subscribe
+            </p>
+          )}
+          
+          <p className="text-center text-white/50 text-xs mt-4">
             Cancel anytime • Secure payment via Stripe
           </p>
         </div>

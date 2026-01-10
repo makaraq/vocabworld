@@ -4,60 +4,63 @@ import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/contexts/auth-context'
 
+/**
+ * Welcome Overlay Component
+ * Shows sign-in prompt for unauthenticated users
+ * Automatically hides when:
+ * - User is authenticated
+ * - User is returning from payment
+ * - User has skipped before
+ */
 export function WelcomeOverlay() {
   const { user, signInWithGoogle, loading } = useAuth()
   const [isSigningIn, setIsSigningIn] = useState(false)
-  const [showWelcome, setShowWelcome] = useState(false)
-  const [hasBeenSkipped, setHasBeenSkipped] = useState(false)
-  const [isPaymentReturn, setIsPaymentReturn] = useState(false)
+  const [showOverlay, setShowOverlay] = useState(false)
   
   useEffect(() => {
-    // Check if user previously skipped welcome screen
-    const skipped = localStorage.getItem('welcome-skipped')
-    if (skipped === 'true') {
-      setHasBeenSkipped(true)
+    // Don't show while loading
+    if (loading) return
+    
+    // Don't show if user is authenticated
+    if (user) {
+      setShowOverlay(false)
+      return
     }
     
-    // Check if returning from payment - don't show welcome overlay
-    const paymentInProgress = localStorage.getItem('paymentInProgress')
-    const subscriptionJustActivated = localStorage.getItem('subscriptionJustActivated')
-    const restoreToTopicView = localStorage.getItem('restoreToTopicView')
+    // Check for payment return - don't show overlay if returning from Stripe
+    const isPaymentReturn = 
+      localStorage.getItem('paymentInProgress') === 'true' ||
+      localStorage.getItem('subscriptionJustActivated') === 'true' ||
+      localStorage.getItem('restoreLanguages') === 'true'
     
-    if (paymentInProgress === 'true' || subscriptionJustActivated === 'true' || restoreToTopicView === 'true') {
-      console.log('🎉 Payment return detected - skipping welcome overlay')
-      setIsPaymentReturn(true)
+    if (isPaymentReturn) {
+      console.log('🎉 Payment return detected - hiding welcome overlay')
+      setShowOverlay(false)
+      return
     }
-  }, [])
-  
-  useEffect(() => {
-    // Only show welcome if:
-    // 1. Not loading
-    // 2. No authenticated user
-    // 3. User hasn't manually dismissed it
-    // 4. User hasn't skipped it before
-    // 5. Not returning from payment
-    if (!loading) {
-      if (!user && !hasBeenSkipped && !isPaymentReturn) {
-        // Add a small delay to ensure session has time to be restored
-        const timer = setTimeout(() => {
-          // Double-check user state after delay
-          if (!user && !hasBeenSkipped && !isPaymentReturn) {
-            setShowWelcome(true)
-          }
-        }, 500)
-        return () => clearTimeout(timer)
-      } else {
-        setShowWelcome(false)
-        setIsSigningIn(false)
+    
+    // Check if user previously skipped
+    const hasSkipped = localStorage.getItem('welcome-skipped') === 'true'
+    if (hasSkipped) {
+      setShowOverlay(false)
+      return
+    }
+    
+    // Show overlay for unauthenticated users after a brief delay
+    const timer = setTimeout(() => {
+      if (!user) {
+        setShowOverlay(true)
       }
-    }
-  }, [loading, user, hasBeenSkipped, isPaymentReturn])
+    }, 300)
+    
+    return () => clearTimeout(timer)
+  }, [loading, user])
   
   const handleGoogleSignIn = async () => {
     setIsSigningIn(true)
     try {
       await signInWithGoogle()
-      // OAuth will redirect, so we keep the loading state
+      // OAuth will redirect, keep loading state
     } catch (error) {
       console.error('Sign in failed:', error)
       setIsSigningIn(false)
@@ -65,13 +68,12 @@ export function WelcomeOverlay() {
   }
   
   const handleSkip = () => {
-    setShowWelcome(false)
-    setHasBeenSkipped(true)
+    setShowOverlay(false)
     localStorage.setItem('welcome-skipped', 'true')
   }
   
-  // Don't render if loading, user is authenticated, manually hidden, or payment return
-  if (loading || user || !showWelcome || isPaymentReturn) {
+  // Don't render if conditions not met
+  if (loading || user || !showOverlay) {
     return null
   }
 
@@ -87,9 +89,8 @@ export function WelcomeOverlay() {
           <h1 className="text-3xl font-bold text-white mb-3 tracking-wide leading-tight drop-shadow-lg">
             WELCOME TO VOCABWORLD!
           </h1>
-          
           <p className="text-white/90 text-base drop-shadow">
-            Sign into your account
+            Sign in to track your progress
           </p>
         </div>
         
@@ -114,6 +115,14 @@ export function WelcomeOverlay() {
             Continue with Google
           </Button>
         )}
+        
+        {/* Skip Button */}
+        <button
+          onClick={handleSkip}
+          className="text-white/60 hover:text-white/90 text-sm transition-colors"
+        >
+          Skip for now
+        </button>
       </div>
     </div>
   )

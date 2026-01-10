@@ -1,42 +1,67 @@
 'use client'
 
-import { useEffect, Suspense } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import { Icon } from '@iconify/react'
 
+/**
+ * Subscription Success Page
+ * 
+ * This page is where Stripe redirects after successful payment.
+ * 
+ * Flow:
+ * 1. User arrives from Stripe checkout
+ * 2. Restore saved language codes to main storage
+ * 3. Set flags for the main app to detect
+ * 4. Redirect to home page
+ * 5. Home page sees restoreLanguages flag and shows topic slider
+ */
 function SuccessContent() {
   const router = useRouter()
+  const [restoredLanguages, setRestoredLanguages] = useState<{native: string | null, target: string | null}>({
+    native: null,
+    target: null
+  })
 
   useEffect(() => {
-    // Mark subscription as just activated for the main app to detect
-    localStorage.setItem('subscriptionJustActivated', 'true')
+    console.log('🎉 Payment success page loaded')
     
-    // Restore language selection from before payment flow
-    const nativeLanguageCode = localStorage.getItem('paymentLanguageNative')
-    const targetLanguageCode = localStorage.getItem('paymentLanguageTarget')
+    // Read saved language codes from payment flow
+    const savedNative = localStorage.getItem('paymentLanguageNative')
+    const savedTarget = localStorage.getItem('paymentLanguageTarget')
     
-    // Clean up payment language storage
+    console.log('📦 Restoring languages:', { native: savedNative, target: savedTarget })
+    
+    // Restore languages to main storage keys
+    if (savedNative) {
+      localStorage.setItem('nativeLanguageCode', savedNative)
+      console.log('✅ Restored native language:', savedNative)
+    }
+    if (savedTarget) {
+      localStorage.setItem('targetLanguageCode', savedTarget)
+      console.log('✅ Restored target language:', savedTarget)
+    }
+    
+    setRestoredLanguages({ native: savedNative, target: savedTarget })
+    
+    // Clean up payment-specific storage
     localStorage.removeItem('paymentLanguageNative')
     localStorage.removeItem('paymentLanguageTarget')
     localStorage.removeItem('paymentInProgress')
     
-    // If we have saved language codes, restore them to the main language storage
-    if (nativeLanguageCode) {
-      localStorage.setItem('nativeLanguageCode', nativeLanguageCode)
-    }
-    if (targetLanguageCode) {
-      localStorage.setItem('targetLanguageCode', targetLanguageCode)
+    // Set flags for main app to detect successful payment
+    localStorage.setItem('subscriptionJustActivated', 'true')
+    
+    // Set flag to restore language view (tells main app to skip welcome, show topics)
+    if (savedNative && savedTarget) {
+      localStorage.setItem('restoreLanguages', 'true')
     }
     
-    // Signal to the main app to restore the language selection view
-    if (nativeLanguageCode && targetLanguageCode) {
-      localStorage.setItem('restoreToTopicView', 'true')
-    }
-    
-    // Redirect to main app after a short delay
+    // Redirect to main app after showing success message
     const timer = setTimeout(() => {
+      console.log('🔄 Redirecting to home...')
       router.push('/')
-    }, 3000)
+    }, 2500)
 
     return () => clearTimeout(timer)
   }, [router])
@@ -57,6 +82,15 @@ function SuccessContent() {
       <p className="text-white/70 text-lg mb-6">
         Your subscription is now active. You have full access to all 47 vocabulary topics!
       </p>
+      
+      {/* Language Restoration Info */}
+      {restoredLanguages.native && restoredLanguages.target && (
+        <div className="bg-white/5 rounded-xl p-3 mb-4 border border-white/10">
+          <p className="text-white/80 text-sm">
+            Restoring your language selection...
+          </p>
+        </div>
+      )}
       
       {/* Features */}
       <div className="bg-white/5 rounded-xl p-4 mb-6 text-left">
@@ -84,7 +118,7 @@ function SuccessContent() {
       {/* Loading indicator */}
       <div className="flex items-center justify-center gap-3 text-white/60">
         <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-        <span>Redirecting to the app...</span>
+        <span>Taking you back to the app...</span>
       </div>
     </div>
   )

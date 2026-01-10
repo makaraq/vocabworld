@@ -1,10 +1,13 @@
 'use client'
 
-import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react'
+import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback, useRef } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { User } from '@supabase/supabase-js'
+import { User, Session } from '@supabase/supabase-js'
 import { FREE_TOPIC_IDS } from '@/lib/pricing'
 
+// ============================================
+// TYPES
+// ============================================
 interface SubscriptionStatus {
   isPremium: boolean
   subscription: {
@@ -17,19 +20,32 @@ interface SubscriptionStatus {
 }
 
 interface AuthContextType {
+  // Auth state
   user: User | null
+  session: Session | null
   loading: boolean
+  
+  // Subscription state
   isPremium: boolean
   subscriptionLoading: boolean
   subscriptionStatus: SubscriptionStatus | null
+  
+  // Auth methods
   signInWithGoogle: () => Promise<void>
   signInWithApple: () => Promise<void>
   signOut: () => Promise<void>
+  
+  // Subscription methods
   refreshSubscription: () => Promise<void>
   canAccessTopic: (topicId: number) => boolean
+  
+  // Token for API calls
   getAccessToken: () => Promise<string | null>
 }
 
+// ============================================
+// CONTEXT
+// ============================================
 const AuthContext = createContext<AuthContextType | null>(null)
 
 export function useAuth() {
@@ -40,26 +56,32 @@ export function useAuth() {
   return context
 }
 
-interface AuthProviderProps {
-  children: ReactNode
-}
-
-export function AuthProvider({ children }: AuthProviderProps) {
+// ============================================
+// PROVIDER
+// ============================================
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
-  const [accessToken, setAccessToken] = useState<string | null>(null)
+  const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
   const [subscriptionStatus, setSubscriptionStatus] = useState<SubscriptionStatus | null>(null)
   const [subscriptionLoading, setSubscriptionLoading] = useState(false)
+  
   const supabase = createClientComponentClient()
+  const initializingRef = useRef(false)
 
-  // Fetch subscription status
-  const fetchSubscriptionStatus = useCallback(async () => {
+  // ============================================
+  // SUBSCRIPTION FETCHING
+  // ============================================
+  const fetchSubscriptionStatus = useCallback(async (userId: string) => {
+    if (!userId) return
+    
     setSubscriptionLoading(true)
     try {
+      console.log('📊 Fetching subscription status for user:', userId)
       const response = await fetch('/api/subscription/status')
       const data = await response.json()
       setSubscriptionStatus(data)
-      console.log('📊 Subscription status:', data)
+      console.log('📊 Subscription result:', data)
     } catch (error) {
       console.error('❌ Failed to fetch subscription:', error)
       setSubscriptionStatus({ isPremium: false, subscription: null })
@@ -68,22 +90,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, [])
 
-  // Check if user can access a topic
-  const canAccessTopic = useCallback((topicId: number): boolean => {
-    // Free topics are always accessible
-    if (FREE_TOPIC_IDS.includes(topicId)) {
-      return true
+  const refreshSubscription = useCallback(async () => {
+    if (user?.id) {
+      await fetchSubscriptionStatus(user.id)
     }
-    // Premium topics require subscription
+  }, [user?.id, fetchSubscriptionStatus])
+
+  // ============================================
+  // TOPIC ACCESS
+  // ============================================
+  const canAccessTopic = useCallback((topicId: number): boolean => {
+    if (FREE_TOPIC_IDS.includes(topicId)) return true
     return subscriptionStatus?.isPremium ?? false
   }, [subscriptionStatus])
 
-  // Refresh subscription (call after payment)
-  const refreshSubscription = useCallback(async () => {
-    await fetchSubscriptionStatus()
-  }, [fetchSubscriptionStatus])
-
+  // ============================================
+  // AUTH METHODS
+  // ============================================
   const signInWithGoogle = async () => {
+    console.log('🔐 Starting Google sign-in...')
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -97,6 +122,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   const signInWithApple = async () => {
+    console.log('🔐 Starting Apple sign-in...')
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'apple',
       options: {
@@ -110,216 +136,170 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   const signOut = async () => {
+    console.log('🔐 Signing out...')
     await supabase.auth.signOut()
     setUser(null)
-    setAccessToken(null)
+    setSession(null)
     setSubscriptionStatus(null)
+    // Clear any payment-related localStorage
+    localStorage.removeItem('paymentInProgress')
+    localStorage.removeItem('subscriptionJustActivated')
+    localStorage.removeItem('paymentLanguageNative')
+    localStorage.removeItem('paymentLanguageTarget')
+    localStorage.removeItem('restoreLanguages')
   }
 
-  // Get access token for API calls - use stored token or try to refresh
   const getAccessToken = useCallback(async (): Promise<string | null> => {
-    // First try the stored token
-    if (accessToken) {
-      console.log('✅ getAccessToken: Using stored token')
-      return accessToken
+    // Use current session if available
+    if (session?.access_token) {
+      return session.access_token
     }
     
     // Try to get fresh session
     try {
-      console.log('🔄 getAccessToken: Trying to get fresh session...')
-      const { data: { session }, error } = await supabase.auth.getSession()
-      if (error) {
-        console.log('❌ getAccessToken error:', error.message)
-        // Try refreshing the session
-        const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession()
-        if (refreshError || !refreshData.session) {
-          console.log('❌ getAccessToken: Refresh failed')
-          return null
-        }
-        console.log('✅ getAccessToken: Session refreshed')
-        setAccessToken(refreshData.session.access_token)
-        return refreshData.session.access_token
+      const { data, error } = await supabase.auth.getSession()
+      if (!error && data.session) {
+        return data.session.access_token
       }
-      if (session) {
-        console.log('✅ getAccessToken: Got session')
-        setAccessToken(session.access_token)
-        return session.access_token
-      }
-      console.log('❌ getAccessToken: No session found')
-      return null
-    } catch (error) {
-      console.error('❌ getAccessToken exception:', error)
+      
+      // Try refresh
+      const { data: refreshData } = await supabase.auth.refreshSession()
+      return refreshData.session?.access_token ?? null
+    } catch {
       return null
     }
-  }, [supabase, accessToken])
+  }, [session, supabase])
 
+  // ============================================
+  // INITIALIZATION & AUTH STATE LISTENER
+  // ============================================
   useEffect(() => {
-    let mounted = true
+    if (initializingRef.current) return
+    initializingRef.current = true
 
-    const getInitialSession = async () => {
+    const initializeAuth = async () => {
+      console.log('🔐 Initializing auth...')
+      
       try {
-        console.log('🔐 Getting initial session...')
+        // Get initial session
+        const { data: { session: initialSession }, error } = await supabase.auth.getSession()
         
-        // Debug: Check what's in localStorage for Supabase
-        if (typeof window !== 'undefined') {
-          const storageKeys = Object.keys(localStorage).filter(k => k.includes('supabase') || k.includes('sb-'))
-          console.log('📦 Supabase localStorage keys:', storageKeys)
-          storageKeys.forEach(key => {
-            const value = localStorage.getItem(key)
-            console.log(`  ${key}:`, value?.substring(0, 100) + '...')
+        if (error) {
+          console.error('❌ Session error:', error)
+        }
+        
+        if (initialSession) {
+          console.log('✅ Session found:', {
+            userId: initialSession.user.id,
+            email: initialSession.user.email,
+            name: initialSession.user.user_metadata?.full_name || initialSession.user.user_metadata?.name
           })
-        }
-        
-        let { data: { session }, error: sessionError } = await supabase.auth.getSession()
-        console.log('🔍 getSession result:', { 
-          hasSession: !!session, 
-          userId: session?.user?.id,
-          email: session?.user?.email,
-          error: sessionError?.message 
-        })
-        
-        // If no session, try to refresh (might help after returning from external site)
-        if (!session) {
-          console.log('🔄 No session found, trying to refresh...')
-          const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession()
-          if (!refreshError && refreshData.session) {
-            session = refreshData.session
-            console.log('✅ Session refreshed successfully')
-          } else {
-            console.log('❌ Session refresh failed:', refreshError?.message)
-          }
-        }
-        
-        const currentUser = session?.user ?? null
-        
-        if (mounted) {
-          setUser(currentUser)
-          if (session?.access_token) {
-            setAccessToken(session.access_token)
-            console.log('✅ Initial session loaded with token for user:', currentUser?.email)
-          } else {
-            console.log('⚠️ No session/token available')
-          }
+          setSession(initialSession)
+          setUser(initialSession.user)
           
-          if (currentUser) {
-            // Fetch subscription status
-            await fetchSubscriptionStatus()
-            
-            // Update login streak
-            try {
-              await fetch('/api/progress/streak', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: currentUser.id })
-              })
-            } catch (error) {
-              console.error('Failed to update login streak:', error)
-            }
-          }
+          // Fetch subscription
+          await fetchSubscriptionStatus(initialSession.user.id)
           
-          setLoading(false)
+          // Update login streak
+          try {
+            await fetch('/api/progress/streak', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ userId: initialSession.user.id })
+            })
+          } catch (e) {
+            console.log('Failed to update streak:', e)
+          }
+        } else {
+          console.log('⚠️ No session found')
         }
       } catch (error) {
         console.error('❌ Auth initialization error:', error)
-        if (mounted) {
-          setLoading(false)
-        }
+      } finally {
+        setLoading(false)
       }
     }
 
-    getInitialSession()
-
-    // Listen for auth changes
+    // Set up auth state listener
     const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      async (event, newSession) => {
         console.log('🔐 Auth state changed:', event, {
-          hasSession: !!session,
-          userId: session?.user?.id,
-          email: session?.user?.email,
-          hasMetadata: !!session?.user?.user_metadata,
-          metadataKeys: session?.user?.user_metadata ? Object.keys(session?.user?.user_metadata) : [],
-          fullName: session?.user?.user_metadata?.full_name,
-          name: session?.user?.user_metadata?.name
+          hasSession: !!newSession,
+          userId: newSession?.user?.id,
+          email: newSession?.user?.email
         })
-        const currentUser = session?.user ?? null
         
-        if (mounted) {
-          setUser(currentUser)
+        if (newSession) {
+          setSession(newSession)
+          setUser(newSession.user)
           
-          // Store access token when session changes
-          if (session?.access_token) {
-            setAccessToken(session.access_token)
-            console.log('✅ Auth state change: token stored')
-          } else {
-            setAccessToken(null)
+          if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+            await fetchSubscriptionStatus(newSession.user.id)
           }
-          
-          if (currentUser) {
-            await fetchSubscriptionStatus()
-          } else {
-            setSubscriptionStatus(null)
-          }
-          
-          setLoading(false)
+        } else if (event === 'SIGNED_OUT') {
+          setSession(null)
+          setUser(null)
+          setSubscriptionStatus(null)
         }
+        
+        setLoading(false)
       }
     )
 
+    initializeAuth()
+
     return () => {
-      mounted = false
       authSubscription.unsubscribe()
     }
   }, [supabase, fetchSubscriptionStatus])
 
-  // Check for subscription activation after payment return
+  // ============================================
+  // HANDLE PAYMENT RETURN
+  // ============================================
   useEffect(() => {
-    const checkPaymentReturn = async () => {
+    const handlePaymentReturn = async () => {
       const justActivated = localStorage.getItem('subscriptionJustActivated')
-      if (justActivated === 'true') {
-        console.log('🎉 Subscription just activated, refreshing with polling...')
+      
+      if (justActivated === 'true' && user) {
+        console.log('🎉 Payment return detected - refreshing subscription...')
         localStorage.removeItem('subscriptionJustActivated')
         
-        // Poll for subscription status a few times (webhook may take a moment)
+        // Poll subscription status (webhook may take a moment)
         let attempts = 0
         const maxAttempts = 5
         
-        const pollSubscription = async (): Promise<boolean> => {
-          await refreshSubscription()
-          // Check if premium is now true
-          const response = await fetch('/api/subscription/status')
-          const data = await response.json()
-          console.log(`📊 Poll attempt ${attempts + 1}:`, data)
-          return data.isPremium === true
-        }
-        
         while (attempts < maxAttempts) {
-          const isPremiumNow = await pollSubscription()
-          if (isPremiumNow) {
-            console.log('✅ Subscription confirmed as premium!')
+          await refreshSubscription()
+          
+          if (subscriptionStatus?.isPremium) {
+            console.log('✅ Premium status confirmed!')
             break
           }
+          
           attempts++
           if (attempts < maxAttempts) {
-            console.log(`⏳ Waiting 2s before retry ${attempts + 1}/${maxAttempts}...`)
-            await new Promise(resolve => setTimeout(resolve, 2000))
+            console.log(`⏳ Waiting for webhook... (${attempts}/${maxAttempts})`)
+            await new Promise(r => setTimeout(r, 2000))
           }
-        }
-        
-        if (attempts >= maxAttempts) {
-          console.log('⚠️ Subscription may still be processing, try refreshing the page')
         }
       }
     }
     
-    checkPaymentReturn()
-  }, [refreshSubscription])
+    if (!loading && user) {
+      handlePaymentReturn()
+    }
+  }, [loading, user, refreshSubscription, subscriptionStatus?.isPremium])
 
+  // ============================================
+  // RENDER
+  // ============================================
   const isPremium = subscriptionStatus?.isPremium ?? false
 
   return (
     <AuthContext.Provider
       value={{
         user,
+        session,
         loading,
         isPremium,
         subscriptionLoading,

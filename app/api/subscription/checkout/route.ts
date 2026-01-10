@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient } from '@supabase/ssr'
 import { createClient } from '@supabase/supabase-js'
-import { cookies } from 'next/headers'
 import { getStripe } from '@/lib/stripe'
 import { PRICING } from '@/lib/pricing'
 
-// Service role client for database operations (bypasses RLS)
+/**
+ * Subscription Checkout API
+ * 
+ * Creates a Stripe checkout session for subscription.
+ * Uses Authorization header for authentication (more reliable than cookies).
+ */
+
+// Service role client for database operations
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -13,142 +18,114 @@ const supabaseAdmin = createClient(
 
 export async function POST(req: NextRequest) {
   const stripe = getStripe()
+  
   try {
-    const cookieStore = await cookies()
-    
-    // Debug: Log all cookies
-    const allCookies = cookieStore.getAll()
-    console.log('🍪 Checkout - All cookies:', allCookies.map(c => c.name))
-    
-    // Check for Authorization header first (more reliable)
+    // Get user from Authorization header
     const authHeader = req.headers.get('Authorization')
-    let user = null
     
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      const token = authHeader.substring(7)
-      console.log('🔑 Found Authorization header, verifying token...')
-      
-      // Verify the token using admin client
-      const { data: { user: tokenUser }, error: tokenError } = await supabaseAdmin.auth.getUser(token)
-      
-      if (tokenError) {
-        console.log('❌ Token verification failed:', tokenError.message)
-      } else if (tokenUser) {
-        user = tokenUser
-        console.log('✅ Got user from token:', user.id)
-      }
-    }
-    
-    // Fallback to cookie-based auth if token auth failed
-    if (!user) {
-      console.log('🍪 Trying cookie-based auth...')
-      const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-          cookies: {
-            getAll() {
-              return cookieStore.getAll()
-            },
-            setAll(cookiesToSet) {
-              try {
-                cookiesToSet.forEach(({ name, value, options }) =>
-                  cookieStore.set(name, value, options)
-                )
-              } catch {
-                // Ignore
-              }
-            },
-          },
-        }
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      console.log('❌ No Authorization header')
+      return NextResponse.json(
+        { error: 'Unauthorized - no token provided' },
+        { status: 401 }
       )
-      
-      // Try getUser first, fallback to getSession
-      const { data: userData, error: userError } = await supabase.auth.getUser()
-      
-      if (userError || !userData.user) {
-        console.log('🔐 getUser failed, trying getSession:', userError?.message)
-        const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
-        
-        if (!sessionError && sessionData.session) {
-          user = sessionData.session.user
-          console.log('✅ Got user from session:', user.id)
-        }
-      } else {
-        user = userData.user
-        console.log('✅ Got user from getUser:', user.id)
-      }
     }
     
-    if (!user) {
-      console.log('❌ All auth methods failed')
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const token = authHeader.substring(7)
+    
+    // Verify token and get user
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token)
+    
+    if (authError || !user) {
+      console.log('❌ Token verification failed:', authError?.message)
+      return NextResponse.json(
+        { error: 'Unauthorized - invalid token' },
+        { status: 401 }
+      )
     }
     
+    console.log('✅ User authenticated:', user.id, user.email)
+    
+    // Get request body
     const { priceType } = await req.json()
     
-    // Validate price type
-    if (priceType !== 'monthly' && priceType !== 'yearly') {
-      return NextResponse.json({ error: 'Invalid price type' }, { status: 400 })
+    if (!priceType || !['monthly', 'yearly'].includes(priceType)) {
+      return NextResponse.json(
+        { error: 'Invalid price type' },
+        { status: 400 }
+      )
     }
     
-    const priceId = PRICING[priceType].priceId
+    // Get or create Stripe customer
+    let customerId: string
     
-    if (!priceId) {
-      return NextResponse.json({ error: 'Price ID not configured' }, { status: 500 })
-    }
-    
-    // Get or create Stripe customer (using admin client to bypass RLS)
+    // Check if user already has a Stripe customer ID
     const { data: profile } = await supabaseAdmin
       .from('user_profiles')
       .select('stripe_customer_id')
       .eq('id', user.id)
       .single()
     
-    let customerId = profile?.stripe_customer_id
-    
-    if (!customerId) {
+    if (profile?.stripe_customer_id) {
+      customerId = profile.stripe_customer_id
+      console.log('✅ Using existing Stripe customer:', customerId)
+    } else {
       // Create new Stripe customer
       const customer = await stripe.customers.create({
         email: user.email,
         metadata: {
-          supabase_user_id: user.id,
-        },
+          supabase_user_id: user.id
+        }
       })
       customerId = customer.id
+      console.log('✅ Created new Stripe customer:', customerId)
       
-      // Save customer ID (using admin client to bypass RLS)
+      // Save customer ID to profile
       await supabaseAdmin
         .from('user_profiles')
         .update({ stripe_customer_id: customerId })
         .eq('id', user.id)
     }
     
-    // Get origin for redirect URLs
-    const origin = req.headers.get('origin') || 'http://localhost:3000'
+    // Get price ID
+    const priceId = priceType === 'yearly' 
+      ? PRICING.yearly.priceId 
+      : PRICING.monthly.priceId
+    
+    if (!priceId) {
+      console.error('❌ Missing Stripe price ID for:', priceType)
+      return NextResponse.json(
+        { error: 'Price configuration error' },
+        { status: 500 }
+      )
+    }
     
     // Create checkout session
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
-      mode: 'subscription',
       payment_method_types: ['card'],
+      mode: 'subscription',
       line_items: [
         {
           price: priceId,
           quantity: 1,
         },
       ],
-      success_url: `${origin}/subscription/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/?canceled=true`,
+      success_url: `${req.headers.get('origin')}/subscription/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${req.headers.get('origin')}/?canceled=true`,
       metadata: {
-        user_id: user.id,
+        supabase_user_id: user.id,
+        plan_type: priceType
       },
       subscription_data: {
         metadata: {
-          user_id: user.id,
-        },
-      },
+          supabase_user_id: user.id,
+          plan_type: priceType
+        }
+      }
     })
+    
+    console.log('✅ Checkout session created:', session.id)
     
     return NextResponse.json({ url: session.url })
     

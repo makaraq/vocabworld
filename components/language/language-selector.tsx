@@ -137,17 +137,6 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
   isPremium,
   setShowPaywall
 }) => {
-  // Debug: Log user object
-  console.log('👤 User object in language-selector:', {
-    userId: user?.id,
-    email: user?.email,
-    hasMetadata: !!user?.user_metadata,
-    metadataKeys: user?.user_metadata ? Object.keys(user?.user_metadata) : [],
-    fullName: user?.user_metadata?.full_name,
-    name: user?.user_metadata?.name,
-    avatarUrl: user?.user_metadata?.avatar_url
-  })
-  
   const [touchStart, setTouchStart] = useState(0)
   const [touchEnd, setTouchEnd] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
@@ -717,15 +706,19 @@ export function LanguageSelector() {
   // 🎉 Restore language selection after successful payment return
   useEffect(() => {
     const restoreAfterPayment = () => {
-      const shouldRestore = localStorage.getItem('restoreToTopicView')
-      if (shouldRestore === 'true') {
+      // Check both old and new flag names for compatibility
+      const shouldRestore = localStorage.getItem('restoreLanguages') === 'true' || 
+                           localStorage.getItem('restoreToTopicView') === 'true'
+      
+      if (shouldRestore) {
         console.log('🎉 Restoring language selection after payment success')
         
         // Get saved language codes
         const savedNativeCode = localStorage.getItem('nativeLanguageCode')
         const savedTargetCode = localStorage.getItem('targetLanguageCode')
         
-        // Clean up the flag
+        // Clean up all restoration flags
+        localStorage.removeItem('restoreLanguages')
         localStorage.removeItem('restoreToTopicView')
         
         if (savedNativeCode && savedTargetCode) {
