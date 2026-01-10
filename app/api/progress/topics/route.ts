@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { progressService } from '@/lib/progress/progress-service'
 import { createClient } from '@supabase/supabase-js'
-import fs from 'fs'
-import path from 'path'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -56,23 +54,8 @@ async function getDetailedTopicProgress(userId: string, languageCode: string) {
 
     console.log('✅ Fetched topics count:', allTopics?.length)
     
-    // Load the exact order from topics.json file (same as /api/topics)
-    const topicsPath = path.join(process.cwd(), 'public', 'data', 'topics.json')
-    console.log('📂 Looking for topics.json at:', topicsPath)
-    
-    if (!fs.existsSync(topicsPath)) {
-      console.error('❌ topics.json file not found at:', topicsPath)
-      return NextResponse.json({ error: 'Topics data file not found' }, { status: 500 })
-    }
-    
-    const topicsData = fs.readFileSync(topicsPath, 'utf8')
-    const topicsFromFile = JSON.parse(topicsData)
-    console.log('✅ Loaded topics from file:', topicsFromFile.length)
-    
-    // Sort topics according to their order in the JSON file
-    const topics = topicsFromFile
-      .map((topicFromFile: any) => allTopics?.find(topic => topic.id === topicFromFile.id))
-      .filter((topic: any) => topic !== undefined)
+    // Sort topics by ID (simplest approach that works in serverless)
+    const topics = allTopics?.sort((a, b) => a.id - b.id) || []
 
     console.log('✅ Ordered topics count:', topics?.length)
     if (topics?.length > 0) {
