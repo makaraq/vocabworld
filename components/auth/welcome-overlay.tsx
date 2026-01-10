@@ -9,12 +9,23 @@ export function WelcomeOverlay() {
   const [isSigningIn, setIsSigningIn] = useState(false)
   const [showWelcome, setShowWelcome] = useState(false)
   const [hasBeenSkipped, setHasBeenSkipped] = useState(false)
+  const [isPaymentReturn, setIsPaymentReturn] = useState(false)
   
   useEffect(() => {
     // Check if user previously skipped welcome screen
     const skipped = localStorage.getItem('welcome-skipped')
     if (skipped === 'true') {
       setHasBeenSkipped(true)
+    }
+    
+    // Check if returning from payment - don't show welcome overlay
+    const paymentInProgress = localStorage.getItem('paymentInProgress')
+    const subscriptionJustActivated = localStorage.getItem('subscriptionJustActivated')
+    const restoreToTopicView = localStorage.getItem('restoreToTopicView')
+    
+    if (paymentInProgress === 'true' || subscriptionJustActivated === 'true' || restoreToTopicView === 'true') {
+      console.log('🎉 Payment return detected - skipping welcome overlay')
+      setIsPaymentReturn(true)
     }
   }, [])
   
@@ -24,15 +35,23 @@ export function WelcomeOverlay() {
     // 2. No authenticated user
     // 3. User hasn't manually dismissed it
     // 4. User hasn't skipped it before
+    // 5. Not returning from payment
     if (!loading) {
-      if (!user && !hasBeenSkipped) {
-        setShowWelcome(true)
+      if (!user && !hasBeenSkipped && !isPaymentReturn) {
+        // Add a small delay to ensure session has time to be restored
+        const timer = setTimeout(() => {
+          // Double-check user state after delay
+          if (!user && !hasBeenSkipped && !isPaymentReturn) {
+            setShowWelcome(true)
+          }
+        }, 500)
+        return () => clearTimeout(timer)
       } else {
         setShowWelcome(false)
         setIsSigningIn(false)
       }
     }
-  }, [loading, user, hasBeenSkipped])
+  }, [loading, user, hasBeenSkipped, isPaymentReturn])
   
   const handleGoogleSignIn = async () => {
     setIsSigningIn(true)
@@ -51,8 +70,8 @@ export function WelcomeOverlay() {
     localStorage.setItem('welcome-skipped', 'true')
   }
   
-  // Don't render if loading, user is authenticated, or manually hidden
-  if (loading || user || !showWelcome) {
+  // Don't render if loading, user is authenticated, manually hidden, or payment return
+  if (loading || user || !showWelcome || isPaymentReturn) {
     return null
   }
 
