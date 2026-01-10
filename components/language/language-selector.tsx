@@ -137,6 +137,17 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
   isPremium,
   setShowPaywall
 }) => {
+  // Debug: Log user object
+  console.log('👤 User object in language-selector:', {
+    userId: user?.id,
+    email: user?.email,
+    hasMetadata: !!user?.user_metadata,
+    metadataKeys: user?.user_metadata ? Object.keys(user?.user_metadata) : [],
+    fullName: user?.user_metadata?.full_name,
+    name: user?.user_metadata?.name,
+    avatarUrl: user?.user_metadata?.avatar_url
+  })
+  
   const [touchStart, setTouchStart] = useState(0)
   const [touchEnd, setTouchEnd] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
