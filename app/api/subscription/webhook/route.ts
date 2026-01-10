@@ -14,8 +14,18 @@ export async function POST(req: NextRequest) {
   const body = await req.text()
   const signature = req.headers.get('stripe-signature')
   
+  console.log('🔔 Webhook received')
+  console.log('🔑 Signature present:', !!signature)
+  console.log('🔐 Webhook secret configured:', !!process.env.STRIPE_WEBHOOK_SECRET)
+  
   if (!signature) {
+    console.error('❌ No signature in request')
     return NextResponse.json({ error: 'No signature' }, { status: 400 })
+  }
+  
+  if (!process.env.STRIPE_WEBHOOK_SECRET) {
+    console.error('❌ STRIPE_WEBHOOK_SECRET not configured')
+    return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 })
   }
   
   let event: Stripe.Event
@@ -24,14 +34,15 @@ export async function POST(req: NextRequest) {
     event = stripe.webhooks.constructEvent(
       body,
       signature,
-      process.env.STRIPE_WEBHOOK_SECRET!
+      process.env.STRIPE_WEBHOOK_SECRET
     )
   } catch (err: any) {
     console.error('❌ Webhook signature verification failed:', err.message)
-    return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
+    console.error('❌ Signature:', signature?.substring(0, 20) + '...')
+    return NextResponse.json({ error: `Invalid signature: ${err.message}` }, { status: 400 })
   }
   
-  console.log(`📨 Webhook received: ${event.type}`)
+  console.log(`📨 Webhook verified: ${event.type}`)
   
   try {
     switch (event.type) {
