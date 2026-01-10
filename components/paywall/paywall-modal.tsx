@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { Icon } from '@iconify/react'
 import { PRICING, formatPrice } from '@/lib/pricing'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 interface PaywallModalProps {
   isOpen: boolean
@@ -18,6 +19,7 @@ export function PaywallModal({ isOpen, onCloseAction, onSuccessAction, nativeLan
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
+  const supabase = createClientComponentClient()
 
   useEffect(() => {
     setMounted(true)
@@ -31,10 +33,20 @@ export function PaywallModal({ isOpen, onCloseAction, onSuccessAction, nativeLan
     setError(null)
     
     try {
+      // Get the current session to extract the access token
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+      
+      if (sessionError || !session) {
+        throw new Error('Please sign in to subscribe')
+      }
+      
       const response = await fetch('/api/subscription/checkout', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include', // Important: include cookies for auth
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`
+        },
+        credentials: 'include',
         body: JSON.stringify({ priceType: selectedPlan }),
       })
       

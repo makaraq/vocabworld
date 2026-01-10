@@ -20,51 +20,68 @@ export async function POST(req: NextRequest) {
     const allCookies = cookieStore.getAll()
     console.log('🍪 Checkout - All cookies:', allCookies.map(c => c.name))
     
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll()
-          },
-          setAll(cookiesToSet) {
-            try {
-              cookiesToSet.forEach(({ name, value, options }) =>
-                cookieStore.set(name, value, options)
-              )
-            } catch {
-              // The `setAll` method was called from a Server Component.
-              // This can be ignored if you have middleware refreshing
-              // user sessions.
-            }
-          },
-        },
-      }
-    )
-    
-    // Try getUser first (more secure), fallback to getSession if needed
+    // Check for Authorization header first (more reliable)
+    const authHeader = req.headers.get('Authorization')
     let user = null
-    const { data: userData, error: userError } = await supabase.auth.getUser()
     
-    if (userError || !userData.user) {
-      console.log('🔐 getUser failed, trying getSession:', userError?.message)
-      // Fallback to getSession which might work better in some cases
-      const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.substring(7)
+      console.log('🔑 Found Authorization header, verifying token...')
       
-      if (sessionError || !sessionData.session) {
-        console.log('❌ Both auth methods failed:', { userError, sessionError })
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      // Verify the token using admin client
+      const { data: { user: tokenUser }, error: tokenError } = await supabaseAdmin.auth.getUser(token)
+      
+      if (tokenError) {
+        console.log('❌ Token verification failed:', tokenError.message)
+      } else if (tokenUser) {
+        user = tokenUser
+        console.log('✅ Got user from token:', user.id)
       }
+    }
+    
+    // Fallback to cookie-based auth if token auth failed
+    if (!user) {
+      console.log('🍪 Trying cookie-based auth...')
+      const supabase = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+          cookies: {
+            getAll() {
+              return cookieStore.getAll()
+            },
+            setAll(cookiesToSet) {
+              try {
+                cookiesToSet.forEach(({ name, value, options }) =>
+                  cookieStore.set(name, value, options)
+                )
+              } catch {
+                // Ignore
+              }
+            },
+          },
+        }
+      )
       
-      user = sessionData.session.user
-      console.log('✅ Got user from session:', user.id)
-    } else {
-      user = userData.user
-      console.log('✅ Got user from getUser:', user.id)
+      // Try getUser first, fallback to getSession
+      const { data: userData, error: userError } = await supabase.auth.getUser()
+      
+      if (userError || !userData.user) {
+        console.log('🔐 getUser failed, trying getSession:', userError?.message)
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
+        
+        if (!sessionError && sessionData.session) {
+          user = sessionData.session.user
+          console.log('✅ Got user from session:', user.id)
+        }
+      } else {
+        user = userData.user
+        console.log('✅ Got user from getUser:', user.id)
+      }
     }
     
     if (!user) {
+      console.log('❌ All auth methods failed')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     
