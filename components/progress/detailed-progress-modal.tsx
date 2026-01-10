@@ -170,19 +170,30 @@ export function DetailedProgressModal({
     const fetchTopicProgress = async () => {
       try {
         setLoading(true)
-        console.log('Fetching progress for user:', user.id, 'language:', targetLanguageCode)
-        const response = await fetch(`/api/progress/topics?userId=${user.id}&languageCode=${targetLanguageCode}&detailed=true`)
+        console.log('🔍 Fetching progress for user:', user.id, 'language:', targetLanguageCode)
+        const url = `/api/progress/topics?userId=${user.id}&languageCode=${targetLanguageCode}&detailed=true`
+        console.log('🌐 API URL:', url)
+        
+        const response = await fetch(url)
+        console.log('📡 Response status:', response.status, response.statusText)
         
         if (response.ok) {
           const data = await response.json()
-          console.log('Received topic progress data:', data)
+          console.log('✅ Received topic progress data:', data)
+          console.log('📊 Topics count:', data.topics?.length)
+          
+          if (data.topics && data.topics.length > 0) {
+            console.log('📈 Sample topic:', data.topics[0])
+          }
+          
           setTopicProgress(data.topics || [])
         } else {
-          console.error('Failed to fetch topic progress')
+          const errorData = await response.text()
+          console.error('❌ Failed to fetch topic progress:', response.status, errorData)
           setTopicProgress([])
         }
       } catch (error) {
-        console.error('Error fetching topic progress:', error)
+        console.error('❌ Error fetching topic progress:', error)
         setTopicProgress([])
       } finally {
         setLoading(false)
