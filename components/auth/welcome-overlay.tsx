@@ -5,18 +5,15 @@ import { Button } from '@/components/ui/button'
 import { useAuth } from '@/contexts/auth-context'
 
 export function WelcomeOverlay() {
-  const { user, signInWithGoogle, loading, isPremium } = useAuth()
+  const { user, signInWithGoogle, loading } = useAuth()
   const [isSigningIn, setIsSigningIn] = useState(false)
   const [showWelcome, setShowWelcome] = useState(false)
   const [hasBeenSkipped, setHasBeenSkipped] = useState(false)
   
   useEffect(() => {
-    // Check if user previously skipped welcome screen or just returned from payment
+    // Check if user previously skipped welcome screen
     const skipped = localStorage.getItem('welcome-skipped')
-    const paymentCompleted = localStorage.getItem('paymentCompletedAt')
-    const forcedPremium = localStorage.getItem('forcedPremiumAccess')
-    
-    if (skipped === 'true' || forcedPremium === 'true' || paymentCompleted) {
+    if (skipped === 'true') {
       setHasBeenSkipped(true)
     }
   }, [])
@@ -27,16 +24,15 @@ export function WelcomeOverlay() {
     // 2. No authenticated user
     // 3. User hasn't manually dismissed it
     // 4. User hasn't skipped it before
-    // 5. User doesn't have premium (hasn't just paid)
     if (!loading) {
-      if (!user && !hasBeenSkipped && !isPremium) {
+      if (!user && !hasBeenSkipped) {
         setShowWelcome(true)
       } else {
         setShowWelcome(false)
         setIsSigningIn(false)
       }
     }
-  }, [loading, user, hasBeenSkipped, isPremium])
+  }, [loading, user, hasBeenSkipped])
   
   const handleGoogleSignIn = async () => {
     setIsSigningIn(true)
