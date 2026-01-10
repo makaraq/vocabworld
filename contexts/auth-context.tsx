@@ -46,6 +46,7 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null)
+  const [accessToken, setAccessToken] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [subscriptionStatus, setSubscriptionStatus] = useState<SubscriptionStatus | null>(null)
   const [subscriptionLoading, setSubscriptionLoading] = useState(false)
@@ -111,23 +112,46 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signOut = async () => {
     await supabase.auth.signOut()
     setUser(null)
+    setAccessToken(null)
     setSubscriptionStatus(null)
   }
 
-  // Get access token for API calls
+  // Get access token for API calls - use stored token or try to refresh
   const getAccessToken = useCallback(async (): Promise<string | null> => {
+    // First try the stored token
+    if (accessToken) {
+      console.log('✅ getAccessToken: Using stored token')
+      return accessToken
+    }
+    
+    // Try to get fresh session
     try {
+      console.log('🔄 getAccessToken: Trying to get fresh session...')
       const { data: { session }, error } = await supabase.auth.getSession()
-      if (error || !session) {
-        console.log('❌ getAccessToken: No session found')
-        return null
+      if (error) {
+        console.log('❌ getAccessToken error:', error.message)
+        // Try refreshing the session
+        const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession()
+        if (refreshError || !refreshData.session) {
+          console.log('❌ getAccessToken: Refresh failed')
+          return null
+        }
+        console.log('✅ getAccessToken: Session refreshed')
+        setAccessToken(refreshData.session.access_token)
+        return refreshData.session.access_token
       }
-      return session.access_token
+      if (session) {
+        console.log('✅ getAccessToken: Got session')
+        setAccessToken(session.access_token)
+        return session.access_token
+      }
+      console.log('❌ getAccessToken: No session found')
+      return null
     } catch (error) {
-      console.error('❌ getAccessToken error:', error)
+      console.error('❌ getAccessToken exception:', error)
       return null
     }
-  }, [supabase])
+  }, [supabase, accessToken])
 
   useEffect(() => {
     let mounted = true
@@ -139,6 +163,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
         
         if (mounted) {
           setUser(currentUser)
+          if (session?.access_token) {
+            setAccessToken(session.access_token)
+            console.log('✅ Initial session loaded with token')
+          }
           
           if (currentUser) {
             // Fetch subscription status
@@ -176,6 +204,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
         
         if (mounted) {
           setUser(currentUser)
+          
+          // Store access token when session changes
+          if (session?.access_token) {
+            setAccessToken(session.access_token)
+            console.log('✅ Auth state change: token stored')
+          } else {
+            setAccessToken(null)
+          }
           
           if (currentUser) {
             await fetchSubscriptionStatus()
