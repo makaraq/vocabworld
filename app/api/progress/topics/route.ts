@@ -42,34 +42,45 @@ export async function GET(request: NextRequest) {
 
 async function getDetailedTopicProgress(userId: string, languageCode: string) {
   try {
+    console.log('🔍 getDetailedTopicProgress called with:', { userId, languageCode })
+    
     // Get all topics with their word counts
     const { data: allTopics, error: topicsError } = await supabase
       .from('topics')
       .select('id, name')
 
     if (topicsError) {
-      console.error('Error fetching topics:', topicsError)
-      return NextResponse.json({ error: 'Failed to fetch topics' }, { status: 500 })
+      console.error('❌ Error fetching topics:', topicsError)
+      return NextResponse.json({ error: 'Failed to fetch topics', details: topicsError.message }, { status: 500 })
     }
 
-    console.log('Fetched topics count:', allTopics?.length)
+    console.log('✅ Fetched topics count:', allTopics?.length)
     
     // Load the exact order from topics.json file (same as /api/topics)
     const topicsPath = path.join(process.cwd(), 'public', 'data', 'topics.json')
+    console.log('📂 Looking for topics.json at:', topicsPath)
+    
+    if (!fs.existsSync(topicsPath)) {
+      console.error('❌ topics.json file not found at:', topicsPath)
+      return NextResponse.json({ error: 'Topics data file not found' }, { status: 500 })
+    }
+    
     const topicsData = fs.readFileSync(topicsPath, 'utf8')
     const topicsFromFile = JSON.parse(topicsData)
+    console.log('✅ Loaded topics from file:', topicsFromFile.length)
     
     // Sort topics according to their order in the JSON file
     const topics = topicsFromFile
       .map((topicFromFile: any) => allTopics?.find(topic => topic.id === topicFromFile.id))
       .filter((topic: any) => topic !== undefined)
 
-    console.log('Ordered topics count:', topics?.length)
+    console.log('✅ Ordered topics count:', topics?.length)
     if (topics?.length > 0) {
-      console.log('Sample topic:', topics[0])
+      console.log('📝 Sample topic:', topics[0])
     }
 
     // Get progress for each topic
+    console.log('🔄 Fetching progress for', topics.length, 'topics...')
     const topicProgress = await Promise.all(
       topics.map(async (topic) => {
         // Get topic completion data (this is the correct table)
@@ -82,7 +93,7 @@ async function getDetailedTopicProgress(userId: string, languageCode: string) {
           .single()
 
         if (topicError && topicError.code !== 'PGRST116') {
-          console.error(`Error fetching topic completion for topic ${topic.id}:`, topicError)
+          console.error(`❌ Error fetching topic completion for topic ${topic.id}:`, topicError)
         }
 
         // If no progress record exists, get total words count and return default
@@ -113,7 +124,7 @@ async function getDetailedTopicProgress(userId: string, languageCode: string) {
         // Use data from user_topic_completion table
         const completionPercentage = topicData.total_words > 0 ? (topicData.words_learned / topicData.total_words) * 100 : 0
         
-        console.log(`Topic ${topic.id} (${topic.name}): ${topicData.words_learned}/${topicData.total_words} words (${Math.round(completionPercentage)}%)`)
+        console.log(`📊 Topic ${topic.id} (${topic.name}): ${topicData.words_learned}/${topicData.total_words} words (${Math.round(completionPercentage)}%)`)
 
         return {
           topicId: topic.id,
@@ -126,6 +137,7 @@ async function getDetailedTopicProgress(userId: string, languageCode: string) {
       })
     )
 
+    console.log('✅ Returning progress for', topicProgress.length, 'topics')
     return NextResponse.json({
       topics: topicProgress,
       languageCode,
@@ -133,8 +145,12 @@ async function getDetailedTopicProgress(userId: string, languageCode: string) {
     })
 
   } catch (error) {
-    console.error('Error fetching detailed topic progress:', error)
-    return NextResponse.json({ error: 'Failed to fetch topic progress' }, { status: 500 })
+    console.error('❌ Error fetching detailed topic progress:', error)
+    console.error('❌ Error stack:', error instanceof Error ? error.stack : 'No stack trace')
+    return NextResponse.json({ 
+      error: 'Failed to fetch topic progress',
+      details: error instanceof Error ? error.message : String(error)
+    }, { status: 500 })
   }
 }
 
