@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { Icon } from '@iconify/react'
 import { PRICING, formatPrice } from '@/lib/pricing'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useAuth } from '@/contexts/auth-context'
 
 interface PaywallModalProps {
   isOpen: boolean
@@ -19,7 +19,7 @@ export function PaywallModal({ isOpen, onCloseAction, onSuccessAction, nativeLan
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
-  const supabase = createClientComponentClient()
+  const { user, getAccessToken } = useAuth()
 
   useEffect(() => {
     setMounted(true)
@@ -33,18 +33,25 @@ export function PaywallModal({ isOpen, onCloseAction, onSuccessAction, nativeLan
     setError(null)
     
     try {
-      // Get the current session to extract the access token
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-      
-      if (sessionError || !session) {
+      // Check if user is logged in
+      if (!user) {
         throw new Error('Please sign in to subscribe')
       }
+      
+      // Get the access token from auth context
+      const accessToken = await getAccessToken()
+      
+      if (!accessToken) {
+        throw new Error('Session expired. Please sign in again.')
+      }
+      
+      console.log('🔑 Got access token, calling checkout API...')
       
       const response = await fetch('/api/subscription/checkout', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`
+          'Authorization': `Bearer ${accessToken}`
         },
         credentials: 'include',
         body: JSON.stringify({ priceType: selectedPlan }),

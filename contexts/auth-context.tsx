@@ -27,6 +27,7 @@ interface AuthContextType {
   signOut: () => Promise<void>
   refreshSubscription: () => Promise<void>
   canAccessTopic: (topicId: number) => boolean
+  getAccessToken: () => Promise<string | null>
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
@@ -112,6 +113,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setUser(null)
     setSubscriptionStatus(null)
   }
+
+  // Get access token for API calls
+  const getAccessToken = useCallback(async (): Promise<string | null> => {
+    try {
+      const { data: { session }, error } = await supabase.auth.getSession()
+      if (error || !session) {
+        console.log('❌ getAccessToken: No session found')
+        return null
+      }
+      return session.access_token
+    } catch (error) {
+      console.error('❌ getAccessToken error:', error)
+      return null
+    }
+  }, [supabase])
 
   useEffect(() => {
     let mounted = true
@@ -236,6 +252,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         signOut,
         refreshSubscription,
         canAccessTopic,
+        getAccessToken,
       }}
     >
       {children}
