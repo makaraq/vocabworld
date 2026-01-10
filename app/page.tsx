@@ -5,11 +5,11 @@ import { Toaster } from "@/components/ui/toaster"
 import { LanguageSelector } from "@/components/language/language-selector"
 import { WelcomeOverlay } from "@/components/auth/welcome-overlay"
 import { TestSimulator } from "@/components/debug/test-simulator"
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/browser-client'
 
 export default function LanguagePage() {
   const { toast } = useToast()
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
   const [showTestSimulator, setShowTestSimulator] = useState(false)
   const [currentLanguages, setCurrentLanguages] = useState<{native: string, target: string}>({native: '', target: ''})
   

@@ -1,8 +1,8 @@
 'use client'
 
 import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback, useRef } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { User, Session } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/browser-client'
 import { FREE_TOPIC_IDS } from '@/lib/pricing'
 
 // ============================================
@@ -66,7 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [subscriptionStatus, setSubscriptionStatus] = useState<SubscriptionStatus | null>(null)
   const [subscriptionLoading, setSubscriptionLoading] = useState(false)
   
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
   const initializingRef = useRef(false)
 
   // ============================================

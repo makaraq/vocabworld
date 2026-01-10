@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import { Icon } from '@iconify/react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/browser-client'
 
 /**
  * Subscription Success Page
@@ -20,7 +20,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
  */
 function SuccessContent() {
   const router = useRouter()
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
   const [restoredLanguages, setRestoredLanguages] = useState<{native: string | null, target: string | null}>({
     native: null,
     target: null
