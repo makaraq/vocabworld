@@ -159,7 +159,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const getInitialSession = async () => {
       try {
         console.log('🔐 Getting initial session...')
-        let { data: { session } } = await supabase.auth.getSession()
+        
+        // Debug: Check what's in localStorage for Supabase
+        if (typeof window !== 'undefined') {
+          const storageKeys = Object.keys(localStorage).filter(k => k.includes('supabase') || k.includes('sb-'))
+          console.log('📦 Supabase localStorage keys:', storageKeys)
+          storageKeys.forEach(key => {
+            const value = localStorage.getItem(key)
+            console.log(`  ${key}:`, value?.substring(0, 100) + '...')
+          })
+        }
+        
+        let { data: { session }, error: sessionError } = await supabase.auth.getSession()
+        console.log('🔍 getSession result:', { 
+          hasSession: !!session, 
+          userId: session?.user?.id,
+          email: session?.user?.email,
+          error: sessionError?.message 
+        })
         
         // If no session, try to refresh (might help after returning from external site)
         if (!session) {
