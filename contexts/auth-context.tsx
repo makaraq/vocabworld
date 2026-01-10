@@ -158,14 +158,30 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     const getInitialSession = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession()
+        console.log('🔐 Getting initial session...')
+        let { data: { session } } = await supabase.auth.getSession()
+        
+        // If no session, try to refresh (might help after returning from external site)
+        if (!session) {
+          console.log('🔄 No session found, trying to refresh...')
+          const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession()
+          if (!refreshError && refreshData.session) {
+            session = refreshData.session
+            console.log('✅ Session refreshed successfully')
+          } else {
+            console.log('❌ Session refresh failed:', refreshError?.message)
+          }
+        }
+        
         const currentUser = session?.user ?? null
         
         if (mounted) {
           setUser(currentUser)
           if (session?.access_token) {
             setAccessToken(session.access_token)
-            console.log('✅ Initial session loaded with token')
+            console.log('✅ Initial session loaded with token for user:', currentUser?.email)
+          } else {
+            console.log('⚠️ No session/token available')
           }
           
           if (currentUser) {
