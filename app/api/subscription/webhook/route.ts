@@ -58,18 +58,21 @@ export async function POST(req: NextRequest) {
       
       case 'customer.subscription.created':
       case 'customer.subscription.updated': {
+        console.log(`📝 Subscription ${event.type}:`, event.data.object.id)
         const subscription = event.data.object as Stripe.Subscription
         await handleSubscriptionChange(subscription, 'updated')
         break
       }
       
       case 'customer.subscription.deleted': {
+        console.log('🗑️ Subscription deleted:', event.data.object.id)
         const subscription = event.data.object as Stripe.Subscription
         await handleSubscriptionChange(subscription, 'deleted')
         break
       }
       
       case 'invoice.payment_succeeded': {
+        console.log('💰 Payment succeeded for invoice:', event.data.object.id)
         const invoice = event.data.object as Stripe.Invoice
         // @ts-ignore - subscription exists on invoice
         if (invoice.subscription) {
@@ -103,10 +106,18 @@ async function handleSubscriptionChange(
   subscription: Stripe.Subscription,
   eventType: string
 ) {
-  const userId = subscription.metadata?.user_id
+  // Check both possible metadata keys
+  const userId = subscription.metadata?.supabase_user_id || subscription.metadata?.user_id
+  
+  console.log('🔍 Looking for user ID in subscription metadata:', {
+    supabase_user_id: subscription.metadata?.supabase_user_id,
+    user_id: subscription.metadata?.user_id,
+    resolved_userId: userId
+  })
   
   if (!userId) {
     // Try to find user by customer ID
+    console.log('⚠️ No user ID in metadata, trying to find by customer ID:', subscription.customer)
     const { data: profile } = await supabase
       .from('user_profiles')
       .select('id')
