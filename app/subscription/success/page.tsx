@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import { Icon } from '@iconify/react'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 /**
  * Subscription Success Page
@@ -11,60 +12,76 @@ import { Icon } from '@iconify/react'
  * 
  * Flow:
  * 1. User arrives from Stripe checkout
- * 2. Restore saved language codes to main storage
- * 3. Set flags for the main app to detect
- * 4. Redirect to home page
- * 5. Home page sees restoreLanguages flag and shows topic slider
+ * 2. Force refresh Supabase session
+ * 3. Restore saved language codes to main storage
+ * 4. Set flags for the main app to detect
+ * 5. Redirect to home page
+ * 6. Home page sees restoreLanguages flag and shows topic slider
  */
 function SuccessContent() {
   const router = useRouter()
+  const supabase = createClientComponentClient()
   const [restoredLanguages, setRestoredLanguages] = useState<{native: string | null, target: string | null}>({
     native: null,
     target: null
   })
 
   useEffect(() => {
-    console.log('🎉 Payment success page loaded')
-    
-    // Read saved language codes from payment flow
-    const savedNative = localStorage.getItem('paymentLanguageNative')
-    const savedTarget = localStorage.getItem('paymentLanguageTarget')
-    
-    console.log('📦 Restoring languages:', { native: savedNative, target: savedTarget })
-    
-    // Restore languages to main storage keys
-    if (savedNative) {
-      localStorage.setItem('nativeLanguageCode', savedNative)
-      console.log('✅ Restored native language:', savedNative)
+    const handleReturn = async () => {
+      console.log('🎉 Payment success page loaded')
+      
+      // CRITICAL: Force refresh session after returning from external site
+      try {
+        const { data, error } = await supabase.auth.refreshSession()
+        if (error) {
+          console.error('❌ Session refresh failed:', error)
+        } else if (data.session) {
+          console.log('✅ Session refreshed:', data.session.user.email)
+        }
+      } catch (e) {
+        console.error('❌ Session refresh error:', e)
+      }
+      
+      // Read saved language codes from payment flow
+      const savedNative = localStorage.getItem('paymentLanguageNative')
+      const savedTarget = localStorage.getItem('paymentLanguageTarget')
+      
+      console.log('📦 Restoring languages:', { native: savedNative, target: savedTarget })
+      
+      // Restore languages to main storage keys
+      if (savedNative) {
+        localStorage.setItem('nativeLanguageCode', savedNative)
+        console.log('✅ Restored native language:', savedNative)
+      }
+      if (savedTarget) {
+        localStorage.setItem('targetLanguageCode', savedTarget)
+        console.log('✅ Restored target language:', savedTarget)
+      }
+      
+      setRestoredLanguages({ native: savedNative, target: savedTarget })
+      
+      // Clean up payment-specific storage
+      localStorage.removeItem('paymentLanguageNative')
+      localStorage.removeItem('paymentLanguageTarget')
+      localStorage.removeItem('paymentInProgress')
+      
+      // Set flags for main app to detect successful payment
+      localStorage.setItem('subscriptionJustActivated', 'true')
+      
+      // Set flag to restore language view (tells main app to skip welcome, show topics)
+      if (savedNative && savedTarget) {
+        localStorage.setItem('restoreLanguages', 'true')
+      }
+      
+      // Redirect to main app after showing success message
+      setTimeout(() => {
+        console.log('🔄 Redirecting to home...')
+        router.push('/')
+      }, 2500)
     }
-    if (savedTarget) {
-      localStorage.setItem('targetLanguageCode', savedTarget)
-      console.log('✅ Restored target language:', savedTarget)
-    }
     
-    setRestoredLanguages({ native: savedNative, target: savedTarget })
-    
-    // Clean up payment-specific storage
-    localStorage.removeItem('paymentLanguageNative')
-    localStorage.removeItem('paymentLanguageTarget')
-    localStorage.removeItem('paymentInProgress')
-    
-    // Set flags for main app to detect successful payment
-    localStorage.setItem('subscriptionJustActivated', 'true')
-    
-    // Set flag to restore language view (tells main app to skip welcome, show topics)
-    if (savedNative && savedTarget) {
-      localStorage.setItem('restoreLanguages', 'true')
-    }
-    
-    // Redirect to main app after showing success message
-    const timer = setTimeout(() => {
-      console.log('🔄 Redirecting to home...')
-      router.push('/')
-    }, 2500)
-
-    return () => clearTimeout(timer)
-  }, [router])
+    handleReturn()
+  }, [router, supabase])
 
   return (
     <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 max-w-md w-full text-center border border-white/20">

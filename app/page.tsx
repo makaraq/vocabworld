@@ -5,11 +5,38 @@ import { Toaster } from "@/components/ui/toaster"
 import { LanguageSelector } from "@/components/language/language-selector"
 import { WelcomeOverlay } from "@/components/auth/welcome-overlay"
 import { TestSimulator } from "@/components/debug/test-simulator"
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 export default function LanguagePage() {
   const { toast } = useToast()
+  const supabase = createClientComponentClient()
   const [showTestSimulator, setShowTestSimulator] = useState(false)
   const [currentLanguages, setCurrentLanguages] = useState<{native: string, target: string}>({native: '', target: ''})
+  
+  // Check if returning from payment and force session refresh
+  useEffect(() => {
+    const checkPaymentReturn = async () => {
+      const isPaymentReturn = 
+        localStorage.getItem('subscriptionJustActivated') === 'true' ||
+        localStorage.getItem('restoreLanguages') === 'true'
+      
+      if (isPaymentReturn) {
+        console.log('🔄 Payment return detected on home page - refreshing session...')
+        try {
+          const { data, error } = await supabase.auth.refreshSession()
+          if (error) {
+            console.error('❌ Session refresh failed:', error)
+          } else if (data.session) {
+            console.log('✅ Session refreshed on home page:', data.session.user.email)
+          }
+        } catch (e) {
+          console.error('❌ Session refresh error:', e)
+        }
+      }
+    }
+    
+    checkPaymentReturn()
+  }, [supabase])
   
   // Allow opening test simulator with keyboard shortcut (Ctrl+Shift+T)
   useEffect(() => {
