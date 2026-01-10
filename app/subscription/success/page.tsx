@@ -11,6 +11,28 @@ function SuccessContent() {
     // Mark subscription as just activated for the main app to detect
     localStorage.setItem('subscriptionJustActivated', 'true')
     
+    // Restore language selection from before payment flow
+    const nativeLanguageCode = localStorage.getItem('paymentLanguageNative')
+    const targetLanguageCode = localStorage.getItem('paymentLanguageTarget')
+    
+    // Clean up payment language storage
+    localStorage.removeItem('paymentLanguageNative')
+    localStorage.removeItem('paymentLanguageTarget')
+    localStorage.removeItem('paymentInProgress')
+    
+    // If we have saved language codes, restore them to the main language storage
+    if (nativeLanguageCode) {
+      localStorage.setItem('nativeLanguageCode', nativeLanguageCode)
+    }
+    if (targetLanguageCode) {
+      localStorage.setItem('targetLanguageCode', targetLanguageCode)
+    }
+    
+    // Signal to the main app to restore the language selection view
+    if (nativeLanguageCode && targetLanguageCode) {
+      localStorage.setItem('restoreToTopicView', 'true')
+    }
+    
     // Redirect to main app after a short delay
     const timer = setTimeout(() => {
       router.push('/')

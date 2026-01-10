@@ -9,9 +9,11 @@ interface PaywallModalProps {
   isOpen: boolean
   onCloseAction: () => void
   onSuccessAction?: () => void
+  nativeLanguageCode?: string
+  targetLanguageCode?: string
 }
 
-export function PaywallModal({ isOpen, onCloseAction, onSuccessAction }: PaywallModalProps) {
+export function PaywallModal({ isOpen, onCloseAction, onSuccessAction, nativeLanguageCode, targetLanguageCode }: PaywallModalProps) {
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('yearly')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -32,6 +34,7 @@ export function PaywallModal({ isOpen, onCloseAction, onSuccessAction }: Paywall
       const response = await fetch('/api/subscription/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // Important: include cookies for auth
         body: JSON.stringify({ priceType: selectedPlan }),
       })
       
@@ -42,8 +45,14 @@ export function PaywallModal({ isOpen, onCloseAction, onSuccessAction }: Paywall
       }
       
       if (data.url) {
-        // Store that we're about to go to payment
+        // Store payment state and language selection for restoration after payment
         localStorage.setItem('paymentInProgress', 'true')
+        if (nativeLanguageCode) {
+          localStorage.setItem('paymentLanguageNative', nativeLanguageCode)
+        }
+        if (targetLanguageCode) {
+          localStorage.setItem('paymentLanguageTarget', targetLanguageCode)
+        }
         window.location.href = data.url
       } else {
         throw new Error('No checkout URL returned')

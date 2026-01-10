@@ -703,6 +703,58 @@ export function LanguageSelector() {
     detectIOS();
   }, []);
 
+  // 🎉 Restore language selection after successful payment return
+  useEffect(() => {
+    const restoreAfterPayment = () => {
+      const shouldRestore = localStorage.getItem('restoreToTopicView')
+      if (shouldRestore === 'true') {
+        console.log('🎉 Restoring language selection after payment success')
+        
+        // Get saved language codes
+        const savedNativeCode = localStorage.getItem('nativeLanguageCode')
+        const savedTargetCode = localStorage.getItem('targetLanguageCode')
+        
+        // Clean up the flag
+        localStorage.removeItem('restoreToTopicView')
+        
+        if (savedNativeCode && savedTargetCode) {
+          // Helper to get language name from code
+          const getLanguageName = (code: string): string => {
+            const languageNames: { [key: string]: string } = {
+              'ar': 'Arabic', 'bg': 'Bulgarian', 'bn': 'Bengali', 'ca': 'Catalan',
+              'cs': 'Czech', 'cy': 'Welsh', 'da': 'Danish', 'de': 'German',
+              'el': 'Greek', 'en': 'English', 'es': 'Spanish', 'et': 'Estonian',
+              'eu': 'Basque', 'fa': 'Persian', 'fi': 'Finnish', 'fr': 'French',
+              'ga': 'Irish', 'gu': 'Gujarati', 'he': 'Hebrew', 'hi': 'Hindi',
+              'hr': 'Croatian', 'hu': 'Hungarian', 'id': 'Indonesian', 'is': 'Icelandic',
+              'it': 'Italian', 'ja': 'Japanese', 'ko': 'Korean', 'lt': 'Lithuanian',
+              'lv': 'Latvian', 'mk': 'Macedonian', 'ml': 'Malayalam', 'mr': 'Marathi',
+              'mt': 'Maltese', 'nl': 'Dutch', 'no': 'Norwegian', 'pl': 'Polish',
+              'pt': 'Portuguese', 'ro': 'Romanian', 'ru': 'Russian', 'sk': 'Slovak',
+              'sl': 'Slovenian', 'sv': 'Swedish', 'ta': 'Tamil', 'te': 'Telugu',
+              'th': 'Thai', 'tr': 'Turkish', 'uk': 'Ukrainian', 'ur': 'Urdu',
+              'vi': 'Vietnamese', 'zh': 'Chinese'
+            }
+            return languageNames[code] || code
+          }
+          
+          // Restore language state
+          setNativeLanguageCode(savedNativeCode)
+          setNativeLanguage(getLanguageName(savedNativeCode))
+          setTargetLanguageCode(savedTargetCode)
+          setTargetLanguage(getLanguageName(savedTargetCode))
+          
+          // Navigate directly to confirmation (topic slider)
+          setCurrentPage('confirmation')
+          console.log('✅ Restored to topic slider with languages:', savedNativeCode, '→', savedTargetCode)
+        }
+      }
+    }
+    
+    // Check on mount
+    restoreAfterPayment()
+  }, [])
+
   // 📊 Set global variables for progress tracking in audio service
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -3438,6 +3490,8 @@ export function LanguageSelector() {
           setShowPaywall(false)
           refreshSubscription()
         }}
+        nativeLanguageCode={nativeLanguageCode}
+        targetLanguageCode={targetLanguageCode}
       />
     </div>
   )
