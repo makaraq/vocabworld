@@ -1042,22 +1042,21 @@ export function LanguageSelector() {
               });
               audioElementsRef.current = [];
 
-              // Convert language names to codes - All 49 languages with B2 audio support
+              // Convert language names to codes - UPDATED FOR AZURE ROUTING
               const languageMappings = {
-                // All languages with B2/Alnilam audio support (use simple ISO codes)
-                'Arabic': 'ar', 'Basque': 'eu', 'Bengali': 'bn', 'Bulgarian': 'bg',
-                'Catalan': 'ca', 'Chinese': 'zh', 'Croatian': 'hr', 'Czech': 'cs',
-                'Danish': 'da', 'Dutch': 'nl', 'English': 'en', 'Estonian': 'et',
-                'Finnish': 'fi', 'French': 'fr', 'German': 'de', 'Greek': 'el',
-                'Gujarati': 'gu', 'Hebrew': 'he', 'Hindi': 'hi', 'Hungarian': 'hu',
-                'Icelandic': 'is', 'Indonesian': 'id', 'Irish': 'ga', 'Italian': 'it',
-                'Japanese': 'ja', 'Korean': 'ko', 'Latvian': 'lv', 'Lithuanian': 'lt',
-                'Macedonian': 'mk', 'Malayalam': 'ml', 'Maltese': 'mt', 'Marathi': 'mr',
-                'Norwegian': 'no', 'Persian': 'fa', 'Polish': 'pl', 'Portuguese': 'pt',
-                'Romanian': 'ro', 'Russian': 'ru', 'Slovak': 'sk', 'Slovenian': 'sl',
-                'Spanish': 'es', 'Swedish': 'sv', 'Tamil': 'ta', 'Telugu': 'te',
-                'Thai': 'th', 'Turkish': 'tr', 'Ukrainian': 'uk', 'Urdu': 'ur',
-                'Vietnamese': 'vi', 'Welsh': 'cy'
+                // Azure target languages (keep Azure locale codes)
+                'Chinese': 'zh-CN', 'Swedish': 'sv-SE', 'Norwegian': 'no', 'Danish': 'da-DK',
+                'Finnish': 'fi-FI', 'Hebrew': 'he-IL', 'Czech': 'cs-CZ', 'Greek': 'el-GR',
+                'Malay': 'ms-MY', 'Hungarian': 'hu-HU', 'Bulgarian': 'bg-BG', 'Croatian': 'hr-HR',
+                'Slovak': 'sk-SK', 'Slovenian': 'sl-SI', 'Estonian': 'et-EE',
+                
+                // Alnilam languages (use simple codes for compatibility)
+                'Arabic': 'ar', 'German': 'de', 'Spanish': 'es', 'French': 'fr',
+                'Hindi': 'hi', 'Indonesian': 'id', 'Italian': 'it', 'Japanese': 'ja',
+                'Korean': 'ko', 'Portuguese': 'pt', 'Russian': 'ru', 'Dutch': 'nl',
+                'Polish': 'pl', 'Thai': 'th', 'Turkish': 'tr', 'Vietnamese': 'vi',
+                'Romanian': 'ro', 'Ukrainian': 'uk', 'Bengali': 'bn', 'Marathi': 'mr',
+                'Tamil': 'ta', 'Telugu': 'te', 'English': 'en'
               };
 
               const sourceLangCode = (languageMappings as any)[sourceLanguage] || sourceLanguage.toLowerCase();
