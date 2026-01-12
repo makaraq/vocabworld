@@ -179,6 +179,7 @@ export async function GET(request: NextRequest) {
         id: word.id,
         sourceWord: sourceWord,
         targetWord: targetWord,
+        english_word: word.word_en, // Always include English word for audio lookup
         confidenceScore: 0.95,
         context: word.context,
         category: category,

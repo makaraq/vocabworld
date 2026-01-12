@@ -8,8 +8,9 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const wordId = searchParams.get('wordId');
     const languageCode = searchParams.get('languageCode');
+    const word = searchParams.get('word'); // Optional: English word for Verbs topic lookup
 
-    console.log(`🔑 Authenticated Audio Request:`, { wordId, languageCode });
+    console.log(`🔑 Authenticated Audio Request:`, { wordId, languageCode, word });
 
     if (!wordId || !languageCode) {
       return NextResponse.json(
@@ -126,7 +127,7 @@ export async function GET(request: NextRequest) {
       const csvContent = await csvResponse.text();
       const lines = csvContent.split('\n');
       
-      console.log(`🔍 Searching main CSV: ${lines.length} entries for wordId=${wordId}, language=${audioLangCode}`);
+      console.log(`🔍 Searching main CSV: ${lines.length} entries for wordId=${wordId}, language=${audioLangCode}, word=${word}`);
       console.log(`🔍 First few lines of CSV:`, lines.slice(0, 3));
 
       for (let i = 1; i < lines.length; i++) {
@@ -141,25 +142,65 @@ export async function GET(request: NextRequest) {
 
         const [, localPath, backblazeURL, language, category, csvFileName] = match;
         
-        // Existing pattern: alnilam_{id}_
+        // Pattern 1: alnilam_{id}_ (standard topics)
         const wordIdMatch = csvFileName.match(/alnilam_(\d+)_/);
-        if (!wordIdMatch) {
-          if (i < 5) console.log(`🔍 Line ${i} no wordId match in filename: ${csvFileName}`);
-          continue;
-        }
-
-        const csvWordId = wordIdMatch[1];
-        
-        if (csvWordId === wordId && language === audioLangCode) {
-          fileName = csvFileName;
-          filePath = localPath;
-          console.log(`✅ Found audio mapping (main): ${fileName} at ${filePath}`);
-          break;
+        if (wordIdMatch) {
+          const csvWordId = wordIdMatch[1];
+          if (csvWordId === wordId && language === audioLangCode) {
+            fileName = csvFileName;
+            filePath = localPath;
+            console.log(`✅ Found audio mapping (ID-based): ${fileName} at ${filePath}`);
+            break;
+          }
         }
         
         // Debug first few matches
         if (i < 5) {
-          console.log(`🔍 Line ${i} check: csvWordId=${csvWordId}, wordId=${wordId}, language=${language}, audioLangCode=${audioLangCode}, match=${csvWordId === wordId && language === audioLangCode}`);
+          console.log(`🔍 Line ${i} check: filename=${csvFileName}, language=${language}, audioLangCode=${audioLangCode}`);
+        }
+      }
+      
+      // If not found by ID and we have a word parameter, try word-based lookup (for Verbs topic)
+      if (!fileName && !filePath && word) {
+        console.log(`🔍 Trying word-based lookup for: ${word}`);
+        
+        // Try fetching the Verbs CSV
+        const verbsCsvUrl = `${baseUrl}/data/verb-b2-urls.csv`;
+        try {
+          const verbsCsvResponse = await fetch(verbsCsvUrl);
+          if (verbsCsvResponse.ok) {
+            const verbsCsvContent = await verbsCsvResponse.text();
+            const verbsLines = verbsCsvContent.split('\n');
+            console.log(`🔍 Searching Verbs CSV: ${verbsLines.length} entries`);
+            
+            // Normalize the word for matching (lowercase, handle special chars)
+            const normalizedWord = word.toLowerCase().trim();
+            
+            for (let i = 1; i < verbsLines.length; i++) {
+              const line = verbsLines[i];
+              if (!line.trim()) continue;
+              
+              const match = line.match(/^"([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)"$/);
+              if (!match) continue;
+              
+              const [, localPath, backblazeURL, language, category, csvFileName] = match;
+              
+              // Pattern: alnilam_{word}_.wav (word-based for verbs)
+              // Also check if the word appears in the filename
+              const wordMatch = csvFileName.match(/alnilam_([^_]+)_\.wav/i);
+              if (wordMatch) {
+                const csvWord = wordMatch[1].toLowerCase();
+                if (csvWord === normalizedWord && language === audioLangCode) {
+                  fileName = csvFileName;
+                  filePath = localPath;
+                  console.log(`✅ Found audio mapping (word-based): ${fileName} at ${filePath}`);
+                  break;
+                }
+              }
+            }
+          }
+        } catch (verbsError) {
+          console.log(`⚠️ Verbs CSV not found or error:`, verbsError);
         }
       }
     } catch (error) {
@@ -167,7 +208,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (!fileName || !filePath) {
-      console.log(`❌ Audio file not found in CSV for wordId=${wordId}, language=${audioLangCode}`);
+      console.log(`❌ Audio file not found in CSV for wordId=${wordId}, language=${audioLangCode}, word=${word}`);
       return NextResponse.json(
         { error: 'Audio file not found', wordId, languageCode: audioLangCode },
         { status: 404 }

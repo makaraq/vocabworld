@@ -1018,9 +1018,9 @@ export function LanguageSelector() {
         
         // Create service directly with all needed methods
         const alnilamAudioService = {
-          async playWordSequence(sourceWord: string, targetWord: string, settings: any, wordId: string, sourceLanguage: string, targetLanguage: string) {
+          async playWordSequence(sourceWord: string, targetWord: string, settings: any, wordId: string, sourceLanguage: string, targetLanguage: string, englishWord?: string) {
             console.log('🎵 Alnilam playWordSequence called:', {
-              sourceWord, targetWord, sourceLanguage, targetLanguage, wordId
+              sourceWord, targetWord, sourceLanguage, targetLanguage, wordId, englishWord
             });
 
             // Get abort signal from the current autoplay session
@@ -1042,21 +1042,22 @@ export function LanguageSelector() {
               });
               audioElementsRef.current = [];
 
-              // Convert language names to codes - UPDATED FOR AZURE ROUTING
+              // Convert language names to codes - All 49 languages with B2 audio support
               const languageMappings = {
-                // Azure target languages (keep Azure locale codes)
-                'Chinese': 'zh-CN', 'Swedish': 'sv-SE', 'Norwegian': 'no', 'Danish': 'da-DK',
-                'Finnish': 'fi-FI', 'Hebrew': 'he-IL', 'Czech': 'cs-CZ', 'Greek': 'el-GR',
-                'Malay': 'ms-MY', 'Hungarian': 'hu-HU', 'Bulgarian': 'bg-BG', 'Croatian': 'hr-HR',
-                'Slovak': 'sk-SK', 'Slovenian': 'sl-SI', 'Estonian': 'et-EE',
-                
-                // Alnilam languages (use simple codes for compatibility)
-                'Arabic': 'ar', 'German': 'de', 'Spanish': 'es', 'French': 'fr',
-                'Hindi': 'hi', 'Indonesian': 'id', 'Italian': 'it', 'Japanese': 'ja',
-                'Korean': 'ko', 'Portuguese': 'pt', 'Russian': 'ru', 'Dutch': 'nl',
-                'Polish': 'pl', 'Thai': 'th', 'Turkish': 'tr', 'Vietnamese': 'vi',
-                'Romanian': 'ro', 'Ukrainian': 'uk', 'Bengali': 'bn', 'Marathi': 'mr',
-                'Tamil': 'ta', 'Telugu': 'te', 'English': 'en'
+                // All languages with B2/Alnilam audio support (use simple ISO codes)
+                'Arabic': 'ar', 'Basque': 'eu', 'Bengali': 'bn', 'Bulgarian': 'bg',
+                'Catalan': 'ca', 'Chinese': 'zh', 'Croatian': 'hr', 'Czech': 'cs',
+                'Danish': 'da', 'Dutch': 'nl', 'English': 'en', 'Estonian': 'et',
+                'Finnish': 'fi', 'French': 'fr', 'German': 'de', 'Greek': 'el',
+                'Gujarati': 'gu', 'Hebrew': 'he', 'Hindi': 'hi', 'Hungarian': 'hu',
+                'Icelandic': 'is', 'Indonesian': 'id', 'Irish': 'ga', 'Italian': 'it',
+                'Japanese': 'ja', 'Korean': 'ko', 'Latvian': 'lv', 'Lithuanian': 'lt',
+                'Macedonian': 'mk', 'Malayalam': 'ml', 'Maltese': 'mt', 'Marathi': 'mr',
+                'Norwegian': 'no', 'Persian': 'fa', 'Polish': 'pl', 'Portuguese': 'pt',
+                'Romanian': 'ro', 'Russian': 'ru', 'Slovak': 'sk', 'Slovenian': 'sl',
+                'Spanish': 'es', 'Swedish': 'sv', 'Tamil': 'ta', 'Telugu': 'te',
+                'Thai': 'th', 'Turkish': 'tr', 'Ukrainian': 'uk', 'Urdu': 'ur',
+                'Vietnamese': 'vi', 'Welsh': 'cy'
               };
 
               const sourceLangCode = (languageMappings as any)[sourceLanguage] || sourceLanguage.toLowerCase();
@@ -1177,9 +1178,14 @@ export function LanguageSelector() {
               }
 
               // 🔧 UNIVERSAL AUDIO ROUTING - Supports all 47 Azure languages + Alnilam
-              const getAudioUrl = (wordId: string | number, languageCode: string) => {
-                console.log(`🌍 Using Universal Audio API for ${languageCode}`);
-                return `/api/universal-audio?wordId=${wordId}&languageCode=${languageCode}`;
+              // Now includes optional 'word' parameter for Verbs topic word-based lookup
+              const getAudioUrl = (wordId: string | number, languageCode: string, englishWord?: string) => {
+                console.log(`🌍 Using Universal Audio API for ${languageCode}`, { wordId, englishWord });
+                let url = `/api/universal-audio?wordId=${wordId}&languageCode=${languageCode}`;
+                if (englishWord) {
+                  url += `&word=${encodeURIComponent(englishWord)}`;
+                }
+                return url;
               };
 
               // IMPROVED: Play audio with queuing to prevent browser overwhelm
@@ -1240,7 +1246,7 @@ export function LanguageSelector() {
 
               // FIXED ORDER: Play TARGET language first (what user is learning)
               if (wordId && targetLangCode) {
-                const targetUrl = getAudioUrl(wordId, targetLangCode);
+                const targetUrl = getAudioUrl(wordId, targetLangCode, englishWord);
                 console.log(`🎯 Loading TARGET audio FIRST: ${targetUrl}`);
                 
                 // Set visual indicator for target language
@@ -1297,7 +1303,7 @@ export function LanguageSelector() {
               // FIXED ORDER: Play SOURCE language second (native/main language)
               // Skip if playTargetOnly is enabled
               if (wordId && sourceLangCode && !settings?.playTargetOnly) {
-                const sourceUrl = getAudioUrl(wordId, sourceLangCode);
+                const sourceUrl = getAudioUrl(wordId, sourceLangCode, englishWord);
                 console.log(`🎵 Loading SOURCE audio SECOND: ${sourceUrl}`);
                 
                 // Set visual indicator for source language
@@ -1483,6 +1489,7 @@ export function LanguageSelector() {
       const sourceWord = word.sourceWord || word.training_word || ''
       const targetWord = word.targetWord || word.main_word || ''
       const wordId = word.id
+      const englishWord = word.english_word || '' // English word for Verbs audio lookup
       const isCustomWord = word.isCustomWord || false // Check if this is a playlist/custom word
 
       if (!sourceWord || typeof sourceWord !== 'string' || sourceWord.trim().length === 0) {
@@ -1497,7 +1504,8 @@ export function LanguageSelector() {
       console.log('🎓 Algenib audio playback for:', { 
         wordId,
         sourceWord, 
-        targetWord, 
+        targetWord,
+        englishWord,
         targetLanguage, 
         nativeLanguage,
         currentWordIndex,
@@ -1632,7 +1640,8 @@ export function LanguageSelector() {
             },
             wordId,               // wordId
             nativeLanguage,       // sourceLanguage
-            targetLanguage        // targetLanguage
+            targetLanguage,       // targetLanguage
+            englishWord           // englishWord for Verbs audio lookup
           )
           
           console.log('🎵 Alnilam playWordSequence returned:', alnilamSuccess)
