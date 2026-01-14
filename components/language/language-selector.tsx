@@ -1348,7 +1348,6 @@ export function LanguageSelector() {
                 if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
                   console.log('🔓 Resuming AudioContext for autoplay...');
                   await audioContextRef.current.resume();
-                  }
                 }
               } catch (audioContextError) {
                 console.log('⚠️ AudioContext resume failed (might be normal):', (audioContextError as Error).message);
