@@ -975,98 +975,146 @@ export function LanguageSelector() {
   const audioElementsRef = useRef<HTMLAudioElement[]>([])
   const stopRequestedRef = useRef(false)
   
-  // 🔊 MOBILE FIX: Dual audio element approach for mobile browsers
-  // Mobile browsers block audio after changing src on the same element
-  // Solution: Use TWO audio elements and alternate between them (double-buffering)
-  const audioPoolRef = useRef<HTMLAudioElement[]>([])
-  const currentAudioIndexRef = useRef(0)
+  // 🔊 MOBILE FIX V3: Use Web Audio API with a persistent AudioContext
+  // This approach keeps the AudioContext unlocked after the first user gesture
+  // and routes all audio through it for reliable mobile playback
+  const audioContextRef = useRef<AudioContext | null>(null)
   const audioUnlockedRef = useRef(false)
   
-  // Initialize dual audio elements on mount
+  // Initialize Web Audio API context on mount
   useEffect(() => {
-    if (typeof window !== 'undefined' && audioPoolRef.current.length === 0) {
-      // Create a pool of audio elements to alternate between
-      for (let i = 0; i < 4; i++) {
-        const audio = new Audio()
-        audio.crossOrigin = 'anonymous'
-        audio.preload = 'auto'
-        audioPoolRef.current.push(audio)
+    if (typeof window !== 'undefined' && !audioContextRef.current) {
+      try {
+        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
+        console.log('🔊 Web Audio API context created, state:', audioContextRef.current.state)
+      } catch (e) {
+        console.log('⚠️ Failed to create AudioContext:', e)
       }
-      console.log('🔊 Audio pool created with', audioPoolRef.current.length, 'elements for mobile compatibility')
     }
     return () => {
-      audioPoolRef.current.forEach(audio => {
-        audio.pause()
-        audio.src = ''
-      })
+      if (audioContextRef.current) {
+        audioContextRef.current.close().catch(() => {})
+      }
     }
   }, [])
   
-  // 🔓 Unlock ALL audio elements on user interaction (for mobile autoplay policy)
+  // 🔓 Unlock AudioContext on user interaction (for mobile autoplay policy)
   const unlockAudio = async () => {
     if (audioUnlockedRef.current) return true
     
     try {
-      // Play silent sound on ALL pooled audio elements to unlock them
-      const silentDataUri = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA'
-      
-      const unlockPromises = audioPoolRef.current.map(async (audio) => {
-        try {
-          audio.src = silentDataUri
-          audio.volume = 0.01
-          await audio.play()
-          audio.pause()
-          audio.currentTime = 0
-          audio.volume = 1
-          audio.src = '' // Clear src for reuse
-        } catch (e) {
-          console.log('⚠️ Failed to unlock one audio element:', e)
-        }
-      })
-      
-      await Promise.all(unlockPromises)
-      
-      // Also try to resume AudioContext
-      if (typeof window !== 'undefined' && window.AudioContext) {
-        try {
-          const ctx = new (window.AudioContext || (window as any).webkitAudioContext)()
-          if (ctx.state === 'suspended') {
-            await ctx.resume()
-          }
-        } catch (e) {
-          // Ignore AudioContext errors
-        }
+      // Create AudioContext if it doesn't exist
+      if (!audioContextRef.current) {
+        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
       }
       
+      const ctx = audioContextRef.current
+      
+      // Resume the AudioContext (this is what unlocks it on mobile)
+      if (ctx.state === 'suspended') {
+        await ctx.resume()
+        console.log('🔓 AudioContext resumed, state:', ctx.state)
+      }
+      
+      // Create and play a short silent buffer to fully unlock
+      const buffer = ctx.createBuffer(1, 1, 22050)
+      const source = ctx.createBufferSource()
+      source.buffer = buffer
+      source.connect(ctx.destination)
+      source.start(0)
+      
       audioUnlockedRef.current = true
-      console.log('🔓 All', audioPoolRef.current.length, 'audio elements unlocked for mobile playback')
+      console.log('🔓 Audio unlocked for mobile playback via Web Audio API')
       return true
     } catch (error) {
-      console.log('⚠️ Audio unlock failed (may need direct interaction):', error)
+      console.log('⚠️ Audio unlock failed:', error)
       return false
     }
   }
   
-  // Get next audio element from the pool (round-robin)
-  const getNextAudioElement = (): HTMLAudioElement => {
-    const pool = audioPoolRef.current
-    if (pool.length === 0) {
-      // Fallback: create new audio element if pool is empty
-      const audio = new Audio()
+  // 🔊 Play audio through Web Audio API for reliable mobile playback
+  const playAudioWithWebAudio = (url: string, playbackRate: number = 1.0): Promise<void> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // Ensure AudioContext is resumed
+        if (audioContextRef.current?.state === 'suspended') {
+          await audioContextRef.current.resume()
+        }
+        
+        // Fetch the audio file
+        const response = await fetch(url)
+        if (!response.ok) {
+          throw new Error(`Failed to fetch audio: ${response.status}`)
+        }
+        
+        const arrayBuffer = await response.arrayBuffer()
+        
+        // Check if stop was requested during fetch
+        if (stopRequestedRef.current) {
+          reject(new DOMException('Audio fetch aborted', 'AbortError'))
+          return
+        }
+        
+        // Decode the audio data
+        const audioBuffer = await audioContextRef.current!.decodeAudioData(arrayBuffer)
+        
+        // Check again after decode
+        if (stopRequestedRef.current) {
+          reject(new DOMException('Audio decode aborted', 'AbortError'))
+          return
+        }
+        
+        // Create and play the buffer source
+        const source = audioContextRef.current!.createBufferSource()
+        source.buffer = audioBuffer
+        source.playbackRate.value = playbackRate
+        source.connect(audioContextRef.current!.destination)
+        
+        source.onended = () => resolve()
+        source.start(0)
+        
+        console.log('🎵 Playing via Web Audio API at', playbackRate, 'x speed')
+        
+      } catch (error) {
+        console.error('Web Audio playback error:', error)
+        reject(error)
+      }
+    })
+  }
+  
+  // Fallback: regular HTML Audio element playback
+  const playAudioFallback = (url: string, playbackRate: number = 1.0): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      const audio = new Audio(url)
       audio.crossOrigin = 'anonymous'
-      audio.preload = 'auto'
-      return audio
+      audio.playbackRate = playbackRate
+      audioElementsRef.current.push(audio)
+      
+      const cleanup = () => {
+        audioElementsRef.current = audioElementsRef.current.filter(a => a !== audio)
+      }
+      
+      audio.onended = () => { cleanup(); resolve() }
+      audio.onerror = (e) => { cleanup(); reject(e) }
+      
+      audio.play().catch(reject)
+    })
+  }
+  
+  // Combined audio player - tries Web Audio first, falls back to HTML Audio
+  const playAudioUniversal = async (url: string, playbackRate: number = 1.0): Promise<void> => {
+    // If Web Audio is available and unlocked, use it
+    if (audioContextRef.current && audioUnlockedRef.current) {
+      try {
+        await playAudioWithWebAudio(url, playbackRate)
+        return
+      } catch (error) {
+        console.log('⚠️ Web Audio failed, trying fallback:', error)
+      }
     }
     
-    // Round-robin through the pool
-    const audio = pool[currentAudioIndexRef.current]
-    currentAudioIndexRef.current = (currentAudioIndexRef.current + 1) % pool.length
-    
-    // Reset the audio element for reuse
-    audio.pause()
-    audio.currentTime = 0
-    
-    return audio
+    // Fallback to HTML Audio
+    await playAudioFallback(url, playbackRate)
   }
   
   // Audio request queue to prevent concurrent B2 API calls
@@ -1264,32 +1312,42 @@ export function LanguageSelector() {
                 });
               };
               
-              // 🔊 MOBILE FIX: Helper to get audio element from the pool
-              // Use pre-unlocked pool elements for mobile compatibility
-              const getAudioElement = (url: string): HTMLAudioElement => {
-                // Use pool element if audio is unlocked
-                if (audioUnlockedRef.current && audioPoolRef.current.length > 0) {
-                  const audio = getNextAudioElement();
-                  audio.src = url;
-                  console.log('🔊 Using pooled audio element for:', url);
-                  return audio;
+              // 🔊 MOBILE FIX V3: Use Web Audio API for reliable mobile playback
+              // Falls back to HTML Audio if Web Audio fails
+              const playAudioUrl = async (url: string, description: string, playbackRate: number = 1.0): Promise<void> => {
+                // Check abort before starting
+                if (abortSignal?.aborted || stopRequestedRef.current) {
+                  throw new DOMException('Audio playback aborted', 'AbortError');
                 }
-                // Fallback: create new audio element
+                
+                // Try Web Audio API first (more reliable on mobile)
+                if (audioContextRef.current && audioUnlockedRef.current) {
+                  try {
+                    console.log(`🎵 Playing via Web Audio: ${description}`);
+                    await playAudioWithWebAudio(url, playbackRate);
+                    return;
+                  } catch (error: any) {
+                    if (error.name === 'AbortError') throw error;
+                    console.log('⚠️ Web Audio failed, trying HTML Audio fallback');
+                  }
+                }
+                
+                // Fallback to HTML Audio
+                console.log(`🎵 Playing via HTML Audio: ${description}`);
                 const audio = new Audio(url);
                 audio.crossOrigin = 'anonymous';
                 audio.preload = 'auto';
                 audioElementsRef.current.push(audio);
-                return audio;
+                
+                await playAudioWithAbort(audio, description, playbackRate);
               };
 
               // CRITICAL: Enable audio context for autoplay policy
               try {
                 // Try to resume AudioContext if it's suspended (autoplay policy)
-                if (typeof window !== 'undefined' && window.AudioContext) {
-                  const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-                  if (audioContext.state === 'suspended') {
-                    console.log('🔓 Resuming AudioContext for autoplay...');
-                    await audioContext.resume();
+                if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
+                  console.log('🔓 Resuming AudioContext for autoplay...');
+                  await audioContextRef.current.resume();
                   }
                 }
               } catch (audioContextError) {
@@ -1320,38 +1378,12 @@ export function LanguageSelector() {
                       }
                       
                       console.log(`🎯 Loading ${description}: ${url}`);
-                      // 🔊 MOBILE FIX: Use persistent audio element for better mobile compatibility
-                      const audio = getAudioElement(url);
                       
-                      // CRITICAL: Set audio properties for better browser compatibility
-                      audio.playbackRate = getSpeedRate(settings.pronunciationSpeed || 'Normal');
+                      // 🔊 MOBILE FIX V3: Use Web Audio API for reliable playback
+                      const speedRate = getSpeedRate(settings.pronunciationSpeed || 'Normal');
                       
-                      const timeout = setTimeout(() => {
-                        reject(new Error(`Audio timeout for ${description}`));
-                      }, 10000); // 10 second timeout
-                      
-                      audio.onended = () => {
-                        clearTimeout(timeout);
-                        resolve();
-                      };
-                      audio.onerror = (error) => {
-                        clearTimeout(timeout);
-                        console.error(`Audio error for ${description}:`, error);
-                        reject(error);
-                      };
-                      audio.oncanplaythrough = () => {
-                        // Check stop flag before playing
-                        if (stopRequestedRef.current) {
-                          clearTimeout(timeout);
-                          resolve();
-                          return;
-                        }
-                        // Audio is ready to play
-                        audio.play().catch(reject);
-                      };
-                      
-                      // Load the audio
-                      audio.load();
+                      await playAudioUrl(url, description, speedRate);
+                      resolve();
                     } catch (error) {
                       reject(error);
                     }
@@ -1379,12 +1411,11 @@ export function LanguageSelector() {
                   }
                   
                   try {
-                    // 🔊 MOBILE FIX: Use persistent audio element for better mobile compatibility
-                    const targetAudio = getAudioElement(targetUrl);
+                    // 🔊 MOBILE FIX V3: Use Web Audio API for reliable playback
                     const speedRate = getSpeedRate(settings.pronunciationSpeed || 'Normal');
                     console.log(`🎚️ Speed setting: ${settings.pronunciationSpeed} -> rate: ${speedRate}`);
                     
-                    await playAudioWithAbort(targetAudio, `TARGET ${targetWord} - Repeat ${i + 1}`, speedRate);
+                    await playAudioUrl(targetUrl, `TARGET ${targetWord} - Repeat ${i + 1}`, speedRate);
                     console.log(`✅ TARGET audio played: ${targetWord} (${targetLangCode}) - Repeat ${i + 1}/${targetRepeats}`);
                     
                     // Small pause between repeats (except after last repeat)
@@ -1434,11 +1465,10 @@ export function LanguageSelector() {
                   }
                   
                   try {
-                    // 🔊 MOBILE FIX: Use persistent audio element for better mobile compatibility
-                    const sourceAudio = getAudioElement(sourceUrl);
+                    // 🔊 MOBILE FIX V3: Use Web Audio API for reliable playback
                     const speedRate = getSpeedRate(settings.pronunciationSpeed || 'Normal');
                     
-                    await playAudioWithAbort(sourceAudio, `SOURCE ${sourceWord} - Repeat ${i + 1}`, speedRate);
+                    await playAudioUrl(sourceUrl, `SOURCE ${sourceWord} - Repeat ${i + 1}`, speedRate);
                     console.log(`✅ SOURCE audio played: ${sourceWord} (${sourceLangCode}) - Repeat ${i + 1}/${sourceRepeats}`);
                     
                     // Small pause between repeats (except after last repeat)
@@ -1651,29 +1681,15 @@ export function LanguageSelector() {
           const targetLangCode = languageMappings[targetLanguage] || targetLanguageCode || 'en'
           const nativeLangCode = languageMappings[nativeLanguage] || nativeLanguageCode || 'en'
           
-          // 🔊 MOBILE FIX: Helper to get audio element for TTS from pool
-          const getTTSAudioElement = (url: string): HTMLAudioElement => {
-            if (audioUnlockedRef.current && audioPoolRef.current.length > 0) {
-              const audio = getNextAudioElement();
-              audio.src = url;
-              return audio;
-            }
-            const audio = new Audio(url);
-            audio.crossOrigin = 'anonymous';
-            audioElementsRef.current.push(audio);
-            return audio;
-          };
-          
-          // Play target word (learning language)
+          // Play target word (learning language) using Web Audio API
           setCurrentAudioStep('training')
           const targetAudioUrl = `/api/custom-audio?text=${encodeURIComponent(sourceWord)}&languageCode=${targetLangCode}`
-          const targetAudio = getTTSAudioElement(targetAudioUrl)
           
-          await new Promise<void>((resolve, reject) => {
-            targetAudio.onended = () => resolve()
-            targetAudio.onerror = (e) => reject(e)
-            targetAudio.play().catch(reject)
-          })
+          try {
+            await playAudioUniversal(targetAudioUrl, 1.0);
+          } catch (e) {
+            console.log('⚠️ Target TTS failed:', e);
+          }
           
           // Pause between words
           await new Promise(resolve => setTimeout(resolve, settings.pauseBetweenTranslations || 1000))
@@ -1685,16 +1701,15 @@ export function LanguageSelector() {
             return
           }
           
-          // Play native word
+          // Play native word using Web Audio API
           setCurrentAudioStep('main')
           const nativeAudioUrl = `/api/custom-audio?text=${encodeURIComponent(targetWord)}&languageCode=${nativeLangCode}`
-          const nativeAudio = getTTSAudioElement(nativeAudioUrl)
           
-          await new Promise<void>((resolve, reject) => {
-            nativeAudio.onended = () => resolve()
-            nativeAudio.onerror = (e) => reject(e)
-            nativeAudio.play().catch(reject)
-          })
+          try {
+            await playAudioUniversal(nativeAudioUrl, 1.0);
+          } catch (e) {
+            console.log('⚠️ Native TTS failed:', e);
+          }
           
           console.log('✅ TTS audio completed successfully')
           setCurrentAudioStep('idle')
@@ -1861,19 +1876,7 @@ export function LanguageSelector() {
     audioRequestQueue.current = [];
     isProcessingAudioQueue.current = false;
     
-    // 🔊 MOBILE FIX: Stop all pooled audio elements (but keep them for reuse)
-    audioPoolRef.current.forEach(audio => {
-      try {
-        audio.pause();
-        audio.currentTime = 0;
-        // Don't clear src - keep element ready for reuse
-      } catch (error) {
-        console.log('⚠️ Error stopping pooled audio:', error);
-      }
-    });
-    console.log('🛑 Stopped all pooled audio elements');
-    
-    // Immediately stop all other audio elements
+    // Immediately stop all audio elements
     audioElementsRef.current.forEach(audio => {
       try {
         audio.pause();
