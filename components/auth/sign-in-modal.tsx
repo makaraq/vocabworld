@@ -46,14 +46,6 @@ export function SignInModal({ isOpen, onCloseAction }: SignInModalProps) {
             <Chrome className="w-5 h-5" />
             {loading ? 'Signing in...' : 'Continue with Google'}
           </Button>
-          
-          {/* Skip for now option */}
-          <button
-            onClick={() => onCloseAction()}
-            className="text-white/60 hover:text-white/80 text-sm mt-6 underline transition-colors duration-200"
-          >
-            Skip for now
-          </button>
         </div>
       </DialogContent>
     </Dialog>

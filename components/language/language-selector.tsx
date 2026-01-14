@@ -975,6 +975,70 @@ export function LanguageSelector() {
   const audioElementsRef = useRef<HTMLAudioElement[]>([])
   const stopRequestedRef = useRef(false)
   
+  // 🔊 MOBILE FIX: Persistent audio element to maintain user gesture chain
+  // Mobile browsers block new Audio() instances created programmatically,
+  // but allow reusing an element that was unlocked by user interaction
+  const persistentAudioRef = useRef<HTMLAudioElement | null>(null)
+  const audioUnlockedRef = useRef(false)
+  
+  // Initialize persistent audio element on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !persistentAudioRef.current) {
+      persistentAudioRef.current = new Audio()
+      persistentAudioRef.current.crossOrigin = 'anonymous'
+      persistentAudioRef.current.preload = 'auto'
+      console.log('🔊 Persistent audio element created for mobile compatibility')
+    }
+    return () => {
+      if (persistentAudioRef.current) {
+        persistentAudioRef.current.pause()
+        persistentAudioRef.current.src = ''
+      }
+    }
+  }, [])
+  
+  // 🔓 Unlock audio on ANY user interaction (for mobile autoplay policy)
+  const unlockAudio = async () => {
+    if (audioUnlockedRef.current) return true
+    
+    try {
+      const audio = persistentAudioRef.current
+      if (!audio) {
+        persistentAudioRef.current = new Audio()
+        persistentAudioRef.current.crossOrigin = 'anonymous'
+      }
+      
+      // Play a silent sound to unlock audio context
+      const silentDataUri = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA'
+      persistentAudioRef.current!.src = silentDataUri
+      persistentAudioRef.current!.volume = 0.01
+      
+      await persistentAudioRef.current!.play()
+      persistentAudioRef.current!.pause()
+      persistentAudioRef.current!.currentTime = 0
+      persistentAudioRef.current!.volume = 1
+      
+      // Also try to resume AudioContext
+      if (typeof window !== 'undefined' && window.AudioContext) {
+        try {
+          const ctx = new (window.AudioContext || (window as any).webkitAudioContext)()
+          if (ctx.state === 'suspended') {
+            await ctx.resume()
+          }
+        } catch (e) {
+          // Ignore AudioContext errors
+        }
+      }
+      
+      audioUnlockedRef.current = true
+      console.log('🔓 Audio unlocked for mobile playback')
+      return true
+    } catch (error) {
+      console.log('⚠️ Audio unlock failed (may need direct interaction):', error)
+      return false
+    }
+  }
+  
   // Audio request queue to prevent concurrent B2 API calls
   const audioRequestQueue = useRef<Array<() => Promise<void>>>([])
   const isProcessingAudioQueue = useRef(false)
@@ -1094,6 +1158,7 @@ export function LanguageSelector() {
               };
 
               // Helper function: Play audio with abort support
+              // 🔊 MOBILE FIX: Use persistent audio element OR fallback to new Audio
               const playAudioWithAbort = (audio: HTMLAudioElement, description: string, playbackRate: number = 1.0): Promise<void> => {
                 return new Promise((resolve, reject) => {
                   // Check abort before starting
@@ -1108,6 +1173,9 @@ export function LanguageSelector() {
                   
                   const cleanup = () => {
                     clearTimeout(timeout);
+                    audio.onended = null;
+                    audio.onerror = null;
+                    audio.oncanplaythrough = null;
                     audioElementsRef.current = audioElementsRef.current.filter(a => a !== audio);
                   };
                   
@@ -1131,14 +1199,18 @@ export function LanguageSelector() {
                     // CRITICAL: Set playbackRate right before play to ensure it's applied
                     audio.playbackRate = playbackRate;
                     console.log(`🎚️ Playing ${description} at speed ${playbackRate}x`);
-                    audio.play().catch(reject);
+                    audio.play().catch((playError) => {
+                      // 🔊 MOBILE FIX: If play fails, try to recover
+                      console.log(`⚠️ Play failed for ${description}, error:`, playError);
+                      cleanup();
+                      reject(playError);
+                    });
                   };
                   
                   // Listen for abort signal during playback
                   if (abortSignal) {
                     abortSignal.addEventListener('abort', () => {
                       audio.pause();
-                      audio.src = '';
                       cleanup();
                       reject(new DOMException('Audio playback aborted', 'AbortError'));
                     }, { once: true });
@@ -1149,7 +1221,6 @@ export function LanguageSelector() {
                     if (stopRequestedRef.current || abortSignal?.aborted) {
                       clearInterval(checkInterval);
                       audio.pause();
-                      audio.src = '';
                       cleanup();
                       reject(new DOMException('Audio playback aborted', 'AbortError'));
                     }
@@ -1161,6 +1232,27 @@ export function LanguageSelector() {
                   // Load the audio
                   audio.load();
                 });
+              };
+              
+              // 🔊 MOBILE FIX: Helper to get or create audio element
+              // Prefer persistent audio element for mobile, fall back to new Audio
+              const getAudioElement = (url: string): HTMLAudioElement => {
+                // Try to use persistent audio element on mobile for better compatibility
+                if (persistentAudioRef.current && audioUnlockedRef.current) {
+                  // Reset and reuse persistent audio
+                  const audio = persistentAudioRef.current;
+                  audio.pause();
+                  audio.currentTime = 0;
+                  audio.src = url;
+                  console.log('🔊 Using persistent audio element for:', url);
+                  return audio;
+                }
+                // Fallback: create new audio element
+                const audio = new Audio(url);
+                audio.crossOrigin = 'anonymous';
+                audio.preload = 'auto';
+                audioElementsRef.current.push(audio);
+                return audio;
               };
 
               // CRITICAL: Enable audio context for autoplay policy
@@ -1201,14 +1293,10 @@ export function LanguageSelector() {
                       }
                       
                       console.log(`🎯 Loading ${description}: ${url}`);
-                      const audio = new Audio(url);
-                      
-                      // Store audio element for stop functionality
-                      audioElementsRef.current.push(audio);
+                      // 🔊 MOBILE FIX: Use persistent audio element for better mobile compatibility
+                      const audio = getAudioElement(url);
                       
                       // CRITICAL: Set audio properties for better browser compatibility
-                      audio.crossOrigin = 'anonymous';
-                      audio.preload = 'auto';
                       audio.playbackRate = getSpeedRate(settings.pronunciationSpeed || 'Normal');
                       
                       const timeout = setTimeout(() => {
@@ -1264,10 +1352,8 @@ export function LanguageSelector() {
                   }
                   
                   try {
-                    const targetAudio = new Audio(targetUrl);
-                    audioElementsRef.current.push(targetAudio);
-                    targetAudio.crossOrigin = 'anonymous';
-                    targetAudio.preload = 'auto';
+                    // 🔊 MOBILE FIX: Use persistent audio element for better mobile compatibility
+                    const targetAudio = getAudioElement(targetUrl);
                     const speedRate = getSpeedRate(settings.pronunciationSpeed || 'Normal');
                     console.log(`🎚️ Speed setting: ${settings.pronunciationSpeed} -> rate: ${speedRate}`);
                     
@@ -1321,10 +1407,8 @@ export function LanguageSelector() {
                   }
                   
                   try {
-                    const sourceAudio = new Audio(sourceUrl);
-                    audioElementsRef.current.push(sourceAudio);
-                    sourceAudio.crossOrigin = 'anonymous';
-                    sourceAudio.preload = 'auto';
+                    // 🔊 MOBILE FIX: Use persistent audio element for better mobile compatibility
+                    const sourceAudio = getAudioElement(sourceUrl);
                     const speedRate = getSpeedRate(settings.pronunciationSpeed || 'Normal');
                     
                     await playAudioWithAbort(sourceAudio, `SOURCE ${sourceWord} - Repeat ${i + 1}`, speedRate);
@@ -1540,11 +1624,25 @@ export function LanguageSelector() {
           const targetLangCode = languageMappings[targetLanguage] || targetLanguageCode || 'en'
           const nativeLangCode = languageMappings[nativeLanguage] || nativeLanguageCode || 'en'
           
+          // 🔊 MOBILE FIX: Helper to get audio element for TTS
+          const getTTSAudioElement = (url: string): HTMLAudioElement => {
+            if (persistentAudioRef.current && audioUnlockedRef.current) {
+              const audio = persistentAudioRef.current;
+              audio.pause();
+              audio.currentTime = 0;
+              audio.src = url;
+              return audio;
+            }
+            const audio = new Audio(url);
+            audio.crossOrigin = 'anonymous';
+            audioElementsRef.current.push(audio);
+            return audio;
+          };
+          
           // Play target word (learning language)
           setCurrentAudioStep('training')
           const targetAudioUrl = `/api/custom-audio?text=${encodeURIComponent(sourceWord)}&languageCode=${targetLangCode}`
-          const targetAudio = new Audio(targetAudioUrl)
-          audioElementsRef.current.push(targetAudio)
+          const targetAudio = getTTSAudioElement(targetAudioUrl)
           
           await new Promise<void>((resolve, reject) => {
             targetAudio.onended = () => resolve()
@@ -1565,8 +1663,7 @@ export function LanguageSelector() {
           // Play native word
           setCurrentAudioStep('main')
           const nativeAudioUrl = `/api/custom-audio?text=${encodeURIComponent(targetWord)}&languageCode=${nativeLangCode}`
-          const nativeAudio = new Audio(nativeAudioUrl)
-          audioElementsRef.current.push(nativeAudio)
+          const nativeAudio = getTTSAudioElement(nativeAudioUrl)
           
           await new Promise<void>((resolve, reject) => {
             nativeAudio.onended = () => resolve()
@@ -1739,9 +1836,22 @@ export function LanguageSelector() {
     audioRequestQueue.current = [];
     isProcessingAudioQueue.current = false;
     
+    // 🔊 MOBILE FIX: Stop persistent audio element (but don't clear it)
+    if (persistentAudioRef.current) {
+      try {
+        persistentAudioRef.current.pause();
+        persistentAudioRef.current.currentTime = 0;
+        console.log('🛑 Stopped persistent audio element');
+      } catch (error) {
+        console.log('⚠️ Error stopping persistent audio:', error);
+      }
+    }
+    
     // Immediately stop all currently playing audio elements
     audioElementsRef.current.forEach(audio => {
       try {
+        // Skip persistent audio - it's managed separately
+        if (audio === persistentAudioRef.current) return;
         audio.pause();
         audio.currentTime = 0;
         audio.src = '';
@@ -1751,7 +1861,7 @@ export function LanguageSelector() {
       }
     });
     
-    // Clear the audio elements array
+    // Clear the audio elements array (but keep persistent audio ref)
     audioElementsRef.current = [];
     
     // Cancel the auto-play loop - CRITICAL: Do this BEFORE resetting other states
@@ -2699,6 +2809,9 @@ export function LanguageSelector() {
   }
 
   const handlePrevious = () => {
+    // 🔓 MOBILE FIX: Unlock audio on any user gesture
+    unlockAudio()
+    
     if (vocabulary.length > 0) {
       // Stop any current audio and auto-play sequence
       stopAudio()
@@ -2717,6 +2830,9 @@ export function LanguageSelector() {
   }
 
   const handleNext = () => {
+    // 🔓 MOBILE FIX: Unlock audio on any user gesture
+    unlockAudio()
+    
     if (vocabulary.length > 0) {
       // Stop any current audio and auto-play sequence
       stopAudio()
@@ -2733,9 +2849,12 @@ export function LanguageSelector() {
     }
   }
 
-  const handlePlay = () => {
+  const handlePlay = async () => {
     // Mark that user has interacted (prevents auto-play on page load)
     setHasUserInteracted(true)
+    
+    // 🔓 MOBILE FIX: Unlock audio on user gesture before any playback
+    await unlockAudio()
     
     if (isPlaying || autoPlayActive) {
       console.log('🛑 User pressed stop button - stopping all audio and autoplay')

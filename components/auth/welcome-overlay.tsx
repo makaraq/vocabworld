@@ -115,14 +115,6 @@ export function WelcomeOverlay() {
             Continue with Google
           </Button>
         )}
-        
-        {/* Skip Button */}
-        <button
-          onClick={handleSkip}
-          className="text-white/60 hover:text-white/90 text-sm transition-colors"
-        >
-          Skip for now
-        </button>
       </div>
     </div>
   )
