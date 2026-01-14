@@ -975,48 +975,56 @@ export function LanguageSelector() {
   const audioElementsRef = useRef<HTMLAudioElement[]>([])
   const stopRequestedRef = useRef(false)
   
-  // 🔊 MOBILE FIX: Persistent audio element to maintain user gesture chain
-  // Mobile browsers block new Audio() instances created programmatically,
-  // but allow reusing an element that was unlocked by user interaction
-  const persistentAudioRef = useRef<HTMLAudioElement | null>(null)
+  // 🔊 MOBILE FIX: Dual audio element approach for mobile browsers
+  // Mobile browsers block audio after changing src on the same element
+  // Solution: Use TWO audio elements and alternate between them (double-buffering)
+  const audioPoolRef = useRef<HTMLAudioElement[]>([])
+  const currentAudioIndexRef = useRef(0)
   const audioUnlockedRef = useRef(false)
   
-  // Initialize persistent audio element on mount
+  // Initialize dual audio elements on mount
   useEffect(() => {
-    if (typeof window !== 'undefined' && !persistentAudioRef.current) {
-      persistentAudioRef.current = new Audio()
-      persistentAudioRef.current.crossOrigin = 'anonymous'
-      persistentAudioRef.current.preload = 'auto'
-      console.log('🔊 Persistent audio element created for mobile compatibility')
+    if (typeof window !== 'undefined' && audioPoolRef.current.length === 0) {
+      // Create a pool of audio elements to alternate between
+      for (let i = 0; i < 4; i++) {
+        const audio = new Audio()
+        audio.crossOrigin = 'anonymous'
+        audio.preload = 'auto'
+        audioPoolRef.current.push(audio)
+      }
+      console.log('🔊 Audio pool created with', audioPoolRef.current.length, 'elements for mobile compatibility')
     }
     return () => {
-      if (persistentAudioRef.current) {
-        persistentAudioRef.current.pause()
-        persistentAudioRef.current.src = ''
-      }
+      audioPoolRef.current.forEach(audio => {
+        audio.pause()
+        audio.src = ''
+      })
     }
   }, [])
   
-  // 🔓 Unlock audio on ANY user interaction (for mobile autoplay policy)
+  // 🔓 Unlock ALL audio elements on user interaction (for mobile autoplay policy)
   const unlockAudio = async () => {
     if (audioUnlockedRef.current) return true
     
     try {
-      const audio = persistentAudioRef.current
-      if (!audio) {
-        persistentAudioRef.current = new Audio()
-        persistentAudioRef.current.crossOrigin = 'anonymous'
-      }
-      
-      // Play a silent sound to unlock audio context
+      // Play silent sound on ALL pooled audio elements to unlock them
       const silentDataUri = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA'
-      persistentAudioRef.current!.src = silentDataUri
-      persistentAudioRef.current!.volume = 0.01
       
-      await persistentAudioRef.current!.play()
-      persistentAudioRef.current!.pause()
-      persistentAudioRef.current!.currentTime = 0
-      persistentAudioRef.current!.volume = 1
+      const unlockPromises = audioPoolRef.current.map(async (audio) => {
+        try {
+          audio.src = silentDataUri
+          audio.volume = 0.01
+          await audio.play()
+          audio.pause()
+          audio.currentTime = 0
+          audio.volume = 1
+          audio.src = '' // Clear src for reuse
+        } catch (e) {
+          console.log('⚠️ Failed to unlock one audio element:', e)
+        }
+      })
+      
+      await Promise.all(unlockPromises)
       
       // Also try to resume AudioContext
       if (typeof window !== 'undefined' && window.AudioContext) {
@@ -1031,12 +1039,34 @@ export function LanguageSelector() {
       }
       
       audioUnlockedRef.current = true
-      console.log('🔓 Audio unlocked for mobile playback')
+      console.log('🔓 All', audioPoolRef.current.length, 'audio elements unlocked for mobile playback')
       return true
     } catch (error) {
       console.log('⚠️ Audio unlock failed (may need direct interaction):', error)
       return false
     }
+  }
+  
+  // Get next audio element from the pool (round-robin)
+  const getNextAudioElement = (): HTMLAudioElement => {
+    const pool = audioPoolRef.current
+    if (pool.length === 0) {
+      // Fallback: create new audio element if pool is empty
+      const audio = new Audio()
+      audio.crossOrigin = 'anonymous'
+      audio.preload = 'auto'
+      return audio
+    }
+    
+    // Round-robin through the pool
+    const audio = pool[currentAudioIndexRef.current]
+    currentAudioIndexRef.current = (currentAudioIndexRef.current + 1) % pool.length
+    
+    // Reset the audio element for reuse
+    audio.pause()
+    audio.currentTime = 0
+    
+    return audio
   }
   
   // Audio request queue to prevent concurrent B2 API calls
@@ -1234,17 +1264,14 @@ export function LanguageSelector() {
                 });
               };
               
-              // 🔊 MOBILE FIX: Helper to get or create audio element
-              // Prefer persistent audio element for mobile, fall back to new Audio
+              // 🔊 MOBILE FIX: Helper to get audio element from the pool
+              // Use pre-unlocked pool elements for mobile compatibility
               const getAudioElement = (url: string): HTMLAudioElement => {
-                // Try to use persistent audio element on mobile for better compatibility
-                if (persistentAudioRef.current && audioUnlockedRef.current) {
-                  // Reset and reuse persistent audio
-                  const audio = persistentAudioRef.current;
-                  audio.pause();
-                  audio.currentTime = 0;
+                // Use pool element if audio is unlocked
+                if (audioUnlockedRef.current && audioPoolRef.current.length > 0) {
+                  const audio = getNextAudioElement();
                   audio.src = url;
-                  console.log('🔊 Using persistent audio element for:', url);
+                  console.log('🔊 Using pooled audio element for:', url);
                   return audio;
                 }
                 // Fallback: create new audio element
@@ -1624,12 +1651,10 @@ export function LanguageSelector() {
           const targetLangCode = languageMappings[targetLanguage] || targetLanguageCode || 'en'
           const nativeLangCode = languageMappings[nativeLanguage] || nativeLanguageCode || 'en'
           
-          // 🔊 MOBILE FIX: Helper to get audio element for TTS
+          // 🔊 MOBILE FIX: Helper to get audio element for TTS from pool
           const getTTSAudioElement = (url: string): HTMLAudioElement => {
-            if (persistentAudioRef.current && audioUnlockedRef.current) {
-              const audio = persistentAudioRef.current;
-              audio.pause();
-              audio.currentTime = 0;
+            if (audioUnlockedRef.current && audioPoolRef.current.length > 0) {
+              const audio = getNextAudioElement();
               audio.src = url;
               return audio;
             }
@@ -1836,22 +1861,21 @@ export function LanguageSelector() {
     audioRequestQueue.current = [];
     isProcessingAudioQueue.current = false;
     
-    // 🔊 MOBILE FIX: Stop persistent audio element (but don't clear it)
-    if (persistentAudioRef.current) {
+    // 🔊 MOBILE FIX: Stop all pooled audio elements (but keep them for reuse)
+    audioPoolRef.current.forEach(audio => {
       try {
-        persistentAudioRef.current.pause();
-        persistentAudioRef.current.currentTime = 0;
-        console.log('🛑 Stopped persistent audio element');
+        audio.pause();
+        audio.currentTime = 0;
+        // Don't clear src - keep element ready for reuse
       } catch (error) {
-        console.log('⚠️ Error stopping persistent audio:', error);
+        console.log('⚠️ Error stopping pooled audio:', error);
       }
-    }
+    });
+    console.log('🛑 Stopped all pooled audio elements');
     
-    // Immediately stop all currently playing audio elements
+    // Immediately stop all other audio elements
     audioElementsRef.current.forEach(audio => {
       try {
-        // Skip persistent audio - it's managed separately
-        if (audio === persistentAudioRef.current) return;
         audio.pause();
         audio.currentTime = 0;
         audio.src = '';
@@ -1861,7 +1885,7 @@ export function LanguageSelector() {
       }
     });
     
-    // Clear the audio elements array (but keep persistent audio ref)
+    // Clear the audio elements array
     audioElementsRef.current = [];
     
     // Cancel the auto-play loop - CRITICAL: Do this BEFORE resetting other states
