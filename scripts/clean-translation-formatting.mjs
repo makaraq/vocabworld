@@ -58,19 +58,44 @@ async function cleanTranslations() {
   const vocabIds = vocabRecords.map(v => v.id);
   console.log(`✅ Found ${vocabRecords.length} vocabulary records\n`);
 
-  // Step 2: Get all translations for these vocabulary IDs
+  // Step 2: Get all translations for these vocabulary IDs (fetch in batches to avoid limit)
   console.log('📌 Fetching translations...');
-  const { data: translations, error: transError } = await supabase
-    .from('vocabulary_translations')
-    .select('id, vocabulary_id, language_code, translated_word')
-    .in('vocabulary_id', vocabIds);
+  let allTranslations = [];
+  const fetchBatchSize = 100; // Process 100 vocab IDs at a time
+  
+  for (let i = 0; i < vocabIds.length; i += fetchBatchSize) {
+    const batchIds = vocabIds.slice(i, i + fetchBatchSize);
+    
+    // Fetch all translations for this batch of vocab IDs
+    let offset = 0;
+    let hasMore = true;
+    
+    while (hasMore) {
+      const { data: batchTranslations, error: transError } = await supabase
+        .from('vocabulary_translations')
+        .select('id, vocabulary_id, language_code, translated_word')
+        .in('vocabulary_id', batchIds)
+        .range(offset, offset + 999); // Fetch 1000 at a time
 
-  if (transError || !translations) {
-    console.error('❌ Error fetching translations:', transError);
-    return;
+      if (transError) {
+        console.error('❌ Error fetching translations:', transError);
+        return;
+      }
+      
+      if (!batchTranslations || batchTranslations.length === 0) {
+        hasMore = false;
+      } else {
+        allTranslations.push(...batchTranslations);
+        offset += 1000;
+        hasMore = batchTranslations.length === 1000; // Continue if we got a full batch
+      }
+    }
+    
+    process.stdout.write(`\r   Fetched: ${allTranslations.length} translations...`);
   }
-
-  console.log(`✅ Found ${translations.length} translations\n`);
+  
+  const translations = allTranslations;
+  console.log(`\r✅ Found ${translations.length} translations                  \n`);
 
   // Step 3: Clean translations and track changes
   console.log('📌 Cleaning translations...');
