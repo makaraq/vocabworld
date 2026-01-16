@@ -2782,9 +2782,56 @@ export function LanguageSelector() {
     }
   }
 
-  // Get category-based progress for Verbs topic (41)
+  // Get category definitions based on topic
+  const getCategoryDefinitions = () => {
+    if (selectedTopic?.id === 41) {
+      // Verbs topic categories
+      return [
+        { name: 'Basic', start: 1, end: 63 },
+        { name: 'Daily Routine', start: 64, end: 107 },
+        { name: 'Mental', start: 108, end: 173 },
+        { name: 'Communication', start: 174, end: 210 },
+        { name: 'Social', start: 211, end: 236 },
+        { name: 'Work', start: 237, end: 276 },
+        { name: 'Travel', start: 277, end: 304 },
+        { name: 'Household', start: 305, end: 334 },
+        { name: 'Money', start: 335, end: 356 },
+        { name: 'Food', start: 357, end: 380 },
+        { name: 'Nature', start: 381, end: 401 },
+        { name: 'Health', start: 402, end: 423 },
+        { name: 'Technology', start: 424, end: 449 }
+      ]
+    } else if (selectedTopic?.id === 42) {
+      // Common Phrases categories
+      return [
+        { name: 'Daily Life & Actions', start: 1, end: 47 },
+        { name: 'Socializing & Relationships', start: 48, end: 92 },
+        { name: 'Conversation Starters & Enders', start: 93, end: 138 },
+        { name: 'Small Talk & Casual Speech', start: 139, end: 185 },
+        { name: 'Sharing Information', start: 186, end: 231 },
+        { name: 'Asking for Information', start: 232, end: 274 },
+        { name: 'Opinions & Thoughts', start: 275, end: 319 },
+        { name: 'Agreement & Disagreement', start: 320, end: 357 },
+        { name: 'Decisions & Choices', start: 358, end: 395 },
+        { name: 'Time & Scheduling', start: 396, end: 435 },
+        { name: 'Work & Productivity', start: 436, end: 476 },
+        { name: 'Problems & Solutions', start: 477, end: 520 },
+        { name: 'Emotions & Reactions', start: 521, end: 560 },
+        { name: 'Politeness & Tone', start: 561, end: 604 },
+        { name: 'Encouragement & Support', start: 605, end: 641 },
+        { name: 'Money & Practical Life', start: 642, end: 682 },
+        { name: 'Food & Daily Needs', start: 683, end: 722 },
+        { name: 'Technology & Communication', start: 723, end: 763 },
+        { name: 'Travel & Public Situations', start: 764, end: 801 },
+        { name: 'Learning & Self-Improvement', start: 802, end: 1000 }
+      ]
+    }
+    return []
+  }
+
+  // Get category-based progress for Verbs topic (41) and Common Phrases (42)
   const getCategoryProgress = () => {
-    if (selectedTopic?.id !== 41 || vocabulary.length === 0) {
+    if ((selectedTopic?.id !== 41 && selectedTopic?.id !== 42) || vocabulary.length === 0) {
       return {
         current: currentWordIndex + 1,
         total: vocabulary.length,
@@ -2795,22 +2842,8 @@ export function LanguageSelector() {
     const currentWord = vocabulary[currentWordIndex] || vocabulary[0]
     const learningOrder = currentWord.learningOrder || 1
 
-    // Define category ranges and names
-    const categories = [
-      { name: 'Basic', start: 1, end: 63 },
-      { name: 'Daily Routine', start: 64, end: 107 },
-      { name: 'Mental', start: 108, end: 173 },
-      { name: 'Communication', start: 174, end: 210 },
-      { name: 'Social', start: 211, end: 236 },
-      { name: 'Work', start: 237, end: 276 },
-      { name: 'Travel', start: 277, end: 304 },
-      { name: 'Household', start: 305, end: 334 },
-      { name: 'Money', start: 335, end: 356 },
-      { name: 'Food', start: 357, end: 380 },
-      { name: 'Nature', start: 381, end: 401 },
-      { name: 'Health', start: 402, end: 423 },
-      { name: 'Technology', start: 424, end: 449 }
-    ]
+    // Get category definitions
+    const categories = getCategoryDefinitions()
 
     // Find current category
     const currentCategory = categories.find(cat => learningOrder >= cat.start && learningOrder <= cat.end)
@@ -2831,6 +2864,62 @@ export function LanguageSelector() {
       current: positionInCategory,
       total: categorySize,
       categoryName: currentCategory.name.toUpperCase()
+    }
+  }
+
+  const handlePreviousCategory = () => {
+    unlockAudio()
+    stopAudio()
+    
+    if (vocabulary.length === 0 || (selectedTopic?.id !== 41 && selectedTopic?.id !== 42)) return
+    
+    const currentWord = vocabulary[currentWordIndex] || vocabulary[0]
+    const currentLearningOrder = currentWord.learningOrder || 1
+    const categories = getCategoryDefinitions()
+    
+    // Find current category index
+    const currentCategoryIndex = categories.findIndex(
+      cat => currentLearningOrder >= cat.start && currentLearningOrder <= cat.end
+    )
+    
+    if (currentCategoryIndex <= 0) {
+      // Already at first category, go to last category
+      const lastCategory = categories[categories.length - 1]
+      const targetIndex = vocabulary.findIndex(w => w.learningOrder === lastCategory.start)
+      if (targetIndex !== -1) setCurrentWordIndex(targetIndex)
+    } else {
+      // Go to previous category
+      const prevCategory = categories[currentCategoryIndex - 1]
+      const targetIndex = vocabulary.findIndex(w => w.learningOrder === prevCategory.start)
+      if (targetIndex !== -1) setCurrentWordIndex(targetIndex)
+    }
+  }
+  
+  const handleNextCategory = () => {
+    unlockAudio()
+    stopAudio()
+    
+    if (vocabulary.length === 0 || (selectedTopic?.id !== 41 && selectedTopic?.id !== 42)) return
+    
+    const currentWord = vocabulary[currentWordIndex] || vocabulary[0]
+    const currentLearningOrder = currentWord.learningOrder || 1
+    const categories = getCategoryDefinitions()
+    
+    // Find current category index
+    const currentCategoryIndex = categories.findIndex(
+      cat => currentLearningOrder >= cat.start && currentLearningOrder <= cat.end
+    )
+    
+    if (currentCategoryIndex === -1 || currentCategoryIndex >= categories.length - 1) {
+      // Already at last category, go to first category
+      const firstCategory = categories[0]
+      const targetIndex = vocabulary.findIndex(w => w.learningOrder === firstCategory.start)
+      if (targetIndex !== -1) setCurrentWordIndex(targetIndex)
+    } else {
+      // Go to next category
+      const nextCategory = categories[currentCategoryIndex + 1]
+      const targetIndex = vocabulary.findIndex(w => w.learningOrder === nextCategory.start)
+      if (targetIndex !== -1) setCurrentWordIndex(targetIndex)
     }
   }
 
@@ -3207,12 +3296,28 @@ export function LanguageSelector() {
                 </div>
               )}
 
-              {/* Category indicator - shown for topics with categories (e.g., Verbs) */}
+              {/* Category indicator - shown for topics with categories (e.g., Verbs, Common Phrases) */}
               {getCurrentContent().category && (
-                <div className="mb-4 flex justify-center">
+                <div className="mb-4 flex justify-center items-center gap-3">
+                  <button
+                    onClick={handlePreviousCategory}
+                    className="w-8 h-8 bg-white/5 border border-white/10 rounded-full flex items-center justify-center hover:bg-white/10 transition-all duration-200 transform hover:scale-110"
+                    disabled={vocabulary.length === 0}
+                    title="Previous category"
+                  >
+                    <ChevronLeft className="w-4 h-4 text-white/60" />
+                  </button>
                   <span className="px-3 py-1 bg-white/10 rounded-lg text-white/70 text-xs font-medium uppercase tracking-wider">
                     {getCurrentContent().category}
                   </span>
+                  <button
+                    onClick={handleNextCategory}
+                    className="w-8 h-8 bg-white/5 border border-white/10 rounded-full flex items-center justify-center hover:bg-white/10 transition-all duration-200 transform hover:scale-110"
+                    disabled={vocabulary.length === 0}
+                    title="Next category"
+                  >
+                    <ChevronRight className="w-4 h-4 text-white/60" />
+                  </button>
                 </div>
               )}
 
