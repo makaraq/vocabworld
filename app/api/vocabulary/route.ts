@@ -164,6 +164,29 @@ export async function GET(request: NextRequest) {
         else if (order <= 401) category = 'Nature';
         else if (order <= 423) category = 'Health';
         else category = 'Technology';
+      } else if (parseInt(topicId) === 42 && word.learning_order) {
+        // Category mapping for Common Phrases topic (ID 42)
+        const order = word.learning_order;
+        if (order <= 47) category = 'Daily Life & Actions';
+        else if (order <= 92) category = 'Socializing & Relationships';
+        else if (order <= 138) category = 'Conversation Starters & Enders';
+        else if (order <= 185) category = 'Small Talk & Casual Speech';
+        else if (order <= 231) category = 'Sharing Information';
+        else if (order <= 274) category = 'Asking for Information';
+        else if (order <= 319) category = 'Opinions & Thoughts';
+        else if (order <= 357) category = 'Agreement & Disagreement';
+        else if (order <= 395) category = 'Decisions & Choices';
+        else if (order <= 435) category = 'Time & Scheduling';
+        else if (order <= 476) category = 'Work & Productivity';
+        else if (order <= 520) category = 'Problems & Solutions';
+        else if (order <= 560) category = 'Emotions & Reactions';
+        else if (order <= 604) category = 'Politeness & Tone';
+        else if (order <= 641) category = 'Encouragement & Support';
+        else if (order <= 682) category = 'Money & Practical Life';
+        else if (order <= 722) category = 'Food & Daily Needs';
+        else if (order <= 763) category = 'Technology & Communication';
+        else if (order <= 801) category = 'Travel & Public Situations';
+        else category = 'Learning & Self-Improvement';
       } else if (word.context) {
         // Fallback: Extract category from context (e.g., "basic - verbs" -> "Basic")
         const contextParts = word.context.split(' - ');

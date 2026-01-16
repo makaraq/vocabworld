@@ -68,12 +68,13 @@ async function insertCommonPhrasesTopic() {
 
   // Step 2: Insert Vocabulary in batches
   console.log('📌 Step 2: Inserting vocabulary...');
-  const vocabularyData = phrases.map(phrase => ({
+  const vocabularyData = phrases.map((phrase, index) => ({
     topic_id: 42,
     word_en: phrase.english,
     part_of_speech: 'phrase',
     difficulty_level: 1,
-    context: phrase.categoryDescription || ''
+    context: phrase.category || '', // Use category name, not description
+    learning_order: index + 1 // Add learning order based on position
   }));
 
   const batchSize = 100;

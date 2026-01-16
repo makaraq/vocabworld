@@ -2094,7 +2094,7 @@ export function LanguageSelector() {
             selectedTopic.id,
             targetLanguage, // Use full language name, not code
             nativeLanguage, // Use full language name, not code
-            200, // Reduced from 10000 to 200 for better initial performance
+            1000, // Increased to 1000 to handle larger topics like Verbs (449) and Common Phrases (838)
             0 // Start from offset 0
           )
           
@@ -2717,7 +2717,7 @@ export function LanguageSelector() {
           topic.id,
           targetLanguage,
           nativeLanguage,
-          500, // Increased to handle larger topics like Verbs (449 words)
+          1000, // Increased to handle larger topics like Common Phrases (838 words)
           0
         )
         
