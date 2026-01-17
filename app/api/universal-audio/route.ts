@@ -164,8 +164,10 @@ export async function GET(request: NextRequest) {
       if (!fileName && !filePath && wordId) {
         console.log(`🔍 Trying topic-specific CSV lookup for wordId: ${wordId}`);
         
+        const wordIdNum = parseInt(wordId);
+        
         // Try Common Phrases CSV (topic 42, IDs 4172-4965)
-        if (wordId >= 4172 && wordId <= 4965) {
+        if (wordIdNum >= 4172 && wordIdNum <= 4965) {
           const phrasesCsvUrl = `${baseUrl}/data/common-phrases-b2-urls.csv`;
           try {
             const phrasesCsvResponse = await fetch(phrasesCsvUrl);
@@ -178,7 +180,7 @@ export async function GET(request: NextRequest) {
                 if (!line.trim()) continue;
                 const [csvVocabId, csvLang, csvUrl] = line.split(',');
                 
-                if (parseInt(csvVocabId) === wordId && csvLang === audioLangCode) {
+                if (parseInt(csvVocabId) === wordIdNum && csvLang === audioLangCode) {
                   // Extract path from URL: https://f002.backblazeb2.com/file/voco-audio-library/CommonPhrases/cy/file.wav
                   const urlMatch = csvUrl.match(/voco-audio-library\/(.+)$/);
                   if (urlMatch) {
