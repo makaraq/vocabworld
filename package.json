@@ -19,7 +19,7 @@
     "@capacitor/core": "^7.4.3",
     "@capacitor/ios": "^7.4.3",
     "@codetrix-studio/capacitor-google-auth": "^3.4.0-rc.4",
-    "@google-cloud/text-to-speech": "^6.3.0",
+    "@google-cloud/text-to-speech": "^6.4.0",
     "@google-cloud/vertexai": "^1.10.0",
     "@google/genai": "^1.15.0",
     "@google/generative-ai": "^0.24.1",

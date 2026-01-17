@@ -160,47 +160,80 @@ export async function GET(request: NextRequest) {
         }
       }
       
-      // If not found by ID and we have a word parameter, try word-based lookup (for Verbs topic)
-      if (!fileName && !filePath && word) {
-        console.log(`🔍 Trying word-based lookup for: ${word}`);
+      // If not found by ID, try topic-specific CSV lookups
+      if (!fileName && !filePath && wordId) {
+        console.log(`🔍 Trying topic-specific CSV lookup for wordId: ${wordId}`);
         
-        // Try fetching the Verbs CSV
-        const verbsCsvUrl = `${baseUrl}/data/verb-b2-urls.csv`;
-        try {
-          const verbsCsvResponse = await fetch(verbsCsvUrl);
-          if (verbsCsvResponse.ok) {
-            const verbsCsvContent = await verbsCsvResponse.text();
-            const verbsLines = verbsCsvContent.split('\n');
-            console.log(`🔍 Searching Verbs CSV: ${verbsLines.length} entries`);
-            
-            // Normalize the word for matching (lowercase, handle special chars)
-            const normalizedWord = word.toLowerCase().trim();
-            
-            for (let i = 1; i < verbsLines.length; i++) {
-              const line = verbsLines[i];
-              if (!line.trim()) continue;
+        // Try Common Phrases CSV (topic 42, IDs 4172-4965)
+        if (wordId >= 4172 && wordId <= 4965) {
+          const phrasesCsvUrl = `${baseUrl}/data/common-phrases-b2-urls.csv`;
+          try {
+            const phrasesCsvResponse = await fetch(phrasesCsvUrl);
+            if (phrasesCsvResponse.ok) {
+              const phrasesCsvContent = await phrasesCsvResponse.text();
+              const phrasesLines = phrasesCsvContent.split('\n');
+              console.log(`🔍 Searching Common Phrases CSV: ${phrasesLines.length} entries`);
               
-              const match = line.match(/^"([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)"$/);
-              if (!match) continue;
-              
-              const [, localPath, backblazeURL, language, category, csvFileName] = match;
-              
-              // Pattern: alnilam_{word}_.wav (word-based for verbs)
-              // Also check if the word appears in the filename
-              const wordMatch = csvFileName.match(/alnilam_([^_]+)_\.wav/i);
-              if (wordMatch) {
-                const csvWord = wordMatch[1].toLowerCase();
-                if (csvWord === normalizedWord && language === audioLangCode) {
-                  fileName = csvFileName;
-                  filePath = localPath;
-                  console.log(`✅ Found audio mapping (word-based): ${fileName} at ${filePath}`);
-                  break;
+              for (const line of phrasesLines) {
+                if (!line.trim()) continue;
+                const [csvVocabId, csvLang, csvUrl] = line.split(',');
+                
+                if (parseInt(csvVocabId) === wordId && csvLang === audioLangCode) {
+                  // Extract path from URL: https://f002.backblazeb2.com/file/voco-audio-library/CommonPhrases/cy/file.wav
+                  const urlMatch = csvUrl.match(/voco-audio-library\/(.+)$/);
+                  if (urlMatch) {
+                    filePath = urlMatch[1];
+                    fileName = filePath.split('/').pop();
+                    console.log(`✅ Found Common Phrases audio: ${fileName} at ${filePath}`);
+                    break;
+                  }
                 }
               }
             }
+          } catch (phrasesError) {
+            console.log(`⚠️ Common Phrases CSV not found or error:`, phrasesError);
           }
-        } catch (verbsError) {
-          console.log(`⚠️ Verbs CSV not found or error:`, verbsError);
+        }
+        
+        // Try Verbs CSV (word-based lookup)
+        if (!fileName && !filePath && word) {
+          const verbsCsvUrl = `${baseUrl}/data/verb-b2-urls.csv`;
+          try {
+            const verbsCsvResponse = await fetch(verbsCsvUrl);
+            if (verbsCsvResponse.ok) {
+              const verbsCsvContent = await verbsCsvResponse.text();
+              const verbsLines = verbsCsvContent.split('\n');
+              console.log(`🔍 Searching Verbs CSV: ${verbsLines.length} entries`);
+              
+              // Normalize the word for matching (lowercase, handle special chars)
+              const normalizedWord = word.toLowerCase().trim();
+              
+              for (let i = 1; i < verbsLines.length; i++) {
+                const line = verbsLines[i];
+                if (!line.trim()) continue;
+                
+                const match = line.match(/^"([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)"$/);
+                if (!match) continue;
+                
+                const [, localPath, backblazeURL, language, category, csvFileName] = match;
+                
+                // Pattern: alnilam_{word}_.wav (word-based for verbs)
+                // Also check if the word appears in the filename
+                const wordMatch = csvFileName.match(/alnilam_([^_]+)_\.wav/i);
+                if (wordMatch) {
+                  const csvWord = wordMatch[1].toLowerCase();
+                  if (csvWord === normalizedWord && language === audioLangCode) {
+                    fileName = csvFileName;
+                    filePath = localPath;
+                    console.log(`✅ Found audio mapping (word-based): ${fileName} at ${filePath}`);
+                    break;
+                  }
+                }
+              }
+            }
+          } catch (verbsError) {
+            console.log(`⚠️ Verbs CSV not found or error:`, verbsError);
+          }
         }
       }
     } catch (error) {
