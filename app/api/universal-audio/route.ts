@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// 🚀 PERFORMANCE: In-memory cache for CSV files (persists across requests in same serverless instance)
+const csvCache: { [key: string]: { data: Map<string, string>, timestamp: number } } = {};
+const CSV_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
 // Universal Audio API - B2 Authenticated Access
 // Fetches audio from private B2 bucket using API credentials
 export async function GET(request: NextRequest) {
@@ -166,34 +170,62 @@ export async function GET(request: NextRequest) {
         
         const wordIdNum = parseInt(wordId);
         
-        // Try Common Phrases CSV (topic 42, IDs 4172-4965)
+        // Try Common Phrases CSV (topic 42, IDs 4172-4965) with CACHING
         if (wordIdNum >= 4172 && wordIdNum <= 4965) {
           const phrasesCsvUrl = `${baseUrl}/data/common-phrases-b2-urls.csv`;
+          const cacheKey = 'common-phrases-b2-urls';
+          
           try {
-            const phrasesCsvResponse = await fetch(phrasesCsvUrl);
-            if (phrasesCsvResponse.ok) {
-              const phrasesCsvContent = await phrasesCsvResponse.text();
-              const phrasesLines = phrasesCsvContent.split('\n');
-              console.log(`🔍 Searching Common Phrases CSV: ${phrasesLines.length} entries`);
+            // Check cache first
+            let phrasesMap: Map<string, string>;
+            const now = Date.now();
+            
+            if (csvCache[cacheKey] && (now - csvCache[cacheKey].timestamp) < CSV_CACHE_TTL) {
+              console.log(`🚀 Using cached Common Phrases CSV (${csvCache[cacheKey].data.size} entries)`);
+              phrasesMap = csvCache[cacheKey].data;
+            } else {
+              console.log(`📥 Fetching and caching Common Phrases CSV...`);
+              const phrasesCsvResponse = await fetch(phrasesCsvUrl);
               
-              for (const line of phrasesLines) {
-                if (!line.trim()) continue;
-                const [csvVocabId, csvLang, csvUrl] = line.split(',');
+              if (phrasesCsvResponse.ok) {
+                const phrasesCsvContent = await phrasesCsvResponse.text();
+                const phrasesLines = phrasesCsvContent.split('\n');
                 
-                if (parseInt(csvVocabId) === wordIdNum && csvLang === audioLangCode) {
-                  // Extract path from URL: https://f002.backblazeb2.com/file/voco-audio-library/CommonPhrases/cy/file.wav
-                  const urlMatch = csvUrl.match(/voco-audio-library\/(.+)$/);
-                  if (urlMatch) {
-                    filePath = urlMatch[1];
-                    fileName = filePath.split('/').pop();
-                    console.log(`✅ Found Common Phrases audio: ${fileName} at ${filePath}`);
-                    break;
+                // Build Map for O(1) lookups: "wordId_lang" -> "full_b2_url"
+                phrasesMap = new Map();
+                for (const line of phrasesLines) {
+                  if (!line.trim()) continue;
+                  const [csvVocabId, csvLang, csvUrl] = line.split(',');
+                  if (csvVocabId && csvLang && csvUrl) {
+                    phrasesMap.set(`${csvVocabId}_${csvLang}`, csvUrl);
                   }
                 }
+                
+                // Cache for 5 minutes
+                csvCache[cacheKey] = { data: phrasesMap, timestamp: now };
+                console.log(`✅ Cached ${phrasesMap.size} Common Phrases entries`);
+              } else {
+                throw new Error(`CSV fetch failed: ${phrasesCsvResponse.status}`);
               }
             }
+            
+            // O(1) lookup instead of O(n) loop
+            const lookupKey = `${wordIdNum}_${audioLangCode}`;
+            const csvUrl = phrasesMap.get(lookupKey);
+            
+            if (csvUrl) {
+              // Extract path from URL: https://f002.backblazeb2.com/file/voco-audio-library/CommonPhrases/cy/file.wav
+              const urlMatch = csvUrl.match(/voco-audio-library\/(.+)$/);
+              if (urlMatch) {
+                filePath = urlMatch[1];
+                fileName = filePath.split('/').pop();
+                console.log(`✅ Found Common Phrases audio: ${fileName} at ${filePath}`);
+              }
+            } else {
+              console.log(`⚠️ No audio found for wordId=${wordIdNum}, lang=${audioLangCode}`);
+            }
           } catch (phrasesError) {
-            console.log(`⚠️ Common Phrases CSV not found or error:`, phrasesError);
+            console.log(`⚠️ Common Phrases CSV error:`, phrasesError);
           }
         }
         
