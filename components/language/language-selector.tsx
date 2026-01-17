@@ -1451,8 +1451,10 @@ export function LanguageSelector() {
 
               // FIXED ORDER: Play SOURCE language second (native/main language)
               // Note: targetWord actually contains the NATIVE language translation (inverted naming in vocabulary API)
-              // Skip if playTargetOnly is enabled
-              if (wordId && sourceLangCode && !settings?.playTargetOnly) {
+              // Skip source audio if playTargetOnly is enabled
+              if (settings?.playTargetOnly) {
+                console.log('⏭️ Skipping source audio (playTargetOnly enabled) - playing only target language');
+              } else if (wordId && sourceLangCode) {
                 const sourceUrl = getAudioUrl(wordId, sourceLangCode, englishWord, targetWord);
                 console.log(`🎵 Loading SOURCE audio SECOND: ${sourceUrl}`);
                 
@@ -1490,8 +1492,6 @@ export function LanguageSelector() {
                     await abortableSleep(500); // Brief pause before retry
                   }
                 }
-              } else if (settings?.playTargetOnly) {
-                console.log('⏭️ Skipping source audio (playTargetOnly enabled) - will still track progress');
               }
 
               console.log('🎉 Alnilam sequence completed successfully');
