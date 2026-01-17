@@ -1,8 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// Next.js Route Segment Config - Increase timeout for audio streaming
+export const maxDuration = 30; // 30 seconds max (Vercel Pro: 60s, Hobby: 10s default)
+export const dynamic = 'force-dynamic'; // Disable static generation
+
 // 🚀 PERFORMANCE: In-memory cache for CSV files (persists across requests in same serverless instance)
 const csvCache: { [key: string]: { data: Map<string, string>, timestamp: number } } = {};
 const CSV_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+// 🚀 PERFORMANCE: Cache B2 authorization tokens (valid for 24 hours)
+let b2AuthCache: { authData: any, downloadAuthData: any, timestamp: number } | null = null;
+const B2_AUTH_CACHE_TTL = 20 * 60 * 1000; // 20 minutes (tokens valid for 24h, refresh every 20min)
 
 // Universal Audio API - B2 Authenticated Access
 // Fetches audio from private B2 bucket using API credentials
@@ -61,53 +69,66 @@ export async function GET(request: NextRequest) {
     const audioLangCode = getAudioLanguageCode(languageCode);
     console.log(`🔑 Language mapping:`, { original: languageCode, mapped: audioLangCode });
 
-    // Step 1: Authorize with B2
-    console.log('🔐 Authorizing with B2...');
+    // Step 1: Authorize with B2 (with caching)
+    let authData: any;
+    let downloadAuthData: any;
+    const now = Date.now();
     
-    const authResponse = await fetch('https://api.backblazeb2.com/b2api/v2/b2_authorize_account', {
-      method: 'GET',
-      headers: {
-        'Authorization': 'Basic ' + Buffer.from(`${keyId}:${applicationKey}`).toString('base64')
+    if (b2AuthCache && (now - b2AuthCache.timestamp) < B2_AUTH_CACHE_TTL) {
+      console.log('🚀 Using cached B2 authorization');
+      authData = b2AuthCache.authData;
+      downloadAuthData = b2AuthCache.downloadAuthData;
+    } else {
+      console.log('🔐 Authorizing with B2...');
+      
+      const authResponse = await fetch('https://api.backblazeb2.com/b2api/v2/b2_authorize_account', {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Basic ' + Buffer.from(`${keyId}:${applicationKey}`).toString('base64')
+        }
+      });
+
+      if (!authResponse.ok) {
+        console.log('❌ B2 authorization failed');
+        return NextResponse.json(
+          { error: 'B2 authorization failed' },
+          { status: 503 }
+        );
       }
-    });
 
-    if (!authResponse.ok) {
-      console.log('❌ B2 authorization failed');
-      return NextResponse.json(
-        { error: 'B2 authorization failed' },
-        { status: 503 }
-      );
+      authData = await authResponse.json();
+      console.log('✅ B2 authorization successful');
+
+      // Step 2: Get download authorization
+      console.log('🔑 Getting download authorization...');
+      
+      const downloadAuthResponse = await fetch(`${authData.apiUrl}/b2api/v2/b2_get_download_authorization`, {
+        method: 'POST',
+        headers: {
+          'Authorization': authData.authorizationToken,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          bucketId: 'aa1d47dd5cca310593920d1c',
+          fileNamePrefix: `${audioLangCode}/`,
+          validDurationInSeconds: 3600
+        })
+      });
+
+      if (!downloadAuthResponse.ok) {
+        console.log('❌ Download authorization failed');
+        return NextResponse.json(
+          { error: 'Download authorization failed' },
+          { status: 503 }
+        );
+      }
+
+      downloadAuthData = await downloadAuthResponse.json();
+      console.log('✅ Download authorization successful');
+      
+      // Cache for 20 minutes
+      b2AuthCache = { authData, downloadAuthData, timestamp: now };
     }
-
-    const authData = await authResponse.json();
-    console.log('✅ B2 authorization successful');
-
-    // Step 2: Get download authorization
-    console.log('🔑 Getting download authorization...');
-    
-    const downloadAuthResponse = await fetch(`${authData.apiUrl}/b2api/v2/b2_get_download_authorization`, {
-      method: 'POST',
-      headers: {
-        'Authorization': authData.authorizationToken,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        bucketId: 'aa1d47dd5cca310593920d1c',
-        fileNamePrefix: `${audioLangCode}/`,
-        validDurationInSeconds: 3600
-      })
-    });
-
-    if (!downloadAuthResponse.ok) {
-      console.log('❌ Download authorization failed');
-      return NextResponse.json(
-        { error: 'Download authorization failed' },
-        { status: 503 }
-      );
-    }
-
-    const downloadAuthData = await downloadAuthResponse.json();
-    console.log('✅ Download authorization successful');
 
     // Step 3: Find file URL from CSV (check main CSV for audio files)
     let fileName: string | null = null;
