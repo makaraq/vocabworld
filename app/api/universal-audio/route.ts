@@ -80,7 +80,13 @@ export async function GET(request: NextRequest) {
     console.log('✅ B2 authorization successful');
 
     // Step 2: Get download authorization
-    console.log('🔑 Getting download authorization...');
+    // For Common Phrases (topic 42, IDs 4172-4965), files are at CommonPhrases/{lang}/
+    // For other topics, files are at {lang}/{category}/
+    const wordIdNum = wordId ? parseInt(wordId) : 0;
+    const isCommonPhrases = wordIdNum >= 4172 && wordIdNum <= 4965;
+    const fileNamePrefix = isCommonPhrases ? 'CommonPhrases/' : `${audioLangCode}/`;
+    
+    console.log(`🔑 Getting download authorization for prefix: ${fileNamePrefix}`);
     
     const downloadAuthResponse = await fetch(`${authData.apiUrl}/b2api/v2/b2_get_download_authorization`, {
       method: 'POST',
@@ -90,7 +96,7 @@ export async function GET(request: NextRequest) {
       },
       body: JSON.stringify({
         bucketId: 'aa1d47dd5cca310593920d1c',
-        fileNamePrefix: `${audioLangCode}/`,
+        fileNamePrefix: fileNamePrefix,
         validDurationInSeconds: 3600
       })
     });
