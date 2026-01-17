@@ -630,11 +630,6 @@ export function LanguageSelector() {
   const { user, signOut, signInWithGoogle, isPremium, canAccessTopic, refreshSubscription, loading } = useAuth()
   const [showPaywall, setShowPaywall] = useState(false)
 
-  // Don't render until auth is initialized
-  if (loading) {
-    return null
-  }
-
   // Debug auth state
   useEffect(() => {
     console.log('🔍 Auth state:', { 
@@ -3196,6 +3191,11 @@ export function LanguageSelector() {
         </div>
       </button>
     )
+  }
+
+  // Don't render until auth is initialized
+  if (loading) {
+    return null
   }
 
   return (
