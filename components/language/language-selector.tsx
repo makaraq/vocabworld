@@ -3308,28 +3308,34 @@ export function LanguageSelector() {
                 </div>
               )}
 
-              {/* Category indicator - shown for topics with categories (e.g., Verbs, Common Phrases) */}
-              {(selectedTopic?.id === 41 || selectedTopic?.id === 42) && getCurrentContent().category && (
+              {/* Category indicator - shown for topics with categories */}
+              {getCurrentContent().category && (
                 <div className="mb-4 flex justify-center items-center gap-3">
-                  <button
-                    onClick={handlePreviousCategory}
-                    className="w-8 h-8 bg-white/5 border border-white/10 rounded-full flex items-center justify-center hover:bg-white/10 transition-all duration-200 transform hover:scale-110"
-                    disabled={vocabulary.length === 0}
-                    title="Previous category"
-                  >
-                    <ChevronLeft className="w-4 h-4 text-white/60" />
-                  </button>
+                  {/* Navigation arrows only for Verbs and Common Phrases */}
+                  {(selectedTopic?.id === 41 || selectedTopic?.id === 42) && (
+                    <button
+                      onClick={handlePreviousCategory}
+                      className="w-8 h-8 bg-white/5 border border-white/10 rounded-full flex items-center justify-center hover:bg-white/10 transition-all duration-200 transform hover:scale-110"
+                      disabled={vocabulary.length === 0}
+                      title="Previous category"
+                    >
+                      <ChevronLeft className="w-4 h-4 text-white/60" />
+                    </button>
+                  )}
                   <span className="px-3 py-1 bg-white/10 rounded-lg text-white/70 text-xs font-medium uppercase tracking-wider">
                     {getCurrentContent().category}
                   </span>
-                  <button
-                    onClick={handleNextCategory}
-                    className="w-8 h-8 bg-white/5 border border-white/10 rounded-full flex items-center justify-center hover:bg-white/10 transition-all duration-200 transform hover:scale-110"
-                    disabled={vocabulary.length === 0}
-                    title="Next category"
-                  >
-                    <ChevronRight className="w-4 h-4 text-white/60" />
-                  </button>
+                  {/* Navigation arrows only for Verbs and Common Phrases */}
+                  {(selectedTopic?.id === 41 || selectedTopic?.id === 42) && (
+                    <button
+                      onClick={handleNextCategory}
+                      className="w-8 h-8 bg-white/5 border border-white/10 rounded-full flex items-center justify-center hover:bg-white/10 transition-all duration-200 transform hover:scale-110"
+                      disabled={vocabulary.length === 0}
+                      title="Next category"
+                    >
+                      <ChevronRight className="w-4 h-4 text-white/60" />
+                    </button>
+                  )}
                 </div>
               )}
 
