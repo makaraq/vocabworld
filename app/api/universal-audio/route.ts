@@ -166,34 +166,41 @@ export async function GET(request: NextRequest) {
         
         const wordIdNum = parseInt(wordId);
         
-        // Try Common Phrases CSV (topic 42, IDs 4172-4965)
-        if (wordIdNum >= 4172 && wordIdNum <= 4965) {
+        // Try Common Phrases CSV (topic 42, IDs 4172-4965) - uses word-based lookup like Verbs
+        if (wordIdNum >= 4172 && wordIdNum <= 4965 && word) {
           const phrasesCsvUrl = `${baseUrl}/data/common-phrases-b2-urls.csv`;
           try {
             const phrasesCsvResponse = await fetch(phrasesCsvUrl);
             if (phrasesCsvResponse.ok) {
               const phrasesCsvContent = await phrasesCsvResponse.text();
               const phrasesLines = phrasesCsvContent.split('\n');
-              console.log(`🔍 Searching Common Phrases CSV: ${phrasesLines.length} entries`);
+              console.log(`🔍 Searching Common Phrases CSV: ${phrasesLines.length} entries for word="${word}"`);
               
-              for (const line of phrasesLines) {
+              // Normalize the word for matching (lowercase, handle special chars like spaces)
+              const normalizedWord = word.toLowerCase().trim().replace(/\s+/g, '_');
+              
+              for (let i = 1; i < phrasesLines.length; i++) {
+                const line = phrasesLines[i];
                 if (!line.trim()) continue;
-                const [csvVocabId, csvLang, csvUrl] = line.split(',');
                 
-                if (parseInt(csvVocabId) === wordIdNum && csvLang === audioLangCode) {
-                  // Extract path from URL: https://f002.backblazeb2.com/file/voco-audio-library/CommonPhrases/cy/file.wav
-                  const urlMatch = csvUrl.match(/voco-audio-library\/(.+)$/);
-                  if (urlMatch) {
-                    filePath = urlMatch[1];
-                    fileName = filePath.split('/').pop();
-                    console.log(`✅ Found Common Phrases audio: ${fileName} at ${filePath}`);
-                    break;
-                  }
+                const match = line.match(/^"([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)"$/);
+                if (!match) continue;
+                
+                const [, localPath, backblazeURL, language, category, csvFileName] = match;
+                
+                // Match by filename (e.g., "get_up.wav" matches word "get up")
+                const fileNameWithoutExt = csvFileName.replace('.wav', '').toLowerCase();
+                
+                if (fileNameWithoutExt === normalizedWord && language === audioLangCode) {
+                  fileName = csvFileName;
+                  filePath = localPath;
+                  console.log(`✅ Found Common Phrases audio: ${fileName} at ${filePath}`);
+                  break;
                 }
               }
             }
           } catch (phrasesError) {
-            console.log(`⚠️ Common Phrases CSV not found or error:`, phrasesError);
+            console.log(`⚠️ Common Phrases CSV error:`, phrasesError);
           }
         }
         
