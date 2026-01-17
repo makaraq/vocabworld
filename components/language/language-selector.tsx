@@ -1396,8 +1396,9 @@ export function LanguageSelector() {
               };
 
               // FIXED ORDER: Play TARGET language first (what user is learning)
+              // Note: sourceWord actually contains the LEARNING language translation (inverted naming in vocabulary API)
               if (wordId && targetLangCode) {
-                const targetUrl = getAudioUrl(wordId, targetLangCode, englishWord, targetWord);
+                const targetUrl = getAudioUrl(wordId, targetLangCode, englishWord, sourceWord);
                 console.log(`🎯 Loading TARGET audio FIRST: ${targetUrl}`);
                 
                 // Set visual indicator for target language
@@ -1449,9 +1450,10 @@ export function LanguageSelector() {
               }
 
               // FIXED ORDER: Play SOURCE language second (native/main language)
+              // Note: targetWord actually contains the NATIVE language translation (inverted naming in vocabulary API)
               // Skip if playTargetOnly is enabled
               if (wordId && sourceLangCode && !settings?.playTargetOnly) {
-                const sourceUrl = getAudioUrl(wordId, sourceLangCode, englishWord, sourceWord);
+                const sourceUrl = getAudioUrl(wordId, sourceLangCode, englishWord, targetWord);
                 console.log(`🎵 Loading SOURCE audio SECOND: ${sourceUrl}`);
                 
                 // Set visual indicator for source language
