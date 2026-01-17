@@ -1356,11 +1356,15 @@ export function LanguageSelector() {
 
               // 🔧 UNIVERSAL AUDIO ROUTING - Supports all 47 Azure languages + Alnilam
               // Now includes optional 'word' parameter for Verbs topic word-based lookup
-              const getAudioUrl = (wordId: string | number, languageCode: string, englishWord?: string) => {
-                console.log(`🌍 Using Universal Audio API for ${languageCode}`, { wordId, englishWord });
+              // Also includes 'targetWord' parameter for cy/ga/mt Common Phrases lookup
+              const getAudioUrl = (wordId: string | number, languageCode: string, englishWord?: string, targetWordForAudio?: string) => {
+                console.log(`🌍 Using Universal Audio API for ${languageCode}`, { wordId, englishWord, targetWordForAudio });
                 let url = `/api/universal-audio?wordId=${wordId}&languageCode=${languageCode}`;
                 if (englishWord) {
                   url += `&word=${encodeURIComponent(englishWord)}`;
+                }
+                if (targetWordForAudio) {
+                  url += `&targetWord=${encodeURIComponent(targetWordForAudio)}`;
                 }
                 return url;
               };
@@ -1393,7 +1397,7 @@ export function LanguageSelector() {
 
               // FIXED ORDER: Play TARGET language first (what user is learning)
               if (wordId && targetLangCode) {
-                const targetUrl = getAudioUrl(wordId, targetLangCode, englishWord);
+                const targetUrl = getAudioUrl(wordId, targetLangCode, englishWord, targetWord);
                 console.log(`🎯 Loading TARGET audio FIRST: ${targetUrl}`);
                 
                 // Set visual indicator for target language
@@ -1447,7 +1451,7 @@ export function LanguageSelector() {
               // FIXED ORDER: Play SOURCE language second (native/main language)
               // Skip if playTargetOnly is enabled
               if (wordId && sourceLangCode && !settings?.playTargetOnly) {
-                const sourceUrl = getAudioUrl(wordId, sourceLangCode, englishWord);
+                const sourceUrl = getAudioUrl(wordId, sourceLangCode, englishWord, sourceWord);
                 console.log(`🎵 Loading SOURCE audio SECOND: ${sourceUrl}`);
                 
                 // Set visual indicator for source language

@@ -9,8 +9,9 @@ export async function GET(request: NextRequest) {
     const wordId = searchParams.get('wordId');
     const languageCode = searchParams.get('languageCode');
     const word = searchParams.get('word'); // Optional: English word for Verbs topic lookup
+    const targetWord = searchParams.get('targetWord'); // Optional: Target language word for cy/ga/mt Common Phrases lookup
 
-    console.log(`🔑 Authenticated Audio Request:`, { wordId, languageCode, word });
+    console.log(`🔑 Authenticated Audio Request:`, { wordId, languageCode, word, targetWord });
 
     if (!wordId || !languageCode) {
       return NextResponse.json(
@@ -179,6 +180,15 @@ export async function GET(request: NextRequest) {
               // Normalize the word for matching (lowercase, handle special chars like spaces)
               const normalizedWord = word.toLowerCase().trim().replace(/\s+/g, '_');
               
+              // For Welsh (cy), Irish (ga), and Maltese (mt), use targetWord for filename matching
+              // These languages have native language filenames in B2, not English filenames
+              const isNativeFilenameLanguage = ['cy', 'ga', 'mt'].includes(audioLangCode);
+              const normalizedTargetWord = targetWord ? targetWord.toLowerCase().trim().replace(/\s+/g, '_') : null;
+              
+              if (isNativeFilenameLanguage && normalizedTargetWord) {
+                console.log(`🔍 Using targetWord for ${audioLangCode}: "${normalizedTargetWord}"`);
+              }
+              
               for (let i = 1; i < phrasesLines.length; i++) {
                 const line = phrasesLines[i];
                 if (!line.trim()) continue;
@@ -191,7 +201,13 @@ export async function GET(request: NextRequest) {
                 // Match by filename (e.g., "get_up.wav" matches word "get up")
                 const fileNameWithoutExt = csvFileName.replace('.wav', '').toLowerCase();
                 
-                if (fileNameWithoutExt === normalizedWord && language === audioLangCode) {
+                // For cy/ga/mt: try matching with targetWord (native language filename)
+                // For other languages: match with English word
+                const matchWord = (isNativeFilenameLanguage && normalizedTargetWord) 
+                  ? normalizedTargetWord 
+                  : normalizedWord;
+                
+                if (fileNameWithoutExt === matchWord && language === audioLangCode) {
                   fileName = csvFileName;
                   filePath = localPath;
                   console.log(`✅ Found Common Phrases audio: ${fileName} at ${filePath}`);
