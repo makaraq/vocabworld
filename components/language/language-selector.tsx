@@ -73,6 +73,7 @@ const TOPIC_ICONS = [
   { id: 39, icon: 'solar:document-medicine-linear' }, // Advanced Communication & Formal Language
   { id: 40, icon: 'solar:global-linear' }, // Cultural Integration & Global Perspectives
   { id: 41, icon: 'solar:running-2-linear' }, // Verbs
+  { id: 42, icon: 'solar:book-2-linear' }, // Common Phrases
 ]
 
 // iPhone-style Topic Slider Component
