@@ -627,8 +627,13 @@ export function LanguageSelector() {
     }
   }
 
-  const { user, signOut, signInWithGoogle, isPremium, canAccessTopic, refreshSubscription } = useAuth()
+  const { user, signOut, signInWithGoogle, isPremium, canAccessTopic, refreshSubscription, loading } = useAuth()
   const [showPaywall, setShowPaywall] = useState(false)
+
+  // Don't render until auth is initialized
+  if (loading) {
+    return null
+  }
 
   // Debug auth state
   useEffect(() => {
@@ -2401,7 +2406,7 @@ export function LanguageSelector() {
   const alnilamLanguageCodes = ['ar', 'bg', 'bn', 'ca', 'cs', 'cy', 'da', 'de', 'el', 'en', 'es', 'et', 'eu', 'fa', 'fi', 'fr', 'ga', 'gu', 'he', 'hi', 'hr', 'hu', 'id', 'is', 'it', 'ja', 'ko', 'lt', 'lv', 'mk', 'ml', 'mr', 'mt', 'nl', 'no', 'pl', 'pt', 'ro', 'ru', 'sk', 'sl', 'sv', 'ta', 'te', 'th', 'tr', 'uk', 'ur', 'vi', 'zh']
   
   // Order languages with most common first, then alphabetical
-  const topLanguages = ['en', 'es', 'fr', 'de', 'it', 'pt', 'ru', 'ja', 'ko', 'zh']
+  const topLanguages = ['en', 'es', 'fr', 'de', 'it', 'pt', 'ru', 'ja', 'tr', 'ko', 'zh']
   const remainingLanguages = alnilamLanguageCodes
     .filter(code => !topLanguages.includes(code))
     .sort((a, b) => getLanguageName(a).localeCompare(getLanguageName(b)))
@@ -2485,7 +2490,7 @@ export function LanguageSelector() {
         if (targetLanguage && targetLanguageCode) {
           setCurrentPage("confirmation")
         } else {
-          setQuestionText("I want to learn...")
+          setQuestionText("I want to learn")
           setCurrentPage("target")
         }
         setIsTransitioning(false)
@@ -2527,7 +2532,7 @@ export function LanguageSelector() {
         // Don't clear the language - we want to show current selection
       } else {
         setCurrentPage("target")
-        setQuestionText("I want to learn...")
+        setQuestionText("I want to learn")
         // Don't clear the language - we want to show current selection
       }
       setSearchQuery("")
@@ -2548,7 +2553,7 @@ export function LanguageSelector() {
         setNativeLanguageCode("")
       } else {
         setCurrentPage("target")
-        setQuestionText("I want to learn...")
+        setQuestionText("I want to learn")
         // Clear the target language so it can be reselected
         setTargetLanguage("")
         setTargetLanguageCode("")
@@ -3304,7 +3309,7 @@ export function LanguageSelector() {
               )}
 
               {/* Category indicator - shown for topics with categories (e.g., Verbs, Common Phrases) */}
-              {getCurrentContent().category && (
+              {(selectedTopic?.id === 41 || selectedTopic?.id === 42) && getCurrentContent().category && (
                 <div className="mb-4 flex justify-center items-center gap-3">
                   <button
                     onClick={handlePreviousCategory}

@@ -46,14 +46,10 @@ export function WelcomeOverlay() {
       return
     }
     
-    // Show overlay for unauthenticated users after a brief delay
-    const timer = setTimeout(() => {
-      if (!user) {
-        setShowOverlay(true)
-      }
-    }, 300)
-    
-    return () => clearTimeout(timer)
+    // Show overlay immediately for unauthenticated users
+    if (!user) {
+      setShowOverlay(true)
+    }
   }, [loading, user])
   
   const handleGoogleSignIn = async () => {
