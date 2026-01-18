@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server-client'
+import { getSupabaseServer } from '@/lib/supabase-server'
 
 // GET - Fetch user settings
 export async function GET(request: Request) {
   try {
-    const supabase = await createClient()
+    const supabase = getSupabaseServer()
     
     // Get authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -51,7 +51,7 @@ export async function GET(request: Request) {
 // POST - Save user settings
 export async function POST(request: Request) {
   try {
-    const supabase = await createClient()
+    const supabase = getSupabaseServer()
     
     // Get authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
