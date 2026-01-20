@@ -848,9 +848,6 @@ export function LanguageSelector() {
   // Position save debounce ref
   const savePositionTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   
-  // Settings save debounce ref
-  const saveSettingsTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  
   // B2 Audio service state
   const [activeAudioService, setActiveAudioService] = useState<string>("None")
 
@@ -3161,7 +3158,7 @@ export function LanguageSelector() {
     setShowSettings(false)
   }
 
-  const updateSetting = (key: string, value: any) => {
+  const updateSetting = async (key: string, value: any) => {
     console.log(`Updating setting: ${key} = ${value}`)
     
     // If phonetics toggle is turned on and we have vocabulary, fetch phonetics
@@ -3180,34 +3177,27 @@ export function LanguageSelector() {
       const newSettings = { ...prev, [key]: value }
       console.log('New settings:', newSettings)
       
-      // Debounce saving to database (wait 1 second after last change)
-      if (saveSettingsTimeoutRef.current) {
-        clearTimeout(saveSettingsTimeoutRef.current)
-      }
-      
-      saveSettingsTimeoutRef.current = setTimeout(async () => {
-        if (!user?.id) {
-          console.log('⚠️ No user logged in, settings not saved')
-          return
-        }
-        
-        try {
-          console.log('💾 Saving settings to database...')
-          const response = await fetch('/api/settings', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ settings: newSettings })
+      // Save immediately to database
+      if (user?.id) {
+        console.log('💾 Saving settings to database...')
+        fetch('/api/settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ settings: newSettings })
+        })
+          .then(response => {
+            if (response.ok) {
+              console.log('✅ Settings saved successfully')
+            } else {
+              console.error('❌ Failed to save settings')
+            }
           })
-          
-          if (response.ok) {
-            console.log('✅ Settings saved successfully')
-          } else {
-            console.error('❌ Failed to save settings')
-          }
-        } catch (error) {
-          console.error('❌ Error saving settings:', error)
-        }
-      }, 1000) // 1 second debounce
+          .catch(error => {
+            console.error('❌ Error saving settings:', error)
+          })
+      } else {
+        console.log('⚠️ No user logged in, settings not saved')
+      }
       
       return newSettings
     })
