@@ -119,22 +119,29 @@ export async function POST(request: Request) {
     console.log('Settings to save:', settingsToSave)
 
     // Use UPSERT to insert or update user profile
+    // For insert: include required fields (provider)
+    // For update: only update learning_settings
     const { error: upsertError } = await supabase
       .from('user_profiles')
       .upsert({ 
         auth_user_id: user.id,
         email: user.email,
+        provider: user.app_metadata?.provider || 'google', // Default to google if not set
         learning_settings: settingsToSave,
         updated_at: new Date().toISOString()
       }, {
-        onConflict: 'auth_user_id'
+        onConflict: 'auth_user_id',
+        ignoreDuplicates: false
       })
       
     if (upsertError) {
       console.error('❌ Error saving user settings:', upsertError)
+      console.error('❌ Full error details:', JSON.stringify(upsertError, null, 2))
       return NextResponse.json({ 
         error: 'Failed to save settings',
-        details: upsertError.message 
+        details: upsertError.message,
+        code: upsertError.code,
+        hint: upsertError.hint
       }, { status: 500 })
     }
 
