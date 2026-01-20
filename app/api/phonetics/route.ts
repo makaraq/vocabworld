@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupabaseServer } from '@/lib/supabase-server'
+import { createClient } from '@supabase/supabase-js'
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,7 +13,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Language codes required' }, { status: 400 })
     }
     
-    const supabase = getSupabaseServer()
+    // Use service role for fetching phonetics (no auth required for reading)
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
     
     // Fetch phonetics for all vocabulary IDs and both languages
     const { data: phoneticsData, error } = await supabase
