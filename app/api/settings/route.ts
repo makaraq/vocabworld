@@ -115,18 +115,27 @@ export async function POST(request: Request) {
       showPhonetics: settings.showPhonetics ?? false
     }
 
-    // Update user profile with new settings
-    const { error: updateError } = await supabase
+    console.log('💾 Attempting to save settings for user:', user.id)
+    console.log('Settings to save:', settingsToSave)
+
+    // Use UPSERT to insert or update user profile
+    const { error: upsertError } = await supabase
       .from('user_profiles')
-      .update({ 
+      .upsert({ 
+        auth_user_id: user.id,
+        email: user.email,
         learning_settings: settingsToSave,
         updated_at: new Date().toISOString()
+      }, {
+        onConflict: 'auth_user_id'
       })
-      .eq('auth_user_id', user.id)
       
-    if (updateError) {
-      console.error('Error saving user settings:', updateError)
-      return NextResponse.json({ error: 'Failed to save settings' }, { status: 500 })
+    if (upsertError) {
+      console.error('❌ Error saving user settings:', upsertError)
+      return NextResponse.json({ 
+        error: 'Failed to save settings',
+        details: upsertError.message 
+      }, { status: 500 })
     }
 
     console.log('✅ Settings saved successfully for user:', user.email)
