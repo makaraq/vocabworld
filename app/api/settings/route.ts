@@ -32,6 +32,7 @@ export async function GET(request: Request) {
     }
 
     // Fetch user profile with settings
+    console.log('📥 Fetching settings for user:', user.id)
     const { data: profile, error: profileError } = await supabase
       .from('user_profiles')
       .select('learning_settings')
@@ -39,9 +40,36 @@ export async function GET(request: Request) {
       .single()
 
     if (profileError) {
-      console.error('Error fetching user settings:', profileError)
-      return NextResponse.json({ error: 'Failed to fetch settings' }, { status: 500 })
+      console.error('❌ Error fetching user settings:', profileError)
+      console.error('❌ Full error details:', JSON.stringify(profileError, null, 2))
+      
+      // If no row exists, return defaults (this is fine)
+      if (profileError.code === 'PGRST116') {
+        console.log('ℹ️ No profile found, returning defaults')
+        const defaultSettings = {
+          autoPlay: true,
+          trainingLanguageVoice: "Male",
+          mainLanguageVoice: "Male",
+          pronunciationSpeed: "Normal",
+          pauseBetweenTranslations: 0.5,
+          pauseForNextWord: 0.7,
+          repeatTargetLanguage: 1,
+          repeatMainLanguage: 1,
+          playTargetOnly: false,
+          showPhonetics: false
+        }
+        return NextResponse.json({ settings: defaultSettings })
+      }
+      
+      return NextResponse.json({ 
+        error: 'Failed to fetch settings',
+        details: profileError.message,
+        code: profileError.code,
+        hint: profileError.hint
+      }, { status: 500 })
     }
+    
+    console.log('✅ Profile found:', profile ? 'yes' : 'no')
 
     // Return default settings if none exist
     const defaultSettings = {
