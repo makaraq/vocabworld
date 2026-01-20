@@ -36,7 +36,7 @@ export async function GET(request: Request) {
     const { data: profile, error: profileError } = await supabase
       .from('user_profiles')
       .select('learning_settings')
-      .eq('auth_user_id', user.id)
+      .eq('id', user.id)
       .single()
 
     if (profileError) {
@@ -147,18 +147,17 @@ export async function POST(request: Request) {
     console.log('Settings to save:', settingsToSave)
 
     // Use UPSERT to insert or update user profile
-    // For insert: include required fields (provider)
+    // For insert: include required fields
     // For update: only update learning_settings
     const { error: upsertError } = await supabase
       .from('user_profiles')
       .upsert({ 
-        auth_user_id: user.id,
+        id: user.id,
         email: user.email,
-        provider: user.app_metadata?.provider || 'google', // Default to google if not set
         learning_settings: settingsToSave,
         updated_at: new Date().toISOString()
       }, {
-        onConflict: 'auth_user_id',
+        onConflict: 'id',
         ignoreDuplicates: false
       })
       
