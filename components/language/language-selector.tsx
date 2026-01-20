@@ -677,8 +677,10 @@ export function LanguageSelector() {
   
   // Track if settings have been loaded from database
   const settingsLoadedRef = useRef(false)
+  const [settingsInitialized, setSettingsInitialized] = useState(false)
   
-  const [settings, setSettings] = useState({
+  // Default settings
+  const defaultSettings = {
     autoPlay: true, // Auto-play enabled by default as requested
     trainingLanguageVoice: "Male" as "Female" | "Male", // Changed to Male
     mainLanguageVoice: "Male" as "Female" | "Male",
@@ -689,18 +691,26 @@ export function LanguageSelector() {
     repeatMainLanguage: 1, // 1x by default
     playTargetOnly: false, // Play only target language (skip native translation)
     showPhonetics: false, // Show IPA phonetic pronunciations below words
-  })
+  }
+  
+  const [settings, setSettings] = useState(defaultSettings)
 
   // Load user settings from database
   useEffect(() => {
+    console.log('🔄 Settings load effect triggered. User ID:', user?.id)
+    
     const loadUserSettings = async () => {
       if (!user?.id) {
-        console.log('⏭️ Skipping settings load - no user logged in')
+        console.log('⏭️ No user logged in, using defaults')
+        if (!settingsInitialized) {
+          setSettingsInitialized(true)
+          settingsLoadedRef.current = true // Mark as "loaded" so we don't prevent saves
+        }
         return
       }
       
       try {
-        console.log('📥 Loading user settings from database for user:', user.email)
+        console.log('📥 Loading user settings from database for user:', user.id)
         const response = await fetch('/api/settings')
         
         if (response.ok) {
@@ -709,17 +719,25 @@ export function LanguageSelector() {
             console.log('✅ User settings loaded from DB:', JSON.stringify(data.settings, null, 2))
             setSettings(data.settings)
             settingsLoadedRef.current = true
+            setSettingsInitialized(true)
+            console.log('🎯 settingsLoadedRef set to TRUE')
           }
         } else {
           console.error('⚠️ Failed to load settings - HTTP', response.status)
+          // Still mark as initialized so user can save changes
+          settingsLoadedRef.current = true
+          setSettingsInitialized(true)
         }
       } catch (error) {
         console.error('❌ Error loading user settings:', error)
+        // Still mark as initialized
+        settingsLoadedRef.current = true
+        setSettingsInitialized(true)
       }
     }
 
     loadUserSettings()
-  }, [user?.id, user?.email])
+  }, [user?.id])
 
   // 🍎 iOS Detection for Glass Effect Override
   useEffect(() => {
