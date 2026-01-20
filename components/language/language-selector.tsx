@@ -2064,11 +2064,14 @@ export function LanguageSelector() {
     
     try {
       console.log(`🔤 Fetching phonetics for ${vocab.length} words...`)
+      console.log('Sample vocab items:', vocab.slice(0, 3))
       
       // Get vocabulary IDs from the vocab array
       const vocabIds = vocab
         .map(v => v.id)
         .filter((id): id is number => id !== undefined && id !== null)
+      
+      console.log('Vocabulary IDs to fetch:', vocabIds.slice(0, 5), '... total:', vocabIds.length)
       
       if (vocabIds.length === 0) {
         console.log('⚠️ No vocabulary IDs found to fetch phonetics')
@@ -2088,9 +2091,11 @@ export function LanguageSelector() {
       if (response.ok) {
         const data = await response.json()
         console.log(`✅ Loaded phonetics:`, Object.keys(data.phonetics || {}).length, 'entries')
+        console.log('Phonetics data sample:', Object.entries(data.phonetics || {}).slice(0, 3))
         setPhonetics(data.phonetics || {})
       } else {
-        console.log('⚠️ Failed to fetch phonetics:', response.status)
+        const errorText = await response.text()
+        console.log('⚠️ Failed to fetch phonetics:', response.status, errorText)
       }
     } catch (error) {
       console.error('❌ Error fetching phonetics:', error)
@@ -3158,6 +3163,19 @@ export function LanguageSelector() {
 
   const updateSetting = (key: string, value: any) => {
     console.log(`Updating setting: ${key} = ${value}`)
+    
+    // If phonetics toggle is turned on and we have vocabulary, fetch phonetics
+    if (key === 'showPhonetics' && value === true && vocabulary.length > 0) {
+      console.log('🔤 Phonetics enabled! Fetching phonetics now...')
+      console.log('Current state:', { 
+        vocabularyLength: vocabulary.length, 
+        targetLanguageCode, 
+        nativeLanguageCode,
+        hasPhonetics: Object.keys(phonetics).length 
+      })
+      fetchPhonetics(vocabulary, targetLanguageCode, nativeLanguageCode)
+    }
+    
     setSettings((prev) => {
       const newSettings = { ...prev, [key]: value }
       console.log('New settings:', newSettings)
@@ -3460,6 +3478,9 @@ export function LanguageSelector() {
                   <p className="text-white text-2xl font-medium">{getCurrentContent().sourceWord}</p>
                   {settings.showPhonetics && phonetics[currentWordIndex]?.target && (
                     <p className="text-white/50 text-sm italic mt-2">/{phonetics[currentWordIndex].target}/</p>
+                  )}
+                  {settings.showPhonetics && !phonetics[currentWordIndex]?.target && (
+                    <p className="text-white/30 text-xs mt-2" style={{display: 'none'}}>Debug: No phonetic for index {currentWordIndex}</p>
                   )}
                 </div>
                 <div className={`bg-black/40 border border-white/20 rounded-2xl p-8 transition-all duration-300 shadow-lg ${
