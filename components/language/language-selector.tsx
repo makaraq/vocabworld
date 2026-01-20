@@ -675,6 +675,9 @@ export function LanguageSelector() {
   const [touchStart, setTouchStart] = useState<number | null>(null)
   const [touchEnd, setTouchEnd] = useState<number | null>(null)
   
+  // Track if settings have been loaded from database
+  const settingsLoadedRef = useRef(false)
+  
   const [settings, setSettings] = useState({
     autoPlay: true, // Auto-play enabled by default as requested
     trainingLanguageVoice: "Male" as "Female" | "Male", // Changed to Male
@@ -691,20 +694,24 @@ export function LanguageSelector() {
   // Load user settings from database
   useEffect(() => {
     const loadUserSettings = async () => {
-      if (!user?.id) return
+      if (!user?.id) {
+        console.log('⏭️ Skipping settings load - no user logged in')
+        return
+      }
       
       try {
-        console.log('📥 Loading user settings from database...')
+        console.log('📥 Loading user settings from database for user:', user.email)
         const response = await fetch('/api/settings')
         
         if (response.ok) {
           const data = await response.json()
           if (data.settings) {
+            console.log('✅ User settings loaded from DB:', JSON.stringify(data.settings, null, 2))
             setSettings(data.settings)
-            console.log('✅ User settings loaded:', data.settings)
+            settingsLoadedRef.current = true
           }
         } else {
-          console.log('⚠️ Failed to load settings, using defaults')
+          console.error('⚠️ Failed to load settings - HTTP', response.status)
         }
       } catch (error) {
         console.error('❌ Error loading user settings:', error)
@@ -712,7 +719,7 @@ export function LanguageSelector() {
     }
 
     loadUserSettings()
-  }, [user?.id])
+  }, [user?.id, user?.email])
 
   // 🍎 iOS Detection for Glass Effect Override
   useEffect(() => {
@@ -3159,7 +3166,9 @@ export function LanguageSelector() {
   }
 
   const updateSetting = async (key: string, value: any) => {
-    console.log(`Updating setting: ${key} = ${value}`)
+    console.log(`🔧 Updating setting: ${key} = ${value}`)
+    console.log(`   Settings loaded from DB: ${settingsLoadedRef.current}`)
+    console.log(`   User ID: ${user?.id}`)
     
     // If phonetics toggle is turned on and we have vocabulary, fetch phonetics
     if (key === 'showPhonetics' && value === true && vocabulary.length > 0) {
@@ -3173,13 +3182,19 @@ export function LanguageSelector() {
       fetchPhonetics(vocabulary, targetLanguageCode, nativeLanguageCode)
     }
     
+    // Don't save if settings haven't loaded yet (prevents saving defaults)
+    if (!settingsLoadedRef.current && user?.id) {
+      console.log('⚠️ Settings not loaded yet, skipping save to avoid overwriting DB with defaults')
+      setSettings((prev) => ({ ...prev, [key]: value }))
+      return
+    }
+    
     setSettings((prev) => {
       const newSettings = { ...prev, [key]: value }
-      console.log('New settings:', newSettings)
+      console.log('💾 New settings to save:', JSON.stringify(newSettings, null, 2))
       
       // Save immediately to database
       if (user?.id) {
-        console.log('💾 Saving settings to database...')
         fetch('/api/settings', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -3187,10 +3202,14 @@ export function LanguageSelector() {
         })
           .then(response => {
             if (response.ok) {
-              console.log('✅ Settings saved successfully')
+              return response.json()
             } else {
-              console.error('❌ Failed to save settings')
+              console.error('❌ Failed to save settings - HTTP', response.status)
+              throw new Error(`HTTP ${response.status}`)
             }
+          })
+          .then(data => {
+            console.log('✅ Settings saved successfully to DB:', data)
           })
           .catch(error => {
             console.error('❌ Error saving settings:', error)
