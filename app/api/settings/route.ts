@@ -57,8 +57,14 @@ export async function GET(request: Request) {
       showPhonetics: false
     }
 
+    // Merge defaults with saved settings to ensure new fields are included
+    const mergedSettings = {
+      ...defaultSettings,
+      ...(profile?.learning_settings || {})
+    }
+
     return NextResponse.json({
-      settings: profile?.learning_settings || defaultSettings
+      settings: mergedSettings
     })
 
   } catch (error) {
