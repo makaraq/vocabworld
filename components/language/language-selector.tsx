@@ -739,14 +739,6 @@ export function LanguageSelector() {
     loadUserSettings()
   }, [user?.id])
 
-  // Fetch phonetics when settings load with showPhonetics=true
-  useEffect(() => {
-    if (settingsInitialized && settings.showPhonetics && vocabulary.length > 0 && Object.keys(phonetics).length === 0) {
-      console.log('🔤 Settings loaded with phonetics enabled, fetching phonetics...')
-      fetchPhonetics(vocabulary, targetLanguageCode, nativeLanguageCode)
-    }
-  }, [settingsInitialized, settings.showPhonetics, vocabulary, targetLanguageCode, nativeLanguageCode, phonetics])
-
   // 🍎 iOS Detection for Glass Effect Override
   useEffect(() => {
     const detectIOS = () => {
@@ -2131,6 +2123,14 @@ export function LanguageSelector() {
       console.error('❌ Error fetching phonetics:', error)
     }
   }
+
+  // Fetch phonetics when settings load with showPhonetics=true
+  useEffect(() => {
+    if (settingsInitialized && settings.showPhonetics && vocabulary.length > 0 && Object.keys(phonetics).length === 0) {
+      console.log('🔤 Settings loaded with phonetics enabled, fetching phonetics...')
+      fetchPhonetics(vocabulary, targetLanguageCode, nativeLanguageCode)
+    }
+  }, [settingsInitialized, settings.showPhonetics, vocabulary.length, targetLanguageCode, nativeLanguageCode])
 
   // Smart background preloading - invisible to user
   const preloadVocabularyInBackground = async (nativeLang: string, targetLang: string) => {
