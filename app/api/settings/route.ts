@@ -53,7 +53,8 @@ export async function GET(request: Request) {
       pauseForNextWord: 0.7,
       repeatTargetLanguage: 1,
       repeatMainLanguage: 1,
-      playTargetOnly: false
+      playTargetOnly: false,
+      showPhonetics: false
     }
 
     return NextResponse.json({
@@ -102,15 +103,21 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid settings format' }, { status: 400 })
     }
 
+    // Ensure showPhonetics is included
+    const settingsToSave = {
+      ...settings,
+      showPhonetics: settings.showPhonetics ?? false
+    }
+
     // Update user profile with new settings
     const { error: updateError } = await supabase
       .from('user_profiles')
       .update({ 
-        learning_settings: settings,
+        learning_settings: settingsToSave,
         updated_at: new Date().toISOString()
       })
       .eq('auth_user_id', user.id)
-
+      
     if (updateError) {
       console.error('Error saving user settings:', updateError)
       return NextResponse.json({ error: 'Failed to save settings' }, { status: 500 })
@@ -120,7 +127,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      settings
+      settings: settingsToSave
     })
 
   } catch (error) {

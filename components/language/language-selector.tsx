@@ -3495,9 +3495,6 @@ export function LanguageSelector() {
                     )}
                   </div>
                   <p className="text-white text-2xl font-medium">{getCurrentContent().targetWord}</p>
-                  {settings.showPhonetics && phonetics[currentWordIndex]?.native && (
-                    <p className="text-white/50 text-sm italic mt-2">/{phonetics[currentWordIndex].native}/</p>
-                  )}
                 </div>
               </div>
 
