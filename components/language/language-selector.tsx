@@ -651,6 +651,7 @@ export function LanguageSelector() {
   const [isIOS, setIsIOS] = useState(false)
   const [currentSection, setCurrentSection] = useState(1) // Start with FIRST AID KIT (index 1)
   const lastTopicSectionRef = useRef(1) // Track which section the user was on when selecting a topic
+  const [phonetics, setPhonetics] = useState<Record<string, { target: string; native: string }>>({})
   
   // Playlist state for MY WORDS section
   const [userPlaylists, setUserPlaylists] = useState<Array<{
@@ -684,6 +685,7 @@ export function LanguageSelector() {
     repeatTargetLanguage: 1, // 1x by default
     repeatMainLanguage: 1, // 1x by default
     playTargetOnly: false, // Play only target language (skip native translation)
+    showPhonetics: false, // Show IPA phonetic pronunciations below words
   })
 
   // Load user settings from database
@@ -2053,6 +2055,48 @@ export function LanguageSelector() {
     }
   }, [currentWordIndex, user?.id, selectedTopic, targetLanguageCode, vocabulary.length])
 
+  // Fetch phonetics for vocabulary words
+  const fetchPhonetics = async (vocab: VocabularyWord[], targetLangCode: string, nativeLangCode: string) => {
+    if (!vocab || vocab.length === 0) {
+      console.log('⏭️ No vocabulary to fetch phonetics for')
+      return
+    }
+    
+    try {
+      console.log(`🔤 Fetching phonetics for ${vocab.length} words...`)
+      
+      // Get vocabulary IDs from the vocab array
+      const vocabIds = vocab
+        .map(v => v.id)
+        .filter((id): id is number => id !== undefined && id !== null)
+      
+      if (vocabIds.length === 0) {
+        console.log('⚠️ No vocabulary IDs found to fetch phonetics')
+        return
+      }
+      
+      const response = await fetch('/api/phonetics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          vocabularyIds: vocabIds,
+          targetLanguageCode: targetLangCode,
+          nativeLanguageCode: nativeLangCode
+        })
+      })
+      
+      if (response.ok) {
+        const data = await response.json()
+        console.log(`✅ Loaded phonetics:`, Object.keys(data.phonetics || {}).length, 'entries')
+        setPhonetics(data.phonetics || {})
+      } else {
+        console.log('⚠️ Failed to fetch phonetics:', response.status)
+      }
+    } catch (error) {
+      console.error('❌ Error fetching phonetics:', error)
+    }
+  }
+
   // Smart background preloading - invisible to user
   const preloadVocabularyInBackground = async (nativeLang: string, targetLang: string) => {
     if (!dataCache.topics.length) return
@@ -2774,6 +2818,9 @@ export function LanguageSelector() {
         setCurrentWordIndex(savedPosition) // Resume from saved position
         setSelectedTopic(topic)
         
+        // Fetch phonetics for vocabulary
+        fetchPhonetics(vocabularyResponse.vocabulary || [], targetLanguageCode, nativeLanguageCode)
+        
         // Reset audio states
         setIsPlaying(false)
         setCurrentAudioStep('idle')
@@ -3411,6 +3458,9 @@ export function LanguageSelector() {
                     )}
                   </div>
                   <p className="text-white text-2xl font-medium">{getCurrentContent().sourceWord}</p>
+                  {settings.showPhonetics && phonetics[currentWordIndex]?.target && (
+                    <p className="text-white/50 text-sm italic mt-2">/{phonetics[currentWordIndex].target}/</p>
+                  )}
                 </div>
                 <div className={`bg-black/40 border border-white/20 rounded-2xl p-8 transition-all duration-300 shadow-lg ${
                   currentAudioStep === 'main' 
@@ -3424,6 +3474,9 @@ export function LanguageSelector() {
                     )}
                   </div>
                   <p className="text-white text-2xl font-medium">{getCurrentContent().targetWord}</p>
+                  {settings.showPhonetics && phonetics[currentWordIndex]?.native && (
+                    <p className="text-white/50 text-sm italic mt-2">/{phonetics[currentWordIndex].native}/</p>
+                  )}
                 </div>
               </div>
 
@@ -3624,6 +3677,25 @@ export function LanguageSelector() {
                     >
                       <div className={`w-5 h-5 bg-white rounded-full transition-all duration-300 ${
                         settings.playTargetOnly ? "translate-x-5 sm:translate-x-6" : "translate-x-0.5"
+                      }`} />
+                    </button>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-white/80 text-sm">Show phonetic pronunciation</p>
+                      <p className="text-white/50 text-xs">Display IPA pronunciation guide</p>
+                    </div>
+                    <button
+                      onClick={() => updateSetting("showPhonetics", !settings.showPhonetics)}
+                      className={`w-11 h-6 sm:w-12 sm:h-6 rounded-full transition-all duration-300 flex-shrink-0 ${
+                        settings.showPhonetics 
+                          ? "bg-blue-500" 
+                          : "bg-black/30 border border-white/20"
+                      }`}
+                    >
+                      <div className={`w-5 h-5 bg-white rounded-full transition-all duration-300 ${
+                        settings.showPhonetics ? "translate-x-5 sm:translate-x-6" : "translate-x-0.5"
                       }`} />
                     </button>
                   </div>
