@@ -3515,7 +3515,7 @@ export function LanguageSelector() {
                     <p className="text-white/50 text-sm italic mt-2">/{phonetics[currentWordIndex].target}/</p>
                   )}
                   {settings.showPhonetics && !phonetics[currentWordIndex]?.target && (
-                    <p className="text-white/30 text-xs mt-2" style={{display: 'none'}}>Debug: No phonetic for index {currentWordIndex}</p>
+                    <p className="text-red-400/70 text-xs mt-2">Debug: No phonetic for index {currentWordIndex} | Total: {Object.keys(phonetics).length}</p>
                   )}
                 </div>
                 <div className={`bg-black/40 border border-white/20 rounded-2xl p-8 transition-all duration-300 shadow-lg ${
