@@ -2114,6 +2114,8 @@ export function LanguageSelector() {
         const data = await response.json()
         console.log(`✅ Loaded phonetics:`, Object.keys(data.phonetics || {}).length, 'entries')
         console.log('Phonetics data sample:', Object.entries(data.phonetics || {}).slice(0, 3))
+        console.log('Phonetics keys:', Object.keys(data.phonetics || {}).slice(0, 10))
+        console.log('Full phonetics object:', data.phonetics)
         setPhonetics(data.phonetics || {})
       } else {
         const errorText = await response.text()
