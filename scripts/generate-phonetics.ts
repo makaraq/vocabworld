@@ -237,8 +237,8 @@ async function processVocabulary(options: GenerateOptions = {}) {
           errorCount++
         }
         
-        // Small delay to avoid overwhelming the system
-        await new Promise(resolve => setTimeout(resolve, 100))
+        // Removed delay for faster generation
+        // await new Promise(resolve => setTimeout(resolve, 100))
       }
     }
   }
