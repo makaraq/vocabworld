@@ -875,6 +875,8 @@ export function LanguageSelector() {
   
   // B2 Audio service state
   const [activeAudioService, setActiveAudioService] = useState<string>("None")
+  const [alnilamService, setAlnilamService] = useState<any>(null)
+  const alnilamServiceRef = useRef<any>(null)
 
   // 🌍 UNIVERSAL LANGUAGE CODE MAPPING - All 47 Azure Languages + Alnilam
   const getLanguageCode = (languageName: string): string => {
@@ -1207,6 +1209,7 @@ export function LanguageSelector() {
 
   // Initialize Audio Service (uses /api/universal-audio backed by B2)
   useEffect(() => {
+    console.log('🔄 Audio service useEffect triggered - Languages:', { targetLanguageCode, nativeLanguageCode });
     const initAlnilam = () => {
       try {
         console.log('🚀 Starting Alnilam service initialization...') // Updated for debugging
@@ -1616,8 +1619,9 @@ export function LanguageSelector() {
 
         console.log('🌊 B2 Audio Service initialized - Backblaze cloud audio');
         console.log('✅ B2 audio service created:', alnilamAudioService);
+        alnilamServiceRef.current = alnilamAudioService; // Store in ref for immediate access
         setAlnilamService(alnilamAudioService);
-        console.log('✅ B2 audio service set in state');
+        console.log('✅ B2 audio service set in state and ref');
         setActiveAudioService("B2 Audio");
         console.log('🌟 B2 Audio Service initialized successfully');
         
@@ -1806,7 +1810,8 @@ export function LanguageSelector() {
       }
       
       // Priority 1: Try Alnilam Multilingual Audio first (54,738 files)
-      if (alnilamService && wordId) {
+      const currentAlnilamService = alnilamServiceRef.current;
+      if (currentAlnilamService && wordId) {
         console.log('🌟 Using Alnilam Multilingual Audio for comprehensive language support')
         console.log('🔧 About to call playWordSequence with:', {
           sourceWord, targetWord, wordId, nativeLanguage, targetLanguage,
@@ -1822,7 +1827,7 @@ export function LanguageSelector() {
         })
         
         try {
-          const alnilamSuccess = await alnilamService.playWordSequence(
+          const alnilamSuccess = await currentAlnilamService.playWordSequence(
             sourceWord,           // sourceWord string
             targetWord,           // targetWord string  
             {                     // settings object
@@ -1896,7 +1901,7 @@ export function LanguageSelector() {
         }
       } else {
         console.warn('❌ Audio service not available:', {
-          hasService: !!alnilamService,
+          hasService: !!currentAlnilamService,
           hasWordId: !!wordId,
           serviceType: typeof alnilamService
         })
