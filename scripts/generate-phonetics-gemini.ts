@@ -223,6 +223,10 @@ async function main() {
     const batch = wordsToProcess.slice(i, i + GEMINI_BATCH_SIZE)
     const words = batch.map(w => w.word)
     
+    const batchNum = Math.floor(i / GEMINI_BATCH_SIZE) + 1
+    const totalBatches = Math.ceil(wordsToProcess.length / GEMINI_BATCH_SIZE)
+    console.log(`\n🤖 Processing batch ${batchNum}/${totalBatches} (${batch.length} words)...`)
+    
     let retryCount = 0
     const maxRetries = 3
     let success = false
