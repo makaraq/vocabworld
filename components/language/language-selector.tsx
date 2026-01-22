@@ -870,6 +870,13 @@ export function LanguageSelector() {
   const audioCallInProgress = useRef(false)
   const lastAudioCallTime = useRef(0)
   
+  // 🛡️ DEBOUNCE: Prevent rapid button spam from breaking logic
+  const lastNavigationTime = useRef(0)
+  const isNavigating = useRef(false)
+  const lastPlayClickTime = useRef(0)
+  const NAVIGATION_DEBOUNCE_MS = 300 // Minimum time between navigation actions
+  const PLAY_DEBOUNCE_MS = 500 // Minimum time between play button clicks
+  
   // Position save debounce ref
   const savePositionTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   
@@ -2999,10 +3006,22 @@ export function LanguageSelector() {
   }
 
   const handlePreviousCategory = () => {
+    // 🛡️ DEBOUNCE: Prevent rapid button spam
+    const now = Date.now()
+    if (now - lastNavigationTime.current < NAVIGATION_DEBOUNCE_MS || isNavigating.current) {
+      console.log('⏳ Category navigation debounced - ignoring rapid click')
+      return
+    }
+    lastNavigationTime.current = now
+    isNavigating.current = true
+    
     unlockAudio()
     stopAudio()
     
-    if (vocabulary.length === 0 || (selectedTopic?.id !== 41 && selectedTopic?.id !== 42)) return
+    if (vocabulary.length === 0 || (selectedTopic?.id !== 41 && selectedTopic?.id !== 42)) {
+      isNavigating.current = false
+      return
+    }
     
     const currentWord = vocabulary[currentWordIndex] || vocabulary[0]
     const currentLearningOrder = currentWord.learningOrder || 1
@@ -3024,13 +3043,30 @@ export function LanguageSelector() {
       const targetIndex = vocabulary.findIndex(w => w.learningOrder === prevCategory.start)
       if (targetIndex !== -1) setCurrentWordIndex(targetIndex)
     }
+    
+    // Reset navigation lock after debounce period
+    setTimeout(() => {
+      isNavigating.current = false
+    }, NAVIGATION_DEBOUNCE_MS)
   }
   
   const handleNextCategory = () => {
+    // 🛡️ DEBOUNCE: Prevent rapid button spam
+    const now = Date.now()
+    if (now - lastNavigationTime.current < NAVIGATION_DEBOUNCE_MS || isNavigating.current) {
+      console.log('⏳ Category navigation debounced - ignoring rapid click')
+      return
+    }
+    lastNavigationTime.current = now
+    isNavigating.current = true
+    
     unlockAudio()
     stopAudio()
     
-    if (vocabulary.length === 0 || (selectedTopic?.id !== 41 && selectedTopic?.id !== 42)) return
+    if (vocabulary.length === 0 || (selectedTopic?.id !== 41 && selectedTopic?.id !== 42)) {
+      isNavigating.current = false
+      return
+    }
     
     const currentWord = vocabulary[currentWordIndex] || vocabulary[0]
     const currentLearningOrder = currentWord.learningOrder || 1
@@ -3052,9 +3088,23 @@ export function LanguageSelector() {
       const targetIndex = vocabulary.findIndex(w => w.learningOrder === nextCategory.start)
       if (targetIndex !== -1) setCurrentWordIndex(targetIndex)
     }
+    
+    // Reset navigation lock after debounce period
+    setTimeout(() => {
+      isNavigating.current = false
+    }, NAVIGATION_DEBOUNCE_MS)
   }
 
   const handlePrevious = () => {
+    // �️ DEBOUNCE: Prevent rapid button spam
+    const now = Date.now()
+    if (now - lastNavigationTime.current < NAVIGATION_DEBOUNCE_MS || isNavigating.current) {
+      console.log('⏳ Navigation debounced - ignoring rapid click')
+      return
+    }
+    lastNavigationTime.current = now
+    isNavigating.current = true
+    
     // 🔓 MOBILE FIX: Unlock audio on any user gesture
     unlockAudio()
     
@@ -3073,9 +3123,23 @@ export function LanguageSelector() {
         setCurrentWordIndex(vocabulary.length - 1)
       }
     }
+    
+    // Reset navigation lock after debounce period
+    setTimeout(() => {
+      isNavigating.current = false
+    }, NAVIGATION_DEBOUNCE_MS)
   }
 
   const handleNext = () => {
+    // 🛡️ DEBOUNCE: Prevent rapid button spam
+    const now = Date.now()
+    if (now - lastNavigationTime.current < NAVIGATION_DEBOUNCE_MS || isNavigating.current) {
+      console.log('⏳ Navigation debounced - ignoring rapid click')
+      return
+    }
+    lastNavigationTime.current = now
+    isNavigating.current = true
+    
     // 🔓 MOBILE FIX: Unlock audio on any user gesture
     unlockAudio()
     
@@ -3093,9 +3157,22 @@ export function LanguageSelector() {
         setCurrentWordIndex(0)
       }
     }
+    
+    // Reset navigation lock after debounce period
+    setTimeout(() => {
+      isNavigating.current = false
+    }, NAVIGATION_DEBOUNCE_MS)
   }
 
   const handlePlay = async () => {
+    // 🛡️ DEBOUNCE: Prevent rapid play button spam
+    const now = Date.now()
+    if (now - lastPlayClickTime.current < PLAY_DEBOUNCE_MS) {
+      console.log('⏳ Play button debounced - ignoring rapid click')
+      return
+    }
+    lastPlayClickTime.current = now
+    
     // Mark that user has interacted (prevents auto-play on page load)
     setHasUserInteracted(true)
     
