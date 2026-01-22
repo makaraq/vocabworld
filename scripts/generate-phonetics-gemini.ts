@@ -210,16 +210,14 @@ async function main() {
   let generated = 0
   let errors = 0
   
-  // Process in batches of 10 for Gemini
-  const GEMINI_BATCH_SIZE = 10
+  // Process in batches of 20 for Gemini (increased for speed)
+  const GEMINI_BATCH_SIZE = 20
   
   for (let i = 0; i < wordsToProcess.length; i += GEMINI_BATCH_SIZE) {
     const batch = wordsToProcess.slice(i, i + GEMINI_BATCH_SIZE)
     const words = batch.map(w => w.word)
     
     try {
-      console.log(`🤖 Processing batch ${Math.floor(i / GEMINI_BATCH_SIZE) + 1}/${Math.ceil(wordsToProcess.length / GEMINI_BATCH_SIZE)}...`)
-      
       const phonetics = await generatePhoneticBatch(words, languageCode)
       
       if (phonetics.length !== batch.length) {
@@ -239,16 +237,18 @@ async function main() {
       
       processed += batch.length
       
-      // Progress update
-      const elapsed = Math.floor((Date.now() - startTime) / 1000)
-      const rate = processed / elapsed
-      const remaining = wordsToProcess.length - processed
-      const eta = Math.floor(remaining / rate)
+      // Progress update every 100 words
+      if (processed % 100 === 0 || processed === wordsToProcess.length) {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000)
+        const rate = processed / elapsed
+        const remaining = wordsToProcess.length - processed
+        const eta = Math.floor(remaining / rate)
+        
+        console.log(`⚡ Progress: ${processed}/${wordsToProcess.length} (${Math.floor(processed/wordsToProcess.length*100)}%) | Generated: ${generated} | Errors: ${errors} | ETA: ${Math.floor(eta/60)}m ${eta%60}s`)
+      }
       
-      console.log(`⚡ Progress: ${processed}/${wordsToProcess.length} (${Math.floor(processed/wordsToProcess.length*100)}%) | Generated: ${generated} | Errors: ${errors} | ETA: ${Math.floor(eta/60)}m ${eta%60}s`)
-      
-      // Rate limiting - wait 1 second between batches
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // Reduced rate limiting - 500ms between batches for speed
+      await new Promise(resolve => setTimeout(resolve, 500))
       
     } catch (error: any) {
       console.error(`❌ Batch error:`, error.message)
