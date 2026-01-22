@@ -1636,7 +1636,7 @@ export function LanguageSelector() {
     }
     
     initAlnilam()
-  }, [])
+  }, [targetLanguageCode, nativeLanguageCode]) // Re-initialize when languages change
 
   // Main audio playback function - Algenib Enhanced
   const playAudio = async (word: any, autoPlay = false) => {
