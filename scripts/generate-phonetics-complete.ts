@@ -121,6 +121,18 @@ async function main() {
   
   console.log(`✅ Found ${vocabulary.length} vocabulary words\n`)
   
+  // Get all existing phonetics for this language in ONE query (FAST!)
+  console.log('🔍 Checking existing phonetics...')
+  const allVocabIds = vocabulary.map(v => v.id)
+  const { data: existingPhonetics } = await supabase
+    .from('vocabulary_phonetics')
+    .select('vocabulary_id')
+    .eq('language_code', languageCode)
+    .in('vocabulary_id', allVocabIds)
+  
+  const existingIds = new Set((existingPhonetics || []).map(p => p.vocabulary_id))
+  console.log(`✅ Found ${existingIds.size} existing phonetics\n`)
+  
   let processed = 0
   let generated = 0
   let skipped = 0
@@ -131,27 +143,18 @@ async function main() {
     processed++
     
     try {
-      // Check if phonetic already exists (unless forcing)
-      if (!forceArg) {
-        const { data: existing } = await supabase
-          .from('vocabulary_phonetics')
-          .select('id')
-          .eq('vocabulary_id', vocab.id)
-          .eq('language_code', languageCode)
-          .single()
-        
-        if (existing) {
-          skipped++
-          if (processed % 100 === 0) {
-            const elapsed = Math.floor((Date.now() - startTime) / 1000)
-            const rate = processed / elapsed
-            const remaining = vocabulary.length - processed
-            const eta = Math.floor(remaining / rate)
-            
-            console.log(`⚡ Progress: ${processed}/${vocabulary.length} (${Math.floor(processed/vocabulary.length*100)}%) | Generated: ${generated} | Skipped: ${skipped} | ETA: ${Math.floor(eta/60)}m`)
-          }
-          continue
+      // Skip if already exists (unless forcing) - instant lookup from Set
+      if (!forceArg && existingIds.has(vocab.id)) {
+        skipped++
+        if (processed % 100 === 0) {
+          const elapsed = Math.floor((Date.now() - startTime) / 1000)
+          const rate = processed / elapsed
+          const remaining = vocabulary.length - processed
+          const eta = Math.floor(remaining / rate)
+          
+          console.log(`⚡ Progress: ${processed}/${vocabulary.length} (${Math.floor(processed/vocabulary.length*100)}%) | Generated: ${generated} | Skipped: ${skipped} | ETA: ${Math.floor(eta/60)}m`)
         }
+        continue
       }
       
       // Generate for English word
