@@ -2114,6 +2114,11 @@ export function LanguageSelector() {
       
       if (response.ok) {
         const data = await response.json()
+        console.log('✅ Phonetics fetched:', {
+          count: data.count,
+          sampleKeys: Object.keys(data.phonetics || {}).slice(0, 5),
+          sample: Object.values(data.phonetics || {}).slice(0, 2)
+        })
         setPhonetics(data.phonetics || {})
       } else {
         const errorText = await response.text()
@@ -2124,13 +2129,18 @@ export function LanguageSelector() {
     }
   }
 
-  // Fetch phonetics when settings load with showPhonetics=true
+  // Fetch phonetics when settings load with showPhonetics=true OR when vocabulary/languages change
   useEffect(() => {
-    if (settingsInitialized && settings.showPhonetics && vocabulary.length > 0 && Object.keys(phonetics).length === 0) {
-      console.log('🔤 Settings loaded with phonetics enabled, fetching phonetics...')
+    if (settingsInitialized && settings.showPhonetics && vocabulary.length > 0) {
+      console.log('🔤 Fetching phonetics for current vocabulary...', {
+        vocabCount: vocabulary.length,
+        targetLang: targetLanguageCode,
+        nativeLang: nativeLanguageCode,
+        currentPhoneticsCount: Object.keys(phonetics).length
+      })
       fetchPhonetics(vocabulary, targetLanguageCode, nativeLanguageCode)
     }
-  }, [settingsInitialized, settings.showPhonetics, vocabulary.length, targetLanguageCode, nativeLanguageCode])
+  }, [settingsInitialized, settings.showPhonetics, vocabulary.length, targetLanguageCode, nativeLanguageCode, selectedTopic?.id])
 
   // Smart background preloading - invisible to user
   const preloadVocabularyInBackground = async (nativeLang: string, targetLang: string) => {
@@ -2853,8 +2863,11 @@ export function LanguageSelector() {
         setCurrentWordIndex(savedPosition) // Resume from saved position
         setSelectedTopic(topic)
         
-        // Fetch phonetics for vocabulary
-        fetchPhonetics(vocabularyResponse.vocabulary || [], targetLanguageCode, nativeLanguageCode)
+        // Clear and refetch phonetics for new vocabulary
+        setPhonetics({})
+        if (settings.showPhonetics) {
+          fetchPhonetics(vocabularyResponse.vocabulary || [], targetLanguageCode, nativeLanguageCode)
+        }
         
         // Reset audio states
         setIsPlaying(false)

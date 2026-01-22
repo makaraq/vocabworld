@@ -131,6 +131,29 @@ async function main() {
     processed++
     
     try {
+      // Check if phonetic already exists (unless forcing)
+      if (!forceArg) {
+        const { data: existing } = await supabase
+          .from('vocabulary_phonetics')
+          .select('id')
+          .eq('vocabulary_id', vocab.id)
+          .eq('language_code', languageCode)
+          .single()
+        
+        if (existing) {
+          skipped++
+          if (processed % 100 === 0) {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000)
+            const rate = processed / elapsed
+            const remaining = vocabulary.length - processed
+            const eta = Math.floor(remaining / rate)
+            
+            console.log(`⚡ Progress: ${processed}/${vocabulary.length} (${Math.floor(processed/vocabulary.length*100)}%) | Generated: ${generated} | Skipped: ${skipped} | ETA: ${Math.floor(eta/60)}m`)
+          }
+          continue
+        }
+      }
+      
       // Generate for English word
       if (languageCode === 'en') {
         const phonetic = await generatePhonetic(vocab.word_en, 'en')
