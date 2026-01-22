@@ -2112,10 +2112,6 @@ export function LanguageSelector() {
       
       if (response.ok) {
         const data = await response.json()
-        console.log(`✅ Loaded phonetics:`, Object.keys(data.phonetics || {}).length, 'entries')
-        console.log('Phonetics data sample:', Object.entries(data.phonetics || {}).slice(0, 3))
-        console.log('Phonetics keys:', Object.keys(data.phonetics || {}).slice(0, 10))
-        console.log('Full phonetics object:', data.phonetics)
         setPhonetics(data.phonetics || {})
       } else {
         const errorText = await response.text()
@@ -3515,9 +3511,6 @@ export function LanguageSelector() {
                   <p className="text-white text-2xl font-medium">{getCurrentContent().sourceWord}</p>
                   {settings.showPhonetics && phonetics[currentWordIndex]?.target && (
                     <p className="text-white/50 text-sm italic mt-2">/{phonetics[currentWordIndex].target}/</p>
-                  )}
-                  {settings.showPhonetics && !phonetics[currentWordIndex]?.target && (
-                    <p className="text-red-400/70 text-xs mt-2">Debug: No phonetic for index {currentWordIndex} | Total: {Object.keys(phonetics).length}</p>
                   )}
                 </div>
                 <div className={`bg-black/40 border border-white/20 rounded-2xl p-8 transition-all duration-300 shadow-lg ${
