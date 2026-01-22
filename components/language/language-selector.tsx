@@ -1023,9 +1023,6 @@ export function LanguageSelector() {
     return rate
   }
 
-  // B2 Audio Service Integration
-  const [alnilamService, setAlnilamService] = useState<any>(null)
-  
   // Audio control for immediate stopping
   const [currentAudioElements, setCurrentAudioElements] = useState<HTMLAudioElement[]>([])
   const audioElementsRef = useRef<HTMLAudioElement[]>([])
