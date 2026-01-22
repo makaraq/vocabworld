@@ -253,12 +253,36 @@ async function main() {
         console.log(`⚡ Progress: ${processed}/${wordsToProcess.length} (${Math.floor(processed/wordsToProcess.length*100)}%) | Generated: ${generated} | Errors: ${errors} | ETA: ${Math.floor(eta/60)}m ${eta%60}s`)
       }
       
-      // Reduced rate limiting - 500ms between batches for speed
-      await new Promise(resolve => setTimeout(resolve, 500))
+      // Rate limiting - 6 seconds between batches (Gemini quota: 10 requests/minute)
+      await new Promise(resolve => setTimeout(resolve, 6000))
       
     } catch (error: any) {
-      console.error(`❌ Batch error:`, error.message)
-      errors += batch.length
+      // Handle rate limit errors with retry
+      if (error.message?.includes('429') || error.message?.includes('quota')) {
+        console.log('⏸️  Rate limit hit, waiting 60 seconds before retry...')
+        await new Promise(resolve => setTimeout(resolve, 60000))
+        
+        // Retry the same batch
+        try {
+          const phonetics = await generatePhoneticBatch(words, languageCode)
+          
+          for (let j = 0; j < Math.min(batch.length, phonetics.length); j++) {
+            try {
+              await savePhonetic(batch[j].id, languageCode, phonetics[j], forceArg)
+              generated++
+            } catch (saveError: any) {
+              errors++
+              console.error(`❌ Error saving ${batch[j].word}:`, saveError.message)
+            }
+          }
+        } catch (retryError) {
+          console.error(`❌ Retry failed, skipping batch`)
+          errors += batch.length
+        }
+      } else {
+        console.error(`❌ Batch error:`, error.message)
+        errors += batch.length
+      }
       processed += batch.length
     }
   }
