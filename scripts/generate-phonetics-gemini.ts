@@ -163,19 +163,25 @@ async function main() {
   console.log(`✅ Found ${allVocabulary.length} vocabulary words\n`)
   
   // Prepare words to process
+  console.log('🔍 Checking which words need phonetics...')
+  
+  // Get all existing phonetics for this language in one query (FAST!)
+  const allVocabIds = allVocabulary.map(v => v.id)
+  const { data: existingPhonetics } = await supabase
+    .from('vocabulary_phonetics')
+    .select('vocabulary_id')
+    .eq('language_code', languageCode)
+    .in('vocabulary_id', allVocabIds)
+  
+  const existingIds = new Set((existingPhonetics || []).map(p => p.vocabulary_id))
+  console.log(`✅ Found ${existingIds.size} existing phonetics`)
+  
   const wordsToProcess: Array<{ id: number; word: string; isEnglish: boolean }> = []
   
   for (const vocab of allVocabulary) {
-    // Check if already exists (unless forcing)
-    if (!forceArg) {
-      const { data: existing } = await supabase
-        .from('vocabulary_phonetics')
-        .select('id')
-        .eq('vocabulary_id', vocab.id)
-        .eq('language_code', languageCode)
-        .single()
-      
-      if (existing) continue
+    // Skip if already exists (unless forcing)
+    if (!forceArg && existingIds.has(vocab.id)) {
+      continue
     }
     
     // Add English word if generating for English
@@ -204,7 +210,7 @@ async function main() {
   }
   
   console.log(`📝 Words to process: ${wordsToProcess.length}`)
-  console.log('')
+  console.log('🚀 Starting generation...\n')
   
   let processed = 0
   let generated = 0
