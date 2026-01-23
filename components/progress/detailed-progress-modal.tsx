@@ -4,6 +4,7 @@ import { createPortal } from "react-dom"
 import { X, BookOpen, CheckCircle, Circle, ChevronDown, ChevronRight } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { Icon } from "@iconify/react"
+import { AnimatedIcon } from "@/components/ui/animated-icon"
 
 interface TopicProgress {
   topicId: number
@@ -269,7 +270,12 @@ export function DetailedProgressModal({
                     >
                       {/* Section Icon */}
                       <div className="w-10 h-10 bg-white/15 border border-white/25 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <div dangerouslySetInnerHTML={{ __html: section.icon }} className="w-6 h-6" style={{ color: 'rgba(255,255,255,0.8)' }} />
+                        <AnimatedIcon 
+                          svgString={section.icon} 
+                          iconKey={`progress-section-${section.name}`}
+                          className="w-6 h-6" 
+                          style={{ color: 'rgba(255,255,255,0.8)' }} 
+                        />
                       </div>
 
                       {/* Section Info */}
@@ -318,10 +324,11 @@ export function DetailedProgressModal({
                                   {(() => {
                                     const iconInfo = getTopicIcon(topic)
                                     return (
-                                      <div 
+                                      <AnimatedIcon 
+                                        svgString={iconInfo.content}
+                                        iconKey={`progress-topic-${topic.topicId}`}
                                         className="w-5 h-5 flex items-center justify-center" 
                                         style={{ color: 'rgba(255,255,255,0.8)' }}
-                                        dangerouslySetInnerHTML={{ __html: iconInfo.content }}
                                       />
                                     )
                                   })()}

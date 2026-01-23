@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { AnimatedIcon } from "@/components/ui/animated-icon"
 import { Topic, VocabularyWord, VocabularyResponse, getTopics, getVocabularyForTopic } from "@/lib/database"
 import { useAuth } from "@/contexts/auth-context"
 import { ProgressStats } from "@/components/progress/progress-stats"
@@ -143,18 +144,6 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
   const [isDragging, setIsDragging] = useState(false)
   const [dragOffset, setDragOffset] = useState(0)
   const [isTransitioning, setIsTransitioning] = useState(false)
-  
-  // Stable icon key - only changes when section actually changes, not during transitions
-  const [iconKey, setIconKey] = useState(currentSection)
-  const lastSectionRef = useRef(currentSection)
-  
-  useEffect(() => {
-    // Only update icon key when section changes AND we're not in the middle of transitioning
-    if (lastSectionRef.current !== currentSection && !isTransitioning) {
-      setIconKey(currentSection)
-      lastSectionRef.current = currentSection
-    }
-  }, [currentSection, isTransitioning])
 
   // Define the 7 sections with their topics and metadata (Account first, but FIRST AID KIT is default)
   const sections = [
@@ -330,11 +319,11 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
       {/* Section title */}
       <div className="mb-2 px-3 py-1 flex-shrink-0">
         <h2 className="font-medium flex items-center justify-center gap-2.5 text-white">
-          <div 
-            key={`section-icon-${iconKey}`}
+          <AnimatedIcon 
+            svgString={currentSectionData.icon}
+            iconKey={`section-icon-${currentSection}`}
             className="w-6 h-6 sm:w-7 sm:h-7 flex-shrink-0 flex items-center justify-center" 
             style={{ color: 'currentColor' }}
-            dangerouslySetInnerHTML={{ __html: currentSectionData.icon }}
           />
           <span className="text-lg sm:text-2xl tracking-wide leading-none">{currentSectionData.name}</span>
         </h2>
