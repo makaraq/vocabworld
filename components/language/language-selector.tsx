@@ -174,11 +174,10 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
           el.setAttribute('stroke-dashoffset', '0')
         })
         
-        // Set fill-opacity to final values
+        // Set fill-opacity to full opacity (1)
         const pathsWithFillOpacity = iconDiv.querySelectorAll('[fill-opacity="0"]')
         pathsWithFillOpacity.forEach(el => {
-          // Check parent for final value hints, default to 0.3
-          el.setAttribute('fill-opacity', '0.3')
+          el.setAttribute('fill-opacity', '1')
         })
         
         // Now remove animation elements
