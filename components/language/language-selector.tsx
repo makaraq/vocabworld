@@ -146,39 +146,40 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
   
   // Use a stable container ref that persists across re-renders
   const iconContainerRef = useRef<HTMLDivElement>(null)
-  const renderedIconsRef = useRef<Map<number, { element: HTMLDivElement, hasAnimated: boolean }>>(new Map())
-  const currentIconElementRef = useRef<HTMLDivElement | null>(null)
+  const renderedIconsRef = useRef<Map<number, HTMLDivElement>>(new Map())
   
   // Create or retrieve icon element for current section
   useEffect(() => {
     if (!iconContainerRef.current) return
     
     // Get or create icon element for this section
-    let iconData = renderedIconsRef.current.get(currentSection)
+    let iconDiv = renderedIconsRef.current.get(currentSection)
     
-    if (!iconData) {
+    if (!iconDiv) {
       // Create new icon element
-      const iconDiv = document.createElement('div')
+      iconDiv = document.createElement('div')
       iconDiv.innerHTML = sections[currentSection].icon
       iconDiv.className = 'w-6 h-6 sm:w-7 sm:h-7 flex-shrink-0 flex items-center justify-center'
       iconDiv.style.color = 'currentColor'
       
-      iconData = { element: iconDiv, hasAnimated: false }
-      renderedIconsRef.current.set(currentSection, iconData)
+      renderedIconsRef.current.set(currentSection, iconDiv)
       
       // After animation completes, remove animation elements to prevent re-animation
       setTimeout(() => {
-        const animateElements = iconDiv.querySelectorAll('animate, animateMotion, animateTransform')
+        const animateElements = iconDiv!.querySelectorAll('animate, animateMotion, animateTransform')
         animateElements.forEach(el => el.remove())
-        if (iconData) iconData.hasAnimated = true
       }, 2000)
     }
     
-    // Clear container and mount the icon
-    if (iconContainerRef.current) {
+    // Mount the icon (move it to the container, don't clone)
+    if (iconContainerRef.current && iconDiv) {
       iconContainerRef.current.innerHTML = ''
-      iconContainerRef.current.appendChild(iconData.element.cloneNode(true))
-      currentIconElementRef.current = iconData.element
+      iconContainerRef.current.appendChild(iconDiv)
+    }
+    
+    // Cleanup: when section changes, we detach but don't destroy (kept in Map)
+    return () => {
+      // Don't remove from DOM here - will be reattached when we come back
     }
   }, [currentSection])
 
