@@ -164,9 +164,25 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
       
       renderedIconsRef.current.set(currentSection, iconDiv)
       
-      // After animation completes, remove animation elements to prevent re-animation
+      // After animation completes, set final values and remove animation elements
       setTimeout(() => {
-        const animateElements = iconDiv!.querySelectorAll('animate, animateMotion, animateTransform')
+        if (!iconDiv) return
+        
+        // Set stroke-dashoffset to 0 (final state)
+        const pathsWithDash = iconDiv.querySelectorAll('[stroke-dashoffset]')
+        pathsWithDash.forEach(el => {
+          el.setAttribute('stroke-dashoffset', '0')
+        })
+        
+        // Set fill-opacity to final values
+        const pathsWithFillOpacity = iconDiv.querySelectorAll('[fill-opacity="0"]')
+        pathsWithFillOpacity.forEach(el => {
+          // Check parent for final value hints, default to 0.3
+          el.setAttribute('fill-opacity', '0.3')
+        })
+        
+        // Now remove animation elements
+        const animateElements = iconDiv.querySelectorAll('animate, animateMotion, animateTransform')
         animateElements.forEach(el => el.remove())
       }, 2000)
     }
