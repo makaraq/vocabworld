@@ -144,17 +144,43 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
   const [dragOffset, setDragOffset] = useState(0)
   const [isTransitioning, setIsTransitioning] = useState(false)
   
-  // Stable icon key - only changes when section actually changes, not during transitions
-  const [iconKey, setIconKey] = useState(currentSection)
-  const lastSectionRef = useRef(currentSection)
+  // Use a stable container ref that persists across re-renders
+  const iconContainerRef = useRef<HTMLDivElement>(null)
+  const renderedIconsRef = useRef<Map<number, { element: HTMLDivElement, hasAnimated: boolean }>>(new Map())
+  const currentIconElementRef = useRef<HTMLDivElement | null>(null)
   
+  // Create or retrieve icon element for current section
   useEffect(() => {
-    // Only update icon key when section changes AND we're not in the middle of transitioning
-    if (lastSectionRef.current !== currentSection && !isTransitioning) {
-      setIconKey(currentSection)
-      lastSectionRef.current = currentSection
+    if (!iconContainerRef.current) return
+    
+    // Get or create icon element for this section
+    let iconData = renderedIconsRef.current.get(currentSection)
+    
+    if (!iconData) {
+      // Create new icon element
+      const iconDiv = document.createElement('div')
+      iconDiv.innerHTML = sections[currentSection].icon
+      iconDiv.className = 'w-6 h-6 sm:w-7 sm:h-7 flex-shrink-0 flex items-center justify-center'
+      iconDiv.style.color = 'currentColor'
+      
+      iconData = { element: iconDiv, hasAnimated: false }
+      renderedIconsRef.current.set(currentSection, iconData)
+      
+      // After animation completes, remove animation elements to prevent re-animation
+      setTimeout(() => {
+        const animateElements = iconDiv.querySelectorAll('animate, animateMotion, animateTransform')
+        animateElements.forEach(el => el.remove())
+        if (iconData) iconData.hasAnimated = true
+      }, 2000)
     }
-  }, [currentSection, isTransitioning])
+    
+    // Clear container and mount the icon
+    if (iconContainerRef.current) {
+      iconContainerRef.current.innerHTML = ''
+      iconContainerRef.current.appendChild(iconData.element.cloneNode(true))
+      currentIconElementRef.current = iconData.element
+    }
+  }, [currentSection])
 
   // Define the 7 sections with their topics and metadata (Account first, but FIRST AID KIT is default)
   const sections = [
@@ -330,12 +356,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
       {/* Section title */}
       <div className="mb-2 px-3 py-1 flex-shrink-0">
         <h2 className="font-medium flex items-center justify-center gap-2.5 text-white">
-          <div 
-            key={`section-icon-${iconKey}`}
-            className="w-6 h-6 sm:w-7 sm:h-7 flex-shrink-0 flex items-center justify-center" 
-            style={{ color: 'currentColor' }}
-            dangerouslySetInnerHTML={{ __html: currentSectionData.icon }}
-          />
+          <div ref={iconContainerRef} />
           <span className="text-lg sm:text-2xl tracking-wide leading-none">{currentSectionData.name}</span>
         </h2>
       </div>
@@ -869,13 +890,6 @@ export function LanguageSelector() {
   // Audio call tracking to prevent rapid concurrent calls
   const audioCallInProgress = useRef(false)
   const lastAudioCallTime = useRef(0)
-  
-  // 🛡️ DEBOUNCE: Prevent rapid button spam from breaking logic
-  const lastNavigationTime = useRef(0)
-  const isNavigating = useRef(false)
-  const lastPlayClickTime = useRef(0)
-  const NAVIGATION_DEBOUNCE_MS = 300 // Minimum time between navigation actions
-  const PLAY_DEBOUNCE_MS = 500 // Minimum time between play button clicks
   
   // Position save debounce ref
   const savePositionTimeoutRef = useRef<NodeJS.Timeout | null>(null)
@@ -3006,22 +3020,10 @@ export function LanguageSelector() {
   }
 
   const handlePreviousCategory = () => {
-    // 🛡️ DEBOUNCE: Prevent rapid button spam
-    const now = Date.now()
-    if (now - lastNavigationTime.current < NAVIGATION_DEBOUNCE_MS || isNavigating.current) {
-      console.log('⏳ Category navigation debounced - ignoring rapid click')
-      return
-    }
-    lastNavigationTime.current = now
-    isNavigating.current = true
-    
     unlockAudio()
     stopAudio()
     
-    if (vocabulary.length === 0 || (selectedTopic?.id !== 41 && selectedTopic?.id !== 42)) {
-      isNavigating.current = false
-      return
-    }
+    if (vocabulary.length === 0 || (selectedTopic?.id !== 41 && selectedTopic?.id !== 42)) return
     
     const currentWord = vocabulary[currentWordIndex] || vocabulary[0]
     const currentLearningOrder = currentWord.learningOrder || 1
@@ -3043,30 +3045,13 @@ export function LanguageSelector() {
       const targetIndex = vocabulary.findIndex(w => w.learningOrder === prevCategory.start)
       if (targetIndex !== -1) setCurrentWordIndex(targetIndex)
     }
-    
-    // Reset navigation lock after debounce period
-    setTimeout(() => {
-      isNavigating.current = false
-    }, NAVIGATION_DEBOUNCE_MS)
   }
   
   const handleNextCategory = () => {
-    // 🛡️ DEBOUNCE: Prevent rapid button spam
-    const now = Date.now()
-    if (now - lastNavigationTime.current < NAVIGATION_DEBOUNCE_MS || isNavigating.current) {
-      console.log('⏳ Category navigation debounced - ignoring rapid click')
-      return
-    }
-    lastNavigationTime.current = now
-    isNavigating.current = true
-    
     unlockAudio()
     stopAudio()
     
-    if (vocabulary.length === 0 || (selectedTopic?.id !== 41 && selectedTopic?.id !== 42)) {
-      isNavigating.current = false
-      return
-    }
+    if (vocabulary.length === 0 || (selectedTopic?.id !== 41 && selectedTopic?.id !== 42)) return
     
     const currentWord = vocabulary[currentWordIndex] || vocabulary[0]
     const currentLearningOrder = currentWord.learningOrder || 1
@@ -3088,23 +3073,9 @@ export function LanguageSelector() {
       const targetIndex = vocabulary.findIndex(w => w.learningOrder === nextCategory.start)
       if (targetIndex !== -1) setCurrentWordIndex(targetIndex)
     }
-    
-    // Reset navigation lock after debounce period
-    setTimeout(() => {
-      isNavigating.current = false
-    }, NAVIGATION_DEBOUNCE_MS)
   }
 
   const handlePrevious = () => {
-    // �️ DEBOUNCE: Prevent rapid button spam
-    const now = Date.now()
-    if (now - lastNavigationTime.current < NAVIGATION_DEBOUNCE_MS || isNavigating.current) {
-      console.log('⏳ Navigation debounced - ignoring rapid click')
-      return
-    }
-    lastNavigationTime.current = now
-    isNavigating.current = true
-    
     // 🔓 MOBILE FIX: Unlock audio on any user gesture
     unlockAudio()
     
@@ -3123,23 +3094,9 @@ export function LanguageSelector() {
         setCurrentWordIndex(vocabulary.length - 1)
       }
     }
-    
-    // Reset navigation lock after debounce period
-    setTimeout(() => {
-      isNavigating.current = false
-    }, NAVIGATION_DEBOUNCE_MS)
   }
 
   const handleNext = () => {
-    // 🛡️ DEBOUNCE: Prevent rapid button spam
-    const now = Date.now()
-    if (now - lastNavigationTime.current < NAVIGATION_DEBOUNCE_MS || isNavigating.current) {
-      console.log('⏳ Navigation debounced - ignoring rapid click')
-      return
-    }
-    lastNavigationTime.current = now
-    isNavigating.current = true
-    
     // 🔓 MOBILE FIX: Unlock audio on any user gesture
     unlockAudio()
     
@@ -3157,22 +3114,9 @@ export function LanguageSelector() {
         setCurrentWordIndex(0)
       }
     }
-    
-    // Reset navigation lock after debounce period
-    setTimeout(() => {
-      isNavigating.current = false
-    }, NAVIGATION_DEBOUNCE_MS)
   }
 
   const handlePlay = async () => {
-    // 🛡️ DEBOUNCE: Prevent rapid play button spam
-    const now = Date.now()
-    if (now - lastPlayClickTime.current < PLAY_DEBOUNCE_MS) {
-      console.log('⏳ Play button debounced - ignoring rapid click')
-      return
-    }
-    lastPlayClickTime.current = now
-    
     // Mark that user has interacted (prevents auto-play on page load)
     setHasUserInteracted(true)
     
