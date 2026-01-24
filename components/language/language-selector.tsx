@@ -1187,25 +1187,34 @@ export function LanguageSelector() {
     })
   }
   
-  // Fallback: regular HTML Audio element playback
+  // Fallback: regular HTML Audio element playback WITH pitch preservation
   const playAudioFallback = (url: string, playbackRate: number = 1.0): Promise<void> => {
     return new Promise((resolve, reject) => {
       const audio = new Audio(url)
       audio.crossOrigin = 'anonymous'
       
-      // Enable pitch preservation (supported in modern browsers)
+      // CRITICAL: Set playbackRate BEFORE preservesPitch for proper initialization
+      audio.playbackRate = playbackRate
+      
+      // Enable pitch preservation (supported in Chrome 86+, Firefox 47+, Safari 15+)
       // This prevents the "scary" low pitch at slow speed and "chipmunk" high pitch at fast speed
-      if ('preservesPitch' in audio) {
-        (audio as any).preservesPitch = true
-        console.log('✅ Pitch preservation enabled for HTML Audio fallback')
-      } else if ('mozPreservesPitch' in audio) {
-        (audio as any).mozPreservesPitch = true
-        console.log('✅ Pitch preservation enabled (Firefox) for HTML Audio fallback')
-      } else {
-        console.log('⚠️ Pitch preservation not supported in this browser')
+      try {
+        if ('preservesPitch' in audio) {
+          (audio as any).preservesPitch = true
+          console.log('✅ Pitch preservation enabled for HTML Audio')
+        } else if ('mozPreservesPitch' in audio) {
+          (audio as any).mozPreservesPitch = true
+          console.log('✅ Pitch preservation enabled (Firefox) for HTML Audio')
+        } else if ('webkitPreservesPitch' in audio) {
+          (audio as any).webkitPreservesPitch = true
+          console.log('✅ Pitch preservation enabled (WebKit) for HTML Audio')
+        } else {
+          console.warn('⚠️ Pitch preservation not supported - audio will sound distorted at non-1.0x speeds')
+        }
+      } catch (e) {
+        console.warn('⚠️ Failed to enable pitch preservation:', e)
       }
       
-      audio.playbackRate = playbackRate
       audioElementsRef.current.push(audio)
       
       const cleanup = () => {
@@ -1221,19 +1230,39 @@ export function LanguageSelector() {
     })
   }
   
-  // Combined audio player - tries Web Audio first, falls back to HTML Audio
+  // Combined audio player - PRIORITIZES pitch preservation when speed != 1.0
   const playAudioUniversal = async (url: string, playbackRate: number = 1.0): Promise<void> => {
-    // If Web Audio is available and unlocked, use it
+    // STRATEGY: When speed adjustment is needed (not 1.0x), prefer HTML Audio with preservesPitch
+    // This gives true pitch preservation instead of the distortion from Web Audio API
+    
+    if (playbackRate !== 1.0) {
+      // Use HTML Audio for speed adjustments (better pitch preservation)
+      console.log('🎯 Using HTML Audio for pitch-preserved playback at', playbackRate, 'x speed')
+      try {
+        await playAudioFallback(url, playbackRate)
+        return
+      } catch (error) {
+        console.log('⚠️ HTML Audio failed, trying Web Audio:', error)
+        // Fall back to Web Audio if HTML Audio fails
+        if (audioContextRef.current && audioUnlockedRef.current) {
+          await playAudioWithWebAudio(url, playbackRate)
+        } else {
+          throw error
+        }
+      }
+    }
+    
+    // For normal speed (1.0x), prefer Web Audio (more reliable on mobile)
     if (audioContextRef.current && audioUnlockedRef.current) {
       try {
         await playAudioWithWebAudio(url, playbackRate)
         return
       } catch (error) {
-        console.log('⚠️ Web Audio failed, trying fallback:', error)
+        console.log('⚠️ Web Audio failed, trying HTML Audio fallback:', error)
       }
     }
     
-    // Fallback to HTML Audio
+    // Final fallback to HTML Audio
     await playAudioFallback(url, playbackRate)
   }
   
