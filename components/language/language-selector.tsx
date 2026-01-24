@@ -3489,7 +3489,7 @@ export function LanguageSelector() {
   }
 
   return (
-    <div className="w-full max-w-2xl mx-auto px-2 sm:px-3 h-full max-h-[90vh] sm:max-h-[85vh] flex items-center">
+    <div className="w-full max-w-2xl mx-auto px-2 sm:px-3 h-full max-h-[95vh] flex items-center">
       <div className={`bg-white/5 backdrop-blur-3xl border border-white/15 rounded-2xl sm:rounded-3xl px-3 sm:px-5 md:px-7 py-4 sm:py-5 md:py-6 shadow-2xl transform transition-all duration-300 hover:scale-[1.02] hover:shadow-3xl w-full max-h-full overflow-hidden ${isTransitioning ? 'bg-white/10' : 'bg-white/5'}`}>
         {isLoading && (
           <div className="text-center mb-4">
