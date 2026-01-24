@@ -1048,15 +1048,16 @@ export function LanguageSelector() {
     return flagMap[languageCode] || 'flag:us-1x1'
   }
 
-  // Speech speed mapping
+  // Speech speed mapping - using conservative values to minimize pitch distortion
+  // Even with preservesPitch, extreme values can still sound unnatural
   const getSpeedRate = (speed: string): number => {
     let rate: number
     switch (speed) {
-      case 'Slow': rate = 0.7; break
-      case 'Fast': rate = 1.3; break
+      case 'Slow': rate = 0.85; break  // Was 0.7 - reduced to minimize pitch shift
+      case 'Fast': rate = 1.15; break  // Was 1.3 - reduced to minimize pitch shift
       default: rate = 1.0 // Normal
     }
-    console.log(`getSpeedRate: ${speed} -> ${rate}`)
+    console.log(`🎚️ getSpeedRate: ${speed} -> ${rate}x (conservative range for better quality)`)
     return rate
   }
 
@@ -1160,25 +1161,13 @@ export function LanguageSelector() {
         // Create and play the buffer source
         const source = audioContextRef.current!.createBufferSource()
         source.buffer = audioBuffer
-        
-        // Adjust playback rate with pitch compensation
-        // For speeds other than 1.0, we slightly reduce the pitch shift effect
-        // by using a more moderate playback rate adjustment
-        let adjustedRate = playbackRate
-        if (playbackRate !== 1.0) {
-          // Compress the range: 0.7 -> 0.8, 1.3 -> 1.2
-          // This reduces the "scary" low pitch and "chipmunk" high pitch
-          const deviation = playbackRate - 1.0
-          adjustedRate = 1.0 + (deviation * 0.7) // 70% of the original deviation
-        }
-        
-        source.playbackRate.value = adjustedRate
+        source.playbackRate.value = playbackRate
         source.connect(audioContextRef.current!.destination)
         
         source.onended = () => resolve()
         source.start(0)
         
-        console.log(`🎵 Playing via Web Audio API at ${playbackRate}x speed (adjusted to ${adjustedRate.toFixed(2)}x for pitch compensation)`)
+        console.log(`🎵 Playing via Web Audio API at ${playbackRate}x speed (Note: pitch will shift - HTML Audio preferred for speed changes)`)
         
       } catch (error) {
         console.error('Web Audio playback error:', error)
@@ -1193,26 +1182,42 @@ export function LanguageSelector() {
       const audio = new Audio(url)
       audio.crossOrigin = 'anonymous'
       
+      // Check default value of preservesPitch
+      const defaultPreservesPitch = (audio as any).preservesPitch
+      console.log(`🔍 Default preservesPitch value: ${defaultPreservesPitch}`)
+      
       // CRITICAL: Set playbackRate BEFORE preservesPitch for proper initialization
       audio.playbackRate = playbackRate
       
       // Enable pitch preservation (supported in Chrome 86+, Firefox 47+, Safari 15+)
-      // This prevents the "scary" low pitch at slow speed and "chipmunk" high pitch at fast speed
+      // NOTE: In modern browsers, preservesPitch defaults to TRUE
+      let pitchPreservationSet = false
       try {
         if ('preservesPitch' in audio) {
           (audio as any).preservesPitch = true
-          console.log('✅ Pitch preservation enabled for HTML Audio')
+          const actualValue = (audio as any).preservesPitch
+          console.log(`✅ preservesPitch explicitly set to true, actual value: ${actualValue}`)
+          pitchPreservationSet = true
         } else if ('mozPreservesPitch' in audio) {
           (audio as any).mozPreservesPitch = true
-          console.log('✅ Pitch preservation enabled (Firefox) for HTML Audio')
+          const actualValue = (audio as any).mozPreservesPitch
+          console.log(`✅ mozPreservesPitch set to true (Firefox), actual value: ${actualValue}`)
+          pitchPreservationSet = true
         } else if ('webkitPreservesPitch' in audio) {
           (audio as any).webkitPreservesPitch = true
-          console.log('✅ Pitch preservation enabled (WebKit) for HTML Audio')
+          const actualValue = (audio as any).webkitPreservesPitch
+          console.log(`✅ webkitPreservesPitch set to true (WebKit), actual value: ${actualValue}`)
+          pitchPreservationSet = true
         } else {
-          console.warn('⚠️ Pitch preservation not supported - audio will sound distorted at non-1.0x speeds')
+          console.warn('⚠️ NO pitch preservation properties found - audio WILL sound distorted')
+          console.warn('⚠️ Browser:', navigator.userAgent)
         }
       } catch (e) {
-        console.warn('⚠️ Failed to enable pitch preservation:', e)
+        console.error('❌ Failed to enable pitch preservation:', e)
+      }
+      
+      if (!pitchPreservationSet) {
+        console.warn('⚠️ Pitch preservation could not be enabled - using conservative speed range')
       }
       
       audioElementsRef.current.push(audio)
