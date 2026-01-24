@@ -3456,28 +3456,28 @@ export function LanguageSelector() {
         }`}
       >
         <div className="flex flex-col items-center justify-center h-full gap-2">
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 flex items-center justify-center">
             {hasCustomIcon ? (
               <div 
-                className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center" 
+                className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center mx-auto" 
                 style={{ color: 'rgba(255,255,255,0.8)' }}
                 dangerouslySetInnerHTML={{ __html: topic.icon! }}
               />
             ) : customSVGIcons[topic.id] ? (
               <div 
-                className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center" 
+                className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center mx-auto" 
                 style={{ color: 'rgba(255,255,255,0.8)' }}
                 dangerouslySetInnerHTML={{ __html: customSVGIcons[topic.id] }}
               />
             ) : iconData && typeof iconData.icon === 'string' ? (
-              <Icon icon={iconData.icon} width="48" height="48" className="sm:w-16 sm:h-16" style={{ color: 'rgba(255,255,255,0.8)' }} />
+              <Icon icon={iconData.icon} width="48" height="48" className="sm:w-16 sm:h-16 mx-auto" style={{ color: 'rgba(255,255,255,0.8)' }} />
             ) : iconData ? (
-              (iconData.icon as any)({ className: 'w-12 h-12 sm:w-16 sm:h-16 text-white/80' })
+              (iconData.icon as any)({ className: 'w-12 h-12 sm:w-16 sm:h-16 text-white/80 mx-auto' })
             ) : (
-              <MessageCircle className="w-12 h-12 sm:w-16 sm:h-16 text-white/80" />
+              <MessageCircle className="w-12 h-12 sm:w-16 sm:h-16 text-white/80 mx-auto" />
             )}
           </div>
-          <p className="text-white/90 text-base sm:text-lg font-medium leading-tight px-1 text-center">{getTopicDisplayName(topic.id, topic.name)}</p>
+          <p className="text-white/90 text-base sm:text-lg font-medium leading-tight px-1 text-center w-full">{getTopicDisplayName(topic.id, topic.name)}</p>
         </div>
       </button>
     )
