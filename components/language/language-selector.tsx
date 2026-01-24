@@ -1048,22 +1048,17 @@ export function LanguageSelector() {
     return flagMap[languageCode] || 'flag:us-1x1'
   }
 
-  // Speech speed mapping - ALWAYS use 1.0x to prevent pitch distortion
-  // Speed is controlled by pause durations instead
+  // Speech speed mapping - using conservative values to minimize pitch distortion
+  // Even with preservesPitch, extreme values can still sound unnatural
   const getSpeedRate = (speed: string): number => {
-    // Always return 1.0 - no pitch changes ever
-    console.log(`🎚️ Speed setting: ${speed} -> Playing at 1.0x (natural pitch, speed controlled by pauses)`)
-    return 1.0
-  }
-
-  // Get pause multiplier based on speed setting
-  // Slow = longer pauses, Fast = shorter pauses
-  const getPauseMultiplier = (speed: string): number => {
+    let rate: number
     switch (speed) {
-      case 'Slow': return 1.5  // 50% longer pauses
-      case 'Fast': return 0.5  // 50% shorter pauses
-      default: return 1.0       // Normal pauses
+      case 'Slow': rate = 0.85; break  // Was 0.7 - reduced to minimize pitch shift
+      case 'Fast': rate = 1.15; break  // Was 1.3 - reduced to minimize pitch shift
+      default: rate = 1.0 // Normal
     }
+    console.log(`🎚️ getSpeedRate: ${speed} -> ${rate}x (conservative range for better quality)`)
+    return rate
   }
 
   // Audio control for immediate stopping
@@ -1596,13 +1591,11 @@ export function LanguageSelector() {
                   }
                 }
 
-                // Pause between translations (adjusted by speed setting)
+                // Pause between translations
                 if (settings?.pauseBetweenTranslations) {
-                  const pauseMultiplier = getPauseMultiplier(settings.pronunciationSpeed || 'Normal');
-                  const adjustedPause = settings.pauseBetweenTranslations * pauseMultiplier;
                   const pauseStartTime = performance.now();
-                  const expectedPauseDuration = adjustedPause * 1000;
-                  console.log(`⏸️ Starting pause between translations: ${adjustedPause.toFixed(2)}s (base: ${settings.pauseBetweenTranslations}s × ${pauseMultiplier}x speed multiplier = ${expectedPauseDuration}ms)`);
+                  const expectedPauseDuration = settings.pauseBetweenTranslations * 1000;
+                  console.log(`⏸️ Starting pause between translations: ${settings.pauseBetweenTranslations}s (${expectedPauseDuration}ms)`);
                   
                   await abortableSleep(expectedPauseDuration);
                   
@@ -2472,15 +2465,13 @@ export function LanguageSelector() {
           throw new DOMException('Autoplay aborted', 'AbortError');
         }
         
-        // Pause before next word (except for last word) - adjusted by speed setting
+        // Pause before next word (except for last word)
         if (i < vocabulary.length - 1) {
           setCurrentAudioStep('pause');
           
-          const pauseMultiplier = getPauseMultiplier(settings.pronunciationSpeed || 'Normal');
-          const adjustedPause = settings.pauseForNextWord * pauseMultiplier;
           const pauseStartTime = performance.now();
-          const expectedPauseDuration = adjustedPause * 1000;
-          console.log(`⏸️ Starting pause for next word: ${adjustedPause.toFixed(2)}s (base: ${settings.pauseForNextWord}s × ${pauseMultiplier}x speed multiplier = ${expectedPauseDuration}ms)`);
+          const expectedPauseDuration = settings.pauseForNextWord * 1000;
+          console.log(`⏸️ Starting pause for next word: ${settings.pauseForNextWord}s (${expectedPauseDuration}ms)`);
           
           // Interruptible sleep using abort signal
           await new Promise<void>((resolve, reject) => {
