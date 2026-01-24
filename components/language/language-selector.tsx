@@ -562,10 +562,9 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
               ) : (
                 /* Regular topic grid for all other sections */
                 <div 
-                  className={`grid h-full content-start ${
+                  className={`grid gap-2.5 sm:gap-3 h-full content-start ${
                     section.gridCols === 3 ? 'grid-cols-3' : 'grid-cols-2'
                   }`}
-                  style={{ gap: 'clamp(8px, 1.5vh, 16px)' }}
                 >
                   {section.topics.map(renderTopicButton)}
                 </div>
@@ -3450,36 +3449,35 @@ export function LanguageSelector() {
       <button
         key={topic.id}
         onClick={async () => await handleTopicClick(topic)}
-        className={`bg-black/40 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center hover:bg-black/50 transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl ${
+        className={`bg-black/40 rounded-xl sm:rounded-2xl p-3 sm:p-5 text-center hover:bg-black/50 transition-all duration-300 transform hover:scale-[1.02] h-32 sm:h-36 shadow-lg hover:shadow-xl ${
           selectedTopic?.id === topic.id ? "bg-black/60 shadow-xl" : ""
         } ${
           isCompleted ? "shadow-[0_0_20px_rgba(255,255,255,0.5),0_0_40px_rgba(255,255,255,0.3)]" : ""
         }`}
-        style={{ height: 'clamp(120px, 18vh, 160px)' }}
       >
-        <div className="flex flex-col items-center justify-center h-full gap-1.5 sm:gap-2">
-          <div className="flex-shrink-0 flex items-center justify-center" style={{ width: 'clamp(48px, 10vh, 72px)', height: 'clamp(48px, 10vh, 72px)' }}>
+        <div className="flex flex-col items-center justify-center h-full gap-2">
+          <div className="flex-shrink-0 flex items-center justify-center">
             {hasCustomIcon ? (
               <div 
-                className="w-full h-full flex items-center justify-center mx-auto" 
+                className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center mx-auto" 
                 style={{ color: 'rgba(255,255,255,0.8)' }}
                 dangerouslySetInnerHTML={{ __html: topic.icon! }}
               />
             ) : customSVGIcons[topic.id] ? (
               <div 
-                className="w-full h-full flex items-center justify-center mx-auto" 
+                className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center mx-auto" 
                 style={{ color: 'rgba(255,255,255,0.8)' }}
                 dangerouslySetInnerHTML={{ __html: customSVGIcons[topic.id] }}
               />
             ) : iconData && typeof iconData.icon === 'string' ? (
-              <Icon icon={iconData.icon} className="w-full h-full mx-auto" style={{ color: 'rgba(255,255,255,0.8)' }} />
+              <Icon icon={iconData.icon} width="48" height="48" className="sm:w-16 sm:h-16 mx-auto" style={{ color: 'rgba(255,255,255,0.8)' }} />
             ) : iconData ? (
-              (iconData.icon as any)({ className: 'w-full h-full text-white/80 mx-auto' })
+              (iconData.icon as any)({ className: 'w-12 h-12 sm:w-16 sm:h-16 text-white/80 mx-auto' })
             ) : (
-              <MessageCircle className="w-full h-full text-white/80 mx-auto" />
+              <MessageCircle className="w-12 h-12 sm:w-16 sm:h-16 text-white/80 mx-auto" />
             )}
           </div>
-          <p className="text-white/90 font-medium leading-tight px-1 text-center w-full" style={{ fontSize: 'clamp(0.875rem, 2.5vh, 1.125rem)' }}>{getTopicDisplayName(topic.id, topic.name)}</p>
+          <p className="text-white/90 text-base sm:text-lg font-medium leading-tight px-1 text-center w-full">{getTopicDisplayName(topic.id, topic.name)}</p>
         </div>
       </button>
     )
@@ -3491,8 +3489,8 @@ export function LanguageSelector() {
   }
 
   return (
-    <div className="w-full max-w-2xl mx-auto px-2 sm:px-3 h-full flex items-center" style={{ maxHeight: 'min(95vh, 900px)' }}>
-      <div className={`bg-white/5 backdrop-blur-3xl border border-white/15 rounded-2xl sm:rounded-3xl px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-5 shadow-2xl transform transition-all duration-300 hover:scale-[1.02] hover:shadow-3xl w-full h-full overflow-hidden ${isTransitioning ? 'bg-white/10' : 'bg-white/5'}`}>
+    <div className="w-full max-w-2xl mx-auto px-2 sm:px-3 h-full max-h-[95vh] flex items-center">
+      <div className={`bg-white/5 backdrop-blur-3xl border border-white/15 rounded-2xl sm:rounded-3xl px-3 sm:px-5 md:px-7 py-4 sm:py-5 md:py-6 shadow-2xl transform transition-all duration-300 hover:scale-[1.02] hover:shadow-3xl w-full max-h-full overflow-hidden ${isTransitioning ? 'bg-white/10' : 'bg-white/5'}`}>
         {isLoading && (
           <div className="text-center mb-4">
             <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
