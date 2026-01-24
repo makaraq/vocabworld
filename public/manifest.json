@@ -1,7 +1,7 @@
 {
-  "name": "Language Learning Pack - Complete Vocabulary",
-  "short_name": "Language Pack",
-  "description": "Learn vocabulary in 82 languages across 40 topics",
+  "name": "Vocab World - AI Language Learning",
+  "short_name": "Vocab World",
+  "description": "Learn vocabulary in 50 languages with AI-powered TTS",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

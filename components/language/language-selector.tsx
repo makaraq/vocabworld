@@ -575,7 +575,11 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
       </div>
 
       {/* Navigation dots - enhanced visibility with drag feedback */}
-      <div className="flex justify-center gap-3 mt-3 pb-2 flex-shrink-0">
+      <nav 
+        className="flex justify-center gap-3 mt-3 pb-2 flex-shrink-0"
+        role="tablist"
+        aria-label="Language learning sections"
+      >
         {sections.map((section, index) => {
           // Calculate opacity based on drag position for visual feedback
           let opacity = index === currentSection ? 1 : 0.4
@@ -590,6 +594,11 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
           return (
             <button
               key={index}
+              role="tab"
+              aria-selected={index === currentSection}
+              aria-controls={`section-panel-${index}`}
+              aria-label={`Navigate to ${section.name} section`}
+              id={`section-tab-${index}`}
               onClick={() => {
                 if (!isDragging && !isTransitioning) {
                   setIsTransitioning(true)
@@ -597,7 +606,25 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                   setTimeout(() => setIsTransitioning(false), 300)
                 }
               }}
-              className={`relative transition-all duration-300 ${
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  if (!isDragging && !isTransitioning) {
+                    setIsTransitioning(true)
+                    setCurrentSection(index)
+                    setTimeout(() => setIsTransitioning(false), 300)
+                  }
+                }
+                if (e.key === 'ArrowRight' && index < sections.length - 1) {
+                  e.preventDefault()
+                  document.getElementById(`section-tab-${index + 1}`)?.focus()
+                }
+                if (e.key === 'ArrowLeft' && index > 0) {
+                  e.preventDefault()
+                  document.getElementById(`section-tab-${index - 1}`)?.focus()
+                }
+              }}
+              className={`relative transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent ${
                 index === currentSection 
                   ? 'w-3 h-3 bg-white rounded-full shadow-lg' 
                   : 'w-2.5 h-2.5 bg-white/40 hover:bg-white/60 rounded-full'
@@ -619,7 +646,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
             </button>
           )
         })}
-      </div>
+      </nav>
     </div>
   )
 }
@@ -3674,15 +3701,18 @@ export function LanguageSelector() {
                 <div className="flex items-center justify-center gap-8">
                   <button
                     onClick={handlePrevious}
-                    className="w-14 h-14 bg-black/40 border border-white/20 rounded-full flex items-center justify-center hover:bg-black/50 transition-all duration-300 transform hover:scale-110"
+                    aria-label={`Go to previous word${vocabulary.length > 0 ? ': ' + vocabulary[Math.max(0, currentWordIndex - 1)]?.targetWord : ''}`}
+                    className="w-14 h-14 bg-black/40 border border-white/20 rounded-full flex items-center justify-center hover:bg-black/50 transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
                     disabled={vocabulary.length === 0}
                   >
-                    <ChevronLeft className="w-7 h-7 text-white/80" />
+                    <ChevronLeft className="w-7 h-7 text-white/80" aria-hidden="true" />
                   </button>
 
                   <button
                     onClick={handlePlay}
-                    className={`w-16 h-16 border border-white/20 rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 ${
+                    aria-label={isPlaying || autoPlayActive ? 'Stop audio playback' : `Play pronunciation of ${vocabulary[currentWordIndex]?.targetWord || 'current word'} in ${targetLanguage}`}
+                    aria-pressed={isPlaying || autoPlayActive}
+                    className={`w-16 h-16 border border-white/20 rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 ${
                       isPlaying || autoPlayActive
                         ? 'bg-red-500/30 hover:bg-red-500/40' 
                         : currentAudioStep === 'training'
@@ -3694,18 +3724,19 @@ export function LanguageSelector() {
                     disabled={vocabulary.length === 0}
                   >
                     {isPlaying || autoPlayActive ? (
-                      <Square className="w-8 h-8 text-white/80" />
+                      <Square className="w-8 h-8 text-white/80" aria-hidden="true" />
                     ) : (
-                      <Play className="w-8 h-8 text-white/80 ml-1" />
+                      <Play className="w-8 h-8 text-white/80 ml-1" aria-hidden="true" />
                     )}
                   </button>
 
                   <button
                     onClick={handleNext}
-                    className="w-14 h-14 bg-black/40 border border-white/20 rounded-full flex items-center justify-center hover:bg-black/50 transition-all duration-300 transform hover:scale-110"
+                    aria-label={`Go to next word${vocabulary.length > 0 ? ': ' + vocabulary[Math.min(vocabulary.length - 1, currentWordIndex + 1)]?.targetWord : ''}`}
+                    className="w-14 h-14 bg-black/40 border border-white/20 rounded-full flex items-center justify-center hover:bg-black/50 transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
                     disabled={vocabulary.length === 0}
                   >
-                    <ChevronRight className="w-7 h-7 text-white/80" />
+                    <ChevronRight className="w-7 h-7 text-white/80" aria-hidden="true" />
                   </button>
                 </div>
               )}

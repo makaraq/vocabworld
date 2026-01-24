@@ -123,6 +123,34 @@
     @apply bg-background text-foreground font-sans;
   }
 
+  /* ✅ Accessibility: Focus indicators for keyboard navigation */
+  *:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
+  }
+
+  /* Improve visibility of interactive elements for keyboard users */
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
+  }
+
+  /* Screen reader only content - visually hidden but accessible */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
   /* Hide scrollbars for language list */
   .overflow-y-auto::-webkit-scrollbar {
     display: none;

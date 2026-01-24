@@ -1,4 +1,4 @@
-# 🤖 Android Development Guide for Voco Language Learning App
+# 🤖 Android Development Guide for Vocab World Language Learning App
 
 ## ✅ Setup Complete!
 
@@ -6,8 +6,8 @@ Your Android project has been successfully created and configured. Here's what w
 
 ### 📁 Project Structure Created
 - `android/` folder with complete Android Studio project
-- App ID: `com.voco.languagelearning`
-- App Name: `voco`
+- App ID: `com.vocabworld.app`
+- App Name: `Vocab World`
 - Build system: Gradle with Capacitor integration
 
 ## 🚀 Testing in Android Studio
@@ -124,7 +124,7 @@ Debug your web content:
 View native Android logs:
 1. Open Android Studio
 2. Go to View → Tool Windows → Logcat
-3. Filter by your app package: `com.voco.languagelearning`
+3. Filter by your app package: `com.vocabworld.app`
 
 ### **Capacitor Logs**
 ```powershell
@@ -220,4 +220,4 @@ npx cap doctor                       # Check Capacitor setup
 adb logcat                          # View device logs
 ```
 
-Your Voco language learning app is now ready for Android testing! 🎉
+Your Vocab World language learning app is now ready for Android testing! 🎉

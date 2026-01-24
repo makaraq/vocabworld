@@ -12,7 +12,7 @@ const spaceGrotesk = Space_Grotesk({
 })
 
 export const metadata: Metadata = {
-  title: "VOCO - AI Language Learning",
+  title: "Vocab World - AI Language Learning",
   description: "Learn languages with AI-powered vocabulary and premium TTS voices",
   generator: "v0.app",
 }

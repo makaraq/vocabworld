@@ -16,7 +16,7 @@ interface AuthCardProps {
 }
 
 export function AuthCard({ 
-  title = "Welcome to VOCO",
+  title = "Welcome to Vocab World",
   description = "Sign in to start your language learning journey",
   showTitle = true,
   onSuccess

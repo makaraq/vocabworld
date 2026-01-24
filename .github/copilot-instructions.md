@@ -1,4 +1,4 @@
-# VOCO AI Language Learning App - Copilot Instructions
+# Vocab World - AI Language Learning App - Copilot Instructions
 
 ## Architecture Overview
 

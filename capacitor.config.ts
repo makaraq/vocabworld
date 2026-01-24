@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.voco.languagelearning',
-  appName: 'voco',
+  appId: 'com.vocabworld.app',
+  appName: 'Vocab World',
   webDir: 'public',
   server: {
     url: 'http://192.168.2.19:3002',
