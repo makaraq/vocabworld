@@ -1123,6 +1123,9 @@ export function LanguageSelector() {
   }
   
   // 🔊 Play audio through Web Audio API for reliable mobile playback
+  // Note: Web Audio API's playbackRate changes pitch along with speed.
+  // For true pitch preservation, we would need time-stretching algorithms (WSOLA, Phase Vocoder)
+  // However, for language learning, slight pitch change can actually help differentiate speeds
   const playAudioWithWebAudio = (url: string, playbackRate: number = 1.0): Promise<void> => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1157,13 +1160,25 @@ export function LanguageSelector() {
         // Create and play the buffer source
         const source = audioContextRef.current!.createBufferSource()
         source.buffer = audioBuffer
-        source.playbackRate.value = playbackRate
+        
+        // Adjust playback rate with pitch compensation
+        // For speeds other than 1.0, we slightly reduce the pitch shift effect
+        // by using a more moderate playback rate adjustment
+        let adjustedRate = playbackRate
+        if (playbackRate !== 1.0) {
+          // Compress the range: 0.7 -> 0.8, 1.3 -> 1.2
+          // This reduces the "scary" low pitch and "chipmunk" high pitch
+          const deviation = playbackRate - 1.0
+          adjustedRate = 1.0 + (deviation * 0.7) // 70% of the original deviation
+        }
+        
+        source.playbackRate.value = adjustedRate
         source.connect(audioContextRef.current!.destination)
         
         source.onended = () => resolve()
         source.start(0)
         
-        console.log('🎵 Playing via Web Audio API at', playbackRate, 'x speed')
+        console.log(`🎵 Playing via Web Audio API at ${playbackRate}x speed (adjusted to ${adjustedRate.toFixed(2)}x for pitch compensation)`)
         
       } catch (error) {
         console.error('Web Audio playback error:', error)
@@ -1177,6 +1192,19 @@ export function LanguageSelector() {
     return new Promise((resolve, reject) => {
       const audio = new Audio(url)
       audio.crossOrigin = 'anonymous'
+      
+      // Enable pitch preservation (supported in modern browsers)
+      // This prevents the "scary" low pitch at slow speed and "chipmunk" high pitch at fast speed
+      if ('preservesPitch' in audio) {
+        (audio as any).preservesPitch = true
+        console.log('✅ Pitch preservation enabled for HTML Audio fallback')
+      } else if ('mozPreservesPitch' in audio) {
+        (audio as any).mozPreservesPitch = true
+        console.log('✅ Pitch preservation enabled (Firefox) for HTML Audio fallback')
+      } else {
+        console.log('⚠️ Pitch preservation not supported in this browser')
+      }
+      
       audio.playbackRate = playbackRate
       audioElementsRef.current.push(audio)
       
@@ -1188,6 +1216,8 @@ export function LanguageSelector() {
       audio.onerror = (e) => { cleanup(); reject(e) }
       
       audio.play().catch(reject)
+      
+      console.log(`🎵 Playing via HTML Audio fallback at ${playbackRate}x speed (preservesPitch: ${('preservesPitch' in audio) || ('mozPreservesPitch' in audio)})`)
     })
   }
   
@@ -1529,7 +1559,15 @@ export function LanguageSelector() {
 
                 // Pause between translations
                 if (settings?.pauseBetweenTranslations) {
-                  await abortableSleep(settings.pauseBetweenTranslations * 1000);
+                  const pauseStartTime = performance.now();
+                  const expectedPauseDuration = settings.pauseBetweenTranslations * 1000;
+                  console.log(`⏸️ Starting pause between translations: ${settings.pauseBetweenTranslations}s (${expectedPauseDuration}ms)`);
+                  
+                  await abortableSleep(expectedPauseDuration);
+                  
+                  const actualPauseDuration = performance.now() - pauseStartTime;
+                  const difference = actualPauseDuration - expectedPauseDuration;
+                  console.log(`✅ Pause between translations completed: Expected ${expectedPauseDuration}ms, Actual ${actualPauseDuration.toFixed(2)}ms (diff: ${difference >= 0 ? '+' : ''}${difference.toFixed(2)}ms)`);
                 }
               }
 
@@ -2397,15 +2435,24 @@ export function LanguageSelector() {
         if (i < vocabulary.length - 1) {
           setCurrentAudioStep('pause');
           
+          const pauseStartTime = performance.now();
+          const expectedPauseDuration = settings.pauseForNextWord * 1000;
+          console.log(`⏸️ Starting pause for next word: ${settings.pauseForNextWord}s (${expectedPauseDuration}ms)`);
+          
           // Interruptible sleep using abort signal
           await new Promise<void>((resolve, reject) => {
             const timeoutId = setTimeout(() => {
+              const actualPauseDuration = performance.now() - pauseStartTime;
+              const difference = actualPauseDuration - expectedPauseDuration;
+              console.log(`✅ Pause for next word completed: Expected ${expectedPauseDuration}ms, Actual ${actualPauseDuration.toFixed(2)}ms (diff: ${difference >= 0 ? '+' : ''}${difference.toFixed(2)}ms)`);
               resolve();
-            }, settings.pauseForNextWord * 1000);
+            }, expectedPauseDuration);
             
             // Listen for abort signal during sleep
             signal.addEventListener('abort', () => {
               clearTimeout(timeoutId);
+              const actualPauseDuration = performance.now() - pauseStartTime;
+              console.log(`🛑 Pause for next word aborted after ${actualPauseDuration.toFixed(2)}ms`);
               reject(new DOMException('Autoplay aborted during pause', 'AbortError'));
             });
           });
