@@ -85,12 +85,12 @@ const TOPICS_DATA = [
   },
   {
     "id": 13,
-    "name": "Emotions & Feelings",
+    "name": "Emotions",
     "description": "Emotional expressions and feelings"
   },
   {
     "id": 14,
-    "name": "Personality & Character",
+    "name": "Personality",
     "description": "Personality traits and character descriptions"
   },
   {
@@ -106,7 +106,7 @@ const TOPICS_DATA = [
   },
   {
     "id": 16,
-    "name": "Sports & Fitness",
+    "name": "Fitness",
     "description": "Sports, exercise, and fitness vocabulary"
   },
   {
@@ -127,7 +127,7 @@ const TOPICS_DATA = [
   },
   {
     "id": 34,
-    "name": "History & Culture",
+    "name": "History",
     "description": "Historical and cultural vocabulary",
     "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"40\" height=\"40\" viewBox=\"0 0 24 24\"><path fill=\"currentColor\" d=\"M6 5h12a1 1 0 0 1 1 1a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1a1 1 0 0 1 1-1m15-3v2H3V2zm-6 6h2v14h-2zM7 8h2v14H7zm4 0h2v14h-2z\"/></svg>"
   },
@@ -138,17 +138,17 @@ const TOPICS_DATA = [
   },
   {
     "id": 24,
-    "name": "Technology & Gadgets",
+    "name": "Technology",
     "description": "Technology, devices, and digital vocabulary"
   },
   {
     "id": 23,
-    "name": "Arts & Entertainment",
+    "name": "Art",
     "description": "Creative arts and entertainment vocabulary"
   },
   {
     "id": 33,
-    "name": "Mathematics & Geometry",
+    "name": "Mathematics",
     "description": "Mathematical and geometric vocabulary"
   },
   {
@@ -159,7 +159,7 @@ const TOPICS_DATA = [
   },
   {
     "id": 29,
-    "name": "Business & Economics",
+    "name": "Business",
     "description": "Business, finance, and economic vocabulary",
     "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"40\" height=\"40\" viewBox=\"0 0 24 24\"><path fill=\"currentColor\" d=\"M21.71 8.71c1.25-1.25.68-2.71 0-3.42l-3-3c-1.26-1.25-2.71-.68-3.42 0L13.59 4H11C9.1 4 8 5 7.44 6.15L3 10.59v4l-.71.7c-1.25 1.26-.68 2.71 0 3.42l3 3c.54.54 1.12.74 1.67.74c.71 0 1.36-.35 1.75-.74l2.7-2.71H15c1.7 0 2.56-1.06 2.87-2.1c1.13-.3 1.75-1.16 2-2C21.42 14.5 22 13.03 22 12V9h-.59zM20 12c0 .45-.19 1-1 1h-1v1c0 .45-.19 1-1 1h-1v1c0 .45-.19 1-1 1h-4.41l-3.28 3.28c-.31.29-.49.12-.6.01l-2.99-2.98c-.29-.31-.12-.49-.01-.6L5 15.41v-4l2-2V11c0 1.21.8 3 3 3s3-1.79 3-3h7zm.29-4.71L18.59 9H11v2c0 .45-.19 1-1 1s-1-.55-1-1V8c0-.46.17-2 2-2h3.41l2.28-2.28c.31-.29.49-.12.6-.01l2.99 2.98c.29.31.12.49.01.6\"/></svg>"
   },
@@ -171,7 +171,7 @@ const TOPICS_DATA = [
   },
   {
     "id": 36,
-    "name": "Religion & Philosophy",
+    "name": "Religion",
     "description": "Religious and philosophical concepts"
   },
   {
@@ -192,12 +192,12 @@ const TOPICS_DATA = [
   },
   {
     "id": 37,
-    "name": "Mythology & Fantasy",
+    "name": "Mythology",
     "description": "Mythological and fantasy vocabulary"
   },
   {
     "id": 38,
-    "name": "Celebrations & Holidays",
+    "name": "Holidays",
     "description": "Holidays, celebrations, and festive vocabulary"
   },
   {
@@ -223,7 +223,7 @@ const TOPICS_DATA = [
   },
   {
     "id": 42,
-    "name": "Common Phrases",
+    "name": "Daily Language",
     "description": "Essential everyday phrases and expressions",
     "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"40\" height=\"40\" viewBox=\"0 0 24 24\"><path fill=\"currentColor\" d=\"M21 11h-3V4h3m0 14h-3v-7h3M8 18H5V6h3m15-4h-5v18h5a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2M11 6H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h5a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2\"/></svg>"
   }

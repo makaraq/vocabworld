@@ -2720,6 +2720,8 @@ export function LanguageSelector() {
       12: "Family", // Family & Relationships → Family
       17: "City", // Places Around Town → City
       18: "Travel", // Travel & Tourism → Travel
+      // Note: API now has short names for: History, Technology, Art, Mathematics, 
+      // Emotions, Personality, Fitness, Business, Religion, Mythology, Holidays, Daily Language
     }
     
     return nameMapping[topicId] || originalName

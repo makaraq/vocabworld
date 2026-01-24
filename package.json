@@ -10,7 +10,10 @@
     "check-env": "node scripts/check-env.js",
     "setup-auth": "node scripts/setup-auth.js",
     "test-auth": "npm run setup-auth && npm run dev",
-    "generate-phonetics": "tsx scripts/generate-phonetics.ts"
+    "generate-phonetics": "tsx scripts/generate-phonetics.ts",
+    "generate-examples": "tsx scripts/generate-example-sentences.ts",
+    "generate-examples-consistent": "tsx scripts/generate-examples-consistent.ts",
+    "check-examples-setup": "tsx scripts/check-example-sentences-setup.ts"
   },
   "dependencies": {
     "@capacitor-community/apple-sign-in": "^7.1.0",

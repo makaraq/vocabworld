@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
     console.log('✅ B2 authorization successful');
 
     // Step 2: Get download authorization
-    // For Common Phrases (topic 42, IDs 4172-4965), files are at CommonPhrases/{lang}/
+    // For Daily Language (topic 42, IDs 4172-4965), files are at CommonPhrases/{lang}/
     // For other topics, files are at {lang}/{category}/
     const wordIdNum = wordId ? parseInt(wordId) : 0;
     const isCommonPhrases = wordIdNum >= 4172 && wordIdNum <= 4965;
@@ -173,7 +173,7 @@ export async function GET(request: NextRequest) {
         
         const wordIdNum = parseInt(wordId);
         
-        // Try Common Phrases CSV (topic 42, IDs 4172-4965) - uses word-based lookup like Verbs
+        // Try Daily Language CSV (topic 42, IDs 4172-4965) - uses word-based lookup like Verbs
         if (wordIdNum >= 4172 && wordIdNum <= 4965 && word) {
           const phrasesCsvUrl = `${baseUrl}/data/common-phrases-b2-urls.csv`;
           try {
@@ -181,7 +181,7 @@ export async function GET(request: NextRequest) {
             if (phrasesCsvResponse.ok) {
               const phrasesCsvContent = await phrasesCsvResponse.text();
               const phrasesLines = phrasesCsvContent.split('\n');
-              console.log(`🔍 Searching Common Phrases CSV: ${phrasesLines.length} entries for word="${word}"`);
+              console.log(`🔍 Searching Daily Language CSV: ${phrasesLines.length} entries for word="${word}"`);
               
               // Normalize the word for matching (lowercase, handle special chars like spaces)
               const normalizedWord = word.toLowerCase().trim().replace(/\s+/g, '_');
@@ -216,13 +216,13 @@ export async function GET(request: NextRequest) {
                 if (fileNameWithoutExt === matchWord && language === audioLangCode) {
                   fileName = csvFileName;
                   filePath = localPath;
-                  console.log(`✅ Found Common Phrases audio: ${fileName} at ${filePath}`);
+                  console.log(`✅ Found Daily Language audio: ${fileName} at ${filePath}`);
                   break;
                 }
               }
             }
           } catch (phrasesError) {
-            console.log(`⚠️ Common Phrases CSV error:`, phrasesError);
+            console.log(`⚠️ Daily Language CSV error:`, phrasesError);
           }
         }
         
