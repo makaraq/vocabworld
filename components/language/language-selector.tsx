@@ -379,7 +379,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
 
       {/* Sliding container with drag support */}
       <div 
-        className="flex-1 overflow-hidden px-2"
+        className="flex-1 overflow-hidden"
         style={{ touchAction: 'none' }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
@@ -394,7 +394,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
           }}
         >
           {sections.map((section, sectionIndex) => (
-            <div key={sectionIndex} className="w-full h-full flex-shrink-0 px-2 overflow-hidden">
+            <div key={sectionIndex} className="w-full h-full flex-shrink-0 overflow-hidden">
               {/* Account section special content */}
               {section.isAccount ? (
                 <div className="h-full flex flex-col space-y-2.5 sm:space-y-3">
