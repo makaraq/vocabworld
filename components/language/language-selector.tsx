@@ -273,9 +273,17 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
       const diff = currentTouch - touchStart
       setIsDragging(true)
       
-      // Limit drag distance to prevent over-scrolling
-      const maxDrag = window.innerWidth * 0.3 // 30% of screen width
-      const limitedDrag = Math.max(-maxDrag, Math.min(maxDrag, diff))
+      // iPhone-like drag with resistance at edges
+      const screenWidth = window.innerWidth
+      let dragAmount = diff
+      
+      // Add resistance at edges
+      if ((currentSection === 0 && diff > 0) || (currentSection === sections.length - 1 && diff < 0)) {
+        dragAmount = diff * 0.3 // Rubber band effect
+      }
+      
+      const maxDrag = screenWidth * 0.8 // 80% of screen width for more freedom
+      const limitedDrag = Math.max(-maxDrag, Math.min(maxDrag, dragAmount))
       setDragOffset(limitedDrag)
     }
   }
@@ -290,9 +298,15 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
     }
     
     const distance = touchStart - touchEnd
-    const threshold = 80 // Minimum swipe distance
-    const isLeftSwipe = distance > threshold
-    const isRightSwipe = distance < -threshold
+    const velocity = Math.abs(distance)
+    const screenWidth = window.innerWidth
+    
+    // iPhone-like: either 50px swipe OR 30% of screen drag
+    const threshold = Math.min(50, screenWidth * 0.15) // More sensitive
+    const dragPercentage = Math.abs(dragOffset) / screenWidth
+    
+    const isLeftSwipe = distance > threshold || (distance > 0 && dragPercentage > 0.3)
+    const isRightSwipe = distance < -threshold || (distance < 0 && dragPercentage > 0.3)
 
     setIsTransitioning(true)
     
@@ -328,8 +342,16 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
         const diff = moveEvent.clientX - touchStart
         setIsDragging(true)
         
-        const maxDrag = window.innerWidth * 0.3
-        const limitedDrag = Math.max(-maxDrag, Math.min(maxDrag, diff))
+        const screenWidth = window.innerWidth
+        let dragAmount = diff
+        
+        // Add resistance at edges
+        if ((currentSection === 0 && diff > 0) || (currentSection === sections.length - 1 && diff < 0)) {
+          dragAmount = diff * 0.3 // Rubber band effect
+        }
+        
+        const maxDrag = screenWidth * 0.8 // Match touch handler
+        const limitedDrag = Math.max(-maxDrag, Math.min(maxDrag, dragAmount))
         setDragOffset(limitedDrag)
       }
     }
@@ -339,9 +361,12 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
       
       if (touchStart && touchEnd) {
         const distance = touchStart - touchEnd
-        const threshold = 80
-        const isLeftSwipe = distance > threshold
-        const isRightSwipe = distance < -threshold
+        const screenWidth = window.innerWidth
+        const threshold = Math.min(50, screenWidth * 0.15)
+        const dragPercentage = Math.abs(dragOffset) / screenWidth
+        
+        const isLeftSwipe = distance > threshold || (distance > 0 && dragPercentage > 0.3)
+        const isRightSwipe = distance < -threshold || (distance < 0 && dragPercentage > 0.3)
 
         setIsTransitioning(true)
         
@@ -574,11 +599,38 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
         </div>
       </div>
 
-      {/* Navigation dots - enhanced visibility with drag feedback */}
+      {/* Navigation dots - iPhone-style draggable indicators */}
       <nav 
         className="flex justify-center gap-3 mt-3 pb-2 flex-shrink-0"
         role="tablist"
         aria-label="Language learning sections"
+        onTouchStart={(e) => {
+          e.stopPropagation()
+          const touch = e.touches[0]
+          const dotsContainer = e.currentTarget
+          const rect = dotsContainer.getBoundingClientRect()
+          const x = touch.clientX - rect.left
+          const dotWidth = rect.width / sections.length
+          const targetIndex = Math.floor(x / dotWidth)
+          if (targetIndex >= 0 && targetIndex < sections.length && targetIndex !== currentSection) {
+            setIsTransitioning(true)
+            setCurrentSection(targetIndex)
+            setTimeout(() => setIsTransitioning(false), 300)
+          }
+        }}
+        onMouseDown={(e) => {
+          e.stopPropagation()
+          const dotsContainer = e.currentTarget
+          const rect = dotsContainer.getBoundingClientRect()
+          const x = e.clientX - rect.left
+          const dotWidth = rect.width / sections.length
+          const targetIndex = Math.floor(x / dotWidth)
+          if (targetIndex >= 0 && targetIndex < sections.length && targetIndex !== currentSection) {
+            setIsTransitioning(true)
+            setCurrentSection(targetIndex)
+            setTimeout(() => setIsTransitioning(false), 300)
+          }
+        }}
       >
         {sections.map((section, index) => {
           // Calculate opacity based on drag position for visual feedback
