@@ -610,12 +610,14 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
         role="tablist"
         aria-label="Language learning sections"
         onTouchStart={(e) => {
+          e.preventDefault()
           setDotsTouchStart(e.touches[0].clientX)
           setDotsTouchEnd(null)
           setIsDraggingDots(false)
         }}
         onTouchMove={(e) => {
           if (dotsTouchStart === null) return
+          e.preventDefault()
           const currentTouch = e.touches[0].clientX
           setDotsTouchEnd(currentTouch)
           const diff = Math.abs(currentTouch - dotsTouchStart)
@@ -777,10 +779,10 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                   document.getElementById(`section-tab-${index - 1}`)?.focus()
                 }
               }}
-              className={`relative transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent ${
+              className={`relative focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent ${
                 index === currentSection 
-                  ? 'w-3 h-3 bg-white rounded-full shadow-lg opacity-100' 
-                  : 'w-2.5 h-2.5 bg-white/40 hover:bg-white/60 rounded-full opacity-100'
+                  ? 'w-3 h-3 bg-white rounded-full shadow-lg' 
+                  : 'w-2.5 h-2.5 bg-white/40 hover:bg-white/60 rounded-full'
               }`}
               title={section.name}
             >
