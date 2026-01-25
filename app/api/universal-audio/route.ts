@@ -2,6 +2,172 @@ import { NextRequest, NextResponse } from 'next/server';
 
 // Universal Audio API - B2 Authenticated Access
 // Fetches audio from private B2 bucket using API credentials
+
+// ==================== CACHING LAYER ====================
+// Cache B2 authorization tokens (valid for 24 hours)
+interface B2AuthCache {
+  authData: any;
+  downloadAuthToken: string;
+  expiresAt: number;
+}
+
+let b2AuthCache: B2AuthCache | null = null;
+
+// Cache CSV content (parsed once and reused)
+interface CSVCache {
+  mainCSV: string[][];
+  phrasesCSV: string[][] | null;
+  verbsCSV: string[][] | null;
+  lastUpdated: number;
+}
+
+let csvCache: CSVCache | null = null;
+const CSV_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 hours
+
+// Helper to parse CSV line efficiently
+function parseCSVLine(line: string): string[] | null {
+  if (!line.trim()) return null;
+  const match = line.match(/^"([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)"$/);
+  return match ? [match[1], match[2], match[3], match[4], match[5]] : null;
+}
+
+// Helper to get or refresh B2 auth
+async function getB2Auth(): Promise<B2AuthCache> {
+  const now = Date.now();
+  
+  // Return cached auth if still valid (expires in 50 minutes, B2 tokens last 1 hour)
+  if (b2AuthCache && b2AuthCache.expiresAt > now) {
+    console.log('✅ Using cached B2 authorization');
+    return b2AuthCache;
+  }
+
+  console.log('🔐 Refreshing B2 authorization...');
+  const keyId = process.env.B2_APPLICATION_KEY_ID;
+  const applicationKey = process.env.B2_APPLICATION_KEY;
+
+  if (!keyId || !applicationKey) {
+    throw new Error('B2 credentials not configured');
+  }
+
+  // Step 1: Authorize with B2
+  const authResponse = await fetch('https://api.backblazeb2.com/b2api/v2/b2_authorize_account', {
+    method: 'GET',
+    headers: {
+      'Authorization': 'Basic ' + Buffer.from(`${keyId}:${applicationKey}`).toString('base64')
+    }
+  });
+
+  if (!authResponse.ok) {
+    throw new Error('B2 authorization failed');
+  }
+
+  const authData = await authResponse.json();
+
+  // Step 2: Get download authorization (covers all prefixes)
+  const downloadAuthResponse = await fetch(`${authData.apiUrl}/b2api/v2/b2_get_download_authorization`, {
+    method: 'POST',
+    headers: {
+      'Authorization': authData.authorizationToken,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      bucketId: 'aa1d47dd5cca310593920d1c',
+      fileNamePrefix: '', // Empty prefix = access to all files
+      validDurationInSeconds: 3600
+    })
+  });
+
+  if (!downloadAuthResponse.ok) {
+    throw new Error('Download authorization failed');
+  }
+
+  const downloadAuthData = await downloadAuthResponse.json();
+
+  // Cache for 50 minutes (tokens valid for 1 hour)
+  b2AuthCache = {
+    authData,
+    downloadAuthToken: downloadAuthData.authorizationToken,
+    expiresAt: now + (50 * 60 * 1000)
+  };
+
+  console.log('✅ B2 authorization refreshed and cached');
+  return b2AuthCache;
+}
+
+// Helper to get or load CSV cache
+async function getCSVCache(baseUrl: string): Promise<CSVCache> {
+  const now = Date.now();
+  
+  // Return cached CSV if still valid
+  if (csvCache && (now - csvCache.lastUpdated) < CSV_CACHE_TTL) {
+    console.log('✅ Using cached CSV data');
+    return csvCache;
+  }
+
+  console.log('🔍 Loading and caching CSV files...');
+  
+  // Load main CSV
+  const mainCsvUrl = `${baseUrl}/data/backblaze-urls-20250909-180354.csv`;
+  const mainResponse = await fetch(mainCsvUrl);
+  if (!mainResponse.ok) {
+    throw new Error(`Main CSV fetch failed: ${mainResponse.status}`);
+  }
+  const mainContent = await mainResponse.text();
+  const mainLines = mainContent.split('\n');
+  const mainCSV: string[][] = [];
+  for (let i = 1; i < mainLines.length; i++) {
+    const parsed = parseCSVLine(mainLines[i]);
+    if (parsed) mainCSV.push(parsed);
+  }
+
+  // Load phrases CSV (optional)
+  let phrasesCSV: string[][] | null = null;
+  try {
+    const phrasesCsvUrl = `${baseUrl}/data/common-phrases-b2-urls.csv`;
+    const phrasesResponse = await fetch(phrasesCsvUrl);
+    if (phrasesResponse.ok) {
+      const phrasesContent = await phrasesResponse.text();
+      const phrasesLines = phrasesContent.split('\n');
+      phrasesCSV = [];
+      for (let i = 1; i < phrasesLines.length; i++) {
+        const parsed = parseCSVLine(phrasesLines[i]);
+        if (parsed) phrasesCSV.push(parsed);
+      }
+    }
+  } catch (e) {
+    console.log('⚠️ Phrases CSV not available');
+  }
+
+  // Load verbs CSV (optional)
+  let verbsCSV: string[][] | null = null;
+  try {
+    const verbsCsvUrl = `${baseUrl}/data/verb-b2-urls.csv`;
+    const verbsResponse = await fetch(verbsCsvUrl);
+    if (verbsResponse.ok) {
+      const verbsContent = await verbsResponse.text();
+      const verbsLines = verbsContent.split('\n');
+      verbsCSV = [];
+      for (let i = 1; i < verbsLines.length; i++) {
+        const parsed = parseCSVLine(verbsLines[i]);
+        if (parsed) verbsCSV.push(parsed);
+      }
+    }
+  } catch (e) {
+    console.log('⚠️ Verbs CSV not available');
+  }
+
+  csvCache = {
+    mainCSV,
+    phrasesCSV,
+    verbsCSV,
+    lastUpdated: now
+  };
+
+  console.log(`✅ CSV cache loaded: ${mainCSV.length} main entries, ${phrasesCSV?.length || 0} phrases, ${verbsCSV?.length || 0} verbs`);
+  return csvCache;
+}
+// ==================== END CACHING LAYER ====================
+
 export async function GET(request: NextRequest) {
   try {
     console.log('🔑 Universal Audio API (B2 Authenticated) called'); 
@@ -17,18 +183,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         { error: 'Missing required parameters: wordId and languageCode' },
         { status: 400 }
-      );
-    }
-
-    // B2 credentials from environment
-    const keyId = process.env.B2_APPLICATION_KEY_ID;
-    const applicationKey = process.env.B2_APPLICATION_KEY;
-
-    if (!keyId || !applicationKey) {
-      console.log('❌ B2 credentials not found in environment');
-      return NextResponse.json(
-        { error: 'B2 credentials not configured' },
-        { status: 503 }
       );
     }
 
@@ -58,112 +212,28 @@ export async function GET(request: NextRequest) {
     const audioLangCode = getAudioLanguageCode(languageCode);
     console.log(`🔑 Language mapping:`, { original: languageCode, mapped: audioLangCode });
 
-    // Step 1: Authorize with B2
-    console.log('🔐 Authorizing with B2...');
-    
-    const authResponse = await fetch('https://api.backblazeb2.com/b2api/v2/b2_authorize_account', {
-      method: 'GET',
-      headers: {
-        'Authorization': 'Basic ' + Buffer.from(`${keyId}:${applicationKey}`).toString('base64')
-      }
-    });
+    // Get B2 authorization (from cache or fresh)
+    const b2Auth = await getB2Auth();
 
-    if (!authResponse.ok) {
-      console.log('❌ B2 authorization failed');
-      return NextResponse.json(
-        { error: 'B2 authorization failed' },
-        { status: 503 }
-      );
-    }
+    // Get CSV data (from cache or fresh)
+    const baseUrl = request.url.split('/api/')[0];
+    const csvData = await getCSVCache(baseUrl);
 
-    const authData = await authResponse.json();
-    console.log('✅ B2 authorization successful');
-
-    // Step 2: Get download authorization
-    // For Daily Language (topic 42, IDs 4172-4965), files are at CommonPhrases/{lang}/
-    // For other topics, files are at {lang}/{category}/
-    const wordIdNum = wordId ? parseInt(wordId) : 0;
-    const isCommonPhrases = wordIdNum >= 4172 && wordIdNum <= 4965;
-    const fileNamePrefix = isCommonPhrases ? 'CommonPhrases/' : `${audioLangCode}/`;
-    
-    console.log(`🔑 Getting download authorization for prefix: ${fileNamePrefix}`);
-    
-    const downloadAuthResponse = await fetch(`${authData.apiUrl}/b2api/v2/b2_get_download_authorization`, {
-      method: 'POST',
-      headers: {
-        'Authorization': authData.authorizationToken,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        bucketId: 'aa1d47dd5cca310593920d1c',
-        fileNamePrefix: fileNamePrefix,
-        validDurationInSeconds: 3600
-      })
-    });
-
-    if (!downloadAuthResponse.ok) {
-      console.log('❌ Download authorization failed');
-      return NextResponse.json(
-        { error: 'Download authorization failed' },
-        { status: 503 }
-      );
-    }
-
-    const downloadAuthData = await downloadAuthResponse.json();
-    console.log('✅ Download authorization successful');
-
-    // Step 3: Find file URL from CSV (check main CSV for audio files)
+    // Find file URL from cached CSV data
     let fileName: string | null = null;
     let filePath: string | null = null;
     
     try {
-      // Fetch CSV from public directory via HTTP (works in serverless)
-      const baseUrl = request.url.split('/api/')[0];
-      const csvUrl = `${baseUrl}/data/backblaze-urls-20250909-180354.csv`;
-      console.log(`🔍 Fetching CSV from: ${csvUrl}`);
-      console.log(`🔍 Full request URL: ${request.url}`);
-      console.log(`🔍 Base URL extracted: ${baseUrl}`);
-      
-      const csvResponse = await fetch(csvUrl);
-      console.log(`🔍 CSV response status: ${csvResponse.status}`);
-      if (!csvResponse.ok) {
-        console.error(`❌ CSV fetch failed: ${csvResponse.status} ${csvResponse.statusText}`);
-        throw new Error(`CSV fetch failed: ${csvResponse.status}`);
-      }
-      
-      const csvContent = await csvResponse.text();
-      const lines = csvContent.split('\n');
-      
-      console.log(`🔍 Searching main CSV: ${lines.length} entries for wordId=${wordId}, language=${audioLangCode}, word=${word}`);
-      console.log(`🔍 First few lines of CSV:`, lines.slice(0, 3));
+      console.log(`🔍 Searching cached CSV for wordId=${wordId}, language=${audioLangCode}, word=${word}`);
 
-      for (let i = 1; i < lines.length; i++) {
-        const line = lines[i];
-        if (!line.trim()) continue;
-
-        const match = line.match(/^"([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)"$/);
-        if (!match) {
-          if (i < 5) console.log(`🔍 Line ${i} no match: ${line}`);
-          continue;
-        }
-
-        const [, localPath, backblazeURL, language, category, csvFileName] = match;
-        
-        // Pattern 1: alnilam_{id}_ (standard topics)
+      // Search main CSV (ID-based matching)
+      for (const [localPath, backblazeURL, language, category, csvFileName] of csvData.mainCSV) {
         const wordIdMatch = csvFileName.match(/alnilam_(\d+)_/);
-        if (wordIdMatch) {
-          const csvWordId = wordIdMatch[1];
-          if (csvWordId === wordId && language === audioLangCode) {
-            fileName = csvFileName;
-            filePath = localPath;
-            console.log(`✅ Found audio mapping (ID-based): ${fileName} at ${filePath}`);
-            break;
-          }
-        }
-        
-        // Debug first few matches
-        if (i < 5) {
-          console.log(`🔍 Line ${i} check: filename=${csvFileName}, language=${language}, audioLangCode=${audioLangCode}`);
+        if (wordIdMatch && wordIdMatch[1] === wordId && language === audioLangCode) {
+          fileName = csvFileName;
+          filePath = localPath;
+          console.log(`✅ Found audio mapping (ID-based): ${fileName}`);
+          break;
         }
       }
       
@@ -173,97 +243,49 @@ export async function GET(request: NextRequest) {
         
         const wordIdNum = parseInt(wordId);
         
-        // Try Daily Language CSV (topic 42, IDs 4172-4965) - uses word-based lookup like Verbs
-        if (wordIdNum >= 4172 && wordIdNum <= 4965 && word) {
-          const phrasesCsvUrl = `${baseUrl}/data/common-phrases-b2-urls.csv`;
-          try {
-            const phrasesCsvResponse = await fetch(phrasesCsvUrl);
-            if (phrasesCsvResponse.ok) {
-              const phrasesCsvContent = await phrasesCsvResponse.text();
-              const phrasesLines = phrasesCsvContent.split('\n');
-              console.log(`🔍 Searching Daily Language CSV: ${phrasesLines.length} entries for word="${word}"`);
-              
-              // Normalize the word for matching (lowercase, handle special chars like spaces)
-              const normalizedWord = word.toLowerCase().trim().replace(/\s+/g, '_');
-              
-              // For Welsh (cy), Irish (ga), and Maltese (mt), use targetWord for filename matching
-              // These languages have native language filenames in B2, not English filenames
-              const isNativeFilenameLanguage = ['cy', 'ga', 'mt'].includes(audioLangCode);
-              const normalizedTargetWord = targetWord ? targetWord.toLowerCase().trim().replace(/\s+/g, '_') : null;
-              
-              if (isNativeFilenameLanguage && normalizedTargetWord) {
-                console.log(`🔍 Using targetWord for ${audioLangCode}: "${normalizedTargetWord}"`);
-              }
-              
-              for (let i = 1; i < phrasesLines.length; i++) {
-                const line = phrasesLines[i];
-                if (!line.trim()) continue;
-                
-                const match = line.match(/^"([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)"$/);
-                if (!match) continue;
-                
-                const [, localPath, backblazeURL, language, category, csvFileName] = match;
-                
-                // Match by filename (e.g., "get_up.wav" matches word "get up")
-                const fileNameWithoutExt = csvFileName.replace('.wav', '').toLowerCase();
-                
-                // For cy/ga/mt: try matching with targetWord (native language filename)
-                // For other languages: match with English word
-                const matchWord = (isNativeFilenameLanguage && normalizedTargetWord) 
-                  ? normalizedTargetWord 
-                  : normalizedWord;
-                
-                if (fileNameWithoutExt === matchWord && language === audioLangCode) {
-                  fileName = csvFileName;
-                  filePath = localPath;
-                  console.log(`✅ Found Daily Language audio: ${fileName} at ${filePath}`);
-                  break;
-                }
-              }
+        // Try Daily Language CSV (topic 42, IDs 4172-4965) - uses word-based lookup
+        if (wordIdNum >= 4172 && wordIdNum <= 4965 && word && csvData.phrasesCSV) {
+          console.log(`🔍 Searching cached phrases CSV for word="${word}"`);
+          
+          const normalizedWord = word.toLowerCase().trim().replace(/\s+/g, '_');
+          const isNativeFilenameLanguage = ['cy', 'ga', 'mt'].includes(audioLangCode);
+          const normalizedTargetWord = targetWord ? targetWord.toLowerCase().trim().replace(/\s+/g, '_') : null;
+          
+          if (isNativeFilenameLanguage && normalizedTargetWord) {
+            console.log(`🔍 Using targetWord for ${audioLangCode}: "${normalizedTargetWord}"`);
+          }
+          
+          for (const [localPath, backblazeURL, language, category, csvFileName] of csvData.phrasesCSV) {
+            const fileNameWithoutExt = csvFileName.replace('.wav', '').toLowerCase();
+            const matchWord = (isNativeFilenameLanguage && normalizedTargetWord) 
+              ? normalizedTargetWord 
+              : normalizedWord;
+            
+            if (fileNameWithoutExt === matchWord && language === audioLangCode) {
+              fileName = csvFileName;
+              filePath = localPath;
+              console.log(`✅ Found Daily Language audio: ${fileName}`);
+              break;
             }
-          } catch (phrasesError) {
-            console.log(`⚠️ Daily Language CSV error:`, phrasesError);
           }
         }
         
         // Try Verbs CSV (word-based lookup)
-        if (!fileName && !filePath && word) {
-          const verbsCsvUrl = `${baseUrl}/data/verb-b2-urls.csv`;
-          try {
-            const verbsCsvResponse = await fetch(verbsCsvUrl);
-            if (verbsCsvResponse.ok) {
-              const verbsCsvContent = await verbsCsvResponse.text();
-              const verbsLines = verbsCsvContent.split('\n');
-              console.log(`🔍 Searching Verbs CSV: ${verbsLines.length} entries`);
-              
-              // Normalize the word for matching (lowercase, handle special chars)
-              const normalizedWord = word.toLowerCase().trim();
-              
-              for (let i = 1; i < verbsLines.length; i++) {
-                const line = verbsLines[i];
-                if (!line.trim()) continue;
-                
-                const match = line.match(/^"([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)"$/);
-                if (!match) continue;
-                
-                const [, localPath, backblazeURL, language, category, csvFileName] = match;
-                
-                // Pattern: alnilam_{word}_.wav (word-based for verbs)
-                // Also check if the word appears in the filename
-                const wordMatch = csvFileName.match(/alnilam_([^_]+)_\.wav/i);
-                if (wordMatch) {
-                  const csvWord = wordMatch[1].toLowerCase();
-                  if (csvWord === normalizedWord && language === audioLangCode) {
-                    fileName = csvFileName;
-                    filePath = localPath;
-                    console.log(`✅ Found audio mapping (word-based): ${fileName} at ${filePath}`);
-                    break;
-                  }
-                }
+        if (!fileName && !filePath && word && csvData.verbsCSV) {
+          console.log(`🔍 Searching cached verbs CSV`);
+          const normalizedWord = word.toLowerCase().trim();
+          
+          for (const [localPath, backblazeURL, language, category, csvFileName] of csvData.verbsCSV) {
+            const wordMatch = csvFileName.match(/alnilam_([^_]+)_\.wav/i);
+            if (wordMatch) {
+              const csvWord = wordMatch[1].toLowerCase();
+              if (csvWord === normalizedWord && language === audioLangCode) {
+                fileName = csvFileName;
+                filePath = localPath;
+                console.log(`✅ Found audio mapping (word-based): ${fileName}`);
+                break;
               }
             }
-          } catch (verbsError) {
-            console.log(`⚠️ Verbs CSV not found or error:`, verbsError);
           }
         }
       }
@@ -279,13 +301,13 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Step 4: Download file using authenticated URL
-    const authenticatedUrl = `${authData.downloadUrl}/file/voco-audio-library/${filePath}`;
-    console.log(`🌐 Fetching authenticated audio: ${authenticatedUrl}`);
+    // Download file using cached B2 authentication
+    const authenticatedUrl = `${b2Auth.authData.downloadUrl}/file/voco-audio-library/${filePath}`;
+    console.log(`🌐 Fetching authenticated audio from B2`);
     
     const audioResponse = await fetch(authenticatedUrl, {
       headers: {
-        'Authorization': downloadAuthData.authorizationToken
+        'Authorization': b2Auth.downloadAuthToken
       }
     });
 
@@ -298,7 +320,7 @@ export async function GET(request: NextRequest) {
     }
 
     const audioBuffer = await audioResponse.arrayBuffer();
-    console.log(`🔑 Serving authenticated audio: ${fileName} (${audioBuffer.byteLength} bytes)`);
+    console.log(`✅ Serving audio: ${fileName} (${audioBuffer.byteLength} bytes)`);
 
     // Determine content type based on file extension
     const contentType = fileName.endsWith('.mp3') ? 'audio/mpeg' : 'audio/wav';
@@ -312,7 +334,7 @@ export async function GET(request: NextRequest) {
         'Content-Disposition': `inline; filename="${fileName}"`,
         'Access-Control-Allow-Origin': '*',
         'X-Audio-Source': 'b2-authenticated',
-        'X-Audio-Auth': 'private-bucket',
+        'X-Audio-Cached': b2AuthCache?.expiresAt ? 'true' : 'false',
       },
     });
 
