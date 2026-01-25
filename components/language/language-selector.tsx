@@ -606,7 +606,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
 
       {/* Navigation dots - iPhone-style draggable indicators */}
       <nav 
-        className="flex justify-center gap-3 mt-3 pb-2 flex-shrink-0 cursor-grab active:cursor-grabbing"
+        className="flex justify-center gap-3 mt-3 pb-2 pt-2 px-4 flex-shrink-0 cursor-grab active:cursor-grabbing"
         role="tablist"
         aria-label="Language learning sections"
         onTouchStart={(e) => {
@@ -626,32 +626,42 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
           }
         }}
         onTouchEnd={(e) => {
-          if (dotsTouchStart === null || dotsTouchEnd === null) {
+          if (dotsTouchStart === null) {
             setDotsTouchStart(null)
             setDotsTouchEnd(null)
             setIsDraggingDots(false)
             return
           }
           
-          const distance = dotsTouchStart - dotsTouchEnd
-          const threshold = 50 // 50px swipe threshold
-          
-          if (Math.abs(distance) > threshold) {
-            e.stopPropagation()
-            const isLeftSwipe = distance > 0
-            const isRightSwipe = distance < 0
+          // If we have touchEnd, check for swipe
+          if (dotsTouchEnd !== null) {
+            const distance = dotsTouchStart - dotsTouchEnd
+            const threshold = 50 // 50px swipe threshold
             
-            if (isLeftSwipe && currentSection < sections.length - 1) {
-              setIsTransitioning(true)
-              setCurrentSection(currentSection + 1)
-              setTimeout(() => setIsTransitioning(false), 300)
-            } else if (isRightSwipe && currentSection > 0) {
-              setIsTransitioning(true)
-              setCurrentSection(currentSection - 1)
-              setTimeout(() => setIsTransitioning(false), 300)
+            if (Math.abs(distance) > threshold) {
+              e.stopPropagation()
+              const isLeftSwipe = distance > 0
+              const isRightSwipe = distance < 0
+              
+              if (isLeftSwipe && currentSection < sections.length - 1) {
+                setIsTransitioning(true)
+                setCurrentSection(currentSection + 1)
+                setTimeout(() => setIsTransitioning(false), 300)
+              } else if (isRightSwipe && currentSection > 0) {
+                setIsTransitioning(true)
+                setCurrentSection(currentSection - 1)
+                setTimeout(() => setIsTransitioning(false), 300)
+              }
+              
+              setDotsTouchStart(null)
+              setDotsTouchEnd(null)
+              setIsDraggingDots(false)
+              return
             }
-          } else if (!isDraggingDots) {
-            // If not dragging, treat as tap
+          }
+          
+          // If not dragging or swipe too short, treat as tap
+          if (!isDraggingDots || dotsTouchEnd === null) {
             const dotsContainer = e.currentTarget
             const rect = dotsContainer.getBoundingClientRect()
             const x = e.changedTouches[0].clientX - rect.left
@@ -734,16 +744,6 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
         }}
       >
         {sections.map((section, index) => {
-          // Calculate opacity based on drag position for visual feedback
-          let opacity = index === currentSection ? 1 : 0.4
-          if (isDragging && dragOffset !== 0) {
-            const dragDirection = dragOffset > 0 ? -1 : 1 // Opposite direction of content
-            const targetSection = currentSection + dragDirection
-            if (index === targetSection && Math.abs(dragOffset) > 40) {
-              opacity = 0.7 // Preview next section
-            }
-          }
-          
           return (
             <button
               key={index}
@@ -753,7 +753,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
               aria-label={`Navigate to ${section.name} section`}
               id={`section-tab-${index}`}
               onClick={() => {
-                if (!isDragging && !isTransitioning) {
+                if (!isDragging && !isTransitioning && !isDraggingDots) {
                   setIsTransitioning(true)
                   setCurrentSection(index)
                   setTimeout(() => setIsTransitioning(false), 300)
@@ -779,10 +779,9 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
               }}
               className={`relative transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent ${
                 index === currentSection 
-                  ? 'w-3 h-3 bg-white rounded-full shadow-lg' 
-                  : 'w-2.5 h-2.5 bg-white/40 hover:bg-white/60 rounded-full'
+                  ? 'w-3 h-3 bg-white rounded-full shadow-lg opacity-100' 
+                  : 'w-2.5 h-2.5 bg-white/40 hover:bg-white/60 rounded-full opacity-100'
               }`}
-              style={{ opacity }}
               title={section.name}
             >
               {/* Add text labels for first two sections */}
