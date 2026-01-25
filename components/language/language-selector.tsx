@@ -2187,7 +2187,7 @@ export function LanguageSelector() {
       clearTimeout(savePositionTimeoutRef.current)
     }
 
-    // Debounce save for 2 seconds to avoid excessive API calls
+    // Debounce save for 1 second to avoid excessive API calls while still being responsive
     savePositionTimeoutRef.current = setTimeout(async () => {
       try {
         await fetch('/api/progress/position', {
@@ -2205,12 +2205,30 @@ export function LanguageSelector() {
       } catch (error) {
         console.error('Failed to auto-save position:', error)
       }
-    }, 2000)
+    }, 1000) // Reduced from 2000ms to 1000ms for faster saves
 
-    // Cleanup on unmount
+    // Cleanup on unmount - execute any pending save immediately
     return () => {
       if (savePositionTimeoutRef.current) {
         clearTimeout(savePositionTimeoutRef.current)
+        // Immediately save position on unmount/navigation
+        if (user?.id && selectedTopic && targetLanguageCode && vocabulary.length > 0) {
+          fetch('/api/progress/position', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              userId: user.id,
+              topicId: selectedTopic.id,
+              targetLanguageCode: targetLanguageCode,
+              currentWordIndex: currentWordIndex,
+              totalWords: vocabulary.length
+            })
+          }).then(() => {
+            console.log('💾 Cleanup-saved position:', currentWordIndex, 'for topic:', selectedTopic.id)
+          }).catch(error => {
+            console.error('Failed to cleanup-save position:', error)
+          })
+        }
       }
     }
   }, [currentWordIndex, user?.id, selectedTopic, targetLanguageCode, vocabulary.length])
@@ -2942,15 +2960,20 @@ export function LanguageSelector() {
     let savedPosition = 0
     if (user?.id && targetLanguageCode) {
       try {
+        console.log('📍 Fetching saved position for:', { userId: user.id, topicId: topic.id, targetLanguageCode })
         const positionResponse = await fetch(`/api/progress/position?userId=${user.id}&topicId=${topic.id}&targetLanguageCode=${targetLanguageCode}`)
         if (positionResponse.ok) {
           const positionData = await positionResponse.json()
           savedPosition = positionData.currentWordIndex || 0
-          console.log('📍 Loaded saved position:', savedPosition, 'for topic:', topic.id)
+          console.log('📍 Loaded saved position:', savedPosition, 'for topic:', topic.id, 'data:', positionData)
+        } else {
+          console.log('📍 No saved position found (status:', positionResponse.status, ')')
         }
       } catch (error) {
         console.error('Failed to load saved position:', error)
       }
+    } else {
+      console.log('📍 Skipping position load - user:', !!user?.id, 'targetLangCode:', targetLanguageCode)
     }
     
     // Check if we have cached vocabulary
@@ -2963,6 +2986,7 @@ export function LanguageSelector() {
       setTotalWords(cachedVocabulary.length)
       setCurrentOffset(cachedVocabulary.length)
       setHasMoreWords(false)
+      console.log('📍 Setting currentWordIndex to saved position:', savedPosition, 'out of', cachedVocabulary.length, 'words')
       setCurrentWordIndex(savedPosition) // Resume from saved position
       setSelectedTopic(topic)
       
@@ -3007,6 +3031,7 @@ export function LanguageSelector() {
         setTotalWords(vocabularyResponse.totalWords || 0)
         setCurrentOffset(vocabularyResponse.vocabulary?.length || 0)
         setHasMoreWords(false)
+        console.log('📍 Setting currentWordIndex to saved position:', savedPosition, 'out of', vocabularyResponse.vocabulary?.length || 0, 'words')
         setCurrentWordIndex(savedPosition) // Resume from saved position
         setSelectedTopic(topic)
         
