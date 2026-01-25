@@ -40,7 +40,8 @@ if (!GEMINI_API_KEY) {
 // Initialize clients
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY)
-const model = genAI.getGenerativeModel({ model: 'models/gemini-2.0-flash-exp' })
+// Using gemini-2.0-flash-lite - 4K RPM, 4M TPM, Unlimited RPD
+const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-lite' })
 
 // All supported languages
 const LANGUAGES = [
@@ -140,10 +141,10 @@ async function fetchVocabulary(limit: number | null, startFrom: number): Promise
     .order('id', { ascending: true })
 
   if (startFrom > 0) {
+    // Always use ID filter, not row position
+    query = query.gte('id', startFrom)
     if (limit) {
-      query = query.range(startFrom, startFrom + limit - 1)
-    } else {
-      query = query.gte('id', startFrom)
+      query = query.limit(limit)
     }
   } else if (limit) {
     query = query.limit(limit)

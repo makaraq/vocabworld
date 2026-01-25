@@ -2,6 +2,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Space_Grotesk } from "next/font/google"
 import { AuthProvider } from "@/contexts/auth-context"
+import { ServiceWorkerProvider } from "@/components/providers/service-worker-provider"
 import "./globals.css"
 import "../styles/stripe-elements.css"
 
@@ -27,9 +28,11 @@ export default function RootLayout({
       <head>
       </head>
       <body className="font-sans" style={{ fontFamily: "var(--font-space-grotesk)" }}>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        <ServiceWorkerProvider>
+          <AuthProvider>
+            {children}
+          </AuthProvider>
+        </ServiceWorkerProvider>
       </body>
     </html>
   )
