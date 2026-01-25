@@ -144,6 +144,11 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
   const [dragOffset, setDragOffset] = useState(0)
   const [isTransitioning, setIsTransitioning] = useState(false)
   
+  // Dots dragging state
+  const [dotsTouchStart, setDotsTouchStart] = useState<number | null>(null)
+  const [dotsTouchEnd, setDotsTouchEnd] = useState<number | null>(null)
+  const [isDraggingDots, setIsDraggingDots] = useState(false)
+  
   // Use a stable container ref that persists across re-renders
   const iconContainerRef = useRef<HTMLDivElement>(null)
   const renderedIconsRef = useRef<Map<number, HTMLDivElement>>(new Map())
@@ -601,35 +606,131 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
 
       {/* Navigation dots - iPhone-style draggable indicators */}
       <nav 
-        className="flex justify-center gap-3 mt-3 pb-2 flex-shrink-0"
+        className="flex justify-center gap-3 mt-3 pb-2 flex-shrink-0 cursor-grab active:cursor-grabbing"
         role="tablist"
         aria-label="Language learning sections"
         onTouchStart={(e) => {
-          e.stopPropagation()
-          const touch = e.touches[0]
-          const dotsContainer = e.currentTarget
-          const rect = dotsContainer.getBoundingClientRect()
-          const x = touch.clientX - rect.left
-          const dotWidth = rect.width / sections.length
-          const targetIndex = Math.floor(x / dotWidth)
-          if (targetIndex >= 0 && targetIndex < sections.length && targetIndex !== currentSection) {
-            setIsTransitioning(true)
-            setCurrentSection(targetIndex)
-            setTimeout(() => setIsTransitioning(false), 300)
+          setDotsTouchStart(e.touches[0].clientX)
+          setDotsTouchEnd(null)
+          setIsDraggingDots(false)
+        }}
+        onTouchMove={(e) => {
+          if (dotsTouchStart === null) return
+          const currentTouch = e.touches[0].clientX
+          setDotsTouchEnd(currentTouch)
+          const diff = Math.abs(currentTouch - dotsTouchStart)
+          
+          // Start dragging after 10px movement
+          if (diff > 10) {
+            setIsDraggingDots(true)
           }
         }}
-        onMouseDown={(e) => {
-          e.stopPropagation()
-          const dotsContainer = e.currentTarget
-          const rect = dotsContainer.getBoundingClientRect()
-          const x = e.clientX - rect.left
-          const dotWidth = rect.width / sections.length
-          const targetIndex = Math.floor(x / dotWidth)
-          if (targetIndex >= 0 && targetIndex < sections.length && targetIndex !== currentSection) {
-            setIsTransitioning(true)
-            setCurrentSection(targetIndex)
-            setTimeout(() => setIsTransitioning(false), 300)
+        onTouchEnd={(e) => {
+          if (dotsTouchStart === null || dotsTouchEnd === null) {
+            setDotsTouchStart(null)
+            setDotsTouchEnd(null)
+            setIsDraggingDots(false)
+            return
           }
+          
+          const distance = dotsTouchStart - dotsTouchEnd
+          const threshold = 50 // 50px swipe threshold
+          
+          if (Math.abs(distance) > threshold) {
+            e.stopPropagation()
+            const isLeftSwipe = distance > 0
+            const isRightSwipe = distance < 0
+            
+            if (isLeftSwipe && currentSection < sections.length - 1) {
+              setIsTransitioning(true)
+              setCurrentSection(currentSection + 1)
+              setTimeout(() => setIsTransitioning(false), 300)
+            } else if (isRightSwipe && currentSection > 0) {
+              setIsTransitioning(true)
+              setCurrentSection(currentSection - 1)
+              setTimeout(() => setIsTransitioning(false), 300)
+            }
+          } else if (!isDraggingDots) {
+            // If not dragging, treat as tap
+            const dotsContainer = e.currentTarget
+            const rect = dotsContainer.getBoundingClientRect()
+            const x = e.changedTouches[0].clientX - rect.left
+            const dotWidth = rect.width / sections.length
+            const targetIndex = Math.floor(x / dotWidth)
+            if (targetIndex >= 0 && targetIndex < sections.length && targetIndex !== currentSection) {
+              setIsTransitioning(true)
+              setCurrentSection(targetIndex)
+              setTimeout(() => setIsTransitioning(false), 300)
+            }
+          }
+          
+          setDotsTouchStart(null)
+          setDotsTouchEnd(null)
+          setIsDraggingDots(false)
+        }}
+        onMouseDown={(e) => {
+          setDotsTouchStart(e.clientX)
+          setDotsTouchEnd(null)
+          setIsDraggingDots(false)
+          
+          const handleMouseMove = (moveEvent: MouseEvent) => {
+            if (dotsTouchStart === null) return
+            setDotsTouchEnd(moveEvent.clientX)
+            const diff = Math.abs(moveEvent.clientX - dotsTouchStart)
+            
+            if (diff > 10) {
+              setIsDraggingDots(true)
+            }
+          }
+          
+          const handleMouseUp = (upEvent: MouseEvent) => {
+            if (dotsTouchStart === null) {
+              document.removeEventListener('mousemove', handleMouseMove)
+              document.removeEventListener('mouseup', handleMouseUp)
+              return
+            }
+            
+            if (dotsTouchEnd !== null) {
+              const distance = dotsTouchStart - dotsTouchEnd
+              const threshold = 50
+              
+              if (Math.abs(distance) > threshold) {
+                const isLeftSwipe = distance > 0
+                const isRightSwipe = distance < 0
+                
+                if (isLeftSwipe && currentSection < sections.length - 1) {
+                  setIsTransitioning(true)
+                  setCurrentSection(currentSection + 1)
+                  setTimeout(() => setIsTransitioning(false), 300)
+                } else if (isRightSwipe && currentSection > 0) {
+                  setIsTransitioning(true)
+                  setCurrentSection(currentSection - 1)
+                  setTimeout(() => setIsTransitioning(false), 300)
+                }
+              } else if (!isDraggingDots) {
+                // If not dragging, treat as click
+                const dotsContainer = e.currentTarget
+                const rect = dotsContainer.getBoundingClientRect()
+                const x = upEvent.clientX - rect.left
+                const dotWidth = rect.width / sections.length
+                const targetIndex = Math.floor(x / dotWidth)
+                if (targetIndex >= 0 && targetIndex < sections.length && targetIndex !== currentSection) {
+                  setIsTransitioning(true)
+                  setCurrentSection(targetIndex)
+                  setTimeout(() => setIsTransitioning(false), 300)
+                }
+              }
+            }
+            
+            setDotsTouchStart(null)
+            setDotsTouchEnd(null)
+            setIsDraggingDots(false)
+            document.removeEventListener('mousemove', handleMouseMove)
+            document.removeEventListener('mouseup', handleMouseUp)
+          }
+          
+          document.addEventListener('mousemove', handleMouseMove)
+          document.addEventListener('mouseup', handleMouseUp)
         }}
       >
         {sections.map((section, index) => {
