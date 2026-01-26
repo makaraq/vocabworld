@@ -1,0 +1,194 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { Icon } from '@iconify/react'
+import { X, ChevronLeft, ChevronRight, Plus } from 'lucide-react'
+import createSupabaseClient from '@/lib/supabase/client'
+
+interface ExampleSentence {
+  id: number
+  sentence: string
+  translation: string
+  sentence_order: number
+}
+
+interface ExampleSentencesModalProps {
+  vocabularyId: number
+  sourceWord: string
+  targetWord: string
+  nativeLanguageCode: string
+  targetLanguageCode: string
+  userId?: string
+  onCloseAction: () => void
+  onAddToPlaylistAction?: () => void
+}
+
+export function ExampleSentencesModal({
+  vocabularyId,
+  sourceWord,
+  targetWord,
+  nativeLanguageCode,
+  targetLanguageCode,
+  userId,
+  onCloseAction,
+  onAddToPlaylistAction
+}: ExampleSentencesModalProps) {
+  const [sentences, setSentences] = useState<ExampleSentence[]>([])
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetchExampleSentences()
+  }, [vocabularyId, targetLanguageCode])
+
+  const fetchExampleSentences = async () => {
+    try {
+      setIsLoading(true)
+      setError(null)
+
+      const supabase = createSupabaseClient()
+      const { data, error: fetchError } = await supabase
+        .from('example_sentences')
+        .select('*')
+        .eq('vocabulary_id', vocabularyId)
+        .eq('language_code', targetLanguageCode)
+        .order('sentence_order', { ascending: true })
+
+      if (fetchError) throw fetchError
+
+      if (!data || data.length === 0) {
+        setError('No example sentences available for this word')
+      } else {
+        setSentences(data)
+      }
+    } catch (err: any) {
+      console.error('Error fetching example sentences:', err)
+      setError(err.message || 'Failed to load example sentences')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handlePrevious = () => {
+    setCurrentIndex((prev) => (prev > 0 ? prev - 1 : sentences.length - 1))
+  }
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev < sentences.length - 1 ? prev + 1 : 0))
+  }
+
+  return (
+    <div 
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+      onClick={onCloseAction}
+    >
+      <div 
+        className="bg-gradient-to-br from-purple-900/95 via-blue-900/95 to-black/95 backdrop-blur-3xl border border-white/20 rounded-3xl max-w-lg w-full shadow-2xl transform transition-all"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="p-5 border-b border-white/10 flex items-center justify-between">
+          <div>
+            <h3 className="text-white font-semibold text-lg">{sourceWord}</h3>
+            <p className="text-white/60 text-sm">{targetWord}</p>
+          </div>
+          <button
+            onClick={onCloseAction}
+            className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all"
+          >
+            <X className="w-5 h-5 text-white/80" />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-6">
+          {isLoading && (
+            <div className="text-center py-12">
+              <div className="w-10 h-10 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-3" />
+              <p className="text-white/50 text-sm">Loading examples...</p>
+            </div>
+          )}
+
+          {error && (
+            <div className="text-center py-12">
+              <Icon icon="solar:close-circle-bold" className="w-12 h-12 text-red-400 mx-auto mb-3" />
+              <p className="text-red-300 text-sm">{error}</p>
+            </div>
+          )}
+
+          {!isLoading && !error && sentences.length > 0 && (
+            <div>
+              {/* Sentence Counter */}
+              <div className="flex items-center justify-center gap-2 mb-4">
+                {sentences.map((_, idx) => (
+                  <div
+                    key={idx}
+                    className={`h-1.5 rounded-full transition-all ${
+                      idx === currentIndex ? 'w-8 bg-blue-400' : 'w-1.5 bg-white/30'
+                    }`}
+                  />
+                ))}
+              </div>
+
+              {/* Sentence Display */}
+              <div className="bg-white/5 rounded-2xl p-6 mb-4 min-h-[200px] flex flex-col justify-center">
+                <div className="space-y-4">
+                  {/* Target language sentence */}
+                  <div>
+                    <p className="text-white/50 text-xs mb-2 uppercase tracking-wider">Example</p>
+                    <p className="text-white text-xl font-medium leading-relaxed">
+                      {sentences[currentIndex]?.sentence}
+                    </p>
+                  </div>
+
+                  {/* English translation */}
+                  <div className="pt-4 border-t border-white/10">
+                    <p className="text-white/50 text-xs mb-2 uppercase tracking-wider">Translation</p>
+                    <p className="text-white/80 text-base">
+                      {sentences[currentIndex]?.translation}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Navigation */}
+              <div className="flex items-center justify-between">
+                <button
+                  onClick={handlePrevious}
+                  className="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all"
+                >
+                  <ChevronLeft className="w-5 h-5 text-white" />
+                </button>
+
+                <span className="text-white/50 text-sm">
+                  {currentIndex + 1} / {sentences.length}
+                </span>
+
+                <button
+                  onClick={handleNext}
+                  className="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all"
+                >
+                  <ChevronRight className="w-5 h-5 text-white" />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Footer - Add to Playlist Button */}
+        {userId && onAddToPlaylistAction && !isLoading && !error && (
+          <div className="p-5 border-t border-white/10">
+            <button
+              onClick={onAddToPlaylistAction}
+              className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02]"
+            >
+              <Plus className="w-5 h-5" />
+              Add to Playlist
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}

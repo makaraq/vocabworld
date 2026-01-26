@@ -202,13 +202,24 @@ Do not include any text before or after the JSON. Make sure all languages have e
       cleanedResponse = cleanedResponse.replace(/^```\s*/, '').replace(/\s*```$/, '')
     }
     
-    const parsed = JSON.parse(cleanedResponse)
-    
-    // Validate all languages have 3 sentences
-    for (const lang of ['en', ...LANGUAGES]) {
-      if (!parsed[lang] || !Array.isArray(parsed[lang]) || parsed[lang].length !== 3) {
-        console.warn(`⚠️  Missing or invalid data for language: ${lang}`)
+    try {
+      const parsed = JSON.parse(cleanedResponse)
+      
+      // Validate all languages have 3 sentences
+      for (const lang of ['en', ...LANGUAGES]) {
+        if (!parsed[lang] || !Array.isArray(parsed[lang]) || parsed[lang].length !== 3) {
+          console.warn(`⚠️  Missing or invalid data for language: ${lang}`)
+        }
       }
+      
+      return parsed
+    } catch (parseError: any) {
+      // Log the problematic response for debugging
+      console.error(`  ❌ JSON Parse Error: ${parseError.message}`)
+      console.error(`  Response length: ${cleanedResponse.length} characters`)
+      console.error(`  First 500 chars: ${cleanedResponse.substring(0, 500)}`)
+      console.error(`  Last 500 chars: ${cleanedResponse.substring(cleanedResponse.length - 500)}`)
+      throw parseError
     }
     
     return parsed

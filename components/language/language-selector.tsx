@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/auth-context"
 import { ProgressStats } from "@/components/progress/progress-stats"
 import { SearchWordLearning } from "@/components/learning/search-word-learning"
 import { PaywallModal } from "@/components/paywall/paywall-modal"
+import { ExampleSentencesModal } from "@/components/learning/example-sentences-modal"
 
 declare global {
   interface Window {
@@ -2262,6 +2263,15 @@ export function LanguageSelector() {
   const [isLoading, setIsLoading] = useState(false)
   const [completedTopicIds, setCompletedTopicIds] = useState<number[]>([])
 
+  // Example sentences modal state
+  const [showExampleModal, setShowExampleModal] = useState(false)
+  const [exampleModalData, setExampleModalData] = useState<{
+    vocabularyId: number
+    sourceWord: string
+    targetWord: string
+  } | null>(null)
+  const [showPlaylistModal, setShowPlaylistModal] = useState(false)
+
   // Smart preloading cache - load everything invisibly in background
   const [dataCache, setDataCache] = useState<{
     topics: Topic[]
@@ -3522,6 +3532,36 @@ export function LanguageSelector() {
     setCurrentPage("confirmation")
   }
 
+  // Hold gesture handlers for flashcard example sentences
+  let holdTimer: NodeJS.Timeout | null = null
+
+  const handleFlashcardHoldStart = () => {
+    const currentWord = vocabulary[currentWordIndex]
+    if (!currentWord || !currentWord.id) return
+
+    holdTimer = setTimeout(() => {
+      setExampleModalData({
+        vocabularyId: currentWord.id,
+        sourceWord: getCurrentContent().sourceWord,
+        targetWord: getCurrentContent().targetWord
+      })
+      setShowExampleModal(true)
+    }, 800) // 800ms hold time
+  }
+
+  const handleFlashcardHoldEnd = () => {
+    if (holdTimer) {
+      clearTimeout(holdTimer)
+      holdTimer = null
+    }
+  }
+
+  const handleAddToPlaylist = () => {
+    // Close example modal and show playlist modal
+    setShowExampleModal(false)
+    setShowPlaylistModal(true)
+  }
+
   const handleSettingsClick = () => {
     setShowSettings(true)
   }
@@ -3838,11 +3878,30 @@ export function LanguageSelector() {
               )}
 
               <div className="space-y-6 mb-12" onTouchStart={(e) => e.stopPropagation()}>
-                <div className={`bg-black/40 border border-white/20 rounded-2xl p-8 transition-all duration-300 shadow-lg ${
-                  currentAudioStep === 'training' 
-                    ? 'bg-blue-500/20 border-blue-400/30 scale-105' 
-                    : 'bg-black/40'
-                }`}>
+                <div 
+                  className={`bg-black/40 border border-white/20 rounded-2xl p-8 transition-all duration-300 shadow-lg ${
+                    currentAudioStep === 'training' 
+                      ? 'bg-blue-500/20 border-blue-400/30 scale-105' 
+                      : 'bg-black/40'
+                  }`}
+                  onTouchStart={(e) => {
+                    e.stopPropagation()
+                    handleFlashcardHoldStart()
+                  }}
+                  onTouchEnd={(e) => {
+                    e.stopPropagation()
+                    handleFlashcardHoldEnd()
+                  }}
+                  onMouseDown={(e) => {
+                    e.stopPropagation()
+                    handleFlashcardHoldStart()
+                  }}
+                  onMouseUp={(e) => {
+                    e.stopPropagation()
+                    handleFlashcardHoldEnd()
+                  }}
+                  onMouseLeave={handleFlashcardHoldEnd}
+                >
                   <div className="text-white/60 text-sm mb-2 flex items-center gap-2">
                     {targetLanguage}
                     {currentAudioStep === 'training' && (
@@ -3854,11 +3913,30 @@ export function LanguageSelector() {
                     <p className="text-white/50 text-sm italic mt-2">/{phonetics[currentWordIndex].target}/</p>
                   )}
                 </div>
-                <div className={`bg-black/40 border border-white/20 rounded-2xl p-8 transition-all duration-300 shadow-lg ${
-                  currentAudioStep === 'main' 
-                    ? 'bg-blue-500/20 border-blue-400/30 scale-105' 
-                    : 'bg-black/40'
-                }`}>
+                <div 
+                  className={`bg-black/40 border border-white/20 rounded-2xl p-8 transition-all duration-300 shadow-lg ${
+                    currentAudioStep === 'main' 
+                      ? 'bg-blue-500/20 border-blue-400/30 scale-105' 
+                      : 'bg-black/40'
+                  }`}
+                  onTouchStart={(e) => {
+                    e.stopPropagation()
+                    handleFlashcardHoldStart()
+                  }}
+                  onTouchEnd={(e) => {
+                    e.stopPropagation()
+                    handleFlashcardHoldEnd()
+                  }}
+                  onMouseDown={(e) => {
+                    e.stopPropagation()
+                    handleFlashcardHoldStart()
+                  }}
+                  onMouseUp={(e) => {
+                    e.stopPropagation()
+                    handleFlashcardHoldEnd()
+                  }}
+                  onMouseLeave={handleFlashcardHoldEnd}
+                >
                   <div className="text-white/60 text-sm mb-2 flex items-center gap-2">
                     {nativeLanguage}
                     {currentAudioStep === 'main' && (
@@ -4285,6 +4363,23 @@ export function LanguageSelector() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Example Sentences Modal */}
+      {showExampleModal && exampleModalData && (
+        <ExampleSentencesModal
+          vocabularyId={exampleModalData.vocabularyId}
+          sourceWord={exampleModalData.sourceWord}
+          targetWord={exampleModalData.targetWord}
+          nativeLanguageCode={nativeLanguageCode}
+          targetLanguageCode={targetLanguageCode}
+          userId={user?.id}
+          onCloseAction={() => {
+            setShowExampleModal(false)
+            setExampleModalData(null)
+          }}
+          onAddToPlaylistAction={handleAddToPlaylist}
+        />
       )}
 
       {/* Paywall Modal */}
