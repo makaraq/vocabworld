@@ -2271,6 +2271,7 @@ export function LanguageSelector() {
     targetWord: string
   } | null>(null)
   const [showPlaylistModal, setShowPlaylistModal] = useState(false)
+  const [isHoldingFlashcard, setIsHoldingFlashcard] = useState(false)
 
   // Smart preloading cache - load everything invisibly in background
   const [dataCache, setDataCache] = useState<{
@@ -3539,6 +3540,7 @@ export function LanguageSelector() {
     const currentWord = vocabulary[currentWordIndex]
     if (!currentWord || !currentWord.id) return
 
+    setIsHoldingFlashcard(true)
     holdTimer = setTimeout(() => {
       setExampleModalData({
         vocabularyId: currentWord.id,
@@ -3546,10 +3548,12 @@ export function LanguageSelector() {
         targetWord: getCurrentContent().targetWord
       })
       setShowExampleModal(true)
-    }, 800) // 800ms hold time
+      setIsHoldingFlashcard(false)
+    }, 275) // 275ms hold time
   }
 
   const handleFlashcardHoldEnd = () => {
+    setIsHoldingFlashcard(false)
     if (holdTimer) {
       clearTimeout(holdTimer)
       holdTimer = null
@@ -3882,6 +3886,8 @@ export function LanguageSelector() {
                   className={`bg-black/40 border border-white/20 rounded-2xl p-8 transition-all duration-300 shadow-lg ${
                     currentAudioStep === 'training' 
                       ? 'bg-blue-500/20 border-blue-400/30 scale-105' 
+                      : isHoldingFlashcard
+                      ? 'scale-105'
                       : 'bg-black/40'
                   }`}
                   onTouchStart={(e) => {
@@ -3917,6 +3923,8 @@ export function LanguageSelector() {
                   className={`bg-black/40 border border-white/20 rounded-2xl p-8 transition-all duration-300 shadow-lg ${
                     currentAudioStep === 'main' 
                       ? 'bg-blue-500/20 border-blue-400/30 scale-105' 
+                      : isHoldingFlashcard
+                      ? 'scale-105'
                       : 'bg-black/40'
                   }`}
                   onTouchStart={(e) => {

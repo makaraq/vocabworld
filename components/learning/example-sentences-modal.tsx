@@ -80,11 +80,11 @@ export function ExampleSentencesModal({
 
   return (
     <div 
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md"
       onClick={onCloseAction}
     >
       <div 
-        className="bg-gradient-to-br from-purple-900/95 via-blue-900/95 to-black/95 backdrop-blur-3xl border border-white/20 rounded-3xl max-w-lg w-full shadow-2xl transform transition-all"
+        className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl max-w-lg w-full shadow-2xl transform transition-all"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -132,7 +132,7 @@ export function ExampleSentencesModal({
               </div>
 
               {/* Sentence Display */}
-              <div className="bg-white/5 rounded-2xl p-6 mb-4 min-h-[200px] flex flex-col justify-center">
+              <div className="bg-black/20 backdrop-blur-sm border border-white/10 rounded-2xl p-6 mb-4 min-h-[200px] flex flex-col justify-center">
                 <div className="space-y-4">
                   {/* Target language sentence */}
                   <div>
