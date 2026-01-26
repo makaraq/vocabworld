@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Icon } from '@iconify/react'
-import { X, ChevronLeft, ChevronRight, Plus } from 'lucide-react'
+import { X, ChevronLeft, ChevronRight, Plus, Volume2 } from 'lucide-react'
 import createSupabaseClient from '@/lib/supabase/client'
 
 interface ExampleSentence {
@@ -38,6 +38,8 @@ export function ExampleSentencesModal({
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isVisible, setIsVisible] = useState(false)
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false)
+  const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null)
 
   useEffect(() => {
     // Trigger animation after mount
@@ -80,6 +82,52 @@ export function ExampleSentencesModal({
   const handleNext = () => {
     setCurrentIndex((prev) => (prev < sentences.length - 1 ? prev + 1 : 0))
   }
+
+  const handlePlayAudio = async () => {
+    if (isPlayingAudio && currentAudio) {
+      currentAudio.pause()
+      setIsPlayingAudio(false)
+      return
+    }
+
+    const sentence = sentences[currentIndex]?.sentence
+    if (!sentence) return
+
+    try {
+      setIsPlayingAudio(true)
+      const audioUrl = `/api/tts?text=${encodeURIComponent(sentence)}&languageCode=${targetLanguageCode}`
+      const audio = new Audio(audioUrl)
+      
+      setCurrentAudio(audio)
+      
+      audio.onended = () => {
+        setIsPlayingAudio(false)
+        setCurrentAudio(null)
+      }
+      
+      audio.onerror = () => {
+        setIsPlayingAudio(false)
+        setCurrentAudio(null)
+        console.error('Error playing audio')
+      }
+      
+      await audio.play()
+    } catch (error) {
+      console.error('Failed to play audio:', error)
+      setIsPlayingAudio(false)
+      setCurrentAudio(null)
+    }
+  }
+
+  // Cleanup audio on unmount
+  useEffect(() => {
+    return () => {
+      if (currentAudio) {
+        currentAudio.pause()
+        setCurrentAudio(null)
+      }
+    }
+  }, [currentAudio])
 
   return (
     <div 
@@ -137,7 +185,16 @@ export function ExampleSentencesModal({
               </div>
 
               {/* Sentence Display */}
-              <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 mb-4 min-h-[200px] flex flex-col justify-center">
+              <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 mb-4 min-h-[200px] flex flex-col justify-center relative">
+                {/* Speaker button */}
+                <button
+                  onClick={handlePlayAudio}
+                  className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all border border-white/20"
+                  title="Play sentence audio"
+                >
+                  <Volume2 className={`w-5 h-5 text-white ${isPlayingAudio ? 'animate-pulse' : ''}`} />
+                </button>
+
                 <div className="space-y-4">
                   {/* Target language sentence */}
                   <div>
