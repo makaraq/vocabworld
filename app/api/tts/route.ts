@@ -56,10 +56,6 @@ const VOICE_MAP: Record<string, string> = {
   'zh': 'zh-CN-XiaoxiaoNeural'
 }
 
-// Force Node.js runtime for fetch API compatibility
-export const runtime = 'nodejs'
-export const dynamic = 'force-dynamic'
-
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)

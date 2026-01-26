@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { Icon } from '@iconify/react'
 import { X, ChevronLeft, ChevronRight, Plus, Volume2 } from 'lucide-react'
 import createSupabaseClient from '@/lib/supabase/client'
-import { generateTTS } from '@/app/actions/tts'
 
 interface ExampleSentence {
   id: number
@@ -119,15 +118,11 @@ export function ExampleSentencesModal({
 
     try {
       setIsPlayingAudio(true)
+      const audioUrl = `/api/tts?text=${encodeURIComponent(sentence)}&languageCode=${targetLanguageCode}`
       
-      console.log('🎵 Requesting TTS for:', sentence.substring(0, 50))
+      console.log('🎵 Playing TTS:', audioUrl)
       
-      // Use server action instead of API route
-      const audioDataUrl = await generateTTS(sentence, targetLanguageCode)
-      
-      console.log('✅ Got audio data URL, playing...')
-      
-      const audio = new Audio(audioDataUrl)
+      const audio = new Audio(audioUrl)
       setCurrentAudio(audio)
       
       const resetState = () => {
@@ -143,13 +138,14 @@ export function ExampleSentencesModal({
       
       audio.onerror = (e) => {
         console.error('Audio playback error:', e)
+        console.error('Failed URL:', audioUrl)
         resetState()
       }
       
       await audio.play()
-      console.log('Audio play() called successfully')
+      console.log('Audio playing...')
     } catch (error) {
-      console.error('Failed to generate/play audio:', error)
+      console.error('Failed to play audio:', error)
       setIsPlayingAudio(false)
       setCurrentAudio(null)
     }
