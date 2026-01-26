@@ -69,31 +69,32 @@ export async function GET(request: NextRequest) {
 
     const voice = VOICE_MAP[languageCode] || 'en-US-JennyNeural'
 
-    // Use Azure Cognitive Services Edge TTS API
-    const ttsUrl = `https://eastus.tts.speech.microsoft.com/cognitiveservices/v1`
+    // Use Microsoft Edge's free TTS service (Speech Synthesis API)
+    const ttsUrl = 'https://speech.platform.bing.com/consumer/speech/synthesize/readaloud/edge/v1'
     
-    const ssml = `
-      <speak version='1.0' xml:lang='en-US'>
-        <voice name='${voice}'>
-          <prosody rate='0%' pitch='0%'>
-            ${text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}
-          </prosody>
-        </voice>
-      </speak>
-    `
+    // Generate random request ID
+    const requestId = crypto.randomUUID().replace(/-/g, '')
+    
+    const ssml = `<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='en-US'>
+      <voice name='${voice}'>
+        <prosody pitch='+0Hz' rate='+0%' volume='+0%'>
+          ${text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')}
+        </prosody>
+      </voice>
+    </speak>`
 
-    const response = await fetch(ttsUrl, {
+    const response = await fetch(`${ttsUrl}?TrustedClientToken=6A5AA1D4EAFF4E9FB37E23D68491D6F4&RequestId=${requestId}`, {
       method: 'POST',
       headers: {
-        'Ocp-Apim-Subscription-Key': process.env.AZURE_TTS_KEY || '',
         'Content-Type': 'application/ssml+xml',
         'X-Microsoft-OutputFormat': 'audio-24khz-48kbitrate-mono-mp3',
-        'User-Agent': 'VocabWorld'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0',
       },
       body: ssml
     })
 
     if (!response.ok) {
+      console.error('TTS API error:', response.status, await response.text())
       throw new Error(`TTS API error: ${response.status}`)
     }
 
