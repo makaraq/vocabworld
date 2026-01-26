@@ -118,7 +118,8 @@ export function ExampleSentencesModal({
 
     try {
       setIsPlayingAudio(true)
-      const audioUrl = `/api/speech?text=${encodeURIComponent(sentence)}&languageCode=${targetLanguageCode}`
+      // Use universal-audio endpoint with 'text' param for TTS
+      const audioUrl = `/api/universal-audio?text=${encodeURIComponent(sentence)}&languageCode=${targetLanguageCode}`
       
       console.log('🎵 Playing TTS:', audioUrl)
       
