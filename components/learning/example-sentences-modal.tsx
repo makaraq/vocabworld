@@ -39,7 +39,6 @@ export function ExampleSentencesModal({
   const [error, setError] = useState<string | null>(null)
   const [isVisible, setIsVisible] = useState(false)
   const [isPlayingAudio, setIsPlayingAudio] = useState(false)
-  const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null)
 
   useEffect(() => {
     // Trigger animation after mount
@@ -118,57 +117,68 @@ export function ExampleSentencesModal({
 
     try {
       setIsPlayingAudio(true)
-      // Use universal-audio endpoint with 'text' param for TTS
-      const audioUrl = `/api/universal-audio?text=${encodeURIComponent(sentence)}&languageCode=${targetLanguageCode}`
       
-      console.log('🎵 Playing TTS:', audioUrl)
-      
-      const audio = new Audio(audioUrl)
-      setCurrentAudio(audio)
-      
-      const resetState = () => {
-        console.log('Resetting audio state')
+      // Use browser's built-in Speech Synthesis API (works offline, no server needed)
+      if ('speechSynthesis' in window) {
+        // Cancel any ongoing speech
+        window.speechSynthesis.cancel()
+        
+        const utterance = new SpeechSynthesisUtterance(sentence)
+        
+        // Map language codes to BCP 47 language tags
+        const langMap: Record<string, string> = {
+          'ar': 'ar-SA', 'bg': 'bg-BG', 'bn': 'bn-BD', 'ca': 'ca-ES', 'cs': 'cs-CZ',
+          'cy': 'cy-GB', 'da': 'da-DK', 'de': 'de-DE', 'el': 'el-GR', 'en': 'en-US',
+          'es': 'es-ES', 'et': 'et-EE', 'eu': 'eu-ES', 'fa': 'fa-IR', 'fi': 'fi-FI',
+          'fr': 'fr-FR', 'ga': 'ga-IE', 'gu': 'gu-IN', 'he': 'he-IL', 'hi': 'hi-IN',
+          'hr': 'hr-HR', 'hu': 'hu-HU', 'id': 'id-ID', 'is': 'is-IS', 'it': 'it-IT',
+          'ja': 'ja-JP', 'ko': 'ko-KR', 'lt': 'lt-LT', 'lv': 'lv-LV', 'mk': 'mk-MK',
+          'ms': 'ms-MY', 'mt': 'mt-MT', 'nl': 'nl-NL', 'no': 'nb-NO', 'pl': 'pl-PL',
+          'pt': 'pt-PT', 'ro': 'ro-RO', 'ru': 'ru-RU', 'sk': 'sk-SK', 'sl': 'sl-SI',
+          'sq': 'sq-AL', 'sr': 'sr-RS', 'sv': 'sv-SE', 'sw': 'sw-KE', 'th': 'th-TH',
+          'tl': 'fil-PH', 'tr': 'tr-TR', 'uk': 'uk-UA', 'vi': 'vi-VN', 'zh': 'zh-CN'
+        }
+        
+        utterance.lang = langMap[targetLanguageCode] || targetLanguageCode
+        utterance.rate = 0.9 // Slightly slower for learning
+        
+        utterance.onend = () => {
+          console.log('Speech ended')
+          setIsPlayingAudio(false)
+        }
+        
+        utterance.onerror = (e) => {
+          console.error('Speech error:', e)
+          setIsPlayingAudio(false)
+        }
+        
+        console.log('🎵 Speaking:', sentence.substring(0, 50), 'in', utterance.lang)
+        window.speechSynthesis.speak(utterance)
+      } else {
+        console.error('Speech synthesis not supported')
         setIsPlayingAudio(false)
-        setCurrentAudio(null)
       }
-      
-      audio.onended = () => {
-        console.log('Audio ended')
-        resetState()
-      }
-      
-      audio.onerror = (e) => {
-        console.error('Audio playback error:', e)
-        console.error('Failed URL:', audioUrl)
-        resetState()
-      }
-      
-      await audio.play()
-      console.log('Audio playing...')
     } catch (error) {
       console.error('Failed to play audio:', error)
       setIsPlayingAudio(false)
-      setCurrentAudio(null)
     }
   }
 
-  // Stop audio when currentIndex changes
+  // Stop speech when currentIndex changes
   useEffect(() => {
     return () => {
-      if (currentAudio) {
-        currentAudio.pause()
-        setCurrentAudio(null)
-        setIsPlayingAudio(false)
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel()
       }
+      setIsPlayingAudio(false)
     }
   }, [currentIndex])
 
-  // Cleanup audio on unmount
+  // Cleanup speech on unmount
   useEffect(() => {
     return () => {
-      if (currentAudio) {
-        currentAudio.pause()
-        setCurrentAudio(null)
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel()
       }
     }
   }, [currentAudio])
