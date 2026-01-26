@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+console.log('✅ TTS Route loaded successfully')
+
 // Edge TTS voice mapping for all 50 languages
 const VOICE_MAP: Record<string, string> = {
   'ar': 'ar-SA-ZariyahNeural',
@@ -53,6 +55,10 @@ const VOICE_MAP: Record<string, string> = {
   'vi': 'vi-VN-HoaiMyNeural',
   'zh': 'zh-CN-XiaoxiaoNeural'
 }
+
+// Force Node.js runtime for fetch API compatibility
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
   try {
