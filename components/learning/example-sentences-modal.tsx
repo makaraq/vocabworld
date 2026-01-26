@@ -37,8 +37,11 @@ export function ExampleSentencesModal({
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
+    // Trigger animation after mount
+    setTimeout(() => setIsVisible(true), 10)
     fetchExampleSentences()
   }, [vocabularyId, targetLanguageCode])
 
@@ -84,7 +87,9 @@ export function ExampleSentencesModal({
       onClick={onCloseAction}
     >
       <div 
-        className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl max-w-lg w-full shadow-2xl transform transition-all"
+        className={`bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl max-w-lg w-full shadow-2xl transition-all duration-300 ease-out ${
+          isVisible ? 'scale-100 opacity-100' : 'scale-90 opacity-0'
+        }`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
