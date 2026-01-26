@@ -2271,7 +2271,7 @@ export function LanguageSelector() {
     targetWord: string
   } | null>(null)
   const [showPlaylistModal, setShowPlaylistModal] = useState(false)
-  const [isHoldingFlashcard, setIsHoldingFlashcard] = useState(false)
+  const [holdingCardIndex, setHoldingCardIndex] = useState<number | null>(null)
 
   // Smart preloading cache - load everything invisibly in background
   const [dataCache, setDataCache] = useState<{
@@ -3536,11 +3536,11 @@ export function LanguageSelector() {
   // Hold gesture handlers for flashcard example sentences
   let holdTimer: NodeJS.Timeout | null = null
 
-  const handleFlashcardHoldStart = () => {
+  const handleFlashcardHoldStart = (cardIndex: number) => {
     const currentWord = vocabulary[currentWordIndex]
     if (!currentWord || !currentWord.id) return
 
-    setIsHoldingFlashcard(true)
+    setHoldingCardIndex(cardIndex)
     holdTimer = setTimeout(() => {
       setExampleModalData({
         vocabularyId: currentWord.id,
@@ -3548,12 +3548,12 @@ export function LanguageSelector() {
         targetWord: getCurrentContent().targetWord
       })
       setShowExampleModal(true)
-      setIsHoldingFlashcard(false)
+      setHoldingCardIndex(null)
     }, 275) // 275ms hold time
   }
 
   const handleFlashcardHoldEnd = () => {
-    setIsHoldingFlashcard(false)
+    setHoldingCardIndex(null)
     if (holdTimer) {
       clearTimeout(holdTimer)
       holdTimer = null
@@ -3886,13 +3886,13 @@ export function LanguageSelector() {
                   className={`bg-black/40 border border-white/20 rounded-2xl p-8 transition-all duration-300 shadow-lg ${
                     currentAudioStep === 'training' 
                       ? 'bg-blue-500/20 border-blue-400/30 scale-105' 
-                      : isHoldingFlashcard
+                      : holdingCardIndex === 0
                       ? 'scale-105'
                       : 'bg-black/40'
                   }`}
                   onTouchStart={(e) => {
                     e.stopPropagation()
-                    handleFlashcardHoldStart()
+                    handleFlashcardHoldStart(0)
                   }}
                   onTouchEnd={(e) => {
                     e.stopPropagation()
@@ -3900,7 +3900,7 @@ export function LanguageSelector() {
                   }}
                   onMouseDown={(e) => {
                     e.stopPropagation()
-                    handleFlashcardHoldStart()
+                    handleFlashcardHoldStart(0)
                   }}
                   onMouseUp={(e) => {
                     e.stopPropagation()
@@ -3923,13 +3923,13 @@ export function LanguageSelector() {
                   className={`bg-black/40 border border-white/20 rounded-2xl p-8 transition-all duration-300 shadow-lg ${
                     currentAudioStep === 'main' 
                       ? 'bg-blue-500/20 border-blue-400/30 scale-105' 
-                      : isHoldingFlashcard
+                      : holdingCardIndex === 1
                       ? 'scale-105'
                       : 'bg-black/40'
                   }`}
                   onTouchStart={(e) => {
                     e.stopPropagation()
-                    handleFlashcardHoldStart()
+                    handleFlashcardHoldStart(1)
                   }}
                   onTouchEnd={(e) => {
                     e.stopPropagation()
@@ -3937,7 +3937,7 @@ export function LanguageSelector() {
                   }}
                   onMouseDown={(e) => {
                     e.stopPropagation()
-                    handleFlashcardHoldStart()
+                    handleFlashcardHoldStart(1)
                   }}
                   onMouseUp={(e) => {
                     e.stopPropagation()
