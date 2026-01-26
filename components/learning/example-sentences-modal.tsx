@@ -90,8 +90,8 @@ export function ExampleSentencesModal({
         {/* Header */}
         <div className="p-5 border-b border-white/10 flex items-center justify-between">
           <div>
-            <h3 className="text-white font-semibold text-lg">{sourceWord}</h3>
-            <p className="text-white/60 text-sm">{targetWord}</p>
+            <h3 className="text-white font-semibold text-lg drop-shadow-lg">{sourceWord}</h3>
+            <p className="text-white/60 text-sm drop-shadow">{targetWord}</p>
           </div>
           <button
             onClick={onCloseAction}
@@ -106,14 +106,14 @@ export function ExampleSentencesModal({
           {isLoading && (
             <div className="text-center py-12">
               <div className="w-10 h-10 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-3" />
-              <p className="text-white/50 text-sm">Loading examples...</p>
+              <p className="text-white/50 text-sm drop-shadow">Loading examples...</p>
             </div>
           )}
 
           {error && (
             <div className="text-center py-12">
               <Icon icon="solar:close-circle-bold" className="w-12 h-12 text-red-400 mx-auto mb-3" />
-              <p className="text-red-300 text-sm">{error}</p>
+              <p className="text-red-300 text-sm drop-shadow">{error}</p>
             </div>
           )}
 
@@ -132,20 +132,20 @@ export function ExampleSentencesModal({
               </div>
 
               {/* Sentence Display */}
-              <div className="bg-black/20 backdrop-blur-sm border border-white/10 rounded-2xl p-6 mb-4 min-h-[200px] flex flex-col justify-center">
+              <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 mb-4 min-h-[200px] flex flex-col justify-center">
                 <div className="space-y-4">
                   {/* Target language sentence */}
                   <div>
-                    <p className="text-white/50 text-xs mb-2 uppercase tracking-wider">Example</p>
-                    <p className="text-white text-xl font-medium leading-relaxed">
+                    <p className="text-white/50 text-xs mb-2 uppercase tracking-wider drop-shadow">Example</p>
+                    <p className="text-white text-xl font-medium leading-relaxed drop-shadow-lg">
                       {sentences[currentIndex]?.sentence}
                     </p>
                   </div>
 
                   {/* English translation */}
                   <div className="pt-4 border-t border-white/10">
-                    <p className="text-white/50 text-xs mb-2 uppercase tracking-wider">Translation</p>
-                    <p className="text-white/80 text-base">
+                    <p className="text-white/50 text-xs mb-2 uppercase tracking-wider drop-shadow">Translation</p>
+                    <p className="text-white/80 text-base drop-shadow">
                       {sentences[currentIndex]?.translation}
                     </p>
                   </div>
