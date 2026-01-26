@@ -221,8 +221,6 @@ Do not include any text before or after the JSON. Make sure all languages have e
       console.error(`  Last 500 chars: ${cleanedResponse.substring(cleanedResponse.length - 500)}`)
       throw parseError
     }
-    
-    return parsed
   } catch (error: any) {
     if (retryCount < maxRetries) {
       console.log(`  ⚠️  Retry ${retryCount + 1}/${maxRetries} after error...`)
