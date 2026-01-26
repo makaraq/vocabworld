@@ -60,7 +60,10 @@ export async function GET(request: NextRequest) {
     const text = searchParams.get('text')
     const languageCode = searchParams.get('languageCode')
 
+    console.log('TTS Request:', { text: text?.substring(0, 50), languageCode })
+
     if (!text || !languageCode) {
+      console.error('Missing parameters:', { text: !!text, languageCode })
       return NextResponse.json(
         { error: 'Missing text or languageCode parameter' },
         { status: 400 }
@@ -68,6 +71,7 @@ export async function GET(request: NextRequest) {
     }
 
     const voice = VOICE_MAP[languageCode] || 'en-US-JennyNeural'
+    console.log('Using voice:', voice)
 
     // Use Microsoft Edge's free TTS service (Speech Synthesis API)
     const ttsUrl = 'https://speech.platform.bing.com/consumer/speech/synthesize/readaloud/edge/v1'
@@ -83,6 +87,9 @@ export async function GET(request: NextRequest) {
       </voice>
     </speak>`
 
+    console.log('Calling Edge TTS API...')
+    const startTime = Date.now()
+
     const response = await fetch(`${ttsUrl}?TrustedClientToken=6A5AA1D4EAFF4E9FB37E23D68491D6F4&RequestId=${requestId}`, {
       method: 'POST',
       headers: {
@@ -93,24 +100,33 @@ export async function GET(request: NextRequest) {
       body: ssml
     })
 
+    const duration = Date.now() - startTime
+    console.log('TTS API response:', response.status, `(${duration}ms)`)
+
     if (!response.ok) {
-      console.error('TTS API error:', response.status, await response.text())
-      throw new Error(`TTS API error: ${response.status}`)
+      const errorText = await response.text()
+      console.error('TTS API error details:', { status: response.status, body: errorText })
+      return NextResponse.json(
+        { error: `TTS API error: ${response.status}`, details: errorText },
+        { status: response.status }
+      )
     }
 
     const audioBuffer = await response.arrayBuffer()
+    console.log('Audio generated successfully, size:', audioBuffer.byteLength, 'bytes')
 
     return new NextResponse(audioBuffer, {
       headers: {
         'Content-Type': 'audio/mpeg',
-        'Cache-Control': 'public, max-age=31536000',
+        'Cache-Control': 'public, max-age=2592000', // 30 days cache
+        'Accept-Ranges': 'bytes',
       }
     })
 
-  } catch (error) {
-    console.error('TTS error:', error)
+  } catch (error: any) {
+    console.error('TTS error:', error.message, error.stack)
     return NextResponse.json(
-      { error: 'Failed to generate speech' },
+      { error: 'Failed to generate speech', details: error.message },
       { status: 500 }
     )
   }

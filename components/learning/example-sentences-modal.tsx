@@ -76,48 +76,88 @@ export function ExampleSentencesModal({
   }
 
   const handlePrevious = () => {
+    // Stop any playing audio when switching sentences
+    if (currentAudio) {
+      currentAudio.pause()
+      setCurrentAudio(null)
+      setIsPlayingAudio(false)
+    }
     setCurrentIndex((prev) => (prev > 0 ? prev - 1 : sentences.length - 1))
   }
 
   const handleNext = () => {
+    // Stop any playing audio when switching sentences
+    if (currentAudio) {
+      currentAudio.pause()
+      setCurrentAudio(null)
+      setIsPlayingAudio(false)
+    }
     setCurrentIndex((prev) => (prev < sentences.length - 1 ? prev + 1 : 0))
   }
 
   const handlePlayAudio = async () => {
+    // If already playing, stop it
     if (isPlayingAudio && currentAudio) {
       currentAudio.pause()
+      setCurrentAudio(null)
       setIsPlayingAudio(false)
       return
     }
 
     const sentence = sentences[currentIndex]?.sentence
-    if (!sentence) return
+    if (!sentence) {
+      console.error('No sentence available')
+      return
+    }
 
     try {
       setIsPlayingAudio(true)
       const audioUrl = `/api/tts?text=${encodeURIComponent(sentence)}&languageCode=${targetLanguageCode}`
-      const audio = new Audio(audioUrl)
       
+      console.log('Playing TTS:', audioUrl)
+      
+      const audio = new Audio(audioUrl)
       setCurrentAudio(audio)
       
       audio.onended = () => {
+        console.log('Audio ended')
         setIsPlayingAudio(false)
         setCurrentAudio(null)
       }
       
-      audio.onerror = () => {
+      audio.onerror = (e) => {
+        console.error('Audio playback error:', e)
         setIsPlayingAudio(false)
         setCurrentAudio(null)
-        console.error('Error playing audio')
+      }
+      
+      audio.onloadstart = () => {
+        console.log('Audio loading started')
+      }
+      
+      audio.oncanplay = () => {
+        console.log('Audio can play')
       }
       
       await audio.play()
+      console.log('Audio play() called successfully')
     } catch (error) {
       console.error('Failed to play audio:', error)
       setIsPlayingAudio(false)
       setCurrentAudio(null)
     }
   }
+
+  // Stop audio when currentIndex changes
+  useEffect(() => {
+    return () => {
+      if (currentAudio) {
+        currentAudio.pause()
+        setCurrentAudio(null)
+        setIsPlayingAudio(false)
+      }
+    }
+  }, [currentIndex])
 
   // Cleanup audio on unmount
   useEffect(() => {
