@@ -1,5 +1,7 @@
 'use server'
 
+import { randomUUID } from 'crypto'
+
 // Server action for TTS - bypasses API route issues
 const VOICE_MAP: Record<string, string> = {
   'ar': 'ar-SA-ZariyahNeural',
@@ -61,7 +63,7 @@ export async function generateTTS(text: string, languageCode: string): Promise<s
     const voice = VOICE_MAP[languageCode] || 'en-US-JennyNeural'
     
     const ttsUrl = 'https://speech.platform.bing.com/consumer/speech/synthesize/readaloud/edge/v1'
-    const requestId = crypto.randomUUID().replace(/-/g, '')
+    const requestId = randomUUID().replace(/-/g, '')
     
     const ssml = `<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='en-US'>
       <voice name='${voice}'>
@@ -82,17 +84,25 @@ export async function generateTTS(text: string, languageCode: string): Promise<s
     })
 
     if (!response.ok) {
+      const errorText = await response.text()
+      console.error('❌ TTS API error:', response.status, errorText)
       throw new Error(`TTS API error: ${response.status}`)
     }
 
     const audioBuffer = await response.arrayBuffer()
-    const base64Audio = Buffer.from(audioBuffer).toString('base64')
+    // Convert ArrayBuffer to base64 using Buffer (Node.js)
+    const buffer = Buffer.from(audioBuffer)
+    const base64Audio = buffer.toString('base64')
     
     console.log('✅ TTS generated:', audioBuffer.byteLength, 'bytes')
     
     return `data:audio/mpeg;base64,${base64Audio}`
   } catch (error: any) {
-    console.error('❌ TTS error:', error.message)
-    throw error
+    console.error('❌ TTS Server Action error:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    })
+    throw new Error(`TTS generation failed: ${error.message}`)
   }
 }
