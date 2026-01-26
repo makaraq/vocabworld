@@ -75,30 +75,29 @@ export function ExampleSentencesModal({
   }
 
   const handlePrevious = () => {
-    // Stop any playing audio when switching sentences
-    if (currentAudio) {
-      currentAudio.pause()
-      setCurrentAudio(null)
-      setIsPlayingAudio(false)
+    // Stop any playing speech when switching sentences
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel()
     }
+    setIsPlayingAudio(false)
     setCurrentIndex((prev) => (prev > 0 ? prev - 1 : sentences.length - 1))
   }
 
   const handleNext = () => {
-    // Stop any playing audio when switching sentences
-    if (currentAudio) {
-      currentAudio.pause()
-      setCurrentAudio(null)
-      setIsPlayingAudio(false)
+    // Stop any playing speech when switching sentences
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel()
     }
+    setIsPlayingAudio(false)
     setCurrentIndex((prev) => (prev < sentences.length - 1 ? prev + 1 : 0))
   }
 
   const handlePlayAudio = async () => {
     // If already playing, stop it
-    if (isPlayingAudio && currentAudio) {
-      currentAudio.pause()
-      setCurrentAudio(null)
+    if (isPlayingAudio) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel()
+      }
       setIsPlayingAudio(false)
       return
     }
@@ -109,16 +108,10 @@ export function ExampleSentencesModal({
       return
     }
 
-    // Prevent multiple rapid clicks
-    if (isPlayingAudio) {
-      console.log('Audio already playing, ignoring click')
-      return
-    }
-
     try {
       setIsPlayingAudio(true)
       
-      // Use browser's built-in Speech Synthesis API (works offline, no server needed)
+      // Use browser's built-in Speech Synthesis API
       if ('speechSynthesis' in window) {
         // Cancel any ongoing speech
         window.speechSynthesis.cancel()
