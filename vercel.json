@@ -4,11 +4,6 @@
   "installCommand": "npm install --legacy-peer-deps",
   "framework": "nextjs",
   "regions": ["iad1"],
-  "functions": {
-    "api/sentence-audio.py": {
-      "runtime": "python3.9"
-    }
-  },
   "headers": [
     {
       "source": "/api/(.*)",
