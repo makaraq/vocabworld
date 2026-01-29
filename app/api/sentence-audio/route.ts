@@ -94,9 +94,19 @@ export async function GET(request: NextRequest) {
     )
 
     if (!response.ok) {
-      console.error('Azure Speech API error:', response.status, response.statusText)
+      const errorText = await response.text()
+      console.error('Azure Speech API error:', {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText,
+        headers: Object.fromEntries(response.headers.entries())
+      })
       return NextResponse.json(
-        { error: 'TTS service error', status: response.status },
+        { 
+          error: 'TTS service error', 
+          status: response.status,
+          details: errorText.substring(0, 200)
+        },
         { status: 503 }
       )
     }
