@@ -60,7 +60,8 @@ export const config = {
      * - favicon.ico (favicon file)
      * - public folder files (images, etc.)
      * - API routes that don't need auth refresh
+     * - Python serverless functions
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|mp3|wav)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|api/sentence-audio|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|mp3|wav)$).*)',
   ],
 }
