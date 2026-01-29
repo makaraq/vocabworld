@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Icon } from '@iconify/react'
-import { X, ChevronLeft, ChevronRight, Plus, Volume2 } from 'lucide-react'
+import { X, ChevronLeft, ChevronRight, Plus } from 'lucide-react'
 import createSupabaseClient from '@/lib/supabase/client'
 
 interface ExampleSentence {
@@ -38,8 +38,6 @@ export function ExampleSentencesModal({
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isVisible, setIsVisible] = useState(false)
-  const [isPlayingAudio, setIsPlayingAudio] = useState(false)
-  const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null)
 
   useEffect(() => {
     // Trigger animation after mount
@@ -76,94 +74,12 @@ export function ExampleSentencesModal({
   }
 
   const handlePrevious = () => {
-    // Stop any playing audio when switching sentences
-    if (currentAudio) {
-      currentAudio.pause()
-      setCurrentAudio(null)
-      setIsPlayingAudio(false)
-    }
     setCurrentIndex((prev) => (prev > 0 ? prev - 1 : sentences.length - 1))
   }
 
   const handleNext = () => {
-    // Stop any playing audio when switching sentences
-    if (currentAudio) {
-      currentAudio.pause()
-      setCurrentAudio(null)
-      setIsPlayingAudio(false)
-    }
     setCurrentIndex((prev) => (prev < sentences.length - 1 ? prev + 1 : 0))
   }
-
-  const handlePlayAudio = async () => {
-    // If already playing, stop it
-    if (isPlayingAudio) {
-      if (currentAudio) {
-        currentAudio.pause()
-        setCurrentAudio(null)
-      }
-      window.speechSynthesis?.cancel()
-      setIsPlayingAudio(false)
-      return
-    }
-
-    const sentence = sentences[currentIndex]?.sentence
-    if (!sentence) {
-      console.error('No sentence available')
-      return
-    }
-
-    try {
-      setIsPlayingAudio(true)
-      
-      // Use browser Speech Synthesis API (completely free, no limits)
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel()
-        
-        const utterance = new SpeechSynthesisUtterance(sentence)
-        utterance.lang = targetLanguageCode
-        utterance.rate = 0.9
-        utterance.pitch = 1.0
-        
-        utterance.onend = () => {
-          setIsPlayingAudio(false)
-        }
-        
-        utterance.onerror = () => {
-          setIsPlayingAudio(false)
-        }
-        
-        window.speechSynthesis.speak(utterance)
-      } else {
-        setIsPlayingAudio(false)
-      }
-    } catch (error) {
-      console.error('Failed to play audio:', error)
-      setIsPlayingAudio(false)
-      setCurrentAudio(null)
-    }
-  }
-
-  // Stop audio when currentIndex changes
-  useEffect(() => {
-    return () => {
-      if (currentAudio) {
-        currentAudio.pause()
-        setCurrentAudio(null)
-        setIsPlayingAudio(false)
-      }
-    }
-  }, [currentIndex])
-
-  // Cleanup audio on unmount
-  useEffect(() => {
-    return () => {
-      if (currentAudio) {
-        currentAudio.pause()
-        setCurrentAudio(null)
-      }
-    }
-  }, [])
 
   return (
     <div 
@@ -221,33 +137,23 @@ export function ExampleSentencesModal({
               </div>
 
               {/* Sentence Display */}
-              <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 mb-4 min-h-[200px] flex flex-col justify-center relative">
-                {/* Speaker button */}
-                <button
-                  onClick={handlePlayAudio}
-                  disabled={isPlayingAudio}
-                  className={`absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center transition-all border border-white/20 ${
-                    isPlayingAudio 
-                      ? 'bg-blue-500/30 cursor-not-allowed' 
-                      : 'bg-white/10 hover:bg-white/20 active:scale-95 cursor-pointer'
-                  }`}
-                  title="Play sentence audio"
-                >
-                  <Volume2 className={`w-5 h-5 text-white ${isPlayingAudio ? 'animate-pulse' : ''}`} />
-                </button>
-
+              <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 mb-4 min-h-[200px] flex flex-col justify-center">
                 <div className="space-y-4">
                   {/* Target language sentence */}
                   <div>
-                    <p className="text-white/50 text-xs mb-2 uppercase tracking-wider drop-shadow">Example</p>
+                    <p className="text-white/50 text-xs mb-2 uppercase tracking-wider drop-shadow">
+                      {targetLanguageCode.toUpperCase()} Example
+                    </p>
                     <p className="text-white text-xl font-medium leading-relaxed drop-shadow-lg">
                       {sentences[currentIndex]?.sentence}
                     </p>
                   </div>
 
-                  {/* English translation */}
+                  {/* Native language translation */}
                   <div className="pt-4 border-t border-white/10">
-                    <p className="text-white/50 text-xs mb-2 uppercase tracking-wider drop-shadow">Translation</p>
+                    <p className="text-white/50 text-xs mb-2 uppercase tracking-wider drop-shadow">
+                      {nativeLanguageCode.toUpperCase()} Translation
+                    </p>
                     <p className="text-white/80 text-base drop-shadow">
                       {sentences[currentIndex]?.translation}
                     </p>
