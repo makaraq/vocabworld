@@ -61,18 +61,27 @@ export async function GET(req: NextRequest) {
     const text = searchParams.get('text')
     const lang = searchParams.get('lang') || 'en'
 
+    console.log('🎵 Edge TTS request:', { text, lang })
+
     if (!text) {
       return NextResponse.json({ error: 'Missing text parameter' }, { status: 400 })
     }
 
     const voice = VOICES[lang] || 'en-US-AriaNeural'
+    console.log('🎤 Selected voice:', voice)
 
     // Use Lobehub EdgeSpeechTTS
+    console.log('🔧 Initializing EdgeSpeechTTS...')
     const tts = new EdgeSpeechTTS({ locale: voice })
+    
+    console.log('📝 Creating audio with payload:', { input: text, options: { voice } })
     const response = await tts.create({ input: text, options: { voice } })
+    
+    console.log('✅ TTS response received, status:', response.status)
 
     // Get audio buffer from response
     const audioBuffer = await response.arrayBuffer()
+    console.log('📦 Audio buffer size:', audioBuffer.byteLength)
 
     return new NextResponse(audioBuffer, {
       status: 200,
@@ -83,7 +92,13 @@ export async function GET(req: NextRequest) {
       }
     })
   } catch (error: any) {
-    console.error('Edge TTS error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    console.error('❌ Edge TTS error:', error)
+    console.error('Error stack:', error.stack)
+    console.error('Error message:', error.message)
+    return NextResponse.json({ 
+      error: error.message,
+      stack: error.stack,
+      details: JSON.stringify(error)
+    }, { status: 500 })
   }
 }
