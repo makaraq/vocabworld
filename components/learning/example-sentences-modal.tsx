@@ -102,6 +102,7 @@ export function ExampleSentencesModal({
         currentAudio.pause()
         setCurrentAudio(null)
       }
+      window.speechSynthesis?.cancel()
       setIsPlayingAudio(false)
       return
     }
@@ -115,26 +116,29 @@ export function ExampleSentencesModal({
     try {
       setIsPlayingAudio(true)
       
-      // Use Azure Speech API via /api/sentence-audio
-      const audioUrl = `/api/sentence-audio?text=${encodeURIComponent(sentence)}&lang=${targetLanguageCode}`
-      
-      const audio = new Audio(audioUrl)
-      setCurrentAudio(audio)
-      
-      audio.onended = () => {
+      // Use browser Speech Synthesis API (completely free, no limits)
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel()
+        
+        const utterance = new SpeechSynthesisUtterance(sentence)
+        utterance.lang = targetLanguageCode
+        utterance.rate = 0.9
+        utterance.pitch = 1.0
+        
+        utterance.onend = () => {
+          setIsPlayingAudio(false)
+        }
+        
+        utterance.onerror = () => {
+          setIsPlayingAudio(false)
+        }
+        
+        window.speechSynthesis.speak(utterance)
+      } else {
         setIsPlayingAudio(false)
-        setCurrentAudio(null)
       }
-      
-      audio.onerror = (e) => {
-        console.error('Azure Speech error:', e)
-        setIsPlayingAudio(false)
-        setCurrentAudio(null)
-      }
-      
-      await audio.play()
     } catch (error) {
-      console.error('Failed to play Azure Speech audio:', error)
+      console.error('Failed to play audio:', error)
       setIsPlayingAudio(false)
       setCurrentAudio(null)
     }
