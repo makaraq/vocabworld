@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { EdgeSpeechTTS } from '@lobehub/tts'
 
 // Voice mapping for all 50 languages
 const VOICES: Record<string, string> = {
@@ -66,21 +67,9 @@ export async function GET(req: NextRequest) {
 
     const voice = VOICES[lang] || 'en-US-AriaNeural'
 
-    // Use public Edge TTS API proxy
-    const proxyUrl = `https://tts.travisvn.com/speak?text=${encodeURIComponent(text)}&voice=${voice}`
-
-    const response = await fetch(proxyUrl, {
-      method: 'GET',
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-      }
-    })
-
-    if (!response.ok) {
-      throw new Error(`TTS API failed: ${response.status}`)
-    }
-
-    const audioBuffer = await response.arrayBuffer()
+    // Use Lobehub EdgeSpeechTTS
+    const tts = new EdgeSpeechTTS({ locale: voice })
+    const audioBuffer = await tts.create({ input: text, options: { voice } })
 
     return new NextResponse(audioBuffer, {
       status: 200,
