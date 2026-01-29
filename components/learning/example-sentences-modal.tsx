@@ -102,7 +102,6 @@ export function ExampleSentencesModal({
         currentAudio.pause()
         setCurrentAudio(null)
       }
-      window.speechSynthesis?.cancel()
       setIsPlayingAudio(false)
       return
     }
@@ -116,29 +115,27 @@ export function ExampleSentencesModal({
     try {
       setIsPlayingAudio(true)
       
-      // Use browser Speech Synthesis API (works everywhere)
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel() // Cancel any ongoing speech
-        
-        const utterance = new SpeechSynthesisUtterance(sentence)
-        utterance.lang = targetLanguageCode
-        utterance.rate = 0.9
-        utterance.pitch = 1.0
-        
-        utterance.onend = () => {
-          setIsPlayingAudio(false)
-        }
-        
-        utterance.onerror = () => {
-          setIsPlayingAudio(false)
-        }
-        
-        window.speechSynthesis.speak(utterance)
-      } else {
+      // Use Edge TTS via external server (Railway deployment)
+      const edgeTtsUrl = process.env.NEXT_PUBLIC_EDGE_TTS_URL || 'https://vocabworld-edge-tts.up.railway.app'
+      const audioUrl = `${edgeTtsUrl}/tts?text=${encodeURIComponent(sentence)}&lang=${targetLanguageCode}`
+      
+      const audio = new Audio(audioUrl)
+      setCurrentAudio(audio)
+      
+      audio.onended = () => {
         setIsPlayingAudio(false)
+        setCurrentAudio(null)
       }
+      
+      audio.onerror = (e) => {
+        console.error('Edge TTS error:', e)
+        setIsPlayingAudio(false)
+        setCurrentAudio(null)
+      }
+      
+      await audio.play()
     } catch (error) {
-      console.error('Failed to play audio:', error)
+      console.error('Failed to play Edge TTS audio:', error)
       setIsPlayingAudio(false)
       setCurrentAudio(null)
     }
