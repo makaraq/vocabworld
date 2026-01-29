@@ -174,7 +174,7 @@ export function ExampleSentencesModal({
         window.speechSynthesis.cancel()
       }
     }
-  }, [currentAudio])
+  }, [])
 
   return (
     <div 
