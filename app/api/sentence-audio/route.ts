@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { EdgeSpeechTTS } from '@lobehub/tts'
 
 // Voice mapping for all 50 languages
 const VOICES: Record<string, string> = {
@@ -61,27 +60,27 @@ export async function GET(req: NextRequest) {
     const text = searchParams.get('text')
     const lang = searchParams.get('lang') || 'en'
 
-    console.log('🎵 Edge TTS request:', { text, lang })
-
     if (!text) {
       return NextResponse.json({ error: 'Missing text parameter' }, { status: 400 })
     }
 
     const voice = VOICES[lang] || 'en-US-AriaNeural'
-    console.log('🎤 Selected voice:', voice)
 
-    // Use Lobehub EdgeSpeechTTS
-    console.log('🔧 Initializing EdgeSpeechTTS...')
-    const tts = new EdgeSpeechTTS({ locale: voice })
-    
-    console.log('📝 Creating audio with payload:', { input: text, options: { voice } })
-    const response = await tts.create({ input: text, options: { voice } })
-    
-    console.log('✅ TTS response received, status:', response.status)
+    // Use edge-tts-speaker API (free Edge TTS HTTP proxy)
+    const apiUrl = `https://edge-tts-speaker.vercel.app/api/tts?text=${encodeURIComponent(text)}&voice=${voice}`
 
-    // Get audio buffer from response
+    const response = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+      }
+    })
+
+    if (!response.ok) {
+      throw new Error(`Edge TTS API failed: ${response.status}`)
+    }
+
     const audioBuffer = await response.arrayBuffer()
-    console.log('📦 Audio buffer size:', audioBuffer.byteLength)
 
     return new NextResponse(audioBuffer, {
       status: 200,
@@ -92,13 +91,9 @@ export async function GET(req: NextRequest) {
       }
     })
   } catch (error: any) {
-    console.error('❌ Edge TTS error:', error)
-    console.error('Error stack:', error.stack)
-    console.error('Error message:', error.message)
+    console.error('Edge TTS error:', error)
     return NextResponse.json({ 
-      error: error.message,
-      stack: error.stack,
-      details: JSON.stringify(error)
+      error: error.message
     }, { status: 500 })
   }
 }
