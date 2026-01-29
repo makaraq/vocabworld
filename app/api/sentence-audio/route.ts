@@ -65,46 +65,22 @@ export async function GET(request: NextRequest) {
 
     const voice = VOICES[lang] || 'en-US-AriaNeural'
 
-    // Use public Edge TTS API endpoint
-    const ttsUrl = `https://eastus.api.speech.microsoft.com/cognitiveservices/v1`
-    
-    const ssml = `<speak version='1.0' xml:lang='${lang}'>
-      <voice xml:lang='${lang}' xml:gender='Female' name='${voice}'>
-        ${text}
-      </voice>
-    </speak>`
-
-    const response = await fetch(ttsUrl, {
-      method: 'POST',
+    // Return metadata for client-side browser TTS
+    // Edge TTS requires WebSocket which doesn't work on Vercel serverless
+    return NextResponse.json({
+      text,
+      lang,
+      voice,
+      useBrowserTTS: true,
+      message: 'Use browser Speech Synthesis API'
+    }, {
       headers: {
-        'Content-Type': 'application/ssml+xml',
-        'X-Microsoft-OutputFormat': 'audio-24khz-48kbitrate-mono-mp3',
-        'User-Agent': 'Mozilla/5.0',
-      },
-      body: ssml,
-    })
-
-    if (!response.ok) {
-      // Fallback to browser Speech Synthesis API format for now
-      return NextResponse.json({ 
-        error: 'TTS service unavailable',
-        fallback: 'browser',
-        text,
-        lang 
-      }, { status: 503 })
-    }
-
-    const audioBuffer = await response.arrayBuffer()
-
-    return new NextResponse(audioBuffer, {
-      headers: {
-        'Content-Type': 'audio/mpeg',
         'Cache-Control': 'public, max-age=86400',
         'Access-Control-Allow-Origin': '*',
       },
     })
   } catch (error) {
-    console.error('Edge TTS error:', error)
+    console.error('TTS error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

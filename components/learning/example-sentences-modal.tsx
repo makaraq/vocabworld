@@ -102,6 +102,7 @@ export function ExampleSentencesModal({
         currentAudio.pause()
         setCurrentAudio(null)
       }
+      window.speechSynthesis?.cancel()
       setIsPlayingAudio(false)
       return
     }
@@ -115,27 +116,27 @@ export function ExampleSentencesModal({
     try {
       setIsPlayingAudio(true)
       
-      // Use Edge TTS API
-      const audioUrl = `/api/sentence-audio?text=${encodeURIComponent(sentence)}&lang=${targetLanguageCode}`
-      console.log('🎵 Fetching Edge TTS:', audioUrl)
-      
-      const audio = new Audio(audioUrl)
-      setCurrentAudio(audio)
-      
-      audio.onended = () => {
-        console.log('Audio ended')
+      // Use browser Speech Synthesis API (works everywhere)
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel() // Cancel any ongoing speech
+        
+        const utterance = new SpeechSynthesisUtterance(sentence)
+        utterance.lang = targetLanguageCode
+        utterance.rate = 0.9
+        utterance.pitch = 1.0
+        
+        utterance.onend = () => {
+          setIsPlayingAudio(false)
+        }
+        
+        utterance.onerror = () => {
+          setIsPlayingAudio(false)
+        }
+        
+        window.speechSynthesis.speak(utterance)
+      } else {
         setIsPlayingAudio(false)
-        setCurrentAudio(null)
       }
-      
-      audio.onerror = (e) => {
-        console.error('Audio error:', e)
-        setIsPlayingAudio(false)
-        setCurrentAudio(null)
-      }
-      
-      await audio.play()
-      console.log('Audio playing...')
     } catch (error) {
       console.error('Failed to play audio:', error)
       setIsPlayingAudio(false)
