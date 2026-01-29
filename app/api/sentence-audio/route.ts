@@ -69,7 +69,10 @@ export async function GET(req: NextRequest) {
 
     // Use Lobehub EdgeSpeechTTS
     const tts = new EdgeSpeechTTS({ locale: voice })
-    const audioBuffer = await tts.create({ input: text, options: { voice } })
+    const response = await tts.create({ input: text, options: { voice } })
+
+    // Get audio buffer from response
+    const audioBuffer = await response.arrayBuffer()
 
     return new NextResponse(audioBuffer, {
       status: 200,
