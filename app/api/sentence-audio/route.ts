@@ -64,23 +64,54 @@ export async function GET(request: NextRequest) {
     }
 
     const voice = VOICES[lang] || 'en-US-AriaNeural'
+    const azureKey = process.env.AZURE_SPEECH_KEY
+    const azureRegion = process.env.AZURE_SPEECH_REGION
 
-    // Return metadata for client-side browser TTS
-    // Edge TTS requires WebSocket which doesn't work on Vercel serverless
-    return NextResponse.json({
-      text,
-      lang,
-      voice,
-      useBrowserTTS: true,
-      message: 'Use browser Speech Synthesis API'
-    }, {
+    if (!azureKey || !azureRegion) {
+      return NextResponse.json({ error: 'Azure Speech API not configured' }, { status: 500 })
+    }
+
+    // Build SSML for Azure Speech
+    const ssml = `<speak version='1.0' xml:lang='${lang}' xmlns='http://www.w3.org/2001/10/synthesis' xmlns:mstts='https://www.w3.org/2001/mstts'>
+      <voice name='${voice}'>
+        ${text}
+      </voice>
+    </speak>`
+
+    // Call Azure Speech API
+    const response = await fetch(
+      `https://${azureRegion}.tts.speech.microsoft.com/cognitiveservices/v1`,
+      {
+        method: 'POST',
+        headers: {
+          'Ocp-Apim-Subscription-Key': azureKey,
+          'Content-Type': 'application/ssml+xml',
+          'X-Microsoft-OutputFormat': 'audio-24khz-48kbitrate-mono-mp3',
+          'User-Agent': 'VocabWorld',
+        },
+        body: ssml,
+      }
+    )
+
+    if (!response.ok) {
+      console.error('Azure Speech API error:', response.status, response.statusText)
+      return NextResponse.json(
+        { error: 'TTS service error', status: response.status },
+        { status: 503 }
+      )
+    }
+
+    const audioBuffer = await response.arrayBuffer()
+
+    return new NextResponse(audioBuffer, {
       headers: {
+        'Content-Type': 'audio/mpeg',
         'Cache-Control': 'public, max-age=86400',
         'Access-Control-Allow-Origin': '*',
       },
     })
   } catch (error) {
-    console.error('TTS error:', error)
+    console.error('Azure TTS error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
