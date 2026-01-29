@@ -141,20 +141,14 @@ export function ExampleSentencesModal({
                 <div className="space-y-4">
                   {/* Target language sentence */}
                   <div>
-                    <p className="text-white/50 text-xs mb-2 uppercase tracking-wider drop-shadow">
-                      {targetLanguageCode.toUpperCase()} Example
-                    </p>
-                    <p className="text-white text-xl font-medium leading-relaxed drop-shadow-lg">
+                    <p className="text-white text-2xl font-medium leading-relaxed drop-shadow-lg">
                       {sentences[currentIndex]?.sentence}
                     </p>
                   </div>
 
-                  {/* Native language translation */}
+                  {/* Translation */}
                   <div className="pt-4 border-t border-white/10">
-                    <p className="text-white/50 text-xs mb-2 uppercase tracking-wider drop-shadow">
-                      {nativeLanguageCode.toUpperCase()} Translation
-                    </p>
-                    <p className="text-white/80 text-base drop-shadow">
+                    <p className="text-white/70 text-lg drop-shadow">
                       {sentences[currentIndex]?.translation}
                     </p>
                   </div>
