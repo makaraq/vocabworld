@@ -115,9 +115,8 @@ export function ExampleSentencesModal({
     try {
       setIsPlayingAudio(true)
       
-      // Use Edge TTS via external server (Railway deployment)
-      const edgeTtsUrl = process.env.NEXT_PUBLIC_EDGE_TTS_URL || 'https://vocabworld-edge-tts.up.railway.app'
-      const audioUrl = `${edgeTtsUrl}/tts?text=${encodeURIComponent(sentence)}&lang=${targetLanguageCode}`
+      // Use Azure Speech API via /api/sentence-audio
+      const audioUrl = `/api/sentence-audio?text=${encodeURIComponent(sentence)}&lang=${targetLanguageCode}`
       
       const audio = new Audio(audioUrl)
       setCurrentAudio(audio)
@@ -128,14 +127,14 @@ export function ExampleSentencesModal({
       }
       
       audio.onerror = (e) => {
-        console.error('Edge TTS error:', e)
+        console.error('Azure Speech error:', e)
         setIsPlayingAudio(false)
         setCurrentAudio(null)
       }
       
       await audio.play()
     } catch (error) {
-      console.error('Failed to play Edge TTS audio:', error)
+      console.error('Failed to play Azure Speech audio:', error)
       setIsPlayingAudio(false)
       setCurrentAudio(null)
     }
