@@ -12,6 +12,12 @@ interface ExampleSentence {
   sentence_order: number
 }
 
+interface CombinedSentence {
+  targetSentence: string
+  nativeSentence: string
+  sentence_order: number
+}
+
 interface ExampleSentencesModalProps {
   vocabularyId: number
   sourceWord: string
@@ -33,7 +39,7 @@ export function ExampleSentencesModal({
   onCloseAction,
   onAddToPlaylistAction
 }: ExampleSentencesModalProps) {
-  const [sentences, setSentences] = useState<ExampleSentence[]>([])
+  const [sentences, setSentences] = useState<CombinedSentence[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -43,7 +49,7 @@ export function ExampleSentencesModal({
     // Trigger animation after mount
     setTimeout(() => setIsVisible(true), 10)
     fetchExampleSentences()
-  }, [vocabularyId, nativeLanguageCode])
+  }, [vocabularyId, nativeLanguageCode, targetLanguageCode])
 
   const fetchExampleSentences = async () => {
     try {
@@ -51,20 +57,46 @@ export function ExampleSentencesModal({
       setError(null)
 
       const supabase = createSupabaseClient()
-      const { data, error: fetchError } = await supabase
-        .from('example_sentences')
-        .select('*')
-        .eq('vocabulary_id', vocabularyId)
-        .eq('language_code', nativeLanguageCode)
-        .order('sentence_order', { ascending: true })
+      
+      // Fetch sentences for both target language and native language
+      const [targetResult, nativeResult] = await Promise.all([
+        supabase
+          .from('example_sentences')
+          .select('*')
+          .eq('vocabulary_id', vocabularyId)
+          .eq('language_code', targetLanguageCode)
+          .order('sentence_order', { ascending: true }),
+        supabase
+          .from('example_sentences')
+          .select('*')
+          .eq('vocabulary_id', vocabularyId)
+          .eq('language_code', nativeLanguageCode)
+          .order('sentence_order', { ascending: true })
+      ])
 
-      if (fetchError) throw fetchError
+      if (targetResult.error) throw targetResult.error
 
-      if (!data || data.length === 0) {
+      if (!targetResult.data || targetResult.data.length === 0) {
         setError('No example sentences available for this word')
-      } else {
-        setSentences(data)
+        return
       }
+
+      // Combine target language sentences with native language translations
+      const combinedSentences: CombinedSentence[] = targetResult.data.map((targetSentence: ExampleSentence) => {
+        // Find matching native language sentence by sentence_order
+        const nativeSentence = nativeResult.data?.find(
+          (ns: ExampleSentence) => ns.sentence_order === targetSentence.sentence_order
+        )
+        
+        return {
+          targetSentence: targetSentence.sentence,
+          // Use native language sentence if available, otherwise fall back to English translation
+          nativeSentence: nativeSentence?.sentence || targetSentence.translation,
+          sentence_order: targetSentence.sentence_order
+        }
+      })
+
+      setSentences(combinedSentences)
     } catch (err: any) {
       console.error('Error fetching example sentences:', err)
       setError(err.message || 'Failed to load example sentences')
@@ -142,14 +174,14 @@ export function ExampleSentencesModal({
                   {/* Target language sentence */}
                   <div>
                     <p className="text-white text-2xl font-medium leading-relaxed drop-shadow-lg">
-                      {sentences[currentIndex]?.sentence}
+                      {sentences[currentIndex]?.targetSentence}
                     </p>
                   </div>
 
-                  {/* Translation */}
+                  {/* Native language translation */}
                   <div className="pt-4 border-t border-white/10">
                     <p className="text-white/70 text-lg drop-shadow">
-                      {sentences[currentIndex]?.translation}
+                      {sentences[currentIndex]?.nativeSentence}
                     </p>
                   </div>
                 </div>
