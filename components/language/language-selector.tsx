@@ -3697,14 +3697,40 @@ export function LanguageSelector() {
       18: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M11 6h2V4h-2zm1 6q-1.9 0-3.625-.788T5 9.45V8q0-.825.588-1.412T7 6h2V3q0-.425.288-.712T10 2h4q.425 0 .713.288T15 3v3h2q.825 0 1.413.588T19 8v1.45q-1.65.975-3.375 1.763T12 12m-5 9q-.825 0-1.412-.587T5 19v-7.3q1.4.85 2.888 1.45t3.112.8V14q0 .425.288.713T12 15t.713-.288T13 14v-.05q1.625-.2 3.113-.8T19 11.7V19q0 .825-.587 1.413T17 21q0 .425-.288.713T16 22q-.4 0-.562-.363T15 21H9q0 .425-.288.713T8 22q-.4 0-.562-.363T7 21"/></svg>'
     }
     
+    let topicHoldTimer: NodeJS.Timeout | null = null
+
+    const handleTopicHoldStart = (topicId: number) => {
+      setHoldingTopicId(topicId)
+      topicHoldTimer = setTimeout(() => {
+        // Future: Open topic details or quick preview modal
+        console.log('Topic held:', topicId)
+        setHoldingTopicId(null)
+      }, 275)
+    }
+
+    const handleTopicHoldEnd = () => {
+      if (topicHoldTimer) clearTimeout(topicHoldTimer)
+      setHoldingTopicId(null)
+    }
+
     return (
       <button
         key={topic.id}
         onClick={async () => await handleTopicClick(topic)}
+        onTouchStart={(e) => {
+          e.stopPropagation()
+          handleTopicHoldStart(topic.id)
+        }}
+        onTouchEnd={(e) => {
+          e.stopPropagation()
+          handleTopicHoldEnd()
+        }}
         className={`bg-black/40 rounded-xl sm:rounded-2xl p-3 sm:p-5 text-center hover:bg-black/50 transition-all duration-300 transform hover:scale-[1.02] h-32 sm:h-36 shadow-lg hover:shadow-xl ${
           selectedTopic?.id === topic.id ? "bg-black/60 shadow-xl" : ""
         } ${
           isCompleted ? "shadow-[0_0_20px_rgba(255,255,255,0.5),0_0_40px_rgba(255,255,255,0.3)]" : ""
+        } ${
+          holdingTopicId === topic.id ? 'scale-105' : ''
         }`}
       >
         <div className="flex flex-col items-center justify-center h-full gap-2">
@@ -3828,27 +3854,57 @@ export function LanguageSelector() {
               </div>
 
               {/* Progress indicator */}
-              {vocabulary.length > 0 && (
-                <div className="mb-6 text-center">
-                  <p className="text-white/60 text-sm">
-                    {(() => {
-                      const progress = getCategoryProgress()
-                      return `${progress.current} of ${progress.total} words`
-                    })()}
-                  </p>
-                  <div className="w-full bg-white/10 rounded-full h-2 mt-2">
-                    <div
-                      className="bg-gradient-to-r from-blue-400 to-blue-600 h-2 rounded-full transition-all duration-300"
-                      style={{ 
-                        width: `${(() => {
-                          const progress = getCategoryProgress()
-                          return (progress.current / progress.total) * 100
-                        })()}%`
-                      }}
-                    />
+              {vocabulary.length > 0 && (() => {
+                let progressHoldTimer: NodeJS.Timeout | null = null
+
+                const handleProgressHoldStart = () => {
+                  setHoldingProgressBar(true)
+                  progressHoldTimer = setTimeout(() => {
+                    // Future: Show detailed progress statistics
+                    console.log('Progress bar held')
+                    setHoldingProgressBar(false)
+                  }, 275)
+                }
+
+                const handleProgressHoldEnd = () => {
+                  if (progressHoldTimer) clearTimeout(progressHoldTimer)
+                  setHoldingProgressBar(false)
+                }
+
+                return (
+                  <div 
+                    className="mb-6 text-center"
+                    onTouchStart={(e) => {
+                      e.stopPropagation()
+                      handleProgressHoldStart()
+                    }}
+                    onTouchEnd={(e) => {
+                      e.stopPropagation()
+                      handleProgressHoldEnd()
+                    }}
+                  >
+                    <p className="text-white/60 text-sm">
+                      {(() => {
+                        const progress = getCategoryProgress()
+                        return `${progress.current} of ${progress.total} words`
+                      })()}
+                    </p>
+                    <div className={`w-full bg-white/10 rounded-full h-2 mt-2 transition-all duration-300 ${
+                      holdingProgressBar ? 'scale-105' : ''
+                    }`}>
+                      <div
+                        className="bg-gradient-to-r from-blue-400 to-blue-600 h-2 rounded-full transition-all duration-300"
+                        style={{ 
+                          width: `${(() => {
+                            const progress = getCategoryProgress()
+                            return (progress.current / progress.total) * 100
+                          })()}%`
+                        }}
+                      />
+                    </div>
                   </div>
-                </div>
-              )}
+                )
+              })()}
 
               {/* Category indicator - shown for topics with categories */}
               {getCurrentContent().category && (
@@ -4033,16 +4089,44 @@ export function LanguageSelector() {
             {/* Language Grid */}
             <div className="max-h-96 overflow-y-auto mb-6 language-grid-container">
               <div className="grid grid-cols-3 gap-4">
-                {filteredLanguages.map((language) => (
-                  <button
-                    key={language.code}
-                    onClick={() => handleLanguageSelect(language)}
-                    className="p-5 bg-black/40 border border-white/20 rounded-xl hover:bg-black/50 transition-all duration-300 transform hover:scale-[1.02] text-center min-h-[75px] flex flex-col items-center justify-center gap-2 shadow-lg"
-                  >
-                    <Icon icon={getFlagIcon(language.code)} className="w-7 h-7" />
-                    <p className="text-white font-medium text-sm leading-tight">{language.name}</p>
-                  </button>
-                ))}
+                {filteredLanguages.map((language) => {
+                  let languageHoldTimer: NodeJS.Timeout | null = null
+
+                  const handleLanguageHoldStart = (langCode: string) => {
+                    setHoldingLanguageCode(langCode)
+                    languageHoldTimer = setTimeout(() => {
+                      // Future: Show language details or preview
+                      console.log('Language held:', langCode)
+                      setHoldingLanguageCode(null)
+                    }, 275)
+                  }
+
+                  const handleLanguageHoldEnd = () => {
+                    if (languageHoldTimer) clearTimeout(languageHoldTimer)
+                    setHoldingLanguageCode(null)
+                  }
+
+                  return (
+                    <button
+                      key={language.code}
+                      onClick={() => handleLanguageSelect(language)}
+                      onTouchStart={(e) => {
+                        e.stopPropagation()
+                        handleLanguageHoldStart(language.code)
+                      }}
+                      onTouchEnd={(e) => {
+                        e.stopPropagation()
+                        handleLanguageHoldEnd()
+                      }}
+                      className={`p-5 bg-black/40 border border-white/20 rounded-xl hover:bg-black/50 transition-all duration-300 transform hover:scale-[1.02] text-center min-h-[75px] flex flex-col items-center justify-center gap-2 shadow-lg ${
+                        holdingLanguageCode === language.code ? 'scale-105' : ''
+                      }`}
+                    >
+                      <Icon icon={getFlagIcon(language.code)} className="w-7 h-7" />
+                      <p className="text-white font-medium text-sm leading-tight">{language.name}</p>
+                    </button>
+                  )
+                })}
               </div>
             </div>
           </div>
