@@ -43,7 +43,7 @@ export function ExampleSentencesModal({
     // Trigger animation after mount
     setTimeout(() => setIsVisible(true), 10)
     fetchExampleSentences()
-  }, [vocabularyId, nativeLanguageCode])
+  }, [vocabularyId, targetLanguageCode])
 
   const fetchExampleSentences = async () => {
     try {
@@ -55,7 +55,7 @@ export function ExampleSentencesModal({
         .from('example_sentences')
         .select('*')
         .eq('vocabulary_id', vocabularyId)
-        .eq('language_code', nativeLanguageCode)
+        .eq('language_code', targetLanguageCode)
         .order('sentence_order', { ascending: true })
 
       if (fetchError) throw fetchError
@@ -139,17 +139,17 @@ export function ExampleSentencesModal({
               {/* Sentence Display */}
               <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 mb-4 min-h-[200px] flex flex-col justify-center">
                 <div className="space-y-4">
-                  {/* Target language sentence - show translation field */}
+                  {/* Target language sentence */}
                   <div>
                     <p className="text-white text-2xl font-medium leading-relaxed drop-shadow-lg">
-                      {sentences[currentIndex]?.translation}
+                      {sentences[currentIndex]?.sentence}
                     </p>
                   </div>
 
-                  {/* Native language translation - show sentence field */}
+                  {/* Translation */}
                   <div className="pt-4 border-t border-white/10">
                     <p className="text-white/70 text-lg drop-shadow">
-                      {sentences[currentIndex]?.sentence}
+                      {sentences[currentIndex]?.translation}
                     </p>
                   </div>
                 </div>
