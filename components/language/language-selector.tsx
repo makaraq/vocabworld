@@ -3720,20 +3720,14 @@ export function LanguageSelector() {
       <button
         key={topic.id}
         onClick={async () => await handleTopicClick(topic)}
-        onTouchStart={(e) => {
-          e.stopPropagation()
-          handleTopicHoldStart(topic.id)
-        }}
-        onTouchEnd={(e) => {
-          e.stopPropagation()
-          handleTopicHoldEnd()
-        }}
-        className={`bg-black/40 rounded-xl sm:rounded-2xl p-3 sm:p-5 text-center hover:bg-black/50 transition-all duration-300 transform hover:scale-[1.02] h-32 sm:h-36 shadow-lg hover:shadow-xl ${
+        onTouchStart={() => handleTopicHoldStart(topic.id)}
+        onTouchEnd={() => handleTopicHoldEnd()}
+        className={`bg-black/40 rounded-xl sm:rounded-2xl p-3 sm:p-5 text-center hover:bg-black/50 transition-all h-32 sm:h-36 shadow-lg hover:shadow-xl ${
+          holdingTopicId === topic.id ? 'scale-105 duration-75' : 'duration-300 hover:scale-[1.02]'
+        } ${
           selectedTopic?.id === topic.id ? "bg-black/60 shadow-xl" : ""
         } ${
           isCompleted ? "shadow-[0_0_20px_rgba(255,255,255,0.5),0_0_40px_rgba(255,255,255,0.3)]" : ""
-        } ${
-          holdingTopicId === topic.id ? 'scale-105' : ''
         }`}
       >
         <div className="flex flex-col items-center justify-center h-full gap-2">
@@ -3876,15 +3870,11 @@ export function LanguageSelector() {
 
                 return (
                   <div 
-                    className="mb-6 text-center"
-                    onTouchStart={(e) => {
-                      e.stopPropagation()
-                      handleProgressHoldStart()
-                    }}
-                    onTouchEnd={(e) => {
-                      e.stopPropagation()
-                      handleProgressHoldEnd()
-                    }}
+                    className={`mb-6 text-center transition-all ${
+                      holdingProgressBar ? 'scale-105 duration-75' : 'duration-300'
+                    }`}
+                    onTouchStart={() => handleProgressHoldStart()}
+                    onTouchEnd={() => handleProgressHoldEnd()}
                   >
                     <p className="text-white/60 text-sm">
                       {(() => {
@@ -3892,9 +3882,7 @@ export function LanguageSelector() {
                         return `${progress.current} of ${progress.total} words`
                       })()}
                     </p>
-                    <div className={`w-full bg-white/10 rounded-full h-2 mt-2 transition-all duration-300 ${
-                      holdingProgressBar ? 'scale-105' : ''
-                    }`}>
+                    <div className="w-full bg-white/10 rounded-full h-2 mt-2">
                       <div
                         className="bg-gradient-to-r from-blue-400 to-blue-600 h-2 rounded-full transition-all duration-300"
                         style={{ 
@@ -4113,16 +4101,10 @@ export function LanguageSelector() {
                     <button
                       key={language.code}
                       onClick={() => handleLanguageSelect(language)}
-                      onTouchStart={(e) => {
-                        e.stopPropagation()
-                        handleLanguageHoldStart(language.code)
-                      }}
-                      onTouchEnd={(e) => {
-                        e.stopPropagation()
-                        handleLanguageHoldEnd()
-                      }}
-                      className={`p-5 bg-black/40 border border-white/20 rounded-xl hover:bg-black/50 transition-all duration-300 transform hover:scale-[1.02] text-center min-h-[75px] flex flex-col items-center justify-center gap-2 shadow-lg ${
-                        holdingLanguageCode === language.code ? 'scale-105' : ''
+                      onTouchStart={() => handleLanguageHoldStart(language.code)}
+                      onTouchEnd={() => handleLanguageHoldEnd()}
+                      className={`p-5 bg-black/40 border border-white/20 rounded-xl hover:bg-black/50 transition-all text-center min-h-[75px] flex flex-col items-center justify-center gap-2 shadow-lg ${
+                        holdingLanguageCode === language.code ? 'scale-105 duration-75' : 'duration-300 hover:scale-[1.02]'
                       }`}
                     >
                       <Icon icon={getFlagIcon(language.code)} className="w-7 h-7" />
