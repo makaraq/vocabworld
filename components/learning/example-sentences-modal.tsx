@@ -43,7 +43,7 @@ export function ExampleSentencesModal({
     // Trigger animation after mount
     setTimeout(() => setIsVisible(true), 10)
     fetchExampleSentences()
-  }, [vocabularyId, targetLanguageCode])
+  }, [vocabularyId, nativeLanguageCode])
 
   const fetchExampleSentences = async () => {
     try {
@@ -55,7 +55,7 @@ export function ExampleSentencesModal({
         .from('example_sentences')
         .select('*')
         .eq('vocabulary_id', vocabularyId)
-        .eq('language_code', targetLanguageCode)
+        .eq('language_code', nativeLanguageCode)
         .order('sentence_order', { ascending: true })
 
       if (fetchError) throw fetchError
