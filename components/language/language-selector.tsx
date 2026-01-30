@@ -2272,6 +2272,9 @@ export function LanguageSelector() {
   } | null>(null)
   const [showPlaylistModal, setShowPlaylistModal] = useState(false)
   const [holdingCardIndex, setHoldingCardIndex] = useState<number | null>(null)
+  const [holdingTopicId, setHoldingTopicId] = useState<number | null>(null)
+  const [holdingLanguageCode, setHoldingLanguageCode] = useState<string | null>(null)
+  const [holdingProgressBar, setHoldingProgressBar] = useState<boolean>(false)
 
   // Smart preloading cache - load everything invisibly in background
   const [dataCache, setDataCache] = useState<{
