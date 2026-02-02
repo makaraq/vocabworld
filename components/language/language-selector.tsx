@@ -2276,6 +2276,7 @@ export function LanguageSelector() {
   const [holdingLanguageCode, setHoldingLanguageCode] = useState<string | null>(null)
   const [holdingProgressBar, setHoldingProgressBar] = useState<boolean>(false)
   const [holdingSwapButton, setHoldingSwapButton] = useState<'native' | 'target' | null>(null)
+  const [holdingNavButton, setHoldingNavButton] = useState<'back' | 'settings' | 'previous' | 'play' | 'next' | null>(null)
 
   // Smart preloading cache - load everything invisibly in background
   const [dataCache, setDataCache] = useState<{
@@ -3800,7 +3801,12 @@ export function LanguageSelector() {
               <div className="flex items-center justify-between mb-8 gap-2">
                 <button
                   onClick={handleBackToTopics}
-                  className="w-10 h-10 sm:w-12 sm:h-12 bg-black/40 border border-white/20 rounded-full flex items-center justify-center hover:bg-black/50 transition-all duration-300 transform hover:scale-110 shadow-lg flex-shrink-0"
+                  onTouchStart={() => setHoldingNavButton('back')}
+                  onTouchEnd={() => setHoldingNavButton(null)}
+                  onTouchCancel={() => setHoldingNavButton(null)}
+                  className={`w-10 h-10 sm:w-12 sm:h-12 bg-black/40 border border-white/20 rounded-full flex items-center justify-center hover:bg-black/50 shadow-lg flex-shrink-0 ${
+                    holdingNavButton === 'back' ? 'scale-105 transition-all duration-75' : 'scale-100 transition-all duration-300 hover:scale-110'
+                  }`}
                 >
                   <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 text-white/80" />
                 </button>
@@ -3840,7 +3846,12 @@ export function LanguageSelector() {
                 
                 <button
                   onClick={handleSettingsClick}
-                  className="w-10 h-10 sm:w-12 sm:h-12 bg-black/40 border border-white/20 rounded-full flex items-center justify-center hover:bg-black/50 transition-all duration-300 transform hover:scale-110 shadow-lg flex-shrink-0"
+                  onTouchStart={() => setHoldingNavButton('settings')}
+                  onTouchEnd={() => setHoldingNavButton(null)}
+                  onTouchCancel={() => setHoldingNavButton(null)}
+                  className={`w-10 h-10 sm:w-12 sm:h-12 bg-black/40 border border-white/20 rounded-full flex items-center justify-center hover:bg-black/50 shadow-lg flex-shrink-0 ${
+                    holdingNavButton === 'settings' ? 'scale-105 transition-all duration-75' : 'scale-100 transition-all duration-300 hover:scale-110'
+                  }`}
                 >
                   <Settings className="w-5 h-5 sm:w-6 sm:h-6 text-white/80" />
                 </button>
@@ -4004,8 +4015,13 @@ export function LanguageSelector() {
                 <div className="flex items-center justify-center gap-8">
                   <button
                     onClick={handlePrevious}
+                    onTouchStart={() => setHoldingNavButton('previous')}
+                    onTouchEnd={() => setHoldingNavButton(null)}
+                    onTouchCancel={() => setHoldingNavButton(null)}
                     aria-label={`Go to previous word${vocabulary.length > 0 ? ': ' + vocabulary[Math.max(0, currentWordIndex - 1)]?.targetWord : ''}`}
-                    className="w-14 h-14 bg-black/40 border border-white/20 rounded-full flex items-center justify-center hover:bg-black/50 transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
+                    className={`w-14 h-14 bg-black/40 border border-white/20 rounded-full flex items-center justify-center hover:bg-black/50 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 ${
+                      holdingNavButton === 'previous' ? 'scale-105 transition-all duration-75' : 'scale-100 transition-all duration-300 hover:scale-110'
+                    }`}
                     disabled={vocabulary.length === 0}
                   >
                     <ChevronLeft className="w-7 h-7 text-white/80" aria-hidden="true" />
@@ -4013,9 +4029,12 @@ export function LanguageSelector() {
 
                   <button
                     onClick={handlePlay}
+                    onTouchStart={() => setHoldingNavButton('play')}
+                    onTouchEnd={() => setHoldingNavButton(null)}
+                    onTouchCancel={() => setHoldingNavButton(null)}
                     aria-label={isPlaying || autoPlayActive ? 'Stop audio playback' : `Play pronunciation of ${vocabulary[currentWordIndex]?.targetWord || 'current word'} in ${targetLanguage}`}
                     aria-pressed={isPlaying || autoPlayActive}
-                    className={`w-16 h-16 border border-white/20 rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 ${
+                    className={`w-16 h-16 border border-white/20 rounded-full flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 ${
                       isPlaying || autoPlayActive
                         ? 'bg-red-500/30 hover:bg-red-500/40' 
                         : currentAudioStep === 'training'
@@ -4023,6 +4042,8 @@ export function LanguageSelector() {
                         : currentAudioStep === 'main'
                         ? 'bg-blue-500/30 hover:bg-blue-500/40'
                         : 'bg-black/40 hover:bg-black/50'
+                    } ${
+                      holdingNavButton === 'play' ? 'scale-105 transition-all duration-75' : 'scale-100 transition-all duration-300 hover:scale-110'
                     }`}
                     disabled={vocabulary.length === 0}
                   >
@@ -4035,8 +4056,13 @@ export function LanguageSelector() {
 
                   <button
                     onClick={handleNext}
+                    onTouchStart={() => setHoldingNavButton('next')}
+                    onTouchEnd={() => setHoldingNavButton(null)}
+                    onTouchCancel={() => setHoldingNavButton(null)}
                     aria-label={`Go to next word${vocabulary.length > 0 ? ': ' + vocabulary[Math.min(vocabulary.length - 1, currentWordIndex + 1)]?.targetWord : ''}`}
-                    className="w-14 h-14 bg-black/40 border border-white/20 rounded-full flex items-center justify-center hover:bg-black/50 transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
+                    className={`w-14 h-14 bg-black/40 border border-white/20 rounded-full flex items-center justify-center hover:bg-black/50 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 ${
+                      holdingNavButton === 'next' ? 'scale-105 transition-all duration-75' : 'scale-100 transition-all duration-300 hover:scale-110'
+                    }`}
                     disabled={vocabulary.length === 0}
                   >
                     <ChevronRight className="w-7 h-7 text-white/80" aria-hidden="true" />
