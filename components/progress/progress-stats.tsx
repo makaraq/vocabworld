@@ -44,6 +44,7 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName }: { targ
   const [loading, setLoading] = useState(true)
   const [showDetailedModal, setShowDetailedModal] = useState(false)
   const [lastFetchKey, setLastFetchKey] = useState<string>('')
+  const [holdingProgressButton, setHoldingProgressButton] = useState(false)
 
   useEffect(() => {
     if (!user?.id || !targetLanguageCode) {
@@ -99,8 +100,13 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName }: { targ
     <>
       <div className="space-y-3 sm:space-y-4">
         <div 
-          className="bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-5 border border-white/20 cursor-pointer hover:bg-white/15 transition-all duration-200"
+          className={`bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-5 border border-white/20 cursor-pointer hover:bg-white/15 ${
+            holdingProgressButton ? 'scale-105 transition-all duration-75' : 'scale-100 transition-all duration-300'
+          }`}
           onClick={() => setShowDetailedModal(true)}
+          onTouchStart={() => setHoldingProgressButton(true)}
+          onTouchEnd={() => setHoldingProgressButton(false)}
+          onTouchCancel={() => setHoldingProgressButton(false)}
         >
           <div className="flex items-start gap-3 sm:gap-4">
             {/* Flag on the left */}

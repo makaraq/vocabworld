@@ -3705,15 +3705,9 @@ export function LanguageSelector() {
 
     const handleTopicHoldStart = (topicId: number) => {
       setHoldingTopicId(topicId)
-      topicHoldTimer = setTimeout(() => {
-        // Future: Open topic details or quick preview modal
-        console.log('Topic held:', topicId)
-        setHoldingTopicId(null)
-      }, 275)
     }
 
     const handleTopicHoldEnd = () => {
-      if (topicHoldTimer) clearTimeout(topicHoldTimer)
       setHoldingTopicId(null)
     }
 
@@ -3723,6 +3717,7 @@ export function LanguageSelector() {
         onClick={async () => await handleTopicClick(topic)}
         onTouchStart={() => handleTopicHoldStart(topic.id)}
         onTouchEnd={() => handleTopicHoldEnd()}
+        onTouchCancel={() => handleTopicHoldEnd()}
         className={`bg-black/40 rounded-xl sm:rounded-2xl p-3 sm:p-5 text-center hover:bg-black/50 h-32 sm:h-36 shadow-lg hover:shadow-xl ${
           holdingTopicId === topic.id ? 'scale-105 transition-all duration-75' : 'scale-100 transition-all duration-300 hover:scale-[1.02]'
         } ${
@@ -3853,19 +3848,11 @@ export function LanguageSelector() {
 
               {/* Progress indicator */}
               {vocabulary.length > 0 && (() => {
-                let progressHoldTimer: NodeJS.Timeout | null = null
-
                 const handleProgressHoldStart = () => {
                   setHoldingProgressBar(true)
-                  progressHoldTimer = setTimeout(() => {
-                    // Future: Show detailed progress statistics
-                    console.log('Progress bar held')
-                    setHoldingProgressBar(false)
-                  }, 275)
                 }
 
                 const handleProgressHoldEnd = () => {
-                  if (progressHoldTimer) clearTimeout(progressHoldTimer)
                   setHoldingProgressBar(false)
                 }
 
@@ -3876,6 +3863,7 @@ export function LanguageSelector() {
                     }`}
                     onTouchStart={() => handleProgressHoldStart()}
                     onTouchEnd={() => handleProgressHoldEnd()}
+                    onTouchCancel={() => handleProgressHoldEnd()}
                   >
                     <p className="text-white/60 text-sm">
                       {(() => {
@@ -4082,19 +4070,11 @@ export function LanguageSelector() {
             <div className="max-h-96 overflow-y-auto mb-6 language-grid-container">
               <div className="grid grid-cols-3 gap-4">
                 {filteredLanguages.map((language) => {
-                  let languageHoldTimer: NodeJS.Timeout | null = null
-
                   const handleLanguageHoldStart = (langCode: string) => {
                     setHoldingLanguageCode(langCode)
-                    languageHoldTimer = setTimeout(() => {
-                      // Future: Show language details or preview
-                      console.log('Language held:', langCode)
-                      setHoldingLanguageCode(null)
-                    }, 275)
                   }
 
                   const handleLanguageHoldEnd = () => {
-                    if (languageHoldTimer) clearTimeout(languageHoldTimer)
                     setHoldingLanguageCode(null)
                   }
 
@@ -4104,6 +4084,7 @@ export function LanguageSelector() {
                       onClick={() => handleLanguageSelect(language)}
                       onTouchStart={() => handleLanguageHoldStart(language.code)}
                       onTouchEnd={() => handleLanguageHoldEnd()}
+                      onTouchCancel={() => handleLanguageHoldEnd()}
                       className={`p-5 bg-black/40 border border-white/20 rounded-xl hover:bg-black/50 text-center min-h-[75px] flex flex-col items-center justify-center gap-2 shadow-lg ${
                         holdingLanguageCode === language.code ? 'scale-105 transition-all duration-75' : 'scale-100 transition-all duration-300 hover:scale-[1.02]'
                       }`}
