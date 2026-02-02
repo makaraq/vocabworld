@@ -3723,8 +3723,8 @@ export function LanguageSelector() {
         onClick={async () => await handleTopicClick(topic)}
         onTouchStart={() => handleTopicHoldStart(topic.id)}
         onTouchEnd={() => handleTopicHoldEnd()}
-        className={`bg-black/40 rounded-xl sm:rounded-2xl p-3 sm:p-5 text-center hover:bg-black/50 transition-all h-32 sm:h-36 shadow-lg hover:shadow-xl ${
-          holdingTopicId === topic.id ? 'scale-105 duration-75' : 'duration-300 hover:scale-[1.02]'
+        className={`bg-black/40 rounded-xl sm:rounded-2xl p-3 sm:p-5 text-center hover:bg-black/50 h-32 sm:h-36 shadow-lg hover:shadow-xl ${
+          holdingTopicId === topic.id ? 'scale-105 transition-all duration-75' : 'scale-100 transition-all duration-300 hover:scale-[1.02]'
         } ${
           selectedTopic?.id === topic.id ? "bg-black/60 shadow-xl" : ""
         } ${
@@ -3871,8 +3871,8 @@ export function LanguageSelector() {
 
                 return (
                   <div 
-                    className={`mb-6 text-center transition-all ${
-                      holdingProgressBar ? 'scale-105 duration-75' : 'duration-300'
+                    className={`mb-6 text-center ${
+                      holdingProgressBar ? 'scale-105 transition-all duration-75' : 'scale-100 transition-all duration-300'
                     }`}
                     onTouchStart={() => handleProgressHoldStart()}
                     onTouchEnd={() => handleProgressHoldEnd()}
@@ -4104,8 +4104,8 @@ export function LanguageSelector() {
                       onClick={() => handleLanguageSelect(language)}
                       onTouchStart={() => handleLanguageHoldStart(language.code)}
                       onTouchEnd={() => handleLanguageHoldEnd()}
-                      className={`p-5 bg-black/40 border border-white/20 rounded-xl hover:bg-black/50 transition-all text-center min-h-[75px] flex flex-col items-center justify-center gap-2 shadow-lg ${
-                        holdingLanguageCode === language.code ? 'scale-105 duration-75' : 'duration-300 hover:scale-[1.02]'
+                      className={`p-5 bg-black/40 border border-white/20 rounded-xl hover:bg-black/50 text-center min-h-[75px] flex flex-col items-center justify-center gap-2 shadow-lg ${
+                        holdingLanguageCode === language.code ? 'scale-105 transition-all duration-75' : 'scale-100 transition-all duration-300 hover:scale-[1.02]'
                       }`}
                     >
                       <Icon icon={getFlagIcon(language.code)} className="w-7 h-7" />
