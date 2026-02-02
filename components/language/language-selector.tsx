@@ -2275,6 +2275,7 @@ export function LanguageSelector() {
   const [holdingTopicId, setHoldingTopicId] = useState<number | null>(null)
   const [holdingLanguageCode, setHoldingLanguageCode] = useState<string | null>(null)
   const [holdingProgressBar, setHoldingProgressBar] = useState<boolean>(false)
+  const [holdingSwapButton, setHoldingSwapButton] = useState<'native' | 'target' | null>(null)
 
   // Smart preloading cache - load everything invisibly in background
   const [dataCache, setDataCache] = useState<{
@@ -4155,7 +4156,12 @@ export function LanguageSelector() {
               <div className="flex items-center justify-center gap-3 max-w-full">
                 <button
                   onClick={() => handleConfirmationLanguageChange("native")}
-                  className="bg-black/40 border border-white/20 rounded-xl p-2.5 flex-1 hover:bg-black/50 transition-all duration-300 shadow-lg min-w-0"
+                  onTouchStart={() => setHoldingSwapButton('native')}
+                  onTouchEnd={() => setHoldingSwapButton(null)}
+                  onTouchCancel={() => setHoldingSwapButton(null)}
+                  className={`bg-black/40 border border-white/20 rounded-xl p-2.5 flex-1 hover:bg-black/50 shadow-lg min-w-0 ${
+                    holdingSwapButton === 'native' ? 'scale-105 transition-all duration-75' : 'scale-100 transition-all duration-300'
+                  }`}
                 >
                   <p className="text-white font-medium text-sm truncate">{nativeLanguage}</p>
                 </button>
@@ -4164,7 +4170,12 @@ export function LanguageSelector() {
                 </div>
                 <button
                   onClick={() => handleConfirmationLanguageChange("target")}
-                  className="bg-black/40 border border-white/20 rounded-xl p-2.5 flex-1 hover:bg-black/50 transition-all duration-300 shadow-lg min-w-0"
+                  onTouchStart={() => setHoldingSwapButton('target')}
+                  onTouchEnd={() => setHoldingSwapButton(null)}
+                  onTouchCancel={() => setHoldingSwapButton(null)}
+                  className={`bg-black/40 border border-white/20 rounded-xl p-2.5 flex-1 hover:bg-black/50 shadow-lg min-w-0 ${
+                    holdingSwapButton === 'target' ? 'scale-105 transition-all duration-75' : 'scale-100 transition-all duration-300'
+                  }`}
                 >
                   <p className="text-white font-medium text-sm truncate">{targetLanguage}</p>
                 </button>
