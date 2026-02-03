@@ -8,6 +8,8 @@ import { ProgressStats } from "@/components/progress/progress-stats"
 import { SearchWordLearning } from "@/components/learning/search-word-learning"
 import { PaywallModal } from "@/components/paywall/paywall-modal"
 import { ExampleSentencesModal } from "@/components/learning/example-sentences-modal"
+import { languageNamesTranslations } from "@/lib/i18n/language-names-translations"
+import { sectionNamesTranslations } from "@/lib/i18n/section-names-translations"
 
 declare global {
   interface Window {
@@ -207,51 +209,51 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
   // Define the 7 sections with their topics and metadata (Account first, but FIRST AID KIT is default)
   const sections = [
     {
-      name: "ACCOUNT",
+      name: sectionNamesTranslations[nativeLanguageCode || 'en']?.['account'] || "ACCOUNT",
       icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path fill="currentColor" fill-opacity="0" stroke-dasharray="20" stroke-dashoffset="20" d="M12 12c2.21 0 4 -1.79 4 -4c0 -2.21 -1.79 -4 -4 -4c-2.21 0 -4 1.79 -4 4c0 2.21 1.79 4 4 4Z"><animate fill="freeze" attributeName="fill-opacity" begin="0.8s" dur="0.15s" values="0;0.3"/><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="20;0"/></path><path stroke-dasharray="36" stroke-dashoffset="36" d="M20 20c0 -4.42 -3.58 -8 -8 -8c-4.42 0 -8 3.58 -8 8"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.4s" values="36;0"/></path></g></svg>',
       topics: [], // No topics, this is a special page
       gridCols: 1,
       isAccount: true // Special flag for account page
     },
     {
-      name: "FIRST AID KIT",
+      name: sectionNamesTranslations[nativeLanguageCode || 'en']?.['first-aid-kit'] || "ESSENTIALS",
       icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><mask id="SVGDmnSdctG"><g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path fill="#fff" fill-opacity="0" stroke-dasharray="64" stroke-dashoffset="64" d="M9 7h11c0.55 0 1 0.45 1 1v11c0 0.55 -0.45 1 -1 1h-16c-0.55 0 -1 -0.45 -1 -1v-11c0 -0.55 0.45 -1 1 -1Z"><animate fill="freeze" attributeName="fill-opacity" begin="0.9s" dur="0.5s" values="0;1"/><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0"/></path><path stroke-dasharray="16" stroke-dashoffset="16" d="M9 7v-3c0 -0.55 0.45 -1 1 -1h4c0.55 0 1 0.45 1 1v3"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.7s" dur="0.2s" values="16;0"/></path><path stroke="#000" stroke-dasharray="8" stroke-dashoffset="8" d="M12 11v6"><animate fill="freeze" attributeName="stroke-dashoffset" begin="1.4s" dur="0.2s" values="8;0"/></path><path stroke="#000" stroke-dasharray="8" stroke-dashoffset="8" d="M9 14h6"><animate fill="freeze" attributeName="stroke-dashoffset" begin="1.6s" dur="0.2s" values="8;0"/></path></g></mask><rect width="24" height="24" fill="currentColor" mask="url(#SVGDmnSdctG)"/></svg>',
       topics: topics.slice(0, 6), // 6 topics: Greetings, Numbers, Time, Emergency, Directions, Travel
       gridCols: 2,
       isDefault: true // This will be the default page
     },
     {
-      name: "DAILY LIFE", 
+      name: sectionNamesTranslations[nativeLanguageCode || 'en']?.['daily-life'] || "DAILY LIFE", 
       icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" fill-opacity="0" d="M17 14v4c0 1.66 -1.34 3 -3 3h-6c-1.66 0 -3 -1.34 -3 -3v-4Z"><animate fill="freeze" attributeName="fill-opacity" begin="0.8s" dur="0.15s" values="0;0.3"/></path><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="48" stroke-dashoffset="48" d="M17 9v9c0 1.66 -1.34 3 -3 3h-6c-1.66 0 -3 -1.34 -3 -3v-9Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="48;0"/></path><path stroke-dasharray="14" stroke-dashoffset="14" d="M17 9h3c0.55 0 1 0.45 1 1v3c0 0.55 -0.45 1 -1 1h-3"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.2s" values="14;0"/></path><mask id="SVGnGEayvOG"><path stroke="#fff" d="M8 0c0 2-2 2-2 4s2 2 2 4-2 2-2 4 2 2 2 4M12 0c0 2-2 2-2 4s2 2 2 4-2 2-2 4 2 2 2 4M16 0c0 2-2 2-2 4s2 2 2 4-2 2-2 4 2 2 2 4"><animateMotion calcMode="linear" dur="3s" path="M0 0v-8" repeatCount="indefinite"/></path></mask><rect width="24" height="0" y="7" fill="currentColor" mask="url(#SVGnGEayvOG)"><animate fill="freeze" attributeName="y" begin="0.8s" dur="0.6s" values="7;2"/><animate fill="freeze" attributeName="height" begin="0.8s" dur="0.6s" values="0;5"/></rect></g></svg>',
       topics: topics.slice(6, 14), // 8 topics: Shopping, Food, Health, Home, Family, Personal Style, Weather & Nature, Places
       gridCols: 2
     },
     {
-      name: "WORK & SCHOOL",
+      name: sectionNamesTranslations[nativeLanguageCode || 'en']?.['work-school'] || "WORK & SCHOOL",
       icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="20" stroke-dashoffset="20" d="M3 21h18"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.2s" values="20;0"/></path><path fill="currentColor" fill-opacity="0" stroke-dasharray="48" stroke-dashoffset="48" d="M7 17v-4l10 -10l4 4l-10 10h-4"><animate fill="freeze" attributeName="fill-opacity" begin="1.1s" dur="0.15s" values="0;0.3"/><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.2s" dur="0.6s" values="48;0"/></path><path stroke-dasharray="8" stroke-dashoffset="8" d="M14 6l4 4"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.8s" dur="0.2s" values="8;0"/></path></g></svg>',
       topics: topics.slice(20, 28), // 8 topics: Professions, Education, History & Culture, Science, Technology, Arts, Mathematics, Colors
       gridCols: 2
     },
     {
-      name: "PERSONAL & SOCIAL LIFE",
+      name: sectionNamesTranslations[nativeLanguageCode || 'en']?.['personal-social'] || "PERSONAL & SOCIAL",
       icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><mask id="SVGydZajcRT"><g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path fill="#fff" fill-opacity="0" stroke-dasharray="64" stroke-dashoffset="64" d="M12 3c4.97 0 9 4.03 9 9c0 4.97 -4.03 9 -9 9c-4.97 0 -9 -4.03 -9 -9c0 -4.97 4.03 -9 9 -9"><animate fill="freeze" attributeName="fill-opacity" begin="0.7s" dur="0.5s" values="0;1"/><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0"/></path><path stroke="#000" stroke-dasharray="2" stroke-dashoffset="2" d="M9 9v1"><animate fill="freeze" attributeName="stroke-dashoffset" begin="1.2s" dur="0.2s" values="2;0"/></path><path stroke="#000" stroke-dasharray="2" stroke-dashoffset="2" d="M15 9v1"><animate fill="freeze" attributeName="stroke-dashoffset" begin="1.4s" dur="0.2s" values="2;0"/></path><path stroke="#000" stroke-dasharray="12" stroke-dashoffset="12" d="M8 14c0.5 1.5 1.79 3 4 3c2.21 0 3.5 -1.5 4 -3"><animate fill="freeze" attributeName="stroke-dashoffset" begin="1.6s" dur="0.2s" values="12;0"/></path></g></mask><rect width="24" height="24" fill="currentColor" mask="url(#SVGydZajcRT)"/></svg>',
       topics: topics.slice(14, 20), // 6 topics: Emotions & Feelings, Personality, Actions, Hobbies, Sports, Adjectives
       gridCols: 2
     },
     {
-      name: "CULTURE & SOCIETY",
+      name: sectionNamesTranslations[nativeLanguageCode || 'en']?.['culture-society'] || "CULTURE & SOCIETY",
       icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-dasharray="80" stroke-dashoffset="80" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7.47 5.94c1.83 1.37 3.81 4.14 4.53 5.63c0.72 -1.49 2.7 -4.26 4.53 -5.63c1.33 -0.99 3.47 -1.75 3.47 0.68c0 0.49 -0.28 4.08 -0.45 4.66c-0.57 2.03 -2.65 2.55 -4.5 2.23c3.24 0.55 4.06 2.36 2.28 4.17c-3.38 3.44 -4.85 -0.87 -5.23 -1.97c-0.07 -0.2 -0.1 -0.3 -0.1 -0.22c-0 -0.08 -0.03 0.02 -0.1 0.22c-0.38 1.1 -1.86 5.41 -5.23 1.97c-1.78 -1.81 -0.96 -3.63 2.28 -4.17c-1.85 0.31 -3.93 -0.21 -4.5 -2.23c-0.17 -0.58 -0.45 -4.18 -0.45 -4.66c0 -2.43 2.14 -1.67 3.47 -0.68Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="80;0"/></path></svg>',
       topics: topics.slice(28, 36), // 8 topics: Business & Economics, Politics & Law, Religion & Philosophy, Cultural Integration, Environment, Media, Mythology & Fantasy, Celebrations & Holidays
       gridCols: 2
     },
     {
-      name: "VETERAN FIELD",
+      name: sectionNamesTranslations[nativeLanguageCode || 'en']?.['veteran-field'] || "PROFESSIONAL",
       icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-dasharray="64" stroke-dashoffset="64" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2l-9 3.5v6.5c0 3.5 3.5 9 8 10c4.5 -1 8 -6.5 8 -10v-6.5l-8 -3.5Z"><animate fill="freeze" attributeName="fill-opacity" begin="0.7s" dur="0.15s" values="0;0.3"/><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0"/></path></svg>',
       topics: topics.slice(36, 41), // 5 topics: Common Collocations, Modern Expressions, Formal Language, Verbs, Common Phrases
       gridCols: 2
     },
     {
-      name: "MY WORDS",
+      name: sectionNamesTranslations[nativeLanguageCode || 'en']?.['my-words'] || "MY WORDS",
       icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M3 3v18h18V3zm16 16H5V5h14zm-7-2h5v-2h-5zm0-4h5V9h-5zm-6 4h4v-6H6zm0-8h10V7H6z"/></svg>',
       topics: [], // No predefined topics - this is for custom word search
       gridCols: 1,
@@ -871,6 +873,10 @@ export function LanguageSelector() {
   const [currentSection, setCurrentSection] = useState(1) // Start with FIRST AID KIT (index 1)
   const lastTopicSectionRef = useRef(1) // Track which section the user was on when selecting a topic
   const [phonetics, setPhonetics] = useState<Record<string, { target: string; native: string }>>({})
+  
+  // Translation state - loaded once when language changes
+  const [topicTranslations, setTopicTranslations] = useState<Record<number, string>>({})
+  const [categoryTranslations, setCategoryTranslations] = useState<Record<string, string>>({})
   
   // Playlist state for MY WORDS section
   const [userPlaylists, setUserPlaylists] = useState<Array<{
@@ -2346,6 +2352,41 @@ export function LanguageSelector() {
     fetchCompletedTopics()
   }, [user?.id, targetLanguageCode])
 
+  // Load topic and category translations from database when native language changes
+  useEffect(() => {
+    if (!nativeLanguageCode) return
+    
+    const loadTranslations = async () => {
+      try {
+        // Load topic translations
+        const topicRes = await fetch(`/api/translations/topics?lang=${nativeLanguageCode}`)
+        if (topicRes.ok) {
+          const topics = await topicRes.json()
+          const topicMap: Record<number, string> = {}
+          topics.forEach((t: any) => {
+            topicMap[t.topic_id] = t.translated_name
+          })
+          setTopicTranslations(topicMap)
+        }
+        
+        // Load category translations
+        const catRes = await fetch(`/api/translations/categories?lang=${nativeLanguageCode}`)
+        if (catRes.ok) {
+          const categories = await catRes.json()
+          const catMap: Record<string, string> = {}
+          categories.forEach((c: any) => {
+            catMap[c.category] = c.translated_category
+          })
+          setCategoryTranslations(catMap)
+        }
+      } catch (error) {
+        console.error('Failed to load translations:', error)
+      }
+    }
+    
+    loadTranslations()
+  }, [nativeLanguageCode])
+
   // 💾 Auto-save position when word index changes (debounced)
   useEffect(() => {
     if (!user?.id || !selectedTopic || !targetLanguageCode || vocabulary.length === 0) {
@@ -2747,105 +2788,18 @@ export function LanguageSelector() {
     console.log('🎵 B2 Audio system active - Backblaze cloud audio storage')
   }, [])
 
-  // Language names mapping for better display
+  // Language names mapping - uses translation system
   const getLanguageName = (languageCode: string): string => {
-    const nameMap: { [key: string]: string } = {
-      'af': 'Afrikaans',
-      'am': 'Amharic',
-      'ar': 'Arabic',
-      'az': 'Azerbaijani',
-      'be': 'Belarusian',
-      'bg': 'Bulgarian',
-      'bn': 'Bengali',
-      'br': 'Breton',
-      'bs': 'Bosnian',
-      'ca': 'Catalan',
-      'co': 'Corsican',
-      'cs': 'Czech',
-      'cy': 'Welsh',
-      'da': 'Danish',
-      'de': 'German',
-      'el': 'Greek',
-      'en': 'English',
-      'eo': 'Esperanto',
-      'es': 'Spanish',
-      'et': 'Estonian',
-      'eu': 'Basque',
-      'fa': 'Persian',
-      'fi': 'Finnish',
-      'fo': 'Faroese',
-      'fr': 'French',
-      'ga': 'Irish',
-      'gd': 'Scottish Gaelic',
-      'gu': 'Gujarati',
-      'ha': 'Hausa',
-      'he': 'Hebrew',
-      'hi': 'Hindi',
-      'hr': 'Croatian',
-      'hu': 'Hungarian',
-      'id': 'Indonesian',
-      'ig': 'Igbo',
-      'is': 'Icelandic',
-      'it': 'Italian',
-      'ja': 'Japanese',
-      'jv': 'Javanese',
-      'ka': 'Georgian',
-      'kk': 'Kazakh',
-      'km': 'Khmer',
-      'kn': 'Kannada',
-      'ko': 'Korean',
-      'ky': 'Kyrgyz',
-      'la': 'Latin',
-      'lb': 'Luxembourgish',
-      'lo': 'Lao',
-      'lt': 'Lithuanian',
-      'lv': 'Latvian',
-      'mg': 'Malagasy',
-      'mk': 'Macedonian',
-      'ml': 'Malayalam',
-      'mn': 'Mongolian',
-      'mr': 'Marathi',
-      'ms': 'Malay',
-      'mt': 'Maltese',
-      'my': 'Myanmar',
-      'ne': 'Nepali',
-      'nl': 'Dutch',
-      'no': 'Norwegian',
-      'or': 'Odia',
-      'pa': 'Punjabi',
-      'pl': 'Polish',
-      'ps': 'Pashto',
-      'pt': 'Portuguese',
-      'ro': 'Romanian',
-      'ru': 'Russian',
-      'rw': 'Kinyarwanda',
-      'sa': 'Sanskrit',
-      'si': 'Sinhala',
-      'sk': 'Slovak',
-      'sl': 'Slovenian',
-      'sn': 'Shona',
-      'so': 'Somali',
-      'sq': 'Albanian',
-      'sr': 'Serbian',
-      'sv': 'Swedish',
-      'sw': 'Swahili',
-      'ta': 'Tamil',
-      'te': 'Telugu',
-      'tg': 'Tajik',
-      'th': 'Thai',
-      'tk': 'Turkmen',
-      'tl': 'Filipino',
-      'tr': 'Turkish',
-      'uk': 'Ukrainian',
-      'ur': 'Urdu',
-      'uz': 'Uzbek',
-      'vi': 'Vietnamese',
-      'xh': 'Xhosa',
-      'yo': 'Yoruba',
-      'zh': 'Chinese',
-      'zu': 'Zulu',
+    // Use translated language names based on user's main language (nativeLanguageCode)
+    const userLang = nativeLanguageCode || 'en'
+    const translations = languageNamesTranslations[userLang]
+    
+    if (translations && translations[languageCode]) {
+      return translations[languageCode]
     }
-    return nameMap[languageCode] || languageCode.toUpperCase()
+    
+    // Fallback to English if translation not found
+    return languageNamesTranslations['en']?.[languageCode] || languageCode.toUpperCase()
   }
 
   // All 50 languages from Alnilam Audio Library - matching available audio files
@@ -2899,20 +2853,15 @@ export function LanguageSelector() {
   }, [targetLanguage, currentPage])
   */
 
-  // Get display name for topics (with custom name mappings)
+  // Get display name for topics - uses translation system
   const getTopicDisplayName = (topicId: number, originalName: string): string => {
-    // Custom name mappings for specific topics
-    const nameMapping: { [key: number]: string } = {
-      8: "Health", // Health & Body Parts → Health
-      11: "Weather", // Weather & Nature → Weather (already merged in database)
-      12: "Family", // Family & Relationships → Family
-      17: "City", // Places Around Town → City
-      18: "Travel", // Travel & Tourism → Travel
-      // Note: API now has short names for: History, Technology, Art, Mathematics, 
-      // Emotions, Personality, Fitness, Business, Religion, Mythology, Holidays, Daily Language
+    // Use translated topic name if available
+    if (topicTranslations[topicId]) {
+      return topicTranslations[topicId]
     }
     
-    return nameMapping[topicId] || originalName
+    // Fallback to English name
+    return originalName
   }
 
   const handleLanguageSelect = (language: { code: string; name: string }) => {
@@ -3251,7 +3200,7 @@ export function LanguageSelector() {
     return {
       sourceWord: currentWord.sourceWord?.toLowerCase() || '', // Training language word (what user wants to learn) - displayed in lowercase
       targetWord: currentWord.targetWord?.toLowerCase() || '',  // Main language translation (user's native language) - displayed in lowercase
-      category: currentWord.category || '' // Category for verb grouping display
+      category: categoryTranslations[currentWord.category] || currentWord.category || '' // Category for verb grouping display - translated
     }
   }
 
