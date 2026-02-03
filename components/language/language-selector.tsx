@@ -435,7 +435,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                   {targetLanguageCode && (
                     <ProgressStats 
                       targetLanguageCode={targetLanguageCode}
-                      targetLanguageName={targetLanguage}
+                      targetLanguageName={languageNamesTranslations['en']?.[targetLanguageCode] || targetLanguage}
                     />
                   )}
 
@@ -2361,22 +2361,14 @@ export function LanguageSelector() {
         // Load topic translations
         const topicRes = await fetch(`/api/translations/topics?lang=${nativeLanguageCode}`)
         if (topicRes.ok) {
-          const topics = await topicRes.json()
-          const topicMap: Record<number, string> = {}
-          topics.forEach((t: any) => {
-            topicMap[t.topic_id] = t.translated_name
-          })
+          const topicMap = await topicRes.json()
           setTopicTranslations(topicMap)
         }
         
         // Load category translations
         const catRes = await fetch(`/api/translations/categories?lang=${nativeLanguageCode}`)
         if (catRes.ok) {
-          const categories = await catRes.json()
-          const catMap: Record<string, string> = {}
-          categories.forEach((c: any) => {
-            catMap[c.category] = c.translated_category
-          })
+          const catMap = await catRes.json()
           setCategoryTranslations(catMap)
         }
       } catch (error) {
@@ -4065,7 +4057,9 @@ export function LanguageSelector() {
                       }`}
                     >
                       <Icon icon={getFlagIcon(language.code)} className="w-7 h-7" />
-                      <p className="text-white font-medium text-sm leading-tight">{language.name}</p>
+                      <p className="text-white font-medium text-sm leading-tight">
+                        {getLanguageName(language.code)}
+                      </p>
                     </button>
                   )
                 })}
