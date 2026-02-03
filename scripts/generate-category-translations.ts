@@ -262,12 +262,12 @@ async function runTest() {
 
   // Step 6: Display summary
   console.log('\n============================================================')
-  console.log('📊 TEST SUMMARY')
+  console.log('📊 GENERATION SUMMARY')
   console.log('============================================================')
-  console.log(`Categories tested: ${testCategories.length}`)
-  console.log(`Languages tested: ${TEST_LANGUAGES.length}`)
+  console.log(`Categories processed: ${allCategories.length}`)
+  console.log(`Languages processed: ${ALL_LANGUAGES.length}`)
   console.log(`Translations created: ${results.length}`)
-  console.log('\nSample translations:')
+  console.log('\nSample translations (first 3 categories):')
   
   // Group by category
   const byCategory: Record<string, any[]> = {}
@@ -276,16 +276,20 @@ async function runTest() {
     byCategory[r.category].push({ lang: r.language_code, translation: r.translated_category })
   })
 
-  Object.entries(byCategory).forEach(([cat, trans]) => {
+  const sampleCategories = Object.entries(byCategory).slice(0, 3)
+  sampleCategories.forEach(([cat, trans]) => {
     console.log(`\n"${cat}":`)
-    trans.forEach(t => console.log(`  ${t.lang}: "${t.translation}"`))
+    trans.slice(0, 5).forEach(t => console.log(`  ${t.lang}: "${t.translation}"`))
+    if (trans.length > 5) {
+      console.log(`  ... and ${trans.length - 5} more languages`)
+    }
   })
 
-  console.log('\n✅ Test complete!')
+  console.log('\n✅ Full translation complete!')
   console.log('\nNext steps:')
-  console.log('1. Review translations above for quality')
+  console.log('1. Review sample translations above')
   console.log('2. Check database table: category_translations')
-  console.log('3. If good, scale to all categories × 50 languages')
+  console.log('3. Update app to use translated categories')
   console.log('============================================================\n')
 }
 
