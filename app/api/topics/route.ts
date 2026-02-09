@@ -226,6 +226,12 @@ const TOPICS_DATA = [
     "name": "Daily Language",
     "description": "Essential everyday phrases and expressions",
     "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"40\" height=\"40\" viewBox=\"0 0 24 24\"><path fill=\"currentColor\" d=\"M21 11h-3V4h3m0 14h-3v-7h3M8 18H5V6h3m15-4h-5v18h5a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2M11 6H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h5a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2\"/></svg>"
+  },
+  {
+    "id": 43,
+    "name": "Essential Words",
+    "description": "Essential grammar words and structures",
+    "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"40\" height=\"40\" viewBox=\"0 0 24 24\"><path fill=\"currentColor\" d=\"M14.6 16.6l4.6-4.6l-4.6-4.6L16 6l6 6l-6 6zM9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6l6 6z\"/></svg>"
   }
 ]
 
