@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 // Universal Audio API - B2 Authenticated Access
 // Fetches audio from private B2 bucket using API credentials
+// Supports multiple B2 buckets (primary + secondary for new topics)
 
 // ==================== B2 AUTH CACHING ====================
 // Cache B2 authorization tokens to avoid repeated auth calls
@@ -12,20 +13,30 @@ interface B2AuthCache {
 }
 
 let b2AuthCache: B2AuthCache | null = null;
+let b2AuthCache2: B2AuthCache | null = null; // Second bucket for topics 43-44
 
-async function getB2Auth(): Promise<B2AuthCache> {
+async function getB2Auth(bucketNumber: 1 | 2 = 1): Promise<B2AuthCache> {
   const now = Date.now();
   
+  const cache = bucketNumber === 1 ? b2AuthCache : b2AuthCache2;
+  
   // Return cached auth if still valid (expires in 50 minutes, B2 tokens last 1 hour)
-  if (b2AuthCache && b2AuthCache.expiresAt > now) {
-    return b2AuthCache;
+  if (cache && cache.expiresAt > now) {
+    return cache;
   }
 
-  const keyId = process.env.B2_APPLICATION_KEY_ID;
-  const applicationKey = process.env.B2_APPLICATION_KEY;
+  const keyId = bucketNumber === 1 
+    ? process.env.B2_APPLICATION_KEY_ID 
+    : process.env.B2_APPLICATION_KEY_ID_2;
+  const applicationKey = bucketNumber === 1 
+    ? process.env.B2_APPLICATION_KEY 
+    : process.env.B2_APPLICATION_KEY_2;
+  const bucketId = bucketNumber === 1
+    ? 'aa1d47dd5cca310593920d1c'
+    : '47389e8c43de41aa9dc10016';
 
   if (!keyId || !applicationKey) {
-    throw new Error('B2 credentials not configured');
+    throw new Error(`B2 bucket ${bucketNumber} credentials not configured`);
   }
 
   // Authorize with B2
@@ -50,7 +61,7 @@ async function getB2Auth(): Promise<B2AuthCache> {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      bucketId: 'aa1d47dd5cca310593920d1c',
+      bucketId: bucketId,
       fileNamePrefix: '',
       validDurationInSeconds: 3600
     })
@@ -63,13 +74,19 @@ async function getB2Auth(): Promise<B2AuthCache> {
   const downloadAuthData = await downloadAuthResponse.json();
 
   // Cache for 50 minutes
-  b2AuthCache = {
+  const newCache: B2AuthCache = {
     authData,
     downloadAuthToken: downloadAuthData.authorizationToken,
     expiresAt: now + (50 * 60 * 1000)
   };
 
-  return b2AuthCache;
+  if (bucketNumber === 1) {
+    b2AuthCache = newCache;
+  } else {
+    b2AuthCache2 = newCache;
+  }
+
+  return newCache;
 }
 // ==================== END B2 AUTH CACHING ====================
 
@@ -112,9 +129,6 @@ export async function GET(request: NextRequest) {
     };
 
     const audioLangCode = getAudioLanguageCode(languageCode);
-
-    // Get B2 auth (cached)
-    const b2Auth = await getB2Auth();
 
     // Find file path using streaming CSV search (fast, low memory)
     const baseUrl = request.url.split('/api/')[0];
@@ -226,8 +240,16 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Determine which bucket based on topic folder in file path
+    const isSecondaryBucket = filePath.startsWith('BadWords/') || filePath.startsWith('EssentialWords/');
+    const bucketNumber: 1 | 2 = isSecondaryBucket ? 2 : 1;
+    const bucketName = isSecondaryBucket ? 'voco-audio-library2' : 'voco-audio-library';
+
+    // Get B2 auth for the appropriate bucket (cached)
+    const b2Auth = await getB2Auth(bucketNumber);
+
     // Download and stream audio from B2
-    const authenticatedUrl = `${b2Auth.authData.downloadUrl}/file/voco-audio-library/${filePath}`;
+    const authenticatedUrl = `${b2Auth.authData.downloadUrl}/file/${bucketName}/${filePath}`;
     const audioResponse = await fetch(authenticatedUrl, {
       headers: { 'Authorization': b2Auth.downloadAuthToken }
     });

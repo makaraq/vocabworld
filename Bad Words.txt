@@ -1,0 +1,47 @@
+Mild Profanity:
+damn
+hell
+crap
+jerk
+idiot
+stupid
+dumb
+moron
+loser
+shut up
+
+Moderate Profanity:
+ass
+asshole
+bastard
+bloody
+bullshit
+piss
+pissed
+screw
+screwed
+sucks
+
+Strong Profanity:
+shit
+shitty
+fuck
+fucked
+fucking
+motherfucker
+son of a bitch
+bitch
+prick
+dick
+
+Severe Profanity:
+cock
+pussy
+slut
+whore
+jackass
+douche
+douchebag
+arse
+bugger
+wanker
