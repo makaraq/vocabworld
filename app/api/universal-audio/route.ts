@@ -177,9 +177,13 @@ export async function GET(request: NextRequest) {
             const phrasesCsvContent = await phrasesCsvResponse.text();
             const phrasesLines = phrasesCsvContent.split('\n');
             
-            const normalizedWord = word.toLowerCase().trim().replace(/\s+/g, '_');
+            // Sanitize word to match generation script pattern
+            const sanitizeForMatch = (w: string) => 
+              w.toLowerCase().trim().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '').substring(0, 50);
+            
+            const normalizedWord = sanitizeForMatch(word);
             const isNativeFilenameLanguage = ['cy', 'ga', 'mt'].includes(audioLangCode);
-            const normalizedTargetWord = targetWord ? targetWord.toLowerCase().trim().replace(/\s+/g, '_') : null;
+            const normalizedTargetWord = targetWord ? sanitizeForMatch(targetWord) : null;
             const matchWord = (isNativeFilenameLanguage && normalizedTargetWord) ? normalizedTargetWord : normalizedWord;
             
             for (let i = 1; i < phrasesLines.length; i++) {
@@ -190,7 +194,7 @@ export async function GET(request: NextRequest) {
               if (!match) continue;
               
               const [, localPath, , language, , csvFileName] = match;
-              const fileNameWithoutExt = csvFileName.replace('.wav', '').toLowerCase();
+              const fileNameWithoutExt = csvFileName.replace(/\.(wav|mp3)$/i, '').toLowerCase();
               
               if (fileNameWithoutExt === matchWord && language === audioLangCode) {
                 fileName = csvFileName;
