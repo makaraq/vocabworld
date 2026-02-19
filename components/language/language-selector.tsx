@@ -3250,10 +3250,22 @@ export function LanguageSelector() {
     if (selectedTopic?.id === 41) {
       console.log('🏷️ Current word:', currentWord.sourceWord, 'Category:', currentWord.category, 'learningOrder:', currentWord.learningOrder)
     }
+    
+    // Format category: Replace underscores with spaces and capitalize first letter of each word
+    const formatCategory = (cat: string) => {
+      if (!cat) return ''
+      return cat
+        .replace(/_/g, ' ')
+        .toLowerCase()
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ')
+    }
+    
     return {
       sourceWord: currentWord.sourceWord?.toLowerCase() || '', // Training language word (what user wants to learn) - displayed in lowercase
       targetWord: currentWord.targetWord?.toLowerCase() || '',  // Main language translation (user's native language) - displayed in lowercase
-      category: currentWord.category || '' // Category for verb grouping display
+      category: formatCategory(currentWord.category || '') // Category for verb grouping display
     }
   }
 
@@ -3913,7 +3925,7 @@ export function LanguageSelector() {
                       <ChevronLeft className="w-4 h-4 text-white/60" />
                     </button>
                   )}
-                  <span className="px-3 py-1 bg-white/10 rounded-lg text-white/70 text-xs font-medium uppercase tracking-wider">
+                  <span className="px-3 py-1 bg-white/10 rounded-lg text-white/70 text-xs font-medium tracking-wider">
                     {getCurrentContent().category}
                   </span>
                   {/* Navigation arrows only for Verbs and Common Phrases */}

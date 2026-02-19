@@ -164,11 +164,11 @@ export async function GET(request: NextRequest) {
         }
       }
       
-      // If not found, try phrases CSV (Common Phrases, Essential Words, Bad Words)
+      // If not found, try phrases CSV (Common Phrases, Essential Words, Bad Words, Example Sentences)
       if (!fileName && !filePath) {
         const wordIdNum = parseInt(wordId);
         
-        // Topics 42-44: Common Phrases (4172-4965), Essential Words (5689-6077), Bad Words (6021-6060)
+        // Topics 42-45: Common Phrases (4172-4965), Essential Words (5689-6077), Bad Words (6021-6060), Example Sentences (6078+)
         if (wordIdNum >= 4172 && word) {
           const phrasesCsvUrl = `${baseUrl}/data/common-phrases-b2-urls.csv`;
           const phrasesCsvResponse = await fetch(phrasesCsvUrl);
