@@ -178,8 +178,12 @@ export async function GET(request: NextRequest) {
             const phrasesLines = phrasesCsvContent.split('\n');
             
             // Sanitize word to match generation script pattern
+            // Must match the exact pattern from generate-example-sentences-audio.mjs
             const sanitizeForMatch = (w: string) => 
-              w.toLowerCase().trim().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '').substring(0, 50);
+              w.toLowerCase()
+                .replace(/[^a-z0-9\s]+/g, '')  // Remove special characters (keep spaces)
+                .replace(/\s+/g, '_')           // Replace spaces with underscores
+                .substring(0, 60);              // Limit length
             
             const normalizedWord = sanitizeForMatch(word);
             const isNativeFilenameLanguage = ['cy', 'ga', 'mt'].includes(audioLangCode);
