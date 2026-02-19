@@ -3,11 +3,11 @@ import { progressService } from '@/lib/progress/progress-service'
 
 /**
  * POST /api/progress/streak
- * Update user's login streak when they log in
+ * Update user's login streak when they log in (timezone-aware with grace period)
  */
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = await request.json()
+    const { userId, timezone } = await request.json()
     
     if (!userId) {
       return NextResponse.json(
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    await progressService.updateLoginStreak(userId)
+    await progressService.updateLoginStreak(userId, timezone)
     
     return NextResponse.json({ success: true })
   } catch (error: any) {

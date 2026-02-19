@@ -200,12 +200,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           // Fetch subscription
           await fetchSubscriptionStatus(initialSession.user.id)
           
-          // Update login streak
+          // Update login streak (timezone-aware)
           try {
+            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
             await fetch('/api/progress/streak', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ userId: initialSession.user.id })
+              body: JSON.stringify({ 
+                userId: initialSession.user.id,
+                timezone 
+              })
             })
           } catch (e) {
             console.log('Failed to update streak:', e)
@@ -289,6 +293,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       handlePaymentReturn()
     }
   }, [loading, user, refreshSubscription, subscriptionStatus?.isPremium])
+
+  // ============================================
+  // STREAK UPDATE ON APP FOCUS
+  // ============================================
+  useEffect(() => {
+    if (!user) return
+
+    const handleVisibilityChange = async () => {
+      if (document.visibilityState === 'visible') {
+        // App regained focus - check and update streak
+        try {
+          const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+          await fetch('/api/progress/streak', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              userId: user.id,
+              timezone 
+            })
+          })
+        } catch (e) {
+          console.log('Failed to update streak on focus:', e)
+        }
+      }
+    }
+
+    // Listen for visibility changes
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [user])
 
   // ============================================
   // RENDER

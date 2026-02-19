@@ -271,11 +271,14 @@ class ProgressService {
   }
 
   /**
-   * Update login streak when user logs in
+   * Update login streak when user logs in (timezone-aware with 1-day grace period)
    */
-  async updateLoginStreak(userId: string): Promise<void> {
+  async updateLoginStreak(userId: string, userTimezone?: string): Promise<void> {
     try {
-      const today = new Date().toISOString().split('T')[0]
+      // Get user's local date (not UTC)
+      const today = userTimezone 
+        ? new Date().toLocaleDateString('en-CA', { timeZone: userTimezone })
+        : new Date().toLocaleDateString('en-CA') // Fallback to system timezone
       
       // Get existing streak data
       const { data: existing, error: checkError } = await supabase
@@ -309,18 +312,18 @@ class ProgressService {
         return
       }
 
-      // Calculate date difference
-      const lastDate = new Date(existing.last_login_date)
-      const currentDate = new Date(today)
-      const diffTime = currentDate.getTime() - lastDate.getTime()
-      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+      // Calculate calendar day difference (not time-based)
+      const daysDiff = this.calculateDayDifference(existing.last_login_date, today)
 
       let newStreak = existing.current_streak
       
-      if (diffDays === 1) {
+      if (daysDiff === 1) {
         // Consecutive day - increment streak
         newStreak = existing.current_streak + 1
-      } else if (diffDays > 1) {
+      } else if (daysDiff === 2) {
+        // 1-day grace period - user missed yesterday but keep streak alive
+        newStreak = existing.current_streak + 1
+      } else if (daysDiff > 2) {
         // Streak broken - reset to 1
         newStreak = 1
       }
@@ -339,6 +342,16 @@ class ProgressService {
     } catch (error) {
       console.error('Error updating login streak:', error)
     }
+  }
+
+  /**
+   * Calculate calendar day difference between two date strings
+   */
+  private calculateDayDifference(date1: string, date2: string): number {
+    const d1 = new Date(date1 + 'T00:00:00')
+    const d2 = new Date(date2 + 'T00:00:00')
+    const diffTime = d2.getTime() - d1.getTime()
+    return Math.round(diffTime / (1000 * 60 * 60 * 24))
   }
 
   /**
