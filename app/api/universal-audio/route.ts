@@ -246,7 +246,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Determine which bucket based on topic folder in file path
-    const isSecondaryBucket = filePath.startsWith('BadWords/') || filePath.startsWith('EssentialWords/');
+    const isSecondaryBucket = filePath.startsWith('BadWords/') || filePath.startsWith('EssentialWords/') || filePath.startsWith('ExampleSentences/');
     const bucketNumber: 1 | 2 = isSecondaryBucket ? 2 : 1;
     const bucketName = isSecondaryBucket ? 'voco-audio-library2' : 'voco-audio-library';
 
