@@ -3251,15 +3251,10 @@ export function LanguageSelector() {
       console.log('🏷️ Current word:', currentWord.sourceWord, 'Category:', currentWord.category, 'learningOrder:', currentWord.learningOrder)
     }
     
-    // Format category: Replace underscores with spaces and capitalize first letter of each word
+    // Format category: Replace underscores with spaces and make uppercase
     const formatCategory = (cat: string) => {
       if (!cat) return ''
-      return cat
-        .replace(/_/g, ' ')
-        .toLowerCase()
-        .split(' ')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ')
+      return cat.replace(/_/g, ' ').toUpperCase()
     }
     
     return {
