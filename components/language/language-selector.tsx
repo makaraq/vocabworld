@@ -1060,6 +1060,15 @@ export function LanguageSelector() {
     return uiTranslations[key] || fallback
   }
 
+  // Database state
+  const [topics, setTopics] = useState<Topic[]>([])
+  const [vocabulary, setVocabulary] = useState<VocabularyWord[]>([])
+  const [totalWords, setTotalWords] = useState<number>(0)
+  const [currentOffset, setCurrentOffset] = useState<number>(0)
+  const [hasMoreWords, setHasMoreWords] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [completedTopicIds, setCompletedTopicIds] = useState<number[]>([])
+
   // Define the 7 sections with their topics and metadata (Account first, but FIRST AID KIT is default)
   // Sections with dynamic translations
   const sections = useMemo(() => [
@@ -2294,15 +2303,6 @@ export function LanguageSelector() {
     
     console.log('✅ Audio stopped immediately and all states reset')
   }
-
-  // Database state
-  const [topics, setTopics] = useState<Topic[]>([])
-  const [vocabulary, setVocabulary] = useState<VocabularyWord[]>([])
-  const [totalWords, setTotalWords] = useState<number>(0)
-  const [currentOffset, setCurrentOffset] = useState<number>(0)
-  const [hasMoreWords, setHasMoreWords] = useState<boolean>(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [completedTopicIds, setCompletedTopicIds] = useState<number[]>([])
 
   // Example sentences modal state
   const [showExampleModal, setShowExampleModal] = useState(false)
