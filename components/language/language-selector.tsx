@@ -1036,13 +1036,13 @@ export function LanguageSelector() {
   // 🌍 Fetch UI translations for section names
   useEffect(() => {
     const fetchUiTranslations = async () => {
-      if (!targetLanguageCode) {
+      if (!nativeLanguageCode) {
         setUiTranslations({})
         return
       }
       
       try {
-        const response = await fetch(`/api/ui-translations?languageCode=${targetLanguageCode}`)
+        const response = await fetch(`/api/ui-translations?languageCode=${nativeLanguageCode}`)
         if (response.ok) {
           const data = await response.json()
           setUiTranslations(data.translations || {})
@@ -1053,7 +1053,7 @@ export function LanguageSelector() {
     }
     
     fetchUiTranslations()
-  }, [targetLanguageCode])
+  }, [nativeLanguageCode])
 
   // Helper function to get translated section name
   const getTranslatedSectionName = (key: string, fallback: string) => {
