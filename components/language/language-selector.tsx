@@ -827,6 +827,7 @@ export function LanguageSelector() {
   const [isIOS, setIsIOS] = useState(false)
   const [currentSection, setCurrentSection] = useState(1) // Start with FIRST AID KIT (index 1)
   const [uiTranslations, setUiTranslations] = useState<Record<string, string>>({})
+  const [topicTranslations, setTopicTranslations] = useState<Record<number, string>>({})
   const lastTopicSectionRef = useRef(1) // Track which section the user was on when selecting a topic
   const [phonetics, setPhonetics] = useState<Record<string, { target: string; native: string }>>({})
   
@@ -1053,6 +1054,28 @@ export function LanguageSelector() {
     }
     
     fetchUiTranslations()
+  }, [nativeLanguageCode])
+
+  // 🌍 Fetch topic translations
+  useEffect(() => {
+    const fetchTopicTranslations = async () => {
+      if (!nativeLanguageCode) {
+        setTopicTranslations({})
+        return
+      }
+      
+      try {
+        const response = await fetch(`/api/topic-translations?languageCode=${nativeLanguageCode}`)
+        if (response.ok) {
+          const data = await response.json()
+          setTopicTranslations(data.translations || {})
+        }
+      } catch (error) {
+        console.error('Error fetching topic translations:', error)
+      }
+    }
+    
+    fetchTopicTranslations()
   }, [nativeLanguageCode])
 
   // Helper function to get translated section name
@@ -2942,15 +2965,18 @@ export function LanguageSelector() {
 
   // Get display name for topics (with custom name mappings)
   const getTopicDisplayName = (topicId: number, originalName: string): string => {
-    // Custom name mappings for specific topics
+    // First check if we have a translation for this topic in the user's native language
+    if (topicTranslations[topicId]) {
+      return topicTranslations[topicId]
+    }
+    
+    // Fallback: Custom name mappings for English shortened names
     const nameMapping: { [key: number]: string } = {
       8: "Health", // Health & Body Parts → Health
-      11: "Weather", // Weather & Nature → Weather (already merged in database)
+      11: "Weather", // Weather & Nature → Weather
       12: "Family", // Family & Relationships → Family
       17: "City", // Places Around Town → City
       18: "Travel", // Travel & Tourism → Travel
-      // Note: API now has short names for: History, Technology, Art, Mathematics, 
-      // Emotions, Personality, Fitness, Business, Religion, Mythology, Holidays, Daily Language
     }
     
     return nameMapping[topicId] || originalName
