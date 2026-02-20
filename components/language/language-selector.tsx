@@ -3355,7 +3355,7 @@ export function LanguageSelector() {
     return {
       sourceWord: currentWord.sourceWord?.toLowerCase() || '', // Training language word (what user wants to learn) - displayed in lowercase
       targetWord: currentWord.targetWord?.toLowerCase() || '',  // Main language translation (user's native language) - displayed in lowercase
-      category: formatCategory(currentWord.category || '') // Category for verb grouping display
+      category: formatCategory(currentWord.context || '') // Category for verb grouping display (use context not category)
     }
   }
 
