@@ -3343,13 +3343,24 @@ export function LanguageSelector() {
     const formatCategory = (cat: string) => {
       if (!cat) return ''
       
+      let displayText = ''
+      
       // First check if we have a translation for this category
       if (categoryTranslations[cat]) {
-        return categoryTranslations[cat]
+        displayText = categoryTranslations[cat]
+      } else {
+        // Fallback: Replace underscores with spaces
+        displayText = cat.replace(/_/g, ' ')
       }
       
-      // Fallback: Replace underscores with spaces and make uppercase
-      return cat.replace(/_/g, ' ').toUpperCase()
+      // Remove dash and everything after it (e.g., "basic greetings - greetings" -> "basic greetings")
+      const dashIndex = displayText.indexOf(' - ')
+      if (dashIndex !== -1) {
+        displayText = displayText.substring(0, dashIndex)
+      }
+      
+      // Make uppercase
+      return displayText.toUpperCase()
     }
     
     return {
