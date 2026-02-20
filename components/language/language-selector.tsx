@@ -828,6 +828,7 @@ export function LanguageSelector() {
   const [currentSection, setCurrentSection] = useState(1) // Start with FIRST AID KIT (index 1)
   const [uiTranslations, setUiTranslations] = useState<Record<string, string>>({})
   const [topicTranslations, setTopicTranslations] = useState<Record<number, string>>({})
+  const [categoryTranslations, setCategoryTranslations] = useState<Record<string, string>>({})
   const lastTopicSectionRef = useRef(1) // Track which section the user was on when selecting a topic
   const [phonetics, setPhonetics] = useState<Record<string, { target: string; native: string }>>({})
   
@@ -1076,6 +1077,28 @@ export function LanguageSelector() {
     }
     
     fetchTopicTranslations()
+  }, [nativeLanguageCode])
+
+  // 🏷️ Fetch category translations
+  useEffect(() => {
+    const fetchCategoryTranslations = async () => {
+      if (!nativeLanguageCode) {
+        setCategoryTranslations({})
+        return
+      }
+      
+      try {
+        const response = await fetch(`/api/category-translations?languageCode=${nativeLanguageCode}`)
+        if (response.ok) {
+          const data = await response.json()
+          setCategoryTranslations(data)
+        }
+      } catch (error) {
+        console.error('Error fetching category translations:', error)
+      }
+    }
+    
+    fetchCategoryTranslations()
   }, [nativeLanguageCode])
 
   // Helper function to get translated section name
@@ -3316,9 +3339,16 @@ export function LanguageSelector() {
       console.log('🏷️ Current word:', currentWord.sourceWord, 'Category:', currentWord.category, 'learningOrder:', currentWord.learningOrder)
     }
     
-    // Format category: Replace underscores with spaces and make uppercase
+    // Format category: Use translation if available, otherwise format English version
     const formatCategory = (cat: string) => {
       if (!cat) return ''
+      
+      // First check if we have a translation for this category
+      if (categoryTranslations[cat]) {
+        return categoryTranslations[cat]
+      }
+      
+      // Fallback: Replace underscores with spaces and make uppercase
       return cat.replace(/_/g, ' ').toUpperCase()
     }
     
@@ -3915,7 +3945,9 @@ export function LanguageSelector() {
                     }
                     return <BookOpen className="w-7 h-7 sm:w-8 sm:h-8 text-white/80 flex-shrink-0" />
                   })()}
-                  <h1 className="text-lg sm:text-xl md:text-2xl font-medium text-white text-center truncate">{selectedTopic?.name}</h1>
+                  <h1 className="text-lg sm:text-xl md:text-2xl font-medium text-white text-center truncate">
+                    {selectedTopic ? getTopicDisplayName(selectedTopic.id, selectedTopic.name) : ''}
+                  </h1>
                 </div>
                 
                 <button
