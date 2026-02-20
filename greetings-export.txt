@@ -1,0 +1,1870 @@
+GREETINGS TRANSLATIONS
+======================================================================
+
+1. "hello" (ID: 2682)
+   -----------------------------------------------------------------
+   ar: مرحبا
+   bg: Здравей
+   bn: নমস্কার
+   ca: Hola
+   cs: Ahoj
+   cy: Helo
+   da: Hej
+   de: Hallo
+   el: Γεια
+   es: Hola
+   et: Tere
+   eu: Kaixo
+   fa: سلام
+   fi: Hei
+   fr: Bonjour
+   ga: Dia dhuit
+   gu: કેમ છો
+   he: שלום
+   hi: नमस्ते
+   hr: Zdravo
+   hu: Szia
+   id: Halo
+   is: Halló
+   it: Ciao
+   ja: こんにちは
+   ko: 안녕하세요
+   lt: Sveiki
+   lv: Sveiki
+   mk: Здраво
+   ml: ഹലോ
+   mr: नमस्कार
+   mt: Bonġu
+   nl: Hallo
+   no: Hallo
+   pl: Cześć
+   pt: Olá
+   ro: Salut
+   ru: Привет
+   sk: Ahoj
+   sl: Živjo
+   sv: Hej
+   ta: வணக்கம்
+   te: నమస్కారం
+   th: สวัสดี
+   tr: Merhaba
+   uk: Привіт
+   ur: السلام علیکم
+   vi: Xin chào
+   zh: 你好
+
+2. "good morning" (ID: 2683)
+   -----------------------------------------------------------------
+   ar: صباح الخير
+   bg: Добро утро
+   bn: সুপ্রভাত
+   ca: Bon dia
+   cs: Dobré ráno
+   cy: Bore da
+   da: Godmorgen
+   de: Guten Morgen
+   el: καλημέρα
+   es: Buenos días
+   et: Tere hommikust
+   eu: Egun on
+   fa: صبح بخیر
+   fi: Hyvää huomenta
+   fr: Bonjour
+   ga: Dia duit
+   gu: સુપ્રભાત
+   he: בוקר טוב
+   hi: सुप्रभात
+   hr: Dobro jutro
+   hu: Jó reggelt
+   id: Selamat pagi
+   is: Gott morgun
+   it: Buongiorno
+   ja: おはようございます
+   ko: 좋은 아침
+   lt: Labas rytas
+   lv: Labrīt
+   mk: Добро утро
+   ml: ശുഭോദയം
+   mr: सकाळी शुभेच्छा
+   mt: Bonġu
+   nl: Goedemorgen
+   no: God morgen
+   pl: Dzień dobry
+   pt: Bom dia
+   ro: Bună dimineața
+   ru: Доброе утро
+   sk: Dobré ráno
+   sl: Dobro jutro
+   sv: God morgon
+   ta: வணக்கம்
+   te: శుభోదయం
+   th: สวัสดีตอนเช้า
+   tr: Günaydın
+   uk: Добрий ранок
+   ur: صبح بخیر
+   vi: Chào buổi sáng
+   zh: 早上好
+
+3. "good evening" (ID: 2684)
+   -----------------------------------------------------------------
+   ar: مساء الخير
+   bg: Добър вечер
+   bn: শুভ সন্ধ্যা
+   ca: Bon vespre
+   cs: Dobrý večer
+   cy: Noswaith da
+   da: God aften
+   de: Guten Abend
+   el: καλησπέρα
+   es: Buenas noches
+   et: Tere õhtust
+   eu: Arratsalde on
+   fa: شبتون بخیر
+   fi: Hyvää iltaa
+   fr: Bonsoir
+   ga: Dia dhuit
+   gu: સાંજ સાહેબ
+   he: ערב טוב
+   hi: शुभ संध्या
+   hr: Dobro veče
+   hu: Jó estét
+   id: Selamat malam
+   is: Góðan kvöld
+   it: Buonasera
+   ja: こんばんは
+   ko: 좋은 저녁입니다
+   lt: Labas vakaras
+   lv: Labvakar
+   mk: добровечер
+   ml: ഗുഡ് ഈവനിംഗ്
+   mr: संध्याकाळी शुभेच्छा
+   mt: Il
+   nl: Goedenavond
+   no: God kveld
+   pl: Dobry wieczór
+   pt: Boa noite
+   ro: Bună seara
+   ru: Добрый вечер
+   sk: Dobrý večer
+   sl: Dober večer
+   sv: God kväll
+   ta: சாயங்காலம் வணக்கம்
+   te: శుభ సంధ్య
+   th: สวัสดีตอนเย็น
+   tr: iyi akşamlar
+   uk: Добрий вечір
+   ur: خیر شام
+   vi: Chào buổi tối
+   zh: 晚上好
+
+4. "good night" (ID: 2685)
+   -----------------------------------------------------------------
+   ar: تصبح على خير
+   bg: Лека нощ
+   bn: শুভরাত্রি
+   ca: Bonanit
+   cs: Dobrou noc
+   cy: Nos da
+   da: godnat
+   de: Gute Nacht
+   el: καληνύχτα
+   es: Buenas noches
+   et: Head ööd
+   eu: Gau on
+   fa: شب بخیر
+   fi: Hyvää yötä
+   fr: bonsoir
+   ga: Oíche mhaith
+   gu: શુભ રાત્રિ
+   he: לילה טוב
+   hi: शुभ रात्रि
+   hr: laku noć
+   hu: Jó éjszakát
+   id: Selamat malam
+   is: Nættuhvíl
+   it: buonanotte
+   ja: おやすみなさい
+   ko: 잘 자요
+   lt: Labanakt
+   lv: Labas nakts
+   mk: Лека ноќ
+   ml: ശുഭരാത്രി
+   mr: शुभ रात्र
+   mt: Lejl tajjeb
+   nl: Goedenacht
+   no: God natt
+   pl: Dobranoc
+   pt: boa noite
+   ro: Noapte bună
+   ru: Спокойной ночи
+   sk: Dobrú noc
+   sl: Dober večer
+   sv: God natt
+   ta: இனிய இரவு
+   te: శుభరాత్రి
+   th: ราตรีสวัสดิ์
+   tr: İyi geceler
+   uk: Доброї ночі
+   ur: شب بخیر
+   vi: Chúc ngủ ngon
+   zh: 晚安
+
+5. "my name is Alex" (ID: 2686)
+   -----------------------------------------------------------------
+   ar: اسمي أليكس
+   bg: Казвам се Алекс
+   bn: আমার নাম অ্যালেক্স
+   ca: Em dic Alex
+   cs: Jmenuji se Alex
+   cy: Rwy'n Alex
+   da: Mit navn er Alex
+   de: Ich heiße Alex
+   el: Με λένε Άλεξ
+   es: Me llamo Alex
+   et: Minu nimi on Alex
+   eu: Alex da nire izena
+   fa: نام من الکس است
+   fi: Minun nimeni on Alex
+   fr: Je m'appelle Alex
+   ga: Is mise Alex
+   gu: મારું નામ એલેક્ષ છે
+   he: שמי אלכס
+   hi: मेरा नाम एलेक्स है
+   hr: Zovem se Alex
+   hu: A nevem Alex
+   id: Nama saya Alex
+   is: Ég heiti Alex
+   it: Mi chiamo Alex
+   ja: アレックスです
+   ko: 제 이름은 알렉스입니다
+   lt: Mane Aleksas
+   lv: Mani sauc Aleksa
+   mk: Јас сум Алекс
+   ml: എന്റെ പേര് ആലക്സ്
+   mr: माझं नाव अलेक्स आहे
+   mt: Ismi Alex
+   nl: Mijn naam is Alex
+   no: Jeg heter Alex
+   pl: Nazywam się Alex
+   pt: Meu nome é Alex
+   ro: Mă numesc Alex
+   ru: Меня зовут Алекс
+   sk: Volám sa Alex
+   sl: Ime mi je Alex
+   sv: Jag heter Alex
+   ta: என் பெயர் அலெக்ஸ்
+   te: నా పేరు ఆలెక్స్
+   th: ชื่อผมคืออเล็กซ์
+   tr: Benim adım Alex
+   uk: Мене звуть Алекс
+   ur: میرا نام Alex ہے
+   vi: Tôi tên là Alex
+   zh: 我叫Alex
+
+6. "what is your name?" (ID: 2687)
+   -----------------------------------------------------------------
+   ar: ما اسمك؟
+   bg: Как се казвате?
+   bn: আপনার নাম কি?
+   ca: Com et dius?
+   cs: Jak se jmenujete?
+   cy: Beth yw eich enw?
+   da: Hvad hedder du?
+   de: Wie heißen Sie?
+   el: Πώς σε λένε;
+   es: ¿Cómo te llamas?
+   et: Kuidas sind kutsutakse?
+   eu: Zein da zure izena?
+   fa: اسم شما چیست؟
+   fi: Mikä sinun nimesi on?
+   fr: Comment vous appelez
+   ga: Cad é d'ainm?
+   gu: તમારું નામ શું છે?
+   he: מה שמך?
+   hi: आपका नाम क्या है?
+   hr: Kako se zovete?
+   hu: Hogy hívják?
+   id: Siapa namamu?
+   is: Hvað heitir þú?
+   it: Come ti chiami?
+   ja: お名前は？
+   ko: 이름이 무엇입니까?
+   lt: Koks jūsų vardas?
+   lv: Kā tevi sauc?
+   mk: Како се викаш?
+   ml: നിങ്ങളുടെ പേരെന്താണ്?
+   mr: तुमचे नाव काय आहे?
+   mt: Ismek x'inhu?
+   nl: Hoe heet je?
+   no: Hva heter du?
+   pl: Jak masz na imię?
+   pt: Qual o seu nome?
+   ro: Cum te numești?
+   ru: Как вас зовут?
+   sk: Ako sa voláš?
+   sl: Kako se imenujete?
+   sv: Vad heter du?
+   ta: உங்கள் பெயர் என்ன?
+   te: మీ పేరు ఏమిటి?
+   th: คุณชื่ออะไร
+   tr: Adınız nedir?
+   uk: Як вас звати?
+   ur: آپ کا نام کیا ہے؟
+   vi: Tên bạn là gì?
+   zh: 你叫什么名字？
+
+7. "nice to meet you" (ID: 2688)
+   -----------------------------------------------------------------
+   ar: يسرني أن أقابلك
+   bg: Приятно ми е да се запознаем
+   bn: আপনার সাথে দেখা হয়ে ভালো লাগল
+   ca: Encantat de conèixer
+   cs: Rádo jsem vás poznal
+   cy: Hwyl fawr i'ch cyfarfod
+   da: Dejligt at møde dig
+   de: Freut mich
+   el: Χάρηκα πολύ που σας γνώρισα
+   es: Mucho gusto
+   et: Tore kohtuda
+   eu: Zurekin ezagutzea pozgarria da
+   fa: خوشبختم
+   fi: Mukava tavata
+   fr: Enchanté
+   ga: Dia duit
+   gu: આપને મળીને આનંદ થયો
+   he: נעים מאוד להכיר
+   hi: आपसे मिलकर अच्छा लगा
+   hr: Drago mi je
+   hu: Örülök, hogy megismerhettelek
+   id: Senang bertemu dengan Anda
+   is: Það er gott að kynnast þér
+   it: Piacere di conoscerti
+   ja: はじめまして
+   ko: 만나서 반갑습니다
+   lt: Malonu susipažinti
+   lv: Patīkami iepazīties
+   mk: Драго ми е
+   ml: സന്തോഷമുണ്ട് നിങ്ങളെ കാണാന്‍
+   mr: तुम्हाला भेटून आनंद झाला
+   mt: Pjaċir li niltaqgħu miegħek
+   nl: Aangenaam
+   no: Hyggelig å møte deg
+   pl: Miło mi cię poznać
+   pt: Prazer em conhecê
+   ro: Încântat de cunoștință
+   ru: Приятно познакомиться
+   sk: Teší ma
+   sl: Lep pozdrav
+   sv: Trevligt att träffa dig
+   ta: சந்தித்ததில் மகிழ்ச்சி
+   te: మీతో పరిచయం చేసుకున్నందుకు సంతోషంగా ఉంది
+   th: ยินดีที่ได้รู้จัก
+   tr: Tanıştığıma memnun oldum
+   uk: Приємно познайомитися
+   ur: آپ سے مل کر خوشی ہوئی
+   vi: Rất vui được gặp bạn
+   zh: 很高兴认识你
+
+8. "how are you?" (ID: 2689)
+   -----------------------------------------------------------------
+   ar: كيف حالك؟
+   bg: Как си?
+   bn: আপনার কেমন আছেন?
+   ca: Com estàs?
+   cs: Jak se máš?
+   cy: Sut mae?
+   da: Hvordan går det?
+   de: Wie geht es Ihnen?
+   el: Τι κάνεις;
+   es: ¿Cómo estás?
+   et: Kuidas läheb?
+   eu: Zer moduz?
+   fa: خوبی؟
+   fi: Mitä kuuluu?
+   fr: Comment allez
+   ga: Conas atá tú?
+   gu: કેમ છો?
+   he: מה שלומך?
+   hi: आप कैसे हैं?
+   hr: Kako si?
+   hu: Hogy vagy?
+   id: Apa kabar?
+   is: Hvernig hefurðu það?
+   it: Come stai?
+   ja: はじめまして
+   ko: 안녕하세요
+   lt: Labas
+   lv: Kā klājas?
+   mk: Како си?
+   ml: സുഖമോ
+   mr: कसे आहात?
+   mt: Kif int?
+   nl: Hoe gaat het?
+   no: Hvordan går det?
+   pl: Jak się masz?
+   pt: Como está?
+   ro: Ce mai faci?
+   ru: Как дела?
+   sk: Ako sa máš?
+   sl: Kako si?
+   sv: Hur mår du?
+   ta: எப்படி இருக்கீங்க?
+   te: ఎలా ఉన్నారు?
+   th: สบายดีไหม
+   tr: Nasılsınız?
+   uk: Як справи?
+   ur: کیا حال ہے؟
+   vi: Dạ khỏe không ạ?
+   zh: 你好
+
+9. "I'm fine, thank you" (ID: 2690)
+   -----------------------------------------------------------------
+   ar: بخير شكراً
+   bg: Добре съм, благодаря
+   bn: আমি ভালো আছি, ধন্যবাদ
+   ca: Bé, gràcies
+   cs: Děkuji, dobře
+   cy: Rydw i'n iawn, diolch
+   da: Jeg har det fint, tak
+   de: Mir geht es gut, danke
+   el: Είμαι καλά, ευχαριστώ
+   es: Bien, gracias
+   et: Mul on kõik hästi, aitäh
+   eu: Ongi nago, eskerrik asko
+   fa: خوبم، ممنونم
+   fi: Hyvä, kiitos
+   fr: Ça va bien, merci
+   ga: Go raibh maith agat, tá mé go maith
+   gu: હું બરાબર છું, આભાર
+   he: בסדר גמור, תודה
+   hi: मैं ठीक हूँ, धन्यवाद
+   hr: Dobro sam, hvala
+   hu: Jól vagyok, köszönöm
+   id: Baik, terima kasih
+   is: Ég er í lagi, takk
+   it: Sto bene, grazie
+   ja: 大丈夫です、ありがとうございます
+   ko: 괜찮아요, 고맙습니다
+   lt: Ačiū, gerai
+   lv: Paldies, labi
+   mk: Добре сум, благодарам
+   ml: ക്ഷമിക്കണം, സുഖമാണ്
+   mr: मी ठीक आहे, धन्यवाद
+   mt: Tajba, grazzi
+   nl: Het gaat goed, dank u
+   no: Jeg har det bra, takk
+   pl: Dobrze, dziękuję
+   pt: Estou bem, obrigado
+   ro: Bine, mulțumesc
+   ru: Спасибо, хорошо
+   sk: Ďakujem, dobre
+   sl: V redu, hvala
+   sv: Jag mår bra, tack
+   ta: நல்லா இருக்கேன், நன்றி
+   te: బాగున్నాను, ధన్యవాదాలు
+   th: สบายดีค่ะ
+   tr: İyiyim, teşekkür ederim
+   uk: Дякую, добре
+   ur: میں ٹھیک ہوں، شکریہ
+   vi: Tôi khỏe, cảm ơn
+   zh: 我很好，谢谢
+
+10. "pleased to meet you" (ID: 2691)
+   -----------------------------------------------------------------
+   ar: سُررتُ بلِقائِك
+   bg: Радвам се да се запознаем
+   bn: আপনার সাথে দেখা হয়ে ভালো লাগল
+   ca: Encantat de conèixer
+   cs: Rád
+   cy: Mae'n bleser gennyf eich cyfarfod
+   da: Dejligt at møde dig
+   de: Freut mich
+   el: Χάρηκα που σας γνώρισα
+   es: Encantado de conocerte
+   et: Tore teiega kohtuda
+   eu: Zurekin pozik
+   fa: خوشبختم
+   fi: Mukavaa tutustua
+   fr: Enchanté
+   ga: Áthas orm bualadh leat
+   gu: આપને મળીને આનંદ થયો
+   he: נעים מאוד להכיר
+   hi: आपसे मिलकर खुशी हुई
+   hr: Drago mi je
+   hu: Örülök, hogy megismerhettelek
+   id: Senang bertemu dengan Anda
+   is: Það gleður mig að kynnast þér
+   it: Piacere di conoscerla
+   ja: はじめまして
+   ko: 만나서 반갑습니다
+   lt: Malonu susipažinti
+   lv: Patīkami iepazīties
+   mk: Драго ми е што се запознавме
+   ml: സന്തോഷമുണ്ട് നിങ്ങളെ കണ്ടതില്‍
+   mr: तुम्हाला भेटून आनंद झाला
+   mt: It
+   nl: Aangenaam
+   no: Hyggelig å møte deg
+   pl: Miło mi cię poznać
+   pt: Prazer em conhecê
+   ro: Încântat de cunoștință
+   ru: Рада
+   sk: Teší ma
+   sl: Vesel
+   sv: Trevligt att träffas
+   ta: சந்தித்ததில் மகிழ்ச்சி
+   te: మీతో పరిచయం చేసుకున్నందుకు సంతోషంగా ఉంది
+   th: ยินดีที่ได้รู้จัก
+   tr: Tanıştığımıza memnun oldum
+   uk: Приємно познайомитися
+   ur: آپ سے مل کر خوشی ہوئی
+   vi: Rất vui được gặp bạn
+   zh: 很高兴认识你
+
+11. "please" (ID: 2692)
+   -----------------------------------------------------------------
+   ar: من فضلك
+   bg: моля
+   bn: অনুগ্রহ করে
+   ca: Si us plau
+   cs: Prosím
+   cy: Os gwelwch yn dda
+   da: Venligst
+   de: Bitte
+   el: παρακαλώ
+   es: Por favor
+   et: palun
+   eu: Mesedez
+   fa: لطفا
+   fi: Ole hyvä
+   fr: s'il vous plaît
+   ga: Le do thoil
+   gu: कृपया
+   he: בבקשה
+   hi: कृपया
+   hr: molim
+   hu: kérem
+   id: silakan
+   is: Vinsamlegast
+   it: Per favore
+   ja: お願いします
+   ko: 부탁드립니다
+   lt: Prašau
+   lv: Lūdzu
+   mk: ве молам
+   ml: ദയവായി
+   mr: कृपया
+   mt: Jekk jogħġbok
+   nl: alsjeblieft
+   no: vær så snill
+   pl: Proszę
+   pt: por favor
+   ro: Te rog
+   ru: Пожалуйста
+   sk: Prosím
+   sl: prosim
+   sv: Snälla
+   ta: தயவுசெய்து
+   te: దయచేసి
+   th: กรุณา
+   tr: Lütfen
+   uk: будь ласка
+   ur: कृपया
+   vi: Làm ơn
+   zh: 请
+
+12. "thank you" (ID: 2693)
+   -----------------------------------------------------------------
+   ar: شكرا
+   bg: Благодаря
+   bn: ধন্যবাদ
+   ca: Gràcies
+   cs: Děkuji
+   cy: Diolch
+   da: Tak
+   de: Danke
+   el: ευχαριστώ
+   es: Gracias
+   et: Aitäh
+   eu: Eskerrik asko
+   fa: متشکرم
+   fi: Kiitos
+   fr: Merci
+   ga: Go raibh maith agat
+   gu: ધન્યવાદ
+   he: תודה
+   hi: धन्यवाद
+   hr: Hvala
+   hu: Köszönöm
+   id: Terima kasih
+   is: Takk
+   it: Grazie
+   ja: ありがとうございます
+   ko: 감사합니다
+   lt: Ačiū
+   lv: Paldies
+   mk: Благодарам
+   ml: നന്ദി
+   mr: धन्यवाद
+   mt: Grazzi
+   nl: dank u wel
+   no: Takk
+   pl: dziękuję
+   pt: obrigado
+   ro: Mulțumesc
+   ru: Спасибо
+   sk: Ďakujem
+   sl: Hvala
+   sv: Tack
+   ta: நன்றி
+   te: ధన్యవాదాలు
+   th: ขอบคุณ
+   tr: Teşekkür ederim
+   uk: Дякую
+   ur: شکریہ
+   vi: Cảm ơn
+   zh: 谢谢
+
+13. "yes" (ID: 2694)
+   -----------------------------------------------------------------
+   ar: نعم
+   bg: Да
+   bn: হ্যাঁ
+   ca: Sí
+   cs: Ano
+   cy: Ie
+   da: Ja
+   de: Ja
+   el: ναι
+   es: Sí
+   et: Jah
+   eu: Bai
+   fa: بله
+   fi: Kyllä
+   fr: Oui
+   ga: Sea
+   gu: હા
+   he: כן
+   hi: हाँ
+   hr: Da
+   hu: Igen
+   id: Ya
+   is: Já
+   it: Sì
+   ja: はい
+   ko: 네
+   lt: Taip
+   lv: Jā
+   mk: Да
+   ml: അതെ
+   mr: होय
+   mt: Iva
+   nl: Ja
+   no: Ja
+   pl: Tak
+   pt: Sim
+   ro: Da
+   ru: Да
+   sk: Áno
+   sl: Da
+   sv: Ja
+   ta: ஆம்
+   te: అవును
+   th: ครับ
+   tr: Evet
+   uk: Так
+   ur: جی ہاں
+   vi: Vâng
+   zh: 是的
+
+14. "no" (ID: 2695)
+   -----------------------------------------------------------------
+   ar: لا
+   bg: Не
+   bn: না
+   cs: Ne
+   cy: Na
+   da: Nej
+   de: Nein
+   el: όχι
+   et: ei
+   eu: Ez
+   fa: نه
+   fi: Ei
+   fr: Non
+   ga: Ní
+   gu: ના
+   he: לא
+   hi: नहीं
+   hr: Ne
+   hu: Nem
+   id: Tidak
+   is: Nei
+   ja: いいえ
+   ko: 아니요
+   lt: Ne
+   lv: Nē
+   mk: Не
+   ml: ഇല്ല
+   mr: नाही
+   mt: Le
+   nl: Nee
+   no: nei
+   pl: Nie
+   pt: não
+   ro: Nu
+   ru: нет
+   sk: Nie
+   sl: Ne
+   sv: Nej
+   ta: இல்லை
+   te: లేదు
+   th: ไม่
+   tr: Hayır
+   uk: ні
+   ur: جی نہیں
+   vi: Không
+   zh: 不
+
+15. "okay" (ID: 2696)
+   -----------------------------------------------------------------
+   ar: تمام
+   bg: Добре
+   bn: ঠিক আছে
+   ca: D'acord
+   cs: Dobře
+   cy: Iawn
+   el: εντάξει
+   es: Vale
+   et: Olgu
+   eu: Bai
+   fa: باشه
+   fi: hyvä
+   fr: D'accord
+   ga: Ceart go leor
+   gu: ઠીક છે
+   he: בסדר
+   hi: ठीक है
+   hr: U redu
+   hu: Rendben
+   id: Baik
+   is: Í lagi
+   it: Va bene
+   ja: はい
+   ko: 네
+   lt: Gerai
+   lv: Labi
+   mk: добро
+   ml: ശരി
+   mr: ठीक आहे
+   mt: Tajba
+   nl: Goed
+   no: Greit
+   pl: Dobrze
+   pt: Tudo bem
+   ro: Bună
+   ru: Хорошо
+   sk: Dobre
+   sl: V redu
+   sv: Okej
+   ta: சரி
+   te: సరే
+   th: ค่ะ
+   tr: Tamam
+   uk: Гаразд
+   ur: ٹھیک ہے
+   vi: Được rồi
+   zh: 好的
+
+16. "sure" (ID: 2697)
+   -----------------------------------------------------------------
+   ar: بالتأكيد
+   bg: Разбира се
+   bn: ঠিক আছে
+   ca: Sí
+   cs: Jasně
+   cy: Ie
+   da: Ja
+   de: Sicher
+   el: βέβαια
+   es: Claro
+   et: jah
+   eu: Bai
+   fa: حتماً
+   fi: Toki
+   fr: Bien sûr
+   ga: Sea
+   gu: ચોક્કસ
+   he: בוודאי
+   hi: ठीक है
+   hr: Naravno
+   hu: Persze
+   id: Tentu
+   is: Jú
+   it: Certo
+   ja: かしこまりました
+   ko: 네
+   lt: Gerai
+   lv: Protams
+   mk: Секако
+   ml: തീര്‍ച്ചയായും
+   mr: ठीक आहे
+   mt: Iva
+   nl: Natuurlijk
+   no: Jada
+   pl: Jasne
+   pt: Claro
+   ro: Sigur
+   ru: Конечно
+   sk: Iste
+   sl: Seveda
+   sv: Javisst
+   ta: சரி
+   te: ఖచ్చితంగా
+   th: ค่ะ
+   tr: Elbette
+   uk: Звичайно
+   ur: ٹھیک ہے
+   vi: Vâng
+   zh: 好的
+
+17. "you're welcome" (ID: 2698)
+   -----------------------------------------------------------------
+   ar: عفواً
+   bg: Моля
+   bn: ধন্যবাদ
+   ca: De res
+   cs: Prosím
+   cy: Croeso
+   da: Velkommen
+   de: Bitte
+   el: παρακαλώ
+   es: De nada
+   et: Palun
+   eu: Ez horregatik
+   fa: خواهش میکنم
+   fi: Ole hyvä
+   fr: De rien
+   ga: Go raibh maith agat
+   gu: આપનું સ્વાગત છે
+   he: בבקשה
+   hi: स्वागत है
+   hr: Nema na čemu
+   hu: Szívesen
+   id: Sama
+   is: Þetta er ekkert mál
+   it: Prego
+   ja: どういたしまして
+   ko: 천만에요
+   lt: Prašau
+   lv: Lūdzu
+   mk: Нема проблем
+   ml: സ്വാഗതം
+   mr: नकोरे
+   mt: Prego
+   nl: Graag gedaan
+   no: Vær så god
+   pl: Proszę
+   pt: De nada
+   ro: Cu plăcere
+   ru: Пожалуйста
+   sk: Prosím
+   sl: Prosim
+   sv: Varsågod
+   ta: சமாதானம்
+   te: అస్సలు
+   th: ไม่เป็นไร
+   tr: rica ederim
+   uk: Будь ласка
+   ur: خوش آمدید
+   vi: Không có gì
+   zh: 不客气
+
+18. "excuse me" (ID: 2699)
+   -----------------------------------------------------------------
+   ar: عفواً
+   bg: Извинете
+   bn: দয়া করে
+   ca: Perdoni
+   cs: Promiňte
+   cy: Mae'n ddrwg gennyf
+   da: Undskyld
+   de: Entschuldigung
+   el: Συγνώμη
+   es: Disculpe
+   et: Vabandust
+   eu: Barkatu
+   fa: ببخشید
+   fi: Anteeksi
+   fr: Excusez
+   ga: Máthair Dhé
+   gu: માફ કરશો
+   he: סליחה
+   hi: क्षमा करें
+   hr: Oprostite
+   hu: Elnézést
+   id: Permisi
+   is: Þetta afsakið
+   it: Scusi
+   ja: すみません
+   ko: 죄송합니다
+   lt: Atsiprašau
+   lv: Atvainojiet
+   mk: Извини
+   ml: ക്ഷമിക്കണം
+   mr: मला माफ करा
+   mt: Jiena naħferlek
+   nl: Pardon
+   no: unnskyld
+   pl: Przepraszam
+   pt: Com licença
+   ro: Scuze
+   ru: Извините
+   sk: Prepáčte
+   sl: Oprostite
+   sv: ursäkta
+   ta: சாரி
+   te: క్షమించండి
+   th: ขอโทษค่ะ
+   tr: Afedersiniz
+   uk: Вибачте
+   ur: معاف کیجیے
+   vi: Xin lỗi
+   zh: 对不起
+
+19. "sorry" (ID: 2700)
+   -----------------------------------------------------------------
+   ar: عفواً
+   bg: Извинете
+   bn: দুঃখিত
+   ca: Ho sento
+   cs: Promiňte
+   cy: Mae'n ddrwg gennyf
+   da: Undskyld
+   de: Entschuldigung
+   el: Συγνώμη
+   es: Disculpa
+   et: Vabandust
+   eu: Barkatu
+   fa: متاسفم
+   fi: Anteeksi
+   fr: Excusez
+   ga: Gabh mo leithscéal
+   gu: માફ કરશો
+   he: סליחה
+   hi: क्षमा करें
+   hr: Oprostite
+   hu: Elnézést
+   id: Maaf
+   is: Þvílíkt
+   it: Scusi
+   ja: すみません
+   ko: 죄송합니다
+   lt: Atsiprašau
+   lv: Atvainojiet
+   mk: Извини
+   ml: ക്ഷമിക്കണം
+   mr: माफ करा
+   mt: Jiena naħfer
+   nl: Het spijt me
+   no: Beklager
+   pl: Przepraszam
+   pt: Desculpe
+   ro: Scuze
+   ru: Извини
+   sk: Prepáč
+   sl: Oprostite
+   sv: Ursäkta
+   ta: சாரி
+   te: క్షమించండి
+   th: ขอโทษค่ะ
+   tr: Kusura bakmayın
+   uk: Вибачте
+   ur: معاف کیجیے
+   vi: xin lỗi
+   zh: 对不起
+
+20. "no problem" (ID: 2701)
+   -----------------------------------------------------------------
+   ar: لا مشكلة
+   bg: Няма проблем
+   bn: কোনো সমস্যা নেই
+   ca: De res
+   cs: Není problém
+   cy: Dim problem
+   da: Ingen problem
+   de: Kein Problem
+   el: κανένα πρόβλημα
+   es: De nada
+   et: Pole probleemi
+   eu: Arazo ez
+   fa: مشکلی نیست
+   fi: Ei hätää
+   fr: Pas de problème
+   ga: gan fhadhb
+   gu: કોઈ વાંધો નહીં
+   he: אין בעיה
+   hi: कोई बात नहीं
+   hr: Nema problema
+   hu: Nincs probléma
+   id: Tidak masalah
+   is: Ekkert mál
+   it: Prego
+   ja: 大丈夫です
+   ko: 괜찮아요
+   lt: Nieko
+   lv: Nav problēmu
+   mk: Нeма проблем
+   ml: പ്രശ്നമില്ല
+   mr: काही हरकत नाही
+   mt: Mela m'hemmx problema
+   nl: Graag gedaan
+   no: Ingen problem
+   pl: Proszę
+   pt: De nada
+   ro: Nicio problemă
+   ru: Пожалуйста
+   sk: žiadny problém
+   sl: Ni problema
+   sv: Ingen fara
+   ta: சரி
+   te: సమస్య లేదు
+   th: ไม่เป็นไร
+   tr: Sorun değil
+   uk: Звісно
+   ur: کوئی بات نہیں
+   vi: Không có gì
+   zh: 没问题
+
+21. "welcome" (ID: 2702)
+   -----------------------------------------------------------------
+   ar: أهلًا
+   bg: Добре дошли
+   bn: আপনাকে স্বাগতম
+   ca: Benvingut
+   cs: Vítejte
+   cy: Croeso
+   da: Velkommen
+   de: Willkommen
+   el: Καλώς ήρθατε
+   es: Bienvenido
+   et: Tere tulemast
+   eu: Ongi etorri
+   fa: خوش آمدید
+   fi: Tervetuloa
+   fr: Bienvenue
+   ga: Fáilte
+   gu: સ્વાગત
+   he: ברוכים הבאים
+   hi: स्वागत
+   hr: Dobrodošli
+   hu: Üdvözlöm
+   id: Selamat datang
+   is: Velkominn
+   it: Benvenuti
+   ja: いらっしゃいませ
+   ko: 환영합니다
+   lt: Sveiki
+   lv: Laipni lūgti
+   mk: Добредојде
+   ml: സ്വാഗതം
+   mr: स्वागत
+   mt: Merħba
+   nl: Welkom
+   no: Velkommen
+   pl: Witaj
+   pt: Bem
+   ro: Bun venit
+   ru: Добро пожаловать
+   sk: Vitajte
+   sl: Dobrodošli
+   sv: välkommen
+   ta: வருகை
+   te: స్వాగతం
+   th: ยินดีต้อนรับ
+   tr: Hoş geldiniz
+   uk: Ласкаво просимо
+   ur: خوش آمدید
+   vi: Chào mừng
+   zh: 欢迎
+
+22. "come in" (ID: 2703)
+   -----------------------------------------------------------------
+   ar: تفضل
+   bg: Влезте
+   bn: আসুন
+   ca: Passeu
+   cs: Pojďte dál
+   cy: Dewch i mewn
+   da: kom ind
+   de: Herein
+   el: μπείτε
+   es: Pase
+   et: Tulge sisse
+   eu: Sartu
+   fa: بیایید داخل
+   fi: Tule sisään
+   fr: Entrez
+   ga: Téigh isteach
+   gu: આવો
+   he: בוא
+   hi: आइए
+   hr: Uđite
+   hu: Szóljon be
+   id: Silakan masuk
+   is: Komdu inn
+   it: Entri
+   ja: どうぞ
+   ko: 어서 오세요
+   lt: Ateik
+   lv: Ienāc
+   mk: Влез
+   ml: വാ
+   mr: आवा
+   mt: Idħol
+   nl: Kom binnen
+   no: Kom inn
+   pl: Proszę
+   pt: Entre
+   ro: Intrați
+   ru: Заходите
+   sk: Prosím, poďte
+   sl: Vstopite
+   sv: kom in
+   ta: வாங்க
+   te: రండి
+   th: เชิญครับ
+   tr: Buyur
+   uk: Заходьте
+   ur: آئیے
+   vi: Vào đi
+   zh: 进来
+
+23. "how do you do?" (ID: 2704)
+   -----------------------------------------------------------------
+   ar: أهلًا بك
+   bg: Как сте?
+   bn: আপনার কেমন আছেন?
+   ca: Bon dia
+   cs: Dobrý den
+   cy: Sut mae?
+   da: Hvordan har De det?
+   de: Guten Tag
+   el: καλημέρα
+   es: ¿Cómo está usted?
+   et: Tere
+   eu: Kaixo
+   fa: سلام علیکم
+   fi: Kuuluuko
+   fr: Bonjour
+   ga: Dia duit
+   gu: કેમ છો
+   he: שלום
+   hi: आप कैसे हैं?
+   hr: Dobar dan
+   hu: Hogy van?
+   id: Selamat pagi
+   is: Hvernig hefur þú það?
+   it: Come sta?
+   ja: 始めまして
+   ko: 안녕하십니까
+   lt: Labas
+   lv: Labdien
+   mk: Здраво
+   ml: സുഖമോ?
+   mr: नमस्कार
+   mt: Kif int?
+   nl: Hoe maakt u het?
+   no: Hvordan har De det?
+   pl: Dzień dobry
+   pt: Como está?
+   ro: Bună ziua
+   ru: Здравствуйте
+   sk: Dobrý deň
+   sl: Dober dan
+   sv: Hur mår du?
+   ta: வணக்கம்
+   te: ఎలా ఉన్నారు?
+   th: สวัสดีครับ
+   tr: Nasılsınız?
+   uk: Як Ви поживаєте?
+   ur: کیا حال ہے؟
+   vi: Chào ông
+   zh: 您好
+
+24. "pleasure to meet you" (ID: 2705)
+   -----------------------------------------------------------------
+   ar: سُرُورٌ لِمُقابَلَتِكُم
+   bg: Радвам се да се запознаем
+   bn: আপনার সাথে দেখা হয়ে অনেক আনন্দ হল
+   ca: El plaer de conèixer
+   cs: Těší mě
+   cy: Mae'n bleser mawr i'm cyfarfod â chi
+   da: Det var en fornøjelse at møde dig
+   de: Freut mich, Sie kennenzulernen
+   el: Χαρά μου η γνωριμία σας
+   es: Mucho gusto
+   et: Hea meel teiega kohtuda
+   eu: Zurekin ezagutzea pozgarria da
+   fa: ملاقات شما باعث خوشحالی من است
+   fi: Ilahduttavaa tavata teidät
+   fr: Enchanté
+   ga: Áthas liom bhur gcaitheamh a fheiceáil
+   gu: આપને મળીને આનંદ થયો
+   he: הנאה רבה להכירך
+   hi: आपसे मिलकर बहुत खुशी हुई
+   hr: Drago mi je što sam vas upoznao
+   hu: Örömmel ismerkedtem önnel
+   id: Senang bertemu dengan Anda
+   is: Mjög þægilegt að kynnast þér
+   it: Piacere di conoscerla
+   ja: はじめまして
+   ko: 만나서 반갑습니다
+   lt: Malonu susipažinti
+   lv: Prieks jūs satikt
+   mk: Задоволство ми е што ве запознав
+   ml: സന്തോഷമുണ്ട് നിങ്ങളെ കണ്ടതില്‍
+   mr: तुम्हाला भेटून आनंद झाला
+   mt: Pjaċir iltqajna
+   nl: Aangenaam kennis te maken
+   no: Behør å møte deg
+   pl: Miło mi pana
+   pt: Prazer em conhecê
+   ro: Încântat de cunoștință
+   ru: Приятно познакомиться
+   sk: Teší ma
+   sl: Veseli me, da sem vas spoznal
+   sv: Trevligt att träffas
+   ta: சந்தித்ததில் மகிழ்ச்சி
+   te: మిమ్మల్ని కలుసుకోవడం ఆనందంగా ఉంది
+   th: ยินดีที่ได้พบคุณ
+   tr: Tanıştığıma memnun oldum
+   uk: Задоволення познайомитися з вами
+   ur: آپ سے ملاقات کرکے خوشی ہوئی
+   vi: Rất hân hạnh được gặp ông
+   zh: 很高兴认识您
+
+25. "may I introduce myself?" (ID: 2706)
+   -----------------------------------------------------------------
+   ar: هل لي أن أعرف بنفسي؟
+   bg: Позволете ми да се представя
+   bn: আমি নিজেকে পরিচয় করতে পারি?
+   ca: Permeti'm presentar
+   cs: Dovolte mi představit se
+   cy: Gadewch imi fy nghyflwyno fy hun
+   da: Må jeg introducere mig?
+   de: Darf ich mich vorstellen?
+   el: Επιτρέψτε μου να σας συστηθώ
+   es: ¿Puedo presentarme?
+   et: Luba mul ennast tutvustada
+   eu: Utzi al didat aurkeztu?
+   fa: اجازه بدهید خودم را معرفی کنم
+   fi: Saanko esittäytyä
+   fr: Puis
+   ga: An bhfuil cead agam dul isteach?
+   gu: શું હું મારી જાતને પરિચય આપી શકું?
+   he: אני מצטער, האם אוכל להציג את עצמי?
+   hi: क्या मैं अपना परिचय दे सकता हूँ?
+   hr: Dopuštite da se predstavim
+   hu: Engedje meg, hogy bemutatkozzam
+   id: Perkenalkan diri saya
+   is: Má ég kynna mig?
+   it: Posso presentarmi?
+   ja: はじめまして
+   ko: 제 소개를 드리겠습니다
+   lt: Leiskite man prisistatyti
+   lv: Atļaujiet man iepazīstināties
+   mk: Дозволете да се претставам
+   ml: എന്നെ പരിചയപ്പെടുത്താമോ?
+   mr: मी स्वतःचा परिचय देऊ शकतो का?
+   mt: Jien nista' nippreżenta lili nnifsi?
+   nl: Mag ik mij voorstellen?
+   no: Får jeg presentere meg?
+   pl: Czy mogę się przedstawić?
+   pt: Posso me apresentar?
+   ro: Îmi permiteți să mă prezint?
+   ru: Разрешите представиться
+   sk: Dovoľte mi predstaviť sa
+   sl: Dovolite, da se predstavim.
+   sv: Får jag presentera mig?
+   ta: என்னை அறிமுகப்படுத்திக்கொள்ளலாமா?
+   te: నేను నా పరిచయాన్ని చేసుకోవచ్చా?
+   th: ขออนุญาตแนะนำตัวค่ะ
+   tr: Tanışabilir miyim?
+   uk: Дозвольте представитися
+   ur: میں اپنا تعارف کروا سکتا ہوں؟
+   vi: xin chào, tôi xin tự giới thiệu
+   zh: 请问允许我自我介绍一下？
+
+26. "let me introduce my wife" (ID: 2707)
+   -----------------------------------------------------------------
+   ar: اسمحوا لي أن أُعرفكم بزوجتي
+   bg: Позволете ми да ви представя съпругата си
+   bn: আমার স্ত্রীর সাথে পরিচয় করিয়ে দিই
+   ca: Permeti'm presentar
+   cs: Dovolte mi představit mou manželku
+   cy: Caniatâd i mi gyflwyno fy ngwraig
+   da: Må jeg præsentere min hustru
+   de: Darf ich Ihnen meine Frau vorstellen
+   el: Ας σας συστήσω τη σύζυγό μου
+   es: Permítame presentarles a mi esposa
+   et: Lubage mul oma abikaasat tutvustada
+   eu: Ezagutarazi nahi dizuet emaztea
+   fa: اجازه بدهید همسرم را به شما معرفی کنم
+   fi: Saattakaa minut esittelemään vaimoni
+   fr: Permettez
+   ga: Lig dom mo bhean chéile a thabhairt isteach
+   gu: મારી પત્નીનો પરિચય કરાવું
+   he: אשתתי
+   hi: आपसे मेरी पत्नी का परिचय कराती हूँ
+   hr: Dopuštite da vam predstavim svoju suprugu
+   hu: Engedje meg, hogy bemutassam feleségemet
+   id: Izinkan saya memperkenalkan istri saya
+   is: Leyfið mér að kynna eiginkonu mína
+   it: Permettimi di presentarvi mia moglie
+   ja: 奥様をご紹介いたします
+   ko: 제 아내를 소개합니다
+   lt: Leiskite pristatyti mano žmoną
+   lv: Ļaujiet man iepazīstināt manu sievu
+   mk: Дозволете ми да ви ја запознаам мојата сопруга
+   ml: എന്റെ ഭാര്യയെ പരിചയപ്പെടുത്തട്ടെ
+   mr: मला माझी पत्नी ओळखवू द्या
+   mt: Ħalluni nintroduċi lil marti
+   nl: Laat mij mijn vrouw voorstellen
+   no: La meg presentere min kone
+   pl: Pozwolę sobie przedstawić moją żonę
+   pt: Permitam
+   ro: Permiteți
+   ru: Разрешите представить мою супругу
+   sk: Dovoľte mi predstaviť moju manželku
+   sl: Dovolite, da vam predstavim svojo ženo
+   sv: Låt mig få presentera min fru
+   ta: என் மனைவியை அறிமுகப்படுத்த அனுமதியுங்கள்
+   te: నా భార్యను పరిచయం చేస్తాను
+   th: ขออนุญาตแนะนำภรรยาของผมครับ
+   tr: Eşimi tanıştırayım
+   uk: Дозвольте представити мою дружину
+   ur: میں اپنی زوجہ سے آپ کو متعارف کرواتا ہوں
+   vi: xin phép cho tôi giới thiệu vợ tôi
+   zh: 让我介绍我的妻子
+
+27. "what's up?" (ID: 2708)
+   -----------------------------------------------------------------
+   ar: كيف حالك؟
+   bg: Какво става?
+   bn: কী হচ্ছে?
+   ca: Què tal?
+   cs: Co je?
+   cy: Beth sydd?
+   da: Hvad sker der?
+   de: Was geht?
+   el: τι κάνεις;
+   es: ¿Qué tal?
+   et: Kuidas läheb?
+   eu: Zer moduz?
+   fa: چطوری؟
+   fi: Mitä kuuluu?
+   fr: Quoi de neuf ?
+   ga: Cad é an scéal?
+   gu: શું ચાલે છે?
+   he: מה קורה?
+   hi: क्या हाल है?
+   hr: Što je novo?
+   hu: Mi újság?
+   id: Apa kabar?
+   is: Hvað er að?
+   it: Ciao
+   ja: どうした？
+   ko: 뭐해?
+   lt: Kas naujo?
+   lv: Kas notiek?
+   mk: Што има?
+   ml: എന്താ സംഭവം?
+   mr: काय चाललय?
+   mt: Xi hemm?
+   nl: Wat is er?
+   no: Hva skjer?
+   pl: Co tam?
+   pt: E aí?
+   ro: Ce mai faci?
+   ru: Что нового?
+   sk: Čo je?
+   sl: Kaj je?
+   sv: Vad händer?
+   ta: என்ன விஷயம்?
+   te: ఎలా ఉన్నావు?
+   th: สบายดีไหม
+   tr: Naber?
+   uk: Що нового?
+   ur: کیا حال ہے؟
+   vi: Có gì?
+   zh: 怎么了
+
+28. "long time no see" (ID: 2709)
+   -----------------------------------------------------------------
+   ar: أَيْنَ كُنْتَ؟
+   bg: Отдавна не сме се виждали
+   bn: দীর্ঘদিন পর দেখা
+   ca: Faci temps que no ens veiem
+   cs: Dlouho jsem tě neviděl
+   cy: Oes amser ers i ni ein gweld
+   da: længe siden
+   de: Lange nicht gesehen
+   el: καιρό είχαμε να τα πούμε
+   es: Cuánto tiempo
+   et: Kaua aega pole nähtud
+   eu: Aspaldian ez dut zure berririk izan
+   fa: خیلی وقت بود نديدمت
+   fi: Kauan ei ole nähty
+   fr: Longtemps pas vu
+   ga: Fada ó nach bhfaca mé thú
+   gu: ઘણા સમય પછી મળ્યા
+   he: זמן לא ראיתי אותך
+   hi: काफी समय बाद मिला
+   hr: Dugo se nismo vidjeli
+   hu: Rég nem láttalak
+   id: Lama tak jumpa
+   is: Lengi síðan
+   it: Tanto tempo!
+   ja: 久しぶり
+   ko: 오랜만이야
+   lt: Seniai matytas
+   lv: Seniai neesam tikušies
+   mk: долго време не се виделе
+   ml: നാള്‍ക്ക് കണ്ടില്ലല്ലോ
+   mr: काय रे, किती दिवसांनी
+   mt: Ilni żmien ma rajtekx
+   nl: Langs geleden
+   no: Lenge siden sist
+   pl: Dawno się nie widzieliśmy
+   pt: tempo sem te ver
+   ro: N
+   ru: Давно не виделись
+   sk: Dlho sme sa nevideli
+   sl: Dolgo časa se nisva videla
+   sv: Längesen
+   ta: நாளைக்கு
+   te: ఎంతకాలం తర్వాత
+   th: หายไปนาน
+   tr: Uzun zamandır görüşmedik
+   uk: Давно не бачились
+   ur: کتنے عرصے بعد
+   vi: Lâu lắm không gặp
+   zh: 好久不见
+
+29. "how's it going?" (ID: 2710)
+   -----------------------------------------------------------------
+   ar: كيف حالك؟
+   bg: Как върви?
+   bn: কেমন আছো?
+   ca: Com va?
+   cs: Co je nového?
+   cy: Sut mae?
+   da: Hvordan går det?
+   de: Wie geht's?
+   el: Τι κάνεις;
+   es: ¿Qué tal?
+   et: Kuidas läheb?
+   eu: Zer moduz?
+   fa: چطوری؟
+   fi: Mitä kuuluu?
+   fr: Ça va ?
+   ga: Conas atá tú?
+   gu: કેમ છો?
+   he: מה שלומך?
+   hi: क्या हाल है?
+   hr: Kako je?
+   hu: Hogy vagy?
+   id: Apa kabar?
+   is: Hvernig líður þér?
+   it: Come va?
+   ja: 調子はどう？
+   ko: 잘 지내?
+   lt: Kaip sekasi?
+   lv: Kā iet?
+   mk: Што има?
+   ml: എങ്ങനെയുണ്ട്
+   mr: काय चाललय?
+   mt: Kif sejrin?
+   nl: Hoe gaat het?
+   no: Hvordan går det?
+   pl: Co tam?
+   pt: Como vai?
+   ro: Ce mai faci?
+   ru: Как дела?
+   sk: Ako sa máš?
+   sl: Kaj je?
+   sv: Hur går det?
+   ta: என்ன செய்றீங்க?
+   te: ఎలా ఉంది?
+   th: สบายดีไหม
+   tr: Nasılsın?
+   uk: Як справи?
+   ur: کیا حال ہے؟
+   vi: Dạo này thế nào?
+   zh: 最近怎么样？
+
+30. "glad to see you" (ID: 2711)
+   -----------------------------------------------------------------
+   ar: يسرني رؤيتك
+   bg: Радвам се да те видя
+   bn: তোমাকে দেখে ভালো লাগল
+   ca: Content d'haver
+   cs: Rád
+   cy: Da iawn eich gweld
+   da: Glad at se dig
+   de: Schön dich zu sehen
+   el: Χαίρομαι που σε βλέπω
+   es: Encantado de verte
+   et: Tore sind näha
+   eu: Pozik zaitut ikusteak
+   fa: خوشحالم که میبینمت
+   fi: Mukava nähdä sinut
+   fr: Ravi de vous voir
+   ga: Sona liom tú a fheiceáil
+   gu: તમને મળીને આનંદ થયો
+   he: שמח לראות אותך
+   hi: आपसे मिलकर खुशी हुई
+   hr: Drago mi je što te vidim
+   hu: Örülök, hogy látlak
+   id: Senang bertemu kamu
+   is: Gleðilegt að sjá þig
+   it: Contento di vederti
+   ja: お会いできて嬉しいです
+   ko: 반가워요
+   lt: Smagu matyti
+   lv: Priecājos tevi redzēt
+   mk: Радо ми е што те гледам
+   ml: സന്തോഷമുണ്ട് നിങ്ങളെ കാണാൻ
+   mr: तुम्हाला भेटून आनंद झाला
+   mt: ura li nara
+   nl: Leuk je te zien
+   no: Hyggelig å se deg
+   pl: Miło cię widzieć
+   pt: Feliz em ver você
+   ro: Mă bucur să te văd
+   ru: Рад тебя видеть
+   sk: Rád
+   sl: Vesel
+   sv: Kul att se dig
+   ta: சந்தோஷமா இருக்கு
+   te: మీరు చూడడానికి సంతోషంగా ఉంది
+   th: ดีใจที่ได้เจอคุณ
+   tr: Seni görmekten memnun oldum
+   uk: Радий тебе бачити
+   ur: آپ کو دیکھ کر خوشی ہوئی
+   vi: Vui được gặp bạn
+   zh: 很高兴见到你
+
+31. "catch you later" (ID: 2712)
+   -----------------------------------------------------------------
+   ar: أراك لاحقاً
+   bg: Чао
+   bn: পরে দেখা হবে
+   ca: Ens veiem més tard
+   cs: Uvidíme se později
+   cy: Cwel di'n hwyrach
+   da: ses senere
+   de: Bis später
+   el: τα λέμε αργότερα
+   es: Hasta luego
+   et: Näeme hiljem
+   eu: gero arte
+   fa: بعدا می بینمت
+   fi: Näkemiin
+   fr: À plus tard
+   ga: Dia duit níos déanaí
+   gu: બાદમાં મળીશું
+   he: נתראה אחר כך
+   hi: फिर मिलेंगे
+   hr: Čujemo se kasnije
+   hu: Majd később
+   id: Ketemu lagi nanti
+   is: Þá seinna
+   it: Ci vediamo dopo
+   ja: またね
+   ko: 나중에 봐
+   lt: Ateinu vėliau
+   lv: Uz redzēšanos vēlāk
+   mk: Докажеме се подоцна
+   ml: പിന്നീട് കാണാം
+   mr: नंतर भेटू
+   mt: Narawkom aktar tard
+   nl: Tot later
+   no: Hade bra
+   pl: Do zobaczenia
+   pt: A gente se fala mais tarde
+   ro: Ne vedem mai târziu
+   ru: До встречи
+   sk: Uvidíme sa neskôr
+   sl: Se vidimo kasneje
+   sv: Ses senare
+   ta: பிறகு சந்திக்கலாம்
+   te: తర్వాత కలుద్దాం
+   th: ไว้เจอกัน
+   tr: Görüşürüz
+   uk: До зустрічі
+   ur: پھر ملتے ہیں
+   vi: Gặp lại sau
+   zh: 回头见
+
+32. "bye" (ID: 2713)
+   -----------------------------------------------------------------
+   ar: مع السلامة
+   bg: Чао
+   bn: বিদায়
+   ca: Adéu
+   cs: Ahoj
+   cy: Hwyl
+   da: Farvel
+   de: Tschüss
+   el: Γεια
+   es: Adiós
+   et: Nägemist
+   eu: Agur
+   fa: خداحافظ
+   fi: Hei
+   fr: Au revoir
+   ga: Slán
+   gu: બાય
+   he: ביי
+   hi: अलविदा
+   hr: Doviđenja
+   hu: Szia
+   id: Dadah
+   is: Bæ
+   it: Ciao
+   ja: さようなら
+   ko: 안녕
+   lt: Viso
+   lv: Uz redzēšanos
+   mk: Довидене
+   ml: പോകുന്നു
+   mr: बाय
+   mt: Ċaw
+   nl: Doei
+   no: Ha det
+   pl: pa
+   pt: Tchau
+   ro: La revedere
+   ru: Пока
+   sk: Zatiaľ
+   sl: Adijo
+   sv: Hej då
+   ta: சந்தோஷமா இருங்க
+   te: బాయ్
+   th: บาย
+   tr: Hoşça kal
+   uk: Бувай
+   ur: خدانگہا
+   vi: Tạm biệt
+   zh: 再见
+
+33. "goodbye" (ID: 2714)
+   -----------------------------------------------------------------
+   ar: وداعا
+   bg: Довиждане
+   bn: বিদায়
+   ca: Adéu
+   cs: Na shledanou
+   cy: Hwyl
+   da: Farvel
+   de: Auf Wiedersehen
+   el: Γεια σου
+   es: Adiós
+   et: Nägemist
+   eu: Agur
+   fa: خداحافظ
+   fi: Hei hei
+   fr: Au revoir
+   ga: Slán
+   gu: બાય
+   he: שלום
+   hi: अलविदा
+   hr: Zbogom
+   hu: Viszlát
+   id: Selamat tinggal
+   is: Bless
+   it: Ciao
+   ja: さようなら
+   ko: 안녕
+   lt: Viso gero
+   lv: Uz redzēšanos
+   mk: Довидување
+   ml: പോകുന്നു
+   mr: शुभेच्छा
+   mt: Għal 👋
+   nl: Tot ziens
+   no: Ha det
+   pl: Do widzenia
+   pt: Adeus
+   ro: La revedere
+   ru: До свидания
+   sk: Dovidenia
+   sl: Adijo
+   sv: Hejdå
+   ta: சந்தோஷமா இருங்க
+   te: తేలికగా
+   th: ลาก่อน
+   tr: Hoşça kal
+   uk: До побачення
+   ur: خدانگہا
+   vi: Tạm biệt
+   zh: 再见
+
+34. "see you soon" (ID: 2715)
+   -----------------------------------------------------------------
+   ar: أراك قريباً
+   bg: До скоро
+   bn: শীঘ্রই দেখা হবে
+   ca: A veure aviat
+   cs: Uvidíme se brzy
+   cy: Cewch chi weld chi yn fuan
+   da: Vi ses snart
+   de: Bis bald
+   el: τα λέμε σύντομα
+   es: nos vemos pronto
+   et: Näeme varsti
+   eu: Laster arte
+   fa: به زودی میبینمت
+   fi: Näkemisiin
+   fr: À bientôt
+   ga: Go raibh maith agat go luath
+   gu: જલ્દી મળીશું
+   he: נתראה בקרוב
+   hi: जल्द मिलते हैं
+   hr: Vidimo se uskoro
+   hu: Hamarosan találkozunk
+   id: Sampai jumpa lagi
+   is: Þáttumst fljótlega
+   it: A presto
+   ja: またね
+   ko: 곧 만나요
+   lt: Iki susitiksime
+   lv: Uz drīzu tikšanos
+   mk: Се гледаме скоро
+   ml: പെട്ടെന്ന് കാണാം
+   mr: लवकरच भेटूया
+   mt: Narawkom dalwaqt
+   nl: Tot snel
+   no: Vi ses snart
+   pl: Do zobaczenia
+   pt: a gente se vê em breve
+   ro: Ne vedem curând
+   ru: Увидимся
+   sk: Uvidíme sa čoskoro
+   sl: Se vidimo kmalu
+   sv: Vi ses snart
+   ta: விரைவில் சந்திப்போம்
+   te: త్వరలో కలుద్దాం
+   th: เจอกันเร็วๆ นี้
+   tr: Yakında görüşürüz
+   uk: До скоро
+   ur: جلد ملیں گے
+   vi: Hẹn gặp lại
+   zh: 很快再见
+
+35. "talk to you later" (ID: 2716)
+   -----------------------------------------------------------------
+   ar: أتحدث إليك لاحقًا
+   bg: До скоро
+   bn: পরে কথা হবে
+   ca: Fins més tard
+   cs: Uvidíme se později
+   cy: Cwrdd â ti yn ddiweddarach
+   da: Vi snakkes senere
+   de: Bis später
+   el: Μιλάμε αργότερα
+   es: Hablamos luego
+   et: Nägemist
+   eu: Gero arte
+   fa: بعدا باهات حرف میزنم
+   fi: Jutellaan myöhemmin
+   fr: À tout à l'heure
+   ga: Beidh mé ag caint leat níos déanaí
+   gu: પછી વાત કરીશું
+   he: אדבר איתך אחר כך
+   hi: फिर बात करेंगे
+   hr: Čujemo se kasnije
+   hu: Majd később beszélünk
+   id: Sampai jumpa lagi
+   is: Þetta síðar
+   it: A dopo
+   ja: また後で
+   ko: 나중에 얘기해요
+   lt: Iki susitiksime
+   lv: Uz sarunāšanos vēlāk
+   mk: Како да се видиме подоцна
+   ml: ശേഷം സംസാരിക്കാം
+   mr: नंतर बोलू
+   mt: Nitkellmu aktar tard
+   nl: Tot later
+   no: Hade bra
+   pl: Do usłyszenia
+   pt: A gente se fala mais tarde
+   ro: Vorbim mai târziu
+   ru: Договорились
+   sk: Dovidenia
+   sl: Se vidimo kasneje
+   sv: Vi hörs senare
+   ta: பிறகு பேசுறேன்
+   te: తర్వాత మాట్లాడుకుందాం
+   th: คุยกับคุณทีหลัง
+   tr: Görüşürüz
+   uk: Поговоримо пізніше
+   ur: پھر بات کرتے ہیں
+   vi: Hẹn gặp lại
+   zh: 回头聊
+
+36. "have a good evening" (ID: 2717)
+   -----------------------------------------------------------------
+   ar: تصبح على خير
+   bg: Приятна вечер
+   bn: শুভ সন্ধ্যা
+   ca: Que vagi bé
+   cs: Dobrou noc
+   cy: Nos da iawn
+   da: God aften
+   de: Guten Abend
+   el: καλή σας βραδιά
+   es: Que tenga una buena noche
+   et: Head aega
+   eu: Arratsalde on
+   fa: شب خوش
+   fi: Hyvää iltaa
+   fr: Passez une bonne soirée
+   ga: Go raibh maith agat agus oíche mhaith
+   gu: સારી સાંજ
+   he: ערב טוב
+   hi: शुभ संध्या
+   hr: Dobro večer
+   hu: Jó estét
+   id: Selamat malam
+   is: Gott kvöld
+   it: Buona serata
+   ja: 良い夜を
+   ko: 좋은 저녁 되세요
+   lt: gero vakaro
+   lv: Lai jauka vakara
+   mk: Добровечер
+   ml: നല്ല വൈകുന്നേരം
+   mr: शुभ संध्या
+   mt: lejla tajba
+   nl: Goedenavond
+   no: Ha en god kveld
+   pl: Miłego wieczoru
+   pt: Boa noite
+   ro: Seară frumoasă
+   ru: Приятного вечера
+   sk: Dobrú noc
+   sl: Lep večer
+   sv: Ha en trevlig kväll
+   ta: நல்ல இரவு
+   te: శుభ సంధ్య
+   th: ขอให้มีช่วงเย็นที่ดี
+   tr: İyi akşamlar
+   uk: Гарного вечора
+   ur: خیر شام ہو
+   vi: Chúc ngủ ngon
+   zh: 晚安
+
