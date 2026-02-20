@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useEffect, useRef, useCallback } from "react"
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Topic, VocabularyWord, VocabularyResponse, getTopics, getVocabularyForTopic } from "@/lib/database"
@@ -206,9 +206,14 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
     }
   }, [currentSection])
 
+  // Helper function to get translated section name
+  const getTranslatedSectionName = (key: string, fallback: string) => {
+    return uiTranslations[key] || fallback
+  }
+
   // Define the 7 sections with their topics and metadata (Account first, but FIRST AID KIT is default)
   // Sections with dynamic translations
-  const sections = [
+  const sections = useMemo(() => [
     {
       name: getTranslatedSectionName('PROFILE', 'ACCOUNT'),
       icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path fill="currentColor" fill-opacity="0" stroke-dasharray="20" stroke-dashoffset="20" d="M12 12c2.21 0 4 -1.79 4 -4c0 -2.21 -1.79 -4 -4 -4c-2.21 0 -4 1.79 -4 4c0 2.21 1.79 4 4 4Z"><animate fill="freeze" attributeName="fill-opacity" begin="0.8s" dur="0.15s" values="0;0.3"/><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="20;0"/></path><path stroke-dasharray="36" stroke-dashoffset="36" d="M20 20c0 -4.42 -3.58 -8 -8 -8c-4.42 0 -8 3.58 -8 8"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.4s" values="36;0"/></path></g></svg>',
@@ -260,7 +265,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
       gridCols: 1,
       isMyWords: true // Special flag for My Words section
     }
-  ]
+  ], [uiTranslations, topics])
 
   // Enhanced touch handlers for drag gestures
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -1100,11 +1105,6 @@ export function LanguageSelector() {
     
     fetchUiTranslations()
   }, [targetLanguageCode])
-
-  // Helper function to get translated section name
-  const getTranslatedSectionName = (key: string, fallback: string) => {
-    return uiTranslations[key] || fallback
-  }
 
   // Audio state
   const [isPlaying, setIsPlaying] = useState(false)
