@@ -113,6 +113,15 @@ interface TopicSliderProps {
   renderTopicButton: (topic: Topic) => React.ReactElement
   isPremium: boolean
   setShowPaywall: (show: boolean) => void
+  sections: Array<{
+    name: string
+    icon: string
+    topics: Topic[]
+    gridCols: number
+    isAccount?: boolean
+    isDefault?: boolean
+    isMyWords?: boolean
+  }>
 }
 
 const TopicSlider: React.FC<TopicSliderProps> = ({ 
@@ -139,7 +148,8 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
   onCreatePlaylist,
   renderTopicButton,
   isPremium,
-  setShowPaywall
+  setShowPaywall,
+  sections
 }) => {
   const [touchStart, setTouchStart] = useState(0)
   const [touchEnd, setTouchEnd] = useState(0)
@@ -4193,6 +4203,7 @@ export function LanguageSelector() {
                 renderTopicButton={renderTopicButton}
                 isPremium={isPremium}
                 setShowPaywall={setShowPaywall}
+                sections={sections}
               />
             </div>
 
