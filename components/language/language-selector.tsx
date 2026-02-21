@@ -829,7 +829,7 @@ export function LanguageSelector() {
   const [uiTranslations, setUiTranslations] = useState<Record<string, string>>({})
   const [topicTranslations, setTopicTranslations] = useState<Record<number, string>>({})
   const [categoryTranslations, setCategoryTranslations] = useState<Record<string, string>>({})
-  const [languageTranslations, setLanguageTranslations] = useState<Record<string, string>>({})
+  const [languageTranslations, setLanguageTranslations] = useState<Record<string, string>>({}) // Available for future use
   const lastTopicSectionRef = useRef(1) // Track which section the user was on when selecting a topic
   const [phonetics, setPhonetics] = useState<Record<string, { target: string; native: string }>>({})
   
@@ -1102,7 +1102,7 @@ export function LanguageSelector() {
     fetchCategoryTranslations()
   }, [nativeLanguageCode])
 
-  // 🌍 Fetch language name translations
+  // 🌍 Fetch language name translations (available for future use)
   useEffect(() => {
     const fetchLanguageTranslations = async () => {
       if (!nativeLanguageCode) {
@@ -2956,15 +2956,8 @@ export function LanguageSelector() {
       'zu': 'Zulu',
     }
     
-    const englishName = nameMap[languageCode] || languageCode.toUpperCase()
-    
-    // If we have a translation for this language, use it
-    if (languageTranslations[englishName]) {
-      return languageTranslations[englishName]
-    }
-    
-    // Otherwise return English name
-    return englishName
+    // Always return English name for language buttons
+    return nameMap[languageCode] || languageCode.toUpperCase()
   }
 
   // All 50 languages from Alnilam Audio Library - matching available audio files
