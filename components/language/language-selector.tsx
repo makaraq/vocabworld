@@ -79,6 +79,60 @@ const TOPIC_ICONS = [
   { id: 44, icon: 'solar:close-circle-linear' }, // Bad Words
 ]
 
+// Question text translations for "Choose the language you want to learn"
+const QUESTION_TEXT_TRANSLATIONS: Record<string, string> = {
+  'ar': 'اختر اللغة التي تريد تعلمها',
+  'bg': 'Изберете езика, който искате да научите',
+  'bn': 'আপনি যে ভাষা শিখতে চান তা নির্বাচন করুন',
+  'ca': 'Trieu l\'idioma que voleu aprendre',
+  'cs': 'Vyberte jazyk, který se chcete naučit',
+  'cy': 'Dewiswch yr iaith rydych chi am ei dysgu',
+  'da': 'Vælg det sprog, du vil lære',
+  'de': 'Wählen Sie die Sprache aus, die Sie lernen möchten',
+  'el': 'Επιλέξτε τη γλώσσα που θέλετε να μάθετε',
+  'en': 'Choose the language you want to learn',
+  'es': 'Elige el idioma que quieres aprender',
+  'et': 'Valige keel, mida soovite õppida',
+  'eu': 'Aukeratu ikasi nahi duzun hizkuntza',
+  'fa': 'زبانی که می‌خواهید یاد بگیرید را انتخاب کنید',
+  'fi': 'Valitse kieli, jonka haluat oppia',
+  'fr': 'Choisissez la langue que vous souhaitez apprendre',
+  'ga': 'Roghnaigh an teanga ar mhaith leat a fhoghlaim',
+  'gu': 'તમે જે ભાષા શીખવા માંગો છો તે પસંદ કરો',
+  'he': 'בחר את השפה שאתה רוצה ללמוד',
+  'hi': 'वह भाषा चुनें जो आप सीखना चाहते हैं',
+  'hr': 'Odaberite jezik koji želite naučiti',
+  'hu': 'Válassza ki a nyelvet, amelyet tanulni szeretne',
+  'id': 'Pilih bahasa yang ingin Anda pelajari',
+  'is': 'Veldu tungumálið sem þú vilt læra',
+  'it': 'Scegli la lingua che vuoi imparare',
+  'ja': '学びたい言語を選んでください',
+  'ko': '배우고 싶은 언어를 선택하세요',
+  'lt': 'Pasirinkite kalbą, kurios norite mokytis',
+  'lv': 'Izvēlieties valodu, kuru vēlaties apgūt',
+  'mk': 'Изберете го јазикот што сакате да го научите',
+  'ml': 'നിങ്ങൾ പഠിക്കാൻ ആഗ്രഹിക്കുന്ന ഭാഷ തിരഞ്ഞെടുക്കുക',
+  'mr': 'तुम्हाला जी भाषा शिकायची आहे ती निवडा',
+  'mt': 'Agħżel il-lingwa li trid titgħallem',
+  'nl': 'Kies de taal die je wilt leren',
+  'no': 'Velg språket du vil lære',
+  'pl': 'Wybierz język, którego chcesz się nauczyć',
+  'pt': 'Escolha o idioma que você deseja aprender',
+  'ro': 'Alege limba pe care vrei să o înveți',
+  'ru': 'Выберите язык, который хотите выучить',
+  'sk': 'Vyberte jazyk, ktorý sa chcete naučiť',
+  'sl': 'Izberite jezik, ki se ga želite naučiti',
+  'sv': 'Välj det språk du vill lära dig',
+  'ta': 'நீங்கள் கற்க விரும்பும் மொழியைத் தேர்ந்தெடுக்கவும்',
+  'te': 'మీరు నేర్చుకోవాలనుకునే భాషను ఎంచుకోండి',
+  'th': 'เลือกภาษาที่คุณต้องการเรียนรู้',
+  'tr': 'Öğrenmek istediğiniz dili seçin',
+  'uk': 'Виберіть мову, яку хочете вивчити',
+  'ur': 'وہ زبان منتخب کریں جو آپ سیکھنا چاہتے ہیں',
+  'vi': 'Chọn ngôn ngữ bạn muốn học',
+  'zh': '选择您想学习的语言'
+}
+
 // iPhone-style Topic Slider Component
 interface TopicSliderProps {
   topics: Topic[]
@@ -2973,6 +3027,14 @@ export function LanguageSelector() {
     return englishName
   }
 
+  // Get translated question text based on native language
+  const getQuestionText = (): string => {
+    if (nativeLanguageCode && QUESTION_TEXT_TRANSLATIONS[nativeLanguageCode]) {
+      return QUESTION_TEXT_TRANSLATIONS[nativeLanguageCode]
+    }
+    return 'Choose the language you want to learn'
+  }
+
   // All 50 languages from Alnilam Audio Library - matching available audio files
   const alnilamLanguageCodes = ['ar', 'bg', 'bn', 'ca', 'cs', 'cy', 'da', 'de', 'el', 'en', 'es', 'et', 'eu', 'fa', 'fi', 'fr', 'ga', 'gu', 'he', 'hi', 'hr', 'hu', 'id', 'is', 'it', 'ja', 'ko', 'lt', 'lv', 'mk', 'ml', 'mr', 'mt', 'nl', 'no', 'pl', 'pt', 'ro', 'ru', 'sk', 'sl', 'sv', 'ta', 'te', 'th', 'tr', 'uk', 'ur', 'vi', 'zh']
   
@@ -3071,7 +3133,7 @@ export function LanguageSelector() {
         if (targetLanguage && targetLanguageCode) {
           setCurrentPage("confirmation")
         } else {
-          setQuestionText("Choose the language you want to learn")
+          setQuestionText(getQuestionText())
           setCurrentPage("target")
         }
         setIsTransitioning(false)
@@ -3113,7 +3175,7 @@ export function LanguageSelector() {
         // Don't clear the language - we want to show current selection
       } else {
         setCurrentPage("target")
-        setQuestionText("Choose the language you want to learn")
+        setQuestionText(getQuestionText())
         // Don't clear the language - we want to show current selection
       }
       setSearchQuery("")
@@ -3134,7 +3196,7 @@ export function LanguageSelector() {
         setNativeLanguageCode("")
       } else {
         setCurrentPage("target")
-        setQuestionText("Choose the language you want to learn")
+        setQuestionText(getQuestionText())
         // Clear the target language so it can be reselected
         setTargetLanguage("")
         setTargetLanguageCode("")
