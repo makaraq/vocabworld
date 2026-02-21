@@ -2979,6 +2979,11 @@ export function LanguageSelector() {
     // Filter by search query
     const matchesSearch = lang.name.toLowerCase().includes(searchQuery.toLowerCase())
     
+    // If we're on native language selection, exclude the target language
+    if (currentPage === "native" && targetLanguageCode) {
+      return matchesSearch && lang.code !== targetLanguageCode
+    }
+    
     // If we're on target language selection, exclude the native language
     if (currentPage === "target" && nativeLanguageCode) {
       return matchesSearch && lang.code !== nativeLanguageCode
