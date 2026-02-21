@@ -1,0 +1,70 @@
+// Language Selector Topic Assignment (Frontend API)
+// From: app/api/topics/route.ts (TOPICS_DATA)
+
+FIRST AID KIT
+Code: topics.slice(0, 6) // 6 topics
+────────────────────────────────────────────────────────────
+[0] → ID 1: Greetings
+[1] → ID 2: Numbers
+[2] → ID 3: Time
+[3] → ID 4: Directions
+[4] → ID 7: Emergency
+[5] → ID 18: Travel
+
+DAILY LIFE
+Code: topics.slice(6, 14) // 8 topics
+────────────────────────────────────────────────────────────
+[6] → ID 5: Shopping
+[7] → ID 6: Food
+[8] → ID 9: Home
+[9] → ID 17: Places Around Town
+[10] → ID 12: Family & Relationships
+[11] → ID 8: Health & Body Parts
+[12] → ID 11: Weather & Nature
+[13] → ID 10: Personal Style
+
+PERSONAL & SOCIAL LIFE
+Code: topics.slice(14, 20) // 6 topics
+────────────────────────────────────────────────────────────
+[14] → ID 13: Emotions
+[15] → ID 14: Personality
+[16] → ID 21: Actions
+[17] → ID 15: Hobbies
+[18] → ID 16: Fitness
+[19] → ID 22: Adjectives
+
+WORK & SCHOOL
+Code: topics.slice(20, 28) // 8 topics
+────────────────────────────────────────────────────────────
+[20] → ID 25: Professions
+[21] → ID 26: Education
+[22] → ID 34: History
+[23] → ID 32: Science
+[24] → ID 24: Technology
+[25] → ID 23: Art
+[26] → ID 33: Mathematics
+[27] → ID 19: Colors & Shapes
+
+CULTURE & SOCIETY
+Code: topics.slice(28, 36) // 8 topics
+────────────────────────────────────────────────────────────
+[28] → ID 29: Business
+[29] → ID 35: Politics & Law
+[30] → ID 36: Religion
+[31] → ID 40: Cultural Integration
+[32] → ID 28: Environment
+[33] → ID 27: Media
+[34] → ID 37: Mythology
+[35] → ID 38: Holidays
+
+PROFESSIONAL
+Code: topics.slice(36, 44) // 8 topics
+────────────────────────────────────────────────────────────
+[36] → ID 30: Common Collocations
+[37] → ID 31: Modern Expressions
+[38] → ID 39: Formal Language
+[39] → ID 41: Verbs
+[40] → ID 42: Daily Language
+[41] → ID 43: Essential Words
+[42] → ID 44: Bad Words
+[43] → ID 45: Example Sentences
