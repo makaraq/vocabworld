@@ -3028,9 +3028,10 @@ export function LanguageSelector() {
   }
 
   // Get translated question text based on native language
-  const getQuestionText = (): string => {
-    if (nativeLanguageCode && QUESTION_TEXT_TRANSLATIONS[nativeLanguageCode]) {
-      return QUESTION_TEXT_TRANSLATIONS[nativeLanguageCode]
+  const getQuestionText = (languageCode?: string): string => {
+    const code = languageCode || nativeLanguageCode
+    if (code && QUESTION_TEXT_TRANSLATIONS[code]) {
+      return QUESTION_TEXT_TRANSLATIONS[code]
     }
     return 'Choose the language you want to learn'
   }
@@ -3133,7 +3134,7 @@ export function LanguageSelector() {
         if (targetLanguage && targetLanguageCode) {
           setCurrentPage("confirmation")
         } else {
-          setQuestionText(getQuestionText())
+          setQuestionText(getQuestionText(language.code))
           setCurrentPage("target")
         }
         setIsTransitioning(false)
