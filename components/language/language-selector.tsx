@@ -829,6 +829,7 @@ export function LanguageSelector() {
   const [uiTranslations, setUiTranslations] = useState<Record<string, string>>({})
   const [topicTranslations, setTopicTranslations] = useState<Record<number, string>>({})
   const [categoryTranslations, setCategoryTranslations] = useState<Record<string, string>>({})
+  const [languageTranslations, setLanguageTranslations] = useState<Record<string, string>>({})
   const lastTopicSectionRef = useRef(1) // Track which section the user was on when selecting a topic
   const [phonetics, setPhonetics] = useState<Record<string, { target: string; native: string }>>({})
   
@@ -1099,6 +1100,28 @@ export function LanguageSelector() {
     }
     
     fetchCategoryTranslations()
+  }, [nativeLanguageCode])
+
+  // 🌍 Fetch language name translations
+  useEffect(() => {
+    const fetchLanguageTranslations = async () => {
+      if (!nativeLanguageCode) {
+        setLanguageTranslations({})
+        return
+      }
+      
+      try {
+        const response = await fetch(`/api/language-translations?languageCode=${nativeLanguageCode}`)
+        if (response.ok) {
+          const data = await response.json()
+          setLanguageTranslations(data)
+        }
+      } catch (error) {
+        console.error('Error fetching language translations:', error)
+      }
+    }
+    
+    fetchLanguageTranslations()
   }, [nativeLanguageCode])
 
   // Helper function to get translated section name
@@ -2932,7 +2955,16 @@ export function LanguageSelector() {
       'zh': 'Chinese',
       'zu': 'Zulu',
     }
-    return nameMap[languageCode] || languageCode.toUpperCase()
+    
+    const englishName = nameMap[languageCode] || languageCode.toUpperCase()
+    
+    // If we have a translation for this language, use it
+    if (languageTranslations[englishName]) {
+      return languageTranslations[englishName]
+    }
+    
+    // Otherwise return English name
+    return englishName
   }
 
   // All 50 languages from Alnilam Audio Library - matching available audio files
