@@ -4276,7 +4276,7 @@ export function LanguageSelector() {
                       }`}
                     >
                       <Icon icon={getFlagIcon(language.code)} className="w-7 h-7" />
-                      <p className="text-white font-medium text-sm leading-tight">{language.name}</p>
+                      <p className="text-white font-medium text-sm leading-tight">{getTranslatedLanguageName(language.code)}</p>
                     </button>
                   )
                 })}
