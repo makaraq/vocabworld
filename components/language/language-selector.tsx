@@ -3071,7 +3071,7 @@ export function LanguageSelector() {
         if (targetLanguage && targetLanguageCode) {
           setCurrentPage("confirmation")
         } else {
-          setQuestionText("I want to learn")
+          setQuestionText("Choose the language you want to learn")
           setCurrentPage("target")
         }
         setIsTransitioning(false)
@@ -3113,7 +3113,7 @@ export function LanguageSelector() {
         // Don't clear the language - we want to show current selection
       } else {
         setCurrentPage("target")
-        setQuestionText("I want to learn")
+        setQuestionText("Choose the language you want to learn")
         // Don't clear the language - we want to show current selection
       }
       setSearchQuery("")
@@ -3134,7 +3134,7 @@ export function LanguageSelector() {
         setNativeLanguageCode("")
       } else {
         setCurrentPage("target")
-        setQuestionText("I want to learn")
+        setQuestionText("Choose the language you want to learn")
         // Clear the target language so it can be reselected
         setTargetLanguage("")
         setTargetLanguageCode("")
