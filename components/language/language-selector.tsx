@@ -2956,8 +2956,21 @@ export function LanguageSelector() {
       'zu': 'Zulu',
     }
     
-    // Always return English name for language buttons
+    // Always return English name
     return nameMap[languageCode] || languageCode.toUpperCase()
+  }
+  
+  // Get translated language name (for lists, displays, etc.) - buttons stay in English
+  const getTranslatedLanguageName = (languageCode: string): string => {
+    const englishName = getLanguageName(languageCode)
+    
+    // If we have a translation, return it
+    if (languageTranslations[englishName]) {
+      return languageTranslations[englishName]
+    }
+    
+    // Otherwise return English name
+    return englishName
   }
 
   // All 50 languages from Alnilam Audio Library - matching available audio files
@@ -4103,7 +4116,7 @@ export function LanguageSelector() {
                   onMouseLeave={handleFlashcardHoldEnd}
                 >
                   <div className="text-white/60 text-sm mb-2 flex items-center gap-2">
-                    {targetLanguage}
+                    {getTranslatedLanguageName(targetLanguageCode)}
                     {currentAudioStep === 'training' && (
                       <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
                     )}
@@ -4140,7 +4153,7 @@ export function LanguageSelector() {
                   onMouseLeave={handleFlashcardHoldEnd}
                 >
                   <div className="text-white/60 text-sm mb-2 flex items-center gap-2">
-                    {nativeLanguage}
+                    {getTranslatedLanguageName(nativeLanguageCode)}
                     {currentAudioStep === 'main' && (
                       <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
                     )}
@@ -4318,7 +4331,7 @@ export function LanguageSelector() {
                     holdingSwapButton === 'native' ? 'scale-105 transition-all duration-75' : 'scale-100 transition-all duration-300'
                   }`}
                 >
-                  <p className="text-white font-medium text-sm truncate">{nativeLanguage}</p>
+                  <p className="text-white font-medium text-sm truncate">{getTranslatedLanguageName(nativeLanguageCode)}</p>
                 </button>
                 <div className="flex items-center justify-center flex-shrink-0">
                   <Languages className="w-5 h-5 text-white/60" />
@@ -4332,7 +4345,7 @@ export function LanguageSelector() {
                     holdingSwapButton === 'target' ? 'scale-105 transition-all duration-75' : 'scale-100 transition-all duration-300'
                   }`}
                 >
-                  <p className="text-white font-medium text-sm truncate">{targetLanguage}</p>
+                  <p className="text-white font-medium text-sm truncate">{getTranslatedLanguageName(targetLanguageCode)}</p>
                 </button>
               </div>
             </div>
@@ -4555,7 +4568,7 @@ export function LanguageSelector() {
             
             <div className="mb-4">
               <p className="text-white/60 text-sm mb-2">
-                This playlist will be for <span className="text-blue-400">{nativeLanguage}</span> → <span className="text-green-400">{targetLanguage}</span>
+                This playlist will be for <span className="text-blue-400">{getTranslatedLanguageName(nativeLanguageCode)}</span> → <span className="text-green-400">{getTranslatedLanguageName(targetLanguageCode)}</span>
               </p>
             </div>
             
