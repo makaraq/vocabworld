@@ -93,6 +93,44 @@ async function translateWithMyMemory(word: string, sourceLang: string, targetLan
   }
 }
 
+// Get multiple translation suggestions from MyMemory matches array
+async function getMyMemorySuggestions(word: string, sourceLang: string, targetLang: string): Promise<string[]> {
+  try {
+    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}&langpair=${sourceLang}|${targetLang}`
+    const response = await fetch(url)
+    if (!response.ok) return []
+    
+    const data = await response.json()
+    const seen = new Set<string>()
+    const suggestions: string[] = []
+    
+    // Add the primary translation first
+    if (data.responseData?.translatedText) {
+      const primary = data.responseData.translatedText
+      if (primary.toUpperCase() !== word.toUpperCase()) {
+        seen.add(primary.toLowerCase())
+        suggestions.push(primary)
+      }
+    }
+    
+    // Add unique suggestions from matches array
+    if (Array.isArray(data.matches)) {
+      for (const match of data.matches) {
+        const t: string = match.translation || ''
+        if (!t || t.toUpperCase() === word.toUpperCase()) continue
+        if (seen.has(t.toLowerCase())) continue
+        seen.add(t.toLowerCase())
+        suggestions.push(t)
+        if (suggestions.length >= 6) break
+      }
+    }
+    
+    return suggestions
+  } catch {
+    return []
+  }
+}
+
 // Fetch word from Wiktionary and extract translations
 async function fetchWiktionaryTranslations(word: string): Promise<Record<string, string>> {
   const translations: Record<string, string> = {}
@@ -185,6 +223,7 @@ export async function GET(request: NextRequest) {
     const targetLanguage = searchParams.get('targetLanguage') // Target language code
     const sourceLanguage = searchParams.get('sourceLanguage') || 'en' // Source language code, defaults to English
     const lang = searchParams.get('lang') // Optional: specific language only (deprecated, use targetLanguage)
+    const suggestionsMode = searchParams.get('suggestions') === 'true'
     
     if (!word) {
       return NextResponse.json({ error: 'Word parameter is required' }, { status: 400 })
@@ -193,7 +232,13 @@ export async function GET(request: NextRequest) {
     if (word.length > 50) {
       return NextResponse.json({ error: 'Word too long' }, { status: 400 })
     }
-    
+
+    // Suggestions mode: return multiple translation variants
+    if (suggestionsMode && targetLanguage) {
+      const suggestions = await getMyMemorySuggestions(word, sourceLanguage, targetLanguage)
+      return NextResponse.json({ word, suggestions })
+    }
+
     const supabase = getSupabaseAdmin()
     const effectiveTargetLang = targetLanguage || lang
     

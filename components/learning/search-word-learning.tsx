@@ -2,24 +2,7 @@
 
 import React, { useState, useRef, useCallback, useEffect } from "react"
 import { Icon } from "@iconify/react"
-import { ArrowLeft, Settings, Play, Pause, Square, Plus, Check } from "lucide-react"
-
-// Language voice mapping for Edge TTS (same as custom-audio API)
-const LANGUAGE_CODES: Record<string, string> = {
-  'Arabic': 'ar', 'Bulgarian': 'bg', 'Bengali': 'bn', 'Catalan': 'ca',
-  'Czech': 'cs', 'Welsh': 'cy', 'Danish': 'da', 'German': 'de',
-  'Greek': 'el', 'English': 'en', 'Spanish': 'es', 'Estonian': 'et',
-  'Basque': 'eu', 'Persian': 'fa', 'Finnish': 'fi', 'French': 'fr',
-  'Irish': 'ga', 'Gujarati': 'gu', 'Hebrew': 'he', 'Hindi': 'hi',
-  'Croatian': 'hr', 'Hungarian': 'hu', 'Indonesian': 'id', 'Icelandic': 'is',
-  'Italian': 'it', 'Japanese': 'ja', 'Korean': 'ko', 'Lithuanian': 'lt',
-  'Latvian': 'lv', 'Macedonian': 'mk', 'Malayalam': 'ml', 'Marathi': 'mr',
-  'Maltese': 'mt', 'Dutch': 'nl', 'Norwegian': 'no', 'Polish': 'pl',
-  'Portuguese': 'pt', 'Romanian': 'ro', 'Russian': 'ru', 'Slovak': 'sk',
-  'Slovenian': 'sl', 'Swedish': 'sv', 'Tamil': 'ta', 'Telugu': 'te',
-  'Thai': 'th', 'Turkish': 'tr', 'Ukrainian': 'uk', 'Urdu': 'ur',
-  'Vietnamese': 'vi', 'Chinese': 'zh'
-}
+import { ArrowLeft, ChevronRight } from "lucide-react"
 
 interface SearchWordLearningProps {
   nativeLanguage: string
@@ -29,7 +12,7 @@ interface SearchWordLearningProps {
   userId?: string
   onBack: () => void
   onSettingsClick: () => void
-  onPlaylistUpdate?: () => void // Callback to refresh playlists in parent
+  onPlaylistUpdate?: () => void
 }
 
 interface TranslationResult {
@@ -48,445 +31,197 @@ export function SearchWordLearning({
   onSettingsClick,
   onPlaylistUpdate
 }: SearchWordLearningProps) {
-  // Search states
-  const [sourceWord, setSourceWord] = useState("")
-  const [targetWord, setTargetWord] = useState("")
-  const [isSearchingSource, setIsSearchingSource] = useState(false)
-  const [isSearchingTarget, setIsSearchingTarget] = useState(false)
-  const [translationResult, setTranslationResult] = useState<TranslationResult | null>(null)
+  // Direction state: true = nativeLang → targetLang, false = targetLang → nativeLang
+  const [sourceIsNative, setSourceIsNative] = useState(true)
+
+  // Derived language labels / codes based on direction
+  const fromLanguage = sourceIsNative ? nativeLanguage : targetLanguage
+  const fromCode     = sourceIsNative ? nativeLanguageCode : targetLanguageCode
+  const toLanguage   = sourceIsNative ? targetLanguage : nativeLanguage
+  const toCode       = sourceIsNative ? targetLanguageCode : nativeLanguageCode
+
+  // Input + suggestions state
+  const [inputWord, setInputWord] = useState("")
+  const [suggestions, setSuggestions] = useState<string[]>([])
+  const [isSearching, setIsSearching] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  
-  // Audio states
-  const [isPlayingSource, setIsPlayingSource] = useState(false)
-  const [isPlayingTarget, setIsPlayingTarget] = useState(false)
-  const audioRef = useRef<HTMLAudioElement | null>(null)
-  
-  // Playlist states
+
+  // Playlist state
   const [showPlaylistModal, setShowPlaylistModal] = useState(false)
-  const [isAddedToPlaylist, setIsAddedToPlaylist] = useState(false)
-  
-  // Active card (which card is currently being searched)
-  const [activeCard, setActiveCard] = useState<'source' | 'target' | null>(null)
-  
-  // Debounce timeout ref and abort controller for request cancellation
+  const [selectedSuggestion, setSelectedSuggestion] = useState<string | null>(null)
+  const [addedSuggestions, setAddedSuggestions] = useState<Set<string>>(new Set())
+
+  // Cancellation refs
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const abortControllerRef = useRef<AbortController | null>(null)
   const lastSearchIdRef = useRef<number>(0)
 
-  // Clean up audio and pending requests on unmount
   useEffect(() => {
     return () => {
-      if (audioRef.current) {
-        audioRef.current.pause()
-        audioRef.current = null
-      }
-      if (searchTimeoutRef.current) {
-        clearTimeout(searchTimeoutRef.current)
-      }
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort()
-      }
+      searchTimeoutRef.current && clearTimeout(searchTimeoutRef.current)
+      abortControllerRef.current?.abort()
     }
   }, [])
 
-  // Search for translation with request cancellation
-  const searchTranslation = useCallback(async (word: string, isSourceToTarget: boolean, searchId: number) => {
-    if (!word.trim()) {
-      setTranslationResult(null)
-      return
-    }
+  // Reset suggestions when direction changes
+  useEffect(() => {
+    setInputWord("")
+    setSuggestions([])
+    setError(null)
+    setAddedSuggestions(new Set())
+  }, [sourceIsNative])
 
-    // Cancel any pending request
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort()
-    }
+  const fetchSuggestions = useCallback(async (word: string, searchId: number) => {
+    abortControllerRef.current?.abort()
     abortControllerRef.current = new AbortController()
 
-    // Determine which language to search from/to based on selected languages
-    const fromLang = isSourceToTarget ? nativeLanguageCode : targetLanguageCode
-    const toLang = isSourceToTarget ? targetLanguageCode : nativeLanguageCode
-    
+    setIsSearching(true)
+    setError(null)
     try {
-      setError(null)
-      if (isSourceToTarget) {
-        setIsSearchingSource(true)
-      } else {
-        setIsSearchingTarget(true)
-      }
-
-      const response = await fetch(
-        `/api/translate?word=${encodeURIComponent(word.toLowerCase())}&targetLanguage=${toLang}&sourceLanguage=${fromLang}`,
+      const res = await fetch(
+        `/api/translate?word=${encodeURIComponent(word.toLowerCase())}&sourceLanguage=${fromCode}&targetLanguage=${toCode}&suggestions=true`,
         { signal: abortControllerRef.current.signal }
       )
-
-      // Check if this is still the latest search
-      if (searchId !== lastSearchIdRef.current) {
-        return // Ignore stale results
-      }
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Translation failed')
-      }
-
-      const data = await response.json()
-      
-      // Double-check this is still the latest search before updating UI
-      if (searchId !== lastSearchIdRef.current) {
-        return
-      }
-      
-      if (data.translations) {
-        setTranslationResult(data)
-        
-        // Update the other card with the translation
-        if (isSourceToTarget) {
-          const translation = data.translations[targetLanguageCode] || data.translations[toLang]
-          if (translation && translation !== 'Translation not available') {
-            setTargetWord(translation)
-          } else {
-            setTargetWord('')
-            setError(`No ${targetLanguage} translation found`)
-          }
-        } else {
-          // Searching from target language - get native language translation
-          const nativeTranslation = data.translations[nativeLanguageCode] || data.translations[toLang] || data.word
-          if (nativeTranslation) {
-            setSourceWord(nativeTranslation)
-          }
-        }
-      }
+      if (searchId !== lastSearchIdRef.current) return
+      if (!res.ok) throw new Error('Translation failed')
+      const data = await res.json()
+      if (searchId !== lastSearchIdRef.current) return
+      setSuggestions(data.suggestions || [])
+      if ((data.suggestions || []).length === 0) setError(`No translations found for "${word}"`)
     } catch (err) {
-      // Ignore abort errors
-      if (err instanceof Error && err.name === 'AbortError') {
-        return
-      }
-      // Only show error if this is still the current search
-      if (searchId === lastSearchIdRef.current) {
-        console.error('Translation error:', err)
-        setError(err instanceof Error ? err.message : 'Translation failed')
-      }
+      if (err instanceof Error && err.name === 'AbortError') return
+      if (searchId === lastSearchIdRef.current) setError('Translation failed')
     } finally {
-      // Only update loading state if this is still the current search
-      if (searchId === lastSearchIdRef.current) {
-        setIsSearchingSource(false)
-        setIsSearchingTarget(false)
-      }
+      if (searchId === lastSearchIdRef.current) setIsSearching(false)
     }
-  }, [nativeLanguageCode, targetLanguageCode, targetLanguage])
+  }, [fromCode, toCode])
 
-  // Debounced search handler for source (native language)
-  const handleSourceSearch = useCallback((value: string) => {
-    setSourceWord(value)
-    setActiveCard('source')
-    setIsAddedToPlaylist(false)
-    
-    // Clear the target word immediately when user types (prevents showing stale translation)
-    if (value.trim().length < 3) {
-      setTargetWord('')
-      setTranslationResult(null)
+  const handleInput = useCallback((value: string) => {
+    setInputWord(value)
+    setAddedSuggestions(new Set())
+    if (value.trim().length < 2) {
+      setSuggestions([])
       setError(null)
+      return
     }
-    
-    // Clear previous timeout
-    if (searchTimeoutRef.current) {
-      clearTimeout(searchTimeoutRef.current)
-    }
-    
-    // Longer debounce (800ms) for smoother experience
+    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current)
     searchTimeoutRef.current = setTimeout(() => {
-      if (value.trim().length >= 3) {
-        const searchId = ++lastSearchIdRef.current
-        searchTranslation(value, true, searchId)
-      } else {
-        setTargetWord('')
-        setTranslationResult(null)
-      }
-    }, 800)
-  }, [searchTranslation])
+      const searchId = ++lastSearchIdRef.current
+      fetchSuggestions(value.trim(), searchId)
+    }, 600)
+  }, [fetchSuggestions])
 
-  // Debounced search handler for target language
-  const handleTargetSearch = useCallback((value: string) => {
-    setTargetWord(value)
-    setActiveCard('target')
-    setIsAddedToPlaylist(false)
-    
-    // Clear the source word immediately when user types
-    if (value.trim().length < 3) {
-      setSourceWord('')
-      setTranslationResult(null)
-      setError(null)
-    }
-    
-    // Clear previous timeout
-    if (searchTimeoutRef.current) {
-      clearTimeout(searchTimeoutRef.current)
-    }
-    
-    // Longer debounce (800ms) for smoother experience
-    searchTimeoutRef.current = setTimeout(() => {
-      if (value.trim().length >= 3) {
-        const searchId = ++lastSearchIdRef.current
-        searchTranslation(value, false, searchId)
-      } else {
-        setSourceWord('')
-        setTranslationResult(null)
-      }
-    }, 800)
-  }, [searchTranslation])
-
-  // Play audio for a word
-  const playAudio = useCallback(async (word: string, languageCode: string, isSource: boolean) => {
-    if (!word.trim()) return
-
-    // Stop any playing audio
-    if (audioRef.current) {
-      audioRef.current.pause()
-      audioRef.current = null
-    }
-
-    try {
-      const setPlaying = isSource ? setIsPlayingSource : setIsPlayingTarget
-      setPlaying(true)
-
-      // Use custom audio API
-      const audioUrl = `/api/custom-audio?text=${encodeURIComponent(word)}&languageCode=${languageCode}`
-      
-      const audio = new Audio(audioUrl)
-      audioRef.current = audio
-      
-      audio.onended = () => {
-        setPlaying(false)
-        audioRef.current = null
-      }
-      
-      audio.onerror = () => {
-        console.error('Audio playback error')
-        setPlaying(false)
-        audioRef.current = null
-      }
-      
-      await audio.play()
-    } catch (err) {
-      console.error('Audio error:', err)
-      const setPlaying = isSource ? setIsPlayingSource : setIsPlayingTarget
-      setPlaying(false)
-    }
-  }, [])
-
-  // Add to playlist
-  const handleAddToPlaylist = useCallback(async () => {
-    if (!sourceWord.trim() || !targetWord.trim()) return
-    
-    // For now, just show the modal
+  const handleSuggestionTap = (suggestion: string) => {
+    setSelectedSuggestion(suggestion)
     setShowPlaylistModal(true)
-  }, [sourceWord, targetWord])
+  }
 
   return (
-    <div className="text-center transition-all duration-500 ease-in-out">
-      <div className="mb-12">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8 gap-2">
-          <button
-            onClick={onBack}
-            className="w-10 h-10 sm:w-12 sm:h-12 bg-black/40 border border-white/20 rounded-full flex items-center justify-center hover:bg-black/50 transition-all duration-300 transform hover:scale-110 shadow-lg flex-shrink-0"
-          >
-            <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 text-white/80" />
-          </button>
+    <div className="flex flex-col min-h-full">
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-6">
+        <button
+          onClick={onBack}
+          className="w-10 h-10 bg-black/30 border border-white/20 rounded-full flex items-center justify-center hover:bg-black/50 transition-all flex-shrink-0"
+        >
+          <ArrowLeft className="w-5 h-5 text-white/80" />
+        </button>
+        <h1 className="text-xl font-semibold text-white flex-1 text-center pr-10">Add word</h1>
+      </div>
 
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 justify-center">
-            <Icon icon="solar:magnifer-bold" className="w-7 h-7 sm:w-8 sm:h-8 text-blue-400" />
-            <h1 className="text-lg sm:text-xl md:text-2xl font-medium text-white text-center truncate">
-              Search Word
-            </h1>
-          </div>
-          
-          <button
-            onClick={onSettingsClick}
-            className="w-10 h-10 sm:w-12 sm:h-12 bg-black/40 border border-white/20 rounded-full flex items-center justify-center hover:bg-black/50 transition-all duration-300 transform hover:scale-110 shadow-lg flex-shrink-0"
-          >
-            <Settings className="w-5 h-5 sm:w-6 sm:h-6 text-white/80" />
-          </button>
-        </div>
+      {/* Language swap row */}
+      <div className="flex items-center gap-3 mb-5">
+        <button className="flex-1 bg-black/50 border border-white/20 rounded-full py-2.5 px-4 text-white font-medium text-sm text-center truncate">
+          {fromLanguage}
+        </button>
+        <button
+          onClick={() => setSourceIsNative(prev => !prev)}
+          className="w-9 h-9 bg-white/10 border border-white/20 rounded-full flex items-center justify-center hover:bg-white/20 transition-all flex-shrink-0"
+          aria-label="Swap languages"
+        >
+          <Icon icon="solar:transfer-horizontal-bold" className="w-5 h-5 text-white/80" />
+        </button>
+        <button className="flex-1 bg-black/50 border border-white/20 rounded-full py-2.5 px-4 text-white font-medium text-sm text-center truncate">
+          {toLanguage}
+        </button>
+      </div>
 
-        {/* Error message */}
-        {error && (
-          <div className="mb-4 bg-red-500/20 border border-red-400/30 rounded-lg px-4 py-2 text-red-200 text-sm">
-            {error}
-          </div>
+      {/* Input field */}
+      <div className="bg-white/10 border border-white/20 rounded-2xl px-4 py-3 mb-4 flex items-center gap-3">
+        <input
+          type="text"
+          value={inputWord}
+          onChange={(e) => handleInput(e.target.value)}
+          placeholder={`Type ${fromLanguage} word...`}
+          className="flex-1 bg-transparent text-white text-xl font-medium outline-none placeholder:text-white/30"
+          autoComplete="off"
+          spellCheck={false}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && inputWord.trim().length >= 2) {
+              if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current)
+              const searchId = ++lastSearchIdRef.current
+              fetchSuggestions(inputWord.trim(), searchId)
+            }
+          }}
+        />
+        {isSearching && (
+          <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin flex-shrink-0" />
         )}
-
-        {/* Word Cards with Search */}
-        <div className="space-y-6 mb-8">
-          {/* Source Language Card (Native Language) */}
-          <div className={`bg-black/40 border border-white/20 rounded-2xl p-6 transition-all duration-300 shadow-lg ${
-            activeCard === 'source' ? 'bg-blue-500/20 border-blue-400/30 scale-[1.02]' : ''
-          }`}>
-            <div className="text-white/60 text-sm mb-3 flex items-center justify-between">
-              <span className="flex items-center gap-2">
-                {nativeLanguage}
-                {isSearchingSource && (
-                  <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                )}
-              </span>
-              <button
-                onClick={() => playAudio(sourceWord, nativeLanguageCode, true)}
-                disabled={!sourceWord.trim() || isPlayingSource}
-                className={`p-2 rounded-full transition-all ${
-                  sourceWord.trim() 
-                    ? 'bg-white/10 hover:bg-white/20' 
-                    : 'opacity-30 cursor-not-allowed'
-                }`}
-              >
-                {isPlayingSource ? (
-                  <Square className="w-5 h-5 text-white/80" />
-                ) : (
-                  <Play className="w-5 h-5 text-white/80" />
-                )}
-              </button>
-            </div>
-            <input
-              type="text"
-              value={sourceWord}
-              onChange={(e) => handleSourceSearch(e.target.value)}
-              placeholder={`Type ${nativeLanguage} word...`}
-              className="w-full bg-transparent text-white text-2xl font-medium text-center outline-none placeholder:text-white/30"
-              autoComplete="off"
-              spellCheck={false}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && sourceWord.trim().length >= 2) {
-                  // Clear debounce and search immediately
-                  if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current)
-                  const searchId = ++lastSearchIdRef.current
-                  searchTranslation(sourceWord, true, searchId)
-                }
-              }}
-            />
-          </div>
-
-          {/* Search indicator / Translate button */}
-          <div className="flex justify-center -my-2">
-            {(isSearchingSource || isSearchingTarget) ? (
-              <div className="flex items-center gap-2 px-4 py-2 bg-blue-500/20 rounded-full border border-blue-400/30">
-                <span className="inline-block w-4 h-4 border-2 border-blue-300/50 border-t-blue-300 rounded-full animate-spin" />
-                <span className="text-blue-300 text-sm">Translating...</span>
-              </div>
-            ) : (sourceWord.trim().length >= 2 && !targetWord.trim()) ? (
-              <button
-                onClick={() => {
-                  if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current)
-                  const searchId = ++lastSearchIdRef.current
-                  searchTranslation(sourceWord, true, searchId)
-                }}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-500/30 hover:bg-blue-500/40 rounded-full border border-blue-400/30 transition-all"
-              >
-                <Icon icon="solar:magnifer-bold" className="w-4 h-4 text-blue-300" />
-                <span className="text-blue-300 text-sm">Translate</span>
-              </button>
-            ) : (targetWord.trim().length >= 2 && !sourceWord.trim()) ? (
-              <button
-                onClick={() => {
-                  if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current)
-                  const searchId = ++lastSearchIdRef.current
-                  searchTranslation(targetWord, false, searchId)
-                }}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-500/30 hover:bg-blue-500/40 rounded-full border border-blue-400/30 transition-all"
-              >
-                <Icon icon="solar:magnifer-bold" className="w-4 h-4 text-blue-300" />
-                <span className="text-blue-300 text-sm">Translate</span>
-              </button>
-            ) : null}
-          </div>
-
-          {/* Target Language Card */}
-          <div className={`bg-black/40 border border-white/20 rounded-2xl p-6 transition-all duration-300 shadow-lg ${
-            activeCard === 'target' ? 'bg-blue-500/20 border-blue-400/30 scale-[1.02]' : ''
-          }`}>
-            <div className="text-white/60 text-sm mb-3 flex items-center justify-between">
-              <span className="flex items-center gap-2">
-                {targetLanguage}
-                {isSearchingTarget && (
-                  <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                )}
-              </span>
-              <button
-                onClick={() => playAudio(targetWord, targetLanguageCode, false)}
-                disabled={!targetWord.trim() || isPlayingTarget}
-                className={`p-2 rounded-full transition-all ${
-                  targetWord.trim() 
-                    ? 'bg-white/10 hover:bg-white/20' 
-                    : 'opacity-30 cursor-not-allowed'
-                }`}
-              >
-                {isPlayingTarget ? (
-                  <Square className="w-5 h-5 text-white/80" />
-                ) : (
-                  <Play className="w-5 h-5 text-white/80" />
-                )}
-              </button>
-            </div>
-            <input
-              type="text"
-              value={targetWord}
-              onChange={(e) => handleTargetSearch(e.target.value)}
-              placeholder={`Type ${targetLanguage} word...`}
-              className="w-full bg-transparent text-white text-2xl font-medium text-center outline-none placeholder:text-white/30"
-              autoComplete="off"
-              spellCheck={false}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && targetWord.trim().length >= 2) {
-                  // Clear debounce and search immediately
-                  if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current)
-                  const searchId = ++lastSearchIdRef.current
-                  searchTranslation(targetWord, false, searchId)
-                }
-              }}
-            />
-          </div>
-        </div>
-
-        {/* Action Buttons */}
-        {sourceWord.trim() && targetWord.trim() && (
-          <div className="flex justify-center gap-4">
-            <button
-              onClick={handleAddToPlaylist}
-              disabled={isAddedToPlaylist}
-              className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${
-                isAddedToPlaylist
-                  ? 'bg-green-500/30 text-green-300 border border-green-400/30'
-                  : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700'
-              }`}
-            >
-              {isAddedToPlaylist ? (
-                <>
-                  <Check className="w-5 h-5" />
-                  Added to Playlist
-                </>
-              ) : (
-                <>
-                  <Plus className="w-5 h-5" />
-                  Add to Playlist
-                </>
-              )}
-            </button>
-          </div>
+        {inputWord && !isSearching && (
+          <button
+            onClick={() => { setInputWord(""); setSuggestions([]); setError(null) }}
+            className="text-white/40 hover:text-white/70 transition-colors flex-shrink-0"
+          >
+            <Icon icon="solar:close-circle-bold" className="w-5 h-5" />
+          </button>
         )}
       </div>
 
+      {/* Error */}
+      {error && (
+        <p className="text-red-300 text-sm text-center mb-3 px-2">{error}</p>
+      )}
+
+      {/* Suggestions list */}
+      {suggestions.length > 0 && (
+        <div className="space-y-1">
+          {suggestions.map((suggestion, idx) => (
+            <button
+              key={idx}
+              onClick={() => handleSuggestionTap(suggestion)}
+              className={`w-full flex items-center justify-between px-5 py-4 rounded-xl transition-all text-left ${
+                addedSuggestions.has(suggestion)
+                  ? 'bg-green-500/20 border border-green-400/30'
+                  : 'bg-white/8 hover:bg-white/15 border border-white/10'
+              }`}
+            >
+              <span className={`text-base font-medium ${addedSuggestions.has(suggestion) ? 'text-green-300' : 'text-white'}`}>
+                {suggestion}
+              </span>
+              {addedSuggestions.has(suggestion) ? (
+                <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-green-400 flex-shrink-0" />
+              ) : (
+                <ChevronRight className="w-5 h-5 text-white/40 flex-shrink-0" />
+              )}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Playlist Modal */}
-      {showPlaylistModal && userId && (
+      {showPlaylistModal && userId && selectedSuggestion && (
         <PlaylistSelectModal
-          word={sourceWord}
-          translation={targetWord}
+          word={inputWord}
+          translation={selectedSuggestion}
           userId={userId}
-          translations={translationResult?.translations}
-          nativeLanguageCode={nativeLanguageCode}
-          targetLanguageCode={targetLanguageCode}
-          onClose={() => setShowPlaylistModal(false)}
+          translations={{ [fromCode]: inputWord, [toCode]: selectedSuggestion }}
+          nativeLanguageCode={fromCode}
+          targetLanguageCode={toCode}
+          onClose={() => { setShowPlaylistModal(false); setSelectedSuggestion(null) }}
           onSelect={(playlistId) => {
-            setIsAddedToPlaylist(true)
+            setAddedSuggestions(prev => new Set(prev).add(selectedSuggestion))
             setShowPlaylistModal(false)
-            // Notify parent to refresh playlists
+            setSelectedSuggestion(null)
             onPlaylistUpdate?.()
           }}
         />

@@ -523,7 +523,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                       lastTopicSectionRef.current = currentSection
                       onTopicSelect({ id: -1, name: 'Search Word', icon: '' } as Topic)
                     }}
-                    className="flex-shrink-0 bg-gradient-to-br from-blue-500/30 to-purple-600/30 border-2 border-blue-400/40 rounded-xl sm:rounded-2xl p-4 sm:p-5 text-center hover:from-blue-500/40 hover:to-purple-600/40 transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl relative"
+                    className="flex-shrink-0 bg-gradient-to-br from-blue-500 to-blue-700 border-2 border-blue-400/60 rounded-xl sm:rounded-2xl p-4 sm:p-5 text-center hover:from-blue-400 hover:to-blue-600 transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl relative"
                   >
                     {!isPremium && (
                       <div className="absolute top-2 right-2">
@@ -531,8 +531,8 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                       </div>
                     )}
                     <div className="flex flex-col items-center justify-center gap-3">
-                      <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white/10 rounded-full flex items-center justify-center">
-                        <Icon icon="solar:magnifer-bold" width="32" height="32" className="sm:w-10 sm:h-10 text-blue-300" />
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white/20 rounded-full flex items-center justify-center">
+                        <Icon icon="solar:magnifer-bold" width="32" height="32" className="sm:w-10 sm:h-10 text-white" />
                       </div>
                       <div>
                         <p className="text-white text-lg sm:text-xl font-semibold">Search Word</p>
