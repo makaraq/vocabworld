@@ -72,79 +72,80 @@ function getSupabaseAdmin() {
   return createClient(supabaseUrl, supabaseServiceKey)
 }
 
-// Lingva public instances (Google Translate proxy, no API key needed)
-const LINGVA_INSTANCES = [
-  'https://lingva.ml',
-  'https://lingva.garudalinux.org',
-  'https://translate.plausibility.cloud',
-]
+// Unofficial Google Translate API — no key needed, very stable
+const GTRANS_URL = 'https://translate.googleapis.com/translate_a/single'
 
-// Call Lingva with automatic fallback across instances
-async function fetchLingva(
+async function callGoogleTranslate(
   word: string,
   sourceLang: string,
   targetLang: string
-): Promise<{ translation: string; extraTranslations: Array<{ type: string; list: string[] }> } | null> {
-  for (const base of LINGVA_INSTANCES) {
-    try {
-      const res = await fetch(
-        `${base}/api/v1/${encodeURIComponent(sourceLang)}/${encodeURIComponent(targetLang)}/${encodeURIComponent(word)}`,
-        { signal: AbortSignal.timeout(6000) }
-      )
-      if (!res.ok) continue
-      const data = await res.json()
-      if (!data?.translation) continue
-      return {
-        translation: data.translation as string,
-        extraTranslations: (data.info?.extraTranslations as Array<{ type: string; list: string[] }>) || []
+): Promise<{ translation: string; alternatives: string[] } | null> {
+  try {
+    // dt=t → main translation, dt=bd → dictionary alternatives per pos
+    const url = `${GTRANS_URL}?client=gtx&sl=${encodeURIComponent(sourceLang)}&tl=${encodeURIComponent(targetLang)}&dt=t&dt=bd&q=${encodeURIComponent(word)}`
+    const res = await fetch(url, {
+      headers: { 'User-Agent': 'Mozilla/5.0' },
+      signal: AbortSignal.timeout(8000)
+    })
+    if (!res.ok) return null
+
+    // Response is a nested array — not JSON with named keys
+    const data = await res.json()
+
+    // Main translation: data[0] is array of [translated_chunk, source_chunk, ...]
+    let translation = ''
+    if (Array.isArray(data[0])) {
+      translation = (data[0] as Array<string[]>)
+        .map(chunk => chunk[0] || '')
+        .join('')
+        .trim()
+    }
+
+    // Dictionary alternatives: data[1] is [{pos, terms[], ...}, ...]
+    const seen = new Set<string>()
+    const alternatives: string[] = []
+
+    const add = (t: string) => {
+      const clean = t.trim()
+      if (!clean || clean.toLowerCase() === word.toLowerCase()) return
+      if (seen.has(clean.toLowerCase())) return
+      seen.add(clean.toLowerCase())
+      alternatives.push(clean)
+    }
+
+    if (translation) add(translation)
+
+    if (Array.isArray(data[1])) {
+      for (const group of data[1] as Array<{ terms?: string[] }>) {
+        for (const term of group.terms ?? []) {
+          if (alternatives.length >= 6) break
+          add(term)
+        }
+        if (alternatives.length >= 6) break
       }
-    } catch {
-      // try next instance
     }
+
+    // If no dict alternatives, at least return the main translation
+    if (!translation && alternatives.length === 0) return null
+
+    return { translation: translation || alternatives[0], alternatives }
+  } catch {
+    return null
   }
-  return null
 }
 
-// Single translation via Lingva
-async function translateWithLingva(word: string, sourceLang: string, targetLang: string): Promise<string | null> {
-  const result = await fetchLingva(word, sourceLang, targetLang)
-  if (!result) return null
-  const t = result.translation.trim()
-  // Lingva returns the original word when nothing is found
-  if (t.toLowerCase() === word.toLowerCase()) return null
-  return t
+// Single translation via Google Translate
+async function translateWithGoogle(word: string, sourceLang: string, targetLang: string): Promise<string | null> {
+  const result = await callGoogleTranslate(word, sourceLang, targetLang)
+  if (!result?.translation) return null
+  if (result.translation.toLowerCase() === word.toLowerCase()) return null
+  return result.translation
 }
 
-// Multiple translation suggestions via Lingva's extraTranslations (word-level variants per pos)
-async function getLingvaSuggestions(word: string, sourceLang: string, targetLang: string): Promise<string[]> {
-  const result = await fetchLingva(word, sourceLang, targetLang)
-  if (!result) return []
-
-  const seen = new Set<string>()
-  const suggestions: string[] = []
-
-  const add = (t: string) => {
-    const clean = t.trim()
-    if (!clean) return
-    if (clean.toLowerCase() === word.toLowerCase()) return
-    if (seen.has(clean.toLowerCase())) return
-    seen.add(clean.toLowerCase())
-    suggestions.push(clean)
-  }
-
-  // Primary translation first
-  add(result.translation)
-
-  // Then word-level alternatives from all parts of speech
-  for (const group of result.extraTranslations) {
-    for (const item of group.list ?? []) {
-      if (suggestions.length >= 6) break
-      add(item)
-    }
-    if (suggestions.length >= 6) break
-  }
-
-  return suggestions
+// Multiple word-level suggestions via Google Translate dictionary
+async function getGoogleSuggestions(word: string, sourceLang: string, targetLang: string): Promise<string[]> {
+  const result = await callGoogleTranslate(word, sourceLang, targetLang)
+  return result?.alternatives ?? []
 }
 
 // Fetch word from Wiktionary and extract translations
@@ -203,16 +204,16 @@ async function fetchTranslationsWithFallback(word: string, sourceLang: string = 
     Object.assign(translations, wiktionaryTranslations)
   }
   
-  // For missing languages, use Lingva (Google Translate proxy)
+  // For missing languages, use Google Translate
   const missingLangs = TARGET_LANGUAGES.filter(lang => !translations[lang] && lang !== sourceLang)
   
-  // Limit concurrent requests to avoid overwhelming Lingva instances
+  // Limit concurrent requests
   const batchSize = 5
   for (let i = 0; i < missingLangs.length; i += batchSize) {
     const batch = missingLangs.slice(i, i + batchSize)
     const results = await Promise.all(
       batch.map(async (lang) => {
-        const translation = await translateWithLingva(word, sourceLang, lang)
+        const translation = await translateWithGoogle(word, sourceLang, lang)
         return { lang, translation }
       })
     )
@@ -248,27 +249,27 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Word too long' }, { status: 400 })
     }
 
-    // Suggestions mode: return multiple translation variants via Lingva
+    // Suggestions mode: return multiple word-level variants via Google Translate
     if (suggestionsMode && targetLanguage) {
-      const suggestions = await getLingvaSuggestions(word, sourceLanguage, targetLanguage)
+      const suggestions = await getGoogleSuggestions(word, sourceLanguage, targetLanguage)
       return NextResponse.json({ word, suggestions })
     }
 
     const supabase = getSupabaseAdmin()
     const effectiveTargetLang = targetLanguage || lang
     
-    // For non-English source languages, use Lingva directly (no caching)
+    // For non-English source languages, use Google Translate directly (no caching)
     if (sourceLanguage !== 'en') {
       console.log(`Translating "${word}" from ${sourceLanguage} to ${effectiveTargetLang || 'all languages'}`)
       
       // Direct translation for specific target language
       if (effectiveTargetLang) {
-        const translation = await translateWithLingva(word, sourceLanguage, effectiveTargetLang)
+        const translation = await translateWithGoogle(word, sourceLanguage, effectiveTargetLang)
         return NextResponse.json({
           word: word,
           sourceLanguage: sourceLanguage,
           translations: translation ? { [effectiveTargetLang]: translation } : {},
-          source: 'lingva',
+          source: 'google',
           cached: false
         })
       }
@@ -279,7 +280,7 @@ export async function GET(request: NextRequest) {
         word: word,
         sourceLanguage: sourceLanguage,
         translations: translations,
-        source: 'lingva',
+        source: 'google',
         cached: false
       })
     }
@@ -325,7 +326,7 @@ export async function GET(request: NextRequest) {
       .insert({
         word_en: word,
         translations: translations,
-        source: 'wiktionary+lingva'
+        source: 'wiktionary+google'
       })
       .select()
       .single()
