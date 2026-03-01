@@ -72,85 +72,79 @@ function getSupabaseAdmin() {
   return createClient(supabaseUrl, supabaseServiceKey)
 }
 
-// Alternative: Use MyMemory Translation API (free, 1000 req/day)
-async function translateWithMyMemory(word: string, sourceLang: string, targetLang: string): Promise<string | null> {
-  try {
-    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}&langpair=${sourceLang}|${targetLang}`
-    const response = await fetch(url)
-    
-    if (!response.ok) return null
-    
-    const data = await response.json()
-    if (data.responseStatus === 200 && data.responseData?.translatedText) {
-      const translation = data.responseData.translatedText
-      // MyMemory returns original text in uppercase if no translation found
-      if (translation.toUpperCase() === word.toUpperCase()) return null
-      return translation
+// Lingva public instances (Google Translate proxy, no API key needed)
+const LINGVA_INSTANCES = [
+  'https://lingva.ml',
+  'https://lingva.garudalinux.org',
+  'https://translate.plausibility.cloud',
+]
+
+// Call Lingva with automatic fallback across instances
+async function fetchLingva(
+  word: string,
+  sourceLang: string,
+  targetLang: string
+): Promise<{ translation: string; extraTranslations: Array<{ type: string; list: string[] }> } | null> {
+  for (const base of LINGVA_INSTANCES) {
+    try {
+      const res = await fetch(
+        `${base}/api/v1/${encodeURIComponent(sourceLang)}/${encodeURIComponent(targetLang)}/${encodeURIComponent(word)}`,
+        { signal: AbortSignal.timeout(6000) }
+      )
+      if (!res.ok) continue
+      const data = await res.json()
+      if (!data?.translation) continue
+      return {
+        translation: data.translation as string,
+        extraTranslations: (data.info?.extraTranslations as Array<{ type: string; list: string[] }>) || []
+      }
+    } catch {
+      // try next instance
     }
-    return null
-  } catch {
-    return null
   }
+  return null
 }
 
-// Get multiple translation suggestions from MyMemory matches array
-async function getMyMemorySuggestions(word: string, sourceLang: string, targetLang: string): Promise<string[]> {
-  try {
-    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}&langpair=${sourceLang}|${targetLang}`
-    const response = await fetch(url)
-    if (!response.ok) return []
+// Single translation via Lingva
+async function translateWithLingva(word: string, sourceLang: string, targetLang: string): Promise<string | null> {
+  const result = await fetchLingva(word, sourceLang, targetLang)
+  if (!result) return null
+  const t = result.translation.trim()
+  // Lingva returns the original word when nothing is found
+  if (t.toLowerCase() === word.toLowerCase()) return null
+  return t
+}
 
-    const data = await response.json()
-    const seen = new Set<string>()
-    const suggestions: string[] = []
+// Multiple translation suggestions via Lingva's extraTranslations (word-level variants per pos)
+async function getLingvaSuggestions(word: string, sourceLang: string, targetLang: string): Promise<string[]> {
+  const result = await fetchLingva(word, sourceLang, targetLang)
+  if (!result) return []
 
-    // Allow translations with a similar word count to the input
-    // e.g. "flipar" (1 word) → "to freak out" (3 words) is fine
-    const inputWordCount = word.trim().split(/\s+/).length
-    const maxWords = Math.max(inputWordCount + 2, 4)
+  const seen = new Set<string>()
+  const suggestions: string[] = []
 
-    const isValidTranslation = (t: string) => {
-      const cleaned = t.trim()
-      if (!cleaned) return false
-      // Reject if it looks like the original (MyMemory quirk)
-      if (cleaned.toUpperCase() === word.toUpperCase()) return false
-      // Reject phrases that are too long (sentences, not word translations)
-      if (cleaned.split(/\s+/).length > maxWords) return false
-      // Reject entries containing the source word (untranslated embed)
-      if (cleaned.toLowerCase().includes(word.toLowerCase())) return false
-      return true
-    }
-
-    // Primary translation first
-    if (data.responseData?.translatedText) {
-      const primary = data.responseData.translatedText.trim()
-      if (isValidTranslation(primary)) {
-        seen.add(primary.toLowerCase())
-        suggestions.push(primary)
-      }
-    }
-
-    // Pull additional suggestions from matches, sorted by quality desc
-    if (Array.isArray(data.matches)) {
-      const sorted = [...data.matches].sort(
-        (a, b) => (parseFloat(b.quality) || 0) - (parseFloat(a.quality) || 0)
-      )
-      for (const match of sorted) {
-        if (suggestions.length >= 5) break
-        const quality = parseFloat(match.quality) || 0
-        if (quality < 55) continue
-        const t = (match.translation || '').trim()
-        if (!isValidTranslation(t)) continue
-        if (seen.has(t.toLowerCase())) continue
-        seen.add(t.toLowerCase())
-        suggestions.push(t)
-      }
-    }
-
-    return suggestions
-  } catch {
-    return []
+  const add = (t: string) => {
+    const clean = t.trim()
+    if (!clean) return
+    if (clean.toLowerCase() === word.toLowerCase()) return
+    if (seen.has(clean.toLowerCase())) return
+    seen.add(clean.toLowerCase())
+    suggestions.push(clean)
   }
+
+  // Primary translation first
+  add(result.translation)
+
+  // Then word-level alternatives from all parts of speech
+  for (const group of result.extraTranslations) {
+    for (const item of group.list ?? []) {
+      if (suggestions.length >= 6) break
+      add(item)
+    }
+    if (suggestions.length >= 6) break
+  }
+
+  return suggestions
 }
 
 // Fetch word from Wiktionary and extract translations
@@ -209,16 +203,16 @@ async function fetchTranslationsWithFallback(word: string, sourceLang: string = 
     Object.assign(translations, wiktionaryTranslations)
   }
   
-  // For missing languages, use MyMemory API (batch requests to stay within limits)
+  // For missing languages, use Lingva (Google Translate proxy)
   const missingLangs = TARGET_LANGUAGES.filter(lang => !translations[lang] && lang !== sourceLang)
   
-  // Limit concurrent requests
+  // Limit concurrent requests to avoid overwhelming Lingva instances
   const batchSize = 5
   for (let i = 0; i < missingLangs.length; i += batchSize) {
     const batch = missingLangs.slice(i, i + batchSize)
     const results = await Promise.all(
       batch.map(async (lang) => {
-        const translation = await translateWithMyMemory(word, sourceLang, lang)
+        const translation = await translateWithLingva(word, sourceLang, lang)
         return { lang, translation }
       })
     )
@@ -229,9 +223,8 @@ async function fetchTranslationsWithFallback(word: string, sourceLang: string = 
       }
     }
     
-    // Small delay between batches to avoid rate limiting
     if (i + batchSize < missingLangs.length) {
-      await new Promise(resolve => setTimeout(resolve, 100))
+      await new Promise(resolve => setTimeout(resolve, 80))
     }
   }
   
@@ -255,39 +248,38 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Word too long' }, { status: 400 })
     }
 
-    // Suggestions mode: return multiple translation variants
+    // Suggestions mode: return multiple translation variants via Lingva
     if (suggestionsMode && targetLanguage) {
-      const suggestions = await getMyMemorySuggestions(word, sourceLanguage, targetLanguage)
+      const suggestions = await getLingvaSuggestions(word, sourceLanguage, targetLanguage)
       return NextResponse.json({ word, suggestions })
     }
 
     const supabase = getSupabaseAdmin()
     const effectiveTargetLang = targetLanguage || lang
     
-    // For non-English source languages, we use direct translation via MyMemory
-    // We don't cache non-English source words to avoid complexity
+    // For non-English source languages, use Lingva directly (no caching)
     if (sourceLanguage !== 'en') {
       console.log(`Translating "${word}" from ${sourceLanguage} to ${effectiveTargetLang || 'all languages'}`)
       
       // Direct translation for specific target language
       if (effectiveTargetLang) {
-        const translation = await translateWithMyMemory(word, sourceLanguage, effectiveTargetLang)
+        const translation = await translateWithLingva(word, sourceLanguage, effectiveTargetLang)
         return NextResponse.json({
           word: word,
           sourceLanguage: sourceLanguage,
           translations: translation ? { [effectiveTargetLang]: translation } : {},
-          source: 'mymemory',
+          source: 'lingva',
           cached: false
         })
       }
       
-      // Translate to multiple languages (limited set for performance)
+      // Translate to multiple languages
       const translations = await fetchTranslationsWithFallback(word, sourceLanguage)
       return NextResponse.json({
         word: word,
         sourceLanguage: sourceLanguage,
         translations: translations,
-        source: 'mymemory',
+        source: 'lingva',
         cached: false
       })
     }
@@ -333,7 +325,7 @@ export async function GET(request: NextRequest) {
       .insert({
         word_en: word,
         translations: translations,
-        source: 'wiktionary+mymemory'
+        source: 'wiktionary+lingva'
       })
       .select()
       .single()

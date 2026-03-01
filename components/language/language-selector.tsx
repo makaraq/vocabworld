@@ -523,7 +523,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                       lastTopicSectionRef.current = currentSection
                       onTopicSelect({ id: -1, name: 'Search Word', icon: '' } as Topic)
                     }}
-                    className="flex-shrink-0 bg-gradient-to-br from-blue-600/70 to-blue-900/80 border-2 border-blue-500/30 rounded-xl sm:rounded-2xl p-4 sm:p-5 text-center hover:from-blue-600/80 hover:to-blue-900/90 transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl relative"
+                    className="flex-shrink-0 bg-gradient-to-br from-blue-500 to-blue-800 border-2 border-blue-400/50 rounded-xl sm:rounded-2xl p-4 sm:p-5 text-center hover:from-blue-400 hover:to-blue-700 transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl relative"
                   >
                     {!isPremium && (
                       <div className="absolute top-2 right-2">
