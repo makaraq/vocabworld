@@ -367,10 +367,10 @@ function PlaylistSelectModal({ word, translation, userId, translations, nativeLa
   }
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-gray-900 border border-white/20 rounded-2xl w-full max-w-md max-h-[80vh] overflow-hidden">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div className="bg-gray-900 border border-white/20 rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md flex flex-col max-h-[90vh]">
         {/* Header */}
-        <div className="p-4 border-b border-white/10 flex items-center justify-between">
+        <div className="p-4 border-b border-white/10 flex items-center justify-between flex-shrink-0">
           <h3 className="text-white font-semibold text-lg">Add to Playlist</h3>
           <button
             onClick={onClose}
@@ -381,13 +381,13 @@ function PlaylistSelectModal({ word, translation, userId, translations, nativeLa
         </div>
 
         {/* Word preview */}
-        <div className="p-4 bg-white/5 border-b border-white/10">
+        <div className="p-4 bg-white/5 border-b border-white/10 flex-shrink-0">
           <p className="text-white font-medium">{word}</p>
           <p className="text-white/60 text-sm">{translation}</p>
         </div>
 
         {/* Create new playlist */}
-        <div className="p-4 border-b border-white/10">
+        <div className="p-4 border-b border-white/10 flex-shrink-0">
           <div className="flex gap-2">
             <input
               type="text"
@@ -406,8 +406,8 @@ function PlaylistSelectModal({ word, translation, userId, translations, nativeLa
           </div>
         </div>
 
-        {/* Playlist list */}
-        <div className="p-4 overflow-auto max-h-60">
+        {/* Playlist list — scrollable */}
+        <div className="p-4 overflow-y-auto flex-1 min-h-0">
           {isLoading ? (
             <div className="flex items-center justify-center py-8">
               <span className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
