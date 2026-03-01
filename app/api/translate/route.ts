@@ -115,14 +115,16 @@ async function callGoogleTranslate(
 
     if (translation) add(translation)
 
-    // data[1] structure: [ [posName, [ [word, [synonyms], score], ... ]], ... ]
+    // data[1] structure (client=gtx): [ [posName, [word, word, ...] | [[word, syns, score], ...]], ... ]
     if (Array.isArray(data[1])) {
-      for (const group of data[1] as Array<[string, Array<[string, string[], number]>]>) {
+      for (const group of data[1]) {
+        if (!Array.isArray(group)) continue
         const entries = group[1]
         if (!Array.isArray(entries)) continue
         for (const entry of entries) {
           if (alternatives.length >= 8) break
-          const term = entry[0]
+          // entry can be a plain string OR an array [word, synonyms, score]
+          const term = typeof entry === 'string' ? entry : Array.isArray(entry) ? entry[0] : null
           if (typeof term === 'string') add(term)
         }
         if (alternatives.length >= 8) break
