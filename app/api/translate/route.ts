@@ -99,32 +99,54 @@ async function getMyMemorySuggestions(word: string, sourceLang: string, targetLa
     const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}&langpair=${sourceLang}|${targetLang}`
     const response = await fetch(url)
     if (!response.ok) return []
-    
+
     const data = await response.json()
     const seen = new Set<string>()
     const suggestions: string[] = []
-    
-    // Add the primary translation first
+
+    // Allow translations with a similar word count to the input
+    // e.g. "flipar" (1 word) → "to freak out" (3 words) is fine
+    const inputWordCount = word.trim().split(/\s+/).length
+    const maxWords = Math.max(inputWordCount + 2, 4)
+
+    const isValidTranslation = (t: string) => {
+      const cleaned = t.trim()
+      if (!cleaned) return false
+      // Reject if it looks like the original (MyMemory quirk)
+      if (cleaned.toUpperCase() === word.toUpperCase()) return false
+      // Reject phrases that are too long (sentences, not word translations)
+      if (cleaned.split(/\s+/).length > maxWords) return false
+      // Reject entries containing the source word (untranslated embed)
+      if (cleaned.toLowerCase().includes(word.toLowerCase())) return false
+      return true
+    }
+
+    // Primary translation first
     if (data.responseData?.translatedText) {
-      const primary = data.responseData.translatedText
-      if (primary.toUpperCase() !== word.toUpperCase()) {
+      const primary = data.responseData.translatedText.trim()
+      if (isValidTranslation(primary)) {
         seen.add(primary.toLowerCase())
         suggestions.push(primary)
       }
     }
-    
-    // Add unique suggestions from matches array
+
+    // Pull additional suggestions from matches, sorted by quality desc
     if (Array.isArray(data.matches)) {
-      for (const match of data.matches) {
-        const t: string = match.translation || ''
-        if (!t || t.toUpperCase() === word.toUpperCase()) continue
+      const sorted = [...data.matches].sort(
+        (a, b) => (parseFloat(b.quality) || 0) - (parseFloat(a.quality) || 0)
+      )
+      for (const match of sorted) {
+        if (suggestions.length >= 5) break
+        const quality = parseFloat(match.quality) || 0
+        if (quality < 55) continue
+        const t = (match.translation || '').trim()
+        if (!isValidTranslation(t)) continue
         if (seen.has(t.toLowerCase())) continue
         seen.add(t.toLowerCase())
         suggestions.push(t)
-        if (suggestions.length >= 6) break
       }
     }
-    
+
     return suggestions
   } catch {
     return []
