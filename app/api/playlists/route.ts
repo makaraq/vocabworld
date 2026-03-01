@@ -190,15 +190,29 @@ export async function POST(request: NextRequest) {
           .select('id')
           .single()
         
-        if (insertError || !newWord) {
-          console.error('Error creating dictionary word:', insertError)
-          return NextResponse.json(
-            { error: 'Failed to add word' },
-            { status: 500 }
-          )
+        if (insertError) {
+          // If duplicate (race condition), try to fetch the existing row
+          if (insertError.code === '23505') {
+            const { data: raceWord } = await supabase
+              .from('dictionary_words')
+              .select('id')
+              .eq('word_en', normalizedWord)
+              .single()
+            if (raceWord) {
+              dictionaryWordId = raceWord.id
+            } else {
+              console.error('Error creating dictionary word:', insertError)
+              return NextResponse.json({ error: 'Failed to add word' }, { status: 500 })
+            }
+          } else {
+            console.error('Error creating dictionary word:', insertError)
+            return NextResponse.json({ error: 'Failed to add word' }, { status: 500 })
+          }
+        } else if (!newWord) {
+          return NextResponse.json({ error: 'Failed to add word' }, { status: 500 })
+        } else {
+          dictionaryWordId = newWord.id
         }
-        
-        dictionaryWordId = newWord.id
       } else {
         dictionaryWordId = existingWord.id
         

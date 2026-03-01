@@ -284,7 +284,7 @@ function PlaylistSelectModal({ word, translation, userId, translations, nativeLa
     setError(null)
     
     try {
-      // Create playlist with language codes
+      // Step 1: Create the playlist
       const createResponse = await fetch('/api/playlists', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -303,21 +303,22 @@ function PlaylistSelectModal({ word, translation, userId, translations, nativeLa
       
       const { playlist } = await createResponse.json()
       
-      // Add word to the new playlist using the translate API endpoint
-      const addResponse = await fetch('/api/translate', {
+      if (!playlist?.id) {
+        throw new Error('Playlist was not created properly')
+      }
+
+      // Step 2: Add the word to the new playlist
+      const addResponse = await fetch('/api/playlists', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          word: word,
-          playlistId: playlist.id,
           userId,
-          sourceLanguageCode: nativeLanguageCode,
-          targetLanguageCode: targetLanguageCode,
-          translation: translation,
-          translations: translations
+          playlistId: playlist.id,
+          word,
+          translations: { ...translations, [nativeLanguageCode]: word, [targetLanguageCode]: translation }
         })
       })
-      
+
       if (!addResponse.ok) {
         const errorData = await addResponse.json()
         throw new Error(errorData.error || 'Failed to add word to playlist')
@@ -339,18 +340,15 @@ function PlaylistSelectModal({ word, translation, userId, translations, nativeLa
     setError(null)
     
     try {
-      // Add word to playlist using translate API endpoint
-      const response = await fetch('/api/translate', {
+      // Add word directly via playlists API (handles word upsert + count increment)
+      const response = await fetch('/api/playlists', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          word: word,
-          playlistId: playlistId,
           userId,
-          sourceLanguageCode: nativeLanguageCode,
-          targetLanguageCode: targetLanguageCode,
-          translation: translation,
-          translations: translations
+          playlistId,
+          word,
+          translations: { ...translations, [nativeLanguageCode]: word, [targetLanguageCode]: translation }
         })
       })
       
