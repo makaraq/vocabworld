@@ -8,6 +8,7 @@ import { ProgressStats } from "@/components/progress/progress-stats"
 import { SearchWordLearning } from "@/components/learning/search-word-learning"
 import { PaywallModal } from "@/components/paywall/paywall-modal"
 import { ExampleSentencesModal } from "@/components/learning/example-sentences-modal"
+import { ManageAccountModal } from "@/components/account/manage-account-modal"
 
 declare global {
   interface Window {
@@ -448,66 +449,33 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                     />
                   )}
 
-                  {/* Merged User Info, Subscription, and Sign Out */}
-                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-white/20 space-y-3 sm:space-y-4">
-                    {/* User Profile Info */}
-                    <div className="flex items-center space-x-2 sm:space-x-3">
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
-                        {user?.user_metadata?.avatar_url || user?.user_metadata?.picture ? (
-                          <img 
-                            src={user?.user_metadata?.avatar_url || user?.user_metadata?.picture} 
-                            alt="Profile" 
-                            className="w-full h-full object-cover rounded-full"
-                          />
-                        ) : (
-                          <Icon icon="solar:user-bold" width="24" height="24" className="text-white" />
-                        )}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <h3 className="text-white font-semibold text-base sm:text-lg truncate">
-                          {user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'User'}
-                        </h3>
-                        <p className="text-white/70 text-xs sm:text-sm truncate">{user?.email}</p>
+                  {/* Daily Reminder & Goal Pills */}
+                  <div className="flex gap-2">
+                    <div className="flex-1 bg-white/10 backdrop-blur-sm border border-white/15 rounded-2xl px-3 py-2.5 flex items-center space-x-2">
+                      <Icon icon="solar:bell-bold" width="16" height="16" className="text-purple-300 flex-shrink-0" />
+                      <div className="min-w-0">
+                        <p className="text-white/50 text-[10px] font-medium uppercase tracking-wide leading-none mb-0.5">Daily Reminder</p>
+                        <p className="text-white font-semibold text-sm leading-none">02:00 PM</p>
                       </div>
                     </div>
-
-                    {/* Subscription Status */}
-                    <div className="flex items-center justify-between gap-2">
-                      <h4 className="text-white font-medium text-sm sm:text-base flex items-center space-x-1.5 sm:space-x-2">
-                        <Icon icon="solar:crown-bold" width="18" height="18" className="text-yellow-400 sm:w-5 sm:h-5" />
-                        <span>Subscription</span>
-                      </h4>
-                      {isPremium ? (
-                        <div className="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium bg-gradient-to-r from-yellow-500 to-orange-500 text-white border border-yellow-500/30">
-                          Premium
-                        </div>
-                      ) : (
-                        <div className="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium bg-gray-500/30 text-white/70 border border-gray-500/30">
-                          Free
-                        </div>
-                      )}
+                    <div className="flex-1 bg-white/10 backdrop-blur-sm border border-white/15 rounded-2xl px-3 py-2.5 flex items-center space-x-2">
+                      <span className="text-base leading-none flex-shrink-0">🎯</span>
+                      <div className="min-w-0">
+                        <p className="text-white/50 text-[10px] font-medium uppercase tracking-wide leading-none mb-0.5">Daily Goal</p>
+                        <p className="text-white font-semibold text-sm leading-none">20 words</p>
+                      </div>
                     </div>
-
-                    {/* Upgrade Button (show only for free users) */}
-                    {!isPremium && (
-                      <button
-                        onClick={() => setShowPaywall(true)}
-                        className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white py-2.5 sm:py-3 px-3 sm:px-4 rounded-lg font-medium text-sm hover:from-yellow-600 hover:to-orange-600 transition-all flex items-center justify-center space-x-2"
-                      >
-                        <Icon icon="solar:crown-bold" width="18" height="18" className="sm:w-5 sm:h-5" />
-                        <span>Upgrade to Premium</span>
-                      </button>
-                    )}
-
-                    {/* Sign Out Button */}
-                    <button
-                      onClick={handleSignOut}
-                      className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white py-2.5 sm:py-3 px-3 sm:px-4 rounded-lg font-medium text-sm hover:bg-white/20 transition-all flex items-center justify-center space-x-2"
-                    >
-                      <Icon icon="solar:logout-3-bold" width="18" height="18" className="sm:w-5 sm:h-5" />
-                      <span>Sign Out</span>
-                    </button>
                   </div>
+
+                  {/* Manage Account Button */}
+                  <button
+                    onClick={() => setShowManageAccount(true)}
+                    className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white py-3 px-4 rounded-2xl font-semibold text-sm hover:bg-white/15 transition-all flex items-center justify-center space-x-2"
+                  >
+                    <Icon icon="solar:user-circle-bold" width="18" height="18" className="text-white/70" />
+                    <span>Manage Account</span>
+                    <Icon icon="solar:alt-arrow-right-bold" width="16" height="16" className="text-white/40 ml-auto" />
+                  </button>
                 </div>
               ) : (section as any).isMyWords ? (
                 /* MY WORDS section - Search and custom playlists */
@@ -859,6 +827,7 @@ export function LanguageSelector() {
 
   const { user, signOut, signInWithGoogle, isPremium, canAccessTopic, refreshSubscription, loading } = useAuth()
   const [showPaywall, setShowPaywall] = useState(false)
+  const [showManageAccount, setShowManageAccount] = useState(false)
 
   // Debug auth state
   useEffect(() => {
@@ -4700,6 +4669,18 @@ export function LanguageSelector() {
           onAddToPlaylistAction={handleAddToPlaylist}
         />
       )}
+
+      {/* Manage Account Modal */}
+      <ManageAccountModal
+        open={showManageAccount}
+        onCloseAction={() => setShowManageAccount(false)}
+        name={user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'User'}
+        email={user?.email || ''}
+        avatarUrl={user?.user_metadata?.avatar_url || user?.user_metadata?.picture}
+        isPremium={isPremium}
+        renewalDate="March 2, 2027"
+        onSignOutAction={handleSignOut}
+      />
 
       {/* Paywall Modal */}
       <PaywallModal 
