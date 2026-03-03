@@ -41,10 +41,7 @@ export function ManageAccountModal({
       <Sheet open={open} onOpenChange={(v) => !v && onCloseAction()}>
       <SheetContent
         side="bottom"
-        className="border-0 p-0 rounded-t-3xl overflow-hidden"
-        style={{
-          background: "linear-gradient(160deg, #1a0a2e 0%, #2d1010 100%)",
-        }}
+        className="border-0 p-0 rounded-t-3xl overflow-hidden bg-black/60 backdrop-blur-xl"
       >
         {/* Drag handle */}
         <div className="flex justify-center pt-3 pb-1">
