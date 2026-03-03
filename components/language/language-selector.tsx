@@ -168,6 +168,7 @@ interface TopicSliderProps {
   renderTopicButton: (topic: Topic) => React.ReactElement
   isPremium: boolean
   setShowPaywall: (show: boolean) => void
+  setShowManageAccount: (show: boolean) => void
   sections: Array<{
     name: string
     icon: string
@@ -204,6 +205,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
   renderTopicButton,
   isPremium,
   setShowPaywall,
+  setShowManageAccount,
   sections
 }) => {
   const [touchStart, setTouchStart] = useState(0)
@@ -4347,6 +4349,7 @@ export function LanguageSelector() {
                 renderTopicButton={renderTopicButton}
                 isPremium={isPremium}
                 setShowPaywall={setShowPaywall}
+                setShowManageAccount={setShowManageAccount}
                 sections={sections}
               />
             </div>
