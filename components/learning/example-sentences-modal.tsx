@@ -216,7 +216,7 @@ export function ExampleSentencesModal({
           <div className="p-5 border-t border-white/10">
             <button
               onClick={onAddToPlaylistAction}
-              className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02]"
+              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02]"
             >
               <Plus className="w-5 h-5" />
               Add to Playlist

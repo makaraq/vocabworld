@@ -8,6 +8,7 @@ import { ProgressStats } from "@/components/progress/progress-stats"
 import { SearchWordLearning } from "@/components/learning/search-word-learning"
 import { PaywallModal } from "@/components/paywall/paywall-modal"
 import { ExampleSentencesModal } from "@/components/learning/example-sentences-modal"
+import { PlaylistSelectModal } from "@/components/learning/search-word-learning"
 import { ManageAccountModal } from "@/components/account/manage-account-modal"
 
 declare global {
@@ -4670,6 +4671,29 @@ export function LanguageSelector() {
             setExampleModalData(null)
           }}
           onAddToPlaylistAction={handleAddToPlaylist}
+        />
+      )}
+
+      {/* Playlist Select Modal (opened from Add to Playlist button in Example Sentences) */}
+      {showPlaylistModal && exampleModalData && user?.id && (
+        <PlaylistSelectModal
+          word={exampleModalData.sourceWord}
+          translation={exampleModalData.targetWord}
+          userId={user.id}
+          translations={{
+            [nativeLanguageCode]: exampleModalData.sourceWord,
+            [targetLanguageCode]: exampleModalData.targetWord
+          }}
+          nativeLanguageCode={nativeLanguageCode}
+          targetLanguageCode={targetLanguageCode}
+          onClose={() => {
+            setShowPlaylistModal(false)
+            setExampleModalData(null)
+          }}
+          onSelect={() => {
+            setShowPlaylistModal(false)
+            setExampleModalData(null)
+          }}
         />
       )}
 

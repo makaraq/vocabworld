@@ -231,7 +231,7 @@ export function SearchWordLearning({
 }
 
 // Playlist selection modal component
-interface PlaylistSelectModalProps {
+export interface PlaylistSelectModalProps {
   word: string
   translation: string
   userId: string
@@ -242,7 +242,7 @@ interface PlaylistSelectModalProps {
   onSelect: (playlistId: string) => void
 }
 
-function PlaylistSelectModal({ word, translation, userId, translations, nativeLanguageCode, targetLanguageCode, onClose, onSelect }: PlaylistSelectModalProps) {
+export function PlaylistSelectModal({ word, translation, userId, translations, nativeLanguageCode, targetLanguageCode, onClose, onSelect }: PlaylistSelectModalProps) {
   const [playlists, setPlaylists] = useState<Array<{ id: string; name: string; word_count: number }>>([])
   const [isLoading, setIsLoading] = useState(true)
   const [newPlaylistName, setNewPlaylistName] = useState('')
