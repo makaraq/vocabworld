@@ -897,6 +897,8 @@ export function LanguageSelector() {
     repeatMainLanguage: 1, // 1x by default
     playTargetOnly: false, // Play only target language (skip native translation)
     showPhonetics: false, // Show IPA phonetic pronunciations below words
+    rewindEnabled: false, // Loop back to start word after N words
+    rewindAfterWords: 5, // Number of words before rewinding
   }
   
   const [settings, setSettings] = useState(defaultSettings)
@@ -2780,17 +2782,36 @@ export function LanguageSelector() {
     stopRequestedRef.current = false;
     setAutoPlayActive(true);
     
+    // Capture the rewind anchor — where autoplay was started from
+    const loopStartIndex = currentWordIndex;
+    let wordCount = 0;
+
     try {
-      for (let i = currentWordIndex; i < vocabulary.length; i++) {
+      let i = currentWordIndex;
+      while (true) {
         // Check abort signal FIRST - highest priority check
         if (signal.aborted) {
           console.log('🛑 Autoplay aborted by signal at word', i + 1);
           throw new DOMException('Autoplay aborted', 'AbortError');
         }
+
+        // End of word list reached
+        if (i >= vocabulary.length) {
+          if (settings.rewindEnabled) {
+            console.log('🔄 Rewind: end of list reached, looping back to word', loopStartIndex + 1);
+            i = loopStartIndex;
+            wordCount = 0;
+            continue;
+          } else {
+            // Natural completion
+            break;
+          }
+        }
         
         const word = vocabulary[i];
         if (!word || !word.sourceWord || !word.targetWord) {
           console.log('⏭️ Skipping invalid word at index', i);
+          i++;
           continue;
         }
         
@@ -2815,9 +2836,17 @@ export function LanguageSelector() {
           console.log('🛑 Aborted after playAudio');
           throw new DOMException('Autoplay aborted', 'AbortError');
         }
-        
-        // Pause before next word (except for last word)
-        if (i < vocabulary.length - 1) {
+
+        wordCount++;
+
+        // Rewind check: did we just complete the N-word cycle?
+        const rewindNow = settings.rewindEnabled && wordCount >= (settings.rewindAfterWords || 5);
+
+        // Determine whether there's a "next" step to pause before
+        const hasNext = rewindNow || i < vocabulary.length - 1;
+
+        // Pause before next word / before rewind
+        if (hasNext) {
           setCurrentAudioStep('pause');
           
           const pauseStartTime = performance.now();
@@ -2841,6 +2870,17 @@ export function LanguageSelector() {
               reject(new DOMException('Autoplay aborted during pause', 'AbortError'));
             });
           });
+        }
+
+        // Check abort after pause
+        if (signal.aborted) throw new DOMException('Autoplay aborted', 'AbortError');
+
+        if (rewindNow) {
+          console.log(`🔄 Rewind: played ${wordCount} words, looping back to word ${loopStartIndex + 1}`);
+          i = loopStartIndex;
+          wordCount = 0;
+        } else {
+          i++;
         }
       }
       
@@ -4570,6 +4610,46 @@ export function LanguageSelector() {
                         <span>5x</span>
                       </div>
                     </div>
+                  </div>
+
+                  {/* Rewind After N Words */}
+                  <div>
+                    <div className="flex items-center justify-between gap-3 mb-2 sm:mb-3">
+                      <div className="min-w-0 flex-1">
+                        <p className="text-white/80 text-sm">Rewind After Words</p>
+                        <p className="text-white/50 text-xs">Loop back to start word after N words</p>
+                      </div>
+                      <button
+                        onClick={() => updateSetting("rewindEnabled", !settings.rewindEnabled)}
+                        className={`w-11 h-6 sm:w-12 sm:h-6 rounded-full transition-all duration-300 flex-shrink-0 ${
+                          settings.rewindEnabled
+                            ? "bg-blue-500"
+                            : "bg-black/30 border border-white/20"
+                        }`}
+                      >
+                        <div className={`w-5 h-5 bg-white rounded-full transition-all duration-300 ${
+                          settings.rewindEnabled ? "translate-x-5 sm:translate-x-6" : "translate-x-0.5"
+                        }`} />
+                      </button>
+                    </div>
+                    {settings.rewindEnabled && (
+                      <div className="bg-black/20 backdrop-blur-sm border border-white/10 rounded-xl p-3 sm:p-4">
+                        <input
+                          type="range"
+                          min="2"
+                          max="20"
+                          step="1"
+                          value={settings.rewindAfterWords}
+                          onChange={(e) => updateSetting("rewindAfterWords", Number.parseInt(e.target.value))}
+                          className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
+                        />
+                        <div className="flex justify-between text-white/60 text-xs mt-2">
+                          <span>2 words</span>
+                          <span className="text-white font-medium">{settings.rewindAfterWords} words</span>
+                          <span>20 words</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

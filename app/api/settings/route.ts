@@ -56,7 +56,9 @@ export async function GET(request: Request) {
           repeatTargetLanguage: 1,
           repeatMainLanguage: 1,
           playTargetOnly: false,
-          showPhonetics: false
+          showPhonetics: false,
+          rewindEnabled: false,
+          rewindAfterWords: 5
         }
         return NextResponse.json({ settings: defaultSettings })
       }
@@ -82,7 +84,9 @@ export async function GET(request: Request) {
       repeatTargetLanguage: 1,
       repeatMainLanguage: 1,
       playTargetOnly: false,
-      showPhonetics: false
+      showPhonetics: false,
+      rewindEnabled: false,
+      rewindAfterWords: 5
     }
 
     // Merge defaults with saved settings to ensure new fields are included
