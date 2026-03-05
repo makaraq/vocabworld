@@ -1382,8 +1382,8 @@ export function LanguageSelector() {
   const getSpeedRate = (speed: string): number => {
     let rate: number
     switch (speed) {
-      case 'Slow': rate = 0.85; break  // Was 0.7 - reduced to minimize pitch shift
-      case 'Fast': rate = 1.15; break  // Was 1.3 - reduced to minimize pitch shift
+      case 'Slow': rate = 0.9; break  // 10% slower — minimal time-stretch artifacts
+      case 'Fast': rate = 1.1; break  // 10% faster — minimal time-stretch artifacts
       default: rate = 1.0 // Normal
     }
     console.log(`🎚️ getSpeedRate: ${speed} -> ${rate}x (conservative range for better quality)`)
@@ -1511,43 +1511,24 @@ export function LanguageSelector() {
       const audio = new Audio(url)
       audio.crossOrigin = 'anonymous'
       
-      // Check default value of preservesPitch
-      const defaultPreservesPitch = (audio as any).preservesPitch
-      console.log(`🔍 Default preservesPitch value: ${defaultPreservesPitch}`)
-      
-      // CRITICAL: Set playbackRate BEFORE preservesPitch for proper initialization
-      audio.playbackRate = playbackRate
-      
-      // Enable pitch preservation (supported in Chrome 86+, Firefox 47+, Safari 15+)
-      // NOTE: In modern browsers, preservesPitch defaults to TRUE
-      let pitchPreservationSet = false
+      // Set pitch preservation BEFORE playbackRate so the browser initialises
+      // its time-stretching algorithm in pitch-preserving mode from the start.
+      // Must try all vendor-prefixed variants for Capacitor (iOS/Android WebViews).
       try {
         if ('preservesPitch' in audio) {
           (audio as any).preservesPitch = true
-          const actualValue = (audio as any).preservesPitch
-          console.log(`✅ preservesPitch explicitly set to true, actual value: ${actualValue}`)
-          pitchPreservationSet = true
-        } else if ('mozPreservesPitch' in audio) {
-          (audio as any).mozPreservesPitch = true
-          const actualValue = (audio as any).mozPreservesPitch
-          console.log(`✅ mozPreservesPitch set to true (Firefox), actual value: ${actualValue}`)
-          pitchPreservationSet = true
-        } else if ('webkitPreservesPitch' in audio) {
+        }
+        if ('webkitPreservesPitch' in audio) {
           (audio as any).webkitPreservesPitch = true
-          const actualValue = (audio as any).webkitPreservesPitch
-          console.log(`✅ webkitPreservesPitch set to true (WebKit), actual value: ${actualValue}`)
-          pitchPreservationSet = true
-        } else {
-          console.warn('⚠️ NO pitch preservation properties found - audio WILL sound distorted')
-          console.warn('⚠️ Browser:', navigator.userAgent)
+        }
+        if ('mozPreservesPitch' in audio) {
+          (audio as any).mozPreservesPitch = true
         }
       } catch (e) {
-        console.error('❌ Failed to enable pitch preservation:', e)
+        console.warn('⚠️ Could not set pitch preservation:', e)
       }
       
-      if (!pitchPreservationSet) {
-        console.warn('⚠️ Pitch preservation could not be enabled - using conservative speed range')
-      }
+      audio.playbackRate = playbackRate
       
       audioElementsRef.current.push(audio)
       
@@ -4505,13 +4486,56 @@ export function LanguageSelector() {
                 </div>
               </div>
 
+              {/* Rewind Section */}
+              <div>
+                <div className="flex items-center justify-between gap-3 mb-2 sm:mb-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-white/80 text-sm font-medium">Rewind</p>
+                    <p className="text-white/50 text-xs">Replay a set of words on a loop</p>
+                  </div>
+                  <button
+                    onClick={() => updateSetting("rewindEnabled", !settings.rewindEnabled)}
+                    className={`w-11 h-6 sm:w-12 sm:h-6 rounded-full transition-all duration-300 flex-shrink-0 ${
+                      settings.rewindEnabled
+                        ? "bg-blue-500"
+                        : "bg-black/30 border border-white/20"
+                    }`}
+                  >
+                    <div className={`w-5 h-5 bg-white rounded-full transition-all duration-300 ${
+                      settings.rewindEnabled ? "translate-x-5 sm:translate-x-6" : "translate-x-0.5"
+                    }`} />
+                  </button>
+                </div>
+                {settings.rewindEnabled && (
+                  <div className="bg-black/20 backdrop-blur-sm border border-white/10 rounded-xl p-3 sm:p-4">
+                    <input
+                      type="range"
+                      min="2"
+                      max="20"
+                      step="1"
+                      value={settings.rewindAfterWords}
+                      onChange={(e) => updateSetting("rewindAfterWords", Number.parseInt(e.target.value))}
+                      className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
+                    />
+                    <div className="flex justify-between text-white/60 text-xs mt-2">
+                      <span>2 words</span>
+                      <span className="text-white font-medium">{settings.rewindAfterWords} words</span>
+                      <span>20 words</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {/* Pace Section */}
               <div>
                 <h3 className="text-base sm:text-lg font-medium text-white mb-3 sm:mb-4">Pace</h3>
 
                 <div className="space-y-4 sm:space-y-6">
                   <div>
-                    <p className="text-white/80 text-sm mb-2 sm:mb-3">Pronunciation Speed:</p>
+                    <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                      <Icon icon="solar:soundwave-bold" width="15" height="15" className="text-white/60 flex-shrink-0" />
+                      <p className="text-white/80 text-sm">Pronunciation speed</p>
+                    </div>
                     <div className="flex gap-2 sm:gap-3">
                       {["Slow", "Normal", "Fast"].map((speed) => (
                         <button
@@ -4533,7 +4557,10 @@ export function LanguageSelector() {
                   </div>
 
                   <div>
-                    <p className="text-white/80 text-sm mb-2 sm:mb-3">Pause Duration between translations:</p>
+                    <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                      <Icon icon="solar:pause-circle-bold" width="15" height="15" className="text-white/60 flex-shrink-0" />
+                      <p className="text-white/80 text-sm">Pause between translations</p>
+                    </div>
                     <div className="bg-black/20 backdrop-blur-sm border border-white/10 rounded-xl p-3 sm:p-4">
                       <input
                         type="range"
@@ -4553,7 +4580,10 @@ export function LanguageSelector() {
                   </div>
 
                   <div>
-                    <p className="text-white/80 text-sm mb-2 sm:mb-3">Pause Duration for the next word:</p>
+                    <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                      <Icon icon="solar:skip-next-bold" width="15" height="15" className="text-white/60 flex-shrink-0" />
+                      <p className="text-white/80 text-sm">Pause before next word</p>
+                    </div>
                     <div className="bg-black/20 backdrop-blur-sm border border-white/10 rounded-xl p-3 sm:p-4">
                       <input
                         type="range"
@@ -4573,7 +4603,10 @@ export function LanguageSelector() {
                   </div>
 
                   <div>
-                    <p className="text-white/80 text-sm mb-2 sm:mb-3">Repeat Target Language Word:</p>
+                    <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                      <Icon icon="solar:repeat-bold" width="15" height="15" className="text-white/60 flex-shrink-0" />
+                      <p className="text-white/80 text-sm">Repeat target language</p>
+                    </div>
                     <div className="bg-black/20 backdrop-blur-sm border border-white/10 rounded-xl p-3 sm:p-4">
                       <input
                         type="range"
@@ -4593,7 +4626,10 @@ export function LanguageSelector() {
                   </div>
 
                   <div>
-                    <p className="text-white/80 text-sm mb-2 sm:mb-3">Repeat Main Language Word:</p>
+                    <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                      <Icon icon="solar:repeat-one-bold" width="15" height="15" className="text-white/60 flex-shrink-0" />
+                      <p className="text-white/80 text-sm">Repeat main language</p>
+                    </div>
                     <div className="bg-black/20 backdrop-blur-sm border border-white/10 rounded-xl p-3 sm:p-4">
                       <input
                         type="range"
@@ -4612,45 +4648,6 @@ export function LanguageSelector() {
                     </div>
                   </div>
 
-                  {/* Rewind After N Words */}
-                  <div>
-                    <div className="flex items-center justify-between gap-3 mb-2 sm:mb-3">
-                      <div className="min-w-0 flex-1">
-                        <p className="text-white/80 text-sm">Rewind After Words</p>
-                        <p className="text-white/50 text-xs">Loop back to start word after N words</p>
-                      </div>
-                      <button
-                        onClick={() => updateSetting("rewindEnabled", !settings.rewindEnabled)}
-                        className={`w-11 h-6 sm:w-12 sm:h-6 rounded-full transition-all duration-300 flex-shrink-0 ${
-                          settings.rewindEnabled
-                            ? "bg-blue-500"
-                            : "bg-black/30 border border-white/20"
-                        }`}
-                      >
-                        <div className={`w-5 h-5 bg-white rounded-full transition-all duration-300 ${
-                          settings.rewindEnabled ? "translate-x-5 sm:translate-x-6" : "translate-x-0.5"
-                        }`} />
-                      </button>
-                    </div>
-                    {settings.rewindEnabled && (
-                      <div className="bg-black/20 backdrop-blur-sm border border-white/10 rounded-xl p-3 sm:p-4">
-                        <input
-                          type="range"
-                          min="2"
-                          max="20"
-                          step="1"
-                          value={settings.rewindAfterWords}
-                          onChange={(e) => updateSetting("rewindAfterWords", Number.parseInt(e.target.value))}
-                          className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
-                        />
-                        <div className="flex justify-between text-white/60 text-xs mt-2">
-                          <span>2 words</span>
-                          <span className="text-white font-medium">{settings.rewindAfterWords} words</span>
-                          <span>20 words</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
                 </div>
               </div>
             </div>
