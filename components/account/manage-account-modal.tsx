@@ -41,6 +41,7 @@ export function ManageAccountModal({
       <Sheet open={open} onOpenChange={(v) => !v && onCloseAction()}>
       <SheetContent
         side="bottom"
+        hideCloseButton
         className="border-0 p-0 rounded-t-3xl overflow-hidden bg-white/10 backdrop-blur-2xl"
         style={{ WebkitTapHighlightColor: 'transparent' }}
       >
