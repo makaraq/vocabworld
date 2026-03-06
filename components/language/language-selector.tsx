@@ -4432,7 +4432,7 @@ export function LanguageSelector() {
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
                         <Icon icon="solar:play-circle-bold" width="15" height="15" className="text-white/60 flex-shrink-0" />
-                        <p className="text-white/80 text-sm">Auto-play</p>
+                        <p className="text-white text-sm">Auto-play</p>
                       </div>
                       <p className="text-white/50 text-xs mt-0.5">Automatically play audio when words change</p>
                     </div>
@@ -4454,7 +4454,7 @@ export function LanguageSelector() {
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
                         <Icon icon="solar:volume-loud-bold" width="15" height="15" className="text-white/60 flex-shrink-0" />
-                        <p className="text-white/80 text-sm">Play target language only</p>
+                        <p className="text-white text-sm">Play target language only</p>
                       </div>
                       <p className="text-white/50 text-xs mt-0.5">Skip native language translation</p>
                     </div>
@@ -4476,7 +4476,7 @@ export function LanguageSelector() {
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
                         <Icon icon="solar:text-bold" width="15" height="15" className="text-white/60 flex-shrink-0" />
-                        <p className="text-white/80 text-sm">Show phonetic pronunciation</p>
+                        <p className="text-white text-sm">Show phonetic pronunciation</p>
                       </div>
                       <p className="text-white/50 text-xs mt-0.5">Display IPA pronunciation guide</p>
                     </div>
@@ -4502,7 +4502,7 @@ export function LanguageSelector() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <Icon icon="solar:rewind-back-bold" width="15" height="15" className="text-white/60 flex-shrink-0" />
-                      <p className="text-white/80 text-sm font-medium">Rewind</p>
+                      <p className="text-white text-sm font-medium">Rewind</p>
                     </div>
                     <p className="text-white/50 text-xs mt-0.5">Replay a set of words on a loop</p>
                   </div>
@@ -4547,7 +4547,7 @@ export function LanguageSelector() {
                   <div>
                     <div className="flex items-center gap-2 mb-2 sm:mb-3">
                       <Icon icon="solar:soundwave-bold" width="15" height="15" className="text-white/60 flex-shrink-0" />
-                      <p className="text-white/80 text-sm">Pronunciation speed</p>
+                      <p className="text-white text-sm">Pronunciation speed</p>
                     </div>
                     <div className="flex gap-2 sm:gap-3">
                       {["Slow", "Normal", "Fast"].map((speed) => (
@@ -4572,7 +4572,7 @@ export function LanguageSelector() {
                   <div>
                     <div className="flex items-center gap-2 mb-2 sm:mb-3">
                       <Icon icon="solar:pause-circle-bold" width="15" height="15" className="text-white/60 flex-shrink-0" />
-                      <p className="text-white/80 text-sm">Pause between translations</p>
+                      <p className="text-white text-sm">Pause between translations</p>
                     </div>
                     <div className="bg-black/20 backdrop-blur-sm border border-white/10 rounded-xl p-3 sm:p-4">
                       <input
@@ -4595,7 +4595,7 @@ export function LanguageSelector() {
                   <div>
                     <div className="flex items-center gap-2 mb-2 sm:mb-3">
                       <Icon icon="solar:skip-next-bold" width="15" height="15" className="text-white/60 flex-shrink-0" />
-                      <p className="text-white/80 text-sm">Pause before next word</p>
+                      <p className="text-white text-sm">Pause before next word</p>
                     </div>
                     <div className="bg-black/20 backdrop-blur-sm border border-white/10 rounded-xl p-3 sm:p-4">
                       <input
@@ -4618,7 +4618,7 @@ export function LanguageSelector() {
                   <div>
                     <div className="flex items-center gap-2 mb-2 sm:mb-3">
                       <Icon icon="solar:repeat-bold" width="15" height="15" className="text-white/60 flex-shrink-0" />
-                      <p className="text-white/80 text-sm">Repeat target language</p>
+                      <p className="text-white text-sm">Repeat target language</p>
                     </div>
                     <div className="bg-black/20 backdrop-blur-sm border border-white/10 rounded-xl p-3 sm:p-4">
                       <input
@@ -4641,7 +4641,7 @@ export function LanguageSelector() {
                   <div>
                     <div className="flex items-center gap-2 mb-2 sm:mb-3">
                       <Icon icon="solar:repeat-one-bold" width="15" height="15" className="text-white/60 flex-shrink-0" />
-                      <p className="text-white/80 text-sm">Repeat main language</p>
+                      <p className="text-white text-sm">Repeat main language</p>
                     </div>
                     <div className="bg-black/20 backdrop-blur-sm border border-white/10 rounded-xl p-3 sm:p-4">
                       <input
