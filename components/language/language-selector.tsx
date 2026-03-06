@@ -4426,11 +4426,15 @@ export function LanguageSelector() {
             <div className="space-y-6 sm:space-y-8">
               {/* Playback Options */}
               <div>
+                <h3 className="text-base sm:text-lg font-medium text-white mb-3 sm:mb-4">Settings</h3>
                 <div className="space-y-4 sm:space-y-5">
                   <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0 flex-1">
-                      <p className="text-white/80 text-sm">Auto-play</p>
-                      <p className="text-white/50 text-xs">Automatically play audio when words change</p>
+                      <div className="flex items-center gap-2">
+                        <Icon icon="solar:play-circle-bold" width="15" height="15" className="text-white/60 flex-shrink-0" />
+                        <p className="text-white/80 text-sm">Auto-play</p>
+                      </div>
+                      <p className="text-white/50 text-xs mt-0.5">Automatically play audio when words change</p>
                     </div>
                     <button
                       onClick={() => updateSetting("autoPlay", !settings.autoPlay)}
@@ -4448,8 +4452,11 @@ export function LanguageSelector() {
 
                   <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0 flex-1">
-                      <p className="text-white/80 text-sm">Play target language only</p>
-                      <p className="text-white/50 text-xs">Skip native language translation</p>
+                      <div className="flex items-center gap-2">
+                        <Icon icon="solar:volume-loud-bold" width="15" height="15" className="text-white/60 flex-shrink-0" />
+                        <p className="text-white/80 text-sm">Play target language only</p>
+                      </div>
+                      <p className="text-white/50 text-xs mt-0.5">Skip native language translation</p>
                     </div>
                     <button
                       onClick={() => updateSetting("playTargetOnly", !settings.playTargetOnly)}
@@ -4467,8 +4474,11 @@ export function LanguageSelector() {
 
                   <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0 flex-1">
-                      <p className="text-white/80 text-sm">Show phonetic pronunciation</p>
-                      <p className="text-white/50 text-xs">Display IPA pronunciation guide</p>
+                      <div className="flex items-center gap-2">
+                        <Icon icon="solar:text-bold" width="15" height="15" className="text-white/60 flex-shrink-0" />
+                        <p className="text-white/80 text-sm">Show phonetic pronunciation</p>
+                      </div>
+                      <p className="text-white/50 text-xs mt-0.5">Display IPA pronunciation guide</p>
                     </div>
                     <button
                       onClick={() => updateSetting("showPhonetics", !settings.showPhonetics)}
@@ -4490,8 +4500,11 @@ export function LanguageSelector() {
               <div>
                 <div className="flex items-center justify-between gap-3 mb-2 sm:mb-3">
                   <div className="min-w-0 flex-1">
-                    <p className="text-white/80 text-sm font-medium">Rewind</p>
-                    <p className="text-white/50 text-xs">Replay a set of words on a loop</p>
+                    <div className="flex items-center gap-2">
+                      <Icon icon="solar:rewind-back-bold" width="15" height="15" className="text-white/60 flex-shrink-0" />
+                      <p className="text-white/80 text-sm font-medium">Rewind</p>
+                    </div>
+                    <p className="text-white/50 text-xs mt-0.5">Replay a set of words on a loop</p>
                   </div>
                   <button
                     onClick={() => updateSetting("rewindEnabled", !settings.rewindEnabled)}
