@@ -144,7 +144,7 @@ export function DetailedProgressModal({
 
     fetch(`/api/ui-translations?languageCode=${nativeLanguageCode}`)
       .then(res => res.ok ? res.json() : null)
-      .then(data => setUiTranslations(data || {}))
+      .then(data => setUiTranslations(data?.translations || {}))
       .catch(() => setUiTranslations({}))
   }, [nativeLanguageCode])
 
