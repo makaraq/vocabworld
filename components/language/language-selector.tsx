@@ -76,7 +76,7 @@ const TOPIC_ICONS = [
   { id: 39, icon: 'solar:document-medicine-linear' }, // Advanced Communication & Formal Language
   { id: 40, icon: 'solar:global-linear' }, // Cultural Integration & Global Perspectives
   { id: 41, icon: 'solar:running-2-linear' }, // Verbs
-  { id: 42, icon: 'solar:book-2-linear' }, // Daily Language
+  { id: 42, icon: 'solar:sun-linear' }, // Daily Language
   { id: 43, icon: 'solar:code-square-linear' }, // Essential Words
   { id: 44, icon: 'solar:close-circle-linear' }, // Bad Words
 ]
