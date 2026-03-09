@@ -61,6 +61,17 @@ export function DetailedProgressModal({
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set()) // All sections closed by default
   const [sections, setSections] = useState<Array<{name: string, topicIds: number[], icon: string}>>([])
   const [topicTranslations, setTopicTranslations] = useState<Record<number, string>>({})
+  const [uiTranslations, setUiTranslations] = useState<Record<string, string>>({})
+
+  // Map hardcoded English section names to their UI translation keys
+  const SECTION_KEYS: Record<string, string> = {
+    'FIRST AID KIT': 'FIRST_AID_KIT',
+    'DAILY LIFE': 'DAILY_LIFE',
+    'PERSONAL & SOCIAL LIFE': 'PERSONAL_AND_SOCIAL_LIFE',
+    'WORK & SCHOOL': 'WORK_AND_SCHOOL',
+    'CULTURE & SOCIETY': 'CULTURE_AND_SOCIETY',
+    'PROFESSIONAL': 'PROFESSIONAL',
+  }
 
   // Load sections structure from topics API - dynamically generated
   useEffect(() => {
@@ -130,6 +141,11 @@ export function DetailedProgressModal({
       .then(res => res.ok ? res.json() : null)
       .then(data => setTopicTranslations(data?.translations || {}))
       .catch(() => setTopicTranslations({}))
+
+    fetch(`/api/ui-translations?languageCode=${nativeLanguageCode}`)
+      .then(res => res.ok ? res.json() : null)
+      .then(data => setUiTranslations(data || {}))
+      .catch(() => setUiTranslations({}))
   }, [nativeLanguageCode])
 
   const toggleSection = (sectionName: string) => {
@@ -289,7 +305,7 @@ export function DetailedProgressModal({
                       {/* Section Info */}
                       <div className="flex-1 min-w-0 text-left">
                         <div className="flex items-center justify-between mb-2">
-                          <h3 className="font-semibold text-white drop-shadow text-sm">{section.name}</h3>
+                          <h3 className="font-semibold text-white drop-shadow text-sm">{uiTranslations[SECTION_KEYS[section.name]] || section.name}</h3>
                           <div className="flex items-center gap-2">
                             <span className="text-xs text-white/70 drop-shadow">
                               {sectionProgress.completed}/{sectionProgress.total} topics • {Math.round(sectionProgress.percentage)}%
