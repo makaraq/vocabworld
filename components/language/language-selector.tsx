@@ -3945,22 +3945,22 @@ export function LanguageSelector() {
           <div className="flex-shrink-0 flex items-center justify-center">
             {hasCustomIcon ? (
               <div 
-                className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center mx-auto" 
+                className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center mx-auto [&>svg]:w-full [&>svg]:h-full" 
                 style={{ color: 'rgba(255,255,255,0.8)' }}
                 dangerouslySetInnerHTML={{ __html: topic.icon! }}
               />
             ) : customSVGIcons[topic.id] ? (
               <div 
-                className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center mx-auto" 
+                className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center mx-auto [&>svg]:w-full [&>svg]:h-full" 
                 style={{ color: 'rgba(255,255,255,0.8)' }}
                 dangerouslySetInnerHTML={{ __html: customSVGIcons[topic.id] }}
               />
             ) : iconData && typeof iconData.icon === 'string' ? (
-              <Icon icon={iconData.icon} width="48" height="48" className="sm:w-16 sm:h-16 mx-auto" style={{ color: 'rgba(255,255,255,0.8)' }} />
+              <Icon icon={iconData.icon} className="w-12 h-12 sm:w-14 sm:h-14 mx-auto" style={{ color: 'rgba(255,255,255,0.8)' }} />
             ) : iconData ? (
-              (iconData.icon as any)({ className: 'w-12 h-12 sm:w-16 sm:h-16 text-white/80 mx-auto' })
+              (iconData.icon as any)({ className: 'w-12 h-12 sm:w-14 sm:h-14 text-white/80 mx-auto' })
             ) : (
-              <MessageCircle className="w-12 h-12 sm:w-16 sm:h-16 text-white/80 mx-auto" />
+              <MessageCircle className="w-12 h-12 sm:w-14 sm:h-14 text-white/80 mx-auto" />
             )}
           </div>
           <p className="text-white/90 text-base sm:text-lg font-medium leading-tight px-1 text-center w-full">{getTopicDisplayName(topic.id, topic.name)}</p>
