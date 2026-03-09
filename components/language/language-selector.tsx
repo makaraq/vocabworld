@@ -4037,7 +4037,7 @@ export function LanguageSelector() {
                     if (selectedTopic?.icon) {
                       return (
                         <div 
-                          className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 flex-shrink-0" 
+                          className="w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0 [&>svg]:w-full [&>svg]:h-full" 
                           style={{ color: 'rgba(255,255,255,0.8)' }}
                           dangerouslySetInnerHTML={{ __html: selectedTopic.icon! }}
                         />
