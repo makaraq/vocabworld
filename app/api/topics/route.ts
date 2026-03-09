@@ -225,7 +225,7 @@ const TOPICS_DATA = [
     "id": 42,
     "name": "Daily Language",
     "description": "Essential everyday phrases and expressions",
-    "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"40\" height=\"40\" viewBox=\"0 0 24 24\"><path fill=\"currentColor\" d=\"M21 11h-3V4h3m0 14h-3v-7h3M8 18H5V6h3m15-4h-5v18h5a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2M11 6H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h5a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2\"/></svg>"
+    "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"40\" height=\"40\" viewBox=\"0 0 24 24\"><path fill=\"currentColor\" d=\"M12 7a5 5 0 0 1 5 5a5 5 0 0 1-5 5a5 5 0 0 1-5-5a5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3m0-7l2.39 3.42C13.63 5.15 12.84 5 12 5s-1.63.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10l3.33-4.79c.14.79.39 1.55.83 2.29c.51.88 1.23 1.62 2.1 2.16zM20.65 7l-3.33 4.79c-.14-.79-.39-1.55-.83-2.29a7.2 7.2 0 0 0-1.56-1.85zm-.01 10l-4.16.35a7.2 7.2 0 0 0 1.56-1.85c.44-.74.69-1.5.83-2.29zM12 22l-2.41-3.44c.76.27 1.55.44 2.41.44s1.65-.17 2.41-.44z\"/></svg>"
   },
   {
     "id": 43,
