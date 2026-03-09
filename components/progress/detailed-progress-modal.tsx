@@ -19,6 +19,7 @@ interface DetailedProgressModalProps {
   onCloseAction: () => void
   targetLanguageCode: string
   targetLanguageName: string
+  nativeLanguageCode?: string
 }
 
 // Map language codes to flag icons (same as progress-stats)
@@ -49,7 +50,8 @@ export function DetailedProgressModal({
   isOpen, 
   onCloseAction, 
   targetLanguageCode, 
-  targetLanguageName 
+  targetLanguageName,
+  nativeLanguageCode
 }: DetailedProgressModalProps) {
   const { user } = useAuth()
   const [topicProgress, setTopicProgress] = useState<TopicProgress[]>([])
@@ -58,6 +60,7 @@ export function DetailedProgressModal({
   const [topicsData, setTopicsData] = useState<any[]>([])
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set()) // All sections closed by default
   const [sections, setSections] = useState<Array<{name: string, topicIds: number[], icon: string}>>([])
+  const [topicTranslations, setTopicTranslations] = useState<Record<number, string>>({})
 
   // Load sections structure from topics API - dynamically generated
   useEffect(() => {
@@ -117,6 +120,17 @@ export function DetailedProgressModal({
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  useEffect(() => {
+    if (!nativeLanguageCode || nativeLanguageCode === 'en') {
+      setTopicTranslations({})
+      return
+    }
+    fetch(`/api/topic-translations?languageCode=${nativeLanguageCode}`)
+      .then(res => res.ok ? res.json() : null)
+      .then(data => setTopicTranslations(data?.translations || {}))
+      .catch(() => setTopicTranslations({}))
+  }, [nativeLanguageCode])
 
   const toggleSection = (sectionName: string) => {
     const newExpanded = new Set(expandedSections)
@@ -331,7 +345,7 @@ export function DetailedProgressModal({
                                 <div className="flex-1 min-w-0">
                                   <div className="flex items-center justify-between mb-1">
                                     <h4 className="text-sm font-medium text-white drop-shadow truncate">
-                                      {topic.topicName}
+                                      {topicTranslations[topic.topicId] || topic.topicName}
                                     </h4>
                                     <div className="flex items-center gap-1">
                                       {topic.isCompleted ? (

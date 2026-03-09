@@ -38,7 +38,7 @@ function getFlagIcon(languageCode: string): string {
   return flagMap[languageCode] || 'flag:us-1x1'
 }
 
-export function ProgressStats({ targetLanguageCode, targetLanguageName }: { targetLanguageCode: string, targetLanguageName: string }) {
+export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLanguageCode }: { targetLanguageCode: string, targetLanguageName: string, nativeLanguageCode?: string }) {
   const { user } = useAuth()
   const [stats, setStats] = useState<ProgressStats | null>(null)
   const [loading, setLoading] = useState(true)
@@ -169,6 +169,7 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName }: { targ
         onCloseAction={() => setShowDetailedModal(false)}
         targetLanguageCode={targetLanguageCode}
         targetLanguageName={targetLanguageName}
+        nativeLanguageCode={nativeLanguageCode}
       />
     </>
   )

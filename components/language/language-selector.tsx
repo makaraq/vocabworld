@@ -449,6 +449,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                     <ProgressStats 
                       targetLanguageCode={targetLanguageCode}
                       targetLanguageName={targetLanguage}
+                      nativeLanguageCode={nativeLanguageCode}
                     />
                   )}
 
