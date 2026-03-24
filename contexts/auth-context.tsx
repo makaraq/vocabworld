@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useState, ReactNode, useCa
 import { User, Session } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/browser-client'
 import { FREE_TOPIC_IDS } from '@/lib/pricing'
+import { initRevenueCat, logOutRevenueCat } from '@/lib/revenuecat-client'
 
 // ============================================
 // TYPES
@@ -137,16 +138,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     console.log('🔐 Signing out...')
+    await logOutRevenueCat()
     await supabase.auth.signOut()
     setUser(null)
     setSession(null)
     setSubscriptionStatus(null)
-    // Clear any payment-related localStorage
-    localStorage.removeItem('paymentInProgress')
-    localStorage.removeItem('subscriptionJustActivated')
-    localStorage.removeItem('paymentLanguageNative')
-    localStorage.removeItem('paymentLanguageTarget')
-    localStorage.removeItem('restoreLanguages')
   }
 
   const getAccessToken = useCallback(async (): Promise<string | null> => {
@@ -199,6 +195,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           
           // Fetch subscription
           await fetchSubscriptionStatus(initialSession.user.id)
+
+          // Initialise RevenueCat with Supabase user ID as appUserId
+          initRevenueCat(initialSession.user.id).catch(console.error)
           
           // Update login streak (timezone-aware)
           try {
@@ -239,6 +238,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           
           if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
             await fetchSubscriptionStatus(newSession.user.id)
+            if (event === 'SIGNED_IN') {
+              initRevenueCat(newSession.user.id).catch(console.error)
+            }
           }
         } else if (event === 'SIGNED_OUT') {
           setSession(null)
@@ -256,43 +258,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       authSubscription.unsubscribe()
     }
   }, [supabase, fetchSubscriptionStatus])
-
-  // ============================================
-  // HANDLE PAYMENT RETURN
-  // ============================================
-  useEffect(() => {
-    const handlePaymentReturn = async () => {
-      const justActivated = localStorage.getItem('subscriptionJustActivated')
-      
-      if (justActivated === 'true' && user) {
-        console.log('🎉 Payment return detected - refreshing subscription...')
-        localStorage.removeItem('subscriptionJustActivated')
-        
-        // Poll subscription status (webhook may take a moment)
-        let attempts = 0
-        const maxAttempts = 5
-        
-        while (attempts < maxAttempts) {
-          await refreshSubscription()
-          
-          if (subscriptionStatus?.isPremium) {
-            console.log('✅ Premium status confirmed!')
-            break
-          }
-          
-          attempts++
-          if (attempts < maxAttempts) {
-            console.log(`⏳ Waiting for webhook... (${attempts}/${maxAttempts})`)
-            await new Promise(r => setTimeout(r, 2000))
-          }
-        }
-      }
-    }
-    
-    if (!loading && user) {
-      handlePaymentReturn()
-    }
-  }, [loading, user, refreshSubscription, subscriptionStatus?.isPremium])
 
   // ============================================
   // STREAK UPDATE ON APP FOCUS

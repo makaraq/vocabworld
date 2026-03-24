@@ -1,20 +1,19 @@
 // Pricing configuration
-// Price IDs are loaded server-side only for security
-
-// Pricing configuration
 export const PRICING = {
   monthly: {
-    priceId: process.env.STRIPE_MONTHLY_PRICE_ID || '',
     price: 4.99,
     interval: 'month' as const,
     name: 'Monthly',
+    // RevenueCat package identifier (set in RC Dashboard)
+    rcPackageId: '$rc_monthly',
   },
   yearly: {
-    priceId: process.env.STRIPE_YEARLY_PRICE_ID || '',
     price: 29.99,
     interval: 'year' as const,
     name: 'Yearly',
     savings: '50%',
+    // RevenueCat package identifier (set in RC Dashboard)
+    rcPackageId: '$rc_annual',
   },
 }
 

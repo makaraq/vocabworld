@@ -5,39 +5,34 @@ import { createPortal } from 'react-dom'
 import { Icon } from '@iconify/react'
 import { PRICING, formatPrice } from '@/lib/pricing'
 import { useAuth } from '@/contexts/auth-context'
+import { useRevenueCat } from '@/hooks/use-revenuecat'
 
 interface PaywallModalProps {
   isOpen: boolean
   onCloseAction: () => void
   onSuccessAction?: () => void
-  // Current language selection to preserve through payment flow
   nativeLanguageCode?: string
   targetLanguageCode?: string
 }
 
 /**
- * Paywall Modal Component
- * Handles subscription checkout with language preservation
- * 
+ * Paywall Modal — powered by RevenueCat.
+ *
  * Flow:
- * 1. User clicks subscribe
- * 2. Language codes are saved to localStorage
- * 3. User redirects to Stripe
- * 4. After payment, redirects to /subscription/success
- * 5. Success page restores languages and redirects to app
+ * 1. User selects a plan and taps "Subscribe"
+ * 2. RC SDK presents the native purchase sheet (App Store / Google Play / Web Billing)
+ * 3. On success: refreshSubscription() updates isPremium → modal closes, topic unlocks
+ * 4. USER_CANCELLED is handled silently (no error shown)
  */
-export function PaywallModal({ 
-  isOpen, 
-  onCloseAction, 
-  onSuccessAction, 
-  nativeLanguageCode, 
-  targetLanguageCode 
+export function PaywallModal({
+  isOpen,
+  onCloseAction,
+  onSuccessAction,
 }: PaywallModalProps) {
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('yearly')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
-  const { user, getAccessToken } = useAuth()
+  const { user, refreshSubscription } = useAuth()
+  const { purchasePackage, restorePurchases, loading, error, clearError } = useRevenueCat()
 
   useEffect(() => {
     setMounted(true)
@@ -47,72 +42,33 @@ export function PaywallModal({
   if (!isOpen || !mounted) return null
 
   const handleSubscribe = async () => {
-    setLoading(true)
-    setError(null)
-    
-    try {
-      // Validate user is logged in
-      if (!user) {
-        throw new Error('Please sign in to subscribe')
-      }
-      
-      // Get access token
-      const accessToken = await getAccessToken()
-      if (!accessToken) {
-        throw new Error('Session expired. Please sign in again.')
-      }
-      
-      console.log('💳 Starting checkout...', { 
-        plan: selectedPlan,
-        nativeLanguage: nativeLanguageCode,
-        targetLanguage: targetLanguageCode 
-      })
-      
-      // CRITICAL: Save language selection BEFORE redirecting to Stripe
-      if (nativeLanguageCode) {
-        localStorage.setItem('paymentLanguageNative', nativeLanguageCode)
-        console.log('💾 Saved native language:', nativeLanguageCode)
-      }
-      if (targetLanguageCode) {
-        localStorage.setItem('paymentLanguageTarget', targetLanguageCode)
-        console.log('💾 Saved target language:', targetLanguageCode)
-      }
-      localStorage.setItem('paymentInProgress', 'true')
-      
-      // Call checkout API
-      const response = await fetch('/api/subscription/checkout', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
-        },
-        credentials: 'include',
-        body: JSON.stringify({ priceType: selectedPlan }),
-      })
-      
-      const data = await response.json()
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to create checkout')
-      }
-      
-      if (data.url) {
-        // Redirect to Stripe Checkout
-        window.location.href = data.url
-      } else {
-        throw new Error('No checkout URL returned')
-      }
-    } catch (err: any) {
-      console.error('❌ Subscription error:', err)
-      setError(err.message || 'Something went wrong')
-      setLoading(false)
-      // Clean up on error
-      localStorage.removeItem('paymentInProgress')
+    if (!user) return
+    clearError()
+
+    const success = await purchasePackage(selectedPlan)
+
+    if (success) {
+      // Refresh subscription state so canAccessTopic() returns true immediately
+      await refreshSubscription()
+      onSuccessAction?.()
+      onCloseAction()
+    }
+  }
+
+  const handleRestore = async () => {
+    if (!user) return
+    clearError()
+
+    const hasAccess = await restorePurchases()
+    if (hasAccess) {
+      await refreshSubscription()
+      onSuccessAction?.()
+      onCloseAction()
     }
   }
 
   const modalContent = (
-    <div 
+    <div
       className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/20 backdrop-blur-md"
       onClick={(e) => {
         if (e.target === e.currentTarget) onCloseAction()
@@ -127,7 +83,7 @@ export function PaywallModal({
           >
             <Icon icon="solar:close-circle-bold" className="w-5 h-5" />
           </button>
-          
+
           <div className="text-center">
             <div className="w-16 h-16 bg-gradient-to-br from-yellow-400/90 to-orange-500/90 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg border border-white/20">
               <Icon icon="solar:crown-bold" className="w-9 h-9 text-white drop-shadow-lg" />
@@ -206,22 +162,14 @@ export function PaywallModal({
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/15">
             <p className="text-white/80 text-sm font-medium mb-3 drop-shadow">Premium includes:</p>
             <div className="grid grid-cols-2 gap-3 text-sm">
-              <div className="flex items-center gap-2 text-white/70">
-                <Icon icon="solar:check-circle-bold" className="w-4 h-4 text-green-400 flex-shrink-0 drop-shadow" />
-                <span className="drop-shadow">47 topics</span>
-              </div>
-              <div className="flex items-center gap-2 text-white/70">
-                <Icon icon="solar:check-circle-bold" className="w-4 h-4 text-green-400 flex-shrink-0 drop-shadow" />
-                <span className="drop-shadow">50 languages</span>
-              </div>
-              <div className="flex items-center gap-2 text-white/70">
-                <Icon icon="solar:check-circle-bold" className="w-4 h-4 text-green-400 flex-shrink-0 drop-shadow" />
-                <span className="drop-shadow">Custom playlists</span>
-              </div>
-              <div className="flex items-center gap-2 text-white/70">
-                <Icon icon="solar:check-circle-bold" className="w-4 h-4 text-green-400 flex-shrink-0 drop-shadow" />
-                <span className="drop-shadow">Word search</span>
-              </div>
+              {[['47 topics', '50 languages'], ['Custom playlists', 'Word search']].flatMap(row =>
+                row.map(label => (
+                  <div key={label} className="flex items-center gap-2 text-white/70">
+                    <Icon icon="solar:check-circle-bold" className="w-4 h-4 text-green-400 flex-shrink-0 drop-shadow" />
+                    <span className="drop-shadow">{label}</span>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>
@@ -252,15 +200,23 @@ export function PaywallModal({
               </>
             )}
           </button>
-          
+
           {!user && (
             <p className="text-center text-white/60 text-sm mt-3">
               Please sign in to subscribe
             </p>
           )}
-          
-          <p className="text-center text-white/50 text-xs mt-4">
-            Cancel anytime • Secure payment via Stripe
+
+          <button
+            onClick={handleRestore}
+            disabled={loading}
+            className="w-full mt-3 py-2 text-white/50 hover:text-white/70 text-sm transition-colors disabled:opacity-30"
+          >
+            Restore purchases
+          </button>
+
+          <p className="text-center text-white/50 text-xs mt-2">
+            Cancel anytime • Secure payment
           </p>
         </div>
       </div>

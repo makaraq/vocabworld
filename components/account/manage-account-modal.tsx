@@ -7,17 +7,18 @@ import {
   SheetContent,
   SheetClose,
 } from "@/components/ui/sheet"
+import { useRevenueCat } from "@/hooks/use-revenuecat"
 
 interface ManageAccountModalProps {
   open: boolean
   onCloseAction: () => void
-  // User props (static/prop for now)
   name?: string
   email?: string
   avatarUrl?: string
   isPremium?: boolean
   renewalDate?: string
   onSignOutAction?: () => void
+  onUpgradeAction?: () => void
 }
 
 export function ManageAccountModal({
@@ -29,13 +30,49 @@ export function ManageAccountModal({
   isPremium = false,
   renewalDate = "March 2, 2027",
   onSignOutAction,
+  onUpgradeAction,
 }: ManageAccountModalProps) {
+  const { restorePurchases, loading: rcLoading } = useRevenueCat()
+
   const initials = name
     .split(" ")
     .map((n) => n[0])
     .join("")
     .toUpperCase()
     .slice(0, 2)
+
+  const handleManageSubscription = async () => {
+    try {
+      const cap = (window as any)?.Capacitor
+      const platform: string = cap?.getPlatform?.() ?? 'web'
+
+      if (platform === 'ios') {
+        // iOS: deep-link to App Store subscription management
+        window.location.href = 'itms-apps://apps.apple.com/account/subscriptions'
+      } else if (platform === 'android') {
+        // Android: open Play Store subscription management
+        window.open('https://play.google.com/store/account/subscriptions', '_blank', 'noopener,noreferrer')
+      } else {
+        // Web: use RC managementURL from customerInfo if available
+        try {
+          const { getRCCustomerInfo } = await import('@/lib/revenuecat-client')
+          const info = await getRCCustomerInfo()
+          const mgmtUrl = (info as any)?.managementURL
+          if (mgmtUrl) {
+            window.open(mgmtUrl, '_blank', 'noopener,noreferrer')
+            return
+          }
+        } catch (_) { /* fall through */ }
+        window.open('https://app.revenuecat.com/customer-portal', '_blank', 'noopener,noreferrer')
+      }
+    } catch (err) {
+      console.error('[RC] handleManageSubscription failed:', err)
+    }
+  }
+
+  const handleRestorePurchases = async () => {
+    await restorePurchases()
+  }
 
   return (
       <Sheet open={open} onOpenChange={(v) => !v && onCloseAction()}>
@@ -105,7 +142,7 @@ export function ManageAccountModal({
 
             {!isPremium && (
               <button
-                onClick={() => {}}
+                onClick={() => { onUpgradeAction?.(); onCloseAction() }}
                 className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white py-2.5 rounded-xl font-semibold text-sm hover:opacity-90 transition-all flex items-center justify-center space-x-2"
               >
                 <Icon icon="solar:crown-bold" width="16" height="16" />
@@ -117,14 +154,23 @@ export function ManageAccountModal({
           {/* Divider */}
           <div className="h-px bg-white/10 my-1" />
 
-          {/* End Subscription */}
-          {isPremium && (
+          {/* Manage / Restore */}
+          {isPremium ? (
             <button
-              onClick={() => {}}
+              onClick={handleManageSubscription}
               className="w-full border border-orange-400/30 bg-orange-500/10 text-orange-300 py-3 px-4 rounded-2xl font-medium text-sm hover:bg-orange-500/20 transition-all flex items-center justify-center space-x-2"
             >
-              <Icon icon="solar:close-square-bold" width="18" height="18" />
-              <span>End Subscription</span>
+              <Icon icon="solar:settings-bold" width="18" height="18" />
+              <span>Manage Subscription</span>
+            </button>
+          ) : (
+            <button
+              onClick={handleRestorePurchases}
+              disabled={rcLoading}
+              className="w-full border border-white/20 bg-white/10 text-white/70 py-3 px-4 rounded-2xl font-medium text-sm hover:bg-white/15 transition-all flex items-center justify-center space-x-2 disabled:opacity-40"
+            >
+              <Icon icon="solar:refresh-bold" width="18" height="18" />
+              <span>{rcLoading ? 'Restoring...' : 'Restore Purchases'}</span>
             </button>
           )}
 

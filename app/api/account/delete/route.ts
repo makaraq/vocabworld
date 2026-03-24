@@ -26,22 +26,9 @@ export async function DELETE(request: Request) {
     if (subsError) {
       console.error('❌ Error fetching subscriptions:', subsError)
     } else if (subscriptions && subscriptions.length > 0) {
-      console.log('💳 Found active subscriptions, canceling via Stripe...')
-      
-      // Cancel Stripe subscriptions
-      const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
-      
-      for (const sub of subscriptions) {
-        if (sub.stripe_subscription_id) {
-          try {
-            await stripe.subscriptions.cancel(sub.stripe_subscription_id)
-            console.log('✅ Canceled subscription:', sub.stripe_subscription_id)
-          } catch (stripeError: any) {
-            console.error('⚠️ Stripe cancellation error:', stripeError.message)
-            // Continue with deletion even if Stripe fails
-          }
-        }
-      }
+      // Subscriptions will be cancelled automatically by RevenueCat when the account is deleted.
+      // No action needed here — the RC webhook will update the DB status.
+      console.log('ℹ️ Found active subscriptions; RevenueCat will handle cancellation.')
     }
 
     // Step 2: Delete user data in correct order (respecting foreign keys)
