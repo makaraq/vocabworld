@@ -6,6 +6,7 @@ import {
   Sheet,
   SheetContent,
   SheetClose,
+  SheetTitle,
 } from "@/components/ui/sheet"
 import { useRevenueCat } from "@/hooks/use-revenuecat"
 
@@ -89,7 +90,7 @@ export function ManageAccountModal({
 
         {/* Header */}
         <div className="flex items-center justify-between px-5 pt-2 pb-4">
-          <h2 className="text-white font-bold text-lg tracking-wide">Account</h2>
+          <SheetTitle className="text-white font-bold text-lg tracking-wide">Account</SheetTitle>
           <SheetClose asChild>
             <button className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:bg-white/20 transition-all">
               <Icon icon="solar:close-circle-bold" width="20" height="20" />
