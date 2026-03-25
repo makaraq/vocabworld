@@ -2,6 +2,8 @@
 
 import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback, useRef } from 'react'
 import { User, Session } from '@supabase/supabase-js'
+import { Capacitor } from '@capacitor/core'
+import { SocialLogin } from '@capgo/capacitor-social-login'
 import { createClient } from '@/lib/supabase/browser-client'
 import { FREE_TOPIC_IDS } from '@/lib/pricing'
 import { initRevenueCat, logOutRevenueCat } from '@/lib/revenuecat-client'
@@ -110,29 +112,56 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ============================================
   const signInWithGoogle = async () => {
     console.log('🔐 Starting Google sign-in...')
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`
+    if (Capacitor.isNativePlatform()) {
+      try {
+        const nonce = Math.random().toString(36).substring(2)
+        await SocialLogin.initialize({
+          google: {
+            iOSClientId: '774773244025-8b6gqb41sudtrbvn2fvmkru6thkqjibj.apps.googleusercontent.com',
+            iOSServerClientId: '774773244025-qku02snjvrkthkfen669lm3lvct07c6l.apps.googleusercontent.com',
+            mode: 'online'
+          }
+        })
+        const result = await SocialLogin.login({ provider: 'google', options: { nonce } })
+        console.log('🔐 SocialLogin.login result:', JSON.stringify(result))
+        if (!result?.result?.idToken) throw new Error('No ID token from Google')
+        const { error } = await supabase.auth.signInWithIdToken({
+          provider: 'google',
+          token: result.result.idToken,
+          nonce,
+        })
+        if (error) throw error
+      } catch (e) {
+        console.error('🔴 Native Google sign-in error:', e)
+        throw e
       }
-    })
-    if (error) {
-      console.error('❌ Google sign-in error:', error)
-      throw error
+    } else {
+      console.log('🔐 Using web OAuth path')
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: `${window.location.origin}/auth/callback` }
+      })
+      if (error) throw error
     }
   }
 
   const signInWithApple = async () => {
     console.log('🔐 Starting Apple sign-in...')
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'apple',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`
-      }
-    })
-    if (error) {
-      console.error('❌ Apple sign-in error:', error)
-      throw error
+    if (Capacitor.isNativePlatform()) {
+      await SocialLogin.initialize({ apple: {} })
+      const result = await SocialLogin.login({ provider: 'apple', options: {} })
+      if (!result?.result?.idToken) throw new Error('No ID token from Apple')
+      const { error } = await supabase.auth.signInWithIdToken({
+        provider: 'apple',
+        token: result.result.idToken
+      })
+      if (error) throw error
+    } else {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'apple',
+        options: { redirectTo: `${window.location.origin}/auth/callback` }
+      })
+      if (error) throw error
     }
   }
 

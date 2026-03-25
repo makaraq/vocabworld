@@ -5,13 +5,14 @@ const config: CapacitorConfig = {
   appName: 'Vocab World',
   webDir: 'public',
   server: {
-    url: 'http://192.168.2.19:3002',
+    url: 'http://localhost:3000',
     cleartext: true
   },
   plugins: {
     GoogleAuth: {
       scopes: ['profile', 'email'],
-      serverClientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+      clientId: '774773244025-8b6gqb41sudtrbvn2fvmkru6thkqjibj.apps.googleusercontent.com',
+      serverClientId: '774773244025-qku02snjvrkthkfen669lm3lvct07c6l.apps.googleusercontent.com',
       forceCodeForRefreshToken: true,
     },
     App: {

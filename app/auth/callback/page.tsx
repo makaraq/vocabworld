@@ -12,31 +12,39 @@ function CallbackHandler() {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
+        // Exchange the code for a session (handles PKCE flow)
+        const code = searchParams.get('code')
+        if (code) {
+          const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+          if (error) {
+            console.error('Code exchange error:', error)
+            router.push(`/auth/error?error=${encodeURIComponent(error.message)}`)
+            return
+          }
+          if (data.session) {
+            console.log('✅ Authentication successful!')
+            router.push('/')
+            return
+          }
+        }
+
+        // Fallback: check existing session (implicit flow)
         const { data, error } = await supabase.auth.getSession()
-        
         if (error) {
           console.error('Auth error:', error)
           router.push(`/auth/error?error=${encodeURIComponent(error.message)}`)
           return
         }
-
-        if (data.session) {
-          console.log('✅ Authentication successful!')
-          router.push('/')
-        } else {
-          console.log('No session found, redirecting home')
-          router.push('/')
-        }
+        router.push('/')
       } catch (error) {
         console.error('Callback error:', error)
         router.push(`/auth/error?error=${encodeURIComponent('Authentication failed')}`)
       }
     }
 
-    // Small delay to ensure auth state is properly updated
-    const timer = setTimeout(handleAuthCallback, 1000)
+    const timer = setTimeout(handleAuthCallback, 500)
     return () => clearTimeout(timer)
-  }, [router, supabase.auth])
+  }, [router, supabase, searchParams])
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">

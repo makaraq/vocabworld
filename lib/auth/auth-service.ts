@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { Capacitor } from '@capacitor/core'
 import { signInWithGoogleMobile, signOutFromGoogle, initializeGoogleAuth } from './google-auth'
 import { signInWithAppleMobile, isAppleSignInAvailable } from './apple-auth'
 
@@ -76,22 +77,11 @@ class AuthService {
   // Google Sign-In
   async signInWithGoogle(): Promise<SignInResult> {
     try {
-      console.log('🔵 Device check - isMobile:', this.isMobile())
-      console.log('🔵 User agent:', navigator.userAgent)
-      
-      // Force web path for debugging
-      console.log('🔵 FORCING web path for debugging')
-      return await this.signInWithGoogleWeb()
-      
-      /* Original logic - temporarily disabled
-      if (this.isMobile()) {
-        console.log('🔵 Taking mobile path')
+      if (Capacitor.isNativePlatform()) {
         return await this.signInWithGoogleMobile()
       } else {
-        console.log('🔵 Taking web path')
         return await this.signInWithGoogleWeb()
       }
-      */
     } catch (error) {
       console.error('Google sign-in error:', error)
       return {
