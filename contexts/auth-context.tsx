@@ -124,7 +124,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         })
         const result = await SocialLogin.login({ provider: 'google', options: { nonce } })
         console.log('🔐 SocialLogin.login result:', JSON.stringify(result))
-        if (!result?.result?.idToken) throw new Error('No ID token from Google')
+        if (result?.result?.responseType !== 'online' || !result.result.idToken) throw new Error('No ID token from Google')
         const { error } = await supabase.auth.signInWithIdToken({
           provider: 'google',
           token: result.result.idToken,
