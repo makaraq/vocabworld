@@ -26,6 +26,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${spaceGrotesk.variable} antialiased`}>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: `
+          document.addEventListener('contextmenu', function(e) { e.preventDefault(); }, true);
+          document.addEventListener('selectstart', function(e) { e.preventDefault(); }, true);
+        ` }} />
       </head>
       <body className="font-sans" style={{ fontFamily: "var(--font-space-grotesk)" }}>
         <ServiceWorkerProvider>

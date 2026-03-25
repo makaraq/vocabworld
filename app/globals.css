@@ -3,15 +3,15 @@
 
 /* Disable iOS long-press text selection and callout menu */
 * {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  user-select: none !important;
 }
 
 /* Re-enable selection for inputs and textareas */
 input, textarea, [contenteditable] {
-  -webkit-user-select: text;
-  user-select: text;
+  -webkit-user-select: text !important;
+  user-select: text !important;
 }
 
 @custom-variant dark (&:is(.dark *));
