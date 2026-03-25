@@ -3,8 +3,8 @@
 
 export async function initializeGoogleAuth() {}
 
-export async function signInWithGoogleMobile() {
-  return { success: false, error: 'Use SocialLogin from auth-context instead' }
+export async function signInWithGoogleMobile(): Promise<{ success: boolean; error: string; data: { idToken: string } | null }> {
+  return { success: false, error: 'Use SocialLogin from auth-context instead', data: null }
 }
 
 export async function signInWithGoogleWeb() {
