@@ -81,7 +81,7 @@ export function AuthSystemTest() {
     await new Promise(resolve => setTimeout(resolve, 500))
     
     try {
-      const { GoogleAuth } = await import('@codetrix-studio/capacitor-google-auth')
+      const { SocialLogin } = await import('@capgo/capacitor-social-login')
       updateTest(2, 'success', 'Google Auth plugin loaded successfully')
     } catch (error) {
       updateTest(2, 'error', `Google Auth plugin error: ${error}`)
