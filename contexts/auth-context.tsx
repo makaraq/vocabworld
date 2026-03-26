@@ -118,7 +118,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await SocialLogin.initialize({
           google: {
             iOSClientId: '774773244025-8b6gqb41sudtrbvn2fvmkru6thkqjibj.apps.googleusercontent.com',
-            iOSServerClientId: '774773244025-qku02snjvrkthkfen669lm3lvct07c6l.apps.googleusercontent.com',
             mode: 'online'
           }
         })
