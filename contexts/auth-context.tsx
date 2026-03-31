@@ -3,6 +3,8 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback, useRef } from 'react'
 import { User, Session } from '@supabase/supabase-js'
 import { Capacitor } from '@capacitor/core'
+import { App } from '@capacitor/app'
+import { Browser } from '@capacitor/browser'
 import { SocialLogin } from '@capgo/capacitor-social-login'
 import { createClient } from '@/lib/supabase/browser-client'
 import { FREE_TOPIC_IDS } from '@/lib/pricing'
@@ -112,18 +114,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ============================================
   const signInWithGoogle = async () => {
     console.log('🔐 Starting Google sign-in...')
-    // Use web OAuth for all platforms — native iOS SDK always puts iOS client ID
-    // as token audience which Supabase rejects. Web OAuth uses the web client and
-    // redirects back via the com.vocabworld.app:// URL scheme on iOS.
-    const redirectTo = Capacitor.isNativePlatform()
-      ? 'com.vocabworld.app://auth/callback'
-      : `${window.location.origin}/auth/callback`
+    if (Capacitor.isNativePlatform()) {
+      // Get OAuth URL from Supabase without auto-opening
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: 'com.vocabworld.app://auth/callback',
+          skipBrowserRedirect: true
+        }
+      })
+      if (error) throw error
+      if (!data.url) throw new Error('No OAuth URL returned')
 
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo }
-    })
-    if (error) throw error
+      // Listen for deep link before opening browser
+      const listener = await App.addListener('appUrlOpen', async ({ url }) => {
+        if (url.includes('auth/callback')) {
+          listener.remove()
+          await Browser.close()
+          const urlObj = new URL(url)
+          const code = urlObj.searchParams.get('code')
+          if (code) {
+            const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
+            if (exchangeError) console.error('🔴 Code exchange error:', exchangeError)
+          }
+        }
+      })
+
+      // Open SFSafariViewController (in-app overlay, app stays active)
+      await Browser.open({ url: data.url, presentationStyle: 'popover' })
+    } else {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: `${window.location.origin}/auth/callback` }
+      })
+      if (error) throw error
+    }
   }
 
   const signInWithApple = async () => {
