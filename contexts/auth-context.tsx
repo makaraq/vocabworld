@@ -114,7 +114,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     console.log('🔐 Starting Google sign-in...')
     if (Capacitor.isNativePlatform()) {
       try {
-        const nonce = Math.random().toString(36).substring(2)
+        const rawNonce = Math.random().toString(36).substring(2)
+        // SHA-256 hash the nonce — Google embeds the hash in the ID token,
+        // Supabase verifies by hashing the raw nonce and comparing
+        const encoder = new TextEncoder()
+        const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(rawNonce))
+        const hashedNonce = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('')
+
         await SocialLogin.initialize({
           google: {
             iOSClientId: '774773244025-8b6gqb41sudtrbvn2fvmkru6thkqjibj.apps.googleusercontent.com',
@@ -122,13 +128,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             mode: 'online'
           }
         })
-        const result = await SocialLogin.login({ provider: 'google', options: { nonce } })
+        const result = await SocialLogin.login({ provider: 'google', options: { nonce: hashedNonce } })
         console.log('🔐 SocialLogin.login result:', JSON.stringify(result))
         if (result?.result?.responseType !== 'online' || !result.result.idToken) throw new Error('No ID token from Google')
         const { error } = await supabase.auth.signInWithIdToken({
           provider: 'google',
           token: result.result.idToken,
-          nonce,
+          nonce: rawNonce,
         })
         if (error) throw error
       } catch (e) {
