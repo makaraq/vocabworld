@@ -1,50 +1,30 @@
 "use client"
 
 import { useEffect, Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/browser-client'
 
 function CallbackHandler() {
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const supabase = createClient()
 
   useEffect(() => {
-    const handleAuthCallback = async () => {
-      try {
-        // Exchange the code for a session (handles PKCE flow)
-        const code = searchParams.get('code')
-        if (code) {
-          const { data, error } = await supabase.auth.exchangeCodeForSession(code)
-          if (error) {
-            console.error('Code exchange error:', error)
-            router.push(`/auth/error?error=${encodeURIComponent(error.message)}`)
-            return
-          }
-          if (data.session) {
-            console.log('✅ Authentication successful!')
-            router.push('/')
-            return
-          }
-        }
+    const supabase = createClient()
 
-        // Fallback: check existing session (implicit flow)
-        const { data, error } = await supabase.auth.getSession()
-        if (error) {
-          console.error('Auth error:', error)
-          router.push(`/auth/error?error=${encodeURIComponent(error.message)}`)
-          return
-        }
+    // detectSessionInUrl: true in browser-client automatically exchanges
+    // the PKCE code when the client initializes. We just wait for it.
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session) {
         router.push('/')
-      } catch (error) {
-        console.error('Callback error:', error)
-        router.push(`/auth/error?error=${encodeURIComponent('Authentication failed')}`)
       }
-    }
+    })
 
-    const timer = setTimeout(handleAuthCallback, 500)
-    return () => clearTimeout(timer)
-  }, [router, supabase, searchParams])
+    // Fallback: if auth state already resolved before listener attached
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) router.push('/')
+    })
+
+    return () => subscription.unsubscribe()
+  }, [router])
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
