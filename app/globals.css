@@ -8,6 +8,14 @@
   user-select: none !important;
 }
 
+/* Match font rendering between iOS WKWebView and desktop browsers.
+   Tailwind preflight sets antialiased which makes fonts thinner on iOS.
+   Resetting to auto uses the platform default, consistent across both. */
+html {
+  -webkit-font-smoothing: auto;
+  -moz-osx-font-smoothing: auto;
+}
+
 /* Re-enable selection for inputs and textareas */
 input, textarea, [contenteditable] {
   -webkit-user-select: text !important;
