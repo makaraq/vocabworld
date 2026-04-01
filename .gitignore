@@ -50,12 +50,6 @@ next-env.d.ts
 *~
 
 # Mobile app specific
-ios/
-!ios/App/App/AppDelegate.swift
-!ios/App/App/ViewController.swift
-!ios/App/App/Info.plist
-!ios/App/App/Base.lproj/Main.storyboard
-!ios/App/Podfile
 android/
 capacitor.config.local.ts
 
