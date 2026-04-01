@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { usePuterAI } from '@/hooks/use-puter-ai'
 import { Loader2, Sparkles, Volume2, BookOpen, MessageSquare } from 'lucide-react'
 
@@ -24,6 +25,8 @@ export function EnhancedVocabularyCard({ word, className }: EnhancedVocabularyCa
   const [aiExplanation, setAiExplanation] = useState<string>('')
   const [aiExamples, setAiExamples] = useState<string>('')
   const [showAiFeatures, setShowAiFeatures] = useState(false)
+  const [pronunciationGuide, setPronunciationGuide] = useState<string>('')
+  const [showPronunciation, setShowPronunciation] = useState(false)
   
   const { generateText, isLoading, error } = usePuterAI()
 
@@ -77,7 +80,8 @@ Make the examples practical and memorable for language learners.`
 Be very specific and helpful for English speakers learning ${word.language}.`
       
       const result = await generateText(prompt, 'gpt-5-nano')
-      alert(result) // You could show this in a modal instead
+      setPronunciationGuide(result)
+      setShowPronunciation(true)
     } catch (err) {
       console.error('Error getting pronunciation guide:', err)
     }
@@ -190,6 +194,15 @@ Be very specific and helpful for English speakers learning ${word.language}.`
           </div>
         </CardContent>
       )}
+
+      <Dialog open={showPronunciation} onOpenChange={setShowPronunciation}>
+        <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Pronunciation Guide: {word.word}</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm whitespace-pre-wrap">{pronunciationGuide}</p>
+        </DialogContent>
+      </Dialog>
     </Card>
   )
 }

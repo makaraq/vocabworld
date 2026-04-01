@@ -59,7 +59,6 @@ export function WelcomeOverlay() {
       // OAuth will redirect, keep loading state
     } catch (error) {
       console.error('Sign in failed:', error)
-      alert('Sign in error: ' + (error instanceof Error ? error.message : JSON.stringify(error)))
       setIsSigningIn(false)
     }
   }
