@@ -17,6 +17,7 @@ declare global {
   }
 }
 import { Icon } from '@iconify/react'
+import { getFlagIcon } from '@/utils/flags'
 import {
   Search,
   Languages,
@@ -1322,61 +1323,6 @@ export function LanguageSelector() {
   }
 
   // Get flag icon for language code using Flag Icons pack
-  const getFlagIcon = (languageCode: string): string => {
-    const flagMap: { [key: string]: string } = {
-      'ar': 'flag:sa-1x1', // Arabic -> Saudi Arabia
-      'bg': 'flag:bg-1x1', // Bulgarian -> Bulgaria
-      'bn': 'flag:bd-1x1', // Bengali -> Bangladesh
-      'ca': 'flag:es-ct-1x1', // Catalan -> Catalonia (Spain)
-      'cs': 'flag:cz-1x1', // Czech -> Czech Republic
-      'cy': 'flag:gb-wls-1x1', // Welsh -> Wales
-      'da': 'flag:dk-1x1', // Danish -> Denmark
-      'de': 'flag:de-1x1', // German -> Germany
-      'el': 'flag:gr-1x1', // Greek -> Greece
-      'en': 'flag:us-1x1', // English -> United States
-      'es': 'flag:es-1x1', // Spanish -> Spain
-      'et': 'flag:ee-1x1', // Estonian -> Estonia
-      'eu': 'flag:es-pv-1x1', // Basque -> Basque Country
-      'fa': 'flag:ir-1x1', // Persian -> Iran
-      'fi': 'flag:fi-1x1', // Finnish -> Finland
-      'fr': 'flag:fr-1x1', // French -> France
-      'ga': 'flag:ie-1x1', // Irish -> Ireland
-      'gu': 'flag:in-1x1', // Gujarati -> India
-      'he': 'flag:il-1x1', // Hebrew -> Israel
-      'hi': 'flag:in-1x1', // Hindi -> India
-      'hr': 'flag:hr-1x1', // Croatian -> Croatia
-      'hu': 'flag:hu-1x1', // Hungarian -> Hungary
-      'id': 'flag:id-1x1', // Indonesian -> Indonesia
-      'is': 'flag:is-1x1', // Icelandic -> Iceland
-      'it': 'flag:it-1x1', // Italian -> Italy
-      'ja': 'flag:jp-1x1', // Japanese -> Japan
-      'ko': 'flag:kr-1x1', // Korean -> South Korea
-      'lt': 'flag:lt-1x1', // Lithuanian -> Lithuania
-      'lv': 'flag:lv-1x1', // Latvian -> Latvia
-      'mk': 'flag:mk-1x1', // Macedonian -> North Macedonia
-      'ml': 'flag:in-1x1', // Malayalam -> India
-      'mr': 'flag:in-1x1', // Marathi -> India
-      'mt': 'flag:mt-1x1', // Maltese -> Malta
-      'nl': 'flag:nl-1x1', // Dutch -> Netherlands
-      'no': 'flag:no-1x1', // Norwegian -> Norway
-      'pl': 'flag:pl-1x1', // Polish -> Poland
-      'pt': 'flag:pt-1x1', // Portuguese -> Portugal
-      'ro': 'flag:ro-1x1', // Romanian -> Romania
-      'ru': 'flag:ru-1x1', // Russian -> Russia
-      'sk': 'flag:sk-1x1', // Slovak -> Slovakia
-      'sl': 'flag:si-1x1', // Slovenian -> Slovenia
-      'sv': 'flag:se-1x1', // Swedish -> Sweden
-      'ta': 'flag:in-1x1', // Tamil -> India
-      'te': 'flag:in-1x1', // Telugu -> India
-      'th': 'flag:th-1x1', // Thai -> Thailand
-      'tr': 'flag:tr-1x1', // Turkish -> Turkey
-      'uk': 'flag:ua-1x1', // Ukrainian -> Ukraine
-      'ur': 'flag:pk-1x1', // Urdu -> Pakistan
-      'vi': 'flag:vn-1x1', // Vietnamese -> Vietnam
-      'zh': 'flag:cn-1x1', // Chinese -> China
-    }
-    return flagMap[languageCode] || 'flag:us-1x1'
-  }
 
   // Speech speed mapping - using conservative values to minimize pitch distortion
   // Even with preservesPitch, extreme values can still sound unnatural
