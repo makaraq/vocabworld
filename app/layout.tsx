@@ -24,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${spaceGrotesk.variable} antialiased`}>
+    <html lang="en" className={`${spaceGrotesk.variable}`}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: `
           document.addEventListener('contextmenu', function(e) { e.preventDefault(); }, true);
