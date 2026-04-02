@@ -4,14 +4,6 @@ import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/contexts/auth-context'
 
-/**
- * Welcome Overlay Component
- * Shows sign-in prompt for unauthenticated users
- * Automatically hides when:
- * - User is authenticated
- * - User is returning from payment
- * - User has skipped before
- */
 export function WelcomeOverlay() {
   const { user, signInWithGoogle, loading } = useAuth()
   const [isSigningIn, setIsSigningIn] = useState(false)
@@ -55,8 +47,21 @@ export function WelcomeOverlay() {
   const handleGoogleSignIn = async () => {
     setIsSigningIn(true)
     try {
+      // On native, listen for the in-app browser closing so we can reset the
+      // spinner if the user dismisses Safari without completing sign-in.
+      const cap = (window as any)?.Capacitor
+      if (cap?.isNativePlatform?.()) {
+        const { Browser } = await import('@capacitor/browser')
+        const listener = await Browser.addListener('browserFinished', () => {
+          listener.remove()
+          // Small delay — if auth succeeded the user state will update and
+          // showOverlay will go false on its own. Only reset if still no user.
+          setTimeout(() => setIsSigningIn(false), 500)
+        })
+      }
+
       await signInWithGoogle()
-      // OAuth will redirect, keep loading state
+      // OAuth will redirect / handle via deep link; keep spinner until resolved
     } catch (error) {
       console.error('Sign in failed:', error)
       setIsSigningIn(false)
