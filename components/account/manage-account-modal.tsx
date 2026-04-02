@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useState } from "react"
-import { createPortal } from "react-dom"
 import { Icon } from "@iconify/react"
 import {
   Sheet,
@@ -118,7 +117,7 @@ export function ManageAccountModal({
       <SheetContent
         side="bottom"
         hideCloseButton
-        className="border-0 p-0 rounded-t-3xl overflow-hidden bg-white/10 backdrop-blur-2xl"
+        className="border-0 p-0 rounded-t-3xl overflow-hidden bg-white/10 backdrop-blur-2xl relative"
         style={{ WebkitTapHighlightColor: 'transparent' }}
       >
         {/* Drag handle */}
@@ -239,73 +238,66 @@ export function ManageAccountModal({
             <span>Sign Out</span>
           </button>
         </div>
+
+        {/* Delete confirmation — absolute overlay inside SheetContent so it's within Radix's focus trap */}
+        {deleteStep !== 'idle' && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center rounded-t-3xl bg-black/60 backdrop-blur-sm">
+            <div className="bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 p-7 mx-6 w-full shadow-2xl space-y-4">
+              <h2 className="text-white font-bold text-lg text-center">Delete Account?</h2>
+
+              {isPremium && (
+                <div className="bg-yellow-500/10 border border-yellow-400/30 rounded-2xl p-3">
+                  <p className="text-yellow-300 text-xs leading-relaxed text-center">
+                    You have an active subscription. Deleting your account will <strong>not</strong> cancel it — you will continue to be charged. Cancel it first via <strong>Settings → Apple ID → Subscriptions</strong>.
+                  </p>
+                </div>
+              )}
+
+              <p className="text-white/60 text-xs leading-relaxed text-center">
+                This will permanently delete your account and all your data. This action cannot be undone.
+              </p>
+
+              <div className="space-y-1.5">
+                <p className="text-white/50 text-xs text-center">Type <strong className="text-white/80">delete</strong> to confirm</p>
+                <input
+                  type="text"
+                  value={deleteConfirmText}
+                  onChange={(e) => setDeleteConfirmText(e.target.value)}
+                  placeholder="delete"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  autoFocus
+                  disabled={deleteStep === 'deleting'}
+                  className="w-full bg-white/5 border border-white/20 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/25 outline-none focus:border-red-400/60 transition-colors disabled:opacity-40 text-center"
+                />
+              </div>
+
+              {deleteStep === 'error' && deleteError && (
+                <p className="text-red-400 text-xs text-center">{deleteError}</p>
+              )}
+
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => { setDeleteStep('idle'); setDeleteError(null); setDeleteConfirmText('') }}
+                  disabled={deleteStep === 'deleting'}
+                  className="flex-1 border border-white/20 bg-white/10 text-white/70 py-3 rounded-2xl font-medium text-sm hover:bg-white/15 transition-all disabled:opacity-40"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDeleteAccount}
+                  disabled={deleteStep === 'deleting' || deleteConfirmText.toLowerCase() !== 'delete'}
+                  className="flex-1 bg-red-500/80 text-white py-3 rounded-2xl font-medium text-sm hover:bg-red-500 transition-all disabled:opacity-40"
+                >
+                  {deleteStep === 'deleting' ? 'Deleting...' : 'Yes, Delete'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </SheetContent>
     </Sheet>
-
-    {/* Delete confirmation overlay — portalled to body so it sits above Sheet's backdrop */}
-    {deleteStep !== 'idle' && typeof document !== 'undefined' && createPortal(
-      <div className="fixed inset-0 z-[60] flex items-center justify-center">
-        {/* Backdrop */}
-        <div
-          className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-          onClick={() => { if (deleteStep !== 'deleting') { setDeleteStep('idle'); setDeleteError(null); setDeleteConfirmText('') } }}
-        />
-
-        {/* Card */}
-        <div className="relative bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 p-7 mx-6 max-w-sm w-full shadow-2xl space-y-4">
-          <h2 className="text-white font-bold text-lg text-center">Delete Account?</h2>
-
-          {isPremium && (
-            <div className="bg-yellow-500/10 border border-yellow-400/30 rounded-2xl p-3">
-              <p className="text-yellow-300 text-xs leading-relaxed text-center">
-                You have an active subscription. Deleting your account will <strong>not</strong> cancel it — you will continue to be charged. Cancel it first via <strong>Settings → Apple ID → Subscriptions</strong>.
-              </p>
-            </div>
-          )}
-
-          <p className="text-white/60 text-xs leading-relaxed text-center">
-            This will permanently delete your account and all your data. This action cannot be undone.
-          </p>
-
-          <div className="space-y-1.5">
-            <p className="text-white/50 text-xs text-center">Type <strong className="text-white/80">delete</strong> to confirm</p>
-            <input
-              type="text"
-              value={deleteConfirmText}
-              onChange={(e) => setDeleteConfirmText(e.target.value)}
-              placeholder="delete"
-              autoCapitalize="none"
-              autoCorrect="off"
-              spellCheck={false}
-              autoFocus
-              disabled={deleteStep === 'deleting'}
-              className="w-full bg-white/5 border border-white/20 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/25 outline-none focus:border-red-400/60 transition-colors disabled:opacity-40 text-center"
-            />
-          </div>
-
-          {deleteStep === 'error' && deleteError && (
-            <p className="text-red-400 text-xs text-center">{deleteError}</p>
-          )}
-
-          <div className="flex space-x-3">
-            <button
-              onClick={() => { setDeleteStep('idle'); setDeleteError(null); setDeleteConfirmText('') }}
-              disabled={deleteStep === 'deleting'}
-              className="flex-1 border border-white/20 bg-white/10 text-white/70 py-3 rounded-2xl font-medium text-sm hover:bg-white/15 transition-all disabled:opacity-40"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleDeleteAccount}
-              disabled={deleteStep === 'deleting' || deleteConfirmText.toLowerCase() !== 'delete'}
-              className="flex-1 bg-red-500/80 text-white py-3 rounded-2xl font-medium text-sm hover:bg-red-500 transition-all disabled:opacity-40"
-            >
-              {deleteStep === 'deleting' ? 'Deleting...' : 'Yes, Delete'}
-            </button>
-          </div>
-        </div>
-      </div>
-    , document.body)}
     </>
   )
 }
