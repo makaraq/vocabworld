@@ -65,13 +65,13 @@ export function ManageAccountModal({
           const { Browser } = await import('@capacitor/browser')
           await Browser.open({ url: mgmtUrl, presentationStyle: 'popover' })
         } else if (platform === 'ios') {
-          // App Store IAP — send user to iOS Settings → Subscriptions
-          const { App } = await import('@capacitor/app')
-          await App.openUrl({ url: 'itms-apps://apps.apple.com/account/subscriptions' })
+          // App Store IAP — send user to iOS Settings → Subscriptions.
+          // itms-apps:// is a native URL scheme; the WebView passes it to the OS.
+          window.open('itms-apps://apps.apple.com/account/subscriptions', '_self')
         } else {
-          // Play Store IAP — open Play Store subscriptions page
-          const { App } = await import('@capacitor/app')
-          await App.openUrl({ url: 'https://play.google.com/store/account/subscriptions' })
+          // Play Store IAP — open Play Store subscriptions page in-app browser
+          const { Browser } = await import('@capacitor/browser')
+          await Browser.open({ url: 'https://play.google.com/store/account/subscriptions' })
         }
       } else {
         // Web: use RC managementURL from customerInfo if available
