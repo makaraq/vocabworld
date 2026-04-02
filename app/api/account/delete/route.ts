@@ -1,6 +1,13 @@
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
+
+// Service-role client — needed for admin.deleteUser() and bypasses RLS for data cleanup
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
 export async function DELETE(request: Request) {
   try {
@@ -17,7 +24,7 @@ export async function DELETE(request: Request) {
     console.log('🗑️ Starting account deletion for user:', user.id)
 
     // Step 1: Get active subscriptions
-    const { data: subscriptions, error: subsError } = await supabase
+    const { data: subscriptions, error: subsError } = await supabaseAdmin
       .from('user_subscriptions')
       .select('stripe_subscription_id, stripe_customer_id')
       .eq('user_id', user.id)
@@ -35,7 +42,7 @@ export async function DELETE(request: Request) {
     console.log('🗑️ Deleting user data...')
 
     // Delete subscription events
-    const { error: eventsError } = await supabase
+    const { error: eventsError } = await supabaseAdmin
       .from('subscription_events')
       .delete()
       .eq('user_id', user.id)
@@ -45,7 +52,7 @@ export async function DELETE(request: Request) {
     }
 
     // Delete subscriptions
-    const { error: subscriptionsError } = await supabase
+    const { error: subscriptionsError } = await supabaseAdmin
       .from('user_subscriptions')
       .delete()
       .eq('user_id', user.id)
@@ -55,7 +62,7 @@ export async function DELETE(request: Request) {
     }
 
     // Delete custom playlists
-    const { error: playlistsError } = await supabase
+    const { error: playlistsError } = await supabaseAdmin
       .from('custom_playlists')
       .delete()
       .eq('user_id', user.id)
@@ -65,7 +72,7 @@ export async function DELETE(request: Request) {
     }
 
     // Delete progress records
-    const { error: progressError } = await supabase
+    const { error: progressError } = await supabaseAdmin
       .from('user_topic_progress')
       .delete()
       .eq('user_id', user.id)
@@ -75,17 +82,17 @@ export async function DELETE(request: Request) {
     }
 
     // Delete user profile
-    const { error: profileError } = await supabase
+    const { error: profileError } = await supabaseAdmin
       .from('user_profiles')
       .delete()
-      .eq('user_id', user.id)
+      .eq('id', user.id)
 
     if (profileError) {
       console.error('⚠️ Error deleting profile:', profileError.message)
     }
 
-    // Step 3: Delete auth user (this should cascade remaining data)
-    const { error: authDeleteError } = await supabase.auth.admin.deleteUser(user.id)
+    // Step 3: Delete auth user (requires service role)
+    const { error: authDeleteError } = await supabaseAdmin.auth.admin.deleteUser(user.id)
 
     if (authDeleteError) {
       console.error('❌ Error deleting auth user:', authDeleteError)
