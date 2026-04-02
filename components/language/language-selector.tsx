@@ -830,7 +830,7 @@ export function LanguageSelector() {
     }
   }
 
-  const { user, signOut, signInWithGoogle, isPremium, canAccessTopic, refreshSubscription, loading } = useAuth()
+  const { user, signOut, signInWithGoogle, isPremium, subscriptionStatus, canAccessTopic, refreshSubscription, loading } = useAuth()
   const [showPaywall, setShowPaywall] = useState(false)
   const [showManageAccount, setShowManageAccount] = useState(false)
 
@@ -4742,7 +4742,12 @@ export function LanguageSelector() {
         email={user?.email || ''}
         avatarUrl={user?.user_metadata?.avatar_url || user?.user_metadata?.picture}
         isPremium={isPremium}
-        renewalDate="March 2, 2027"
+        planType={subscriptionStatus?.subscription?.planType ?? null}
+        renewalDate={
+          subscriptionStatus?.subscription?.currentPeriodEnd
+            ? new Date(subscriptionStatus.subscription.currentPeriodEnd).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+            : undefined
+        }
         onSignOutAction={handleSignOut}
       />
 

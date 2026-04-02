@@ -17,6 +17,7 @@ interface ManageAccountModalProps {
   email?: string
   avatarUrl?: string
   isPremium?: boolean
+  planType?: 'monthly' | 'yearly' | null
   renewalDate?: string
   onSignOutAction?: () => void
   onUpgradeAction?: () => void
@@ -29,7 +30,8 @@ export function ManageAccountModal({
   email = "user@example.com",
   avatarUrl,
   isPremium = false,
-  renewalDate = "March 2, 2027",
+  planType = null,
+  renewalDate,
   onSignOutAction,
   onUpgradeAction,
 }: ManageAccountModalProps) {
@@ -135,9 +137,17 @@ export function ManageAccountModal({
             </div>
 
             {isPremium && (
-              <div className="flex items-center space-x-2 text-white/60 text-xs">
-                <Icon icon="solar:calendar-bold" width="14" height="14" className="text-white/40 flex-shrink-0" />
-                <span>Renews on {renewalDate}</span>
+              <div className="space-y-1">
+                {planType && (
+                  <div className="text-white/60 text-xs">
+                    {planType === 'yearly' ? 'Yearly plan' : 'Monthly plan'}
+                  </div>
+                )}
+                {renewalDate && (
+                  <div className="text-white/60 text-xs">
+                    Renews on {renewalDate}
+                  </div>
+                )}
               </div>
             )}
 
