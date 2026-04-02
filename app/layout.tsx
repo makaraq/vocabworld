@@ -29,6 +29,9 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: `
           document.addEventListener('contextmenu', function(e) { e.preventDefault(); }, true);
           document.addEventListener('selectstart', function(e) { e.preventDefault(); }, true);
+          if (window.Capacitor && window.Capacitor.isNativePlatform()) {
+            document.documentElement.classList.add('cap-native');
+          }
         ` }} />
       </head>
       <body className="font-sans" style={{ fontFamily: "var(--font-space-grotesk)" }}>

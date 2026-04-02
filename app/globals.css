@@ -8,17 +8,16 @@
   user-select: none !important;
 }
 
-/* Match font rendering between iOS WKWebView and desktop browsers.
-   WKWebView renders fonts thinner than desktop browsers. A micro text-shadow
-   using currentColor is the most reliable cross-platform fix. */
+/* iOS WKWebView renders fonts thinner than desktop browsers.
+   Detect the Capacitor native context (set in layout.tsx) and bump font-weight
+   so the native app matches the web/Vercel rendering — zero blurriness. */
 html {
-  -webkit-font-smoothing: auto;
-  -moz-osx-font-smoothing: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-body {
-  text-shadow: 0 0 0.5px currentColor;
-  -webkit-text-stroke: 0;
+.cap-native body {
+  font-weight: 500;
 }
 
 /* Re-enable selection for inputs and textareas */
