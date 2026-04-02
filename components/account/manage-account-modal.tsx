@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
+import { createPortal } from "react-dom"
 import { Icon } from "@iconify/react"
 import {
   Sheet,
@@ -241,8 +242,8 @@ export function ManageAccountModal({
       </SheetContent>
     </Sheet>
 
-    {/* Delete confirmation overlay — floats above the sheet, same style as welcome overlay */}
-    {deleteStep !== 'idle' && (
+    {/* Delete confirmation overlay — portalled to body so it sits above Sheet's backdrop */}
+    {deleteStep !== 'idle' && typeof document !== 'undefined' && createPortal(
       <div className="fixed inset-0 z-[60] flex items-center justify-center">
         {/* Backdrop */}
         <div
@@ -304,7 +305,7 @@ export function ManageAccountModal({
           </div>
         </div>
       </div>
-    )}
+    , document.body)}
     </>
   )
 }
