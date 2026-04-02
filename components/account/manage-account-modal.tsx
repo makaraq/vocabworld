@@ -242,44 +242,27 @@ export function ManageAccountModal({
               </div>
             )}
 
-            {!isPremium && (
-              <button
-                onClick={() => { onUpgradeAction?.(); onCloseAction() }}
-                className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white py-2.5 rounded-xl font-semibold text-sm hover:opacity-90 transition-all flex items-center justify-center space-x-2"
-              >
-                <Icon icon="solar:crown-bold" width="16" height="16" />
-                <span>Upgrade to Premium</span>
-              </button>
-            )}
+
           </div>
 
           {/* Divider */}
           <div className="h-px bg-white/10 my-1" />
 
-          {/* Manage / Restore */}
-          {isPremium ? (
+          {/* Manage Subscription */}
+          {isPremium && (
             <button
               onClick={handleManageSubscription}
-              className="w-full border border-orange-400/30 bg-orange-500/10 text-orange-300 py-3 px-4 rounded-2xl font-medium text-sm hover:bg-orange-500/20 transition-all flex items-center justify-center space-x-2"
+              className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white py-3 px-4 rounded-2xl font-medium text-sm hover:bg-white/15 transition-all flex items-center justify-center space-x-2"
             >
               <Icon icon="solar:settings-bold" width="18" height="18" />
               <span>Manage Subscription</span>
-            </button>
-          ) : (
-            <button
-              onClick={handleRestorePurchases}
-              disabled={rcLoading}
-              className="w-full border border-white/20 bg-white/10 text-white/70 py-3 px-4 rounded-2xl font-medium text-sm hover:bg-white/15 transition-all flex items-center justify-center space-x-2 disabled:opacity-40"
-            >
-              <Icon icon="solar:refresh-bold" width="18" height="18" />
-              <span>{rcLoading ? 'Restoring...' : 'Restore Purchases'}</span>
             </button>
           )}
 
           {/* Delete Account */}
           <button
             onClick={() => setDeleteStep('confirm')}
-            className="w-full border border-red-500/30 bg-red-500/10 text-red-400 py-3 px-4 rounded-2xl font-medium text-sm hover:bg-red-500/20 transition-all flex items-center justify-center space-x-2"
+            className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white py-3 px-4 rounded-2xl font-medium text-sm hover:bg-white/15 transition-all flex items-center justify-center space-x-2"
           >
             <Icon icon="solar:trash-bin-trash-bold" width="18" height="18" />
             <span>Delete Account</span>

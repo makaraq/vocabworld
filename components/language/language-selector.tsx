@@ -498,11 +498,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                     }}
                     className="flex-shrink-0 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl sm:rounded-2xl p-4 sm:p-5 text-center hover:bg-white/15 transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl relative"
                   >
-                    {!isPremium && (
-                      <div className="absolute top-2 right-2">
-                        <Icon icon="solar:crown-bold" width="20" height="20" className="text-yellow-400" />
-                      </div>
-                    )}
+
                     <div className="flex flex-col items-center justify-center gap-3">
                       <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white/20 rounded-full flex items-center justify-center">
                         <Icon icon="solar:magnifer-bold" width="32" height="32" className="sm:w-10 sm:h-10 text-white" />
@@ -649,11 +645,11 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
           
           // If not dragging or swipe too short, treat as tap
           if (!isDraggingDots || dotsTouchEnd === null) {
-            const dotsContainer = e.currentTarget
-            const rect = dotsContainer.getBoundingClientRect()
-            const x = e.changedTouches[0].clientX - rect.left
-            const dotWidth = rect.width / sections.length
-            const targetIndex = Math.floor(x / dotWidth)
+            const touch = e.changedTouches[0]
+            const element = document.elementFromPoint(touch.clientX, touch.clientY)
+            const button = element?.closest('button[role="tab"]')
+            const tabId = button?.getAttribute('id') // "section-tab-{index}"
+            const targetIndex = tabId ? parseInt(tabId.replace('section-tab-', ''), 10) : -1
             if (targetIndex >= 0 && targetIndex < sections.length && targetIndex !== currentSection) {
               setIsTransitioning(true)
               setCurrentSection(targetIndex)
