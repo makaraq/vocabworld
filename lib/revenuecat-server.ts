@@ -108,22 +108,30 @@ export interface RCWebhookEvent {
 
 /**
  * Derive a canonical subscription_status and plan from an RC webhook event.
+ *
+ * CANCELLATION note: when a user cancels, RC fires CANCELLATION immediately
+ * but the user retains access until the end of the paid period. We keep them
+ * as 'premium' on CANCELLATION and only revoke on EXPIRATION (which RC fires
+ * at the real end-of-period). BILLING_ISSUE revokes immediately because
+ * the payment actually failed and access should be cut off right away.
  */
 export function deriveSubscriptionUpdate(event: RCWebhookEvent['event']): {
   subscription_status: 'premium' | 'free'
   subscription_plan: 'monthly' | 'yearly' | null
   subscription_period_end: string | null
 } {
+  // Events that grant / keep premium access
   const activeEvents: RCWebhookEventType[] = [
     'INITIAL_PURCHASE',
     'RENEWAL',
     'UNCANCELLATION',
     'PRODUCT_CHANGE',
+    'CANCELLATION', // user cancelled but still in paid period — keep access
   ]
+  // Events that revoke premium access immediately
   const inactiveEvents: RCWebhookEventType[] = [
-    'CANCELLATION',
-    'EXPIRATION',
-    'BILLING_ISSUE',
+    'EXPIRATION',   // paid period actually ended
+    'BILLING_ISSUE', // payment failed
   ]
 
   const isActive = activeEvents.includes(event.type)
