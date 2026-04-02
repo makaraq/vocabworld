@@ -50,20 +50,25 @@ export function ManageAccountModal({
       const platform: string = cap?.getPlatform?.() ?? 'web'
 
       if (platform === 'ios' || platform === 'android') {
-        // Try the RC management URL first (works for RC Billing web subscriptions
-        // purchased via the app). Fall back to the platform store page.
+        // Check if this is an RC Billing (web) subscription — those have a managementURL.
+        // App Store / Play Store IAP subscriptions return null and must go to the
+        // platform's native subscription management screen instead.
         const { getRCCustomerInfo } = await import('@/lib/revenuecat-client')
         const info = await getRCCustomerInfo()
         const mgmtUrl = info?.managementURL
 
-        const { Browser } = await import('@capacitor/browser')
-
         if (mgmtUrl) {
+          // RC Billing web subscription — open the customer portal in-app
+          const { Browser } = await import('@capacitor/browser')
           await Browser.open({ url: mgmtUrl, presentationStyle: 'popover' })
         } else if (platform === 'ios') {
-          await Browser.open({ url: 'https://apps.apple.com/account/subscriptions', presentationStyle: 'popover' })
+          // App Store IAP — send user to iOS Settings → Subscriptions
+          const { App } = await import('@capacitor/app')
+          await App.openUrl({ url: 'itms-apps://apps.apple.com/account/subscriptions' })
         } else {
-          await Browser.open({ url: 'https://play.google.com/store/account/subscriptions', presentationStyle: 'popover' })
+          // Play Store IAP — open Play Store subscriptions page
+          const { App } = await import('@capacitor/app')
+          await App.openUrl({ url: 'https://play.google.com/store/account/subscriptions' })
         }
       } else {
         // Web: use RC managementURL from customerInfo if available
