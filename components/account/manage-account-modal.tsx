@@ -49,24 +49,33 @@ export function ManageAccountModal({
       const cap = (window as any)?.Capacitor
       const platform: string = cap?.getPlatform?.() ?? 'web'
 
-      if (platform === 'ios') {
-        // iOS: deep-link to App Store subscription management
-        window.location.href = 'itms-apps://apps.apple.com/account/subscriptions'
-      } else if (platform === 'android') {
-        // Android: open Play Store subscription management
-        window.open('https://play.google.com/store/account/subscriptions', '_blank', 'noopener,noreferrer')
+      if (platform === 'ios' || platform === 'android') {
+        // Try the RC management URL first (works for RC Billing web subscriptions
+        // purchased via the app). Fall back to the platform store page.
+        const { getRCCustomerInfo } = await import('@/lib/revenuecat-client')
+        const info = await getRCCustomerInfo()
+        const mgmtUrl = info?.managementURL
+
+        const { Browser } = await import('@capacitor/browser')
+
+        if (mgmtUrl) {
+          await Browser.open({ url: mgmtUrl, presentationStyle: 'popover' })
+        } else if (platform === 'ios') {
+          await Browser.open({ url: 'https://apps.apple.com/account/subscriptions', presentationStyle: 'popover' })
+        } else {
+          await Browser.open({ url: 'https://play.google.com/store/account/subscriptions', presentationStyle: 'popover' })
+        }
       } else {
         // Web: use RC managementURL from customerInfo if available
-        try {
-          const { getRCCustomerInfo } = await import('@/lib/revenuecat-client')
-          const info = await getRCCustomerInfo()
-          const mgmtUrl = (info as any)?.managementURL
-          if (mgmtUrl) {
-            window.open(mgmtUrl, '_blank', 'noopener,noreferrer')
-            return
-          }
-        } catch (_) { /* fall through */ }
-        window.open('https://app.revenuecat.com/customer-portal', '_blank', 'noopener,noreferrer')
+        const { getRCCustomerInfo } = await import('@/lib/revenuecat-client')
+        const info = await getRCCustomerInfo()
+        const mgmtUrl = info?.managementURL
+        if (mgmtUrl) {
+          window.open(mgmtUrl, '_blank', 'noopener,noreferrer')
+        } else {
+          // RC Billing customer portal (web billing subscribers)
+          window.open('https://billing.revenuecat.com/portal', '_blank', 'noopener,noreferrer')
+        }
       }
     } catch (err) {
       console.error('[RC] handleManageSubscription failed:', err)

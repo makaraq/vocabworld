@@ -99,6 +99,7 @@ export async function logOutRevenueCat(): Promise<void> {
 export async function getRCCustomerInfo(): Promise<{
   activeEntitlements: string[]
   isPremium: boolean
+  managementURL: string | null
 } | null> {
   if (typeof window === 'undefined' || !_rcInitialised) return null
 
@@ -110,6 +111,7 @@ export async function getRCCustomerInfo(): Promise<{
       return {
         activeEntitlements,
         isPremium: RC_ENTITLEMENT in customerInfo.entitlements.active,
+        managementURL: (customerInfo as any).managementURL ?? null,
       }
     } else {
       const { Purchases } = await import('@revenuecat/purchases-js')
@@ -118,6 +120,7 @@ export async function getRCCustomerInfo(): Promise<{
       return {
         activeEntitlements,
         isPremium: RC_ENTITLEMENT in info.entitlements.active,
+        managementURL: (info as any).managementURL ?? null,
       }
     }
   } catch (err) {
