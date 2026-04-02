@@ -47,9 +47,8 @@ export async function getRCSubscriber(appUserId: string): Promise<{
         Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
-      // Respect RC cache headers — don't aggressively revalidate
-      next: { revalidate: 60 },
-    } as RequestInit)
+      cache: 'no-store',
+    })
 
     if (!res.ok) {
       console.error('[RC] REST API error:', res.status, await res.text())

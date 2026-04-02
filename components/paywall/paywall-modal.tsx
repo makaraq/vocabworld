@@ -48,6 +48,12 @@ export function PaywallModal({
     const success = await purchasePackage(selectedPlan)
 
     if (success) {
+      // Sync DB immediately — RC webhook may not have fired yet
+      try {
+        await fetch('/api/subscription/sync-rc', { method: 'POST' })
+      } catch {
+        // Non-fatal: webhook will eventually sync the DB
+      }
       // Refresh subscription state so canAccessTopic() returns true immediately
       await refreshSubscription()
       onSuccessAction?.()
@@ -61,6 +67,12 @@ export function PaywallModal({
 
     const hasAccess = await restorePurchases()
     if (hasAccess) {
+      // Sync DB immediately — RC webhook may not have fired yet
+      try {
+        await fetch('/api/subscription/sync-rc', { method: 'POST' })
+      } catch {
+        // Non-fatal
+      }
       await refreshSubscription()
       onSuccessAction?.()
       onCloseAction()

@@ -55,7 +55,6 @@ export async function POST(req: NextRequest) {
     id: event.app_user_id,
     subscription_status,
     subscription_updated_at: new Date().toISOString(),
-    revenuecat_app_user_id: event.app_user_id,
   }
 
   if (subscription_plan) {
@@ -74,6 +73,16 @@ export async function POST(req: NextRequest) {
     console.error('[RC Webhook] DB upsert failed:', dbError)
     return NextResponse.json({ error: 'Database error' }, { status: 500 })
   }
+
+  // Best-effort: also write the RC app user id (requires add-revenuecat-schema.sql migration).
+  // Runs after the primary upsert and never fails the webhook response.
+  supabase
+    .from('user_profiles')
+    .update({ revenuecat_app_user_id: event.app_user_id })
+    .eq('id', event.app_user_id)
+    .then(({ error }) => {
+      if (error) console.warn('[RC Webhook] revenuecat_app_user_id update skipped (column may not exist yet):', error.message)
+    })
 
   console.log(`[RC Webhook] ✅ ${event.type} → ${subscription_status} | user: ${event.app_user_id}`)
   return NextResponse.json({ received: true })
