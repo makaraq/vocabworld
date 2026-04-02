@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { useState } from "react"
 import { Icon } from "@iconify/react"
 import {
   Sheet,
@@ -36,6 +36,8 @@ export function ManageAccountModal({
   onUpgradeAction,
 }: ManageAccountModalProps) {
   const { restorePurchases, loading: rcLoading } = useRevenueCat()
+  const [deleteStep, setDeleteStep] = useState<'idle' | 'confirm' | 'deleting' | 'error'>('idle')
+  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   const initials = name
     .split(" ")
@@ -91,8 +93,25 @@ export function ManageAccountModal({
     await restorePurchases()
   }
 
+  const handleDeleteAccount = async () => {
+    setDeleteStep('deleting')
+    setDeleteError(null)
+    try {
+      const res = await fetch('/api/account/delete', { method: 'DELETE' })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error || 'Failed to delete account')
+      }
+      onSignOutAction?.()
+      onCloseAction()
+    } catch (err: any) {
+      setDeleteError(err.message || 'Failed to delete account. Please try again.')
+      setDeleteStep('error')
+    }
+  }
+
   return (
-      <Sheet open={open} onOpenChange={(v) => !v && onCloseAction()}>
+      <Sheet open={open} onOpenChange={(v) => { if (!v) { setDeleteStep('idle'); setDeleteError(null); onCloseAction() } }}>
       <SheetContent
         side="bottom"
         hideCloseButton
@@ -200,13 +219,53 @@ export function ManageAccountModal({
           )}
 
           {/* Delete Account */}
-          <button
-            onClick={() => {}}
-            className="w-full border border-red-500/30 bg-red-500/10 text-red-400 py-3 px-4 rounded-2xl font-medium text-sm hover:bg-red-500/20 transition-all flex items-center justify-center space-x-2"
-          >
-            <Icon icon="solar:trash-bin-trash-bold" width="18" height="18" />
-            <span>Delete Account</span>
-          </button>
+          {deleteStep === 'idle' ? (
+            <button
+              onClick={() => setDeleteStep('confirm')}
+              className="w-full border border-red-500/30 bg-red-500/10 text-red-400 py-3 px-4 rounded-2xl font-medium text-sm hover:bg-red-500/20 transition-all flex items-center justify-center space-x-2"
+            >
+              <Icon icon="solar:trash-bin-trash-bold" width="18" height="18" />
+              <span>Delete Account</span>
+            </button>
+          ) : (
+            <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-4 space-y-3">
+              <p className="text-white font-semibold text-sm">Delete your account?</p>
+
+              {isPremium && (
+                <div className="bg-yellow-500/10 border border-yellow-400/30 rounded-xl p-3">
+                  <p className="text-yellow-300 text-xs leading-relaxed">
+                    You have an active subscription. Deleting your account will <strong>not</strong> cancel your subscription — you will continue to be charged. Please cancel it first via{" "}
+                    <strong>Settings → Apple ID → Subscriptions</strong> before proceeding.
+                  </p>
+                </div>
+              )}
+
+              <p className="text-white/60 text-xs leading-relaxed">
+                This will permanently delete your account and all your data. This action cannot be undone.
+              </p>
+
+              {deleteStep === 'error' && deleteError && (
+                <p className="text-red-400 text-xs">{deleteError}</p>
+              )}
+
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => { setDeleteStep('idle'); setDeleteError(null) }}
+                  disabled={deleteStep === 'deleting'}
+                  className="flex-1 border border-white/20 bg-white/10 text-white/70 py-2.5 rounded-xl font-medium text-sm hover:bg-white/15 transition-all disabled:opacity-40"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDeleteAccount}
+                  disabled={deleteStep === 'deleting'}
+                  className="flex-1 bg-red-500/80 text-white py-2.5 rounded-xl font-medium text-sm hover:bg-red-500 transition-all disabled:opacity-50"
+                >
+                  {deleteStep === 'deleting' ? 'Deleting...' : 'Yes, Delete'}
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Sign Out */}
           <button
