@@ -834,6 +834,17 @@ export function LanguageSelector() {
   const [showPaywall, setShowPaywall] = useState(false)
   const [showManageAccount, setShowManageAccount] = useState(false)
 
+  // Refresh subscription data from RC every time the account modal opens
+  // so that renewal dates are always current (especially important in sandbox
+  // where webhook delivery to localhost is not reliable).
+  useEffect(() => {
+    if (!showManageAccount) return
+    fetch('/api/subscription/sync-rc', { method: 'POST' })
+      .then(() => refreshSubscription())
+      .catch(() => {})
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showManageAccount])
+
   // Debug auth state
   useEffect(() => {
     console.log('🔍 Auth state:', { 
