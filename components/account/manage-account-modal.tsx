@@ -38,6 +38,7 @@ export function ManageAccountModal({
   const { restorePurchases, loading: rcLoading } = useRevenueCat()
   const [deleteStep, setDeleteStep] = useState<'idle' | 'confirm' | 'deleting' | 'error'>('idle')
   const [deleteError, setDeleteError] = useState<string | null>(null)
+  const [deleteConfirmText, setDeleteConfirmText] = useState('')
 
   const initials = name
     .split(" ")
@@ -111,7 +112,7 @@ export function ManageAccountModal({
   }
 
   return (
-      <Sheet open={open} onOpenChange={(v) => { if (!v) { setDeleteStep('idle'); setDeleteError(null); onCloseAction() } }}>
+      <Sheet open={open} onOpenChange={(v) => { if (!v) { setDeleteStep('idle'); setDeleteError(null); setDeleteConfirmText(''); onCloseAction() } }}>
       <SheetContent
         side="bottom"
         hideCloseButton
@@ -244,13 +245,28 @@ export function ManageAccountModal({
                 This will permanently delete your account and all your data. This action cannot be undone.
               </p>
 
+              <div className="space-y-1.5">
+                <p className="text-white/50 text-xs">Type <strong className="text-white/80">delete</strong> to confirm</p>
+                <input
+                  type="text"
+                  value={deleteConfirmText}
+                  onChange={(e) => setDeleteConfirmText(e.target.value)}
+                  placeholder="delete"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  disabled={deleteStep === 'deleting'}
+                  className="w-full bg-white/5 border border-white/20 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/25 outline-none focus:border-red-400/60 transition-colors disabled:opacity-40"
+                />
+              </div>
+
               {deleteStep === 'error' && deleteError && (
                 <p className="text-red-400 text-xs">{deleteError}</p>
               )}
 
               <div className="flex space-x-2">
                 <button
-                  onClick={() => { setDeleteStep('idle'); setDeleteError(null) }}
+                  onClick={() => { setDeleteStep('idle'); setDeleteError(null); setDeleteConfirmText('') }}
                   disabled={deleteStep === 'deleting'}
                   className="flex-1 border border-white/20 bg-white/10 text-white/70 py-2.5 rounded-xl font-medium text-sm hover:bg-white/15 transition-all disabled:opacity-40"
                 >
@@ -258,8 +274,8 @@ export function ManageAccountModal({
                 </button>
                 <button
                   onClick={handleDeleteAccount}
-                  disabled={deleteStep === 'deleting'}
-                  className="flex-1 bg-red-500/80 text-white py-2.5 rounded-xl font-medium text-sm hover:bg-red-500 transition-all disabled:opacity-50"
+                  disabled={deleteStep === 'deleting' || deleteConfirmText.toLowerCase() !== 'delete'}
+                  className="flex-1 bg-red-500/80 text-white py-2.5 rounded-xl font-medium text-sm hover:bg-red-500 transition-all disabled:opacity-40"
                 >
                   {deleteStep === 'deleting' ? 'Deleting...' : 'Yes, Delete'}
                 </button>
