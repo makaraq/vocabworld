@@ -976,26 +976,6 @@ export function LanguageSelector() {
     detectIOS();
   }, []);
 
-  // Helper shared by both restore effects
-  const getLanguageName = (code: string): string => {
-    const languageNames: { [key: string]: string } = {
-      'ar': 'Arabic', 'bg': 'Bulgarian', 'bn': 'Bengali', 'ca': 'Catalan',
-      'cs': 'Czech', 'cy': 'Welsh', 'da': 'Danish', 'de': 'German',
-      'el': 'Greek', 'en': 'English', 'es': 'Spanish', 'et': 'Estonian',
-      'eu': 'Basque', 'fa': 'Persian', 'fi': 'Finnish', 'fr': 'French',
-      'ga': 'Irish', 'gu': 'Gujarati', 'he': 'Hebrew', 'hi': 'Hindi',
-      'hr': 'Croatian', 'hu': 'Hungarian', 'id': 'Indonesian', 'is': 'Icelandic',
-      'it': 'Italian', 'ja': 'Japanese', 'ko': 'Korean', 'lt': 'Lithuanian',
-      'lv': 'Latvian', 'mk': 'Macedonian', 'ml': 'Malayalam', 'mr': 'Marathi',
-      'mt': 'Maltese', 'nl': 'Dutch', 'no': 'Norwegian', 'pl': 'Polish',
-      'pt': 'Portuguese', 'ro': 'Romanian', 'ru': 'Russian', 'sk': 'Slovak',
-      'sl': 'Slovenian', 'sv': 'Swedish', 'ta': 'Tamil', 'te': 'Telugu',
-      'th': 'Thai', 'tr': 'Turkish', 'uk': 'Ukrainian', 'ur': 'Urdu',
-      'vi': 'Vietnamese', 'zh': 'Chinese'
-    }
-    return languageNames[code] || code
-  }
-
   // 💾 Persist language selection so the app reopens on the topic page
   useEffect(() => {
     if (nativeLanguageCode) localStorage.setItem('nativeLanguageCode', nativeLanguageCode)
@@ -1013,10 +993,13 @@ export function LanguageSelector() {
 
     if (savedNativeCode && savedTargetCode) {
       console.log('🔄 Restoring last language selection:', savedNativeCode, '→', savedTargetCode)
+      // Language names are resolved later by the full getLanguageName defined below;
+      // for now store the code as a temporary display name — it will be overwritten
+      // on the first render that has access to getLanguageName via normal state flow.
       setNativeLanguageCode(savedNativeCode)
-      setNativeLanguage(getLanguageName(savedNativeCode))
+      setNativeLanguage(savedNativeCode)
       setTargetLanguageCode(savedTargetCode)
-      setTargetLanguage(getLanguageName(savedTargetCode))
+      setTargetLanguage(savedTargetCode)
       setCurrentPage('confirmation')
     }
   }, [])
@@ -2951,7 +2934,18 @@ export function LanguageSelector() {
     // Always return English name
     return nameMap[languageCode] || languageCode.toUpperCase()
   }
-  
+
+  // Resolve display names after cold-start restore (codes are stored temporarily as names)
+  useEffect(() => {
+    if (nativeLanguageCode && nativeLanguage === nativeLanguageCode) {
+      setNativeLanguage(getLanguageName(nativeLanguageCode))
+    }
+    if (targetLanguageCode && targetLanguage === targetLanguageCode) {
+      setTargetLanguage(getLanguageName(targetLanguageCode))
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nativeLanguageCode, targetLanguageCode])
+
   // Get translated language name (for lists, displays, etc.) - buttons stay in English
   const getTranslatedLanguageName = (languageCode: string): string => {
     const englishName = getLanguageName(languageCode)
