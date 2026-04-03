@@ -3697,6 +3697,61 @@ export function LanguageSelector() {
     setCurrentPage("confirmation")
   }
 
+  // 🔒 LOCK SCREEN & BACKGROUND PLAYBACK
+  // Web Media Session API — shows controls on the phone lock screen and in the
+  // notification/control-center tray when audio is playing.
+  // HTML <audio> elements already continue playing when the screen locks;
+  // the Media Session API just wires up the OS controls so the user can
+  // pause / skip without unlocking the phone.
+
+  // Always-current handler refs — avoids stale closures inside the Media Session callbacks
+  const _mediaSessionRef = useRef({ stopAudio, handleNext, handlePrevious, handlePlay })
+  _mediaSessionRef.current = { stopAudio, handleNext, handlePrevious, handlePlay }
+
+  // Register action handlers once on mount
+  useEffect(() => {
+    if (typeof navigator === 'undefined' || !('mediaSession' in navigator)) return
+
+    const ms = navigator.mediaSession
+    ms.setActionHandler('play',          () => _mediaSessionRef.current.handlePlay())
+    ms.setActionHandler('pause',         () => _mediaSessionRef.current.stopAudio())
+    ms.setActionHandler('stop',          () => _mediaSessionRef.current.stopAudio())
+    ms.setActionHandler('nexttrack',     () => _mediaSessionRef.current.handleNext())
+    ms.setActionHandler('previoustrack', () => _mediaSessionRef.current.handlePrevious())
+
+    return () => {
+      const actions = ['play', 'pause', 'stop', 'nexttrack', 'previoustrack'] as MediaSessionAction[]
+      actions.forEach(action => { try { ms.setActionHandler(action, null) } catch {} })
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Keep lock-screen metadata and playback state in sync with the current word
+  useEffect(() => {
+    if (typeof navigator === 'undefined' || !('mediaSession' in navigator)) return
+
+    const isActive = isPlaying || autoPlayActive
+    const currentWord = vocabulary[currentWordIndex]
+
+    if (isActive && currentWord) {
+      const wordInTarget = (currentWord as any).targetWord || (currentWord as any).main_word || ''
+      const wordInNative = (currentWord as any).sourceWord || (currentWord as any).training_word || ''
+      try {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title:  wordInTarget,
+          artist: `${wordInNative}  ·  ${targetLanguage} ← ${nativeLanguage}`,
+          album:  `VocabWorld${selectedTopic ? ' · ' + selectedTopic.name : ''}`,
+          artwork: [
+            { src: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+            { src: '/icons/icon-512x512.png', sizes: '512x512', type: 'image/png' },
+          ],
+        })
+        navigator.mediaSession.playbackState = 'playing'
+      } catch {}
+    } else {
+      try { navigator.mediaSession.playbackState = 'paused' } catch {}
+    }
+  }, [isPlaying, autoPlayActive, currentWordIndex, vocabulary, selectedTopic, targetLanguage, nativeLanguage])
+
   // Hold gesture handlers for flashcard example sentences
   let holdTimer: NodeJS.Timeout | null = null
 
