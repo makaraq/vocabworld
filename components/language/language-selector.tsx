@@ -1495,18 +1495,21 @@ export function LanguageSelector() {
       }
     }
     
-    // For normal speed (1.0x), prefer Web Audio (more reliable on mobile)
-    if (audioContextRef.current && audioUnlockedRef.current) {
-      try {
-        await playAudioWithWebAudio(url, playbackRate)
-        return
-      } catch (error) {
-        console.log('⚠️ Web Audio failed, trying HTML Audio fallback:', error)
-      }
+    // 🔒 LOCK SCREEN FIX: Always prefer HTML Audio (<audio> element) over Web Audio API.
+    // The iOS Media Session (lock screen controls) only activates for <audio> elements —
+    // AudioContext / Web Audio API is invisible to the OS media session on iOS.
+    // HTML Audio is also perfectly reliable for normal-speed playback.
+    try {
+      await playAudioFallback(url, playbackRate)
+      return
+    } catch (error) {
+      console.log('⚠️ HTML Audio failed, trying Web Audio fallback:', error)
     }
     
-    // Final fallback to HTML Audio
-    await playAudioFallback(url, playbackRate)
+    // Last resort: Web Audio API
+    if (audioContextRef.current && audioUnlockedRef.current) {
+      await playAudioWithWebAudio(url, playbackRate)
+    }
   }
   
   // Audio request queue to prevent concurrent B2 API calls
