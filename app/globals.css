@@ -32,6 +32,8 @@ input, textarea, [contenteditable] {
 }
 
 @custom-variant dark (&:is(.dark *));
+/* iPhone Plus / Pro Max and larger phones (430pt+) */
+@custom-variant xs (@media (width >= 420px));
 
 @theme inline {
   --font-sans: var(--font-space-grotesk);

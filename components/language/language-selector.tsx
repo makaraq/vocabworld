@@ -420,7 +420,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
       <div className="mb-2 px-3 py-1 flex-shrink-0">
         <h2 className="font-medium flex items-center justify-center gap-2.5 text-white">
           <div ref={iconContainerRef} />
-          <span className="text-lg sm:text-2xl tracking-wide leading-none">{currentSectionData.name}</span>
+          <span className="text-lg xs:text-xl sm:text-2xl tracking-wide leading-none">{currentSectionData.name}</span>
         </h2>
       </div>
 
@@ -511,7 +511,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                   </button>
 
                   {/* My Playlists Section - show 5 items then scroll */}
-                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-white/20 flex flex-col overflow-hidden max-h-[340px] min-h-[100px]">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 sm:p-4 lg:p-5 border border-white/20 flex flex-col overflow-hidden max-h-[340px] lg:max-h-[480px] min-h-[100px]">
                     <div className="flex items-center justify-between mb-3 flex-shrink-0">
                       <h3 className="text-white font-semibold text-base sm:text-lg flex items-center gap-2">
                         <Icon icon="solar:playlist-bold" width="20" height="20" className="text-purple-400" />
@@ -573,8 +573,8 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
               ) : (
                 /* Regular topic grid for all other sections */
                 <div 
-                  className={`grid gap-2.5 sm:gap-3 h-full content-start ${
-                    section.gridCols === 3 ? 'grid-cols-3' : 'grid-cols-2'
+                  className={`grid gap-2.5 sm:gap-3 lg:gap-4 h-full content-start ${
+                    section.gridCols === 3 ? 'grid-cols-3 lg:grid-cols-4' : 'grid-cols-2 lg:grid-cols-3'
                   }`}
                 >
                   {section.topics.map(renderTopicButton)}
@@ -3887,7 +3887,7 @@ export function LanguageSelector() {
         onTouchStart={() => handleTopicHoldStart(topic.id)}
         onTouchEnd={() => handleTopicHoldEnd()}
         onTouchCancel={() => handleTopicHoldEnd()}
-        className={`bg-black/40 rounded-xl sm:rounded-2xl p-3 sm:p-5 text-center hover:bg-black/50 h-32 sm:h-36 shadow-lg hover:shadow-xl ${
+        className={`bg-black/40 rounded-xl xs:rounded-2xl sm:rounded-2xl p-3 xs:p-4 sm:p-5 text-center hover:bg-black/50 h-32 xs:h-36 sm:h-40 shadow-lg hover:shadow-xl ${
           holdingTopicId === topic.id ? 'scale-105 transition-all duration-75' : 'scale-100 transition-all duration-300 hover:scale-[1.02]'
         } ${
           selectedTopic?.id === topic.id ? "bg-black/60 shadow-xl" : ""
@@ -3899,25 +3899,25 @@ export function LanguageSelector() {
           <div className="flex-shrink-0 flex items-center justify-center">
             {hasCustomIcon ? (
               <div 
-                className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center mx-auto [&>svg]:w-full [&>svg]:h-full" 
+                className="w-12 h-12 xs:w-14 xs:h-14 sm:w-16 sm:h-16 flex items-center justify-center mx-auto [&>svg]:w-full [&>svg]:h-full" 
                 style={{ color: 'rgba(255,255,255,0.8)' }}
                 dangerouslySetInnerHTML={{ __html: topic.icon! }}
               />
             ) : customSVGIcons[topic.id] ? (
               <div 
-                className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center mx-auto [&>svg]:w-full [&>svg]:h-full" 
+                className="w-12 h-12 xs:w-14 xs:h-14 sm:w-16 sm:h-16 flex items-center justify-center mx-auto [&>svg]:w-full [&>svg]:h-full" 
                 style={{ color: 'rgba(255,255,255,0.8)' }}
                 dangerouslySetInnerHTML={{ __html: customSVGIcons[topic.id] }}
               />
             ) : iconData && typeof iconData.icon === 'string' ? (
-              <Icon icon={iconData.icon} className="w-12 h-12 sm:w-14 sm:h-14 mx-auto" style={{ color: 'rgba(255,255,255,0.8)' }} />
+              <Icon icon={iconData.icon} className="w-12 h-12 xs:w-14 xs:h-14 sm:w-16 sm:h-16 mx-auto" style={{ color: 'rgba(255,255,255,0.8)' }} />
             ) : iconData ? (
-              (iconData.icon as any)({ className: 'w-12 h-12 sm:w-14 sm:h-14 text-white/80 mx-auto' })
+              (iconData.icon as any)({ className: 'w-12 h-12 xs:w-14 xs:h-14 sm:w-16 sm:h-16 text-white/80 mx-auto' })
             ) : (
-              <MessageCircle className="w-12 h-12 sm:w-14 sm:h-14 text-white/80 mx-auto" />
+              <MessageCircle className="w-12 h-12 xs:w-14 xs:h-14 sm:w-16 sm:h-16 text-white/80 mx-auto" />
             )}
           </div>
-          <p className="text-white/90 text-base sm:text-lg font-medium leading-tight px-1 text-center w-full">{getTopicDisplayName(topic.id, topic.name)}</p>
+          <p className="text-white/90 text-base xs:text-lg sm:text-xl font-medium leading-tight px-1 text-center w-full">{getTopicDisplayName(topic.id, topic.name)}</p>
         </div>
       </button>
     )
@@ -3929,7 +3929,7 @@ export function LanguageSelector() {
   }
 
   return (
-    <div className="w-full max-w-2xl mx-auto px-2 sm:px-3 h-full max-h-[95vh] flex items-center">
+    <div className="w-full max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-2 sm:px-3 h-full max-h-[95vh] flex items-center">
       <div className={`bg-white/5 backdrop-blur-3xl border border-white/15 rounded-2xl sm:rounded-3xl px-3 sm:px-5 md:px-7 py-4 sm:py-5 md:py-6 shadow-2xl transform transition-all duration-300 hover:scale-[1.02] hover:shadow-3xl w-full max-h-full overflow-hidden ${isTransitioning ? 'bg-white/10' : 'bg-white/5'}`}>
         {isLoading && (
           <div className="text-center mb-4">
@@ -4263,8 +4263,8 @@ export function LanguageSelector() {
             </div>
 
             {/* Language Grid */}
-            <div className="max-h-96 overflow-y-auto mb-6 language-grid-container">
-              <div className="grid grid-cols-3 gap-4">
+            <div className="max-h-96 lg:max-h-[500px] overflow-y-auto mb-6 language-grid-container">
+              <div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                 {filteredLanguages.map((language) => {
                   const handleLanguageHoldStart = (langCode: string) => {
                     setHoldingLanguageCode(langCode)
