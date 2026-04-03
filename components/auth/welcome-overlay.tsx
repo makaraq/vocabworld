@@ -9,6 +9,15 @@ export function WelcomeOverlay() {
   const [isSigningIn, setIsSigningIn] = useState(false)
   const [showOverlay, setShowOverlay] = useState(false)
   
+  // Reset sign-in spinner whenever the user is signed out (e.g. after account
+  // deletion). The component stays mounted while the user is logged in (it just
+  // returns null), so isSigningIn can still be true from a previous sign-in.
+  useEffect(() => {
+    if (!user) {
+      setIsSigningIn(false)
+    }
+  }, [user])
+
   useEffect(() => {
     // Don't show while loading
     if (loading) return
