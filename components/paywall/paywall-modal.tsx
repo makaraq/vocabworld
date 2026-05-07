@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { Icon } from '@iconify/react'
+import Link from 'next/link'
 import { PRICING, formatPrice } from '@/lib/pricing'
 import { useAuth } from '@/contexts/auth-context'
 import { useRevenueCat } from '@/hooks/use-revenuecat'
@@ -20,14 +21,29 @@ export function PaywallModal({
   onCloseAction,
   onSuccessAction,
 }: PaywallModalProps) {
+  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('yearly')
   const [mounted, setMounted] = useState(false)
   const { user, refreshSubscription } = useAuth()
-  const { purchasePackage, loading, error, clearError } = useRevenueCat()
+  const { purchasePackage, restorePurchases, loading, error, clearError } = useRevenueCat()
+  const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     setMounted(true)
     return () => setMounted(false)
   }, [])
+
+  // Auto-dismiss error after 4 seconds
+  useEffect(() => {
+    if (error) {
+      if (errorTimerRef.current) clearTimeout(errorTimerRef.current)
+      errorTimerRef.current = setTimeout(() => {
+        clearError()
+      }, 4000)
+    }
+    return () => {
+      if (errorTimerRef.current) clearTimeout(errorTimerRef.current)
+    }
+  }, [error, clearError])
 
   if (!isOpen || !mounted) return null
 
@@ -35,7 +51,7 @@ export function PaywallModal({
     if (!user) return
     clearError()
 
-    const success = await purchasePackage('yearly')
+    const success = await purchasePackage(selectedPlan)
 
     if (success) {
       try {
@@ -81,7 +97,7 @@ export function PaywallModal({
             <div className="flex flex-col gap-3 text-sm">
               {['All topics unlocked', 'Create custom playlists', 'Word Search'].map(label => (
                 <div key={label} className="flex items-center gap-2 text-white/70">
-                  <Icon icon="solar:check-circle-bold" className="w-4 h-4 text-green-400 flex-shrink-0 drop-shadow" />
+                  <Icon icon="solar:star-bold" className="w-4 h-4 text-green-400 flex-shrink-0 drop-shadow" />
                   <span className="drop-shadow">{label}</span>
                 </div>
               ))}
@@ -89,9 +105,17 @@ export function PaywallModal({
           </div>
         </div>
 
-        {/* Yearly Plan */}
-        <div className="px-6 pt-3 pb-2">
-          <div className="w-full p-4 rounded-2xl border-2 border-green-400/60 bg-green-500/20 text-left relative backdrop-blur-sm">
+        {/* Plans */}
+        <div className="px-6 pt-3 pb-2 space-y-3">
+          {/* Yearly Plan */}
+          <button
+            onClick={() => setSelectedPlan('yearly')}
+            className={`w-full p-4 rounded-2xl border-2 transition-all text-left relative backdrop-blur-sm ${
+              selectedPlan === 'yearly'
+                ? 'border-green-400/60 bg-green-500/20'
+                : 'border-white/20 bg-white/10 hover:bg-white/15 hover:border-white/30'
+            }`}
+          >
             <span className="absolute -top-2.5 right-3 px-3 py-1 bg-gradient-to-r from-green-400 to-emerald-500 text-white text-xs font-bold rounded-full shadow-lg border border-white/20">
               7-DAY FREE TRIAL
             </span>
@@ -110,15 +134,47 @@ export function PaywallModal({
                 <p className="text-white/60 text-xs drop-shadow">{formatPrice(PRICING.yearly.price / 12)}/mo</p>
               </div>
             </div>
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-2 border-green-400 bg-green-500 shadow-lg shadow-green-500/30 flex items-center justify-center">
-              <Icon icon="solar:check-circle-bold" className="w-4 h-4 text-white" />
+            <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+              selectedPlan === 'yearly' ? 'border-green-400 bg-green-500 shadow-lg shadow-green-500/30' : 'border-white/40 bg-white/10'
+            }`}>
+              {selectedPlan === 'yearly' && (
+                <Icon icon="solar:check-circle-bold" className="w-4 h-4 text-white" />
+              )}
             </div>
-          </div>
+          </button>
+
+          {/* Monthly Plan */}
+          <button
+            onClick={() => setSelectedPlan('monthly')}
+            className={`w-full p-4 rounded-2xl border-2 transition-all text-left relative backdrop-blur-sm ${
+              selectedPlan === 'monthly'
+                ? 'border-blue-400/60 bg-blue-500/20'
+                : 'border-white/20 bg-white/10 hover:bg-white/15 hover:border-white/30'
+            }`}
+          >
+            <div className="flex items-center justify-between pl-8">
+              <div>
+                <p className="text-white font-semibold drop-shadow">Monthly</p>
+                <p className="text-white/60 text-sm drop-shadow">Billed monthly</p>
+              </div>
+              <div className="text-right">
+                <p className="text-white font-bold text-xl drop-shadow-lg">{formatPrice(PRICING.monthly.price)}</p>
+                <p className="text-white/60 text-xs drop-shadow">per month</p>
+              </div>
+            </div>
+            <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+              selectedPlan === 'monthly' ? 'border-blue-400 bg-blue-500 shadow-lg shadow-blue-500/30' : 'border-white/40 bg-white/10'
+            }`}>
+              {selectedPlan === 'monthly' && (
+                <Icon icon="solar:check-circle-bold" className="w-4 h-4 text-white" />
+              )}
+            </div>
+          </button>
         </div>
 
         {/* Error Message */}
         {error && (
-          <div className="mx-6 mb-2 p-3 bg-red-500/20 border border-red-500/30 rounded-xl">
+          <div className="mx-6 mt-2 p-3 bg-red-500/20 border border-red-500/30 rounded-xl">
             <p className="text-red-200 text-sm text-center">{error}</p>
           </div>
         )}
@@ -147,14 +203,24 @@ export function PaywallModal({
           )}
 
           <div className="flex items-center justify-center gap-3 mt-3">
-            <button className="text-white/50 hover:text-white/70 text-xs transition-colors underline underline-offset-2">
+            <Link
+              href="/terms-of-service"
+              className="text-white/50 hover:text-white/70 text-xs transition-colors underline underline-offset-2"
+            >
               Terms of Service
-            </button>
+            </Link>
             <span className="text-white/30 text-xs">•</span>
-            <button className="text-white/50 hover:text-white/70 text-xs transition-colors underline underline-offset-2">
+            <Link
+              href="/privacy-policy"
+              className="text-white/50 hover:text-white/70 text-xs transition-colors underline underline-offset-2"
+            >
               Privacy Policy
-            </button>
+            </Link>
           </div>
+
+          <p className="text-center text-white/50 text-xs mt-2">
+            Cancel anytime • Secure payment
+          </p>
         </div>
       </div>
     </div>
