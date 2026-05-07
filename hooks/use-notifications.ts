@@ -24,6 +24,7 @@ export interface UseNotificationsReturn {
     key: K,
     value: NotificationPreferences[K]
   ) => Promise<void>
+  refreshPermissionState: () => Promise<void>
   reschedule: (ctx: NotificationContext) => Promise<void>
   onWordPlayed: (ctx: NotificationContext) => Promise<void>
 }
@@ -85,6 +86,26 @@ export function useNotifications(
     }
   }, [prefs])
 
+  // Re-check OS permission state — call on app resume so the UI updates
+  // after the user returns from iOS Settings where they may have toggled permissions.
+  const refreshPermissionState = useCallback(async () => {
+    if (!Capacitor.isNativePlatform()) {
+      setPermissionState('not-native')
+      return
+    }
+    const state = await getNotificationPermission()
+    setPermissionState(state)
+    // If user just enabled in iOS Settings, auto-enable prefs and reschedule
+    if (state === 'granted' && !prefs.enabled) {
+      const newPrefs = { ...prefs, enabled: true }
+      setPrefs(newPrefs)
+      persistPrefsRef.current('notifications', newPrefs)
+      if (ctxRef.current) {
+        await rescheduleAllNotifications(newPrefs, ctxRef.current)
+      }
+    }
+  }, [prefs])
+
   const reschedule = useCallback(async (ctx: NotificationContext) => {
     ctxRef.current = ctx
     if (!prefs.enabled) return
@@ -98,5 +119,5 @@ export function useNotifications(
     if (prefs.reviewReminderEnabled) await rescheduleAllNotifications(prefs, ctx)
   }, [prefs])
 
-  return { prefs, permissionState, loadPrefsFromSettings, setEnabled, updatePref, reschedule, onWordPlayed }
+  return { prefs, permissionState, loadPrefsFromSettings, setEnabled, updatePref, refreshPermissionState, reschedule, onWordPlayed }
 }

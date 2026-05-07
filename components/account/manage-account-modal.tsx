@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/sheet"
 import { useRevenueCat } from "@/hooks/use-revenuecat"
 import { NotificationSettings } from "@/components/settings/notification-settings"
+import { openAppSettings } from "@/lib/notifications"
 import type { NotificationPreferences } from "@/lib/notifications"
 import type { PermissionState } from "@/hooks/use-notifications"
 
@@ -28,7 +29,6 @@ interface ManageAccountModalProps {
   // Notification props
   notifPrefs?: NotificationPreferences
   notifPermission?: PermissionState
-  onNotifSetEnabled?: (enabled: boolean) => Promise<void>
   onNotifUpdatePref?: <K extends keyof NotificationPreferences>(key: K, value: NotificationPreferences[K]) => Promise<void>
   /** When true the notifications section auto-expands on open */
   openNotifications?: boolean
@@ -47,7 +47,6 @@ export function ManageAccountModal({
   onUpgradeAction,
   notifPrefs,
   notifPermission,
-  onNotifSetEnabled,
   onNotifUpdatePref,
   openNotifications = false,
 }: ManageAccountModalProps) {
@@ -291,7 +290,7 @@ export function ManageAccountModal({
           </div>
 
           {/* Notifications section */}
-          {notifPrefs && notifPermission && onNotifSetEnabled && onNotifUpdatePref && (
+          {notifPermission && notifPermission !== 'not-native' && notifPermission !== 'loading' && (
             <div ref={notifSectionRef} className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/15 overflow-hidden">
               {/* Header row — tap to expand/collapse */}
               <button
@@ -299,10 +298,12 @@ export function ManageAccountModal({
                 className="w-full flex items-center justify-between px-4 py-3.5"
               >
                 <div className="flex items-center gap-2.5">
-                  <Icon icon="solar:bell-bold" width="18" className={notifPrefs.enabled ? 'text-blue-400' : 'text-white/50'} />
+                  <Icon icon="solar:bell-bold" width="18" className={notifPermission === 'granted' ? 'text-blue-400' : 'text-white/50'} />
                   <span className="text-white font-medium text-sm">Notifications</span>
-                  {notifPrefs.enabled && (
+                  {notifPermission === 'granted' ? (
                     <span className="text-xs bg-blue-500/20 text-blue-300 border border-blue-400/20 px-2 py-0.5 rounded-full">On</span>
+                  ) : (
+                    <span className="text-xs bg-white/10 text-white/40 border border-white/10 px-2 py-0.5 rounded-full">Off</span>
                   )}
                 </div>
                 <Icon
@@ -312,15 +313,29 @@ export function ManageAccountModal({
                 />
               </button>
 
-              {/* Expanded settings */}
+              {/* Expanded content */}
               {notifExpanded && (
                 <div className="px-4 pb-4 border-t border-white/10 pt-3">
-                  <NotificationSettings
-                    prefs={notifPrefs}
-                    permissionState={notifPermission}
-                    onSetEnabled={onNotifSetEnabled}
-                    onUpdatePref={onNotifUpdatePref}
-                  />
+                  {notifPermission === 'granted' && notifPrefs && onNotifUpdatePref ? (
+                    <NotificationSettings
+                      prefs={notifPrefs}
+                      onUpdatePref={onNotifUpdatePref}
+                    />
+                  ) : (
+                    /* Permission denied or prompt — direct user to iOS Settings */
+                    <div className="space-y-3">
+                      <p className="text-white/50 text-xs leading-relaxed text-center">
+                        Notifications are turned off. Enable them in your device settings to get streak reminders, daily study nudges, and review alerts.
+                      </p>
+                      <button
+                        onClick={() => openAppSettings()}
+                        className="w-full bg-blue-500/20 border border-blue-400/30 text-blue-300 py-2.5 rounded-xl font-medium text-sm hover:bg-blue-500/30 transition-all flex items-center justify-center gap-2"
+                      >
+                        <Icon icon="solar:settings-bold" width="16" />
+                        Open Settings
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

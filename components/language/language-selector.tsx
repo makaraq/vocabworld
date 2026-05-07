@@ -840,9 +840,9 @@ export function LanguageSelector() {
     setShowNotifPrompt(false)
   }
 
-  const handleNotifGoToSettings = () => {
-    setOpenNotificationsInAccount(true)
-    setShowManageAccount(true)
+  const handleOpenAppSettings = async () => {
+    const { openAppSettings } = await import('@/lib/notifications')
+    openAppSettings()
   }
 
   // Refresh subscription data from RC every time the account modal opens
@@ -860,22 +860,6 @@ export function LanguageSelector() {
   useEffect(() => {
   }, [user, isPremium])
   const [currentPage, setCurrentPage] = useState<PageState>("native")
-
-  // Show the first-time notification prompt once the user reaches the topic
-  // selection screen on a native device and hasn't enabled notifications yet.
-  useEffect(() => {
-    if (
-      currentPage === 'confirmation' &&
-      user &&
-      Capacitor.isNativePlatform() &&
-      !notificationsHook.prefs.enabled &&
-      !localStorage.getItem('vw_notif_prompted')
-    ) {
-      const t = setTimeout(() => setShowNotifPrompt(true), 900)
-      return () => clearTimeout(t)
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, user])
 
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [nativeLanguage, setNativeLanguage] = useState("")
@@ -3630,6 +3614,46 @@ export function LanguageSelector() {
   // captures the latest version, so no stale-closure issue here.
   const notificationsHook = useNotifications(updateSetting)
 
+  // First-time notification prompt: fire the iOS native permission dialog
+  // directly. If granted, enable notifications silently. If denied, show our
+  // benefits screen pointing to iOS Settings.
+  useEffect(() => {
+    if (
+      currentPage === 'confirmation' &&
+      user &&
+      Capacitor.isNativePlatform() &&
+      !localStorage.getItem('vw_notif_prompted')
+    ) {
+      const t = setTimeout(async () => {
+        const { requestNotificationPermission } = await import('@/lib/notifications')
+        const granted = await requestNotificationPermission()
+        if (granted) {
+          // Permission granted — enable notifications with defaults and mark as prompted
+          await notificationsHook.setEnabled(true)
+          localStorage.setItem('vw_notif_prompted', 'true')
+        } else {
+          // Denied — show the benefits explanation screen
+          setShowNotifPrompt(true)
+        }
+      }, 900)
+      return () => clearTimeout(t)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, user])
+
+  // Re-check notification permission when the app returns to foreground.
+  // Catches the case where the user went to iOS Settings and enabled notifications.
+  useEffect(() => {
+    const handler = () => {
+      if (document.visibilityState === 'visible') {
+        notificationsHook.refreshPermissionState()
+      }
+    }
+    document.addEventListener('visibilitychange', handler)
+    return () => document.removeEventListener('visibilitychange', handler)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [notificationsHook.refreshPermissionState])
+
   // Swipe gesture handlers for learning page
   const minSwipeDistance = 50 // Minimum distance for swipe
   
@@ -4586,16 +4610,14 @@ export function LanguageSelector() {
         onSignOutAction={handleSignOut}
         notifPrefs={notificationsHook.prefs}
         notifPermission={notificationsHook.permissionState}
-        onNotifSetEnabled={notificationsHook.setEnabled}
         onNotifUpdatePref={notificationsHook.updatePref}
         openNotifications={openNotificationsInAccount}
       />
 
-      {/* First-time notification permission prompt */}
+      {/* Notification benefits screen — shown only after iOS native dialog is denied */}
       <NotificationPromptModal
         open={showNotifPrompt}
-        onEnable={async () => { await notificationsHook.setEnabled(true) }}
-        onGoToSettings={handleNotifGoToSettings}
+        onOpenSettings={handleOpenAppSettings}
         onDismiss={handleNotifPromptDismiss}
       />
 

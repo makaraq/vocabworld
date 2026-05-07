@@ -3,12 +3,9 @@
 import React, { useState } from 'react'
 import { Icon } from '@iconify/react'
 import type { NotificationPreferences } from '@/lib/notifications'
-import type { PermissionState } from '@/hooks/use-notifications'
 
 interface Props {
   prefs: NotificationPreferences
-  permissionState: PermissionState
-  onSetEnabled: (enabled: boolean) => Promise<void>
   onUpdatePref: <K extends keyof NotificationPreferences>(
     key: K,
     value: NotificationPreferences[K]
@@ -146,120 +143,85 @@ function TimePicker({
 
 // ── Main Component ────────────────────────────────────────────────────────────
 
-export function NotificationSettings({ prefs, permissionState, onSetEnabled, onUpdatePref }: Props) {
+export function NotificationSettings({ prefs, onUpdatePref }: Props) {
   const [showTimePicker, setShowTimePicker] = useState(false)
 
-  if (permissionState === 'not-native') return null
-
-  const isLoading = permissionState === 'loading'
-  const needsOsSettings = permissionState === 'denied' && !prefs.enabled
-
   return (
-    <div className="space-y-4">
-      <h3 className="text-base font-semibold text-white/90">Notifications</h3>
+    <div className="space-y-3.5">
 
-      {needsOsSettings && (
-        <div className="bg-amber-500/10 border border-amber-400/25 rounded-xl p-3 text-amber-300 text-xs leading-relaxed">
-          Notifications are blocked by iOS. Go to{' '}
-          <strong>Settings → Notifications → Vocab World</strong> and allow
-          notifications, then enable them here.
+      {/* Daily reminder — toggle + tappable time badge */}
+      <div>
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 min-w-0 flex-1">
+            <Icon icon="solar:clock-circle-bold" width="15" className="text-blue-400 flex-shrink-0" />
+            <p className="text-white text-sm">Daily reminder</p>
+            {/* Time badge — only visible when enabled */}
+            {prefs.dailyReminderEnabled && (
+              <button
+                onClick={() => setShowTimePicker(v => !v)}
+                className={`flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-medium transition-all ${
+                  showTimePicker
+                    ? 'bg-blue-500/30 border border-blue-400/40 text-blue-300'
+                    : 'bg-white/10 border border-white/15 text-white/70 active:bg-white/20'
+                }`}
+              >
+                {displayTime(prefs.dailyReminderTime)}
+                <Icon
+                  icon="solar:settings-bold"
+                  width="11"
+                  className={`transition-transform duration-300 ${showTimePicker ? 'rotate-90' : ''}`}
+                />
+              </button>
+            )}
+          </div>
+          <Toggle
+            value={prefs.dailyReminderEnabled}
+            onChange={v => {
+              onUpdatePref('dailyReminderEnabled', v)
+              if (!v) setShowTimePicker(false)
+            }}
+          />
         </div>
-      )}
 
-      {/* Master toggle */}
+        {/* Inline time picker — slides in below */}
+        {prefs.dailyReminderEnabled && showTimePicker && (
+          <TimePicker
+            value={prefs.dailyReminderTime}
+            onChange={v => onUpdatePref('dailyReminderTime', v)}
+          />
+        )}
+      </div>
+
+      {/* Streak protection */}
       <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2 min-w-0">
-          <Icon icon="solar:bell-bold" width="15" className="text-white/60 flex-shrink-0" />
+        <div className="flex items-center gap-2">
+          <Icon icon="solar:fire-bold" width="15" className="text-amber-400 flex-shrink-0" />
           <div>
-            <p className="text-white text-sm font-medium">Enable notifications</p>
-            <p className="text-white/45 text-xs">Study reminders and streak protection</p>
+            <p className="text-white text-sm">Streak protection</p>
+            <p className="text-white/45 text-xs">8 PM nudge if you haven't studied</p>
           </div>
         </div>
         <Toggle
-          value={prefs.enabled}
-          onChange={onSetEnabled}
-          disabled={isLoading || needsOsSettings}
+          value={prefs.streakProtectionEnabled}
+          onChange={v => onUpdatePref('streakProtectionEnabled', v)}
         />
       </div>
 
-      {prefs.enabled && (
-        <div className="space-y-3.5 pl-3 border-l border-white/10">
-
-          {/* Daily reminder — toggle + tappable time badge */}
+      {/* Review reminder */}
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <Icon icon="solar:refresh-circle-bold" width="15" className="text-emerald-400 flex-shrink-0" />
           <div>
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2 min-w-0 flex-1">
-                <Icon icon="solar:clock-circle-bold" width="15" className="text-blue-400 flex-shrink-0" />
-                <p className="text-white text-sm">Daily reminder</p>
-                {/* Time badge — only visible when enabled */}
-                {prefs.dailyReminderEnabled && (
-                  <button
-                    onClick={() => setShowTimePicker(v => !v)}
-                    className={`flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-medium transition-all ${
-                      showTimePicker
-                        ? 'bg-blue-500/30 border border-blue-400/40 text-blue-300'
-                        : 'bg-white/10 border border-white/15 text-white/70 active:bg-white/20'
-                    }`}
-                  >
-                    {displayTime(prefs.dailyReminderTime)}
-                    <Icon
-                      icon="solar:settings-bold"
-                      width="11"
-                      className={`transition-transform duration-300 ${showTimePicker ? 'rotate-90' : ''}`}
-                    />
-                  </button>
-                )}
-              </div>
-              <Toggle
-                value={prefs.dailyReminderEnabled}
-                onChange={v => {
-                  onUpdatePref('dailyReminderEnabled', v)
-                  if (!v) setShowTimePicker(false)
-                }}
-              />
-            </div>
-
-            {/* Inline time picker — slides in below */}
-            {prefs.dailyReminderEnabled && showTimePicker && (
-              <TimePicker
-                value={prefs.dailyReminderTime}
-                onChange={v => onUpdatePref('dailyReminderTime', v)}
-              />
-            )}
+            <p className="text-white text-sm">Review reminder</p>
+            <p className="text-white/45 text-xs">Revisit yesterday's topic after 24 h</p>
           </div>
-
-          {/* Streak protection */}
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <Icon icon="solar:fire-bold" width="15" className="text-amber-400 flex-shrink-0" />
-              <div>
-                <p className="text-white text-sm">Streak protection</p>
-                <p className="text-white/45 text-xs">8 PM nudge if you haven't studied</p>
-              </div>
-            </div>
-            <Toggle
-              value={prefs.streakProtectionEnabled}
-              onChange={v => onUpdatePref('streakProtectionEnabled', v)}
-            />
-          </div>
-
-          {/* Review reminder */}
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <Icon icon="solar:refresh-circle-bold" width="15" className="text-emerald-400 flex-shrink-0" />
-              <div>
-                <p className="text-white text-sm">Review reminder</p>
-                <p className="text-white/45 text-xs">Revisit yesterday's topic after 24 h</p>
-              </div>
-            </div>
-            <Toggle
-              value={prefs.reviewReminderEnabled}
-              onChange={v => onUpdatePref('reviewReminderEnabled', v)}
-            />
-          </div>
-
         </div>
-      )}
+        <Toggle
+          value={prefs.reviewReminderEnabled}
+          onChange={v => onUpdatePref('reviewReminderEnabled', v)}
+        />
+      </div>
+
     </div>
   )
 }

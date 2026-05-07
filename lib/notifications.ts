@@ -233,6 +233,18 @@ export async function cancelTodaysStreakNotification(): Promise<void> {
   await LocalNotifications.cancel({ notifications: [{ id: STREAK_BASE_ID }] })
 }
 
+/**
+ * Opens the app's settings page in iOS/Android Settings.
+ * Used when the user has denied notification permission and needs to re-enable
+ * from the OS settings screen.
+ */
+export async function openAppSettings(): Promise<void> {
+  if (!isNative()) return
+  // 'app-settings:' is a built-in iOS URL scheme that opens this app's
+  // Settings page directly (where the notification toggle lives).
+  window.open('app-settings:', '_self')
+}
+
 /** Cancel every notification managed by this module. */
 export async function cancelAllNotifications(): Promise<void> {
   if (!isNative()) return
