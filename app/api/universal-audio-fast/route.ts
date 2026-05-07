@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 // FAST Universal Audio API - Direct B2 Access with URL Patterns
 // Simplified approach for production without CSV dependency
 export async function GET(request: NextRequest) {
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+  if (!checkRateLimit(ip, 120, 60_000)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const wordId = searchParams.get('wordId');

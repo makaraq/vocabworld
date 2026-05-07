@@ -3661,6 +3661,8 @@ export function LanguageSelector() {
         onTouchStart={() => handleTopicHoldStart(topic.id)}
         onTouchEnd={() => handleTopicHoldEnd()}
         onTouchCancel={() => handleTopicHoldEnd()}
+        aria-label={`${getTopicDisplayName(topic.id, topic.name)} topic${isCompleted ? ', completed' : ''}`}
+        aria-pressed={selectedTopic?.id === topic.id}
         className={`bg-black/40 rounded-xl xs:rounded-2xl sm:rounded-2xl p-3 xs:p-4 sm:p-5 text-center hover:bg-black/50 h-32 xs:h-36 sm:h-40 shadow-lg hover:shadow-xl ${
           holdingTopicId === topic.id ? 'scale-105 transition-all duration-75' : 'scale-100 transition-all duration-300 hover:scale-[1.02]'
         } ${
@@ -3864,19 +3866,27 @@ export function LanguageSelector() {
                       onClick={handleNextCategory}
                       className="w-8 h-8 bg-white/5 border border-white/10 rounded-full flex items-center justify-center hover:bg-white/10 transition-all duration-200 transform hover:scale-110"
                       disabled={vocabulary.length === 0}
-                      title="Next category"
+                      aria-label="Next category"
                     >
-                      <ChevronRight className="w-4 h-4 text-white/60" />
+                      <ChevronRight className="w-4 h-4 text-white/60" aria-hidden="true" />
                     </button>
                   )}
                 </div>
               )}
 
-              <div className="space-y-6 mb-12" onTouchStart={(e) => e.stopPropagation()}>
-                <div 
+              <div
+                className="space-y-6 mb-12"
+                onTouchStart={(e) => e.stopPropagation()}
+                aria-live="polite"
+                aria-atomic="true"
+                aria-label={`Word ${currentWordIndex + 1} of ${vocabulary.length}`}
+              >
+                <div
+                  role="region"
+                  aria-label={`${getTranslatedLanguageName(targetLanguageCode)}: ${getCurrentContent().sourceWord}`}
                   className={`bg-black/40 border border-white/20 rounded-2xl p-8 transition-all duration-300 shadow-lg ${
-                    currentAudioStep === 'training' 
-                      ? 'bg-blue-500/20 border-blue-400/30 scale-105' 
+                    currentAudioStep === 'training'
+                      ? 'bg-blue-500/20 border-blue-400/30 scale-105'
                       : holdingCardIndex === 0
                       ? 'scale-105'
                       : 'bg-black/40'
@@ -3902,18 +3912,20 @@ export function LanguageSelector() {
                   <div className="text-white/60 text-sm mb-2 flex items-center gap-2">
                     {getTranslatedLanguageName(targetLanguageCode)}
                     {currentAudioStep === 'training' && (
-                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
+                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" aria-hidden="true" />
                     )}
                   </div>
                   <p className="text-white text-2xl font-medium">{getCurrentContent().sourceWord}</p>
                   {settings.showPhonetics && phonetics[currentWordIndex]?.target && (
-                    <p className="text-white/50 text-sm italic mt-2">/{phonetics[currentWordIndex].target}/</p>
+                    <p className="text-white/50 text-sm italic mt-2" aria-label={`Pronunciation: ${phonetics[currentWordIndex].target}`}>/{phonetics[currentWordIndex].target}/</p>
                   )}
                 </div>
-                <div 
+                <div
+                  role="region"
+                  aria-label={`${getTranslatedLanguageName(nativeLanguageCode)}: ${getCurrentContent().targetWord}`}
                   className={`bg-black/40 border border-white/20 rounded-2xl p-8 transition-all duration-300 shadow-lg ${
-                    currentAudioStep === 'main' 
-                      ? 'bg-blue-500/20 border-blue-400/30 scale-105' 
+                    currentAudioStep === 'main'
+                      ? 'bg-blue-500/20 border-blue-400/30 scale-105'
                       : holdingCardIndex === 1
                       ? 'scale-105'
                       : 'bg-black/40'
@@ -3939,7 +3951,7 @@ export function LanguageSelector() {
                   <div className="text-white/60 text-sm mb-2 flex items-center gap-2">
                     {getTranslatedLanguageName(nativeLanguageCode)}
                     {currentAudioStep === 'main' && (
-                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
+                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" aria-hidden="true" />
                     )}
                   </div>
                   <p className="text-white text-2xl font-medium">{getCurrentContent().targetWord}</p>

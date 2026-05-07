@@ -1,86 +1,74 @@
 /**
  * Playlist API - Manage user playlists and playlist words
- * 
+ *
  * GET /api/playlists - List user's playlists
- * POST /api/playlists - Create new playlist
- * GET /api/playlists/[id] - Get playlist with words
- * PUT /api/playlists/[id] - Update playlist (rename)
- * DELETE /api/playlists/[id] - Delete playlist
- * POST /api/playlists/[id]/words - Add word to playlist
- * DELETE /api/playlists/[id]/words/[wordId] - Remove word from playlist
+ * POST /api/playlists - Create new playlist or add word to playlist
+ * PUT /api/playlists - Rename a playlist
+ * DELETE /api/playlists - Delete playlist or remove word from playlist
  */
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
-// Create authenticated Supabase client
-async function getAuthenticatedClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  
-  // For now, use service role key for server-side operations
-  // In production, you'd want to use the user's session
-  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-  
-  if (supabaseServiceKey) {
-    return createClient(supabaseUrl, supabaseServiceKey)
-  }
-  
-  return createClient(supabaseUrl, supabaseAnonKey)
-}
+// Service-role client — used for data operations after auth is verified
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
-// Get user ID from request (simplified - in production, use proper auth)
-async function getUserId(request: NextRequest): Promise<string | null> {
-  // Try to get from Authorization header or cookie
-  const authHeader = request.headers.get('Authorization')
-  const userId = request.headers.get('X-User-Id')
-  
-  if (userId) {
-    return userId
-  }
-  
-  // In production, decode JWT from cookie/header
-  return null
+// Verify the session cookie and return the authenticated user's ID.
+// Returns null if the request is unauthenticated.
+async function getSessionUserId(): Promise<string | null> {
+  const cookieStore = await cookies()
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() { return cookieStore.getAll() },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options)
+            )
+          } catch {}
+        },
+      },
+    }
+  )
+  const { data: { user } } = await supabase.auth.getUser()
+  return user?.id ?? null
 }
 
 // GET - List user's playlists
 export async function GET(request: NextRequest) {
   try {
+    const userId = await getSessionUserId()
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const searchParams = request.nextUrl.searchParams
-    const userId = searchParams.get('userId')
     const playlistId = searchParams.get('playlistId')
     const sourceLanguageCode = searchParams.get('sourceLanguageCode')
     const targetLanguageCode = searchParams.get('targetLanguageCode')
-    
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'User ID required' },
-        { status: 400 }
-      )
-    }
-    
-    const supabase = await getAuthenticatedClient()
-    
+
     // If playlistId is provided, get single playlist with words
     if (playlistId) {
-      // Get playlist
-      const { data: playlist, error: playlistError } = await supabase
+      const { data: playlist, error: playlistError } = await supabaseAdmin
         .from('user_playlists')
         .select('*')
         .eq('id', playlistId)
         .eq('user_id', userId)
         .single()
-      
+
       if (playlistError || !playlist) {
-        return NextResponse.json(
-          { error: 'Playlist not found' },
-          { status: 404 }
-        )
+        return NextResponse.json({ error: 'Playlist not found' }, { status: 404 })
       }
-      
-      // Get words in playlist with dictionary translations
-      const { data: playlistWords, error: wordsError } = await supabase
+
+      const { data: playlistWords, error: wordsError } = await supabaseAdmin
         .from('user_playlist_words')
         .select(`
           id,
@@ -95,105 +83,88 @@ export async function GET(request: NextRequest) {
         `)
         .eq('playlist_id', playlistId)
         .order('added_at', { ascending: false })
-      
+
       if (wordsError) {
         console.error('Error fetching playlist words:', wordsError)
       }
-      
-      return NextResponse.json({
-        playlist,
-        words: playlistWords || []
-      })
+
+      return NextResponse.json({ playlist, words: playlistWords || [] })
     }
-    
+
     // Get all playlists for user with word counts (filtered by language pair if provided)
-    let query = supabase
+    let query = supabaseAdmin
       .from('user_playlists')
-      .select(`
-        *,
-        user_playlist_words(count)
-      `)
+      .select(`*, user_playlist_words(count)`)
       .eq('user_id', userId)
-    
-    // Filter by language pair if provided
-    if (sourceLanguageCode) {
-      query = query.eq('source_language_code', sourceLanguageCode)
-    }
-    if (targetLanguageCode) {
-      query = query.eq('target_language_code', targetLanguageCode)
-    }
-    
+
+    if (sourceLanguageCode) query = query.eq('source_language_code', sourceLanguageCode)
+    if (targetLanguageCode) query = query.eq('target_language_code', targetLanguageCode)
+
     const { data: playlists, error } = await query.order('updated_at', { ascending: false })
-    
+
     if (error) {
       console.error('Error fetching playlists:', error)
-      return NextResponse.json(
-        { error: 'Failed to fetch playlists' },
-        { status: 500 }
-      )
+      return NextResponse.json({ error: 'Failed to fetch playlists' }, { status: 500 })
     }
-    
-    // Transform to include word_count from the joined count
+
     const playlistsWithCount = (playlists || []).map(p => ({
       ...p,
       word_count: p.user_playlist_words?.[0]?.count || 0
     }))
-    
+
     return NextResponse.json({ playlists: playlistsWithCount })
-    
+
   } catch (error) {
     console.error('Playlist GET error:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
 
 // POST - Create new playlist or add word to playlist
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { userId, name, playlistId, word, translations, sourceLanguageCode, targetLanguageCode } = body
-    
+    const userId = await getSessionUserId()
     if (!userId) {
-      return NextResponse.json(
-        { error: 'User ID required' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-    
-    const supabase = await getAuthenticatedClient()
-    
+
+    const body = await request.json()
+    const { name, playlistId, word, translations, sourceLanguageCode, targetLanguageCode } = body
+
     // If playlistId and word provided, add word to playlist
     if (playlistId && word) {
-      // First, ensure word exists in dictionary_words
+      // Verify the playlist belongs to this user before adding a word
+      const { data: playlistCheck } = await supabaseAdmin
+        .from('user_playlists')
+        .select('id')
+        .eq('id', playlistId)
+        .eq('user_id', userId)
+        .single()
+
+      if (!playlistCheck) {
+        return NextResponse.json({ error: 'Playlist not found' }, { status: 404 })
+      }
+
       const normalizedWord = word.toLowerCase().trim()
-      
-      // Check if word exists in dictionary_words (using word_en column)
-      const { data: existingWord, error: wordError } = await supabase
+
+      const { data: existingWord } = await supabaseAdmin
         .from('dictionary_words')
         .select('id')
         .eq('word_en', normalizedWord)
         .single()
-      
+
       let dictionaryWordId: number
-      
+
       if (!existingWord) {
-        // Create new dictionary word entry
-        const { data: newWord, error: insertError } = await supabase
+        const { data: newWord, error: insertError } = await supabaseAdmin
           .from('dictionary_words')
-          .insert({
-            word_en: normalizedWord,
-            translations: translations || {}
-          })
+          .insert({ word_en: normalizedWord, translations: translations || {} })
           .select('id')
           .single()
-        
+
         if (insertError) {
-          // If duplicate (race condition), try to fetch the existing row
           if (insertError.code === '23505') {
-            const { data: raceWord } = await supabase
+            const { data: raceWord } = await supabaseAdmin
               .from('dictionary_words')
               .select('id')
               .eq('word_en', normalizedWord)
@@ -215,89 +186,61 @@ export async function POST(request: NextRequest) {
         }
       } else {
         dictionaryWordId = existingWord.id
-        
-        // Update translations if provided (merge with existing)
+
         if (translations && Object.keys(translations).length > 0) {
-          // Get current translations first
-          const { data: currentWord } = await supabase
+          const { data: currentWord } = await supabaseAdmin
             .from('dictionary_words')
             .select('translations')
             .eq('id', dictionaryWordId)
             .single()
-          
-          const mergedTranslations = {
-            ...(currentWord?.translations || {}),
-            ...translations
-          }
-          
-          await supabase
+
+          await supabaseAdmin
             .from('dictionary_words')
-            .update({ translations: mergedTranslations })
+            .update({ translations: { ...(currentWord?.translations || {}), ...translations } })
             .eq('id', dictionaryWordId)
         }
       }
-      
-      // Check if word already in playlist
-      const { data: existingEntry } = await supabase
+
+      const { data: existingEntry } = await supabaseAdmin
         .from('user_playlist_words')
         .select('id')
         .eq('playlist_id', playlistId)
         .eq('dictionary_word_id', dictionaryWordId)
         .single()
-      
+
       if (existingEntry) {
-        return NextResponse.json({ 
-          success: true, 
-          message: 'Word already in playlist',
-          wordId: existingEntry.id
-        })
+        return NextResponse.json({ success: true, message: 'Word already in playlist', wordId: existingEntry.id })
       }
-      
-      // Add word to playlist (no 'word' column - only references dictionary_word_id)
-      const { data: playlistWord, error: addError } = await supabase
+
+      const { data: playlistWord, error: addError } = await supabaseAdmin
         .from('user_playlist_words')
-        .insert({
-          playlist_id: playlistId,
-          dictionary_word_id: dictionaryWordId
-        })
+        .insert({ playlist_id: playlistId, dictionary_word_id: dictionaryWordId })
         .select()
         .single()
-      
+
       if (addError) {
         console.error('Error adding word to playlist:', addError)
-        return NextResponse.json(
-          { error: 'Failed to add word to playlist' },
-          { status: 500 }
-        )
+        return NextResponse.json({ error: 'Failed to add word to playlist' }, { status: 500 })
       }
-      
-      // Update playlist word count
-      await supabase.rpc('increment_playlist_word_count', { 
-        playlist_id: playlistId 
-      })
-      
-      return NextResponse.json({ 
-        success: true, 
-        wordId: playlistWord.id 
-      })
+
+      await supabaseAdmin.rpc('increment_playlist_word_count', { playlist_id: playlistId })
+
+      return NextResponse.json({ success: true, wordId: playlistWord.id })
     }
-    
+
     // Create new playlist
     if (!name) {
-      return NextResponse.json(
-        { error: 'Playlist name required' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Playlist name required' }, { status: 400 })
     }
-    
+
     if (!sourceLanguageCode || !targetLanguageCode) {
       return NextResponse.json(
         { error: 'Source and target language codes required' },
         { status: 400 }
       )
     }
-    
-    const { data: playlist, error } = await supabase
+
+    const { data: playlist, error } = await supabaseAdmin
       .from('user_playlists')
       .insert({
         user_id: userId,
@@ -307,149 +250,123 @@ export async function POST(request: NextRequest) {
       })
       .select()
       .single()
-    
+
     if (error) {
       console.error('Error creating playlist:', error)
-      
-      // Check for duplicate name error
       if (error.code === '23505') {
         return NextResponse.json(
           { error: 'A playlist with this name already exists for this language pair' },
           { status: 409 }
         )
       }
-      
-      return NextResponse.json(
-        { error: 'Failed to create playlist' },
-        { status: 500 }
-      )
+      return NextResponse.json({ error: 'Failed to create playlist' }, { status: 500 })
     }
-    
-    return NextResponse.json({ 
-      success: true, 
-      playlist 
-    })
-    
+
+    return NextResponse.json({ success: true, playlist })
+
   } catch (error) {
     console.error('Playlist POST error:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
 
 // PUT - Update playlist (rename)
 export async function PUT(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { userId, playlistId, name } = body
-    
-    if (!userId || !playlistId || !name) {
-      return NextResponse.json(
-        { error: 'User ID, playlist ID, and name required' },
-        { status: 400 }
-      )
+    const userId = await getSessionUserId()
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-    
-    const supabase = await getAuthenticatedClient()
-    
-    const { data: playlist, error } = await supabase
+
+    const body = await request.json()
+    const { playlistId, name } = body
+
+    if (!playlistId || !name) {
+      return NextResponse.json({ error: 'Playlist ID and name required' }, { status: 400 })
+    }
+
+    const { data: playlist, error } = await supabaseAdmin
       .from('user_playlists')
-      .update({ 
-        name: name.trim(),
-        updated_at: new Date().toISOString()
-      })
+      .update({ name: name.trim(), updated_at: new Date().toISOString() })
       .eq('id', playlistId)
       .eq('user_id', userId)
       .select()
       .single()
-    
+
     if (error) {
       console.error('Error updating playlist:', error)
-      return NextResponse.json(
-        { error: 'Failed to update playlist' },
-        { status: 500 }
-      )
+      return NextResponse.json({ error: 'Failed to update playlist' }, { status: 500 })
     }
-    
-    return NextResponse.json({ 
-      success: true, 
-      playlist 
-    })
-    
+
+    return NextResponse.json({ success: true, playlist })
+
   } catch (error) {
     console.error('Playlist PUT error:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
 
 // DELETE - Delete playlist or remove word from playlist
 export async function DELETE(request: NextRequest) {
   try {
+    const userId = await getSessionUserId()
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const searchParams = request.nextUrl.searchParams
-    const userId = searchParams.get('userId')
     const playlistId = searchParams.get('playlistId')
     const wordId = searchParams.get('wordId')
-    
-    if (!userId || !playlistId) {
-      return NextResponse.json(
-        { error: 'User ID and playlist ID required' },
-        { status: 400 }
-      )
+
+    if (!playlistId) {
+      return NextResponse.json({ error: 'Playlist ID required' }, { status: 400 })
     }
-    
-    const supabase = await getAuthenticatedClient()
-    
-    // If wordId provided, remove word from playlist
+
+    // Verify playlist ownership before any mutation
+    const { data: playlistCheck } = await supabaseAdmin
+      .from('user_playlists')
+      .select('id')
+      .eq('id', playlistId)
+      .eq('user_id', userId)
+      .single()
+
+    if (!playlistCheck) {
+      return NextResponse.json({ error: 'Playlist not found' }, { status: 404 })
+    }
+
     if (wordId) {
-      const { error } = await supabase
+      const { error } = await supabaseAdmin
         .from('user_playlist_words')
         .delete()
         .eq('id', wordId)
         .eq('playlist_id', playlistId)
-      
+
       if (error) {
         console.error('Error removing word from playlist:', error)
-        return NextResponse.json(
-          { error: 'Failed to remove word' },
-          { status: 500 }
-        )
+        return NextResponse.json({ error: 'Failed to remove word' }, { status: 500 })
       }
-      
-      // Update playlist word count
-      await supabase.rpc('decrement_playlist_word_count', { 
-        playlist_id: playlistId 
-      })
-      
+
+      await supabaseAdmin.rpc('decrement_playlist_word_count', { playlist_id: playlistId })
+
       return NextResponse.json({ success: true })
     }
-    
+
     // Delete entire playlist (cascade will delete words)
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('user_playlists')
       .delete()
       .eq('id', playlistId)
       .eq('user_id', userId)
-    
+
     if (error) {
       console.error('Error deleting playlist:', error)
-      return NextResponse.json(
-        { error: 'Failed to delete playlist' },
-        { status: 500 }
-      )
+      return NextResponse.json({ error: 'Failed to delete playlist' }, { status: 500 })
     }
-    
+
     return NextResponse.json({ success: true })
-    
+
   } catch (error) {
     console.error('Playlist DELETE error:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

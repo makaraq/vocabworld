@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
+import { checkRateLimit } from '@/lib/rate-limit'
 
 /**
  * POST /api/subscription/sync-rc
@@ -23,6 +24,11 @@ const supabaseAdmin = createClient(
 )
 
 export async function POST(req: NextRequest) {
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+  if (!checkRateLimit(ip, 10, 60_000)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  }
+
   try {
     // ── 1. Authenticate ────────────────────────────────────────────────────
     const cookieStore = await cookies()

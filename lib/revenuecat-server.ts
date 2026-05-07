@@ -20,7 +20,16 @@ export function verifyRevenueCatWebhook(authorizationHeader: string | null): boo
     console.error('[RC Webhook] REVENUECAT_WEBHOOK_SECRET is not configured')
     return false
   }
-  return authorizationHeader === secret
+  if (!authorizationHeader) return false
+  // Use timing-safe comparison to prevent timing attacks
+  try {
+    const a = Buffer.from(authorizationHeader)
+    const b = Buffer.from(secret)
+    if (a.length !== b.length) return false
+    return require('crypto').timingSafeEqual(a, b)
+  } catch {
+    return false
+  }
 }
 
 // ─── RC REST API helper ──────────────────────────────────────────────────────

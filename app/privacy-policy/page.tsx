@@ -76,10 +76,10 @@ export default function PrivacyPolicyPage() {
                   </ul>
                 </div>
                 <div>
-                  <h3 className="text-lg font-medium mb-2">Usage Data</h3>
+                  <h3 className="text-lg font-medium mb-2">Learning Progress Data</h3>
                   <ul className="list-disc list-inside space-y-1 ml-4">
-                    <li>Audio playback analytics (optional)</li>
-                    <li>App usage patterns</li>
+                    <li>Words played and completion status (required for core app functionality)</li>
+                    <li>Daily learning streaks</li>
                     <li>Device information (for mobile app functionality)</li>
                   </ul>
                 </div>
@@ -143,11 +143,11 @@ export default function PrivacyPolicyPage() {
                 You have the following rights regarding your personal data:
               </p>
               <ul className="list-disc list-inside space-y-2 text-white/90 ml-4">
-                <li><strong>Access:</strong> Request a copy of your personal data</li>
+                <li><strong>Access:</strong> Request a copy of your personal data by emailing privacy@vocoapp.com</li>
                 <li><strong>Correction:</strong> Update or correct inaccurate information</li>
-                <li><strong>Deletion:</strong> Delete your account and all associated data at any time</li>
-                <li><strong>Portability:</strong> Export your learning data</li>
-                <li><strong>Opt-out:</strong> Unsubscribe from marketing communications</li>
+                <li><strong>Deletion:</strong> Delete your account and all associated data at any time via Account Settings → Delete Account</li>
+                <li><strong>Portability:</strong> Export your learning data by contacting privacy@vocoapp.com</li>
+                <li><strong>Restriction:</strong> Learning progress data is required for core app functionality and cannot be disabled independently — deleting your account removes all data</li>
               </ul>
             </section>
 
@@ -156,7 +156,7 @@ export default function PrivacyPolicyPage() {
               <p className="text-white/90 leading-relaxed">
                 We retain your personal data only as long as necessary to provide our services and comply with legal obligations. 
                 When you delete your account, all your personal data is permanently removed from our systems within 30 days. 
-                Some anonymized usage statistics may be retained for analytics purposes.
+                No analytics data is retained after account deletion.
               </p>
             </section>
 

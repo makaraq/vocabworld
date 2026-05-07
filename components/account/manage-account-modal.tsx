@@ -2,6 +2,7 @@
 
 import React, { useState } from "react"
 import { Icon } from "@iconify/react"
+import { useRouter } from "next/navigation"
 import {
   Sheet,
   SheetContent,
@@ -36,7 +37,9 @@ export function ManageAccountModal({
   onUpgradeAction,
 }: ManageAccountModalProps) {
   const { restorePurchases, loading: rcLoading } = useRevenueCat()
+  const router = useRouter()
   const [deleteStep, setDeleteStep] = useState<'idle' | 'confirm' | 'deleting' | 'error'>('idle')
+  const [restoreStatus, setRestoreStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle')
   const [deleteError, setDeleteError] = useState<string | null>(null)
   const [deleteConfirmText, setDeleteConfirmText] = useState('')
 
@@ -91,7 +94,15 @@ export function ManageAccountModal({
   }
 
   const handleRestorePurchases = async () => {
-    await restorePurchases()
+    setRestoreStatus('loading')
+    try {
+      await restorePurchases()
+      setRestoreStatus('done')
+      setTimeout(() => setRestoreStatus('idle'), 3000)
+    } catch {
+      setRestoreStatus('error')
+      setTimeout(() => setRestoreStatus('idle'), 3000)
+    }
   }
 
   const handleDeleteAccount = async () => {
@@ -258,6 +269,29 @@ export function ManageAccountModal({
               <span>Manage Subscription</span>
             </button>
           )}
+
+          {/* Restore Purchases — always visible per Apple guideline */}
+          <button
+            onClick={handleRestorePurchases}
+            disabled={restoreStatus === 'loading'}
+            className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white py-3 px-4 rounded-2xl font-medium text-sm hover:bg-white/15 transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
+            aria-label="Restore previous purchases"
+          >
+            <Icon icon="solar:refresh-bold" width="18" height="18" />
+            <span>
+              {restoreStatus === 'loading' ? 'Restoring…' : restoreStatus === 'done' ? 'Restored ✓' : restoreStatus === 'error' ? 'Nothing to restore' : 'Restore Purchases'}
+            </span>
+          </button>
+
+          {/* Privacy Policy */}
+          <button
+            onClick={() => { onCloseAction(); router.push('/privacy-policy') }}
+            className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white py-3 px-4 rounded-2xl font-medium text-sm hover:bg-white/15 transition-all flex items-center justify-center space-x-2"
+            aria-label="View privacy policy and data settings"
+          >
+            <Icon icon="solar:shield-check-bold" width="18" height="18" />
+            <span>Privacy Policy</span>
+          </button>
 
           {/* Delete Account */}
           <button

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { checkRateLimit } from '@/lib/rate-limit'
 
 // Wiktionary API endpoint for translations
 const WIKTIONARY_API = 'https://en.wiktionary.org/api/rest_v1/page/definition'
@@ -239,6 +240,11 @@ async function fetchTranslationsWithFallback(word: string, sourceLang: string = 
 }
 
 export async function GET(request: NextRequest) {
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+  if (!checkRateLimit(ip, 30, 60_000)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  }
+
   try {
     const { searchParams } = new URL(request.url)
     const word = searchParams.get('word')?.trim().toLowerCase()
@@ -370,6 +376,11 @@ export async function GET(request: NextRequest) {
 
 // POST endpoint for adding word to playlist
 export async function POST(request: NextRequest) {
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+  if (!checkRateLimit(ip, 30, 60_000)) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+  }
+
   try {
     const body = await request.json()
     const { word, playlistId, userId, sourceLanguageCode, targetLanguageCode, translation, translations: providedTranslations } = body
