@@ -11,6 +11,7 @@ import { ExampleSentencesModal } from "@/components/learning/example-sentences-m
 import { PlaylistSelectModal } from "@/components/learning/search-word-learning"
 import { ManageAccountModal } from "@/components/account/manage-account-modal"
 import { useNotifications } from "@/hooks/use-notifications"
+import { requestNotificationPermission } from "@/lib/notifications"
 import { NotificationPromptModal } from "@/components/notifications/notification-prompt-modal"
 import { NotificationSetupScreen } from "@/components/notifications/notification-setup-screen"
 
@@ -845,24 +846,6 @@ export function LanguageSelector() {
   const handleOpenAppSettings = async () => {
     const { openAppSettings } = await import('@/lib/notifications')
     openAppSettings()
-  }
-
-  const handleNotifSetupEnable = async (reminderTime: string) => {
-    setShowNotifSetup(false)
-    localStorage.setItem('vw_notif_prompted', 'true')
-    const { requestNotificationPermission } = await import('@/lib/notifications')
-    const granted = await requestNotificationPermission()
-    if (granted) {
-      await notificationsHook.updatePref('dailyReminderTime', reminderTime)
-      await notificationsHook.setEnabled(true)
-    } else {
-      setShowNotifPrompt(true)
-    }
-  }
-
-  const handleNotifSetupDismiss = () => {
-    setShowNotifSetup(false)
-    localStorage.setItem('vw_notif_prompted', 'true')
   }
 
   // Refresh subscription data from RC every time the account modal opens
@@ -3633,6 +3616,25 @@ export function LanguageSelector() {
   // Pass updateSetting directly — the hook's internal persistPrefsRef always
   // captures the latest version, so no stale-closure issue here.
   const notificationsHook = useNotifications(updateSetting)
+
+  // Declared here so both notificationsHook and state setters are in scope.
+  const handleNotifSetupEnable = async (reminderTime: string) => {
+    setShowNotifSetup(false)
+    localStorage.setItem('vw_notif_prompted', 'true')
+    // Static import used — no async gap before the OS dialog fires.
+    const granted = await requestNotificationPermission()
+    if (granted) {
+      await notificationsHook.updatePref('dailyReminderTime', reminderTime)
+      await notificationsHook.setEnabled(true)
+    } else {
+      setShowNotifPrompt(true)
+    }
+  }
+
+  const handleNotifSetupDismiss = () => {
+    setShowNotifSetup(false)
+    localStorage.setItem('vw_notif_prompted', 'true')
+  }
 
   // First-time notification prompt: show the setup screen so the user can
   // pick their reminder time before the OS permission dialog fires.
