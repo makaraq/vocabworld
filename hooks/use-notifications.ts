@@ -1,12 +1,5 @@
 'use client'
 
-/**
- * hooks/use-notifications.ts
- *
- * React hook that manages notification state and wires the scheduling
- * service into the app. Used by language-selector.tsx.
- */
-
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { Capacitor } from '@capacitor/core'
 import {
@@ -25,18 +18,13 @@ export type PermissionState = 'granted' | 'denied' | 'prompt' | 'loading' | 'not
 export interface UseNotificationsReturn {
   prefs: NotificationPreferences
   permissionState: PermissionState
-  /** Load saved prefs from the learning_settings object returned by /api/settings */
   loadPrefsFromSettings: (settings: Record<string, any>) => void
-  /** Enable or disable all notifications. Requests OS permission on first enable. */
   setEnabled: (enabled: boolean) => Promise<void>
-  /** Update one preference key, persist, and reschedule. */
   updatePref: <K extends keyof NotificationPreferences>(
     key: K,
     value: NotificationPreferences[K]
   ) => Promise<void>
-  /** Call on every app open/foreground with fresh context from /api/notifications/context. */
   reschedule: (ctx: NotificationContext) => Promise<void>
-  /** Call immediately after any word is played. Cancels today's streak notification. */
   onWordPlayed: (ctx: NotificationContext) => Promise<void>
 }
 
@@ -46,6 +34,13 @@ export function useNotifications(
   const [prefs, setPrefs] = useState<NotificationPreferences>(DEFAULT_NOTIFICATION_PREFS)
   const [permissionState, setPermissionState] = useState<PermissionState>('loading')
   const ctxRef = useRef<NotificationContext | null>(null)
+
+  // ── Fix: always call the LATEST persistPrefs, never a stale closure ──────
+  // The caller (language-selector) recreates persistPrefs on every render, so
+  // capturing it in useCallback deps would cause stale-closure bugs where
+  // user?.id is null. A ref always holds the freshest version.
+  const persistPrefsRef = useRef(persistPrefs)
+  useEffect(() => { persistPrefsRef.current = persistPrefs })
 
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) {
@@ -70,13 +65,13 @@ export function useNotifications(
     }
     const newPrefs = { ...prefs, enabled }
     setPrefs(newPrefs)
-    persistPrefs('notifications', newPrefs)
+    persistPrefsRef.current('notifications', newPrefs)   // ← use ref, not stale closure
     if (!enabled) {
       await cancelAllNotifications()
     } else if (ctxRef.current) {
       await rescheduleAllNotifications(newPrefs, ctxRef.current)
     }
-  }, [prefs, persistPrefs])
+  }, [prefs])  // persistPrefs intentionally removed from deps — ref handles it
 
   const updatePref = useCallback(async <K extends keyof NotificationPreferences>(
     key: K,
@@ -84,11 +79,11 @@ export function useNotifications(
   ) => {
     const newPrefs = { ...prefs, [key]: value }
     setPrefs(newPrefs)
-    persistPrefs('notifications', newPrefs)
+    persistPrefsRef.current('notifications', newPrefs)   // ← use ref
     if (newPrefs.enabled && ctxRef.current) {
       await rescheduleAllNotifications(newPrefs, ctxRef.current)
     }
-  }, [prefs, persistPrefs])
+  }, [prefs])
 
   const reschedule = useCallback(async (ctx: NotificationContext) => {
     ctxRef.current = ctx
@@ -99,21 +94,9 @@ export function useNotifications(
   const onWordPlayed = useCallback(async (ctx: NotificationContext) => {
     ctxRef.current = ctx
     if (!prefs.enabled) return
-    if (prefs.streakProtectionEnabled) {
-      await cancelTodaysStreakNotification()
-    }
-    if (prefs.reviewReminderEnabled) {
-      await rescheduleAllNotifications(prefs, ctx)
-    }
+    if (prefs.streakProtectionEnabled) await cancelTodaysStreakNotification()
+    if (prefs.reviewReminderEnabled) await rescheduleAllNotifications(prefs, ctx)
   }, [prefs])
 
-  return {
-    prefs,
-    permissionState,
-    loadPrefsFromSettings,
-    setEnabled,
-    updatePref,
-    reschedule,
-    onWordPlayed,
-  }
+  return { prefs, permissionState, loadPrefsFromSettings, setEnabled, updatePref, reschedule, onWordPlayed }
 }

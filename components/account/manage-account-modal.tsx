@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useRef, useEffect } from "react"
 import { Icon } from "@iconify/react"
 import { useRouter } from "next/navigation"
 import {
@@ -10,6 +10,9 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { useRevenueCat } from "@/hooks/use-revenuecat"
+import { NotificationSettings } from "@/components/settings/notification-settings"
+import type { NotificationPreferences } from "@/lib/notifications"
+import type { PermissionState } from "@/hooks/use-notifications"
 
 interface ManageAccountModalProps {
   open: boolean
@@ -22,6 +25,13 @@ interface ManageAccountModalProps {
   renewalDate?: string
   onSignOutAction?: () => void
   onUpgradeAction?: () => void
+  // Notification props
+  notifPrefs?: NotificationPreferences
+  notifPermission?: PermissionState
+  onNotifSetEnabled?: (enabled: boolean) => Promise<void>
+  onNotifUpdatePref?: <K extends keyof NotificationPreferences>(key: K, value: NotificationPreferences[K]) => Promise<void>
+  /** When true the notifications section auto-expands on open */
+  openNotifications?: boolean
 }
 
 export function ManageAccountModal({
@@ -35,6 +45,11 @@ export function ManageAccountModal({
   renewalDate,
   onSignOutAction,
   onUpgradeAction,
+  notifPrefs,
+  notifPermission,
+  onNotifSetEnabled,
+  onNotifUpdatePref,
+  openNotifications = false,
 }: ManageAccountModalProps) {
   const { restorePurchases, loading: rcLoading } = useRevenueCat()
   const router = useRouter()
@@ -42,6 +57,25 @@ export function ManageAccountModal({
   const [restoreStatus, setRestoreStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle')
   const [deleteError, setDeleteError] = useState<string | null>(null)
   const [deleteConfirmText, setDeleteConfirmText] = useState('')
+  const [notifExpanded, setNotifExpanded] = useState(false)
+  const notifSectionRef = useRef<HTMLDivElement>(null)
+
+  // Auto-expand and scroll to notifications when openNotifications=true
+  useEffect(() => {
+    if (open && openNotifications) {
+      setNotifExpanded(true)
+      setTimeout(() => {
+        notifSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }, 200)
+    }
+  }, [open, openNotifications])
+
+  // Reset expanded state when modal closes
+  useEffect(() => {
+    if (!open) {
+      setNotifExpanded(false)
+    }
+  }, [open])
 
   const initials = name
     .split(" ")
@@ -255,6 +289,42 @@ export function ManageAccountModal({
 
 
           </div>
+
+          {/* Notifications section */}
+          {notifPrefs && notifPermission && onNotifSetEnabled && onNotifUpdatePref && (
+            <div ref={notifSectionRef} className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/15 overflow-hidden">
+              {/* Header row — tap to expand/collapse */}
+              <button
+                onClick={() => setNotifExpanded(v => !v)}
+                className="w-full flex items-center justify-between px-4 py-3.5"
+              >
+                <div className="flex items-center gap-2.5">
+                  <Icon icon="solar:bell-bold" width="18" className={notifPrefs.enabled ? 'text-blue-400' : 'text-white/50'} />
+                  <span className="text-white font-medium text-sm">Notifications</span>
+                  {notifPrefs.enabled && (
+                    <span className="text-xs bg-blue-500/20 text-blue-300 border border-blue-400/20 px-2 py-0.5 rounded-full">On</span>
+                  )}
+                </div>
+                <Icon
+                  icon="solar:alt-arrow-down-bold"
+                  width="16"
+                  className={`text-white/40 transition-transform duration-200 ${notifExpanded ? 'rotate-180' : ''}`}
+                />
+              </button>
+
+              {/* Expanded settings */}
+              {notifExpanded && (
+                <div className="px-4 pb-4 border-t border-white/10 pt-3">
+                  <NotificationSettings
+                    prefs={notifPrefs}
+                    permissionState={notifPermission}
+                    onSetEnabled={onNotifSetEnabled}
+                    onUpdatePref={onNotifUpdatePref}
+                  />
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Divider */}
           <div className="h-px bg-white/10 my-1" />

@@ -10,8 +10,8 @@ import { PaywallModal } from "@/components/paywall/paywall-modal"
 import { ExampleSentencesModal } from "@/components/learning/example-sentences-modal"
 import { PlaylistSelectModal } from "@/components/learning/search-word-learning"
 import { ManageAccountModal } from "@/components/account/manage-account-modal"
-import { NotificationSettings } from "@/components/settings/notification-settings"
 import { useNotifications } from "@/hooks/use-notifications"
+import { NotificationPromptModal } from "@/components/notifications/notification-prompt-modal"
 
 declare global {
   interface Window {
@@ -19,6 +19,7 @@ declare global {
   }
 }
 import { Icon } from '@iconify/react'
+import { Capacitor } from '@capacitor/core'
 import { getFlagIcon } from '@/utils/flags'
 import {
   Search,
@@ -831,6 +832,18 @@ export function LanguageSelector() {
   const { user, signOut, signInWithGoogle, isPremium, subscriptionStatus, canAccessTopic, refreshSubscription, loading } = useAuth()
   const [showPaywall, setShowPaywall] = useState(false)
   const [showManageAccount, setShowManageAccount] = useState(false)
+  const [openNotificationsInAccount, setOpenNotificationsInAccount] = useState(false)
+  const [showNotifPrompt, setShowNotifPrompt] = useState(false)
+
+  const handleNotifPromptDismiss = () => {
+    localStorage.setItem('vw_notif_prompted', 'true')
+    setShowNotifPrompt(false)
+  }
+
+  const handleNotifGoToSettings = () => {
+    setOpenNotificationsInAccount(true)
+    setShowManageAccount(true)
+  }
 
   // Refresh subscription data from RC every time the account modal opens
   // so that renewal dates are always current (especially important in sandbox
@@ -847,6 +860,23 @@ export function LanguageSelector() {
   useEffect(() => {
   }, [user, isPremium])
   const [currentPage, setCurrentPage] = useState<PageState>("native")
+
+  // Show the first-time notification prompt once the user reaches the topic
+  // selection screen on a native device and hasn't enabled notifications yet.
+  useEffect(() => {
+    if (
+      currentPage === 'confirmation' &&
+      user &&
+      Capacitor.isNativePlatform() &&
+      !notificationsHook.prefs.enabled &&
+      !localStorage.getItem('vw_notif_prompted')
+    ) {
+      const t = setTimeout(() => setShowNotifPrompt(true), 900)
+      return () => clearTimeout(t)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, user])
+
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [nativeLanguage, setNativeLanguage] = useState("")
   const [nativeLanguageCode, setNativeLanguageCode] = useState("")
@@ -3596,11 +3626,9 @@ export function LanguageSelector() {
   }
 
   // ── Notifications ────────────────────────────────────────────────────────
-  const notificationsHook = useNotifications(
-    useCallback((key: string, value: any) => {
-      updateSetting(key, value)
-    }, []) // eslint-disable-line react-hooks/exhaustive-deps
-  )
+  // Pass updateSetting directly — the hook's internal persistPrefsRef always
+  // captures the latest version, so no stale-closure issue here.
+  const notificationsHook = useNotifications(updateSetting)
 
   // Swipe gesture handlers for learning page
   const minSwipeDistance = 50 // Minimum distance for swipe
@@ -4419,16 +4447,6 @@ export function LanguageSelector() {
               </div>
             </div>
 
-            {/* Notifications */}
-            <div className="bg-white/5 rounded-2xl p-4 sm:p-5">
-              <NotificationSettings
-                prefs={notificationsHook.prefs}
-                permissionState={notificationsHook.permissionState}
-                onSetEnabled={notificationsHook.setEnabled}
-                onUpdatePref={notificationsHook.updatePref}
-              />
-            </div>
-
             <Button
               onClick={handleSettingsClose}
               className="w-full mt-6 sm:mt-8 bg-black/20 backdrop-blur-sm border border-white/10 hover:bg-black/30 text-white font-medium rounded-xl sm:rounded-2xl h-11 sm:h-12"
@@ -4554,7 +4572,7 @@ export function LanguageSelector() {
       {/* Manage Account Modal */}
       <ManageAccountModal
         open={showManageAccount}
-        onCloseAction={() => setShowManageAccount(false)}
+        onCloseAction={() => { setShowManageAccount(false); setOpenNotificationsInAccount(false) }}
         name={user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'User'}
         email={user?.email || ''}
         avatarUrl={user?.user_metadata?.avatar_url || user?.user_metadata?.picture}
@@ -4566,6 +4584,19 @@ export function LanguageSelector() {
             : undefined
         }
         onSignOutAction={handleSignOut}
+        notifPrefs={notificationsHook.prefs}
+        notifPermission={notificationsHook.permissionState}
+        onNotifSetEnabled={notificationsHook.setEnabled}
+        onNotifUpdatePref={notificationsHook.updatePref}
+        openNotifications={openNotificationsInAccount}
+      />
+
+      {/* First-time notification permission prompt */}
+      <NotificationPromptModal
+        open={showNotifPrompt}
+        onEnable={async () => { await notificationsHook.setEnabled(true) }}
+        onGoToSettings={handleNotifGoToSettings}
+        onDismiss={handleNotifPromptDismiss}
       />
 
       {/* Paywall Modal */}
