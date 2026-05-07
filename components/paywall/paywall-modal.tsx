@@ -15,24 +15,14 @@ interface PaywallModalProps {
   targetLanguageCode?: string
 }
 
-/**
- * Paywall Modal — powered by RevenueCat.
- *
- * Flow:
- * 1. User selects a plan and taps "Subscribe"
- * 2. RC SDK presents the native purchase sheet (App Store / Google Play / Web Billing)
- * 3. On success: refreshSubscription() updates isPremium → modal closes, topic unlocks
- * 4. USER_CANCELLED is handled silently (no error shown)
- */
 export function PaywallModal({
   isOpen,
   onCloseAction,
   onSuccessAction,
 }: PaywallModalProps) {
-  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('yearly')
   const [mounted, setMounted] = useState(false)
   const { user, refreshSubscription } = useAuth()
-  const { purchasePackage, restorePurchases, loading, error, clearError } = useRevenueCat()
+  const { purchasePackage, loading, error, clearError } = useRevenueCat()
 
   useEffect(() => {
     setMounted(true)
@@ -45,33 +35,13 @@ export function PaywallModal({
     if (!user) return
     clearError()
 
-    const success = await purchasePackage(selectedPlan)
+    const success = await purchasePackage('yearly')
 
     if (success) {
-      // Sync DB immediately — RC webhook may not have fired yet
       try {
         await fetch('/api/subscription/sync-rc', { method: 'POST' })
       } catch {
         // Non-fatal: webhook will eventually sync the DB
-      }
-      // Refresh subscription state so canAccessTopic() returns true immediately
-      await refreshSubscription()
-      onSuccessAction?.()
-      onCloseAction()
-    }
-  }
-
-  const handleRestore = async () => {
-    if (!user) return
-    clearError()
-
-    const hasAccess = await restorePurchases()
-    if (hasAccess) {
-      // Sync DB immediately — RC webhook may not have fired yet
-      try {
-        await fetch('/api/subscription/sync-rc', { method: 'POST' })
-      } catch {
-        // Non-fatal
       }
       await refreshSubscription()
       onSuccessAction?.()
@@ -98,107 +68,67 @@ export function PaywallModal({
 
           <div className="text-center">
             <div className="w-16 h-16 bg-gradient-to-br from-yellow-400/90 to-orange-500/90 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg border border-white/20">
-              <Icon icon="solar:crown-bold" className="w-9 h-9 text-white drop-shadow-lg" />
+              <Icon icon="solar:star-bold" className="w-9 h-9 text-white drop-shadow-lg" />
             </div>
-            <h2 className="text-2xl font-bold text-white drop-shadow-lg mb-2">Unlock Premium</h2>
-            <p className="text-white/70 drop-shadow">Get access to all 47 vocabulary topics</p>
+            <h2 className="text-2xl font-bold text-white drop-shadow-lg mb-2">Unlock Vocab World Unlimited</h2>
           </div>
         </div>
 
-        {/* Plans */}
-        <div className="p-6 space-y-3">
-          {/* Yearly Plan */}
-          <button
-            onClick={() => setSelectedPlan('yearly')}
-            className={`w-full p-4 rounded-2xl border-2 transition-all text-left relative backdrop-blur-sm ${
-              selectedPlan === 'yearly'
-                ? 'border-green-400/60 bg-green-500/20'
-                : 'border-white/20 bg-white/10 hover:bg-white/15 hover:border-white/30'
-            }`}
-          >
+        {/* Features */}
+        <div className="px-6 pt-5 pb-2">
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/15">
+            <p className="text-white/80 text-sm font-medium mb-3 drop-shadow">Premium includes:</p>
+            <div className="flex flex-col gap-3 text-sm">
+              {['All topics unlocked', 'Create custom playlists', 'Word Search'].map(label => (
+                <div key={label} className="flex items-center gap-2 text-white/70">
+                  <Icon icon="solar:check-circle-bold" className="w-4 h-4 text-green-400 flex-shrink-0 drop-shadow" />
+                  <span className="drop-shadow">{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Yearly Plan */}
+        <div className="px-6 pt-3 pb-2">
+          <div className="w-full p-4 rounded-2xl border-2 border-green-400/60 bg-green-500/20 text-left relative backdrop-blur-sm">
+            <span className="absolute -top-2.5 right-3 px-3 py-1 bg-gradient-to-r from-green-400 to-emerald-500 text-white text-xs font-bold rounded-full shadow-lg border border-white/20">
+              7-DAY FREE TRIAL
+            </span>
             {PRICING.yearly.savings && (
-              <span className="absolute -top-2.5 right-3 px-3 py-1 bg-gradient-to-r from-green-400 to-emerald-500 text-white text-xs font-bold rounded-full shadow-lg border border-white/20">
+              <span className="absolute -top-2.5 left-3 px-3 py-1 bg-gradient-to-r from-green-400 to-emerald-500 text-white text-xs font-bold rounded-full shadow-lg border border-white/20">
                 SAVE {PRICING.yearly.savings}
               </span>
             )}
             <div className="flex items-center justify-between pl-8">
               <div>
                 <p className="text-white font-semibold drop-shadow">Yearly</p>
-                <p className="text-white/60 text-sm drop-shadow">Billed annually</p>
+                <p className="text-white/60 text-sm drop-shadow">Billed annually after trial</p>
               </div>
               <div className="text-right">
                 <p className="text-white font-bold text-xl drop-shadow-lg">{formatPrice(PRICING.yearly.price)}</p>
                 <p className="text-white/60 text-xs drop-shadow">{formatPrice(PRICING.yearly.price / 12)}/mo</p>
               </div>
             </div>
-            <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-              selectedPlan === 'yearly' ? 'border-green-400 bg-green-500 shadow-lg shadow-green-500/30' : 'border-white/40 bg-white/10'
-            }`}>
-              {selectedPlan === 'yearly' && (
-                <Icon icon="solar:check-circle-bold" className="w-4 h-4 text-white" />
-              )}
-            </div>
-          </button>
-
-          {/* Monthly Plan */}
-          <button
-            onClick={() => setSelectedPlan('monthly')}
-            className={`w-full p-4 rounded-2xl border-2 transition-all text-left relative backdrop-blur-sm ${
-              selectedPlan === 'monthly'
-                ? 'border-blue-400/60 bg-blue-500/20'
-                : 'border-white/20 bg-white/10 hover:bg-white/15 hover:border-white/30'
-            }`}
-          >
-            <div className="flex items-center justify-between pl-8">
-              <div>
-                <p className="text-white font-semibold drop-shadow">Monthly</p>
-                <p className="text-white/60 text-sm drop-shadow">Billed monthly</p>
-              </div>
-              <div className="text-right">
-                <p className="text-white font-bold text-xl drop-shadow-lg">{formatPrice(PRICING.monthly.price)}</p>
-                <p className="text-white/60 text-xs drop-shadow">per month</p>
-              </div>
-            </div>
-            <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-              selectedPlan === 'monthly' ? 'border-blue-400 bg-blue-500 shadow-lg shadow-blue-500/30' : 'border-white/40 bg-white/10'
-            }`}>
-              {selectedPlan === 'monthly' && (
-                <Icon icon="solar:check-circle-bold" className="w-4 h-4 text-white" />
-              )}
-            </div>
-          </button>
-        </div>
-
-        {/* Features */}
-        <div className="px-6 pb-4">
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/15">
-            <p className="text-white/80 text-sm font-medium mb-3 drop-shadow">Premium includes:</p>
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              {[['47 topics', '50 languages'], ['Custom playlists', 'Word search']].flatMap(row =>
-                row.map(label => (
-                  <div key={label} className="flex items-center gap-2 text-white/70">
-                    <Icon icon="solar:check-circle-bold" className="w-4 h-4 text-green-400 flex-shrink-0 drop-shadow" />
-                    <span className="drop-shadow">{label}</span>
-                  </div>
-                ))
-              )}
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-2 border-green-400 bg-green-500 shadow-lg shadow-green-500/30 flex items-center justify-center">
+              <Icon icon="solar:check-circle-bold" className="w-4 h-4 text-white" />
             </div>
           </div>
         </div>
 
         {/* Error Message */}
         {error && (
-          <div className="mx-6 mb-4 p-3 bg-red-500/20 border border-red-500/30 rounded-xl">
+          <div className="mx-6 mb-2 p-3 bg-red-500/20 border border-red-500/30 rounded-xl">
             <p className="text-red-200 text-sm text-center">{error}</p>
           </div>
         )}
 
         {/* Subscribe Button */}
-        <div className="p-6 pt-2">
+        <div className="p-6 pt-3">
           <button
             onClick={handleSubscribe}
             disabled={loading || !user}
-            className="w-full py-4 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white font-bold text-lg rounded-2xl shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full py-4 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-bold text-lg rounded-2xl shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {loading ? (
               <>
@@ -206,10 +136,7 @@ export function PaywallModal({
                 <span>Processing...</span>
               </>
             ) : (
-              <>
-                <Icon icon="solar:crown-bold" className="w-5 h-5" />
-                <span>Subscribe Now</span>
-              </>
+              <span>Unlock Now</span>
             )}
           </button>
 
@@ -219,17 +146,15 @@ export function PaywallModal({
             </p>
           )}
 
-          <button
-            onClick={handleRestore}
-            disabled={loading}
-            className="w-full mt-3 py-2 text-white/50 hover:text-white/70 text-sm transition-colors disabled:opacity-30"
-          >
-            Restore purchases
-          </button>
-
-          <p className="text-center text-white/50 text-xs mt-2">
-            Cancel anytime • Secure payment
-          </p>
+          <div className="flex items-center justify-center gap-3 mt-3">
+            <button className="text-white/50 hover:text-white/70 text-xs transition-colors underline underline-offset-2">
+              Terms of Service
+            </button>
+            <span className="text-white/30 text-xs">•</span>
+            <button className="text-white/50 hover:text-white/70 text-xs transition-colors underline underline-offset-2">
+              Privacy Policy
+            </button>
+          </div>
         </div>
       </div>
     </div>
