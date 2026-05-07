@@ -1,6 +1,5 @@
 import UIKit
 import Capacitor
-import GoogleSignIn
 import AVFoundation
 
 @UIApplicationMain
@@ -42,10 +41,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-        var handled = GIDSignIn.sharedInstance.handle(url)
-        if handled {
-            return true
-        }
         return ApplicationDelegateProxy.shared.application(app, open: url, options: options)
     }
 
