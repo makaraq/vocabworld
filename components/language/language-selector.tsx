@@ -10,6 +10,8 @@ import { PaywallModal } from "@/components/paywall/paywall-modal"
 import { ExampleSentencesModal } from "@/components/learning/example-sentences-modal"
 import { PlaylistSelectModal } from "@/components/learning/search-word-learning"
 import { ManageAccountModal } from "@/components/account/manage-account-modal"
+import { NotificationSettings } from "@/components/settings/notification-settings"
+import { useNotifications } from "@/hooks/use-notifications"
 
 declare global {
   interface Window {
@@ -927,6 +929,7 @@ export function LanguageSelector() {
           const data = await response.json()
           if (data.settings) {
             setSettings(data.settings)
+            notificationsHook.loadPrefsFromSettings(data.settings)
             settingsLoadedRef.current = true
             setSettingsInitialized(true)
           }
@@ -2094,6 +2097,11 @@ export function LanguageSelector() {
                     targetLanguageCode: targetLanguageCode
                   })
                 })
+                // Cancel today's streak notification and refresh review reminder
+                fetch('/api/notifications/context')
+                  .then(r => r.ok ? r.json() : null)
+                  .then(ctx => ctx && notificationsHook.onWordPlayed(ctx))
+                  .catch(() => {})
               } catch (error) {
                 console.error('Failed to track progress:', error)
               }
@@ -3587,6 +3595,13 @@ export function LanguageSelector() {
     })
   }
 
+  // ── Notifications ────────────────────────────────────────────────────────
+  const notificationsHook = useNotifications(
+    useCallback((key: string, value: any) => {
+      updateSetting(key, value)
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  )
+
   // Swipe gesture handlers for learning page
   const minSwipeDistance = 50 // Minimum distance for swipe
   
@@ -4402,6 +4417,16 @@ export function LanguageSelector() {
 
                 </div>
               </div>
+            </div>
+
+            {/* Notifications */}
+            <div className="bg-white/5 rounded-2xl p-4 sm:p-5">
+              <NotificationSettings
+                prefs={notificationsHook.prefs}
+                permissionState={notificationsHook.permissionState}
+                onSetEnabled={notificationsHook.setEnabled}
+                onUpdatePref={notificationsHook.updatePref}
+              />
             </div>
 
             <Button

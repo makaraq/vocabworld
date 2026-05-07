@@ -18,7 +18,12 @@ const config: CapacitorConfig = {
       forceCodeForRefreshToken: true,
     },
     App: {
-    }
+    },
+    LocalNotifications: {
+      smallIcon: 'ic_notification',
+      iconColor: '#6366f1',
+      sound: 'default',
+    },
   }
 };
 

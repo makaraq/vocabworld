@@ -74,6 +74,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const supabase = createClient()
   const initializingRef = useRef(false)
 
+  // Fetch fresh scheduling context and reschedule all local notifications.
+  // Fire-and-forget — never throws, won't block the auth flow.
+  async function triggerNotificationReschedule() {
+    if (typeof window === 'undefined' || !Capacitor.isNativePlatform()) return
+    try {
+      const [ctxRes, settingsRes] = await Promise.all([
+        fetch('/api/notifications/context'),
+        fetch('/api/settings'),
+      ])
+      if (!ctxRes.ok || !settingsRes.ok) return
+      const ctx = await ctxRes.json()
+      const { settings } = await settingsRes.json()
+      const notifPrefs = {
+        enabled: false,
+        dailyReminderEnabled: true,
+        dailyReminderTime: '09:00',
+        streakProtectionEnabled: true,
+        reviewReminderEnabled: true,
+        ...(settings?.notifications ?? {}),
+      }
+      const { rescheduleAllNotifications } = await import('@/lib/notifications')
+      await rescheduleAllNotifications(notifPrefs, ctx)
+    } catch {
+      // Non-fatal — notifications will reschedule on next open
+    }
+  }
+
   // ============================================
   // SUBSCRIPTION FETCHING
   // ============================================
@@ -228,11 +255,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             await fetch('/api/progress/streak', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ 
+              body: JSON.stringify({
                 userId: initialSession.user.id,
-                timezone 
+                timezone
               })
             })
+            // Persist timezone for the notifications context API (fire-and-forget)
+            void supabase
+              .from('user_profiles')
+              .update({ timezone, updated_at: new Date().toISOString() })
+              .eq('id', initialSession.user.id)
+            // Reschedule notifications with fresh context
+            triggerNotificationReschedule().catch(() => {})
           } catch (e) {
           }
         } else {
@@ -289,11 +323,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           await fetch('/api/progress/streak', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
+            body: JSON.stringify({
               userId: user.id,
-              timezone 
+              timezone
             })
           })
+          // Reschedule notifications on every foreground
+          triggerNotificationReschedule().catch(() => {})
         } catch (e) {
         }
       }

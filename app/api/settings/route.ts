@@ -56,7 +56,14 @@ export async function GET(request: Request) {
           playTargetOnly: false,
           showPhonetics: false,
           rewindEnabled: false,
-          rewindAfterWords: 5
+          rewindAfterWords: 5,
+          notifications: {
+            enabled: false,
+            dailyReminderEnabled: true,
+            dailyReminderTime: '09:00',
+            streakProtectionEnabled: true,
+            reviewReminderEnabled: true,
+          },
         }
         return NextResponse.json({ settings: defaultSettings })
       }
@@ -83,7 +90,14 @@ export async function GET(request: Request) {
       playTargetOnly: false,
       showPhonetics: false,
       rewindEnabled: false,
-      rewindAfterWords: 5
+      rewindAfterWords: 5,
+      notifications: {
+        enabled: false,
+        dailyReminderEnabled: true,
+        dailyReminderTime: '09:00',
+        streakProtectionEnabled: true,
+        reviewReminderEnabled: true,
+      },
     }
 
     // Merge defaults with saved settings to ensure new fields are included
