@@ -127,7 +127,7 @@ export default function AccountPage() {
               <div className="grid grid-cols-1 gap-3 text-sm">
                 <div className="flex items-center gap-2 text-green-400">
                   <Check className="w-4 h-4" />
-                  <span>All 46 vocabulary topics</span>
+                  <span>All 43 vocabulary topics</span>
                 </div>
                 <div className="flex items-center gap-2 text-green-400">
                   <Check className="w-4 h-4" />

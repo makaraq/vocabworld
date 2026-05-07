@@ -91,7 +91,7 @@ function SuccessContent() {
       
       {/* Description */}
       <p className="text-white/70 text-lg mb-6">
-        Your subscription is now active. You have full access to all 46 vocabulary topics!
+        Your subscription is now active. You have full access to all 43 vocabulary topics!
       </p>
       
       {/* Language Restoration Info */}
@@ -109,7 +109,7 @@ function SuccessContent() {
         <ul className="space-y-2 text-white/60">
           <li className="flex items-center gap-2">
             <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-green-400" />
-            All 46 vocabulary topics
+            All 43 vocabulary topics
           </li>
           <li className="flex items-center gap-2">
             <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-green-400" />
