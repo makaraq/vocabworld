@@ -20,6 +20,7 @@ export interface UseNotificationsReturn {
   permissionState: PermissionState
   loadPrefsFromSettings: (settings: Record<string, any>) => void
   setEnabled: (enabled: boolean) => Promise<void>
+  enableWithTime: (reminderTime: string) => Promise<boolean>
   updatePref: <K extends keyof NotificationPreferences>(
     key: K,
     value: NotificationPreferences[K]
@@ -74,6 +75,27 @@ export function useNotifications(
     }
   }, [prefs])  // persistPrefs intentionally removed from deps — ref handles it
 
+  // Atomically enables notifications AND sets the reminder time in one prefs
+  // write, avoiding the stale-closure bug that occurs when updatePref and
+  // setEnabled are called sequentially (each closes over an older prefs snapshot).
+  const enableWithTime = useCallback(async (reminderTime: string): Promise<boolean> => {
+    const granted = await requestNotificationPermission()
+    setPermissionState(granted ? 'granted' : 'denied')
+    if (!granted) return false
+    const newPrefs: NotificationPreferences = {
+      ...prefs,
+      enabled: true,
+      dailyReminderEnabled: true,
+      dailyReminderTime: reminderTime,
+    }
+    setPrefs(newPrefs)
+    persistPrefsRef.current('notifications', newPrefs)
+    if (ctxRef.current) {
+      await rescheduleAllNotifications(newPrefs, ctxRef.current)
+    }
+    return true
+  }, [prefs])
+
   const updatePref = useCallback(async <K extends keyof NotificationPreferences>(
     key: K,
     value: NotificationPreferences[K]
@@ -119,5 +141,5 @@ export function useNotifications(
     if (prefs.reviewReminderEnabled) await rescheduleAllNotifications(prefs, ctx)
   }, [prefs])
 
-  return { prefs, permissionState, loadPrefsFromSettings, setEnabled, updatePref, refreshPermissionState, reschedule, onWordPlayed }
+  return { prefs, permissionState, loadPrefsFromSettings, setEnabled, enableWithTime, updatePref, refreshPermissionState, reschedule, onWordPlayed }
 }

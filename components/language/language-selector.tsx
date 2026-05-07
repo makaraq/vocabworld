@@ -11,7 +11,6 @@ import { ExampleSentencesModal } from "@/components/learning/example-sentences-m
 import { PlaylistSelectModal } from "@/components/learning/search-word-learning"
 import { ManageAccountModal } from "@/components/account/manage-account-modal"
 import { useNotifications } from "@/hooks/use-notifications"
-import { requestNotificationPermission } from "@/lib/notifications"
 import { NotificationPromptModal } from "@/components/notifications/notification-prompt-modal"
 import { NotificationSetupScreen } from "@/components/notifications/notification-setup-screen"
 
@@ -3621,14 +3620,8 @@ export function LanguageSelector() {
   const handleNotifSetupEnable = async (reminderTime: string) => {
     setShowNotifSetup(false)
     localStorage.setItem('vw_notif_prompted', 'true')
-    // Static import used — no async gap before the OS dialog fires.
-    const granted = await requestNotificationPermission()
-    if (granted) {
-      await notificationsHook.updatePref('dailyReminderTime', reminderTime)
-      await notificationsHook.setEnabled(true)
-    } else {
-      setShowNotifPrompt(true)
-    }
+    const granted = await notificationsHook.enableWithTime(reminderTime)
+    if (!granted) setShowNotifPrompt(true)
   }
 
   const handleNotifSetupDismiss = () => {
