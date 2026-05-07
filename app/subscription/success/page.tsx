@@ -28,7 +28,6 @@ function SuccessContent() {
 
   useEffect(() => {
     const handleReturn = async () => {
-      console.log('🎉 Payment success page loaded')
       
       // CRITICAL: Force refresh session after returning from external site
       try {
@@ -36,7 +35,6 @@ function SuccessContent() {
         if (error) {
           console.error('❌ Session refresh failed:', error)
         } else if (data.session) {
-          console.log('✅ Session refreshed:', data.session.user.email)
         }
       } catch (e) {
         console.error('❌ Session refresh error:', e)
@@ -46,16 +44,13 @@ function SuccessContent() {
       const savedNative = localStorage.getItem('paymentLanguageNative')
       const savedTarget = localStorage.getItem('paymentLanguageTarget')
       
-      console.log('📦 Restoring languages:', { native: savedNative, target: savedTarget })
       
       // Restore languages to main storage keys
       if (savedNative) {
         localStorage.setItem('nativeLanguageCode', savedNative)
-        console.log('✅ Restored native language:', savedNative)
       }
       if (savedTarget) {
         localStorage.setItem('targetLanguageCode', savedTarget)
-        console.log('✅ Restored target language:', savedTarget)
       }
       
       setRestoredLanguages({ native: savedNative, target: savedTarget })
@@ -75,7 +70,6 @@ function SuccessContent() {
       
       // Redirect to main app after showing success message
       setTimeout(() => {
-        console.log('🔄 Redirecting to home...')
         router.push('/')
       }, 2500)
     }
@@ -97,7 +91,7 @@ function SuccessContent() {
       
       {/* Description */}
       <p className="text-white/70 text-lg mb-6">
-        Your subscription is now active. You have full access to all 47 vocabulary topics!
+        Your subscription is now active. You have full access to all 46 vocabulary topics!
       </p>
       
       {/* Language Restoration Info */}
@@ -115,7 +109,7 @@ function SuccessContent() {
         <ul className="space-y-2 text-white/60">
           <li className="flex items-center gap-2">
             <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-green-400" />
-            All 47 vocabulary topics
+            All 46 vocabulary topics
           </li>
           <li className="flex items-center gap-2">
             <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-green-400" />

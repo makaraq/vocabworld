@@ -34,20 +34,17 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLa
     
     // Skip if we just fetched for the same user/language combination
     if (cacheKey === lastFetchKey) {
-      console.log('⏩ Skipping progress stats fetch - same cache key')
       setLoading(false)
       return
     }
     
     const fetchStats = async () => {
       try {
-        console.log(`📊 Fetching progress stats for: ${targetLanguageName} (${targetLanguageCode})`)
         const response = await fetch(`/api/progress/stats?userId=${user.id}&targetLanguageCode=${targetLanguageCode}`)
         if (response.ok) {
           const data = await response.json()
           setStats(data)
           setLastFetchKey(cacheKey)
-          console.log('✅ Progress stats loaded successfully')
         }
       } catch (error) {
         console.error('Failed to fetch progress stats:', error)

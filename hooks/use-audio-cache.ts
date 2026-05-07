@@ -84,7 +84,6 @@ export function useAudioCache(options: UseAudioCacheOptions = {}): UseAudioCache
   useEffect(() => {
     const handleUpdateAvailable = (event: Event) => {
       const customEvent = event as CustomEvent;
-      console.log('[useAudioCache] Update available:', customEvent.detail.message);
       
       // You can show a toast notification here
       if (typeof window !== 'undefined' && window.dispatchEvent) {

@@ -35,11 +35,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ received: true }) // 200 so RC does not retry
   }
 
-  console.log(`[RC Webhook] ${event.type} | user: ${event.app_user_id} | env: ${event.environment}`)
 
   // ── 3. Skip test / non-actionable events ─────────────────────────────────
   if (event.type === 'TEST') {
-    console.log('[RC Webhook] Test event — no DB update')
     return NextResponse.json({ received: true })
   }
 
@@ -84,6 +82,5 @@ export async function POST(req: NextRequest) {
       if (error) console.warn('[RC Webhook] revenuecat_app_user_id update skipped (column may not exist yet):', error.message)
     })
 
-  console.log(`[RC Webhook] ✅ ${event.type} → ${subscription_status} | user: ${event.app_user_id}`)
   return NextResponse.json({ received: true })
 }

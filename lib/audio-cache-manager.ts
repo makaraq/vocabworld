@@ -41,7 +41,6 @@ export class AudioCacheManager {
   // Initialize service worker
   async initialize(): Promise<boolean> {
     if (!this.isSupported()) {
-      console.log('[AudioCache] Service Worker not supported');
       return false;
     }
 
@@ -50,7 +49,6 @@ export class AudioCacheManager {
         scope: '/'
       });
 
-      console.log('[AudioCache] Service Worker registered successfully');
 
       // Handle updates
       this.serviceWorkerRegistration.addEventListener('updatefound', () => {
@@ -59,7 +57,6 @@ export class AudioCacheManager {
         if (newWorker) {
           newWorker.addEventListener('statechange', () => {
             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              console.log('[AudioCache] New version available, reload to update');
               // Notify user about update
               this.notifyUpdate();
             }
@@ -90,7 +87,6 @@ export class AudioCacheManager {
 
       messageChannel.port1.onmessage = (event) => {
         if (event.data.success) {
-          console.log(`[AudioCache] Pre-cached ${audioUrls.length} files`);
           resolve();
         } else {
           reject(new Error(event.data.error));
@@ -117,7 +113,6 @@ export class AudioCacheManager {
       (wordId) => `/api/universal-audio?wordId=${wordId}&languageCode=${languageCode}`
     );
 
-    console.log(`[AudioCache] Pre-caching topic ${topicId} with ${wordIds.length} words`);
     await this.preCacheAudios(audioUrls);
   }
 
@@ -180,7 +175,6 @@ export class AudioCacheManager {
 
       messageChannel.port1.onmessage = (event) => {
         if (event.data.success) {
-          console.log('[AudioCache] Cache cleared successfully');
           resolve();
         } else {
           reject(new Error(event.data.error));
@@ -256,7 +250,6 @@ export class AudioCacheManager {
   // Pre-cache free tier topics (1, 2, 3) for offline use
   async preCacheFreeTier(languageCode: string): Promise<void> {
     try {
-      console.log('[AudioCache] Pre-caching free tier topics...');
 
       // Fetch vocabulary for free topics
       const freeTopics = [1, 2, 3]; // Greetings, Numbers, Time
@@ -273,7 +266,6 @@ export class AudioCacheManager {
         }
       }
 
-      console.log('[AudioCache] Free tier pre-caching completed');
     } catch (error) {
       console.error('[AudioCache] Free tier pre-caching failed:', error);
       throw error;

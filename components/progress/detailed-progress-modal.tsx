@@ -97,7 +97,6 @@ export function DetailedProgressModal({
           ]
           
           setSections(dynamicSections)
-          console.log('✅ Loaded dynamic sections from topics API:', dynamicSections.map(s => ({ name: s.name, topicCount: s.topicIds.length })))
         }
       } catch (error) {
         console.error('Failed to load sections structure:', error)
@@ -188,20 +187,14 @@ export function DetailedProgressModal({
     const fetchTopicProgress = async () => {
       try {
         setLoading(true)
-        console.log('🔍 Fetching progress for user:', user.id, 'language:', targetLanguageCode)
         const url = `/api/progress/topics?userId=${user.id}&languageCode=${targetLanguageCode}&detailed=true`
-        console.log('🌐 API URL:', url)
         
         const response = await fetch(url)
-        console.log('📡 Response status:', response.status, response.statusText)
         
         if (response.ok) {
           const data = await response.json()
-          console.log('✅ Received topic progress data:', data)
-          console.log('📊 Topics count:', data.topics?.length)
           
           if (data.topics && data.topics.length > 0) {
-            console.log('📈 Sample topic:', data.topics[0])
           }
           
           setTopicProgress(data.topics || [])

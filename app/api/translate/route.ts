@@ -266,7 +266,6 @@ export async function GET(request: NextRequest) {
     
     // For non-English source languages, use Google Translate directly (no caching)
     if (sourceLanguage !== 'en') {
-      console.log(`Translating "${word}" from ${sourceLanguage} to ${effectiveTargetLang || 'all languages'}`)
       
       // Direct translation for specific target language
       if (effectiveTargetLang) {
@@ -323,7 +322,6 @@ export async function GET(request: NextRequest) {
     }
     
     // Fetch translations from external APIs
-    console.log(`Fetching translations for: ${word}`)
     const translations = await fetchTranslationsWithFallback(word, 'en')
     
     // Cache the result
@@ -383,7 +381,6 @@ export async function POST(request: NextRequest) {
       )
     }
     
-    console.log('📝 Adding word to playlist:', { word, playlistId, userId, sourceLanguageCode, targetLanguageCode, translation })
     
     const supabase = getSupabaseAdmin()
     
@@ -420,7 +417,6 @@ export async function POST(request: NextRequest) {
         translationsToStore = { ...fetchedTranslations, ...translationsToStore }
       }
       
-      console.log('📚 Creating dictionary word with translations:', translationsToStore)
       
       const { data: newWord, error } = await supabase
         .from('dictionary_words')
@@ -457,7 +453,6 @@ export async function POST(request: NextRequest) {
           .from('dictionary_words')
           .update({ translations: updatedTranslations })
           .eq('id', dictWord.id)
-        console.log('📝 Updated dictionary word translations:', updatedTranslations)
       }
     }
     
@@ -477,7 +472,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to add word to playlist' }, { status: 500 })
     }
     
-    console.log('✅ Word added to playlist successfully:', { dictWordId: dictWord.id, playlistId })
     
     return NextResponse.json({ success: true, dictionaryWordId: dictWord.id })
     

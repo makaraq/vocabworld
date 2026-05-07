@@ -38,7 +38,6 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    console.log('🗑️ Starting account deletion for user:', user.id)
 
     // Step 1: Get active subscriptions
     const { data: subscriptions, error: subsError } = await supabaseAdmin
@@ -52,11 +51,9 @@ export async function DELETE(request: Request) {
     } else if (subscriptions && subscriptions.length > 0) {
       // Subscriptions will be cancelled automatically by RevenueCat when the account is deleted.
       // No action needed here — the RC webhook will update the DB status.
-      console.log('ℹ️ Found active subscriptions; RevenueCat will handle cancellation.')
     }
 
     // Step 2: Delete user data in correct order (children before parents)
-    console.log('🗑️ Deleting user data...')
 
     // Delete word-level progress
     const { error: wordProgressError } = await supabaseAdmin
@@ -154,7 +151,6 @@ export async function DELETE(request: Request) {
       )
     }
 
-    console.log('✅ Account successfully deleted:', user.id)
     // Note: no server-side signOut needed — the client calls signOut() after receiving this response
 
     return NextResponse.json({ 

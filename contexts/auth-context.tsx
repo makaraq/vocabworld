@@ -5,7 +5,7 @@ import { User, Session } from '@supabase/supabase-js'
 import { Capacitor } from '@capacitor/core'
 import { App } from '@capacitor/app'
 import { Browser } from '@capacitor/browser'
-import { SocialLogin } from '@capgo/capacitor-social-login'
+import { SignInWithApple } from '@capacitor-community/apple-sign-in'
 import { createClient } from '@/lib/supabase/browser-client'
 import { FREE_TOPIC_IDS } from '@/lib/pricing'
 import { initRevenueCat, logOutRevenueCat } from '@/lib/revenuecat-client'
@@ -82,11 +82,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     setSubscriptionLoading(true)
     try {
-      console.log('📊 Fetching subscription status for user:', userId)
       const response = await fetch('/api/subscription/status')
       const data = await response.json()
       setSubscriptionStatus(data)
-      console.log('📊 Subscription result:', data)
     } catch (error) {
       console.error('❌ Failed to fetch subscription:', error)
       setSubscriptionStatus({ isPremium: false, subscription: null })
@@ -113,7 +111,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // AUTH METHODS
   // ============================================
   const signInWithGoogle = async () => {
-    console.log('🔐 Starting Google sign-in...')
     if (Capacitor.isNativePlatform()) {
       // Get OAuth URL from Supabase without auto-opening
       const { data, error } = await supabase.auth.signInWithOAuth({
@@ -152,14 +149,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const signInWithApple = async () => {
-    console.log('🔐 Starting Apple sign-in...')
     if (Capacitor.isNativePlatform()) {
-      await SocialLogin.initialize({ apple: {} })
-      const result = await SocialLogin.login({ provider: 'apple', options: {} })
-      if (!result?.result?.idToken) throw new Error('No ID token from Apple')
+      const result = await SignInWithApple.authorize()
+      if (!result?.response?.identityToken) throw new Error('No ID token from Apple')
       const { error } = await supabase.auth.signInWithIdToken({
         provider: 'apple',
-        token: result.result.idToken
+        token: result.response.identityToken
       })
       if (error) throw error
     } else {
@@ -172,7 +167,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const signOut = async () => {
-    console.log('🔐 Signing out...')
     await logOutRevenueCat()
     await supabase.auth.signOut()
     setUser(null)
@@ -209,7 +203,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     initializingRef.current = true
 
     const initializeAuth = async () => {
-      console.log('🔐 Initializing auth...')
       
       try {
         // Get initial session
@@ -220,11 +213,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
         
         if (initialSession) {
-          console.log('✅ Session found:', {
-            userId: initialSession.user.id,
-            email: initialSession.user.email,
-            name: initialSession.user.user_metadata?.full_name || initialSession.user.user_metadata?.name
-          })
           setSession(initialSession)
           setUser(initialSession.user)
           
@@ -246,10 +234,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               })
             })
           } catch (e) {
-            console.log('Failed to update streak:', e)
           }
         } else {
-          console.log('⚠️ No session found')
         }
       } catch (error) {
         console.error('❌ Auth initialization error:', error)
@@ -261,11 +247,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Set up auth state listener
     const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange(
       async (event, newSession) => {
-        console.log('🔐 Auth state changed:', event, {
-          hasSession: !!newSession,
-          userId: newSession?.user?.id,
-          email: newSession?.user?.email
-        })
         
         if (newSession) {
           setSession(newSession)
@@ -314,7 +295,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             })
           })
         } catch (e) {
-          console.log('Failed to update streak on focus:', e)
         }
       }
     }

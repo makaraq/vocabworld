@@ -32,7 +32,6 @@ export async function GET(request: Request) {
     }
 
     // Fetch user profile with settings
-    console.log('📥 Fetching settings for user:', user.id)
     const { data: profile, error: profileError } = await supabase
       .from('user_profiles')
       .select('learning_settings')
@@ -45,7 +44,6 @@ export async function GET(request: Request) {
       
       // If no row exists, return defaults (this is fine)
       if (profileError.code === 'PGRST116') {
-        console.log('ℹ️ No profile found, returning defaults')
         const defaultSettings = {
           autoPlay: true,
           trainingLanguageVoice: "Male",
@@ -71,7 +69,6 @@ export async function GET(request: Request) {
       }, { status: 500 })
     }
     
-    console.log('✅ Profile found:', profile ? 'yes' : 'no')
 
     // Return default settings if none exist
     const defaultSettings = {
@@ -147,8 +144,6 @@ export async function POST(request: Request) {
       showPhonetics: settings.showPhonetics ?? false
     }
 
-    console.log('💾 Attempting to save settings for user:', user.id)
-    console.log('Settings to save:', settingsToSave)
 
     // Use UPSERT to insert or update user profile
     // For insert: include required fields
@@ -176,7 +171,6 @@ export async function POST(request: Request) {
       }, { status: 500 })
     }
 
-    console.log('✅ Settings saved successfully for user:', user.email)
 
     return NextResponse.json({
       success: true,

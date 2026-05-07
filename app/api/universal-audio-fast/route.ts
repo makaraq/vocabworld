@@ -4,12 +4,10 @@ import { NextRequest, NextResponse } from 'next/server';
 // Simplified approach for production without CSV dependency
 export async function GET(request: NextRequest) {
   try {
-    console.log('🚀 FAST Universal Audio API called'); 
     const { searchParams } = new URL(request.url);
     const wordId = searchParams.get('wordId');
     const languageCode = searchParams.get('languageCode');
 
-    console.log(`🚀 Fast Audio Request:`, { wordId, languageCode });
 
     if (!wordId || !languageCode) {
       return NextResponse.json(
@@ -23,7 +21,6 @@ export async function GET(request: NextRequest) {
     const applicationKey = process.env.B2_APPLICATION_KEY;
 
     if (!keyId || !applicationKey) {
-      console.log('❌ B2 credentials not found in environment');
       return NextResponse.json(
         { error: 'B2 credentials not configured' },
         { status: 503 }
@@ -47,7 +44,6 @@ export async function GET(request: NextRequest) {
     };
 
     const audioLangCode = getAudioLanguageCode(languageCode);
-    console.log(`🚀 Language: ${languageCode} → ${audioLangCode}`);
 
     // Step 1: Authorize with B2
     const authResponse = await fetch('https://api.backblazeb2.com/b2api/v2/b2_authorize_account', {
@@ -58,12 +54,10 @@ export async function GET(request: NextRequest) {
     });
 
     if (!authResponse.ok) {
-      console.log('❌ B2 authorization failed');
       return NextResponse.json({ error: 'B2 authorization failed' }, { status: 503 });
     }
 
     const authData = await authResponse.json();
-    console.log('✅ B2 authorized');
 
     // Step 2: Get download authorization
     const downloadAuthResponse = await fetch(`${authData.apiUrl}/b2api/v2/b2_get_download_authorization`, {
@@ -80,12 +74,10 @@ export async function GET(request: NextRequest) {
     });
 
     if (!downloadAuthResponse.ok) {
-      console.log('❌ Download authorization failed');
       return NextResponse.json({ error: 'Download authorization failed' }, { status: 503 });
     }
 
     const downloadAuthData = await downloadAuthResponse.json();
-    console.log('✅ Download authorized');
 
     // Step 3: Try common file patterns (based on actual B2 structure)
     const wordIdInt = parseInt(wordId);
@@ -129,7 +121,6 @@ export async function GET(request: NextRequest) {
         const filePath = `${audioLangCode}/${pattern.category}/${fileName}`;
         const downloadUrl = `${authData.downloadUrl}/file/voco-audio-library/${filePath}`;
         
-        console.log(`🔍 Trying: ${filePath}`);
         
         try {
           const audioResponse = await fetch(downloadUrl, {
@@ -140,19 +131,15 @@ export async function GET(request: NextRequest) {
             audioBuffer = await audioResponse.arrayBuffer();
             foundPath = filePath;
             contentType = pattern.extension === 'mp3' ? 'audio/mpeg' : 'audio/wav';
-            console.log(`✅ SUCCESS: ${filePath} (${audioBuffer.byteLength} bytes)`);
             break;
           } else {
-            console.log(`❌ ${filePath} -> ${audioResponse.status}`);
           }
         } catch (e) {
-          console.log(`❌ Error: ${filePath}`);
         }
       }
     }
 
     if (!audioBuffer) {
-      console.log(`❌ Audio not found for wordId=${wordId}, language=${audioLangCode}`);
       return NextResponse.json(
         { error: 'Audio file not found', wordId, languageCode: audioLangCode },
         { status: 404 }

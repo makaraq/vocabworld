@@ -70,5 +70,9 @@
 	<array>
 		<string>audio</string>
 	</array>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Vocab World uses the microphone for pronunciation practice</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Vocab World uses speech recognition to check your pronunciation</string>
 </dict>
 </plist>

@@ -57,7 +57,7 @@ export default function TermsOfServicePage() {
                 <li>Audio pronunciation for vocabulary words</li>
                 <li>Progress tracking and statistics</li>
                 <li>Custom playlists and practice modes (Premium)</li>
-                <li>Access to 47 vocabulary topics (some require Premium subscription)</li>
+                <li>Access to 46 vocabulary topics (some require Premium subscription)</li>
               </ul>
             </section>
 
@@ -90,7 +90,7 @@ export default function TermsOfServicePage() {
                 <div>
                   <h3 className="text-lg font-medium mb-2">Premium Subscription</h3>
                   <ul className="list-disc list-inside space-y-1 ml-4">
-                    <li>Access to all 47 vocabulary topics</li>
+                    <li>Access to all 46 vocabulary topics</li>
                     <li>Audio in all 50 supported languages</li>
                     <li>Custom playlists and word search</li>
                     <li>Advanced learning statistics</li>

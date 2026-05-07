@@ -35,7 +35,6 @@ export function WelcomeOverlay() {
       localStorage.getItem('restoreLanguages') === 'true'
     
     if (isPaymentReturn) {
-      console.log('🎉 Payment return detected - hiding welcome overlay')
       setShowOverlay(false)
       return
     }

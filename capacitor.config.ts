@@ -5,7 +5,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'com.vocabworld.app',
   appName: 'Vocab World',
-  webDir: 'public',
+  webDir: 'public', // Fallback only — app loads from server.url in production
   server: {
     url: 'https://vocabworld-x843.vercel.app',
     cleartext: false

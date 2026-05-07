@@ -27,19 +27,16 @@ class ApiCache {
     // Check if we have valid cached data
     const cached = this.cache.get(cacheKey)
     if (cached && now < cached.expiry) {
-      console.log(`🎯 Cache hit: ${cacheKey}`)
       return cached.data
     }
 
     // Check if there's already a pending request for this key
     const pendingRequest = this.pendingRequests.get(cacheKey)
     if (pendingRequest) {
-      console.log(`⏳ Waiting for pending request: ${cacheKey}`)
       return pendingRequest
     }
 
     // Create new request
-    console.log(`🔄 Cache miss, fetching: ${cacheKey}`)
     const request = fetchFn().then(data => {
       // Cache the result
       this.cache.set(cacheKey, {

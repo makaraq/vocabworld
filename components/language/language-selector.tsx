@@ -792,7 +792,6 @@ export function LanguageSelector() {
   // Custom sign out handler that resets to first page
   const handleSignOut = async () => {
     try {
-      console.log('Starting sign out process...')
       
       // First, reset all local state immediately to prevent UI issues
       setCurrentPage("native")
@@ -817,7 +816,6 @@ export function LanguageSelector() {
       // Then sign out from authentication
       await signOut()
       
-      console.log('Sign out process completed')
       
       // The welcome overlay will automatically appear due to the auth context
     } catch (error) {
@@ -845,10 +843,6 @@ export function LanguageSelector() {
 
   // Debug auth state
   useEffect(() => {
-    console.log('🔍 Auth state:', { 
-      user: !!user,
-      isPremium
-    })
   }, [user, isPremium])
   const [currentPage, setCurrentPage] = useState<PageState>("native")
   const [isTransitioning, setIsTransitioning] = useState(false)
@@ -916,11 +910,9 @@ export function LanguageSelector() {
 
   // Load user settings from database
   useEffect(() => {
-    console.log('🔄 Settings load effect triggered. User ID:', user?.id)
     
     const loadUserSettings = async () => {
       if (!user?.id) {
-        console.log('⏭️ No user logged in, using defaults')
         if (!settingsInitialized) {
           setSettingsInitialized(true)
           settingsLoadedRef.current = true // Mark as "loaded" so we don't prevent saves
@@ -929,17 +921,14 @@ export function LanguageSelector() {
       }
       
       try {
-        console.log('📥 Loading user settings from database for user:', user.id)
         const response = await fetch('/api/settings')
         
         if (response.ok) {
           const data = await response.json()
           if (data.settings) {
-            console.log('✅ User settings loaded from DB:', JSON.stringify(data.settings, null, 2))
             setSettings(data.settings)
             settingsLoadedRef.current = true
             setSettingsInitialized(true)
-            console.log('🎯 settingsLoadedRef set to TRUE')
           }
         } else {
           console.error('⚠️ Failed to load settings - HTTP', response.status)
@@ -968,7 +957,6 @@ export function LanguageSelector() {
       setIsIOS(isIOSDevice || isCapacitor);
       
       if (isIOSDevice || isCapacitor) {
-        console.log('🍎 iOS/Capacitor detected - applying glass effect overrides');
         document.documentElement.classList.add('ios-device');
       }
     };
@@ -992,7 +980,6 @@ export function LanguageSelector() {
     const savedTargetCode = localStorage.getItem('targetLanguageCode')
 
     if (savedNativeCode && savedTargetCode) {
-      console.log('🔄 Restoring last language selection:', savedNativeCode, '→', savedTargetCode)
       // Language names are resolved later by the full getLanguageName defined below;
       // for now store the code as a temporary display name — it will be overwritten
       // on the first render that has access to getLanguageName via normal state flow.
@@ -1009,10 +996,6 @@ export function LanguageSelector() {
     if (typeof window !== 'undefined') {
       (window as any).__vocaWorldUserId = user?.id || null;
       (window as any).__vocaWorldTargetLangCode = targetLanguageCode || null;
-      console.log('📊 Progress tracking globals set:', {
-        userId: user?.id,
-        targetLangCode: targetLanguageCode
-      });
     }
   }, [user?.id, targetLanguageCode]);
 
@@ -1020,7 +1003,6 @@ export function LanguageSelector() {
   const refreshPlaylists = useCallback(async () => {
     if (!user?.id || !nativeLanguageCode || !targetLanguageCode) return
     
-    console.log('🔄 Refreshing playlists...')
     setIsLoadingPlaylists(true)
     try {
       const response = await fetch(
@@ -1029,7 +1011,6 @@ export function LanguageSelector() {
       if (response.ok) {
         const data = await response.json()
         setUserPlaylists(data.playlists || [])
-        console.log('✅ Playlists refreshed:', data.playlists?.length || 0)
       }
     } catch (error) {
       console.error('Error fetching playlists:', error)
@@ -1314,7 +1295,6 @@ export function LanguageSelector() {
       case 'Fast': rate = 1.1; break  // 10% faster — minimal time-stretch artifacts
       default: rate = 1.0 // Normal
     }
-    console.log(`🎚️ getSpeedRate: ${speed} -> ${rate}x (conservative range for better quality)`)
     return rate
   }
 
@@ -1334,9 +1314,7 @@ export function LanguageSelector() {
     if (typeof window !== 'undefined' && !audioContextRef.current) {
       try {
         audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
-        console.log('🔊 Web Audio API context created, state:', audioContextRef.current.state)
       } catch (e) {
-        console.log('⚠️ Failed to create AudioContext:', e)
       }
     }
     return () => {
@@ -1361,7 +1339,6 @@ export function LanguageSelector() {
       // Resume the AudioContext (this is what unlocks it on mobile)
       if (ctx.state === 'suspended') {
         await ctx.resume()
-        console.log('🔓 AudioContext resumed, state:', ctx.state)
       }
       
       // Create and play a short silent buffer to fully unlock
@@ -1372,10 +1349,8 @@ export function LanguageSelector() {
       source.start(0)
       
       audioUnlockedRef.current = true
-      console.log('🔓 Audio unlocked for mobile playback via Web Audio API')
       return true
     } catch (error) {
-      console.log('⚠️ Audio unlock failed:', error)
       return false
     }
   }
@@ -1424,7 +1399,6 @@ export function LanguageSelector() {
         source.onended = () => resolve()
         source.start(0)
         
-        console.log(`🎵 Playing via Web Audio API at ${playbackRate}x speed (Note: pitch will shift - HTML Audio preferred for speed changes)`)
         
       } catch (error) {
         console.error('Web Audio playback error:', error)
@@ -1469,7 +1443,6 @@ export function LanguageSelector() {
       
       audio.play().catch(reject)
       
-      console.log(`🎵 Playing via HTML Audio fallback at ${playbackRate}x speed (preservesPitch: ${('preservesPitch' in audio) || ('mozPreservesPitch' in audio)})`)
     })
   }
   
@@ -1480,12 +1453,10 @@ export function LanguageSelector() {
     
     if (playbackRate !== 1.0) {
       // Use HTML Audio for speed adjustments (better pitch preservation)
-      console.log('🎯 Using HTML Audio for pitch-preserved playback at', playbackRate, 'x speed')
       try {
         await playAudioFallback(url, playbackRate)
         return
       } catch (error) {
-        console.log('⚠️ HTML Audio failed, trying Web Audio:', error)
         // Fall back to Web Audio if HTML Audio fails
         if (audioContextRef.current && audioUnlockedRef.current) {
           await playAudioWithWebAudio(url, playbackRate)
@@ -1503,7 +1474,6 @@ export function LanguageSelector() {
       await playAudioFallback(url, playbackRate)
       return
     } catch (error) {
-      console.log('⚠️ HTML Audio failed, trying Web Audio fallback:', error)
     }
     
     // Last resort: Web Audio API
@@ -1548,18 +1518,12 @@ export function LanguageSelector() {
 
   // Initialize Audio Service (uses /api/universal-audio backed by B2)
   useEffect(() => {
-    console.log('🔄 Audio service useEffect triggered - Languages:', { targetLanguageCode, nativeLanguageCode });
     const initAlnilam = () => {
       try {
-        console.log('🚀 Starting Alnilam service initialization...') // Updated for debugging
-        console.log('🔍 initAlnilam function called - checking environment');
         
         // Create service directly with all needed methods
         const alnilamAudioService = {
           async playWordSequence(sourceWord: string, targetWord: string, settings: any, wordId: string, sourceLanguage: string, targetLanguage: string, englishWord?: string) {
-            console.log('🎵 Alnilam playWordSequence called:', {
-              sourceWord, targetWord, sourceLanguage, targetLanguage, wordId, englishWord
-            });
 
             // Get abort signal from the current autoplay session
             const abortSignal = autoplayAbortController.current?.signal;
@@ -1567,7 +1531,6 @@ export function LanguageSelector() {
             try {
               // Check abort at entry
               if (abortSignal?.aborted || stopRequestedRef.current) {
-                console.log('🛑 Playback aborted at entry');
                 return false;
               }
               
@@ -1601,7 +1564,6 @@ export function LanguageSelector() {
               const sourceLangCode = (languageMappings as any)[sourceLanguage] || sourceLanguage.toLowerCase();
               const targetLangCode = (languageMappings as any)[targetLanguage] || targetLanguage.toLowerCase();
 
-              console.log(`🌟 Playing Alnilam audio: TARGET FIRST ${targetWord} (${targetLangCode}) → THEN SOURCE ${sourceWord} (${sourceLangCode})`);
 
               // Helper function: Interruptible sleep that respects abort signal
               const abortableSleep = (ms: number): Promise<void> => {
@@ -1672,10 +1634,8 @@ export function LanguageSelector() {
                     }
                     // CRITICAL: Set playbackRate right before play to ensure it's applied
                     audio.playbackRate = playbackRate;
-                    console.log(`🎚️ Playing ${description} at speed ${playbackRate}x`);
                     audio.play().catch((playError) => {
                       // 🔊 MOBILE FIX: If play fails, try to recover
-                      console.log(`⚠️ Play failed for ${description}, error:`, playError);
                       cleanup();
                       reject(playError);
                     });
@@ -1719,17 +1679,14 @@ export function LanguageSelector() {
                 // Try Web Audio API first (more reliable on mobile)
                 if (audioContextRef.current && audioUnlockedRef.current) {
                   try {
-                    console.log(`🎵 Playing via Web Audio: ${description}`);
                     await playAudioWithWebAudio(url, playbackRate);
                     return;
                   } catch (error: any) {
                     if (error.name === 'AbortError') throw error;
-                    console.log('⚠️ Web Audio failed, trying HTML Audio fallback');
                   }
                 }
                 
                 // Fallback to HTML Audio
-                console.log(`🎵 Playing via HTML Audio: ${description}`);
                 const audio = new Audio(url);
                 audio.crossOrigin = 'anonymous';
                 audio.preload = 'auto';
@@ -1742,18 +1699,15 @@ export function LanguageSelector() {
               try {
                 // Try to resume AudioContext if it's suspended (autoplay policy)
                 if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
-                  console.log('🔓 Resuming AudioContext for autoplay...');
                   await audioContextRef.current.resume();
                 }
               } catch (audioContextError) {
-                console.log('⚠️ AudioContext resume failed (might be normal):', (audioContextError as Error).message);
               }
 
               // 🔧 UNIVERSAL AUDIO ROUTING - Supports all 47 Azure languages + Alnilam
               // Now includes optional 'word' parameter for Verbs topic word-based lookup
               // Also includes 'targetWord' parameter for cy/ga/mt Common Phrases lookup
               const getAudioUrl = (wordId: string | number, languageCode: string, englishWord?: string, targetWordForAudio?: string) => {
-                console.log(`🌍 Using Universal Audio API for ${languageCode}`, { wordId, englishWord, targetWordForAudio });
                 let url = `/api/universal-audio?wordId=${wordId}&languageCode=${languageCode}`;
                 if (englishWord) {
                   url += `&word=${encodeURIComponent(englishWord)}`;
@@ -1771,12 +1725,10 @@ export function LanguageSelector() {
                     try {
                       // Check if stop was requested
                       if (stopRequestedRef.current) {
-                        console.log(`🛑 Stop requested during ${description}`);
                         resolve();
                         return;
                       }
                       
-                      console.log(`🎯 Loading ${description}: ${url}`);
                       
                       // 🔊 MOBILE FIX V3: Use Web Audio API for reliable playback
                       const speedRate = getSpeedRate(settings.pronunciationSpeed || 'Normal');
@@ -1794,7 +1746,6 @@ export function LanguageSelector() {
               // Note: sourceWord actually contains the LEARNING language translation (inverted naming in vocabulary API)
               if (wordId && targetLangCode) {
                 const targetUrl = getAudioUrl(wordId, targetLangCode, englishWord, sourceWord);
-                console.log(`🎯 Loading TARGET audio FIRST: ${targetUrl}`);
                 
                 // Set visual indicator for target language
                 if (settings?.setCurrentAudioStep) {
@@ -1806,17 +1757,14 @@ export function LanguageSelector() {
                 for (let i = 0; i < targetRepeats; i++) {
                   // Check if stop was requested or aborted
                   if (abortSignal?.aborted || stopRequestedRef.current) {
-                    console.log('🛑 Stop requested during target audio');
                     throw new DOMException('Target audio aborted', 'AbortError');
                   }
                   
                   try {
                     // 🔊 MOBILE FIX V3: Use Web Audio API for reliable playback
                     const speedRate = getSpeedRate(settings.pronunciationSpeed || 'Normal');
-                    console.log(`🎚️ Speed setting: ${settings.pronunciationSpeed} -> rate: ${speedRate}`);
                     
                     await playAudioUrl(targetUrl, `TARGET ${targetWord} - Repeat ${i + 1}`, speedRate);
-                    console.log(`✅ TARGET audio played: ${targetWord} (${targetLangCode}) - Repeat ${i + 1}/${targetRepeats}`);
                     
                     // Small pause between repeats (except after last repeat)
                     if (i < targetRepeats - 1) {
@@ -1824,10 +1772,8 @@ export function LanguageSelector() {
                     }
                   } catch (error: any) {
                     if (error.name === 'AbortError') {
-                      console.log(`🛑 TARGET audio aborted: ${targetWord}`);
                       throw error; // Re-throw to exit the loop
                     }
-                    console.log(`⚠️ TARGET audio failed: ${targetWord} (${targetLangCode}) - Repeat ${i + 1}`, error);
                     await abortableSleep(500); // Brief pause before retry
                   }
                 }
@@ -1836,19 +1782,16 @@ export function LanguageSelector() {
                 if (settings?.pauseBetweenTranslations) {
                   const pauseStartTime = performance.now();
                   const expectedPauseDuration = settings.pauseBetweenTranslations * 1000;
-                  console.log(`⏸️ Starting pause between translations: ${settings.pauseBetweenTranslations}s (${expectedPauseDuration}ms)`);
                   
                   await abortableSleep(expectedPauseDuration);
                   
                   const actualPauseDuration = performance.now() - pauseStartTime;
                   const difference = actualPauseDuration - expectedPauseDuration;
-                  console.log(`✅ Pause between translations completed: Expected ${expectedPauseDuration}ms, Actual ${actualPauseDuration.toFixed(2)}ms (diff: ${difference >= 0 ? '+' : ''}${difference.toFixed(2)}ms)`);
                 }
               }
 
               // Check if stop was requested between target and source
               if (abortSignal?.aborted || stopRequestedRef.current) {
-                console.log('🛑 Stop requested between target and source');
                 throw new DOMException('Playback aborted between languages', 'AbortError');
               }
 
@@ -1856,10 +1799,8 @@ export function LanguageSelector() {
               // Note: targetWord actually contains the NATIVE language translation (inverted naming in vocabulary API)
               // Skip source audio if playTargetOnly is enabled
               if (settings?.playTargetOnly) {
-                console.log('⏭️ Skipping source audio (playTargetOnly enabled) - playing only target language');
               } else if (wordId && sourceLangCode) {
                 const sourceUrl = getAudioUrl(wordId, sourceLangCode, englishWord, targetWord);
-                console.log(`🎵 Loading SOURCE audio SECOND: ${sourceUrl}`);
                 
                 // Set visual indicator for source language
                 if (settings?.setCurrentAudioStep) {
@@ -1871,7 +1812,6 @@ export function LanguageSelector() {
                 for (let i = 0; i < sourceRepeats; i++) {
                   // Check if stop was requested or aborted
                   if (abortSignal?.aborted || stopRequestedRef.current) {
-                    console.log('🛑 Stop requested during source audio');
                     throw new DOMException('Source audio aborted', 'AbortError');
                   }
                   
@@ -1880,7 +1820,6 @@ export function LanguageSelector() {
                     const speedRate = getSpeedRate(settings.pronunciationSpeed || 'Normal');
                     
                     await playAudioUrl(sourceUrl, `SOURCE ${sourceWord} - Repeat ${i + 1}`, speedRate);
-                    console.log(`✅ SOURCE audio played: ${sourceWord} (${sourceLangCode}) - Repeat ${i + 1}/${sourceRepeats}`);
                     
                     // Small pause between repeats (except after last repeat)
                     if (i < sourceRepeats - 1) {
@@ -1888,16 +1827,13 @@ export function LanguageSelector() {
                     }
                   } catch (error: any) {
                     if (error.name === 'AbortError') {
-                      console.log(`🛑 SOURCE audio aborted: ${sourceWord}`);
                       throw error; // Re-throw to exit the loop
                     }
-                    console.log(`⚠️ SOURCE audio failed: ${sourceWord} (${sourceLangCode}) - Repeat ${i + 1}`, error);
                     await abortableSleep(500); // Brief pause before retry
                   }
                 }
               }
 
-              console.log('🎉 Alnilam sequence completed successfully');
               
               // Track word progress when audio completes successfully
               // Get user from context - we'll need to access user state
@@ -1918,12 +1854,10 @@ export function LanguageSelector() {
                   
                   if (response.ok) {
                     const data = await response.json();
-                    console.log('📊 Progress tracked for word:', wordId);
                     
                     // Update completed topics immediately from API response
                     if (data.completedTopicIds) {
                       setCompletedTopicIds(data.completedTopicIds);
-                      console.log('🔄 Completed topics updated:', data.completedTopicIds);
                     }
                   }
                 } catch (error) {
@@ -1940,7 +1874,6 @@ export function LanguageSelector() {
 
             } catch (error: any) {
               if (error.name === 'AbortError') {
-                console.log('🛑 Alnilam sequence aborted cleanly');
                 // Reset visual indicator
                 if (settings?.setCurrentAudioStep) {
                   settings.setCurrentAudioStep('idle');
@@ -1964,25 +1897,14 @@ export function LanguageSelector() {
           }
         };
 
-        console.log('🌊 B2 Audio Service initialized - Backblaze cloud audio');
-        console.log('✅ B2 audio service created:', alnilamAudioService);
         alnilamServiceRef.current = alnilamAudioService; // Store in ref for immediate access
         setAlnilamService(alnilamAudioService);
-        console.log('✅ B2 audio service set in state and ref');
         setActiveAudioService("B2 Audio");
-        console.log('🌟 B2 Audio Service initialized successfully');
         
         // IMMEDIATE TEST: Try calling the service right after initialization
-        console.log('🧪 Testing Alnilam service immediately after initialization...');
-        console.log('🧪 Service object test:', {
-          serviceExists: !!alnilamAudioService,
-          hasPlayMethod: !!alnilamAudioService.playWordSequence,
-          serviceType: typeof alnilamAudioService
-        });
         
       } catch (error) {
         console.error('❌ Failed to initialize Alnilam service:', error);
-        console.log('Alnilam service not available, Algenib will be used instead');
       }
     }
     
@@ -1992,42 +1914,27 @@ export function LanguageSelector() {
   // Main audio playback function - Algenib Enhanced
   const playAudio = async (word: any, autoPlay = false) => {
     const now = Date.now();
-    console.log('🔴 DEBUG: playAudio called', { 
-      word: word ? 'exists' : 'null', 
-      isPlaying, 
-      autoPlay,
-      audioCallInProgress: audioCallInProgress.current,
-      timeSinceLastCall: now - lastAudioCallTime.current,
-      stopRequested: stopRequestedRef.current,
-      autoplayAborted: autoplayAbortController.current?.signal.aborted,
-      timestamp: now
-    });
     
     // CRITICAL: Check abort signal first (highest priority)
     if (autoplayAbortController.current?.signal.aborted) {
-      console.log('🛑 Autoplay aborted - rejecting playAudio call');
       return;
     }
     
     // CRITICAL: Check if stop was requested - exit immediately if true
     if (stopRequestedRef.current) {
-      console.log('🛑 Stop flag is active - rejecting playAudio call');
       return;
     }
     
     // Prevent rapid consecutive calls (less than 100ms apart)
     if (audioCallInProgress.current) {
-      console.log('🔴 DEBUG: Audio call already in progress, ignoring');
       return;
     }
     
     if (now - lastAudioCallTime.current < 100) {
-      console.log('🔴 DEBUG: Too soon since last call, ignoring');
       return;
     }
     
     if (!word || isPlaying) {
-      console.log('🔴 DEBUG: Returning early', { hasWord: !!word, isPlaying });
       return;
     }
 
@@ -2052,17 +1959,6 @@ export function LanguageSelector() {
         return
       }
 
-      console.log('🎓 Algenib audio playback for:', { 
-        wordId,
-        sourceWord, 
-        targetWord,
-        englishWord,
-        targetLanguage, 
-        nativeLanguage,
-        currentWordIndex,
-        autoPlay,
-        isCustomWord
-      })
 
       if (autoPlay) {
         setAutoPlayActive(true)
@@ -2071,7 +1967,6 @@ export function LanguageSelector() {
       
       // For custom/playlist words, use TTS fallback instead of B2 audio
       if (isCustomWord) {
-        console.log('🎤 Using TTS fallback for custom word')
         setActiveAudioService("TTS")
         
         try {
@@ -2098,7 +1993,6 @@ export function LanguageSelector() {
           try {
             await playAudioUniversal(targetAudioUrl, 1.0);
           } catch (e) {
-            console.log('⚠️ Target TTS failed:', e);
           }
           
           // Pause between words
@@ -2118,10 +2012,8 @@ export function LanguageSelector() {
           try {
             await playAudioUniversal(nativeAudioUrl, 1.0);
           } catch (e) {
-            console.log('⚠️ Native TTS failed:', e);
           }
           
-          console.log('✅ TTS audio completed successfully')
           setCurrentAudioStep('idle')
           setIsPlaying(false)
           audioCallInProgress.current = false
@@ -2136,20 +2028,10 @@ export function LanguageSelector() {
         }
       }
       
-      console.log('🎮 Play button clicked - checking services...', {
-        alnilamService: !!alnilamService,
-        alnilamServiceType: typeof alnilamService,
-        wordId,
-        sourceWord,
-        targetWord,
-        targetLanguage,
-        nativeLanguage
-      });
       
       // CRITICAL DEBUG: Check if Alnilam service is available
       if (!alnilamService) {
         console.error('🚨 CRITICAL: Alnilam service is null/undefined!');
-        console.log('🔍 Service initialization status check needed');
       }
       
       if (!wordId) {
@@ -2159,19 +2041,8 @@ export function LanguageSelector() {
       // Priority 1: Try Alnilam Multilingual Audio first (54,738 files)
       const currentAlnilamService = alnilamServiceRef.current;
       if (currentAlnilamService && wordId) {
-        console.log('🌟 Using Alnilam Multilingual Audio for comprehensive language support')
-        console.log('🔧 About to call playWordSequence with:', {
-          sourceWord, targetWord, wordId, nativeLanguage, targetLanguage,
-          settingsType: typeof settings,
-          hasSetCurrentAudioStep: typeof setCurrentAudioStep
-        })
         setActiveAudioService("Alnilam")
         
-        console.log('🎮 DEBUG: Calling Alnilam with settings:', {
-          playTargetOnly: settings.playTargetOnly,
-          repeatTarget: settings.repeatTargetLanguage,
-          repeatMain: settings.repeatMainLanguage
-        })
         
         try {
           const alnilamSuccess = await currentAlnilamService.playWordSequence(
@@ -2192,11 +2063,9 @@ export function LanguageSelector() {
             englishWord           // englishWord for Verbs audio lookup
           )
           
-          console.log('🎵 Alnilam playWordSequence returned:', alnilamSuccess)
           
           // Check abort signal first (highest priority)
           if (autoplayAbortController.current?.signal.aborted) {
-            console.log('🛑 Autoplay aborted during Alnilam playback - immediate exit');
             setCurrentAudioStep('idle')
             setIsPlaying(false)
             audioCallInProgress.current = false
@@ -2205,7 +2074,6 @@ export function LanguageSelector() {
           
           // Check if stop was requested during playback - EXIT IMMEDIATELY
           if (stopRequestedRef.current) {
-            console.log('🛑 Stop requested during Alnilam playback - cleaning up and exiting');
             setCurrentAudioStep('idle')
             setIsPlaying(false)
             audioCallInProgress.current = false
@@ -2213,7 +2081,6 @@ export function LanguageSelector() {
           }
           
           if (alnilamSuccess) {
-            console.log('✅ Alnilam audio completed successfully')
             
             // Track word progress when audio is played successfully
             if (user?.id && wordId && targetLanguageCode) {
@@ -2227,7 +2094,6 @@ export function LanguageSelector() {
                     targetLanguageCode: targetLanguageCode
                   })
                 })
-                console.log('📊 Progress tracked for word:', wordId)
               } catch (error) {
                 console.error('Failed to track progress:', error)
               }
@@ -2237,7 +2103,6 @@ export function LanguageSelector() {
             setIsPlaying(false)
             return
           } else {
-            console.log('⚠️ Audio service returned false - audio may not be available for this word')
             setCurrentAudioStep('idle')
             setIsPlaying(false)
           }
@@ -2269,13 +2134,11 @@ export function LanguageSelector() {
 
   // Stop audio function with abort controller
   const stopAudio = () => {
-    console.log('🛑 STOP AUDIO - Complete shutdown initiated');
     
     // Abort any ongoing autoplay loop immediately
     if (autoplayAbortController.current) {
       autoplayAbortController.current.abort();
       autoplayAbortController.current = null;
-      console.log('✅ Autoplay aborted via AbortController');
     }
     
     // Set legacy stop flags for backward compatibility
@@ -2293,9 +2156,7 @@ export function LanguageSelector() {
         audio.pause();
         audio.currentTime = 0;
         audio.src = '';
-        console.log('🛑 Stopped audio element');
       } catch (error) {
-        console.log('⚠️ Error stopping audio element:', error);
       }
     });
     
@@ -2310,7 +2171,6 @@ export function LanguageSelector() {
     setCurrentAudioStep('idle')
     setAutoPlayActive(false)
     
-    console.log('✅ Audio stopped immediately and all states reset')
   }
 
   // Example sentences modal state
@@ -2379,11 +2239,9 @@ export function LanguageSelector() {
     
     const fetchCompletedTopics = async () => {
       try {
-        console.log('🔍 Fetching completed topics for:', { userId: user.id, targetLanguageCode })
         const response = await fetch(`/api/progress/topics?userId=${user.id}&targetLanguageCode=${targetLanguageCode}`)
         if (response.ok) {
           const data = await response.json()
-          console.log('📊 Completed topics loaded:', data.completedTopicIds)
           setCompletedTopicIds(data.completedTopicIds || [])
         } else {
           console.error('Failed to fetch completed topics:', response.status)
@@ -2421,7 +2279,6 @@ export function LanguageSelector() {
             totalWords: vocabulary.length
           })
         })
-        console.log('💾 Auto-saved position:', currentWordIndex, 'for topic:', selectedTopic.id)
       } catch (error) {
         console.error('Failed to auto-save position:', error)
       }
@@ -2444,7 +2301,6 @@ export function LanguageSelector() {
               totalWords: vocabulary.length
             })
           }).then(() => {
-            console.log('💾 Cleanup-saved position:', currentWordIndex, 'for topic:', selectedTopic.id)
           }).catch(error => {
             console.error('Failed to cleanup-save position:', error)
           })
@@ -2456,23 +2312,18 @@ export function LanguageSelector() {
   // Fetch phonetics for vocabulary words
   const fetchPhonetics = async (vocab: VocabularyWord[], targetLangCode: string, nativeLangCode: string) => {
     if (!vocab || vocab.length === 0) {
-      console.log('⏭️ No vocabulary to fetch phonetics for')
       return
     }
     
     try {
-      console.log(`🔤 Fetching phonetics for ${vocab.length} words...`)
-      console.log('Sample vocab items:', vocab.slice(0, 3))
       
       // Get vocabulary IDs from the vocab array
       const vocabIds = vocab
         .map(v => v.id)
         .filter((id): id is number => id !== undefined && id !== null)
       
-      console.log('Vocabulary IDs to fetch:', vocabIds.slice(0, 5), '... total:', vocabIds.length)
       
       if (vocabIds.length === 0) {
-        console.log('⚠️ No vocabulary IDs found to fetch phonetics')
         return
       }
       
@@ -2488,15 +2339,9 @@ export function LanguageSelector() {
       
       if (response.ok) {
         const data = await response.json()
-        console.log('✅ Phonetics fetched:', {
-          count: data.count,
-          sampleKeys: Object.keys(data.phonetics || {}).slice(0, 5),
-          sample: Object.values(data.phonetics || {}).slice(0, 2)
-        })
         setPhonetics(data.phonetics || {})
       } else {
         const errorText = await response.text()
-        console.log('⚠️ Failed to fetch phonetics:', response.status, errorText)
       }
     } catch (error) {
       console.error('❌ Error fetching phonetics:', error)
@@ -2506,12 +2351,6 @@ export function LanguageSelector() {
   // Fetch phonetics when settings load with showPhonetics=true OR when vocabulary/languages change
   useEffect(() => {
     if (settingsInitialized && settings.showPhonetics && vocabulary.length > 0) {
-      console.log('🔤 Fetching phonetics for current vocabulary...', {
-        vocabCount: vocabulary.length,
-        targetLang: targetLanguageCode,
-        nativeLang: nativeLanguageCode,
-        currentPhoneticsCount: Object.keys(phonetics).length
-      })
       fetchPhonetics(vocabulary, targetLanguageCode, nativeLanguageCode)
     }
   }, [settingsInitialized, settings.showPhonetics, vocabulary.length, targetLanguageCode, nativeLanguageCode, selectedTopic?.id])
@@ -2520,7 +2359,6 @@ export function LanguageSelector() {
   const preloadVocabularyInBackground = async (nativeLang: string, targetLang: string) => {
     if (!dataCache.topics.length) return
     
-    console.log('🔄 Silently preloading vocabulary in background...')
     
     // Preload vocabulary for all topics with these languages (sequential to avoid overwhelming DB)
     const topicsToPreload = dataCache.topics.slice(0, 3); // Reduced from 5 to 3 topics
@@ -2546,7 +2384,6 @@ export function LanguageSelector() {
             }
           }))
           
-          console.log(`✅ Cached vocabulary for topic ${topic.id}: ${vocabularyResponse.vocabulary?.length || 0} words`)
           
           // Small delay between requests to avoid overwhelming the database
           await new Promise(resolve => setTimeout(resolve, 100));
@@ -2557,29 +2394,13 @@ export function LanguageSelector() {
       }
     }
     
-    console.log('✅ Vocabulary preloading completed')
   }
   // Vocabulary is now preloaded in handleTopicSelect before page transition
   /*
   useEffect(() => {
     const loadVocabulary = async () => {
-      console.log('🔍 Vocabulary loading effect triggered:', {
-        selectedTopic: selectedTopic?.id,
-        selectedTopicName: selectedTopic?.name,
-        nativeLanguageCode,
-        targetLanguageCode,
-        nativeLanguage,
-        targetLanguage,
-        allConditionsMet: !!(selectedTopic && nativeLanguageCode && targetLanguageCode)
-      })
       
       if (selectedTopic && nativeLanguageCode && targetLanguageCode) {
-        console.log('✅ Loading vocabulary for word training:', {
-          topicId: selectedTopic.id,
-          topicName: selectedTopic.name,
-          trainingLanguage: `${targetLanguage} (${targetLanguageCode})`, // what user wants to learn
-          mainLanguage: `${nativeLanguage} (${nativeLanguageCode})` // user's native language for translations
-        })
         
         // Clear existing vocabulary to prevent showing old data
         setVocabulary([])
@@ -2597,10 +2418,7 @@ export function LanguageSelector() {
             0 // Start from offset 0
           )
           
-          console.log('Vocabulary loaded:', vocabularyResponse.vocabulary.length, 'words out of', vocabularyResponse.totalWords)
           if (vocabularyResponse.vocabulary.length > 0) {
-            console.log('Sample vocabulary:', vocabularyResponse.vocabulary.slice(0, 3))
-            console.log('First word details:', vocabularyResponse.vocabulary[0])
           }
           setVocabulary(vocabularyResponse.vocabulary)
           setTotalWords(vocabularyResponse.totalWords)
@@ -2609,7 +2427,6 @@ export function LanguageSelector() {
           setCurrentWordIndex(0)
           
           // Audio system removed - placeholder for new TTS implementation
-          console.log(`🎵 Audio system removed for topic ${selectedTopic.id}: ${selectedTopic.name}`)
           setHasUmbrielAudio(false)
           setUmbrielStatus(`🔄 TTS System Removed - Ready for New Implementation`)
           
@@ -2625,14 +2442,6 @@ export function LanguageSelector() {
           setIsLoading(false)
         }
       } else {
-        console.log('❌ Vocabulary loading conditions not met:', {
-          hasSelectedTopic: !!selectedTopic,
-          hasNativeLanguageCode: !!nativeLanguageCode,
-          hasTargetLanguageCode: !!targetLanguageCode,
-          selectedTopic: selectedTopic?.name,
-          nativeLanguageCode,
-          targetLanguageCode
-        })
       }
     }
     loadVocabulary()
@@ -2645,7 +2454,6 @@ export function LanguageSelector() {
     
     try {
       setIsLoading(true)
-      console.log('Loading more words from offset:', currentOffset)
       
       const vocabularyResponse = await getVocabularyForTopic(
         selectedTopic.id,
@@ -2656,7 +2464,6 @@ export function LanguageSelector() {
       )
       
       if (vocabularyResponse.vocabulary && vocabularyResponse.vocabulary.length > 0) {
-        console.log('Loaded', vocabularyResponse.vocabulary.length, 'more words')
         // Append new words to existing vocabulary
         setVocabulary(prev => [...prev, ...(vocabularyResponse.vocabulary || [])])
         setCurrentOffset(prev => prev + 50)
@@ -2672,17 +2479,14 @@ export function LanguageSelector() {
   // Auto-play controller function with AbortController pattern
   const startAutoPlay = async () => {
     if (!vocabulary.length || !settings.autoPlay) {
-      console.log('❌ Autoplay blocked: no vocabulary or autoplay disabled');
       return;
     }
     
     // Prevent multiple simultaneous autoplay instances
     if (isAutoplayActive.current) {
-      console.log('⚠️ Autoplay already active, ignoring duplicate call');
       return;
     }
     
-    console.log('▶️ AUTOPLAY START from word', currentWordIndex + 1);
     
     // Create new AbortController for this autoplay session
     autoplayAbortController.current = new AbortController();
@@ -2703,14 +2507,12 @@ export function LanguageSelector() {
       while (true) {
         // Check abort signal FIRST - highest priority check
         if (signal.aborted) {
-          console.log('🛑 Autoplay aborted by signal at word', i + 1);
           throw new DOMException('Autoplay aborted', 'AbortError');
         }
 
         // End of word list reached
         if (i >= vocabulary.length) {
           if (settings.rewindEnabled) {
-            console.log('🔄 Rewind: end of list reached, looping back to word', loopStartIndex + 1);
             i = loopStartIndex;
             wordCount = 0;
             continue;
@@ -2722,12 +2524,10 @@ export function LanguageSelector() {
         
         const word = vocabulary[i];
         if (!word || !word.sourceWord || !word.targetWord) {
-          console.log('⏭️ Skipping invalid word at index', i);
           i++;
           continue;
         }
         
-        console.log(`▶️ Autoplay [${i + 1}/${vocabulary.length}]: ${word.sourceWord}`);
         
         // Update display ONLY if not aborted
         if (!signal.aborted) {
@@ -2736,7 +2536,6 @@ export function LanguageSelector() {
         
         // Check abort BEFORE playing
         if (signal.aborted) {
-          console.log('🛑 Aborted before playAudio');
           throw new DOMException('Autoplay aborted', 'AbortError');
         }
         
@@ -2745,7 +2544,6 @@ export function LanguageSelector() {
         
         // Check abort AFTER playing
         if (signal.aborted) {
-          console.log('🛑 Aborted after playAudio');
           throw new DOMException('Autoplay aborted', 'AbortError');
         }
 
@@ -2763,14 +2561,12 @@ export function LanguageSelector() {
           
           const pauseStartTime = performance.now();
           const expectedPauseDuration = settings.pauseForNextWord * 1000;
-          console.log(`⏸️ Starting pause for next word: ${settings.pauseForNextWord}s (${expectedPauseDuration}ms)`);
           
           // Interruptible sleep using abort signal
           await new Promise<void>((resolve, reject) => {
             const timeoutId = setTimeout(() => {
               const actualPauseDuration = performance.now() - pauseStartTime;
               const difference = actualPauseDuration - expectedPauseDuration;
-              console.log(`✅ Pause for next word completed: Expected ${expectedPauseDuration}ms, Actual ${actualPauseDuration.toFixed(2)}ms (diff: ${difference >= 0 ? '+' : ''}${difference.toFixed(2)}ms)`);
               resolve();
             }, expectedPauseDuration);
             
@@ -2778,7 +2574,6 @@ export function LanguageSelector() {
             signal.addEventListener('abort', () => {
               clearTimeout(timeoutId);
               const actualPauseDuration = performance.now() - pauseStartTime;
-              console.log(`🛑 Pause for next word aborted after ${actualPauseDuration.toFixed(2)}ms`);
               reject(new DOMException('Autoplay aborted during pause', 'AbortError'));
             });
           });
@@ -2788,7 +2583,6 @@ export function LanguageSelector() {
         if (signal.aborted) throw new DOMException('Autoplay aborted', 'AbortError');
 
         if (rewindNow) {
-          console.log(`🔄 Rewind: played ${wordCount} words, looping back to word ${loopStartIndex + 1}`);
           i = loopStartIndex;
           wordCount = 0;
         } else {
@@ -2797,17 +2591,14 @@ export function LanguageSelector() {
       }
       
       // Natural completion (not aborted)
-      console.log('✅ Autoplay completed naturally');
       
     } catch (error: any) {
       if (error.name === 'AbortError') {
-        console.log('🛑 Autoplay aborted cleanly:', error.message);
       } else {
         console.error('❌ Autoplay error:', error);
       }
     } finally {
       // Always clean up state
-      console.log('🧹 Autoplay cleanup');
       isAutoplayActive.current = false;
       autoPlayRef.current = false;
       setAutoPlayActive(false);
@@ -2822,17 +2613,14 @@ export function LanguageSelector() {
   useEffect(() => {
     // Prevent auto-play on page load - require user interaction first
     if (autoPlayActive && !isPlaying && vocabulary.length > 0 && hasUserInteracted) {
-      console.log('Auto-play triggered by user interaction')
       startAutoPlay()
     } else if (autoPlayActive && !hasUserInteracted) {
-      console.log('Auto-play blocked - no user interaction yet')
       setAutoPlayActive(false) // Reset autoplay since user hasn't interacted
     }
   }, [autoPlayActive, hasUserInteracted])
 
   // Initialize B2 audio system
   useEffect(() => {
-    console.log('🎵 B2 Audio system active - Backblaze cloud audio storage')
   }, [])
 
   // Language names mapping for better display
@@ -3047,7 +2835,6 @@ export function LanguageSelector() {
   }
 
   const handleLanguageSelect = (language: { code: string; name: string }) => {
-    console.log('Language selected:', language)
     
     // Reset scroll position to top of the container
     const languageGrid = document.querySelector('.language-grid-container')
@@ -3058,7 +2845,6 @@ export function LanguageSelector() {
     if (currentPage === "native") {
       setNativeLanguage(language.name)
       setNativeLanguageCode(language.code)
-      console.log('Native language set:', language.name, language.code)
       
       // Start fade animation
       setIsTransitioning(true)
@@ -3077,7 +2863,6 @@ export function LanguageSelector() {
     } else if (currentPage === "target") {
       setTargetLanguage(language.name)
       setTargetLanguageCode(language.code)
-      console.log('Target language set:', language.name, language.code)
       
       // Start background preloading immediately (invisible to user)
       preloadVocabularyInBackground(nativeLanguage, language.name)
@@ -3095,7 +2880,6 @@ export function LanguageSelector() {
 
   const handleContinue = () => {
     if (currentPage === "confirmation") {
-      console.log("Starting language learning journey!")
     }
   }
 
@@ -3143,16 +2927,13 @@ export function LanguageSelector() {
   }
 
   const handleTopicSelect = async (topic: Topic) => {
-    console.log('🔐 Processing topic selection:', topic.id, topic.name)
     
     // Special case: Playlist learning - topic id -2
     if (topic.id === -2) {
-      console.log('📋 Playlist selected - navigating to playlist learning')
       const playlistId = (topic as any).playlistId
       
       // Require authentication for playlists
       if (!user) {
-        console.log('❌ Please sign in to access playlists')
         return
       }
       
@@ -3166,7 +2947,6 @@ export function LanguageSelector() {
         }
         const data = await response.json()
         
-        console.log('📋 Raw playlist data:', JSON.stringify(data, null, 2))
         
         if (!data.words || data.words.length === 0) {
           alert('This playlist has no words yet. Add words from the Search Word feature!')
@@ -3184,13 +2964,6 @@ export function LanguageSelector() {
           const sourceWord = translations[targetLanguageCode] || dictWord?.word_en || ''
           const targetWord = translations[nativeLanguageCode] || dictWord?.word_en || ''
           
-          console.log('📝 Transforming word:', { 
-            word_en: dictWord?.word_en,
-            sourceWord, 
-            targetWord,
-            targetLang: targetLanguageCode,
-            nativeLang: nativeLanguageCode 
-          })
           
           return {
             id: dictWord?.id,
@@ -3201,7 +2974,6 @@ export function LanguageSelector() {
           }
         })
         
-        console.log('📋 Loaded playlist vocabulary:', playlistVocabulary)
         
         // Set vocabulary and navigate
         setVocabulary(playlistVocabulary)
@@ -3231,11 +3003,9 @@ export function LanguageSelector() {
     
     // Special case: Search Word (My Words feature) - topic id -1
     if (topic.id === -1) {
-      console.log('🔍 Search Word selected - navigating to search learning')
       
       // Require authentication for search
       if (!user) {
-        console.log('❌ Please sign in to use search')
         return
       }
       
@@ -3252,7 +3022,6 @@ export function LanguageSelector() {
     // Access check already done in handleTopicClick, proceed with loading topic
     // Note: For regular topics called directly (e.g., from post-payment flow), 
     // we trust that the caller has verified access
-    console.log('✅ Proceeding with topic loading:', topic.id)
 
     // User has access, proceed with topic selection
     const cacheKey = `${topic.id}-${targetLanguage}-${nativeLanguage}`
@@ -3261,25 +3030,20 @@ export function LanguageSelector() {
     let savedPosition = 0
     if (user?.id && targetLanguageCode) {
       try {
-        console.log('📍 Fetching saved position for:', { userId: user.id, topicId: topic.id, targetLanguageCode })
         const positionResponse = await fetch(`/api/progress/position?userId=${user.id}&topicId=${topic.id}&targetLanguageCode=${targetLanguageCode}`)
         if (positionResponse.ok) {
           const positionData = await positionResponse.json()
           savedPosition = positionData.currentWordIndex || 0
-          console.log('📍 Loaded saved position:', savedPosition, 'for topic:', topic.id, 'data:', positionData)
         } else {
-          console.log('📍 No saved position found (status:', positionResponse.status, ')')
         }
       } catch (error) {
         console.error('Failed to load saved position:', error)
       }
     } else {
-      console.log('📍 Skipping position load - user:', !!user?.id, 'targetLangCode:', targetLanguageCode)
     }
     
     // Check if we have cached vocabulary
     if (dataCache.vocabularyCache[cacheKey]) {
-      console.log('✅ Using cached vocabulary - instant transition!')
       
       // Set data from cache instantly
       const cachedVocabulary = dataCache.vocabularyCache[cacheKey]
@@ -3287,7 +3051,6 @@ export function LanguageSelector() {
       setTotalWords(cachedVocabulary.length)
       setCurrentOffset(cachedVocabulary.length)
       setHasMoreWords(false)
-      console.log('📍 Setting currentWordIndex to saved position:', savedPosition, 'out of', cachedVocabulary.length, 'words')
       setCurrentWordIndex(savedPosition) // Resume from saved position
       setSelectedTopic(topic)
       
@@ -3306,7 +3069,6 @@ export function LanguageSelector() {
       
     } else {
       // Fallback: load data if not cached (should be rare)
-      console.log('⚠️ Vocabulary not cached, loading...')
       setIsLoading(true)
       
       try {
@@ -3332,7 +3094,6 @@ export function LanguageSelector() {
         setTotalWords(vocabularyResponse.totalWords || 0)
         setCurrentOffset(vocabularyResponse.vocabulary?.length || 0)
         setHasMoreWords(false)
-        console.log('📍 Setting currentWordIndex to saved position:', savedPosition, 'out of', vocabularyResponse.vocabulary?.length || 0, 'words')
         setCurrentWordIndex(savedPosition) // Resume from saved position
         setSelectedTopic(topic)
         
@@ -3377,7 +3138,6 @@ export function LanguageSelector() {
     const currentWord = vocabulary[currentWordIndex] || vocabulary[0]
     // Debug: Log category info
     if (selectedTopic?.id === 41) {
-      console.log('🏷️ Current word:', currentWord.sourceWord, 'Category:', currentWord.category, 'learningOrder:', currentWord.learningOrder)
     }
     
     // Format category: Use translation if available, otherwise format English version
@@ -3601,20 +3361,16 @@ export function LanguageSelector() {
     await unlockAudio()
     
     if (isPlaying || autoPlayActive) {
-      console.log('🛑 User pressed stop button - stopping all audio and autoplay')
       stopAudio()
     } else {
       const currentWord = vocabulary[currentWordIndex]
       if (currentWord) {
-        console.log('▶️ Manual play button clicked')
         if (settings.autoPlay) {
           // Start auto-play sequence from current word
-          console.log('🔄 Starting autoplay from word', currentWordIndex + 1)
           autoPlayRef.current = true
           setAutoPlayActive(true)
         } else {
           // Just play the current word once
-          console.log('▶️ Playing single word')
           setIsPlaying(true)
           playAudio(currentWord, false).then(() => {
             // Only reset isPlaying if stop wasn't requested
@@ -3679,7 +3435,6 @@ export function LanguageSelector() {
             totalWords: vocabulary.length
           })
         })
-        console.log('💾 Position saved:', currentWordIndex, 'for topic:', selectedTopic.id)
       } catch (error) {
         console.error('Failed to save position:', error)
       }
@@ -3687,7 +3442,6 @@ export function LanguageSelector() {
     
     // Restore the section where the topic was selected from
     setCurrentSection(lastTopicSectionRef.current)
-    console.log('📍 Restoring section:', lastTopicSectionRef.current)
     
     // Stop any currently playing audio when navigating back
     stopAudio()
@@ -3791,32 +3545,20 @@ export function LanguageSelector() {
   }
 
   const updateSetting = async (key: string, value: any) => {
-    console.log(`🔧 Updating setting: ${key} = ${value}`)
-    console.log(`   Settings loaded from DB: ${settingsLoadedRef.current}`)
-    console.log(`   User ID: ${user?.id}`)
     
     // If phonetics toggle is turned on and we have vocabulary, fetch phonetics
     if (key === 'showPhonetics' && value === true && vocabulary.length > 0) {
-      console.log('🔤 Phonetics enabled! Fetching phonetics now...')
-      console.log('Current state:', { 
-        vocabularyLength: vocabulary.length, 
-        targetLanguageCode, 
-        nativeLanguageCode,
-        hasPhonetics: Object.keys(phonetics).length 
-      })
       fetchPhonetics(vocabulary, targetLanguageCode, nativeLanguageCode)
     }
     
     // Don't save if settings haven't loaded yet (prevents saving defaults)
     if (!settingsLoadedRef.current && user?.id) {
-      console.log('⚠️ Settings not loaded yet, skipping save to avoid overwriting DB with defaults')
       setSettings((prev) => ({ ...prev, [key]: value }))
       return
     }
     
     setSettings((prev) => {
       const newSettings = { ...prev, [key]: value }
-      console.log('💾 New settings to save:', JSON.stringify(newSettings, null, 2))
       
       // Save immediately to database
       if (user?.id) {
@@ -3834,13 +3576,11 @@ export function LanguageSelector() {
             }
           })
           .then(data => {
-            console.log('✅ Settings saved successfully to DB:', data)
           })
           .catch(error => {
             console.error('❌ Error saving settings:', error)
           })
       } else {
-        console.log('⚠️ No user logged in, settings not saved')
       }
       
       return newSettings
@@ -3868,7 +3608,6 @@ export function LanguageSelector() {
     
     // Right swipe (left to right) goes back
     if (isRightSwipe && currentPage === "learning") {
-      console.log('🔄 Swipe detected - going back to topics')
       handleBackToTopics()
     }
   }
@@ -3877,17 +3616,14 @@ export function LanguageSelector() {
 
   // Topic click handler with subscription check
   const handleTopicClick = async (topic: Topic) => {
-    console.log('🎯 Topic clicked:', { topicId: topic.id, topicName: topic.name, isPremium })
     
     // Check if user can access this topic
     if (!canAccessTopic(topic.id)) {
-      console.log('🔒 Topic requires premium:', topic.id)
       setShowPaywall(true)
       return
     }
     
     // User has access, proceed
-    console.log('✅ Granting access to topic:', topic.id)
     lastTopicSectionRef.current = currentSection
     handleTopicSelect(topic)
   }
@@ -3900,11 +3636,6 @@ export function LanguageSelector() {
     
     // Debug logging
     if (topic.id === 1) {
-      console.log('🎯 Topic 1 render:', { 
-        completedTopicIds, 
-        isCompleted,
-        topicId: topic.id 
-      })
     }
     
     // Direct mapping for custom SVG icons
@@ -4551,7 +4282,6 @@ export function LanguageSelector() {
                         <button
                           key={speed}
                           onClick={() => {
-                            console.log(`Pronunciation speed button clicked: ${speed}`)
                             updateSetting("pronunciationSpeed", speed)
                           }}
                           className={`flex-1 px-3 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base transition-all duration-300 ${

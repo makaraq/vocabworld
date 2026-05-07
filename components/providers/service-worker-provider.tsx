@@ -15,7 +15,6 @@ export function ServiceWorkerProvider({ children }: { children: React.ReactNode 
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
       audioCacheManager.initialize().then((success) => {
         if (success) {
-          console.log('[App] Service Worker initialized');
         }
       }).catch((error) => {
         console.error('[App] Service Worker initialization failed:', error);

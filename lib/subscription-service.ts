@@ -30,7 +30,6 @@ export class SubscriptionService {
       .single()
     
     if (error || !profile) {
-      console.log('📊 No profile found for user:', userId)
       return { isPremium: false, subscription: null }
     }
     

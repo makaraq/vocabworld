@@ -125,7 +125,6 @@ export async function POST(req: NextRequest) {
         // Don't return 500 — still tell the client they're premium
         // so the UI unlocks. The webhook will eventually fix the DB.
       } else {
-        console.log('[sync-rc] ✅ DB updated to premium for user:', user.id)
       }
     }
 

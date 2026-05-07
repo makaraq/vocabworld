@@ -38,13 +38,6 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '50');
     const offset = parseInt(searchParams.get('offset') || '0');
 
-    console.log('🔍 API Request (Supabase):', {
-      topicId,
-      sourceLanguage,
-      targetLanguage,
-      limit,
-      offset
-    });
 
     if (!topicId || !sourceLanguage || !targetLanguage) {
       return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });

@@ -93,7 +93,6 @@ class AuthService {
   }
 
   private async signInWithGoogleWeb(): Promise<SignInResult> {
-    console.log('🔵 Starting OAuth with Google...')
     
     const { data, error } = await this.supabase.auth.signInWithOAuth({
       provider: 'google',
@@ -106,7 +105,6 @@ class AuthService {
       }
     })
 
-    console.log('🔵 OAuth response:', { data, error })
 
     if (error) {
       console.error('🔴 OAuth error:', error)
@@ -117,7 +115,6 @@ class AuthService {
       }
     }
 
-    console.log('🟢 OAuth redirect should be happening now...')
     // For OAuth, we'll handle the result in the callback
     return {
       user: null,
@@ -336,7 +333,6 @@ class AuthService {
   // Create user profile
   private async createUserProfile(authUser: any): Promise<UserProfile | null> {
     try {
-      console.log('📋 AUTH REPORT: 🆕 Creating new user profile...')
       const providerData = this.getProviderInfo(authUser)
       
       const profileData = {
@@ -353,12 +349,6 @@ class AuthService {
         subscription_id: null
       }
 
-      console.log('📋 PROFILE CREATION:', {
-        email: profileData.email,
-        name: profileData.full_name,
-        provider: profileData.provider,
-        timestamp: new Date().toISOString()
-      })
 
       const { data, error } = await this.supabase
         .from('user_profiles')
@@ -371,7 +361,6 @@ class AuthService {
         return null
       }
 
-      console.log('📋 AUTH REPORT: ✅ User profile created successfully')
       return data
     } catch (error) {
       console.error('📋 AUTH REPORT: ❌ Exception in createUserProfile:', error)
@@ -472,7 +461,6 @@ class AuthService {
         const { signOutFromGoogle } = await import('./google-auth')
         await signOutFromGoogle()
       } catch (googleError) {
-        console.log('Google sign out not available or failed:', googleError)
         // Continue with Supabase sign out even if Google sign out fails
       }
       

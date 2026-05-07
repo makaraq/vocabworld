@@ -71,7 +71,7 @@ export default function PrivacyPolicyPage() {
                   <h3 className="text-lg font-medium mb-2">Subscription Information</h3>
                   <ul className="list-disc list-inside space-y-1 ml-4">
                     <li>Subscription status and tier</li>
-                    <li>Payment history (processed by Stripe, not stored by us)</li>
+                    <li>Payment history (processed by RevenueCat and the App Store/Play Store, not stored by us)</li>
                     <li>Subscription renewal dates</li>
                   </ul>
                 </div>
@@ -112,8 +112,8 @@ export default function PrivacyPolicyPage() {
                   <p className="ml-4">Database hosting and authentication services. Your learning data is stored securely in our Supabase database.</p>
                 </div>
                 <div>
-                  <h3 className="text-lg font-medium">Stripe</h3>
-                  <p className="ml-4">Payment processing. We do not store your credit card information. All payment data is handled securely by Stripe.</p>
+                  <h3 className="text-lg font-medium">RevenueCat</h3>
+                  <p className="ml-4">Subscription management and payment processing. All payment transactions are handled through Apple App Store and Google Play Store. We do not store your credit card information.</p>
                 </div>
                 <div>
                   <h3 className="text-lg font-medium">Backblaze B2</h3>

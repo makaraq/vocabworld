@@ -9,8 +9,6 @@
  * 
  * // Get language names in Turkish
  * const turkishNames = languageNamesTranslations['tr']
- * console.log(turkishNames['en']) // "İngilizce"
- * console.log(turkishNames['es']) // "İspanyolca"
  */
 
 export const languageNamesTranslations: Record<string, Record<string, string>> = {

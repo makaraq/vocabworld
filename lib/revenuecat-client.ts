@@ -52,7 +52,6 @@ export async function initRevenueCat(supabaseUserId: string): Promise<void> {
       }
 
       await Purchases.logIn({ appUserID: supabaseUserId })
-      console.log('[RC] Capacitor SDK initialised, user:', supabaseUserId)
     } else {
       const { Purchases } = await import('@revenuecat/purchases-js')
       const apiKey = process.env.NEXT_PUBLIC_REVENUECAT_WEB_API_KEY || ''
@@ -60,7 +59,6 @@ export async function initRevenueCat(supabaseUserId: string): Promise<void> {
       // purchases-js configure() also handles logIn — appUserId is the 2nd param
       Purchases.configure(apiKey, supabaseUserId)
       _rcInitialised = true
-      console.log('[RC] Web SDK initialised, user:', supabaseUserId)
     }
   } catch (err) {
     console.error('[RC] Failed to initialise RevenueCat:', err)
@@ -86,7 +84,6 @@ export async function logOutRevenueCat(): Promise<void> {
       )
     }
     _rcInitialised = false
-    console.log('[RC] Logged out')
   } catch (err) {
     console.error('[RC] Failed to log out:', err)
   }

@@ -40,7 +40,6 @@ export async function GET(request: NextRequest) {
 
 async function getDetailedTopicProgress(userId: string, languageCode: string) {
   try {
-    console.log('🔍 getDetailedTopicProgress called with:', { userId, languageCode })
     
     // Get all topics with their word counts
     const { data: allTopics, error: topicsError } = await supabase
@@ -52,18 +51,14 @@ async function getDetailedTopicProgress(userId: string, languageCode: string) {
       return NextResponse.json({ error: 'Failed to fetch topics', details: topicsError.message }, { status: 500 })
     }
 
-    console.log('✅ Fetched topics count:', allTopics?.length)
     
     // Sort topics by ID (simplest approach that works in serverless)
     const topics = allTopics?.sort((a, b) => a.id - b.id) || []
 
-    console.log('✅ Ordered topics count:', topics?.length)
     if (topics?.length > 0) {
-      console.log('📝 Sample topic:', topics[0])
     }
 
     // Get progress for each topic
-    console.log('🔄 Fetching progress for', topics.length, 'topics...')
     const topicProgress = await Promise.all(
       topics.map(async (topic) => {
         // Get topic completion data (this is the correct table)
@@ -107,7 +102,6 @@ async function getDetailedTopicProgress(userId: string, languageCode: string) {
         // Use data from user_topic_completion table
         const completionPercentage = topicData.total_words > 0 ? (topicData.words_learned / topicData.total_words) * 100 : 0
         
-        console.log(`📊 Topic ${topic.id} (${topic.name}): ${topicData.words_learned}/${topicData.total_words} words (${Math.round(completionPercentage)}%)`)
 
         return {
           topicId: topic.id,
@@ -120,7 +114,6 @@ async function getDetailedTopicProgress(userId: string, languageCode: string) {
       })
     )
 
-    console.log('✅ Returning progress for', topicProgress.length, 'topics')
     return NextResponse.json({
       topics: topicProgress,
       languageCode,
