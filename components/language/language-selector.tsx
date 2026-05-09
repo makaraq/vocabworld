@@ -39,6 +39,30 @@ const TUTORIAL_STEPS: CoachMarkStep[] = [
   },
 ]
 
+const LEARNING_TUTORIAL_STEPS: CoachMarkStep[] = [
+  {
+    selector: '[data-tour="learning-flashcards"]',
+    title: 'Each word in two languages',
+    body: 'The top card shows the word you\'re learning. Below is the translation in your native language. Tap and hold either card to focus.',
+    placement: 'bottom',
+    padding: 6,
+  },
+  {
+    selector: '[data-tour="learning-controls"]',
+    title: 'Move at your own pace',
+    body: 'Tap play to hear pronunciation, or use the arrows to step forward and back. Take as long as you need on each word.',
+    placement: 'top',
+    padding: 10,
+  },
+  {
+    selector: '[data-tour="learning-settings"]',
+    title: 'Make it yours',
+    body: 'Open settings to adjust playback speed, turn auto-play on or off, and customize how the audio plays — so you can learn the way that works for you.',
+    placement: 'bottom',
+    padding: 6,
+  },
+]
+
 declare global {
   interface Window {
     // Reserved for future use
@@ -864,6 +888,7 @@ export function LanguageSelector() {
   const [showNotifPrompt, setShowNotifPrompt] = useState(false)
   const [showNotifSetup, setShowNotifSetup] = useState(false)
   const [showTutorial, setShowTutorial] = useState(false)
+  const [showLearningTutorial, setShowLearningTutorial] = useState(false)
 
   const handleNotifPromptDismiss = () => {
     localStorage.setItem('vw_notif_prompted', 'true')
@@ -3657,40 +3682,62 @@ export function LanguageSelector() {
     localStorage.setItem('vw_notif_prompted', 'true')
   }
 
-  // First-time notification prompt: show the setup screen so the user can
-  // pick their reminder time before the OS permission dialog fires.
+  // First-time tutorial: fires first when the user lands on the confirmation page.
   useEffect(() => {
     if (
       currentPage === 'confirmation' &&
       user &&
-      Capacitor.isNativePlatform() &&
-      !localStorage.getItem('vw_notif_prompted')
-    ) {
-      const t = setTimeout(() => setShowNotifSetup(true), 900)
-      return () => clearTimeout(t)
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, user])
-
-  // First-time tutorial: fires after the notification flow is settled.
-  // Conditions: confirmation page, no notif modals open, hasn't been shown yet.
-  useEffect(() => {
-    if (
-      currentPage === 'confirmation' &&
-      user &&
-      !showNotifSetup &&
-      !showNotifPrompt &&
       !localStorage.getItem('vw_tutorial_shown')
     ) {
       const t = setTimeout(() => setShowTutorial(true), 600)
       return () => clearTimeout(t)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, user, showNotifSetup, showNotifPrompt])
+  }, [currentPage, user])
+
+  // Notification setup: fires only AFTER the tutorial has been completed/skipped,
+  // so the two flows never appear stacked on top of each other.
+  useEffect(() => {
+    if (
+      currentPage === 'confirmation' &&
+      user &&
+      Capacitor.isNativePlatform() &&
+      !showTutorial &&
+      localStorage.getItem('vw_tutorial_shown') &&
+      !localStorage.getItem('vw_notif_prompted')
+    ) {
+      const t = setTimeout(() => setShowNotifSetup(true), 500)
+      return () => clearTimeout(t)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, user, showTutorial])
 
   const handleTutorialDone = () => {
     setShowTutorial(false)
     localStorage.setItem('vw_tutorial_shown', 'true')
+  }
+
+  // First-time learning-view tutorial: fires the first time the user opens a topic.
+  // Skipped for the search/playlist views (id -1, -2) and only when vocabulary is loaded
+  // so the flashcards target actually exists in the DOM.
+  useEffect(() => {
+    if (
+      currentPage === 'learning' &&
+      selectedTopic &&
+      selectedTopic.id !== -1 &&
+      selectedTopic.id !== -2 &&
+      vocabulary.length > 0 &&
+      !localStorage.getItem('vw_learning_tutorial_shown')
+    ) {
+      const t = setTimeout(() => setShowLearningTutorial(true), 800)
+      return () => clearTimeout(t)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, selectedTopic, vocabulary.length])
+
+  const handleLearningTutorialDone = () => {
+    setShowLearningTutorial(false)
+    localStorage.setItem('vw_learning_tutorial_shown', 'true')
   }
 
   // Re-check notification permission when the app returns to foreground.
@@ -3910,6 +3957,7 @@ export function LanguageSelector() {
                 </div>
                 
                 <button
+                  data-tour="learning-settings"
                   onClick={handleSettingsClick}
                   onTouchStart={() => setHoldingNavButton('settings')}
                   onTouchEnd={() => setHoldingNavButton(null)}
@@ -3994,6 +4042,7 @@ export function LanguageSelector() {
               )}
 
               <div
+                data-tour="learning-flashcards"
                 className="space-y-6 mb-12"
                 onTouchStart={(e) => e.stopPropagation()}
                 aria-live="polite"
@@ -4087,7 +4136,7 @@ export function LanguageSelector() {
                   </Button>
                 </div>
               ) : (
-                <div className="flex items-center justify-center gap-8">
+                <div data-tour="learning-controls" className="flex items-center justify-center gap-8">
                   <button
                     onClick={handlePrevious}
                     onTouchStart={() => setHoldingNavButton('previous')}
@@ -4681,12 +4730,20 @@ export function LanguageSelector() {
         onDismiss={handleNotifPromptDismiss}
       />
 
-      {/* First-time coach-mark tutorial */}
+      {/* First-time coach-mark tutorial (home / topic grid) */}
       <CoachMarkOverlay
         open={showTutorial}
         steps={TUTORIAL_STEPS}
         onComplete={handleTutorialDone}
         onSkip={handleTutorialDone}
+      />
+
+      {/* First-time coach-mark tutorial (inside a topic) */}
+      <CoachMarkOverlay
+        open={showLearningTutorial}
+        steps={LEARNING_TUTORIAL_STEPS}
+        onComplete={handleLearningTutorialDone}
+        onSkip={handleLearningTutorialDone}
       />
 
       {/* Paywall Modal */}
