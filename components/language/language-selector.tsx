@@ -13,6 +13,31 @@ import { ManageAccountModal } from "@/components/account/manage-account-modal"
 import { useNotifications } from "@/hooks/use-notifications"
 import { NotificationPromptModal } from "@/components/notifications/notification-prompt-modal"
 import { NotificationSetupScreen } from "@/components/notifications/notification-setup-screen"
+import { CoachMarkOverlay, type CoachMarkStep } from "@/components/tutorial/coach-mark-overlay"
+
+const TUTORIAL_STEPS: CoachMarkStep[] = [
+  {
+    selector: '[data-tour="topic-grid"]',
+    title: 'Pick a topic to start',
+    body: 'Tap any topic tile to begin learning vocabulary. New words come with audio, translations, and example sentences.',
+    placement: 'top',
+    padding: 6,
+  },
+  {
+    selector: '[data-tour="section-nav"]',
+    title: 'Swipe between sections',
+    body: 'Drag these dots or swipe the screen to explore everyday topics, work, travel, your saved words, and your account.',
+    placement: 'top',
+    padding: 10,
+  },
+  {
+    selector: '[data-tour="language-switcher"]',
+    title: 'Switch languages anytime',
+    body: 'Tap either side to change your native or target language. Your progress is saved per language pair.',
+    placement: 'top',
+    padding: 6,
+  },
+]
 
 declare global {
   interface Window {
@@ -576,7 +601,8 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                 </div>
               ) : (
                 /* Regular topic grid for all other sections */
-                <div 
+                <div
+                  data-tour={currentSection === sectionIndex ? "topic-grid" : undefined}
                   className={`grid gap-2.5 sm:gap-3 lg:gap-4 h-full content-start ${
                     section.gridCols === 3 ? 'grid-cols-3 lg:grid-cols-4' : 'grid-cols-2 lg:grid-cols-3'
                   }`}
@@ -590,7 +616,8 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
       </div>
 
       {/* Navigation dots - iPhone-style draggable indicators */}
-      <nav 
+      <nav
+        data-tour="section-nav"
         className="flex justify-center gap-3 mt-3 pb-2 pt-2 px-4 flex-shrink-0 cursor-grab active:cursor-grabbing"
         role="tablist"
         aria-label="Language learning sections"
@@ -836,6 +863,7 @@ export function LanguageSelector() {
   const [openNotificationsInAccount, setOpenNotificationsInAccount] = useState(false)
   const [showNotifPrompt, setShowNotifPrompt] = useState(false)
   const [showNotifSetup, setShowNotifSetup] = useState(false)
+  const [showTutorial, setShowTutorial] = useState(false)
 
   const handleNotifPromptDismiss = () => {
     localStorage.setItem('vw_notif_prompted', 'true')
@@ -3644,6 +3672,27 @@ export function LanguageSelector() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, user])
 
+  // First-time tutorial: fires after the notification flow is settled.
+  // Conditions: confirmation page, no notif modals open, hasn't been shown yet.
+  useEffect(() => {
+    if (
+      currentPage === 'confirmation' &&
+      user &&
+      !showNotifSetup &&
+      !showNotifPrompt &&
+      !localStorage.getItem('vw_tutorial_shown')
+    ) {
+      const t = setTimeout(() => setShowTutorial(true), 600)
+      return () => clearTimeout(t)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, user, showNotifSetup, showNotifPrompt])
+
+  const handleTutorialDone = () => {
+    setShowTutorial(false)
+    localStorage.setItem('vw_tutorial_shown', 'true')
+  }
+
   // Re-check notification permission when the app returns to foreground.
   // Catches the case where the user went to iOS Settings and enabled notifications.
   useEffect(() => {
@@ -4187,7 +4236,7 @@ export function LanguageSelector() {
             </div>
 
             {/* Language selector at bottom */}
-            <div className="flex-shrink-0 px-3 pb-3">
+            <div className="flex-shrink-0 px-3 pb-3" data-tour="language-switcher">
               <div className="flex items-center justify-center gap-3 max-w-full">
                 <button
                   onClick={() => handleConfirmationLanguageChange("native")}
@@ -4630,6 +4679,14 @@ export function LanguageSelector() {
         open={showNotifPrompt}
         onOpenSettings={handleOpenAppSettings}
         onDismiss={handleNotifPromptDismiss}
+      />
+
+      {/* First-time coach-mark tutorial */}
+      <CoachMarkOverlay
+        open={showTutorial}
+        steps={TUTORIAL_STEPS}
+        onComplete={handleTutorialDone}
+        onSkip={handleTutorialDone}
       />
 
       {/* Paywall Modal */}
