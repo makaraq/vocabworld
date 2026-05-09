@@ -880,6 +880,7 @@ export function LanguageSelector() {
   const [showManageAccount, setShowManageAccount] = useState(false)
   const [openNotificationsInAccount, setOpenNotificationsInAccount] = useState(false)
   const [showNotifPrompt, setShowNotifPrompt] = useState(false)
+  const [notifPromptVariant, setNotifPromptVariant] = useState<'enable' | 'settings'>('settings')
   const [showNotifSetup, setShowNotifSetup] = useState(false)
   const [showTutorial, setShowTutorial] = useState(false)
   const [showLearningTutorial, setShowLearningTutorial] = useState(false)
@@ -3668,12 +3669,40 @@ export function LanguageSelector() {
     setShowNotifSetup(false)
     localStorage.setItem('vw_notif_prompted', 'true')
     const granted = await notificationsHook.enableWithTime(reminderTime)
-    if (!granted) setShowNotifPrompt(true)
+    if (!granted) {
+      // OS dialog was dismissed/denied → only path forward is iOS Settings.
+      setNotifPromptVariant('settings')
+      setShowNotifPrompt(true)
+    }
   }
 
+  // "Not now" on the setup screen → show the benefits prompt with a direct
+  // "Enable notifications" CTA that triggers the OS permission dialog.
+  // We do NOT mark vw_notif_prompted yet so this second pass actually runs.
   const handleNotifSetupDismiss = () => {
     setShowNotifSetup(false)
-    localStorage.setItem('vw_notif_prompted', 'true')
+    setNotifPromptVariant('enable')
+    setShowNotifPrompt(true)
+  }
+
+  const handleNotifPromptPrimary = async () => {
+    if (notifPromptVariant === 'enable') {
+      // Trigger the OS permission dialog directly with the user's current
+      // reminder-time preference. If the dialog is denied, switch this same
+      // modal to the 'settings' variant so the next CTA opens iOS Settings.
+      localStorage.setItem('vw_notif_prompted', 'true')
+      const granted = await notificationsHook.enableWithTime(
+        notificationsHook.prefs.dailyReminderTime
+      )
+      if (granted) {
+        setShowNotifPrompt(false)
+      } else {
+        setNotifPromptVariant('settings')
+      }
+    } else {
+      handleOpenAppSettings()
+      handleNotifPromptDismiss()
+    }
   }
 
   // First-time tutorial: fires first when the user lands on the confirmation page.
@@ -4717,10 +4746,12 @@ export function LanguageSelector() {
         initialTime={notificationsHook.prefs.dailyReminderTime}
       />
 
-      {/* Step 2: Fallback shown only when OS permission was denied — directs to iOS Settings */}
+      {/* Benefits prompt — variant 'enable' triggers the OS permission dialog;
+          variant 'settings' opens iOS Settings (used after the OS dialog was denied). */}
       <NotificationPromptModal
         open={showNotifPrompt}
-        onOpenSettings={handleOpenAppSettings}
+        variant={notifPromptVariant}
+        onPrimary={handleNotifPromptPrimary}
         onDismiss={handleNotifPromptDismiss}
       />
 

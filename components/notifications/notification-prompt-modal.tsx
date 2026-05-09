@@ -4,9 +4,20 @@ import React, { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Icon } from '@iconify/react'
 
+type Variant = 'enable' | 'settings'
+
 interface Props {
   open: boolean
-  onOpenSettings: () => void
+  /**
+   * 'enable'   → button "Enable notifications" → triggers OS permission dialog
+   *              (use when the user dismissed the setup screen but the OS
+   *              permission dialog has not been shown yet)
+   * 'settings' → button "Enable in Settings"   → opens iOS Settings
+   *              (use after the OS dialog was denied; the only path forward
+   *              is the system settings app)
+   */
+  variant?: Variant
+  onPrimary: () => void
   onDismiss: () => void
 }
 
@@ -34,7 +45,12 @@ const BENEFITS = [
   },
 ]
 
-export function NotificationPromptModal({ open, onOpenSettings, onDismiss }: Props) {
+export function NotificationPromptModal({
+  open,
+  variant = 'settings',
+  onPrimary,
+  onDismiss,
+}: Props) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -44,10 +60,9 @@ export function NotificationPromptModal({ open, onOpenSettings, onDismiss }: Pro
 
   if (!open || !mounted) return null
 
-  const handleOpenSettings = () => {
-    onOpenSettings()
-    onDismiss()
-  }
+  const isEnable = variant === 'enable'
+  const primaryLabel = isEnable ? 'Enable notifications' : 'Enable in Settings'
+  const primaryIcon = isEnable ? 'solar:bell-bing-bold' : 'solar:settings-bold'
 
   const content = (
     <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-md">
@@ -94,11 +109,11 @@ export function NotificationPromptModal({ open, onOpenSettings, onDismiss }: Pro
           {/* Buttons */}
           <div className="space-y-2 pt-1">
             <button
-              onClick={handleOpenSettings}
+              onClick={onPrimary}
               className="w-full bg-blue-500 hover:bg-blue-400 active:bg-blue-600 text-white font-semibold rounded-2xl py-3.5 transition-all text-sm flex items-center justify-center gap-2"
             >
-              <Icon icon="solar:settings-bold" width="16" />
-              Enable in Settings
+              <Icon icon={primaryIcon} width="16" />
+              {primaryLabel}
             </button>
             <button
               onClick={onDismiss}
