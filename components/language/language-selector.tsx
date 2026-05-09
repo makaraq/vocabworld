@@ -821,15 +821,10 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
               }`}
               title={section.name}
             >
-              {/* Add text labels for first two sections */}
-              {index === 0 && (
+              {/* Show the section name only for the active dot to avoid overlap */}
+              {index === currentSection && (index === 0 || index === 1) && (
                 <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs text-white/80 whitespace-nowrap">
-                  Account
-                </span>
-              )}
-              {index === 1 && (
-                <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs text-white/80 whitespace-nowrap">
-                  First Aid
+                  {index === 0 ? 'Account' : 'First Aid'}
                 </span>
               )}
             </button>

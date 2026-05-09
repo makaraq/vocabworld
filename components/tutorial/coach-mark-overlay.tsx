@@ -58,11 +58,8 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
       return
     }
     setMissing(false)
-    el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
-    requestAnimationFrame(() => {
-      const r = el.getBoundingClientRect()
-      setRect({ top: r.top, left: r.left, width: r.width, height: r.height })
-    })
+    const r = el.getBoundingClientRect()
+    setRect({ top: r.top, left: r.left, width: r.width, height: r.height })
   }, [step])
 
   useLayoutEffect(() => {
