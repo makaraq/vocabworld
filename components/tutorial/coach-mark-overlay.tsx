@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useLayoutEffect, useState, useCallback } from 'react'
+import React, { useEffect, useLayoutEffect, useState, useCallback, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { Icon } from '@iconify/react'
 
@@ -26,8 +26,8 @@ interface Rect {
   height: number
 }
 
-const TOOLTIP_HEIGHT_ESTIMATE = 180
-const TOOLTIP_GAP = 16
+const TOOLTIP_HEIGHT_FALLBACK = 200
+const TOOLTIP_GAP = 14
 const VIEWPORT_MARGIN = 16
 
 export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
@@ -35,6 +35,8 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
   const [stepIndex, setStepIndex] = useState(0)
   const [rect, setRect] = useState<Rect | null>(null)
   const [missing, setMissing] = useState(false)
+  const [tooltipHeight, setTooltipHeight] = useState(TOOLTIP_HEIGHT_FALLBACK)
+  const tooltipRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setMounted(true)
@@ -78,6 +80,14 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
     }
   }, [open, mounted, measure, step])
 
+  // Measure the tooltip after every render so placement uses the real height,
+  // not a guess. Avoids the body text overlapping the highlighted element.
+  useLayoutEffect(() => {
+    if (!open || !mounted || !tooltipRef.current) return
+    const h = tooltipRef.current.offsetHeight
+    if (h && Math.abs(h - tooltipHeight) > 2) setTooltipHeight(h)
+  })
+
   if (!open || !mounted || !step) return null
 
   const isLast = stepIndex >= steps.length - 1
@@ -92,29 +102,48 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
     if (stepIndex > 0) setStepIndex(i => i - 1)
   }
 
-  // Determine tooltip position
+  // Determine tooltip position. Pick the side with the most usable space,
+  // honoring an explicit `placement` only when that side actually fits the tooltip.
   const vh = typeof window !== 'undefined' ? window.innerHeight : 0
-  const vw = typeof window !== 'undefined' ? window.innerWidth : 0
+  const requiredSpace = tooltipHeight + TOOLTIP_GAP + VIEWPORT_MARGIN
 
   let tooltipTop = 0
   let placement: 'top' | 'bottom' = 'bottom'
+  let tooltipOverlapsTarget = false
 
   if (rect) {
-    const targetCenterY = rect.top + rect.height / 2
-    const placeBelow =
-      step.placement === 'bottom' ||
-      (step.placement !== 'top' && targetCenterY < vh / 2)
+    const spaceAbove = rect.top - padding
+    const spaceBelow = vh - (rect.top + rect.height + padding)
+    const fitsAbove = spaceAbove >= requiredSpace
+    const fitsBelow = spaceBelow >= requiredSpace
+
+    let placeBelow: boolean
+    if (step.placement === 'bottom') placeBelow = fitsBelow || !fitsAbove
+    else if (step.placement === 'top') placeBelow = !fitsAbove && fitsBelow
+    else placeBelow = spaceBelow >= spaceAbove
 
     if (placeBelow) {
       placement = 'bottom'
       tooltipTop = rect.top + rect.height + padding + TOOLTIP_GAP
     } else {
       placement = 'top'
-      tooltipTop = rect.top - padding - TOOLTIP_GAP - TOOLTIP_HEIGHT_ESTIMATE
+      tooltipTop = rect.top - padding - TOOLTIP_GAP - tooltipHeight
     }
-    tooltipTop = Math.max(VIEWPORT_MARGIN, Math.min(tooltipTop, vh - TOOLTIP_HEIGHT_ESTIMATE - VIEWPORT_MARGIN))
+
+    // If neither side fits, anchor the tooltip to the viewport edge with the
+    // most room. The arrow is hidden in that case (see render below).
+    if (!fitsAbove && !fitsBelow) {
+      tooltipOverlapsTarget = true
+      if (spaceBelow >= spaceAbove) {
+        tooltipTop = vh - tooltipHeight - VIEWPORT_MARGIN
+      } else {
+        tooltipTop = VIEWPORT_MARGIN
+      }
+    } else {
+      tooltipTop = Math.max(VIEWPORT_MARGIN, Math.min(tooltipTop, vh - tooltipHeight - VIEWPORT_MARGIN))
+    }
   } else {
-    tooltipTop = Math.max(VIEWPORT_MARGIN, vh / 2 - TOOLTIP_HEIGHT_ESTIMATE / 2)
+    tooltipTop = Math.max(VIEWPORT_MARGIN, vh / 2 - tooltipHeight / 2)
   }
 
   const content = (
@@ -161,6 +190,7 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
 
       {/* Tooltip card */}
       <div
+        ref={tooltipRef}
         className="absolute left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-sm pointer-events-auto"
         style={{ top: tooltipTop }}
       >
@@ -228,8 +258,8 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
           </div>
         </div>
 
-        {/* Pointer arrow */}
-        {rect && !missing && (
+        {/* Pointer arrow — hidden when the tooltip is anchored to the viewport edge */}
+        {rect && !missing && !tooltipOverlapsTarget && (
           <div
             aria-hidden
             className={`absolute left-1/2 -translate-x-1/2 w-3 h-3 bg-white/10 backdrop-blur-xl border border-white/20 rotate-45 ${

@@ -17,18 +17,17 @@ import { CoachMarkOverlay, type CoachMarkStep } from "@/components/tutorial/coac
 
 const TUTORIAL_STEPS: CoachMarkStep[] = [
   {
-    selector: '[data-tour="topic-grid"]',
+    selector: '[data-tour="topic-grid"] > button:first-child',
     title: 'Pick a topic to start',
     body: 'Tap any topic tile to begin learning vocabulary. New words come with audio, translations, and example sentences.',
-    placement: 'top',
-    padding: 6,
+    padding: 4,
   },
   {
     selector: '[data-tour="section-nav"]',
     title: 'Swipe between sections',
     body: 'Drag these dots or swipe the screen to explore everyday topics, work, travel, your saved words, and your account.',
     placement: 'top',
-    padding: 10,
+    padding: 8,
   },
   {
     selector: '[data-tour="language-switcher"]',
