@@ -49,10 +49,10 @@
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>com.vocabworld.app</string>
+			<string>com.sprind.app</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.vocabworld.app</string>
+				<string>com.sprind.app</string>
 			</array>
 		</dict>
 		<dict>

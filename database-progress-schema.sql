@@ -1,4 +1,4 @@
--- VocabWorld Progress Tracking System
+-- Sprind Progress Tracking System
 -- Run this in Supabase SQL Editor
 
 -- =====================================================

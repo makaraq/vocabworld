@@ -68,8 +68,8 @@ Add these to your OAuth client:
 
 #### **Additional Authorized Redirect URIs for Mobile:**
 ```
-vocabworld://auth/callback
-com.vocabworld.app://auth/callback
+sprind://auth/callback
+com.sprind.app://auth/callback
 ```
 
 ### 8. Configure Capacitor
@@ -79,7 +79,7 @@ Update your `capacitor.config.ts`:
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.vocabworld.app',
+  appId: 'com.sprind.app',
   appName: 'Vocab World',
   webDir: 'out',
   server: {

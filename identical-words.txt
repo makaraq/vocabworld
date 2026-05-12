@@ -1,4 +1,4 @@
-VOCABWORLD - IDENTICAL WORDS (English = Translation)
+SPRIND - IDENTICAL WORDS (English = Translation)
 ============================================================
 Found 5778 identical word pairs
 ============================================================

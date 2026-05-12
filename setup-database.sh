@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Database Setup Script for VocabWorld Subscription System
+# Database Setup Script for Sprind Subscription System
 # This script will create all the necessary tables and functions in your Supabase database
 
-echo "🚀 Setting up VocabWorld Subscription Database Schema..."
+echo "🚀 Setting up Sprind Subscription Database Schema..."
 
 # Read the schema file and apply it
 if [ -f "database-schema-subscription.sql" ]; then

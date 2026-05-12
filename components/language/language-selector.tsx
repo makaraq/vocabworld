@@ -3562,7 +3562,7 @@ export function LanguageSelector() {
         navigator.mediaSession.metadata = new MediaMetadata({
           title:  wordInTarget,
           artist: `${wordInNative}  ·  ${targetLanguage} ← ${nativeLanguage}`,
-          album:  `VocabWorld${selectedTopic ? ' · ' + selectedTopic.name : ''}`,
+          album:  `Sprind${selectedTopic ? ' · ' + selectedTopic.name : ''}`,
           artwork: [
             { src: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
             { src: '/icons/icon-512x512.png', sizes: '512x512', type: 'image/png' },

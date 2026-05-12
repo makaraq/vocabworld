@@ -1,4 +1,4 @@
-// Script to create Stripe price IDs for VocabWorld subscription plans
+// Script to create Stripe price IDs for Sprind subscription plans
 const Stripe = require('stripe');
 require('dotenv').config({ path: '.env.local' });
 
@@ -6,14 +6,14 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 async function setupStripePrices() {
   try {
-    console.log('🔄 Setting up Stripe prices for VocabWorld...');
+    console.log('🔄 Setting up Stripe prices for Sprind...');
 
     // Create product first
     const product = await stripe.products.create({
-      name: 'VocabWorld Unlimited',
+      name: 'Sprind Unlimited',
       description: 'Access to all vocabulary topics and premium features',
       metadata: {
-        app: 'vocabworld'
+        app: 'sprind'
       }
     });
 
@@ -30,7 +30,7 @@ async function setupStripePrices() {
       },
       metadata: {
         plan: 'yearly',
-        app: 'vocabworld'
+        app: 'sprind'
       }
     });
 
@@ -46,7 +46,7 @@ async function setupStripePrices() {
       },
       metadata: {
         plan: 'monthly',
-        app: 'vocabworld'
+        app: 'sprind'
       }
     });
 

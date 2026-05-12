@@ -96,7 +96,7 @@ export function WelcomeOverlay() {
         {/* Welcome Text */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-3 tracking-wide leading-tight drop-shadow-lg">
-            WELCOME TO VOCABWORLD!
+            WELCOME TO SPRIND!
           </h1>
           <p className="text-white/90 text-base drop-shadow">
             Sign in to track your progress

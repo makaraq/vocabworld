@@ -1,4 +1,4 @@
-// Language configuration for VocabWorld
+// Language configuration for Sprind
 // Database supports 112 languages for vocabulary translations
 // Audio (B2/TTS) supports 50 languages
 

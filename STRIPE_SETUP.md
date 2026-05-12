@@ -20,8 +20,8 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 
 1. **Create Products in Stripe Dashboard:**
    - Go to Stripe Dashboard > Products
-   - Create "VocabWorld Yearly" product
-   - Create "VocabWorld Monthly" product
+   - Create "Sprind Yearly" product
+   - Create "Sprind Monthly" product
 
 2. **Create Prices:**
    - Yearly: $29.00 USD, recurring every 12 months, with 7-day trial

@@ -1,7 +1,7 @@
-# Database Setup Script for VocabWorld Subscription System
+# Database Setup Script for Sprind Subscription System
 # This script will help you set up all the necessary tables and functions in your Supabase database
 
-Write-Host "🚀 Setting up VocabWorld Subscription Database Schema..." -ForegroundColor Green
+Write-Host "🚀 Setting up Sprind Subscription Database Schema..." -ForegroundColor Green
 
 # Check if schema file exists
 if (Test-Path "database-schema-subscription.sql") {

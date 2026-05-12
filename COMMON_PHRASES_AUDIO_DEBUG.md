@@ -66,7 +66,7 @@
 
 ### Test with curl (Production):
 ```bash
-curl -I "https://vocabworld.com/api/universal-audio?wordId=4172&languageCode=en"
+curl -I "https://sprind.com/api/universal-audio?wordId=4172&languageCode=en"
 ```
 
 **Expected**: Status 200, Content-Type: audio/wav

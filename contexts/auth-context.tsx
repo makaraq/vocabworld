@@ -143,7 +143,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: 'com.vocabworld.app://auth/callback',
+          redirectTo: 'com.sprind.app://auth/callback',
           skipBrowserRedirect: true
         }
       })

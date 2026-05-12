@@ -4,7 +4,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 // Replace the IP below with your Mac's local network IP each session
 // Find it with: ipconfig getifaddr en0   (on macOS)
 const config: CapacitorConfig = {
-  appId: 'com.vocabworld.app',
+  appId: 'com.sprind.app',
   appName: 'Vocab World',
   webDir: 'public',
   server: {

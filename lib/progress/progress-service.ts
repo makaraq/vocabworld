@@ -1,5 +1,5 @@
 /**
- * VocabWorld Progress Tracking Service
+ * Sprind Progress Tracking Service
  * Handles all progress tracking logic server-side
  */
 

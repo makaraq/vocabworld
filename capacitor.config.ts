@@ -3,11 +3,11 @@ import type { CapacitorConfig } from '@capacitor/cli';
 // PRODUCTION config — used for App Store builds
 // Points to the live Vercel deployment so all API routes work on-device
 const config: CapacitorConfig = {
-  appId: 'com.vocabworld.app',
+  appId: 'com.sprind.app',
   appName: 'Vocab World',
   webDir: 'public', // Fallback only — app loads from server.url in production
   server: {
-    url: 'https://vocabworld-x843.vercel.app',
+    url: 'https://sprind-x843.vercel.app',
     cleartext: false
   },
   plugins: {

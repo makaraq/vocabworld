@@ -6,7 +6,7 @@ Your Android project has been successfully created and configured. Here's what w
 
 ### 📁 Project Structure Created
 - `android/` folder with complete Android Studio project
-- App ID: `com.vocabworld.app`
+- App ID: `com.sprind.app`
 - App Name: `Vocab World`
 - Build system: Gradle with Capacitor integration
 
@@ -124,7 +124,7 @@ Debug your web content:
 View native Android logs:
 1. Open Android Studio
 2. Go to View → Tool Windows → Logcat
-3. Filter by your app package: `com.vocabworld.app`
+3. Filter by your app package: `com.sprind.app`
 
 ### **Capacitor Logs**
 ```powershell

@@ -87,7 +87,7 @@ export async function GET(request: NextRequest) {
           'Ocp-Apim-Subscription-Key': azureKey,
           'Content-Type': 'application/ssml+xml',
           'X-Microsoft-OutputFormat': 'audio-24khz-48kbitrate-mono-mp3',
-          'User-Agent': 'VocabWorld',
+          'User-Agent': 'Sprind',
         },
         body: ssml,
       }

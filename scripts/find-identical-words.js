@@ -74,7 +74,7 @@ async function findDuplicates() {
   duplicates.sort((a, b) => a.english.localeCompare(b.english));
 
   // Format output
-  let output = 'VOCABWORLD - IDENTICAL WORDS (English = Translation)\r\n';
+  let output = 'SPRIND - IDENTICAL WORDS (English = Translation)\r\n';
   output += '='.repeat(60) + '\r\n';
   output += 'Found ' + duplicates.length + ' identical word pairs\r\n';
   output += '='.repeat(60) + '\r\n\r\n';

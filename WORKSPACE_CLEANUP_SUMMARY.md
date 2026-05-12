@@ -36,7 +36,7 @@
 - The entire `/scripts` directory containing legacy utilities
 
 ### 🏗️ **Legacy Project Directories**
-- `VocabWorld/` - Old project structure
+- `Sprind/` - Old project structure
 - `voco-mobile/` - Deprecated mobile implementation
 - `voco-production/` - Old production setup
 - `out/` - Build output directory
@@ -87,7 +87,7 @@
 
 ## Result
 
-The workspace is now clean and focused on the essential files needed for the VocabWorld application. This cleanup:
+The workspace is now clean and focused on the essential files needed for the Sprind application. This cleanup:
 
 - **Improves clarity** by removing confusing legacy files
 - **Reduces repository size** significantly
