@@ -1902,6 +1902,10 @@ export function LanguageSelector() {
               }
 
               
+              // Increment persistent words-played counter (used for notification prompt timing)
+              const prevCount = parseInt(localStorage.getItem('vw_words_played_count') || '0', 10)
+              localStorage.setItem('vw_words_played_count', String(prevCount + 1))
+
               // Track word progress when audio completes successfully
               // Get user from context - we'll need to access user state
               const userId = (window as any).__vocaWorldUserId;
@@ -3718,8 +3722,8 @@ export function LanguageSelector() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, user])
 
-  // Notification setup: fires only AFTER the tutorial has been completed/skipped,
-  // so the two flows never appear stacked on top of each other.
+  // Notification setup: fires when the user returns to the main menu (topics page)
+  // AFTER playing at least 10 words — never interrupts an active study session.
   useEffect(() => {
     if (
       currentPage === 'confirmation' &&
@@ -3727,7 +3731,8 @@ export function LanguageSelector() {
       Capacitor.isNativePlatform() &&
       !showTutorial &&
       localStorage.getItem('vw_tutorial_shown') &&
-      !localStorage.getItem('vw_notif_prompted')
+      !localStorage.getItem('vw_notif_prompted') &&
+      parseInt(localStorage.getItem('vw_words_played_count') || '0', 10) >= 10
     ) {
       const t = setTimeout(() => setShowNotifSetup(true), 500)
       return () => clearTimeout(t)
