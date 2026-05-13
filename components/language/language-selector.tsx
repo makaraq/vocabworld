@@ -14,6 +14,7 @@ import { useNotifications } from "@/hooks/use-notifications"
 import { NotificationPromptModal } from "@/components/notifications/notification-prompt-modal"
 import { NotificationSetupScreen } from "@/components/notifications/notification-setup-screen"
 import { CoachMarkOverlay, type CoachMarkStep } from "@/components/tutorial/coach-mark-overlay"
+import { hapticsLight, hapticsMedium, hapticsSuccess, hapticsWarning } from "@/lib/haptics"
 
 const TUTORIAL_STEPS: CoachMarkStep[] = [
   {
@@ -1931,6 +1932,12 @@ export function LanguageSelector() {
                       setCompletedTopicIds((prev) => {
                         const next: number[] = data.completedTopicIds;
                         // First-ever topic completion → ask for a store review (once only)
+                        // Any newly completed topic → success haptic
+                        if (next.length > prev.length) {
+                          hapticsSuccess()
+                        }
+
+                        // First-ever topic completion → ask for a store review (once only)
                         if (
                           prev.length === 0 &&
                           next.length > 0 &&
@@ -2674,6 +2681,7 @@ export function LanguageSelector() {
         if (signal.aborted) throw new DOMException('Autoplay aborted', 'AbortError');
 
         if (rewindNow) {
+          hapticsMedium()
           i = loopStartIndex;
           wordCount = 0;
         } else {
@@ -2926,7 +2934,8 @@ export function LanguageSelector() {
   }
 
   const handleLanguageSelect = (language: { code: string; name: string }) => {
-    
+    hapticsLight()
+
     // Reset scroll position to top of the container
     const languageGrid = document.querySelector('.language-grid-container')
     if (languageGrid) {
@@ -3404,6 +3413,7 @@ export function LanguageSelector() {
   }
 
   const handlePrevious = () => {
+    hapticsLight()
     // 🔓 MOBILE FIX: Unlock audio on any user gesture
     unlockAudio()
     
@@ -3425,6 +3435,7 @@ export function LanguageSelector() {
   }
 
   const handleNext = () => {
+    hapticsLight()
     // 🔓 MOBILE FIX: Unlock audio on any user gesture
     unlockAudio()
     
@@ -3445,9 +3456,10 @@ export function LanguageSelector() {
   }
 
   const handlePlay = async () => {
+    hapticsMedium()
     // Mark that user has interacted (prevents auto-play on page load)
     setHasUserInteracted(true)
-    
+
     // 🔓 MOBILE FIX: Unlock audio on user gesture before any playback
     await unlockAudio()
     
@@ -3512,6 +3524,7 @@ export function LanguageSelector() {
   }
 
   const handleBackToTopics = async () => {
+    hapticsLight()
     // Save current position before going back
     if (user?.id && selectedTopic && targetLanguageCode && vocabulary.length > 0) {
       try {
@@ -3825,14 +3838,16 @@ export function LanguageSelector() {
 
   // Topic click handler with subscription check
   const handleTopicClick = async (topic: Topic) => {
-    
+
     // Check if user can access this topic
     if (!canAccessTopic(topic.id)) {
+      hapticsWarning()
       setShowPaywall(true)
       return
     }
-    
+
     // User has access, proceed
+    hapticsLight()
     lastTopicSectionRef.current = currentSection
     handleTopicSelect(topic)
   }
