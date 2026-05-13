@@ -1925,10 +1925,25 @@ export function LanguageSelector() {
                   
                   if (response.ok) {
                     const data = await response.json();
-                    
+
                     // Update completed topics immediately from API response
                     if (data.completedTopicIds) {
-                      setCompletedTopicIds(data.completedTopicIds);
+                      setCompletedTopicIds((prev) => {
+                        const next: number[] = data.completedTopicIds;
+                        // First-ever topic completion → ask for a store review (once only)
+                        if (
+                          prev.length === 0 &&
+                          next.length > 0 &&
+                          !localStorage.getItem('vw_review_requested') &&
+                          Capacitor.isNativePlatform()
+                        ) {
+                          localStorage.setItem('vw_review_requested', 'true');
+                          import('capacitor-rate-app').then(({ RateApp }) => {
+                            RateApp.requestReview().catch(() => {});
+                          });
+                        }
+                        return next;
+                      });
                     }
                   }
                 } catch (error) {
