@@ -56,6 +56,25 @@ export const SECTION_TOPIC_IDS: Record<string, number[]> = {
   professional: [37, 38, 39, 40, 41, 42, 43, 44],
 }
 
+// Section index ranges into the topics[] array as ordered in the UI.
+// Order matters: this is the order the user actually swipes through sections.
+// Each entry: [start, end) into the topics array (matches `topics.slice(...)`
+// calls in language-selector.tsx so the "next topic" suggestion mirrors what
+// the user sees in the menu).
+export interface SectionRange {
+  key: string
+  start: number
+  end: number
+}
+export const SECTION_INDEX_RANGES: SectionRange[] = [
+  { key: 'first_aid_kit', start: 0, end: 6 },
+  { key: 'daily_life', start: 6, end: 14 },
+  { key: 'work_school', start: 20, end: 28 },
+  { key: 'personal_social', start: 14, end: 20 },
+  { key: 'culture_society', start: 28, end: 36 },
+  { key: 'professional', start: 36, end: 44 },
+]
+
 export const SECTION_LABEL: Record<string, string> = {
   first_aid_kit: 'First Aid Kit',
   daily_life: 'Daily Life',

@@ -10,6 +10,7 @@ import {
   ACHIEVEMENTS_BY_ID,
   AchievementDef,
   SECTION_TOPIC_IDS,
+  SECTION_INDEX_RANGES,
 } from './definitions'
 import {
   getUnlocked,
@@ -186,4 +187,57 @@ export function reportTopicComplete(
 
 export function getUnlockedFor(userId: string | null | undefined) {
   return getUnlocked(userId)
+}
+
+/**
+ * Find the next topic to suggest after the user finishes one. Walks the
+ * current section first (in UI order), then continues through subsequent
+ * sections in UI order. Returns null when every topic is completed.
+ */
+export function findNextTopicAfter<T extends { id: number }>(
+  topics: T[],
+  finishedId: number,
+  completedIds: Iterable<number>,
+): T | null {
+  const completed = new Set(completedIds)
+  const finishedIdx = topics.findIndex((t) => t.id === finishedId)
+  if (finishedIdx === -1) return null
+
+  const sectionOrder = SECTION_INDEX_RANGES
+  const currentSectionIdx = sectionOrder.findIndex(
+    (r) => finishedIdx >= r.start && finishedIdx < r.end,
+  )
+
+  // Search the rest of the current section first.
+  if (currentSectionIdx !== -1) {
+    const cur = sectionOrder[currentSectionIdx]
+    for (let i = finishedIdx + 1; i < Math.min(cur.end, topics.length); i++) {
+      if (!completed.has(topics[i].id)) return topics[i]
+    }
+    // Then walk through the remaining sections in UI order.
+    for (let s = currentSectionIdx + 1; s < sectionOrder.length; s++) {
+      const r = sectionOrder[s]
+      for (let i = r.start; i < Math.min(r.end, topics.length); i++) {
+        if (!completed.has(topics[i].id)) return topics[i]
+      }
+    }
+    // Finally wrap to earlier sections so the suggestion is never empty
+    // when there's still uncompleted work in earlier sections.
+    for (let s = 0; s < currentSectionIdx; s++) {
+      const r = sectionOrder[s]
+      for (let i = r.start; i < Math.min(r.end, topics.length); i++) {
+        if (!completed.has(topics[i].id)) return topics[i]
+      }
+    }
+    return null
+  }
+
+  // Fallback: linear walk if the topic doesn't fit any known section.
+  for (let i = finishedIdx + 1; i < topics.length; i++) {
+    if (!completed.has(topics[i].id)) return topics[i]
+  }
+  for (let i = 0; i < finishedIdx; i++) {
+    if (!completed.has(topics[i].id)) return topics[i]
+  }
+  return null
 }

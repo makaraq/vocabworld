@@ -21,6 +21,7 @@ import {
   reportProgress,
   reportTopicComplete,
   evaluateTimeContext,
+  findNextTopicAfter,
 } from "@/lib/achievements/engine"
 
 const TUTORIAL_STEPS: CoachMarkStep[] = [
@@ -1942,9 +1943,15 @@ export function LanguageSelector() {
                           const newId = fresh[fresh.length - 1];
                           const finished = topicsRef.current.find((t) => t.id === newId);
                           if (finished) {
-                            const sorted = [...topicsRef.current].sort((a, b) => a.id - b.id);
-                            const completedSet = new Set(next);
-                            const nextTopic = sorted.find((t) => !completedSet.has(t.id)) || null;
+                            // Stop the autoplay loop so the modal isn't drowned
+                            // out by the next word starting to play.
+                            try { stopAudioRef.current?.(); } catch {}
+
+                            const nextTopic = findNextTopicAfter(
+                              topicsRef.current,
+                              finished.id,
+                              next,
+                            );
                             const displayName = topicDisplayNameRef.current;
                             reportTopicComplete(
                               userId,
@@ -2288,8 +2295,14 @@ export function LanguageSelector() {
     setIsPlaying(false)
     setCurrentAudioStep('idle')
     setAutoPlayActive(false)
-    
+
   }
+
+  // Expose stopAudio via ref so the audio-init closure (which captures stale
+  // function references) can halt playback when the topic-complete modal opens.
+  useEffect(() => {
+    stopAudioRef.current = stopAudio
+  })
 
   // Example sentences modal state
   const [showExampleModal, setShowExampleModal] = useState(false)
@@ -2395,14 +2408,26 @@ export function LanguageSelector() {
   const topicDisplayNameRef = useRef<(id: number, name: string) => string>(
     (_id, name) => name,
   )
+  // Ref to stopAudio so audio-init closures can stop autoplay when the
+  // topic-complete modal pops without depending on stale closure state.
+  const stopAudioRef = useRef<(() => void) | null>(null)
 
   // 🏆 Topic-complete modal button handlers — drive learning navigation.
   // Use a ref to dodge stale closures: handleTopicSelect is recreated each render.
-  const topicChoiceCtxRef = useRef({
+  const topicChoiceCtxRef = useRef<{
+    topics: Topic[]
+    handleTopicSelect: (t: Topic) => void
+    setCurrentPage: typeof setCurrentPage
+    setCurrentWordIndex: typeof setCurrentWordIndex
+    canAccessTopic: (id: number) => boolean
+    setShowPaywall: typeof setShowPaywall
+  }>({
     topics,
-    handleTopicSelect: (_t: Topic) => {},
+    handleTopicSelect: () => {},
     setCurrentPage,
     setCurrentWordIndex,
+    canAccessTopic: () => true,
+    setShowPaywall,
   })
   useEffect(() => {
     topicChoiceCtxRef.current = {
@@ -2410,6 +2435,8 @@ export function LanguageSelector() {
       handleTopicSelect,
       setCurrentPage,
       setCurrentWordIndex,
+      canAccessTopic,
+      setShowPaywall,
     }
   })
   useEffect(() => {
@@ -2417,7 +2444,14 @@ export function LanguageSelector() {
       const ctx = topicChoiceCtxRef.current
       if (action === 'continue' && nextTopicId != null) {
         const next = ctx.topics.find((t) => t.id === nextTopicId)
-        if (next) ctx.handleTopicSelect(next)
+        if (!next) return
+        // Honor subscription gating — Continue must not bypass the paywall.
+        if (!ctx.canAccessTopic(next.id)) {
+          hapticsWarning()
+          ctx.setShowPaywall(true)
+          return
+        }
+        ctx.handleTopicSelect(next)
         return
       }
       if (action === 'repeat') {
