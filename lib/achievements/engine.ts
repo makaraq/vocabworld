@@ -42,9 +42,11 @@ export interface TopicCompleteEvent {
 
 type UnlockListener = (e: UnlockEvent) => void
 type TopicListener = (e: TopicCompleteEvent) => void
+type BadgesGalleryListener = () => void
 
 const unlockListeners = new Set<UnlockListener>()
 const topicListeners = new Set<TopicListener>()
+const badgesGalleryListeners = new Set<BadgesGalleryListener>()
 
 export function subscribeUnlock(fn: UnlockListener): () => void {
   unlockListeners.add(fn)
@@ -54,6 +56,21 @@ export function subscribeUnlock(fn: UnlockListener): () => void {
 export function subscribeTopicComplete(fn: TopicListener): () => void {
   topicListeners.add(fn)
   return () => topicListeners.delete(fn)
+}
+
+export function subscribeOpenBadgesGallery(fn: BadgesGalleryListener): () => void {
+  badgesGalleryListeners.add(fn)
+  return () => badgesGalleryListeners.delete(fn)
+}
+
+export function openBadgesGallery(): void {
+  badgesGalleryListeners.forEach((fn) => {
+    try {
+      fn()
+    } catch {
+      /* ignore */
+    }
+  })
 }
 
 function emitUnlock(achievement: AchievementDef): void {

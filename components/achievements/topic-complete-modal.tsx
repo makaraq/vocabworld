@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Icon } from '@iconify/react'
 import { hapticsSuccess } from '@/lib/haptics'
 
@@ -38,10 +39,10 @@ export function TopicCompleteModal({
     setShown(false)
   }, [open])
 
-  if (!open) return null
+  if (!open || typeof document === 'undefined') return null
 
-  return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+  return createPortal(
+    <div className="fixed inset-0 z-[80] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
         className={`absolute inset-0 bg-black/40 backdrop-blur-md transition-opacity duration-300 ${
@@ -126,6 +127,7 @@ export function TopicCompleteModal({
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }

@@ -5,13 +5,11 @@ import { Icon } from '@iconify/react'
 import { ACHIEVEMENTS, tierGradient } from '@/lib/achievements/definitions'
 import { getUnlocked, UnlockedRecord } from '@/lib/achievements/storage'
 import { useAuth } from '@/contexts/auth-context'
-import { BadgesModal } from './badges-modal'
-import { subscribeUnlock } from '@/lib/achievements/engine'
+import { openBadgesGallery, subscribeUnlock } from '@/lib/achievements/engine'
 
 export function BadgesCard() {
   const { user } = useAuth()
   const [unlocked, setUnlocked] = useState<UnlockedRecord[]>([])
-  const [showModal, setShowModal] = useState(false)
   const [holding, setHolding] = useState(false)
 
   useEffect(() => {
@@ -36,16 +34,15 @@ export function BadgesCard() {
     .filter(Boolean) as typeof ACHIEVEMENTS
 
   return (
-    <>
-      <button
-        onClick={() => setShowModal(true)}
-        onTouchStart={() => setHolding(true)}
-        onTouchEnd={() => setHolding(false)}
-        onTouchCancel={() => setHolding(false)}
-        className={`bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20 text-left w-full hover:bg-white/15 transition-all ${
-          holding ? 'scale-[1.03]' : 'scale-100'
-        }`}
-      >
+    <button
+      onClick={() => openBadgesGallery()}
+      onTouchStart={() => setHolding(true)}
+      onTouchEnd={() => setHolding(false)}
+      onTouchCancel={() => setHolding(false)}
+      className={`bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20 text-left w-full hover:bg-white/15 transition-all ${
+        holding ? 'scale-[1.03]' : 'scale-100'
+      }`}
+    >
         <div className="flex items-start justify-between mb-1.5 sm:mb-2">
           <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center">
             <Icon icon="solar:medal-star-bold" width="18" height="18" className="text-white" />
@@ -71,9 +68,6 @@ export function BadgesCard() {
           <span className="text-white/50 text-sm sm:text-base font-medium"> / {total}</span>
         </div>
         <div className="text-[10px] sm:text-xs text-white/90">Badges</div>
-      </button>
-
-      <BadgesModal open={showModal} onCloseAction={() => setShowModal(false)} />
-    </>
+    </button>
   )
 }

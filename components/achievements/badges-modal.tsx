@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Icon } from '@iconify/react'
 import {
   ACHIEVEMENTS,
@@ -74,10 +75,10 @@ export function BadgesModal({ open, onCloseAction }: Props) {
     [unlocked],
   )
 
-  if (!open) return null
+  if (!open || typeof document === 'undefined') return null
 
-  return (
-    <div className="fixed inset-0 z-[55] flex items-end sm:items-center justify-center p-0 sm:p-4">
+  return createPortal(
+    <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4">
       <div
         className={`absolute inset-0 bg-black/40 backdrop-blur-md transition-opacity duration-300 ${
           shown ? 'opacity-100' : 'opacity-0'
@@ -171,6 +172,7 @@ export function BadgesModal({ open, onCloseAction }: Props) {
           })}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
