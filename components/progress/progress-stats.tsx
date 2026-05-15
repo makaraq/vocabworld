@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/auth-context"
 import { Icon } from "@iconify/react"
 import { DetailedProgressModal } from "./detailed-progress-modal"
 import { getFlagIcon } from "@/utils/flags"
+import { reportProgress } from "@/lib/achievements/engine"
 
 interface ProgressStats {
   wordsLearned: number
@@ -45,6 +46,15 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLa
           const data = await response.json()
           setStats(data)
           setLastFetchKey(cacheKey)
+          // 🏆 Evaluate badge unlocks against the freshest stats.
+          reportProgress({
+            userId: user.id,
+            wordsLearned: data.wordsLearned,
+            currentStreak: data.dailyLoginStreak,
+            wordsToday: data.wordsLearnedToday,
+            topicsCompleted: data.topicsCompleted,
+            targetLanguageCode,
+          })
         }
       } catch (error) {
         console.error('Failed to fetch progress stats:', error)

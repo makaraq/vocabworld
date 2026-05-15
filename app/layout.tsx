@@ -2,6 +2,7 @@ import type React from "react"
 import type { Metadata, Viewport } from "next"
 import { Space_Grotesk } from "next/font/google"
 import { AuthProvider } from "@/contexts/auth-context"
+import { AchievementProvider } from "@/components/achievements/achievement-provider"
 import "./globals.css"
 import "../styles/stripe-elements.css"
 
@@ -40,7 +41,9 @@ export default function RootLayout({
       </head>
       <body className="font-sans" style={{ fontFamily: "var(--font-space-grotesk)" }}>
         <AuthProvider>
-          {children}
+          <AchievementProvider>
+            {children}
+          </AchievementProvider>
         </AuthProvider>
       </body>
     </html>

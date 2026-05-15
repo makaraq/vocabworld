@@ -15,6 +15,13 @@ import { NotificationPromptModal } from "@/components/notifications/notification
 import { NotificationSetupScreen } from "@/components/notifications/notification-setup-screen"
 import { CoachMarkOverlay, type CoachMarkStep } from "@/components/tutorial/coach-mark-overlay"
 import { hapticsLight, hapticsMedium, hapticsSuccess, hapticsWarning } from "@/lib/haptics"
+import { BadgesCard } from "@/components/achievements/badges-card"
+import { useAchievementContext } from "@/components/achievements/achievement-provider"
+import {
+  reportProgress,
+  reportTopicComplete,
+  evaluateTimeContext,
+} from "@/lib/achievements/engine"
 
 const TUTORIAL_STEPS: CoachMarkStep[] = [
   {
@@ -516,13 +523,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                       <div className="text-xl sm:text-2xl font-bold text-white">02:00 PM</div>
                       <div className="text-[10px] sm:text-xs text-white/90">Daily Reminder</div>
                     </div>
-                    <div className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20">
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center mb-1.5 sm:mb-2">
-                        <Icon icon="solar:target-bold" width="18" height="18" className="text-white" />
-                      </div>
-                      <div className="text-xl sm:text-2xl font-bold text-white">20</div>
-                      <div className="text-[10px] sm:text-xs text-white/90">Daily Goal · words</div>
-                    </div>
+                    <BadgesCard />
                   </div>
 
                   {/* Manage Account Button */}
@@ -1935,6 +1936,25 @@ export function LanguageSelector() {
                         // Any newly completed topic → success haptic
                         if (next.length > prev.length) {
                           hapticsSuccess()
+
+                          // 🏆 Pop the topic-complete celebration modal.
+                          const fresh = next.filter((id) => !prev.includes(id));
+                          const newId = fresh[fresh.length - 1];
+                          const finished = topicsRef.current.find((t) => t.id === newId);
+                          if (finished) {
+                            const sorted = [...topicsRef.current].sort((a, b) => a.id - b.id);
+                            const completedSet = new Set(next);
+                            const nextTopic = sorted.find((t) => !completedSet.has(t.id)) || null;
+                            const displayName = topicDisplayNameRef.current;
+                            reportTopicComplete(
+                              userId,
+                              finished.id,
+                              displayName(finished.id, finished.name),
+                              nextTopic
+                                ? { id: nextTopic.id, name: displayName(nextTopic.id, nextTopic.name) }
+                                : null,
+                            );
+                          }
                         }
 
                         // First-ever topic completion → ask for a store review (once only)
@@ -2351,6 +2371,90 @@ export function LanguageSelector() {
     
     fetchCompletedTopics()
   }, [user?.id, targetLanguageCode])
+
+  // 🏆 Achievement bridge: re-evaluate section/topic-count achievements
+  // any time the completed list changes (initial load + user actions).
+  // The actual celebration modal is fired from the audio-track callback so
+  // it never pops on initial page load.
+  const { registerTopicChoiceHandler } = useAchievementContext()
+  useEffect(() => {
+    reportProgress({
+      userId: user?.id || null,
+      topicsCompleted: completedTopicIds.length,
+      completedTopicIds,
+      targetLanguageCode: targetLanguageCode || undefined,
+    })
+  }, [completedTopicIds, targetLanguageCode, user?.id])
+
+  // Topics ref so the audio-track callback (captured at init) can read the
+  // current topic list for next-topic lookup.
+  const topicsRef = useRef<Topic[]>([])
+  useEffect(() => {
+    topicsRef.current = topics
+  }, [topics])
+  const topicDisplayNameRef = useRef<(id: number, name: string) => string>(
+    (_id, name) => name,
+  )
+
+  // 🏆 Topic-complete modal button handlers — drive learning navigation.
+  // Use a ref to dodge stale closures: handleTopicSelect is recreated each render.
+  const topicChoiceCtxRef = useRef({
+    topics,
+    handleTopicSelect: (_t: Topic) => {},
+    setCurrentPage,
+    setCurrentWordIndex,
+  })
+  useEffect(() => {
+    topicChoiceCtxRef.current = {
+      topics,
+      handleTopicSelect,
+      setCurrentPage,
+      setCurrentWordIndex,
+    }
+  })
+  useEffect(() => {
+    registerTopicChoiceHandler((topicId, action, nextTopicId) => {
+      const ctx = topicChoiceCtxRef.current
+      if (action === 'continue' && nextTopicId != null) {
+        const next = ctx.topics.find((t) => t.id === nextTopicId)
+        if (next) ctx.handleTopicSelect(next)
+        return
+      }
+      if (action === 'repeat') {
+        const cur = ctx.topics.find((t) => t.id === topicId)
+        if (!cur) return
+        const userId = (window as any).__vocaWorldUserId
+        const langCode = (window as any).__vocaWorldTargetLangCode
+        // Reset server-side resume position so handleTopicSelect starts at 0.
+        const resetThenOpen = async () => {
+          if (userId && langCode) {
+            try {
+              await fetch('/api/progress/position', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  userId,
+                  topicId: cur.id,
+                  targetLanguageCode: langCode,
+                  currentWordIndex: 0,
+                  totalWords: 0,
+                }),
+              })
+            } catch {}
+          }
+          ctx.setCurrentWordIndex(0)
+          ctx.handleTopicSelect(cur)
+        }
+        resetThenOpen()
+      }
+    })
+    return () => registerTopicChoiceHandler(null)
+  }, [registerTopicChoiceHandler])
+
+  // 🏆 Time-of-day evaluation on mount (early bird / night owl / weekend).
+  useEffect(() => {
+    evaluateTimeContext(user?.id || null)
+  }, [user?.id])
 
   // 💾 Auto-save position when word index changes (debounced)
   useEffect(() => {
@@ -2932,6 +3036,12 @@ export function LanguageSelector() {
     
     return nameMapping[topicId] || originalName
   }
+
+  // Keep a ref pointing at the latest display-name function so closures
+  // captured at audio-init time (achievements bridge) get localized names.
+  useEffect(() => {
+    topicDisplayNameRef.current = getTopicDisplayName
+  })
 
   const handleLanguageSelect = (language: { code: string; name: string }) => {
     hapticsLight()
