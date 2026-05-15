@@ -3474,6 +3474,8 @@ export function LanguageSelector() {
           setAutoPlayActive(true)
         } else {
           // Just play the current word once
+          stopRequestedRef.current = false
+          audioCallInProgress.current = false
           setIsPlaying(true)
           playAudio(currentWord, false).then(() => {
             // Only reset isPlaying if stop wasn't requested
