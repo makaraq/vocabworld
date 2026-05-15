@@ -41,7 +41,7 @@ export default function PrivacyPolicyPage() {
             <section>
               <h2 className="text-2xl font-semibold mb-4">Introduction</h2>
               <p className="text-white/90 leading-relaxed">
-                Welcome to Vocab World ("we," "our," or "us"). We are committed to protecting your privacy and personal data. 
+                Welcome to Sprind ("we," "our," or "us"). We are committed to protecting your privacy and personal data. 
                 This Privacy Policy explains how we collect, use, store, and protect your information when you use our 
                 language learning application.
               </p>
@@ -168,9 +168,13 @@ export default function PrivacyPolicyPage() {
               <ul className="list-disc list-inside space-y-2 text-white/90 ml-4 mt-3">
                 <li>Permanently delete all your personal information</li>
                 <li>Remove all learning progress and custom playlists</li>
-                <li>Cancel any active subscriptions</li>
                 <li>Revoke all access to premium features</li>
               </ul>
+              <p className="text-white/90 leading-relaxed mt-3">
+                <strong>Important:</strong> Deleting your account does <strong>not</strong> automatically cancel an active App Store or Google Play subscription.
+                You must cancel your subscription separately through your Apple ID settings (iOS) or Google Play account settings (Android) before or after deleting your account,
+                otherwise you may continue to be billed.
+              </p>
               <p className="text-white/90 leading-relaxed mt-3">
                 <strong>This action cannot be undone.</strong> Please export your data before deleting if you wish to keep a copy.
               </p>
@@ -218,7 +222,7 @@ export default function PrivacyPolicyPage() {
 
             <section className="pt-6 border-t border-white/20">
               <p className="text-white/60 text-sm">
-                By using Vocab World, you acknowledge that you have read and understood this Privacy Policy and agree to its terms.
+                By using Sprind, you acknowledge that you have read and understood this Privacy Policy and agree to its terms.
               </p>
             </section>
           </div>

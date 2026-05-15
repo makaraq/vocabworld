@@ -1,4 +1,4 @@
-# Vocab World - Multilingual Language Learning Platform
+# Sprind - Multilingual Language Learning Platform
 
 A modern, AI-powered language learning Progressive Web App (PWA) that teaches vocabulary across 50 languages using advanced Text-to-Speech technology and gamification.
 

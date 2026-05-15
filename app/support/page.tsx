@@ -75,7 +75,7 @@ export default function SupportPage() {
                       </p>
                     </div>
                     <div>
-                      <h3 className="font-medium mb-1">Can I use Vocab World offline?</h3>
+                      <h3 className="font-medium mb-1">Can I use Sprind offline?</h3>
                       <p className="text-sm text-white/80">
                         Some features require an internet connection, especially audio playback. We're working 
                         on offline support for future updates.
@@ -91,7 +91,7 @@ export default function SupportPage() {
                     <div>
                       <h3 className="font-medium mb-1">What languages are supported?</h3>
                       <p className="text-sm text-white/80">
-                        Vocab World supports 50 languages including major European, Asian, and global languages. 
+                        Sprind supports 50 languages including major European, Asian, and global languages. 
                         Check the language selector for the complete list.
                       </p>
                     </div>

@@ -187,7 +187,8 @@ export function ManageAccountModal({
             {isPremium && (
               <div className="bg-yellow-500/10 border border-yellow-400/30 rounded-2xl p-3">
                 <p className="text-yellow-300 text-xs leading-relaxed text-center">
-                  You have an active subscription. Deleting your account will <strong>not</strong> cancel it — you will continue to be charged. Cancel it first via <strong>Settings → Apple ID → Subscriptions</strong>.
+                  You have an active subscription. Deleting your account will <strong>not</strong> cancel it — you will continue to be charged.
+                  Cancel it first via <strong>Apple ID → Subscriptions</strong> (iOS) or <strong>Google Play → Subscriptions</strong> (Android).
                 </p>
               </div>
             )}

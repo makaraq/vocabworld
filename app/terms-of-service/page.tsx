@@ -41,7 +41,7 @@ export default function TermsOfServicePage() {
             <section>
               <h2 className="text-2xl font-semibold mb-4">Agreement to Terms</h2>
               <p className="text-white/90 leading-relaxed">
-                By accessing or using Vocab World ("the App"), you agree to be bound by these Terms of Service ("Terms"). 
+                By accessing or using Sprind ("the App"), you agree to be bound by these Terms of Service ("Terms"). 
                 If you do not agree to these Terms, please do not use the App. We reserve the right to modify these 
                 Terms at any time, and your continued use constitutes acceptance of any changes.
               </p>
@@ -50,7 +50,7 @@ export default function TermsOfServicePage() {
             <section>
               <h2 className="text-2xl font-semibold mb-4">Description of Service</h2>
               <p className="text-white/90 leading-relaxed mb-3">
-                Vocab World is a language learning application that provides:
+                Sprind is a language learning application that provides:
               </p>
               <ul className="list-disc list-inside space-y-2 text-white/90 ml-4">
                 <li>Vocabulary learning across 50 languages</li>
@@ -101,10 +101,10 @@ export default function TermsOfServicePage() {
                   <h3 className="text-lg font-medium mb-2">Payment Terms</h3>
                   <ul className="list-disc list-inside space-y-2 ml-4">
                     <li>Subscriptions are billed monthly or annually</li>
-                    <li>Payments are processed securely through Stripe</li>
-                    <li>Subscriptions automatically renew unless canceled</li>
+                    <li>Payments are processed securely through Apple App Store or Google Play Store billing</li>
+                    <li>Subscriptions automatically renew unless canceled at least 24 hours before the end of the current period</li>
                     <li>Prices may change with 30 days notice</li>
-                    <li>No refunds for partial subscription periods</li>
+                    <li>No refunds for partial subscription periods, except as required by Apple App Store or Google Play Store policies</li>
                   </ul>
                 </div>
               </div>
@@ -150,7 +150,7 @@ export default function TermsOfServicePage() {
               <h2 className="text-2xl font-semibold mb-4">Intellectual Property</h2>
               <p className="text-white/90 leading-relaxed">
                 All content in the App, including but not limited to text, graphics, logos, audio files, and software, 
-                is the property of Vocab World or its licensors and is protected by copyright, trademark, and other intellectual 
+                is the property of Sprind or its licensors and is protected by copyright, trademark, and other intellectual 
                 property laws. You may not copy, modify, distribute, or create derivative works without explicit permission.
               </p>
             </section>
@@ -167,8 +167,8 @@ export default function TermsOfServicePage() {
             <section>
               <h2 className="text-2xl font-semibold mb-4">Third-Party Services</h2>
               <p className="text-white/90 leading-relaxed">
-                The App integrates with third-party services including Google OAuth, Apple Sign In, Stripe for payments, 
-                and Supabase for data storage. Your use of these services is subject to their respective terms and privacy 
+                The App integrates with third-party services including Google OAuth, Apple Sign In, Apple App Store and Google Play Store for in-app billing,
+                and Supabase for data storage. Your use of these services is subject to their respective terms and privacy
                 policies. We are not responsible for the practices or content of third-party services.
               </p>
             </section>
@@ -185,7 +185,7 @@ export default function TermsOfServicePage() {
             <section>
               <h2 className="text-2xl font-semibold mb-4">Limitation of Liability</h2>
               <p className="text-white/90 leading-relaxed">
-                TO THE MAXIMUM EXTENT PERMITTED BY LAW, VOCAB WORLD SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, 
+                TO THE MAXIMUM EXTENT PERMITTED BY LAW, SPRIND SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, 
                 CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING LOSS OF PROFITS, DATA, OR OTHER INTANGIBLE LOSSES, RESULTING 
                 FROM YOUR USE OR INABILITY TO USE THE APP. OUR TOTAL LIABILITY SHALL NOT EXCEED THE AMOUNT YOU PAID FOR 
                 THE SERVICE IN THE LAST 12 MONTHS.
@@ -195,7 +195,7 @@ export default function TermsOfServicePage() {
             <section>
               <h2 className="text-2xl font-semibold mb-4">Indemnification</h2>
               <p className="text-white/90 leading-relaxed">
-                You agree to indemnify and hold harmless Vocab World, its affiliates, and their respective officers, directors, 
+                You agree to indemnify and hold harmless Sprind, its affiliates, and their respective officers, directors, 
                 employees, and agents from any claims, damages, losses, liabilities, and expenses (including legal fees) 
                 arising from your use of the App or violation of these Terms.
               </p>
@@ -222,9 +222,9 @@ export default function TermsOfServicePage() {
             <section>
               <h2 className="text-2xl font-semibold mb-4">Governing Law</h2>
               <p className="text-white/90 leading-relaxed">
-                These Terms shall be governed by and construed in accordance with the laws of [Your Jurisdiction], 
-                without regard to its conflict of law provisions. Any disputes arising from these Terms or the App 
-                shall be resolved in the courts of [Your Jurisdiction].
+                These Terms shall be governed by and construed in accordance with the laws of the State of Delaware,
+                United States, without regard to its conflict of law provisions. Any disputes arising from these Terms or the App
+                shall be resolved in the courts of the State of Delaware.
               </p>
             </section>
 
@@ -234,14 +234,13 @@ export default function TermsOfServicePage() {
                 If you have questions about these Terms, please contact us:
               </p>
               <div className="bg-white/10 border border-white/20 rounded-xl p-4 text-white/90">
-                <p><strong>Email:</strong> legal@vocoapp.com</p>
-                <p><strong>Support:</strong> support@vocoapp.com</p>
+                <p><strong>Email:</strong> support@vocoapp.com</p>
               </div>
             </section>
 
             <section className="pt-6 border-t border-white/20">
               <p className="text-white/60 text-sm">
-                By using Vocab World, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.
+                By using Sprind, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.
               </p>
             </section>
           </div>

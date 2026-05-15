@@ -12,9 +12,8 @@ const spaceGrotesk = Space_Grotesk({
 })
 
 export const metadata: Metadata = {
-  title: "Vocab World - AI Language Learning",
-  description: "Learn languages with AI-powered vocabulary and premium TTS voices",
-  generator: "v0.app",
+  title: "Sprind - AI Language Learning",
+  description: "Learn vocabulary in 50 languages with audio pronunciation, progress tracking, and daily streaks.",
 }
 
 export const viewport: Viewport = {

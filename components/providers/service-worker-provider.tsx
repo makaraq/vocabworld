@@ -62,7 +62,7 @@ export function ServiceWorkerProvider({ children }: { children: React.ReactNode 
                   Update Available
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
-                  A new version of Vocab World is available. Reload to update.
+                  A new version of Sprind is available. Reload to update.
                 </p>
                 
                 <div className="flex gap-2">

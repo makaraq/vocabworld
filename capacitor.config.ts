@@ -4,7 +4,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 // Points to the live Vercel deployment so all API routes work on-device
 const config: CapacitorConfig = {
   appId: 'com.sprind.app',
-  appName: 'Vocab World',
+  appName: 'Sprind',
   webDir: 'public', // Fallback only — app loads from server.url in production
   server: {
     url: 'https://sprind-x843.vercel.app',

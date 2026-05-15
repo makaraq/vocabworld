@@ -5,7 +5,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 // Find it with: ipconfig getifaddr en0   (on macOS)
 const config: CapacitorConfig = {
   appId: 'com.sprind.app',
-  appName: 'Vocab World',
+  appName: 'Sprind',
   webDir: 'public',
   server: {
     url: 'http://localhost:3000', // ← change to your local IP for physical device, e.g. http://192.168.1.5:3000

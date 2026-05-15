@@ -16,7 +16,7 @@ interface AuthCardProps {
 }
 
 export function AuthCard({ 
-  title = "Welcome to Vocab World",
+  title = "Welcome to Sprind",
   description = "Sign in to start your language learning journey",
   showTitle = true,
   onSuccess

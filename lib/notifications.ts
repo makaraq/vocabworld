@@ -1,7 +1,7 @@
 /**
  * lib/notifications.ts
  *
- * On-device notification scheduling for Vocab World.
+ * On-device notification scheduling for Sprind.
  * Uses @capacitor/local-notifications — no APNS/FCM setup required.
  *
  * Notification ID assignments:

@@ -3607,6 +3607,27 @@ export function LanguageSelector() {
     }
   }, [isPlaying, autoPlayActive, currentWordIndex, vocabulary, selectedTopic, targetLanguage, nativeLanguage])
 
+  // Arrow key navigation for words — blocked during playback
+  const _arrowNavRef = useRef({ handlePrevious, handleNext, isPlaying, autoPlayActive, currentPage })
+  _arrowNavRef.current = { handlePrevious, handleNext, isPlaying, autoPlayActive, currentPage }
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      const { handlePrevious, handleNext, isPlaying, autoPlayActive, currentPage } = _arrowNavRef.current
+      if (currentPage !== 'learning') return
+      if (isPlaying || autoPlayActive) return
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault()
+        handlePrevious()
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault()
+        handleNext()
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   // Hold gesture handlers for flashcard example sentences
   let holdTimer: NodeJS.Timeout | null = null
 
@@ -4203,8 +4224,8 @@ export function LanguageSelector() {
                     aria-label={`Go to previous word${vocabulary.length > 0 ? ': ' + vocabulary[Math.max(0, currentWordIndex - 1)]?.targetWord : ''}`}
                     className={`w-14 h-14 bg-black/40 border border-white/20 rounded-full flex items-center justify-center hover:bg-black/50 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 ${
                       holdingNavButton === 'previous' ? 'scale-105 transition-all duration-75' : 'scale-100 transition-all duration-300 hover:scale-110'
-                    }`}
-                    disabled={vocabulary.length === 0}
+                    } ${isPlaying || autoPlayActive ? 'opacity-30 cursor-not-allowed' : ''}`}
+                    disabled={vocabulary.length === 0 || isPlaying || autoPlayActive}
                   >
                     <ChevronLeft className="w-7 h-7 text-white/80" aria-hidden="true" />
                   </button>
@@ -4244,8 +4265,8 @@ export function LanguageSelector() {
                     aria-label={`Go to next word${vocabulary.length > 0 ? ': ' + vocabulary[Math.min(vocabulary.length - 1, currentWordIndex + 1)]?.targetWord : ''}`}
                     className={`w-14 h-14 bg-black/40 border border-white/20 rounded-full flex items-center justify-center hover:bg-black/50 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 ${
                       holdingNavButton === 'next' ? 'scale-105 transition-all duration-75' : 'scale-100 transition-all duration-300 hover:scale-110'
-                    }`}
-                    disabled={vocabulary.length === 0}
+                    } ${isPlaying || autoPlayActive ? 'opacity-30 cursor-not-allowed' : ''}`}
+                    disabled={vocabulary.length === 0 || isPlaying || autoPlayActive}
                   >
                     <ChevronRight className="w-7 h-7 text-white/80" aria-hidden="true" />
                   </button>

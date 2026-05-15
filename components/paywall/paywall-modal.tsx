@@ -16,6 +16,11 @@ interface PaywallModalProps {
   targetLanguageCode?: string
 }
 
+interface LivePrices {
+  monthly: string
+  yearly: string
+}
+
 export function PaywallModal({
   isOpen,
   onCloseAction,
@@ -23,14 +28,32 @@ export function PaywallModal({
 }: PaywallModalProps) {
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('yearly')
   const [mounted, setMounted] = useState(false)
+  const [livePrices, setLivePrices] = useState<LivePrices | null>(null)
+  const [restoreStatus, setRestoreStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle')
   const { user, refreshSubscription } = useAuth()
-  const { purchasePackage, restorePurchases, loading, error, clearError } = useRevenueCat()
+  const { purchasePackage, restorePurchases, getOfferings, loading, error, clearError } = useRevenueCat()
   const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     setMounted(true)
     return () => setMounted(false)
   }, [])
+
+  // Fetch live prices from RevenueCat/StoreKit so the displayed price matches the store
+  useEffect(() => {
+    if (!isOpen) return
+    getOfferings().then(packages => {
+      if (!packages.length) return
+      const monthly = packages.find(p => p.identifier === PRICING.monthly.rcPackageId)
+      const yearly = packages.find(p => p.identifier === PRICING.yearly.rcPackageId)
+      if (monthly || yearly) {
+        setLivePrices({
+          monthly: monthly?.priceString ?? formatPrice(PRICING.monthly.price),
+          yearly: yearly?.priceString ?? formatPrice(PRICING.yearly.price),
+        })
+      }
+    }).catch(() => { /* fall back to hardcoded prices */ })
+  }, [isOpen, getOfferings])
 
   // Auto-dismiss error after 4 seconds
   useEffect(() => {
@@ -65,6 +88,23 @@ export function PaywallModal({
     }
   }
 
+  const handleRestore = async () => {
+    setRestoreStatus('loading')
+    const success = await restorePurchases()
+    if (success) {
+      await refreshSubscription()
+      setRestoreStatus('done')
+      setTimeout(() => { onSuccessAction?.(); onCloseAction() }, 800)
+    } else {
+      setRestoreStatus('error')
+      setTimeout(() => setRestoreStatus('idle'), 3000)
+    }
+  }
+
+  const monthlyPrice = livePrices?.monthly ?? formatPrice(PRICING.monthly.price)
+  const yearlyPrice = livePrices?.yearly ?? formatPrice(PRICING.yearly.price)
+  const yearlyMonthly = livePrices ? '' : formatPrice(PRICING.yearly.price / 12)
+
   const modalContent = (
     <div
       className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/20 backdrop-blur-md"
@@ -86,7 +126,7 @@ export function PaywallModal({
             <div className="w-16 h-16 bg-gradient-to-br from-yellow-400/90 to-orange-500/90 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg border border-white/20">
               <Icon icon="solar:star-bold" className="w-9 h-9 text-white drop-shadow-lg" />
             </div>
-            <h2 className="text-2xl font-bold text-white drop-shadow-lg mb-2">Unlock Vocab World Unlimited</h2>
+            <h2 className="text-2xl font-bold text-white drop-shadow-lg mb-2">Unlock Sprind Premium</h2>
           </div>
         </div>
 
@@ -130,8 +170,8 @@ export function PaywallModal({
                 <p className="text-white/60 text-sm drop-shadow">Billed annually after trial</p>
               </div>
               <div className="text-right">
-                <p className="text-white font-bold text-xl drop-shadow-lg">{formatPrice(PRICING.yearly.price)}</p>
-                <p className="text-white/60 text-xs drop-shadow">{formatPrice(PRICING.yearly.price / 12)}/mo</p>
+                <p className="text-white font-bold text-xl drop-shadow-lg">{yearlyPrice}/yr</p>
+                {yearlyMonthly && <p className="text-white/60 text-xs drop-shadow">{yearlyMonthly}/mo</p>}
               </div>
             </div>
             <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
@@ -158,8 +198,7 @@ export function PaywallModal({
                 <p className="text-white/60 text-sm drop-shadow">Billed monthly</p>
               </div>
               <div className="text-right">
-                <p className="text-white font-bold text-xl drop-shadow-lg">{formatPrice(PRICING.monthly.price)}</p>
-                <p className="text-white/60 text-xs drop-shadow">per month</p>
+                <p className="text-white font-bold text-xl drop-shadow-lg">{monthlyPrice}/mo</p>
               </div>
             </div>
             <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
@@ -202,7 +241,16 @@ export function PaywallModal({
             </p>
           )}
 
-          <div className="flex items-center justify-center gap-3 mt-3">
+          {/* Restore Purchases — required by Apple App Store guidelines */}
+          <button
+            onClick={handleRestore}
+            disabled={loading || restoreStatus === 'loading'}
+            className="w-full py-2 text-white/50 hover:text-white/70 text-sm transition-colors disabled:opacity-50"
+          >
+            {restoreStatus === 'loading' ? 'Restoring…' : restoreStatus === 'done' ? 'Restored ✓' : restoreStatus === 'error' ? 'Nothing to restore' : 'Restore Purchases'}
+          </button>
+
+          <div className="flex items-center justify-center gap-3 mt-1">
             <Link
               href="/terms-of-service"
               className="text-white/50 hover:text-white/70 text-xs transition-colors underline underline-offset-2"
@@ -218,9 +266,19 @@ export function PaywallModal({
             </Link>
           </div>
 
-          <p className="text-center text-white/50 text-xs mt-2">
-            Cancel anytime • Secure payment
-          </p>
+          {/* Free trial disclosure — required by Apple App Store guidelines */}
+          {selectedPlan === 'yearly' && (
+            <p className="text-center text-white/40 text-xs mt-2 leading-relaxed px-2">
+              7-day free trial, then {yearlyPrice}/year. Subscription renews automatically
+              unless cancelled at least 24 hours before renewal. Manage in App Store or Google Play settings.
+            </p>
+          )}
+          {selectedPlan === 'monthly' && (
+            <p className="text-center text-white/40 text-xs mt-2 leading-relaxed px-2">
+              {monthlyPrice}/month. Renews automatically unless cancelled at least 24 hours before renewal.
+              Manage in App Store or Google Play settings.
+            </p>
+          )}
         </div>
       </div>
     </div>
