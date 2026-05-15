@@ -155,14 +155,17 @@ export function reportEvent(
 
 /**
  * Auto-fire time-of-day achievements based on the wall clock. Idempotent —
- * each one only unlocks once per user.
+ * each one only unlocks once per user. Windows are mutually exclusive so a
+ * single session never trips both Night Owl and Early Bird.
  */
 export function evaluateTimeContext(userId: string | null): void {
   const now = new Date()
   const h = now.getHours()
   const day = now.getDay() // 0 = Sun, 6 = Sat
-  if (h < 7) reportEvent(userId, 'time_early_bird')
-  if (h >= 0 && h < 4) reportEvent(userId, 'time_night_owl')
+  // Night Owl: 22:00–03:59 — late evening into the wee hours.
+  if (h >= 22 || h < 4) reportEvent(userId, 'time_night_owl')
+  // Early Bird: 04:00–07:59 — sunrise grind. Disjoint from Night Owl.
+  else if (h >= 4 && h < 8) reportEvent(userId, 'time_early_bird')
   if (day === 0 || day === 6) reportEvent(userId, 'time_weekend')
 }
 

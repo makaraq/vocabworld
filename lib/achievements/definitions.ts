@@ -121,8 +121,8 @@ export const ACHIEVEMENTS: AchievementDef[] = [
 
   // Time-of-day & daily goal (event-only, no metric)
   { id: 'goal_daily', title: 'Daily Dose', description: 'Hit the 20-word daily goal', icon: 'solar:target-bold', category: 'time', tier: 'silver', threshold: 20, metric: 'wordsToday' },
-  { id: 'time_early_bird', title: 'Early Bird', description: 'Practice before 7 AM', icon: 'solar:sun-2-bold', category: 'time', tier: 'bronze', threshold: 1 },
-  { id: 'time_night_owl', title: 'Night Owl', description: 'Practice after midnight', icon: 'solar:moon-stars-bold', category: 'time', tier: 'bronze', threshold: 1 },
+  { id: 'time_early_bird', title: 'Early Bird', description: 'Practice between 4 AM and 8 AM', icon: 'solar:sun-2-bold', category: 'time', tier: 'bronze', threshold: 1 },
+  { id: 'time_night_owl', title: 'Night Owl', description: 'Practice between 10 PM and 4 AM', icon: 'solar:moon-stars-bold', category: 'time', tier: 'bronze', threshold: 1 },
   { id: 'time_weekend', title: 'Weekend Warrior', description: 'Practice on a weekend', icon: 'solar:calendar-mark-bold', category: 'time', tier: 'bronze', threshold: 1 },
 ]
 

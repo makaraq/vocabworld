@@ -1929,6 +1929,22 @@ export function LanguageSelector() {
                   if (response.ok) {
                     const data = await response.json();
 
+                    // 🏆 Real-time achievement evaluation for word/streak/today
+                    // metrics. Only fires on new-word events (server returned
+                    // fresh stats). Time-of-day eval is gated on actual
+                    // learning activity so it never pops on app load.
+                    if (data.stats) {
+                      reportProgress({
+                        userId,
+                        wordsLearned: data.stats.wordsLearned,
+                        currentStreak: data.stats.dailyLoginStreak,
+                        wordsToday: data.stats.wordsLearnedToday,
+                        topicsCompleted: data.stats.topicsCompleted,
+                        targetLanguageCode: userTargetLangCode || undefined,
+                      });
+                      evaluateTimeContext(userId);
+                    }
+
                     // Update completed topics immediately from API response
                     if (data.completedTopicIds) {
                       setCompletedTopicIds((prev) => {
@@ -2484,11 +2500,6 @@ export function LanguageSelector() {
     })
     return () => registerTopicChoiceHandler(null)
   }, [registerTopicChoiceHandler])
-
-  // 🏆 Time-of-day evaluation on mount (early bird / night owl / weekend).
-  useEffect(() => {
-    evaluateTimeContext(user?.id || null)
-  }, [user?.id])
 
   // 💾 Auto-save position when word index changes (debounced)
   useEffect(() => {
