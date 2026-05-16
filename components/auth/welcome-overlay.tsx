@@ -96,18 +96,15 @@ export function WelcomeOverlay() {
       {/* Modal Content */}
       <div className="relative bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 p-10 mx-4 max-w-sm w-full text-center shadow-2xl">
         {/* Hero animation */}
-        <div className="w-40 h-40 mx-auto mb-4 -mt-2">
+        <div className="w-56 h-56 mx-auto mb-4 -mt-2">
           <Lottie animationData={languageTranslatorAnim} loop autoplay />
         </div>
 
         {/* Welcome Text */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-3 tracking-wide leading-tight drop-shadow-lg">
-            WELCOME TO SPRIND!
+          <h1 className="text-2xl font-bold text-white leading-tight drop-shadow-lg">
+            Thousands of words organized by Sprind.
           </h1>
-          <p className="text-white/90 text-base drop-shadow">
-            Sign in to track your progress
-          </p>
         </div>
         
         {/* Google Sign In Button */}
