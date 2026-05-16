@@ -2320,6 +2320,26 @@ export function LanguageSelector() {
     stopAudioRef.current = stopAudio
   })
 
+  // Prefetch current word's audio to eliminate first-play cold-start delay.
+  // Warms the server (CSV index, B2 auth token) and seeds the browser HTTP
+  // cache so the user's first click on play has nothing left to wait on.
+  useEffect(() => {
+    const word: any = vocabulary[currentWordIndex]
+    if (!word?.id || !targetLanguageCode) return
+    if (word.isCustomWord) return // playlists use /api/custom-audio (TTS)
+
+    let url = `/api/universal-audio?wordId=${word.id}&languageCode=${targetLanguageCode}`
+    const englishWord = word.english_word || word.word_en || ''
+    if (englishWord) url += `&word=${encodeURIComponent(englishWord)}`
+    const targetWordForAudio = word.targetWord || ''
+    if (targetWordForAudio) url += `&targetWord=${encodeURIComponent(targetWordForAudio)}`
+
+    const controller = new AbortController()
+    fetch(url, { method: 'GET', cache: 'force-cache', signal: controller.signal })
+      .catch(() => {}) // fire-and-forget; ignore failures
+    return () => controller.abort()
+  }, [vocabulary, currentWordIndex, targetLanguageCode])
+
   // Example sentences modal state
   const [showExampleModal, setShowExampleModal] = useState(false)
   const [exampleModalData, setExampleModalData] = useState<{

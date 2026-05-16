@@ -1,8 +1,93 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { promises as fs } from 'fs';
+import path from 'path';
 
 // Universal Audio API - B2 Authenticated Access
 // Fetches audio from private B2 bucket using API credentials
 // Supports multiple B2 buckets (primary + secondary for new topics)
+
+// ==================== CSV INDEX CACHING ====================
+// CSVs total ~38MB. Without this cache, every audio request would refetch
+// them over HTTP and linear-scan. We read from disk once and build O(1) maps.
+interface CsvEntry { fileName: string; filePath: string; }
+interface CsvIndices {
+  mainById: Map<string, CsvEntry>;
+  phrasesByWord: Map<string, CsvEntry>;
+  verbsByWord: Map<string, CsvEntry>;
+}
+
+let csvIndexPromise: Promise<CsvIndices> | null = null;
+
+function loadCsvIndices(): Promise<CsvIndices> {
+  if (csvIndexPromise) return csvIndexPromise;
+
+  csvIndexPromise = (async () => {
+    const dataDir = path.join(process.cwd(), 'public', 'data');
+    const lineRegex = /^"([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)"$/;
+
+    const readSafe = async (file: string) => {
+      try {
+        return await fs.readFile(path.join(dataDir, file), 'utf-8');
+      } catch (e) {
+        console.error(`[universal-audio] Failed to read ${file}:`, e);
+        return '';
+      }
+    };
+
+    const [mainCsv, phrasesCsv, verbsCsv] = await Promise.all([
+      readSafe('backblaze-urls-20250909-180354.csv'),
+      readSafe('common-phrases-b2-urls.csv'),
+      readSafe('verb-b2-urls.csv'),
+    ]);
+
+    const mainById = new Map<string, CsvEntry>();
+    const phrasesByWord = new Map<string, CsvEntry>();
+    const verbsByWord = new Map<string, CsvEntry>();
+
+    const mainLines = mainCsv.split('\n');
+    for (let i = 1; i < mainLines.length; i++) {
+      const line = mainLines[i];
+      if (!line.trim()) continue;
+      const match = line.match(lineRegex);
+      if (!match) continue;
+      const [, localPath, , language, , csvFileName] = match;
+      const wordIdMatch = csvFileName.match(/alnilam_(\d+)_/);
+      if (wordIdMatch) {
+        mainById.set(`${language}::${wordIdMatch[1]}`, { fileName: csvFileName, filePath: localPath });
+      }
+    }
+
+    const phrasesLines = phrasesCsv.split('\n');
+    for (let i = 1; i < phrasesLines.length; i++) {
+      const line = phrasesLines[i];
+      if (!line.trim()) continue;
+      const match = line.match(lineRegex);
+      if (!match) continue;
+      const [, localPath, , language, , csvFileName] = match;
+      const fileNameWithoutExt = csvFileName.replace(/\.(wav|mp3)$/i, '').toLowerCase();
+      phrasesByWord.set(`${language}::${fileNameWithoutExt}`, { fileName: csvFileName, filePath: localPath });
+    }
+
+    const verbsLines = verbsCsv.split('\n');
+    for (let i = 1; i < verbsLines.length; i++) {
+      const line = verbsLines[i];
+      if (!line.trim()) continue;
+      const match = line.match(lineRegex);
+      if (!match) continue;
+      const [, localPath, , language, , csvFileName] = match;
+      const wordMatch = csvFileName.match(/alnilam_([^_]+)_\.wav/i);
+      if (wordMatch) {
+        verbsByWord.set(`${language}::${wordMatch[1].toLowerCase()}`, { fileName: csvFileName, filePath: localPath });
+      }
+    }
+
+    return { mainById, phrasesByWord, verbsByWord };
+  })();
+
+  csvIndexPromise.catch(() => { csvIndexPromise = null; });
+  return csvIndexPromise;
+}
+// ==================== END CSV INDEX CACHING ====================
 
 // ==================== B2 AUTH CACHING ====================
 // Cache B2 authorization tokens to avoid repeated auth calls
@@ -130,116 +215,53 @@ export async function GET(request: NextRequest) {
 
     const audioLangCode = getAudioLanguageCode(languageCode);
 
-    // Find file path using streaming CSV search (fast, low memory)
-    const baseUrl = request.url.split('/api/')[0];
+    // Look up file path via in-memory CSV indices (loaded once per process)
     let fileName: string | null = null;
     let filePath: string | null = null;
-    
+
     try {
-      // Try main CSV first (ID-based lookup for standard topics)
-      const csvUrl = `${baseUrl}/data/backblaze-urls-20250909-180354.csv`;
-      const csvResponse = await fetch(csvUrl);
-      
-      if (csvResponse.ok) {
-        const csvContent = await csvResponse.text();
-        const lines = csvContent.split('\n');
-        
-        // Fast search - stop as soon as we find a match
-        for (let i = 1; i < lines.length; i++) {
-          const line = lines[i];
-          if (!line.trim()) continue;
-          
-          const match = line.match(/^"([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)"$/);
-          if (!match) continue;
-          
-          const [, localPath, , language, , csvFileName] = match;
-          
-          // ID-based matching (alnilam_{id}_)
-          const wordIdMatch = csvFileName.match(/alnilam_(\d+)_/);
-          if (wordIdMatch && wordIdMatch[1] === wordId && language === audioLangCode) {
-            fileName = csvFileName;
-            filePath = localPath;
-            break;
+      const indices = await loadCsvIndices();
+
+      // ID-based lookup (main CSV - standard topics)
+      const mainHit = indices.mainById.get(`${audioLangCode}::${wordId}`);
+      if (mainHit) {
+        fileName = mainHit.fileName;
+        filePath = mainHit.filePath;
+      }
+
+      // Phrases CSV fallback (Common Phrases, Essential Words, Bad Words, Example Sentences)
+      if (!fileName && !filePath) {
+        const wordIdNum = parseInt(wordId);
+        if (wordIdNum >= 4172 && word) {
+          const sanitizeForMatch = (w: string) =>
+            w.toLowerCase()
+              .replace(/[^a-z0-9\s]+/g, '')
+              .replace(/\s+/g, '_')
+              .substring(0, 60);
+
+          const normalizedWord = sanitizeForMatch(word);
+          const isNativeFilenameLanguage = ['cy', 'ga', 'mt'].includes(audioLangCode);
+          const normalizedTargetWord = targetWord ? sanitizeForMatch(targetWord) : null;
+          const matchWord = (isNativeFilenameLanguage && normalizedTargetWord) ? normalizedTargetWord : normalizedWord;
+
+          const phrasesHit = indices.phrasesByWord.get(`${audioLangCode}::${matchWord}`);
+          if (phrasesHit) {
+            fileName = phrasesHit.fileName;
+            filePath = phrasesHit.filePath;
           }
         }
       }
-      
-      // If not found, try phrases CSV (Common Phrases, Essential Words, Bad Words, Example Sentences)
-      if (!fileName && !filePath) {
-        const wordIdNum = parseInt(wordId);
-        
-        // Topics 42-45: Common Phrases (4172-4965), Essential Words (5689-6077), Bad Words (6021-6060), Example Sentences (6078+)
-        if (wordIdNum >= 4172 && word) {
-          const phrasesCsvUrl = `${baseUrl}/data/common-phrases-b2-urls.csv`;
-          const phrasesCsvResponse = await fetch(phrasesCsvUrl);
-          
-          if (phrasesCsvResponse.ok) {
-            const phrasesCsvContent = await phrasesCsvResponse.text();
-            const phrasesLines = phrasesCsvContent.split('\n');
-            
-            // Sanitize word to match generation script pattern
-            // Must match the exact pattern from generate-example-sentences-audio.mjs
-            const sanitizeForMatch = (w: string) => 
-              w.toLowerCase()
-                .replace(/[^a-z0-9\s]+/g, '')  // Remove special characters (keep spaces)
-                .replace(/\s+/g, '_')           // Replace spaces with underscores
-                .substring(0, 60);              // Limit length
-            
-            const normalizedWord = sanitizeForMatch(word);
-            const isNativeFilenameLanguage = ['cy', 'ga', 'mt'].includes(audioLangCode);
-            const normalizedTargetWord = targetWord ? sanitizeForMatch(targetWord) : null;
-            const matchWord = (isNativeFilenameLanguage && normalizedTargetWord) ? normalizedTargetWord : normalizedWord;
-            
-            for (let i = 1; i < phrasesLines.length; i++) {
-              const line = phrasesLines[i];
-              if (!line.trim()) continue;
-              
-              const match = line.match(/^"([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)"$/);
-              if (!match) continue;
-              
-              const [, localPath, , language, , csvFileName] = match;
-              const fileNameWithoutExt = csvFileName.replace(/\.(wav|mp3)$/i, '').toLowerCase();
-              
-              if (fileNameWithoutExt === matchWord && language === audioLangCode) {
-                fileName = csvFileName;
-                filePath = localPath;
-                break;
-              }
-            }
-          }
-        }
-        
-        // Try verbs CSV for word-based lookup
-        if (!fileName && !filePath && word) {
-          const verbsCsvUrl = `${baseUrl}/data/verb-b2-urls.csv`;
-          const verbsCsvResponse = await fetch(verbsCsvUrl);
-          
-          if (verbsCsvResponse.ok) {
-            const verbsCsvContent = await verbsCsvResponse.text();
-            const verbsLines = verbsCsvContent.split('\n');
-            const normalizedWord = word.toLowerCase().trim();
-            
-            for (let i = 1; i < verbsLines.length; i++) {
-              const line = verbsLines[i];
-              if (!line.trim()) continue;
-              
-              const match = line.match(/^"([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)"$/);
-              if (!match) continue;
-              
-              const [, localPath, , language, , csvFileName] = match;
-              const wordMatch = csvFileName.match(/alnilam_([^_]+)_\.wav/i);
-              
-              if (wordMatch && wordMatch[1].toLowerCase() === normalizedWord && language === audioLangCode) {
-                fileName = csvFileName;
-                filePath = localPath;
-                break;
-              }
-            }
-          }
+
+      // Verbs CSV fallback (word-based lookup)
+      if (!fileName && !filePath && word) {
+        const verbsHit = indices.verbsByWord.get(`${audioLangCode}::${word.toLowerCase().trim()}`);
+        if (verbsHit) {
+          fileName = verbsHit.fileName;
+          filePath = verbsHit.filePath;
         }
       }
     } catch (error) {
-      console.error('Error searching CSV:', error);
+      console.error('Error looking up CSV index:', error);
     }
 
     if (!fileName || !filePath) {
