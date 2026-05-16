@@ -2425,16 +2425,7 @@ export function LanguageSelector() {
   // any time the completed list changes (initial load + user actions).
   // The actual celebration modal is fired from the audio-track callback so
   // it never pops on initial page load.
-  const { registerTopicChoiceHandler, setSuppressToasts } = useAchievementContext()
-
-  // Hide the popping unlock toasts while inside the learning view — they're
-  // distracting mid-flashcard. Unlocks still record and appear in the
-  // Account → Badges gallery.
-  useEffect(() => {
-    const onLearning = currentPage === 'learning'
-    setSuppressToasts(onLearning)
-    return () => setSuppressToasts(false)
-  }, [currentPage, setSuppressToasts])
+  const { registerTopicChoiceHandler } = useAchievementContext()
   useEffect(() => {
     reportProgress({
       userId: user?.id || null,

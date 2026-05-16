@@ -35,8 +35,6 @@ type TopicChoiceHandler = (
 interface AchievementContextValue {
   /** Learning surface registers a callback so the modal buttons can drive its state. */
   registerTopicChoiceHandler: (fn: TopicChoiceHandler | null) => void
-  /** Suppress the popping unlock toasts (unlocks still record). Used by the learning page. */
-  setSuppressToasts: (suppressed: boolean) => void
 }
 
 const AchievementContext = createContext<AchievementContextValue | null>(null)
@@ -45,35 +43,30 @@ export function useAchievementContext(): AchievementContextValue {
   const ctx = useContext(AchievementContext)
   if (!ctx) {
     // Outside the provider — return a no-op so non-app pages don't crash.
-    return { registerTopicChoiceHandler: () => {}, setSuppressToasts: () => {} }
+    return { registerTopicChoiceHandler: () => {} }
   }
   return ctx
 }
 
 export function AchievementProvider({ children }: { children: ReactNode }) {
-  const [toasts, setToasts] = useState<QueuedToast[]>([])
+  // Toasts play one-at-a-time: only the head of the queue is rendered, the
+  // rest wait their turn so they don't pile up on screen.
+  const [queue, setQueue] = useState<QueuedToast[]>([])
   const [topicEvent, setTopicEvent] = useState<TopicCompleteEvent | null>(null)
   const [showBadges, setShowBadges] = useState(false)
   const [mounted, setMounted] = useState(false)
   const handlerRef = useRef<TopicChoiceHandler | null>(null)
-  const suppressToastsRef = useRef(false)
   const keyRef = useRef(0)
 
   useEffect(() => setMounted(true), [])
 
-  // Subscribe to unlocks → push into the toast stack (unless suppressed).
-  // Unlocks always record to storage via the engine; suppression only hides
-  // the popup so the learning page stays distraction-free.
+  // Subscribe to unlocks → enqueue. We never drop unlocks; the head plays,
+  // the rest wait until the current one fades out.
   useEffect(() => {
     const off = subscribeUnlock((e) => {
-      if (suppressToastsRef.current) return
       keyRef.current += 1
       const queued: QueuedToast = { key: keyRef.current, achievement: e.achievement }
-      setToasts((prev) => {
-        // Cap the visible stack so we don't bury the screen.
-        const next = [...prev, queued]
-        return next.slice(-3)
-      })
+      setQueue((prev) => [...prev, queued])
     })
     return off
   }, [])
@@ -97,13 +90,8 @@ export function AchievementProvider({ children }: { children: ReactNode }) {
     [],
   )
 
-  const setSuppressToasts = useCallback((suppressed: boolean) => {
-    suppressToastsRef.current = suppressed
-    if (suppressed) setToasts([])
-  }, [])
-
   const dismissToast = (key: number) =>
-    setToasts((prev) => prev.filter((t) => t.key !== key))
+    setQueue((prev) => prev.filter((t) => t.key !== key))
 
   const closeTopic = () => setTopicEvent(null)
 
@@ -133,13 +121,13 @@ export function AchievementProvider({ children }: { children: ReactNode }) {
             className="fixed top-0 left-0 right-0 z-[90] pt-[max(env(safe-area-inset-top),12px)] px-3 flex flex-col items-center gap-2 pointer-events-none"
             aria-live="polite"
           >
-            {toasts.map((t) => (
+            {queue[0] && (
               <AchievementToast
-                key={t.key}
-                achievement={t.achievement}
-                onDismissAction={() => dismissToast(t.key)}
+                key={queue[0].key}
+                achievement={queue[0].achievement}
+                onDismissAction={() => dismissToast(queue[0].key)}
               />
-            ))}
+            )}
           </div>
 
           <TopicCompleteModal
@@ -158,7 +146,7 @@ export function AchievementProvider({ children }: { children: ReactNode }) {
     : null
 
   return (
-    <AchievementContext.Provider value={{ registerTopicChoiceHandler, setSuppressToasts }}>
+    <AchievementContext.Provider value={{ registerTopicChoiceHandler }}>
       {children}
       {overlays}
     </AchievementContext.Provider>
