@@ -1,8 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Lottie from 'lottie-react'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/contexts/auth-context'
+import languageTranslatorAnim from '@/lib/animations/language-translator.json'
 
 export function WelcomeOverlay() {
   const { user, signInWithGoogle, loading } = useAuth()
@@ -93,6 +95,11 @@ export function WelcomeOverlay() {
       
       {/* Modal Content */}
       <div className="relative bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 p-10 mx-4 max-w-sm w-full text-center shadow-2xl">
+        {/* Hero animation */}
+        <div className="w-40 h-40 mx-auto mb-4 -mt-2">
+          <Lottie animationData={languageTranslatorAnim} loop autoplay />
+        </div>
+
         {/* Welcome Text */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-3 tracking-wide leading-tight drop-shadow-lg">

@@ -3,10 +3,12 @@
 import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { Icon } from '@iconify/react'
+import Lottie from 'lottie-react'
 import Link from 'next/link'
 import { PRICING, formatPrice } from '@/lib/pricing'
 import { useAuth } from '@/contexts/auth-context'
 import { useRevenueCat } from '@/hooks/use-revenuecat'
+import yourRewardsAnim from '@/lib/animations/your-rewards.json'
 
 interface PaywallModalProps {
   isOpen: boolean
@@ -123,8 +125,8 @@ export function PaywallModal({
           </button>
 
           <div className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-br from-yellow-400/90 to-orange-500/90 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg border border-white/20">
-              <Icon icon="solar:star-bold" className="w-9 h-9 text-white drop-shadow-lg" />
+            <div className="w-24 h-24 mx-auto mb-3 drop-shadow-lg">
+              <Lottie animationData={yourRewardsAnim} loop autoplay />
             </div>
             <h2 className="text-2xl font-bold text-white drop-shadow-lg mb-2">Unlock Sprind Premium</h2>
           </div>

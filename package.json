@@ -82,6 +82,7 @@
     "input-otp": "1.4.1",
     "jose": "^6.1.0",
     "jsonwebtoken": "^9.0.2",
+    "lottie-react": "^2.4.1",
     "lucide-react": "^0.454.0",
     "microsoft-cognitiveservices-speech-sdk": "^1.47.0",
     "next": "^16.1.1",
