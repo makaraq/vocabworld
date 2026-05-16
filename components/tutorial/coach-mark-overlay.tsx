@@ -157,7 +157,6 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
             width: rect.width + padding * 2,
             height: rect.height + padding * 2,
             boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.7)',
-            backdropFilter: 'blur(2px)',
           }}
           onClick={handleNext}
         />
