@@ -75,6 +75,7 @@ stripe-cli/
 !capacitor.config.ts
 !components.json
 !vercel.json
+!lib/animations/*.json
 
 # SQL files
 *.sql
