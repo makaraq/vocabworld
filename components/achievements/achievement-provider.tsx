@@ -35,6 +35,8 @@ type TopicChoiceHandler = (
 interface AchievementContextValue {
   /** Learning surface registers a callback so the modal buttons can drive its state. */
   registerTopicChoiceHandler: (fn: TopicChoiceHandler | null) => void
+  /** Suppress the popping unlock toasts (unlocks still record). Used by the learning page. */
+  setSuppressToasts: (suppressed: boolean) => void
 }
 
 const AchievementContext = createContext<AchievementContextValue | null>(null)
@@ -43,7 +45,7 @@ export function useAchievementContext(): AchievementContextValue {
   const ctx = useContext(AchievementContext)
   if (!ctx) {
     // Outside the provider — return a no-op so non-app pages don't crash.
-    return { registerTopicChoiceHandler: () => {} }
+    return { registerTopicChoiceHandler: () => {}, setSuppressToasts: () => {} }
   }
   return ctx
 }
@@ -54,13 +56,17 @@ export function AchievementProvider({ children }: { children: ReactNode }) {
   const [showBadges, setShowBadges] = useState(false)
   const [mounted, setMounted] = useState(false)
   const handlerRef = useRef<TopicChoiceHandler | null>(null)
+  const suppressToastsRef = useRef(false)
   const keyRef = useRef(0)
 
   useEffect(() => setMounted(true), [])
 
-  // Subscribe to unlocks → push into the toast stack.
+  // Subscribe to unlocks → push into the toast stack (unless suppressed).
+  // Unlocks always record to storage via the engine; suppression only hides
+  // the popup so the learning page stays distraction-free.
   useEffect(() => {
     const off = subscribeUnlock((e) => {
+      if (suppressToastsRef.current) return
       keyRef.current += 1
       const queued: QueuedToast = { key: keyRef.current, achievement: e.achievement }
       setToasts((prev) => {
@@ -90,6 +96,11 @@ export function AchievementProvider({ children }: { children: ReactNode }) {
     },
     [],
   )
+
+  const setSuppressToasts = useCallback((suppressed: boolean) => {
+    suppressToastsRef.current = suppressed
+    if (suppressed) setToasts([])
+  }, [])
 
   const dismissToast = (key: number) =>
     setToasts((prev) => prev.filter((t) => t.key !== key))
@@ -147,7 +158,7 @@ export function AchievementProvider({ children }: { children: ReactNode }) {
     : null
 
   return (
-    <AchievementContext.Provider value={{ registerTopicChoiceHandler }}>
+    <AchievementContext.Provider value={{ registerTopicChoiceHandler, setSuppressToasts }}>
       {children}
       {overlays}
     </AchievementContext.Provider>

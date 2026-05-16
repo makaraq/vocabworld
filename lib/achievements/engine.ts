@@ -166,6 +166,8 @@ export function evaluateTimeContext(userId: string | null): void {
   if (h >= 22 || h < 4) reportEvent(userId, 'time_night_owl')
   // Early Bird: 04:00–07:59 — sunrise grind. Disjoint from Night Owl.
   else if (h >= 4 && h < 8) reportEvent(userId, 'time_early_bird')
+  // Lunch & Learn: 12:00–13:59 — mid-day practice.
+  else if (h >= 12 && h < 14) reportEvent(userId, 'time_lunch')
   if (day === 0 || day === 6) reportEvent(userId, 'time_weekend')
 }
 
