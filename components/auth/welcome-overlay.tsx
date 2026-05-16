@@ -103,7 +103,7 @@ export function WelcomeOverlay() {
         {/* Welcome Text */}
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-white leading-tight drop-shadow-lg">
-            Thousands of words organized by Sprind.
+            Thousands of Words. Organized on Sprind.
           </h1>
         </div>
         
