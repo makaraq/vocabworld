@@ -33,6 +33,7 @@ yarn-error.log*
 !capacitor.config.json
 !vercel.json
 !next.config.json
+!lib/animations/*.json
 
 # vercel
 .vercel
