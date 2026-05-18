@@ -353,14 +353,23 @@ export function PaywallModal({
           </button>
         </div>
 
-        {/* Disclosure — App Store 3.1.2 requires clear, conspicuous subscription terms */}
-        <p className="text-center text-white/90 text-xs px-8 pt-1 pb-4 leading-relaxed drop-shadow font-medium">
-          {selectedPlan === 'yearly' ? (
-            <>7 days free, then {yearlyPrice} per year. Billed yearly.<br />Plan auto-renews unless you<br />cancel. Cancel in the App Store.</>
-          ) : (
-            <>{monthlyPrice} per month. Plan auto-renews<br />unless you cancel. Cancel in the App Store.</>
-          )}
-        </p>
+        {/* Disclosure — App Store 3.1.2 requires clear, conspicuous subscription terms.
+            Both variants render in the same grid cell so the modal height stays
+            identical between plans (yearly disclosure is 3 lines, monthly is 2). */}
+        <div className="grid px-8 pt-1 pb-4">
+          <p
+            aria-hidden={selectedPlan !== 'yearly'}
+            className={`col-start-1 row-start-1 text-center text-white/90 text-xs leading-relaxed drop-shadow font-medium ${selectedPlan === 'yearly' ? '' : 'invisible pointer-events-none'}`}
+          >
+            7 days free, then {yearlyPrice} per year. Billed yearly.<br />Plan auto-renews unless you<br />cancel. Cancel in the App Store.
+          </p>
+          <p
+            aria-hidden={selectedPlan !== 'monthly'}
+            className={`col-start-1 row-start-1 self-center text-center text-white/90 text-xs leading-relaxed drop-shadow font-medium ${selectedPlan === 'monthly' ? '' : 'invisible pointer-events-none'}`}
+          >
+            {monthlyPrice} per month. Plan auto-renews<br />unless you cancel. Cancel in the App Store.
+          </p>
+        </div>
 
         {/* Legal links */}
         <div className="flex items-center justify-center gap-3 pb-6">
