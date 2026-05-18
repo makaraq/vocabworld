@@ -235,6 +235,9 @@ export function PaywallModal({
                   </p>
                 </div>
               </div>
+
+              {/* Invisible 3-line spacer to even out the height with the yearly trial timeline */}
+              <div aria-hidden="true" className="h-[58px]" />
             </div>
           </div>
         </div>
