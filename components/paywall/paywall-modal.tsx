@@ -112,12 +112,12 @@ export function PaywallModal({
 
   const modalContent = (
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/40 backdrop-blur-md"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/20 backdrop-blur-md"
       onClick={(e) => {
         if (e.target === e.currentTarget) onCloseAction()
       }}
     >
-      <div className="relative bg-black/50 backdrop-blur-xl rounded-3xl max-w-md w-full border border-white/15 shadow-2xl max-h-[95vh] overflow-y-auto">
+      <div className="relative bg-white/10 backdrop-blur-xl rounded-3xl max-w-md w-full border border-white/20 shadow-2xl max-h-[95vh] overflow-y-auto">
         {/* Close button */}
         <button
           onClick={onCloseAction}
