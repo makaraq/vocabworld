@@ -133,7 +133,7 @@ export function PaywallModal({
             {selectedPlan === 'yearly' ? (
               <>Start your 7-day FREE<br />trial to continue.</>
             ) : (
-              <>Unlock Sprind Unlimited</>
+              <>Get the full Sprind experience</>
             )}
           </h2>
         </div>
@@ -235,9 +235,6 @@ export function PaywallModal({
                   </p>
                 </div>
               </div>
-
-              {/* Invisible 3-line spacer to even out the height with the yearly trial timeline */}
-              <div aria-hidden="true" className="h-[58px]" />
             </div>
           </div>
         </div>
