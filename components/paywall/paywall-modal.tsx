@@ -186,18 +186,41 @@ export function PaywallModal({
             </div>
           </div>
         ) : (
-          <div className="px-6 pb-2 space-y-4">
-            <div className="flex items-start gap-3">
-              <Icon icon="solar:check-circle-bold" className="w-6 h-6 text-white flex-shrink-0 mt-0.5 drop-shadow" />
-              <p className="font-semibold text-white text-base drop-shadow">Access to all topics</p>
+          <div className="px-6 pb-2">
+            <div className="relative flex items-start gap-4 mb-5">
+              <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 shadow-md">
+                <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-white" />
+              </div>
+              <div className="flex-1 pt-1">
+                <p className="font-bold text-white text-base drop-shadow">Access to all topics</p>
+                <p className="text-white/70 text-sm leading-snug drop-shadow">
+                  Every category unlocked — no topic is off-limits.
+                </p>
+              </div>
             </div>
-            <div className="flex items-start gap-3">
-              <Icon icon="solar:check-circle-bold" className="w-6 h-6 text-white flex-shrink-0 mt-0.5 drop-shadow" />
-              <p className="font-semibold text-white text-base drop-shadow">Build playlists for the words you actually need</p>
+
+            <div className="relative flex items-start gap-4 mb-5">
+              <div className="w-10 h-10 rounded-full bg-orange-400 flex items-center justify-center flex-shrink-0 shadow-md">
+                <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-white" />
+              </div>
+              <div className="flex-1 pt-1">
+                <p className="font-bold text-white text-base drop-shadow">Build playlists</p>
+                <p className="text-white/70 text-sm leading-snug drop-shadow">
+                  Create custom lists for the words you actually need.
+                </p>
+              </div>
             </div>
-            <div className="flex items-start gap-3">
-              <Icon icon="solar:check-circle-bold" className="w-6 h-6 text-white flex-shrink-0 mt-0.5 drop-shadow" />
-              <p className="font-semibold text-white text-base drop-shadow">Search a specific word and save it</p>
+
+            <div className="relative flex items-start gap-4">
+              <div className="w-10 h-10 rounded-full bg-white/20 border border-white/30 flex items-center justify-center flex-shrink-0 shadow-md">
+                <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-white" />
+              </div>
+              <div className="flex-1 pt-1">
+                <p className="font-bold text-white text-base drop-shadow">Search any word</p>
+                <p className="text-white/70 text-sm leading-snug drop-shadow">
+                  Find a specific word and save it for later.
+                </p>
+              </div>
             </div>
           </div>
         )}
@@ -304,7 +327,7 @@ export function PaywallModal({
           <button
             onClick={handleRestore}
             disabled={loading || restoreStatus === 'loading'}
-            className="text-white/60 hover:text-white/80 text-sm transition-colors disabled:opacity-50"
+            className="text-white/85 hover:text-white text-sm font-medium drop-shadow transition-colors disabled:opacity-50"
           >
             {restoreStatus === 'loading'
               ? 'Restoring…'
@@ -316,8 +339,8 @@ export function PaywallModal({
           </button>
         </div>
 
-        {/* Disclosure */}
-        <p className="text-center text-white/50 text-xs px-8 pt-1 pb-4 leading-relaxed">
+        {/* Disclosure — App Store 3.1.2 requires clear, conspicuous subscription terms */}
+        <p className="text-center text-white/90 text-xs px-8 pt-1 pb-4 leading-relaxed drop-shadow font-medium">
           {selectedPlan === 'yearly' ? (
             <>7 days free, then {yearlyPrice} per year. Billed yearly.<br />Plan auto-renews unless you<br />cancel. Cancel in the App Store.</>
           ) : (
@@ -329,22 +352,22 @@ export function PaywallModal({
         <div className="flex items-center justify-center gap-3 pb-6">
           <Link
             href="/terms-of-service"
-            className="text-white/50 hover:text-white/70 text-xs transition-colors"
+            className="text-white/85 hover:text-white text-xs font-medium drop-shadow transition-colors"
           >
             Terms
           </Link>
-          <span className="text-white/30 text-xs">·</span>
+          <span className="text-white/60 text-xs drop-shadow">·</span>
           <Link
             href="/privacy-policy"
-            className="text-white/50 hover:text-white/70 text-xs transition-colors"
+            className="text-white/85 hover:text-white text-xs font-medium drop-shadow transition-colors"
           >
             Privacy
           </Link>
-          <span className="text-white/30 text-xs">·</span>
+          <span className="text-white/60 text-xs drop-shadow">·</span>
           <button
             onClick={handleRestore}
             disabled={loading || restoreStatus === 'loading'}
-            className="text-white/50 hover:text-white/70 text-xs transition-colors disabled:opacity-50"
+            className="text-white/85 hover:text-white text-xs font-medium drop-shadow transition-colors disabled:opacity-50"
           >
             Restore
           </button>
