@@ -3,12 +3,10 @@
 import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { Icon } from '@iconify/react'
-import Lottie from 'lottie-react'
 import Link from 'next/link'
 import { PRICING, formatPrice } from '@/lib/pricing'
 import { useAuth } from '@/contexts/auth-context'
 import { useRevenueCat } from '@/hooks/use-revenuecat'
-import yourRewardsAnim from '@/lib/animations/your-rewards.json'
 
 interface PaywallModalProps {
   isOpen: boolean
@@ -41,7 +39,6 @@ export function PaywallModal({
     return () => setMounted(false)
   }, [])
 
-  // Fetch live prices from RevenueCat/StoreKit so the displayed price matches the store
   useEffect(() => {
     if (!isOpen) return
     getOfferings().then(packages => {
@@ -57,7 +54,6 @@ export function PaywallModal({
     }).catch(() => { /* fall back to hardcoded prices */ })
   }, [isOpen, getOfferings])
 
-  // Auto-dismiss error after 4 seconds
   useEffect(() => {
     if (error) {
       if (errorTimerRef.current) clearTimeout(errorTimerRef.current)
@@ -105,127 +101,163 @@ export function PaywallModal({
 
   const monthlyPrice = livePrices?.monthly ?? formatPrice(PRICING.monthly.price)
   const yearlyPrice = livePrices?.yearly ?? formatPrice(PRICING.yearly.price)
-  const yearlyMonthly = livePrices ? '' : formatPrice(PRICING.yearly.price / 12)
+
+  const billingDate = new Date()
+  billingDate.setDate(billingDate.getDate() + 7)
+  const billingDateLabel = billingDate.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  })
 
   const modalContent = (
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/20 backdrop-blur-md"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/40 backdrop-blur-md"
       onClick={(e) => {
         if (e.target === e.currentTarget) onCloseAction()
       }}
     >
-      <div className="bg-white/10 backdrop-blur-xl rounded-3xl max-w-md w-full overflow-hidden border border-white/20 shadow-2xl">
-        {/* Header */}
-        <div className="relative p-6 pb-4 bg-white/5 border-b border-white/10">
-          <button
-            onClick={onCloseAction}
-            className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:bg-white/20 hover:text-white transition-all"
-          >
-            <Icon icon="solar:close-circle-bold" className="w-5 h-5" />
-          </button>
+      <div className="relative bg-white rounded-3xl max-w-md w-full shadow-2xl max-h-[95vh] overflow-y-auto">
+        {/* Close button */}
+        <button
+          onClick={onCloseAction}
+          className="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 hover:text-gray-700 transition-all z-10"
+          aria-label="Close"
+        >
+          <Icon icon="solar:close-circle-bold" className="w-5 h-5" />
+        </button>
 
-          <div className="text-center">
-            <div className="w-24 h-24 mx-auto mb-3 drop-shadow-lg">
-              <Lottie animationData={yourRewardsAnim} loop autoplay />
-            </div>
-            <h2 className="text-2xl font-bold text-white drop-shadow-lg mb-2">Unlock Sprind Premium</h2>
-          </div>
+        {/* Title */}
+        <div className="px-6 pt-8 pb-6">
+          <h2 className="text-2xl font-extrabold text-gray-900 text-center leading-tight">
+            Start your 7-day FREE<br />trial to continue.
+          </h2>
         </div>
 
-        {/* Features */}
-        <div className="px-6 pt-5 pb-2">
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/15">
-            <p className="text-white/80 text-sm font-medium mb-3 drop-shadow">Premium includes:</p>
-            <div className="flex flex-col gap-3 text-sm">
-              {['All topics unlocked', 'Create custom playlists', 'Word Search'].map(label => (
-                <div key={label} className="flex items-center gap-2 text-white/70">
-                  <Icon icon="solar:star-bold" className="w-4 h-4 text-green-400 flex-shrink-0 drop-shadow" />
-                  <span className="drop-shadow">{label}</span>
-                </div>
-              ))}
+        {/* Timeline */}
+        <div className="px-6 pb-2">
+          <div className="relative">
+            {/* Gradient connector bar */}
+            <div className="absolute left-[19px] top-2 bottom-2 w-1 bg-gradient-to-b from-orange-400 via-orange-300 to-gray-300 rounded-full" />
+
+            {/* Step 1: Today */}
+            <div className="relative flex items-start gap-4 mb-5">
+              <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 shadow-md z-10">
+                <Icon icon="solar:lock-keyhole-unlocked-bold" className="w-5 h-5 text-white" />
+              </div>
+              <div className="flex-1 pt-1">
+                <p className="font-bold text-gray-900 text-base">Today</p>
+                <p className="text-gray-500 text-sm leading-snug">
+                  Unlock all premium features: every topic, custom playlists, and word search.
+                </p>
+              </div>
+            </div>
+
+            {/* Step 2: In 6 Days - Reminder */}
+            <div className="relative flex items-start gap-4 mb-5">
+              <div className="w-10 h-10 rounded-full bg-orange-400 flex items-center justify-center flex-shrink-0 shadow-md z-10">
+                <Icon icon="solar:bell-bold" className="w-5 h-5 text-white" />
+              </div>
+              <div className="flex-1 pt-1">
+                <p className="font-bold text-gray-900 text-base">In 6 Days - Reminder</p>
+                <p className="text-gray-500 text-sm leading-snug">
+                  We&apos;ll send you a reminder that your trial is ending soon if you&apos;ve allowed us to notify you.
+                </p>
+              </div>
+            </div>
+
+            {/* Step 3: In 7 Days - Billing Starts */}
+            <div className="relative flex items-start gap-4">
+              <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center flex-shrink-0 shadow-md z-10">
+                <Icon icon="solar:crown-bold" className="w-5 h-5 text-white" />
+              </div>
+              <div className="flex-1 pt-1">
+                <p className="font-bold text-gray-900 text-base">In 7 Days - Billing Starts</p>
+                <p className="text-gray-500 text-sm leading-snug">
+                  You&apos;ll be charged on {billingDateLabel} unless you cancel anytime before.
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Plans */}
-        <div className="px-6 pt-3 pb-2 space-y-3">
-          {/* Yearly Plan */}
+        <div className="px-6 pt-6 pb-2 grid grid-cols-2 gap-3">
+          {/* Monthly */}
           <button
-            onClick={() => setSelectedPlan('yearly')}
-            className={`w-full p-4 rounded-2xl border-2 transition-all text-left relative backdrop-blur-sm ${
-              selectedPlan === 'yearly'
-                ? 'border-green-400/60 bg-green-500/20'
-                : 'border-white/20 bg-white/10 hover:bg-white/15 hover:border-white/30'
+            onClick={() => setSelectedPlan('monthly')}
+            className={`relative p-4 rounded-2xl border-2 text-left transition-all ${
+              selectedPlan === 'monthly'
+                ? 'border-gray-900 bg-white'
+                : 'border-gray-200 bg-white hover:border-gray-300'
             }`}
           >
-            <span className="absolute -top-2.5 right-3 px-3 py-1 bg-gradient-to-r from-green-400 to-emerald-500 text-white text-xs font-bold rounded-full shadow-lg border border-white/20">
-              7-DAY FREE TRIAL
-            </span>
-            {PRICING.yearly.savings && (
-              <span className="absolute -top-2.5 left-3 px-3 py-1 bg-gradient-to-r from-green-400 to-emerald-500 text-white text-xs font-bold rounded-full shadow-lg border border-white/20">
-                SAVE {PRICING.yearly.savings}
-              </span>
-            )}
-            <div className="flex items-center justify-between pl-8">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-white font-semibold drop-shadow">Yearly</p>
-                <p className="text-white/60 text-sm drop-shadow">Billed annually after trial</p>
+                <p className="text-gray-900 font-semibold text-sm">Monthly</p>
+                <p className="text-gray-900 font-bold text-base mt-1">{monthlyPrice} <span className="font-normal text-gray-500 text-sm">/mo</span></p>
               </div>
-              <div className="text-right">
-                <p className="text-white font-bold text-xl drop-shadow-lg">{yearlyPrice}/yr</p>
-                {yearlyMonthly && <p className="text-white/60 text-xs drop-shadow">{yearlyMonthly}/mo</p>}
+              <div
+                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                  selectedPlan === 'monthly' ? 'border-gray-900 bg-gray-900' : 'border-gray-300 bg-white'
+                }`}
+              >
+                {selectedPlan === 'monthly' && (
+                  <Icon icon="solar:check-circle-bold" className="w-4 h-4 text-white" />
+                )}
               </div>
-            </div>
-            <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-              selectedPlan === 'yearly' ? 'border-green-400 bg-green-500 shadow-lg shadow-green-500/30' : 'border-white/40 bg-white/10'
-            }`}>
-              {selectedPlan === 'yearly' && (
-                <Icon icon="solar:check-circle-bold" className="w-4 h-4 text-white" />
-              )}
             </div>
           </button>
 
-          {/* Monthly Plan */}
+          {/* Yearly */}
           <button
-            onClick={() => setSelectedPlan('monthly')}
-            className={`w-full p-4 rounded-2xl border-2 transition-all text-left relative backdrop-blur-sm ${
-              selectedPlan === 'monthly'
-                ? 'border-blue-400/60 bg-blue-500/20'
-                : 'border-white/20 bg-white/10 hover:bg-white/15 hover:border-white/30'
+            onClick={() => setSelectedPlan('yearly')}
+            className={`relative p-4 rounded-2xl border-2 text-left transition-all ${
+              selectedPlan === 'yearly'
+                ? 'border-gray-900 bg-white'
+                : 'border-gray-200 bg-white hover:border-gray-300'
             }`}
           >
-            <div className="flex items-center justify-between pl-8">
+            <span className="absolute -top-2.5 right-3 px-2.5 py-0.5 bg-gray-900 text-white text-[10px] font-bold rounded-full">
+              7 DAYS FREE
+            </span>
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-white font-semibold drop-shadow">Monthly</p>
-                <p className="text-white/60 text-sm drop-shadow">Billed monthly</p>
+                <p className="text-gray-900 font-semibold text-sm">Yearly</p>
+                <p className="text-gray-900 font-bold text-base mt-1">{yearlyPrice}</p>
               </div>
-              <div className="text-right">
-                <p className="text-white font-bold text-xl drop-shadow-lg">{monthlyPrice}/mo</p>
+              <div
+                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                  selectedPlan === 'yearly' ? 'border-gray-900 bg-gray-900' : 'border-gray-300 bg-white'
+                }`}
+              >
+                {selectedPlan === 'yearly' && (
+                  <Icon icon="solar:check-circle-bold" className="w-4 h-4 text-white" />
+                )}
               </div>
-            </div>
-            <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-              selectedPlan === 'monthly' ? 'border-blue-400 bg-blue-500 shadow-lg shadow-blue-500/30' : 'border-white/40 bg-white/10'
-            }`}>
-              {selectedPlan === 'monthly' && (
-                <Icon icon="solar:check-circle-bold" className="w-4 h-4 text-white" />
-              )}
             </div>
           </button>
         </div>
 
+        {/* No Payment Due Now */}
+        <div className="flex items-center justify-center gap-2 px-6 pt-5 pb-3">
+          <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-gray-900" />
+          <span className="text-gray-900 font-semibold text-sm">No Payment Due Now</span>
+        </div>
+
         {/* Error Message */}
         {error && (
-          <div className="mx-6 mt-2 p-3 bg-red-500/20 border border-red-500/30 rounded-xl">
-            <p className="text-red-200 text-sm text-center">{error}</p>
+          <div className="mx-6 mb-2 p-3 bg-red-50 border border-red-200 rounded-xl">
+            <p className="text-red-700 text-sm text-center">{error}</p>
           </div>
         )}
 
-        {/* Subscribe Button */}
-        <div className="p-6 pt-3">
+        {/* CTA Button */}
+        <div className="px-6 pb-3">
           <button
             onClick={handleSubscribe}
             disabled={loading || !user}
-            className="w-full py-4 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-bold text-lg rounded-2xl shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full py-4 bg-gray-900 hover:bg-black text-white font-bold text-base rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {loading ? (
               <>
@@ -233,54 +265,66 @@ export function PaywallModal({
                 <span>Processing...</span>
               </>
             ) : (
-              <span>Unlock Now</span>
+              <span>Start My 7-Day Free Trial</span>
             )}
           </button>
 
           {!user && (
-            <p className="text-center text-white/60 text-sm mt-3">
+            <p className="text-center text-gray-500 text-sm mt-3">
               Please sign in to subscribe
             </p>
           )}
+        </div>
 
-          {/* Restore Purchases — required by Apple App Store guidelines */}
+        {/* Already purchased */}
+        <div className="px-6 pb-2 text-center">
           <button
             onClick={handleRestore}
             disabled={loading || restoreStatus === 'loading'}
-            className="w-full py-2 text-white/50 hover:text-white/70 text-sm transition-colors disabled:opacity-50"
+            className="text-gray-500 hover:text-gray-700 text-sm transition-colors disabled:opacity-50"
           >
-            {restoreStatus === 'loading' ? 'Restoring…' : restoreStatus === 'done' ? 'Restored ✓' : restoreStatus === 'error' ? 'Nothing to restore' : 'Restore Purchases'}
+            {restoreStatus === 'loading'
+              ? 'Restoring…'
+              : restoreStatus === 'done'
+                ? 'Restored ✓'
+                : restoreStatus === 'error'
+                  ? 'Nothing to restore'
+                  : 'Already purchased?'}
           </button>
+        </div>
 
-          <div className="flex items-center justify-center gap-3 mt-1">
-            <Link
-              href="/terms-of-service"
-              className="text-white/50 hover:text-white/70 text-xs transition-colors underline underline-offset-2"
-            >
-              Terms of Service
-            </Link>
-            <span className="text-white/30 text-xs">•</span>
-            <Link
-              href="/privacy-policy"
-              className="text-white/50 hover:text-white/70 text-xs transition-colors underline underline-offset-2"
-            >
-              Privacy Policy
-            </Link>
-          </div>
+        {/* Disclosure */}
+        <p className="text-center text-gray-500 text-xs px-8 pt-1 pb-4 leading-relaxed">
+          {selectedPlan === 'yearly' ? (
+            <>7 days free, then {yearlyPrice} per year. Billed yearly.<br />Plan auto-renews unless you<br />cancel. Cancel in the App Store.</>
+          ) : (
+            <>{monthlyPrice} per month. Plan auto-renews<br />unless you cancel. Cancel in the App Store.</>
+          )}
+        </p>
 
-          {/* Free trial disclosure — required by Apple App Store guidelines */}
-          {selectedPlan === 'yearly' && (
-            <p className="text-center text-white/40 text-xs mt-2 leading-relaxed px-2">
-              7-day free trial, then {yearlyPrice}/year. Subscription renews automatically
-              unless cancelled at least 24 hours before renewal. Manage in App Store or Google Play settings.
-            </p>
-          )}
-          {selectedPlan === 'monthly' && (
-            <p className="text-center text-white/40 text-xs mt-2 leading-relaxed px-2">
-              {monthlyPrice}/month. Renews automatically unless cancelled at least 24 hours before renewal.
-              Manage in App Store or Google Play settings.
-            </p>
-          )}
+        {/* Legal links */}
+        <div className="flex items-center justify-center gap-3 pb-6">
+          <Link
+            href="/terms-of-service"
+            className="text-gray-400 hover:text-gray-600 text-xs transition-colors"
+          >
+            Terms
+          </Link>
+          <span className="text-gray-300 text-xs">·</span>
+          <Link
+            href="/privacy-policy"
+            className="text-gray-400 hover:text-gray-600 text-xs transition-colors"
+          >
+            Privacy
+          </Link>
+          <span className="text-gray-300 text-xs">·</span>
+          <button
+            onClick={handleRestore}
+            disabled={loading || restoreStatus === 'loading'}
+            className="text-gray-400 hover:text-gray-600 text-xs transition-colors disabled:opacity-50"
+          >
+            Restore
+          </button>
         </div>
       </div>
     </div>
