@@ -186,7 +186,7 @@ export function PaywallModal({
             </div>
           </div>
         ) : (
-          <div className="px-6 pb-2 space-y-7">
+          <div className="px-6 pb-2 py-3 space-y-9">
             <div className="relative flex items-start gap-4">
               <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 shadow-md">
                 <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-white" />
@@ -194,31 +194,31 @@ export function PaywallModal({
               <div className="flex-1 pt-1">
                 <p className="font-bold text-white text-base drop-shadow">Access to all topics</p>
                 <p className="text-white/70 text-sm leading-snug drop-shadow">
-                  Every category and lesson unlocked — explore the entire library with no topic off-limits.
+                  Every category unlocked — no topic is off-limits.
                 </p>
               </div>
             </div>
 
             <div className="relative flex items-start gap-4">
-              <div className="w-10 h-10 rounded-full bg-orange-400 flex items-center justify-center flex-shrink-0 shadow-md">
+              <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 shadow-md">
                 <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-white" />
               </div>
               <div className="flex-1 pt-1">
-                <p className="font-bold text-white text-base drop-shadow">Build your own playlists</p>
+                <p className="font-bold text-white text-base drop-shadow">Build playlists</p>
                 <p className="text-white/70 text-sm leading-snug drop-shadow">
-                  Create custom lists for the words you actually need to learn, grouped your way.
+                  Create custom lists for the words you actually need.
                 </p>
               </div>
             </div>
 
             <div className="relative flex items-start gap-4">
-              <div className="w-10 h-10 rounded-full bg-orange-300 flex items-center justify-center flex-shrink-0 shadow-md">
+              <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 shadow-md">
                 <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-white" />
               </div>
               <div className="flex-1 pt-1">
-                <p className="font-bold text-white text-base drop-shadow">Search any word and save it</p>
+                <p className="font-bold text-white text-base drop-shadow">Search any word</p>
                 <p className="text-white/70 text-sm leading-snug drop-shadow">
-                  Find a specific word anywhere across the library and keep it bookmarked for later.
+                  Find a specific word and save it for later.
                 </p>
               </div>
             </div>
