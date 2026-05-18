@@ -138,9 +138,16 @@ export function PaywallModal({
           </h2>
         </div>
 
-        {/* Trial Timeline (yearly) or Benefits list (monthly) */}
-        {selectedPlan === 'yearly' ? (
-          <div className="px-6 pb-2">
+        {/* Trial Timeline (yearly) + Benefits list (monthly) — both rendered in the same
+            grid cell so the container always sizes to the taller (yearly) layout.
+            The inactive one is `invisible` (still takes space, just hidden) to keep
+            the modal height identical between plans. */}
+        <div className="px-6 pb-2 grid">
+          {/* Yearly timeline */}
+          <div
+            aria-hidden={selectedPlan !== 'yearly'}
+            className={`col-start-1 row-start-1 ${selectedPlan === 'yearly' ? '' : 'invisible pointer-events-none'}`}
+          >
             <div className="relative">
               {/* Gradient connector bar */}
               <div className="absolute left-[19px] top-2 bottom-2 w-1 bg-gradient-to-b from-orange-400 via-orange-300 to-white/30 rounded-full" />
@@ -185,45 +192,52 @@ export function PaywallModal({
               </div>
             </div>
           </div>
-        ) : (
-          <div className="px-6 pb-2 py-3 space-y-9">
-            <div className="relative flex items-start gap-4">
-              <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 shadow-md">
-                <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-white" />
-              </div>
-              <div className="flex-1 pt-1">
-                <p className="font-bold text-white text-base drop-shadow">Access to all topics</p>
-                <p className="text-white/70 text-sm leading-snug drop-shadow">
-                  Every category unlocked — no topic is off-limits.
-                </p>
-              </div>
-            </div>
 
-            <div className="relative flex items-start gap-4">
-              <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 shadow-md">
-                <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-white" />
+          {/* Monthly benefits — vertically centered within the cell so the
+              shorter content sits in the same area as the yearly timeline. */}
+          <div
+            aria-hidden={selectedPlan !== 'monthly'}
+            className={`col-start-1 row-start-1 self-center ${selectedPlan === 'monthly' ? '' : 'invisible pointer-events-none'}`}
+          >
+            <div className="space-y-7">
+              <div className="relative flex items-start gap-4">
+                <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 shadow-md">
+                  <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1 pt-1">
+                  <p className="font-bold text-white text-base drop-shadow">Access to all topics</p>
+                  <p className="text-white/70 text-sm leading-snug drop-shadow">
+                    Every category unlocked — no topic is off-limits.
+                  </p>
+                </div>
               </div>
-              <div className="flex-1 pt-1">
-                <p className="font-bold text-white text-base drop-shadow">Build playlists</p>
-                <p className="text-white/70 text-sm leading-snug drop-shadow">
-                  Create custom lists for the words you actually need.
-                </p>
-              </div>
-            </div>
 
-            <div className="relative flex items-start gap-4">
-              <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 shadow-md">
-                <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-white" />
+              <div className="relative flex items-start gap-4">
+                <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 shadow-md">
+                  <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1 pt-1">
+                  <p className="font-bold text-white text-base drop-shadow">Build playlists</p>
+                  <p className="text-white/70 text-sm leading-snug drop-shadow">
+                    Create custom lists for the words you actually need.
+                  </p>
+                </div>
               </div>
-              <div className="flex-1 pt-1">
-                <p className="font-bold text-white text-base drop-shadow">Search any word</p>
-                <p className="text-white/70 text-sm leading-snug drop-shadow">
-                  Find a specific word and save it for later.
-                </p>
+
+              <div className="relative flex items-start gap-4">
+                <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 shadow-md">
+                  <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1 pt-1">
+                  <p className="font-bold text-white text-base drop-shadow">Search any word</p>
+                  <p className="text-white/70 text-sm leading-snug drop-shadow">
+                    Find a specific word and save it for later.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-        )}
+        </div>
 
         {/* Plans */}
         <div className="px-6 pt-6 pb-2 grid grid-cols-2 gap-3">
