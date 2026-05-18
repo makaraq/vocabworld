@@ -133,7 +133,7 @@ export function PaywallModal({
             {selectedPlan === 'yearly' ? (
               <>Start your 7-day FREE<br />trial to continue.</>
             ) : (
-              <>Get the full Sprind experience</>
+              <>Get the full Sprind experience now</>
             )}
           </h2>
         </div>
