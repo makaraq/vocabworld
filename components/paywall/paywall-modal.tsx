@@ -130,56 +130,77 @@ export function PaywallModal({
         {/* Title */}
         <div className="px-6 pt-8 pb-6">
           <h2 className="text-2xl font-extrabold text-white text-center leading-tight drop-shadow-lg">
-            Start your 7-day FREE<br />trial to continue.
+            {selectedPlan === 'yearly' ? (
+              <>Start your 7-day FREE<br />trial to continue.</>
+            ) : (
+              <>Unlock Sprind Unlimited</>
+            )}
           </h2>
         </div>
 
-        {/* Timeline */}
-        <div className="px-6 pb-2">
-          <div className="relative">
-            {/* Gradient connector bar */}
-            <div className="absolute left-[19px] top-2 bottom-2 w-1 bg-gradient-to-b from-orange-400 via-orange-300 to-white/30 rounded-full" />
+        {/* Trial Timeline (yearly) or Benefits list (monthly) */}
+        {selectedPlan === 'yearly' ? (
+          <div className="px-6 pb-2">
+            <div className="relative">
+              {/* Gradient connector bar */}
+              <div className="absolute left-[19px] top-2 bottom-2 w-1 bg-gradient-to-b from-orange-400 via-orange-300 to-white/30 rounded-full" />
 
-            {/* Step 1: Today */}
-            <div className="relative flex items-start gap-4 mb-5">
-              <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 shadow-md z-10">
-                <Icon icon="solar:lock-keyhole-unlocked-bold" className="w-5 h-5 text-white" />
+              {/* Step 1: Today */}
+              <div className="relative flex items-start gap-4 mb-5">
+                <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 shadow-md z-10">
+                  <Icon icon="solar:lock-keyhole-unlocked-bold" className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1 pt-1">
+                  <p className="font-bold text-white text-base drop-shadow">Today</p>
+                  <p className="text-white/70 text-sm leading-snug drop-shadow">
+                    Unlock all premium features: every topic, custom playlists, and word search.
+                  </p>
+                </div>
               </div>
-              <div className="flex-1 pt-1">
-                <p className="font-bold text-white text-base drop-shadow">Today</p>
-                <p className="text-white/70 text-sm leading-snug drop-shadow">
-                  Unlock all premium features: every topic, custom playlists, and word search.
-                </p>
-              </div>
-            </div>
 
-            {/* Step 2: In 6 Days - Reminder */}
-            <div className="relative flex items-start gap-4 mb-5">
-              <div className="w-10 h-10 rounded-full bg-orange-400 flex items-center justify-center flex-shrink-0 shadow-md z-10">
-                <Icon icon="solar:bell-bold" className="w-5 h-5 text-white" />
+              {/* Step 2: In 5 Days - Reminder */}
+              <div className="relative flex items-start gap-4 mb-5">
+                <div className="w-10 h-10 rounded-full bg-orange-400 flex items-center justify-center flex-shrink-0 shadow-md z-10">
+                  <Icon icon="solar:bell-bold" className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1 pt-1">
+                  <p className="font-bold text-white text-base drop-shadow">In 5 Days - Reminder</p>
+                  <p className="text-white/70 text-sm leading-snug drop-shadow">
+                    We&apos;ll send you a reminder that your trial is ending soon if you&apos;ve allowed us to notify you.
+                  </p>
+                </div>
               </div>
-              <div className="flex-1 pt-1">
-                <p className="font-bold text-white text-base drop-shadow">In 6 Days - Reminder</p>
-                <p className="text-white/70 text-sm leading-snug drop-shadow">
-                  We&apos;ll send you a reminder that your trial is ending soon if you&apos;ve allowed us to notify you.
-                </p>
-              </div>
-            </div>
 
-            {/* Step 3: In 7 Days - Billing Starts */}
-            <div className="relative flex items-start gap-4">
-              <div className="w-10 h-10 rounded-full bg-white/20 border border-white/30 flex items-center justify-center flex-shrink-0 shadow-md z-10">
-                <Icon icon="solar:crown-bold" className="w-5 h-5 text-white" />
-              </div>
-              <div className="flex-1 pt-1">
-                <p className="font-bold text-white text-base drop-shadow">In 7 Days - Billing Starts</p>
-                <p className="text-white/70 text-sm leading-snug drop-shadow">
-                  You&apos;ll be charged on {billingDateLabel} unless you cancel anytime before.
-                </p>
+              {/* Step 3: In 7 Days - Billing Starts */}
+              <div className="relative flex items-start gap-4">
+                <div className="w-10 h-10 rounded-full bg-white/20 border border-white/30 flex items-center justify-center flex-shrink-0 shadow-md z-10">
+                  <Icon icon="solar:crown-bold" className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1 pt-1">
+                  <p className="font-bold text-white text-base drop-shadow">In 7 Days - Billing Starts</p>
+                  <p className="text-white/70 text-sm leading-snug drop-shadow">
+                    You&apos;ll be charged on {billingDateLabel} unless you cancel anytime before.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="px-6 pb-2 space-y-4">
+            <div className="flex items-start gap-3">
+              <Icon icon="solar:check-circle-bold" className="w-6 h-6 text-white flex-shrink-0 mt-0.5 drop-shadow" />
+              <p className="font-semibold text-white text-base drop-shadow">Access to all topics</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <Icon icon="solar:check-circle-bold" className="w-6 h-6 text-white flex-shrink-0 mt-0.5 drop-shadow" />
+              <p className="font-semibold text-white text-base drop-shadow">Build playlists for the words you actually need</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <Icon icon="solar:check-circle-bold" className="w-6 h-6 text-white flex-shrink-0 mt-0.5 drop-shadow" />
+              <p className="font-semibold text-white text-base drop-shadow">Search a specific word and save it</p>
+            </div>
+          </div>
+        )}
 
         {/* Plans */}
         <div className="px-6 pt-6 pb-2 grid grid-cols-2 gap-3">
@@ -239,10 +260,12 @@ export function PaywallModal({
           </button>
         </div>
 
-        {/* No Payment Due Now */}
+        {/* Plan reassurance line */}
         <div className="flex items-center justify-center gap-2 px-6 pt-5 pb-3">
           <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-white drop-shadow" />
-          <span className="text-white font-semibold text-sm drop-shadow">No Payment Due Now</span>
+          <span className="text-white font-semibold text-sm drop-shadow">
+            {selectedPlan === 'yearly' ? 'No Payment Due Now' : 'No Commitment - Cancel Anytime'}
+          </span>
         </div>
 
         {/* Error Message */}
@@ -265,7 +288,7 @@ export function PaywallModal({
                 <span>Processing...</span>
               </>
             ) : (
-              <span>Start My 7-Day Free Trial</span>
+              <span>{selectedPlan === 'yearly' ? 'Start My 7-Day Free Trial' : 'Start My Journey'}</span>
             )}
           </button>
 
