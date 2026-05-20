@@ -2,14 +2,12 @@
 
 import React, { useState, useRef, useEffect } from "react"
 import { Icon } from "@iconify/react"
-import { useRouter } from "next/navigation"
 import {
   Sheet,
   SheetContent,
   SheetClose,
   SheetTitle,
 } from "@/components/ui/sheet"
-import { useRevenueCat } from "@/hooks/use-revenuecat"
 import { NotificationSettings } from "@/components/settings/notification-settings"
 import { openAppSettings } from "@/lib/notifications"
 import type { NotificationPreferences } from "@/lib/notifications"
@@ -50,10 +48,7 @@ export function ManageAccountModal({
   onNotifUpdatePref,
   openNotifications = false,
 }: ManageAccountModalProps) {
-  const { restorePurchases, loading: rcLoading } = useRevenueCat()
-  const router = useRouter()
   const [deleteStep, setDeleteStep] = useState<'idle' | 'confirm' | 'deleting' | 'error'>('idle')
-  const [restoreStatus, setRestoreStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle')
   const [deleteError, setDeleteError] = useState<string | null>(null)
   const [deleteConfirmText, setDeleteConfirmText] = useState('')
   const [notifExpanded, setNotifExpanded] = useState(false)
@@ -123,18 +118,6 @@ export function ManageAccountModal({
       }
     } catch (err) {
       console.error('[RC] handleManageSubscription failed:', err)
-    }
-  }
-
-  const handleRestorePurchases = async () => {
-    setRestoreStatus('loading')
-    try {
-      await restorePurchases()
-      setRestoreStatus('done')
-      setTimeout(() => setRestoreStatus('idle'), 3000)
-    } catch {
-      setRestoreStatus('error')
-      setTimeout(() => setRestoreStatus('idle'), 3000)
     }
   }
 
@@ -355,29 +338,6 @@ export function ManageAccountModal({
               <span>Manage Subscription</span>
             </button>
           )}
-
-          {/* Restore Purchases — always visible per Apple guideline */}
-          <button
-            onClick={handleRestorePurchases}
-            disabled={restoreStatus === 'loading'}
-            className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white py-3 px-4 rounded-2xl font-medium text-sm hover:bg-white/15 transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
-            aria-label="Restore previous purchases"
-          >
-            <Icon icon="solar:refresh-bold" width="18" height="18" />
-            <span>
-              {restoreStatus === 'loading' ? 'Restoring…' : restoreStatus === 'done' ? 'Restored ✓' : restoreStatus === 'error' ? 'Nothing to restore' : 'Restore Purchases'}
-            </span>
-          </button>
-
-          {/* Privacy Policy */}
-          <button
-            onClick={() => { onCloseAction(); router.push('/privacy-policy') }}
-            className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white py-3 px-4 rounded-2xl font-medium text-sm hover:bg-white/15 transition-all flex items-center justify-center space-x-2"
-            aria-label="View privacy policy and data settings"
-          >
-            <Icon icon="solar:shield-check-bold" width="18" height="18" />
-            <span>Privacy Policy</span>
-          </button>
 
           {/* Delete Account */}
           <button
