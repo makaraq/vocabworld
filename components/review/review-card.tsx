@@ -22,15 +22,16 @@ export function ReviewCard({ userId, targetLanguageCode, nativeLanguageCode }: R
 
     const fetchDueCount = async () => {
       try {
-        const res = await fetch(
-          `/api/sr/due?userId=${userId}&targetLanguageCode=${targetLanguageCode}&countOnly=true`
-        )
+        const url = `/api/sr/due?userId=${userId}&targetLanguageCode=${targetLanguageCode}&countOnly=true`
+        console.log('[ReviewCard] fetching:', url)
+        const res = await fetch(url)
+        const data = await res.json()
+        console.log('[ReviewCard] response:', res.status, data)
         if (res.ok) {
-          const data = await res.json()
           setDueCount(data.totalDue || 0)
         }
-      } catch {
-        // silently fail, show 0
+      } catch (err) {
+        console.error('[ReviewCard] error:', err)
       } finally {
         setLoading(false)
       }

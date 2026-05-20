@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupabaseClient } from '@/lib/supabase-server'
+import { getSupabaseServer } from '@/lib/supabase-server'
 
 export async function GET(request: NextRequest) {
-  const supabase = getSupabaseClient()
+  const supabase = getSupabaseServer()
   try {
     const { searchParams } = new URL(request.url)
     const vocabularyId = searchParams.get('vocabularyId')
