@@ -16,6 +16,7 @@ import { NotificationSetupScreen } from "@/components/notifications/notification
 import { CoachMarkOverlay, type CoachMarkStep } from "@/components/tutorial/coach-mark-overlay"
 import { hapticsLight, hapticsMedium, hapticsSuccess, hapticsWarning } from "@/lib/haptics"
 import { BadgesCard } from "@/components/achievements/badges-card"
+import { ReviewCard } from "@/components/review/review-card"
 import { useAchievementContext } from "@/components/achievements/achievement-provider"
 import {
   reportProgress,
@@ -517,13 +518,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
 
                   {/* Daily Reminder & Goal Cards */}
                   <div className="grid grid-cols-2 gap-2 sm:gap-3">
-                    <div className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20">
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mb-1.5 sm:mb-2">
-                        <Icon icon="solar:bell-bing-bold" width="18" height="18" className="text-white" />
-                      </div>
-                      <div className="text-xl sm:text-2xl font-bold text-white">02:00 PM</div>
-                      <div className="text-[10px] sm:text-xs text-white/90">Daily Reminder</div>
-                    </div>
+                    <ReviewCard userId={user?.id} targetLanguageCode={targetLanguageCode} nativeLanguageCode={nativeLanguageCode} />
                     <BadgesCard />
                   </div>
 
