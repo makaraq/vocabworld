@@ -141,7 +141,7 @@ export function LeaderboardModal({
       <div className="flex items-center gap-3 flex-shrink-0">
         <div className="text-right">
           <span className="text-white font-bold text-sm">{entry.wordsPlayed.toLocaleString()}</span>
-          <span className="text-white/40 text-xs ml-1">words</span>
+          <span className="text-white/40 text-xs ml-1">plays</span>
         </div>
         <div className="flex items-center gap-0.5">
           <Icon icon="solar:fire-bold" width="14" className="text-orange-400" />
