@@ -214,8 +214,16 @@ export function ReviewQuizModal({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex flex-col touch-none"
-      onTouchMove={(e) => e.preventDefault()}
+      className="fixed inset-0 z-50 flex flex-col"
+      onTouchStart={(e) => e.stopPropagation()}
+      onTouchMove={(e) => { e.stopPropagation(); e.preventDefault() }}
+      onTouchEnd={(e) => e.stopPropagation()}
+      onMouseDown={(e) => e.stopPropagation()}
+      onMouseMove={(e) => e.stopPropagation()}
+      onMouseUp={(e) => e.stopPropagation()}
+      onPointerDown={(e) => e.stopPropagation()}
+      onPointerMove={(e) => e.stopPropagation()}
+      onPointerUp={(e) => e.stopPropagation()}
     >
       <div className="absolute inset-0 bg-black/40 backdrop-blur-xl" />
 
