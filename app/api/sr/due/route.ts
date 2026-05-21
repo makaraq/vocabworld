@@ -16,15 +16,22 @@ export async function GET(request: NextRequest) {
     }
 
     if (countOnly) {
-      const { count, error } = await supabase
-        .from('user_sr_cards')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', userId)
-        .eq('target_language_code', targetLanguageCode)
-        .lte('due', new Date().toISOString())
+      const [dueResult, totalResult] = await Promise.all([
+        supabase
+          .from('user_sr_cards')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', userId)
+          .eq('target_language_code', targetLanguageCode)
+          .lte('due', new Date().toISOString()),
+        supabase
+          .from('user_sr_cards')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', userId)
+          .eq('target_language_code', targetLanguageCode),
+      ])
 
-      if (error) throw error
-      return NextResponse.json({ totalDue: count || 0 })
+      if (dueResult.error) throw dueResult.error
+      return NextResponse.json({ totalDue: dueResult.count || 0, totalCards: totalResult.count || 0 })
     }
 
     const { data: cards, error: cardsError } = await supabase
