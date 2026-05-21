@@ -1,9 +1,10 @@
 "use client"
 import { useEffect, useState } from "react"
-import { Flame, TrendingUp, Trophy, BookOpen } from "lucide-react"
+import { Flame, TrendingUp, BookOpen } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { Icon } from "@iconify/react"
 import { DetailedProgressModal } from "./detailed-progress-modal"
+import { LeaderboardModal } from "@/components/leaderboard/leaderboard-modal"
 import { getFlagIcon } from "@/utils/flags"
 import { reportProgress } from "@/lib/achievements/engine"
 
@@ -21,6 +22,7 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLa
   const [stats, setStats] = useState<ProgressStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [showDetailedModal, setShowDetailedModal] = useState(false)
+  const [showLeaderboard, setShowLeaderboard] = useState(false)
   const [lastFetchKey, setLastFetchKey] = useState<string>('')
   const [holdingProgressButton, setHoldingProgressButton] = useState(false)
 
@@ -138,13 +140,18 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLa
             <div className="text-[10px] sm:text-xs text-white/90">Today</div>
           </div>
           
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-1.5 sm:mb-2">
-              <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+          <button
+            onClick={() => setShowLeaderboard(true)}
+            className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20 text-left hover:bg-white/15 transition-all active:scale-95"
+          >
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center mb-1.5 sm:mb-2">
+              <Icon icon="solar:cup-star-bold" className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </div>
-            <div className="text-xl sm:text-2xl font-bold text-white">{stats.topicsCompleted}</div>
-            <div className="text-[10px] sm:text-xs text-white/90">Topics Done</div>
-          </div>
+            <div className="text-xl sm:text-2xl font-bold text-white">
+              <Icon icon="solar:ranking-bold" className="w-5 h-5 sm:w-6 sm:h-6 inline" />
+            </div>
+            <div className="text-[10px] sm:text-xs text-white/90">Leaderboard</div>
+          </button>
         </div>
       </div>
       
@@ -154,6 +161,12 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLa
         targetLanguageCode={targetLanguageCode}
         targetLanguageName={targetLanguageName}
         nativeLanguageCode={nativeLanguageCode}
+      />
+      <LeaderboardModal
+        open={showLeaderboard}
+        onCloseAction={() => setShowLeaderboard(false)}
+        targetLanguageCode={targetLanguageCode}
+        targetLanguageName={targetLanguageName}
       />
     </>
   )

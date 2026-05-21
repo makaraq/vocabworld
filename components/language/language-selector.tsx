@@ -877,6 +877,7 @@ export function LanguageSelector() {
   const [showPaywall, setShowPaywall] = useState(false)
   const [showManageAccount, setShowManageAccount] = useState(false)
   const [openNotificationsInAccount, setOpenNotificationsInAccount] = useState(false)
+  const [showOnLeaderboard, setShowOnLeaderboard] = useState(false)
   const [showNotifPrompt, setShowNotifPrompt] = useState(false)
   const [notifPromptVariant, setNotifPromptVariant] = useState<'enable' | 'settings'>('settings')
   const [showNotifSetup, setShowNotifSetup] = useState(false)
@@ -903,6 +904,28 @@ export function LanguageSelector() {
       .catch(() => {})
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showManageAccount])
+
+  // Load leaderboard opt-in state when account modal opens
+  useEffect(() => {
+    if (!showManageAccount || !user?.id) return
+    fetch(`/api/leaderboard/opt-in?userId=${user.id}`)
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (data) setShowOnLeaderboard(data.showOnLeaderboard) })
+      .catch(() => {})
+  }, [showManageAccount, user?.id])
+
+  const handleLeaderboardToggle = async (enabled: boolean) => {
+    setShowOnLeaderboard(enabled)
+    try {
+      await fetch('/api/leaderboard/opt-in', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user?.id, showOnLeaderboard: enabled }),
+      })
+    } catch {
+      setShowOnLeaderboard(!enabled)
+    }
+  }
 
   // Debug auth state
   useEffect(() => {
@@ -4962,8 +4985,11 @@ export function LanguageSelector() {
         onSignOutAction={handleSignOut}
         notifPrefs={notificationsHook.prefs}
         notifPermission={notificationsHook.permissionState}
+        onNotifSetEnabled={notificationsHook.setEnabled}
         onNotifUpdatePref={notificationsHook.updatePref}
         openNotifications={openNotificationsInAccount}
+        showOnLeaderboard={showOnLeaderboard}
+        onLeaderboardToggle={handleLeaderboardToggle}
       />
 
       {/* Step 1: Set reminder time + trigger OS permission dialog */}

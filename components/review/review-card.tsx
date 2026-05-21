@@ -41,6 +41,15 @@ export function ReviewCard({ userId, targetLanguageCode, nativeLanguageCode }: R
     fetchDueCount()
   }, [userId, targetLanguageCode])
 
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const { action } = (e as CustomEvent).detail ?? {}
+      if (action === 'open_review') setShowQuiz(true)
+    }
+    window.addEventListener('notification-action', handler)
+    return () => window.removeEventListener('notification-action', handler)
+  }, [])
+
   const handleQuizClose = () => {
     setShowQuiz(false)
     if (userId && targetLanguageCode) {

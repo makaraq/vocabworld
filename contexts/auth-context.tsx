@@ -73,6 +73,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   
   const supabase = createClient()
   const initializingRef = useRef(false)
+  const cleanupTapListenerRef = useRef<(() => void) | null>(null)
 
   // Fetch fresh scheduling context and reschedule all local notifications.
   // Fire-and-forget — never throws, won't block the auth flow.
@@ -267,6 +268,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               .eq('id', initialSession.user.id)
             // Reschedule notifications with fresh context
             triggerNotificationReschedule().catch(() => {})
+            // Listen for notification taps (e.g. open_review)
+            import('@/lib/notifications').then(({ setupNotificationTapListener }) => {
+              setupNotificationTapListener().then(cleanup => {
+                cleanupTapListenerRef.current = cleanup
+              })
+            }).catch(() => {})
           } catch (e) {
           }
         } else {
