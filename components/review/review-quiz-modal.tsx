@@ -54,7 +54,15 @@ export function ReviewQuizModal({
     hapticsLight()
     setIsPlayingAudio(true)
 
-    const url = `/api/custom-audio?text=${encodeURIComponent(card.targetWord)}&languageCode=${targetLanguageCode}`
+    // Use the same B2 audio endpoint as the main learning flow
+    let url = `/api/universal-audio?wordId=${card.vocabularyId}&languageCode=${targetLanguageCode}`
+    if (card.englishWord) {
+      url += `&word=${encodeURIComponent(card.englishWord)}`
+    }
+    if (card.targetWord) {
+      url += `&targetWord=${encodeURIComponent(card.targetWord)}`
+    }
+
     const audio = new Audio(url)
     audioElRef.current = audio
     audio.onended = () => { setIsPlayingAudio(false); audioElRef.current = null }
