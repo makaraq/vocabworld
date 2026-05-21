@@ -236,7 +236,7 @@ export function LeaderboardModal({
             </div>
           )}
 
-          {/* Pinned current user if not in top 50 */}
+          {/* Pinned current user if not in top 20 */}
           {currentUserRank && !entries.some(e => e.isCurrentUser) && (
             <>
               <div className="flex items-center gap-2 py-2 px-3">

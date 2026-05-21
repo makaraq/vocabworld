@@ -145,7 +145,7 @@ async function fetchLeaderboard(
   })
 
   results.sort((a, b) => b.words_played - a.words_played)
-  return results.slice(0, 50)
+  return results.slice(0, 20)
 }
 
 async function fetchUserRank(
