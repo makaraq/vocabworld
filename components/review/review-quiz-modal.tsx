@@ -106,7 +106,9 @@ export function ReviewQuizModal({
         if (!res.ok) throw new Error("Failed to fetch")
         const data = await res.json()
         if (data.cards && data.cards.length > 0) {
-          setCards(data.cards)
+          // Shuffle cards so the quiz order feels random
+          const shuffled = [...data.cards].sort(() => Math.random() - 0.5)
+          setCards(shuffled)
           setSessionState("quiz")
         } else {
           setSessionState("complete")
