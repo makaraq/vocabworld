@@ -1,7 +1,6 @@
 "use client"
 import { useState, useEffect, useCallback } from "react"
 import { createPortal } from "react-dom"
-import { X } from "lucide-react"
 import { Icon } from "@iconify/react"
 import { hapticsSuccess, hapticsWarning, hapticsLight } from "@/lib/haptics"
 import { Rating } from "@/lib/sr/fsrs"
@@ -40,10 +39,46 @@ export function ReviewQuizModal({
   const [sessionState, setSessionState] = useState<SessionState>("loading")
   const [correctCount, setCorrectCount] = useState(0)
   const [loadingOptions, setLoadingOptions] = useState(false)
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false)
+  const audioRef = useCallback(() => {
+    // Keep a stable ref across renders
+    return { current: null as HTMLAudioElement | null }
+  }, [])()
 
+  const playWordAudio = async (card: QuizCard) => {
+    if (isPlayingAudio) {
+      if (audioRef.current) {
+        audioRef.current.pause()
+        audioRef.current = null
+      }
+      setIsPlayingAudio(false)
+      return
+    }
+
+    hapticsLight()
+    setIsPlayingAudio(true)
+    try {
+      const url = `/api/universal-audio-fast?wordId=${card.vocabularyId}&languageCode=${targetLanguageCode}`
+      const audio = new Audio(url)
+      audioRef.current = audio
+      audio.onended = () => { setIsPlayingAudio(false); audioRef.current = null }
+      audio.onerror = () => { setIsPlayingAudio(false); audioRef.current = null }
+      await audio.play()
+    } catch {
+      setIsPlayingAudio(false)
+      audioRef.current = null
+    }
+  }
+
+  // Mount + lock background scroll
   useEffect(() => {
     setMounted(true)
-    return () => setMounted(false)
+    const original = document.body.style.overflow
+    document.body.style.overflow = "hidden"
+    return () => {
+      setMounted(false)
+      document.body.style.overflow = original
+    }
   }, [])
 
   useEffect(() => {
@@ -92,11 +127,17 @@ export function ReviewQuizModal({
 
   useEffect(() => {
     if (sessionState === "quiz" && cards[currentIndex]) {
+      // Stop any playing audio when moving to next card
+      if (audioRef.current) {
+        audioRef.current.pause()
+        audioRef.current = null
+        setIsPlayingAudio(false)
+      }
       loadDistractors(cards[currentIndex])
       setSelectedOption(null)
       setIsCorrect(null)
     }
-  }, [sessionState, currentIndex, cards, loadDistractors])
+  }, [sessionState, currentIndex, cards, loadDistractors, audioRef])
 
   const handleAnswer = async (option: string) => {
     if (sessionState !== "quiz" || selectedOption !== null) return
@@ -153,34 +194,30 @@ export function ReviewQuizModal({
   if (!mounted) return null
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex flex-col">
+    <div
+      className="fixed inset-0 z-50 flex flex-col touch-none"
+      onTouchMove={(e) => e.preventDefault()}
+    >
       <div className="absolute inset-0 bg-black/40 backdrop-blur-xl" />
 
       <div className="relative flex flex-col h-full p-4 sm:p-6 max-w-lg mx-auto w-full">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-4">
-          <button
-            onClick={() => { hapticsLight(); onClose() }}
-            className="w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center"
-          >
-            <X className="w-5 h-5 text-white" />
-          </button>
-          {sessionState !== "complete" && cards.length > 0 && (
-            <div className="text-sm text-white/70">
-              {currentIndex + 1} / {cards.length}
-            </div>
-          )}
-        </div>
-
-        {/* Progress bar */}
+        {/* Header — title + counter + progress bar */}
         {sessionState !== "complete" && cards.length > 0 && (
-          <div className="h-1.5 bg-white/10 rounded-full mb-8 overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-violet-500 to-purple-500 rounded-full transition-all duration-300"
-              style={{
-                width: `${((currentIndex + (sessionState === "answered" ? 1 : 0)) / cards.length) * 100}%`,
-              }}
-            />
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-lg font-semibold text-white">Quick Recall</h2>
+              <div className="text-sm text-white/50">
+                {currentIndex + 1} of {cards.length}
+              </div>
+            </div>
+            <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full transition-all duration-300"
+                style={{
+                  width: `${((currentIndex + (sessionState === "answered" ? 1 : 0)) / cards.length) * 100}%`,
+                }}
+              />
+            </div>
           </div>
         )}
 
@@ -195,13 +232,28 @@ export function ReviewQuizModal({
           cards[currentIndex] && (
             <div className="flex-1 flex flex-col justify-center gap-6">
               {/* Question card */}
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 p-8 text-center">
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 p-8 text-center relative">
                 <div className="text-sm text-white/50 mb-2">
                   What does this mean?
                 </div>
-                <div className="text-3xl sm:text-4xl font-bold text-white">
+                <div className="text-3xl sm:text-4xl font-bold text-white mb-3">
                   {cards[currentIndex].targetWord}
                 </div>
+                <button
+                  onClick={() => playWordAudio(cards[currentIndex])}
+                  className={`w-10 h-10 rounded-full border flex items-center justify-center transition-all active:scale-95 mx-auto ${
+                    isPlayingAudio
+                      ? "bg-blue-500/30 border-blue-400/50"
+                      : "bg-white/10 border-white/20 hover:bg-white/20"
+                  }`}
+                >
+                  <Icon
+                    icon={isPlayingAudio ? "solar:volume-loud-bold" : "solar:volume-bold"}
+                    width="20"
+                    height="20"
+                    className={isPlayingAudio ? "text-blue-400" : "text-white/70"}
+                  />
+                </button>
               </div>
 
               {/* Answer options */}
@@ -231,7 +283,7 @@ export function ReviewQuizModal({
 
         {sessionState === "complete" && (
           <div className="flex-1 flex flex-col items-center justify-center gap-6">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
               <Icon
                 icon="solar:check-circle-bold"
                 width="44"
@@ -252,14 +304,27 @@ export function ReviewQuizModal({
                 </div>
               )}
             </div>
+          </div>
+        )}
+
+        {/* Close button — always at bottom */}
+        <div className="pt-4 pb-2 flex justify-center">
+          {sessionState === "complete" && cards.length > 0 ? (
             <button
               onClick={() => { hapticsLight(); onClose() }}
-              className="mt-4 px-8 py-3 bg-gradient-to-r from-violet-500 to-purple-600 rounded-xl text-white font-semibold text-base hover:opacity-90 transition-opacity"
+              className="w-full py-3.5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl text-white font-semibold text-base hover:opacity-90 transition-opacity"
             >
               Done
             </button>
-          </div>
-        )}
+          ) : (
+            <button
+              onClick={() => { hapticsLight(); onClose() }}
+              className="w-12 h-12 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center hover:bg-white/20 transition-all active:scale-95"
+            >
+              <Icon icon="solar:close-circle-bold" width="24" height="24" className="text-white/70" />
+            </button>
+          )}
+        </div>
       </div>
     </div>,
     document.body

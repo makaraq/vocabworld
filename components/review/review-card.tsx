@@ -22,16 +22,15 @@ export function ReviewCard({ userId, targetLanguageCode, nativeLanguageCode }: R
 
     const fetchDueCount = async () => {
       try {
-        const url = `/api/sr/due?userId=${userId}&targetLanguageCode=${targetLanguageCode}&countOnly=true`
-        console.log('[ReviewCard] fetching:', url)
-        const res = await fetch(url)
-        const data = await res.json()
-        console.log('[ReviewCard] response:', res.status, data)
+        const res = await fetch(
+          `/api/sr/due?userId=${userId}&targetLanguageCode=${targetLanguageCode}&countOnly=true`
+        )
         if (res.ok) {
+          const data = await res.json()
           setDueCount(data.totalDue || 0)
         }
-      } catch (err) {
-        console.error('[ReviewCard] error:', err)
+      } catch {
+        // silently fail, show 0
       } finally {
         setLoading(false)
       }
@@ -56,9 +55,9 @@ export function ReviewCard({ userId, targetLanguageCode, nativeLanguageCode }: R
     <>
       <button
         onClick={() => dueCount > 0 && setShowQuiz(true)}
-        className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20 text-left transition-all hover:bg-white/15 active:scale-[0.97]"
+        className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20 text-left transition-all hover:bg-white/15 active:scale-[1.03]"
       >
-        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mb-1.5 sm:mb-2">
+        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-1.5 sm:mb-2">
           {dueCount > 0 ? (
             <Icon icon="solar:book-2-bold" width="18" height="18" className="text-white" />
           ) : (
