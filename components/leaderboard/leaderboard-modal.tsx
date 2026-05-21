@@ -5,7 +5,6 @@ import { Icon } from "@iconify/react"
 import {
   Sheet,
   SheetContent,
-  SheetClose,
   SheetTitle,
 } from "@/components/ui/sheet"
 import { useAuth } from "@/contexts/auth-context"
@@ -132,7 +131,7 @@ export function LeaderboardModal({
           entry.isCurrentUser ? 'text-blue-200' : 'text-white'
         }`}>
           {getDisplayName(entry)}
-          {entry.isCurrentUser && (
+          {entry.isCurrentUser && !entry.firstName && (
             <span className="text-blue-300/70 text-xs ml-1.5">(you)</span>
           )}
         </p>
@@ -171,11 +170,12 @@ export function LeaderboardModal({
             <Icon icon="solar:cup-star-bold" width="22" className="text-yellow-400" />
             Leaderboard
           </SheetTitle>
-          <SheetClose asChild>
-            <button className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:bg-white/20 transition-all">
-              <Icon icon="solar:close-circle-bold" width="20" height="20" />
-            </button>
-          </SheetClose>
+          <button
+            onClick={onCloseAction}
+            className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:bg-white/20 transition-all"
+          >
+            <Icon icon="solar:close-circle-bold" width="20" height="20" />
+          </button>
         </div>
 
         {/* Toggles */}

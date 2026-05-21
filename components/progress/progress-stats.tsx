@@ -23,6 +23,7 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLa
   const [loading, setLoading] = useState(true)
   const [showDetailedModal, setShowDetailedModal] = useState(false)
   const [showLeaderboard, setShowLeaderboard] = useState(false)
+  const [bestRank, setBestRank] = useState<number | null>(null)
   const [lastFetchKey, setLastFetchKey] = useState<string>('')
   const [holdingProgressButton, setHoldingProgressButton] = useState(false)
 
@@ -57,6 +58,10 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLa
             topicsCompleted: data.topicsCompleted,
             targetLanguageCode,
           })
+          fetch(`/api/leaderboard/rank?userId=${user.id}&targetLanguageCode=${targetLanguageCode}`)
+            .then(r => r.ok ? r.json() : null)
+            .then(d => { if (d) setBestRank(d.bestRank) })
+            .catch(() => {})
         }
       } catch (error) {
         console.error('Failed to fetch progress stats:', error)
@@ -144,11 +149,11 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLa
             onClick={() => setShowLeaderboard(true)}
             className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20 text-left hover:bg-white/15 transition-all active:scale-95"
           >
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center mb-1.5 sm:mb-2">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center mb-1.5 sm:mb-2">
               <Icon icon="solar:cup-star-bold" className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </div>
             <div className="text-xl sm:text-2xl font-bold text-white">
-              <Icon icon="solar:ranking-bold" className="w-5 h-5 sm:w-6 sm:h-6 inline" />
+              {bestRank ? `#${bestRank}` : '—'}
             </div>
             <div className="text-[10px] sm:text-xs text-white/90">Leaderboard</div>
           </button>
