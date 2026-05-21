@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { createPortal } from "react-dom"
 import { Icon } from "@iconify/react"
 import { hapticsSuccess, hapticsWarning, hapticsLight } from "@/lib/haptics"
@@ -40,44 +40,52 @@ export function ReviewQuizModal({
   const [correctCount, setCorrectCount] = useState(0)
   const [loadingOptions, setLoadingOptions] = useState(false)
   const [isPlayingAudio, setIsPlayingAudio] = useState(false)
-  const audioRef = useCallback(() => {
-    // Keep a stable ref across renders
-    return { current: null as HTMLAudioElement | null }
-  }, [])()
+  const audioElRef = useRef<HTMLAudioElement | null>(null)
 
-  const playWordAudio = async (card: QuizCard) => {
-    if (isPlayingAudio) {
-      if (audioRef.current) {
-        audioRef.current.pause()
-        audioRef.current = null
-      }
+  const playWordAudio = (card: QuizCard) => {
+    // Toggle off if already playing
+    if (isPlayingAudio && audioElRef.current) {
+      audioElRef.current.pause()
+      audioElRef.current = null
       setIsPlayingAudio(false)
       return
     }
 
     hapticsLight()
     setIsPlayingAudio(true)
-    try {
-      const url = `/api/universal-audio-fast?wordId=${card.vocabularyId}&languageCode=${targetLanguageCode}`
-      const audio = new Audio(url)
-      audioRef.current = audio
-      audio.onended = () => { setIsPlayingAudio(false); audioRef.current = null }
-      audio.onerror = () => { setIsPlayingAudio(false); audioRef.current = null }
-      await audio.play()
-    } catch {
-      setIsPlayingAudio(false)
-      audioRef.current = null
-    }
+
+    const url = `/api/custom-audio?text=${encodeURIComponent(card.targetWord)}&languageCode=${targetLanguageCode}`
+    const audio = new Audio(url)
+    audioElRef.current = audio
+    audio.onended = () => { setIsPlayingAudio(false); audioElRef.current = null }
+    audio.onerror = () => { setIsPlayingAudio(false); audioElRef.current = null }
+    audio.play().catch(() => { setIsPlayingAudio(false); audioElRef.current = null })
   }
 
-  // Mount + lock background scroll
+  // Mount + fully freeze background (prevent scroll + swipe on the page behind)
   useEffect(() => {
     setMounted(true)
-    const original = document.body.style.overflow
+    const scrollY = window.scrollY
+    const originalStyles = {
+      overflow: document.body.style.overflow,
+      position: document.body.style.position,
+      top: document.body.style.top,
+      width: document.body.style.width,
+      htmlOverflow: document.documentElement.style.overflow,
+    }
     document.body.style.overflow = "hidden"
+    document.body.style.position = "fixed"
+    document.body.style.top = `-${scrollY}px`
+    document.body.style.width = "100%"
+    document.documentElement.style.overflow = "hidden"
     return () => {
       setMounted(false)
-      document.body.style.overflow = original
+      document.body.style.overflow = originalStyles.overflow
+      document.body.style.position = originalStyles.position
+      document.body.style.top = originalStyles.top
+      document.body.style.width = originalStyles.width
+      document.documentElement.style.overflow = originalStyles.htmlOverflow
+      window.scrollTo(0, scrollY)
     }
   }, [])
 
@@ -104,7 +112,6 @@ export function ReviewQuizModal({
 
   const loadDistractors = useCallback(
     async (card: QuizCard) => {
-      setLoadingOptions(true)
       try {
         const res = await fetch(
           `/api/sr/distractors?vocabularyId=${card.vocabularyId}&targetLanguageCode=${sourceLanguageCode}&count=3`
@@ -116,9 +123,9 @@ export function ReviewQuizModal({
           () => Math.random() - 0.5
         )
         setOptions(allOptions)
+        setLoadingOptions(false)
       } catch {
         setOptions([card.sourceWord])
-      } finally {
         setLoadingOptions(false)
       }
     },
@@ -128,16 +135,18 @@ export function ReviewQuizModal({
   useEffect(() => {
     if (sessionState === "quiz" && cards[currentIndex]) {
       // Stop any playing audio when moving to next card
-      if (audioRef.current) {
-        audioRef.current.pause()
-        audioRef.current = null
+      if (audioElRef.current) {
+        audioElRef.current.pause()
+        audioElRef.current = null
         setIsPlayingAudio(false)
       }
-      loadDistractors(cards[currentIndex])
       setSelectedOption(null)
       setIsCorrect(null)
+      // Only show skeletons on the very first card load
+      if (options.length === 0) setLoadingOptions(true)
+      loadDistractors(cards[currentIndex])
     }
-  }, [sessionState, currentIndex, cards, loadDistractors, audioRef])
+  }, [sessionState, currentIndex, cards, loadDistractors]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleAnswer = async (option: string) => {
     if (sessionState !== "quiz" || selectedOption !== null) return
@@ -308,7 +317,7 @@ export function ReviewQuizModal({
         )}
 
         {/* Close button — always at bottom */}
-        <div className="pt-4 pb-2 flex justify-center">
+        <div className="pt-4 pb-6 flex justify-center">
           {sessionState === "complete" && cards.length > 0 ? (
             <button
               onClick={() => { hapticsLight(); onClose() }}
@@ -318,10 +327,10 @@ export function ReviewQuizModal({
             </button>
           ) : (
             <button
-              onClick={() => { hapticsLight(); onClose() }}
-              className="w-12 h-12 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center hover:bg-white/20 transition-all active:scale-95"
+              onPointerUp={() => { hapticsLight(); onClose() }}
+              className="w-14 h-14 rounded-full bg-white/10 border border-white/15 flex items-center justify-center"
             >
-              <Icon icon="solar:close-circle-bold" width="24" height="24" className="text-white/70" />
+              <Icon icon="solar:close-circle-bold" width="28" height="28" className="text-white/50" />
             </button>
           )}
         </div>
