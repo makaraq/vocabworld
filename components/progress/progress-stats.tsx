@@ -125,37 +125,37 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLa
             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-1.5 sm:mb-2">
               <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </div>
-            <div className="text-xl sm:text-2xl font-bold text-white">{stats.wordsLearned}</div>
-            <div className="text-[10px] sm:text-xs text-white/90">Words Learned</div>
+            <div className="text-2xl sm:text-3xl font-bold text-white">{stats.wordsLearned}</div>
+            <div className="text-xs sm:text-sm text-white/90">Words Learned</div>
           </div>
           
           <div className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20">
             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center mb-1.5 sm:mb-2">
               <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </div>
-            <div className="text-xl sm:text-2xl font-bold text-white">{stats.dailyLoginStreak}</div>
-            <div className="text-[10px] sm:text-xs text-white/90">Day Streak</div>
+            <div className="text-2xl sm:text-3xl font-bold text-white">{stats.dailyLoginStreak}</div>
+            <div className="text-xs sm:text-sm text-white/90">Day Streak</div>
           </div>
           
           <div className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20">
             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center mb-1.5 sm:mb-2">
               <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </div>
-            <div className="text-xl sm:text-2xl font-bold text-white">{stats.wordsLearnedToday}</div>
-            <div className="text-[10px] sm:text-xs text-white/90">Today</div>
+            <div className="text-2xl sm:text-3xl font-bold text-white">{stats.wordsLearnedToday}</div>
+            <div className="text-xs sm:text-sm text-white/90">Today</div>
           </div>
           
           <button
             onClick={() => setShowLeaderboard(true)}
-            className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20 text-left hover:bg-white/15 transition-all active:scale-95"
+            className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20 hover:bg-white/15 transition-all active:scale-95"
           >
             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center mb-1.5 sm:mb-2">
               <Icon icon="solar:cup-star-bold" className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </div>
-            <div className="text-xl sm:text-2xl font-bold text-white">
+            <div className="text-2xl sm:text-3xl font-bold text-white">
               {bestRank ? `#${bestRank}` : '—'}
             </div>
-            <div className="text-[10px] sm:text-xs text-white/90">Leaderboard</div>
+            <div className="text-xs sm:text-sm text-white/90">Leaderboard</div>
           </button>
         </div>
       </div>

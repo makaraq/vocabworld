@@ -66,7 +66,7 @@ export function ReviewCard({ userId, targetLanguageCode, nativeLanguageCode }: R
     <>
       <button
         onClick={() => dueCount > 0 && setShowQuiz(true)}
-        className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20 text-left transition-all hover:bg-white/15 active:scale-[1.03]"
+        className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20 transition-all hover:bg-white/15 active:scale-[1.03]"
       >
         <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center mb-1.5 sm:mb-2 ${
           totalCards === 0
@@ -83,23 +83,23 @@ export function ReviewCard({ userId, targetLanguageCode, nativeLanguageCode }: R
         </div>
         {loading ? (
           <>
-            <div className="text-xl sm:text-2xl font-bold text-white/40">...</div>
-            <div className="text-[10px] sm:text-xs text-white/50">Loading</div>
+            <div className="text-2xl sm:text-3xl font-bold text-white/40">...</div>
+            <div className="text-xs sm:text-sm text-white/50">Loading</div>
           </>
         ) : totalCards === 0 ? (
           <>
-            <div className="text-xl sm:text-2xl font-bold text-white/40">—</div>
-            <div className="text-[10px] sm:text-xs text-white/50">Start learning</div>
+            <div className="text-2xl sm:text-3xl font-bold text-white/40">—</div>
+            <div className="text-xs sm:text-sm text-white/50">Start learning</div>
           </>
         ) : dueCount > 0 ? (
           <>
-            <div className="text-xl sm:text-2xl font-bold text-white">{dueCount}</div>
-            <div className="text-[10px] sm:text-xs text-white/90">Words to Review</div>
+            <div className="text-2xl sm:text-3xl font-bold text-white">{dueCount}</div>
+            <div className="text-xs sm:text-sm text-white/90">Words to Review</div>
           </>
         ) : (
           <>
-            <div className="text-xl sm:text-2xl font-bold text-white/70">0</div>
-            <div className="text-[10px] sm:text-xs text-white/90">All caught up!</div>
+            <div className="text-2xl sm:text-3xl font-bold text-white/70">0</div>
+            <div className="text-xs sm:text-sm text-white/90">All caught up!</div>
           </>
         )}
       </button>

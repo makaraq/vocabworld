@@ -39,7 +39,7 @@ export function BadgesCard() {
       onTouchStart={() => setHolding(true)}
       onTouchEnd={() => setHolding(false)}
       onTouchCancel={() => setHolding(false)}
-      className={`bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20 text-left w-full hover:bg-white/15 transition-all ${
+      className={`bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20 w-full hover:bg-white/15 transition-all ${
         holding ? 'scale-[1.03]' : 'scale-100'
       }`}
     >
@@ -63,11 +63,11 @@ export function BadgesCard() {
             </div>
           )}
         </div>
-        <div className="text-xl sm:text-2xl font-bold text-white">
+        <div className="text-2xl sm:text-3xl font-bold text-white">
           {count}
           <span className="text-white/50 text-sm sm:text-base font-medium"> / {total}</span>
         </div>
-        <div className="text-[10px] sm:text-xs text-white/90">Badges</div>
+        <div className="text-xs sm:text-sm text-white/90">Badges</div>
     </button>
   )
 }
