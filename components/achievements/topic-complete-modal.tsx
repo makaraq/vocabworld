@@ -82,7 +82,7 @@ export function TopicCompleteModal({
       >
         {/* Trophy Lottie */}
         <div className="flex justify-center mb-5">
-          <div className="w-24 h-24">
+          <div className="w-40 h-40">
             <Lottie
               key={animKey}
               animationData={trophyAnim}
