@@ -119,6 +119,42 @@ export function BadgesModal({ open, onCloseAction }: Props) {
 
         {/* Body */}
         <div className="flex-1 overflow-y-auto px-5 pb-6 space-y-5">
+          {/* Borders section */}
+          <section>
+            <h3 className="text-white/90 font-semibold text-sm uppercase tracking-wider mb-2.5">
+              Borders
+            </h3>
+            <p className="text-white/50 text-[11px] mb-2.5">Complete a topic multiple times to earn border colors.</p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+              {([
+                { name: 'Beginner', desc: '1x completed', border: 'border-white/80', bg: 'bg-white/20', icon: 'solar:star-bold' },
+                { name: 'Explorer', desc: '2x completed', border: 'border-green-400', bg: 'bg-green-400/20', icon: 'solar:compass-bold' },
+                { name: 'Adventurer', desc: '3x completed', border: 'border-orange-400', bg: 'bg-orange-400/20', icon: 'solar:fire-bold' },
+                { name: 'Master', desc: '4x completed', border: 'border-red-400', bg: 'bg-red-400/20', icon: 'solar:crown-bold' },
+                { name: 'Legend', desc: '5x completed', border: 'border-purple-400', bg: 'bg-purple-400/20', icon: 'solar:crown-star-bold' },
+              ] as const).map((tier) => (
+                <div
+                  key={tier.name}
+                  className={`relative rounded-xl border-2 ${tier.border} p-3 ${tier.bg}`}
+                >
+                  <div className="flex items-start gap-2.5">
+                    <div className={`w-11 h-11 rounded-lg flex items-center justify-center flex-shrink-0 bg-white/10`}>
+                      <Icon icon={tier.icon} width="22" height="22" className="text-white drop-shadow" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="text-white font-semibold text-[13px] leading-tight">
+                        {tier.name}
+                      </div>
+                      <div className="text-white/60 text-[11px] leading-snug mt-0.5">
+                        {tier.desc}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
           {CATEGORY_ORDER.map((cat) => {
             const list = grouped[cat]
             if (list.length === 0) return null
@@ -170,42 +206,6 @@ export function BadgesModal({ open, onCloseAction }: Props) {
               </section>
             )
           })}
-
-          {/* Borders section */}
-          <section>
-            <h3 className="text-white/90 font-semibold text-sm uppercase tracking-wider mb-2.5">
-              Borders
-            </h3>
-            <p className="text-white/50 text-[11px] mb-2.5">Complete a topic multiple times to earn border colors.</p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-              {([
-                { name: 'Beginner', desc: '1x completed', border: 'border-white/80', bg: 'bg-white/20', icon: 'solar:star-bold' },
-                { name: 'Explorer', desc: '2x completed', border: 'border-green-400', bg: 'bg-green-400/20', icon: 'solar:compass-bold' },
-                { name: 'Adventurer', desc: '3x completed', border: 'border-orange-400', bg: 'bg-orange-400/20', icon: 'solar:fire-bold' },
-                { name: 'Master', desc: '4x completed', border: 'border-red-400', bg: 'bg-red-400/20', icon: 'solar:crown-bold' },
-                { name: 'Legend', desc: '5x completed', border: 'border-purple-400', bg: 'bg-purple-400/20', icon: 'solar:diamond-bold' },
-              ] as const).map((tier) => (
-                <div
-                  key={tier.name}
-                  className={`relative rounded-xl border-2 ${tier.border} p-3 ${tier.bg}`}
-                >
-                  <div className="flex items-start gap-2.5">
-                    <div className={`w-11 h-11 rounded-lg flex items-center justify-center flex-shrink-0 bg-white/10`}>
-                      <Icon icon={tier.icon} width="22" height="22" className="text-white drop-shadow" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="text-white font-semibold text-[13px] leading-tight">
-                        {tier.name}
-                      </div>
-                      <div className="text-white/60 text-[11px] leading-snug mt-0.5">
-                        {tier.desc}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
         </div>
       </div>
     </div>,
