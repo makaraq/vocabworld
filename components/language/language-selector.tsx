@@ -17,6 +17,7 @@ import { CoachMarkOverlay, type CoachMarkStep } from "@/components/tutorial/coac
 import { hapticsLight, hapticsMedium, hapticsSuccess, hapticsWarning } from "@/lib/haptics"
 import { BadgesCard } from "@/components/achievements/badges-card"
 import { ReviewCard } from "@/components/review/review-card"
+import { TopicQuizModal } from "@/components/quiz/topic-quiz-modal"
 import { useAchievementContext } from "@/components/achievements/achievement-provider"
 import {
   reportProgress,
@@ -2376,6 +2377,9 @@ export function LanguageSelector() {
   const [showPlaylistModal, setShowPlaylistModal] = useState(false)
   const [holdingCardIndex, setHoldingCardIndex] = useState<number | null>(null)
   const [holdingTopicId, setHoldingTopicId] = useState<number | null>(null)
+  const [quizTopic, setQuizTopic] = useState<{ id: number; name: string } | null>(null)
+  const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const longPressFiredRef = useRef(false)
   const [holdingLanguageCode, setHoldingLanguageCode] = useState<string | null>(null)
   const [holdingProgressBar, setHoldingProgressBar] = useState<boolean>(false)
   const [holdingSwapButton, setHoldingSwapButton] = useState<'native' | 'target' | null>(null)
@@ -2517,6 +2521,12 @@ export function LanguageSelector() {
           return
         }
         ctx.handleTopicSelect(next)
+        return
+      }
+      if (action === 'quiz') {
+        const cur = ctx.topics.find((t) => t.id === topicId)
+        if (!cur) return
+        setQuizTopic({ id: cur.id, name: cur.name })
         return
       }
       if (action === 'repeat') {
@@ -4108,16 +4118,34 @@ export function LanguageSelector() {
     
     const handleTopicHoldStart = (topicId: number) => {
       setHoldingTopicId(topicId)
+      longPressFiredRef.current = false
+      if (longPressTimerRef.current) clearTimeout(longPressTimerRef.current)
+      if (isCompleted) {
+        longPressTimerRef.current = setTimeout(() => {
+          longPressFiredRef.current = true
+          longPressTimerRef.current = null
+          hapticsMedium()
+          setQuizTopic({ id: topic.id, name: getTopicDisplayName(topic.id, topic.name) })
+          setHoldingTopicId(null)
+        }, 500)
+      }
     }
 
     const handleTopicHoldEnd = () => {
       setHoldingTopicId(null)
+      if (longPressTimerRef.current) {
+        clearTimeout(longPressTimerRef.current)
+        longPressTimerRef.current = null
+      }
     }
 
     return (
       <button
         key={topic.id}
-        onClick={async () => await handleTopicClick(topic)}
+        onClick={async () => {
+          if (longPressFiredRef.current) { longPressFiredRef.current = false; return }
+          await handleTopicClick(topic)
+        }}
         onTouchStart={() => handleTopicHoldStart(topic.id)}
         onTouchEnd={() => handleTopicHoldEnd()}
         onTouchCancel={() => handleTopicHoldEnd()}
@@ -5054,6 +5082,17 @@ export function LanguageSelector() {
         nativeLanguageCode={nativeLanguageCode}
         targetLanguageCode={targetLanguageCode}
       />
+
+      {quizTopic && user?.id && (
+        <TopicQuizModal
+          topicId={quizTopic.id}
+          topicName={getTopicDisplayName(quizTopic.id, quizTopic.name)}
+          userId={user.id}
+          targetLanguageCode={targetLanguageCode}
+          sourceLanguageCode={nativeLanguageCode}
+          onClose={() => setQuizTopic(null)}
+        />
+      )}
 
     </div>
   )

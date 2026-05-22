@@ -28,7 +28,7 @@ interface QueuedToast {
 
 type TopicChoiceHandler = (
   topicId: number,
-  action: 'continue' | 'repeat',
+  action: 'continue' | 'repeat' | 'quiz',
   nextTopicId: number | null,
 ) => void
 
@@ -111,6 +111,12 @@ export function AchievementProvider({ children }: { children: ReactNode }) {
     setTopicEvent(null)
   }
 
+  const handleQuiz = () => {
+    if (!topicEvent) return
+    handlerRef.current?.(topicEvent.topicId, 'quiz', null)
+    setTopicEvent(null)
+  }
+
   // Portal all overlays to <body> so they always escape any parent stacking
   // context (the language-selector card uses transform + backdrop-filter,
   // which would otherwise trap fixed-position children).
@@ -137,6 +143,7 @@ export function AchievementProvider({ children }: { children: ReactNode }) {
             nextTopicIcon={topicEvent?.nextTopic?.icon}
             onContinueAction={handleContinue}
             onRepeatAction={handleRepeat}
+            onQuizAction={handleQuiz}
             onCloseAction={closeTopic}
           />
 

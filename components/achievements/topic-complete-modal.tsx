@@ -29,6 +29,7 @@ interface Props {
   nextTopicIcon?: string
   onContinueAction: () => void
   onRepeatAction: () => void
+  onQuizAction: () => void
   onCloseAction: () => void
 }
 
@@ -39,6 +40,7 @@ export function TopicCompleteModal({
   nextTopicIcon,
   onContinueAction,
   onRepeatAction,
+  onQuizAction,
   onCloseAction,
 }: Props) {
   const [shown, setShown] = useState(false)
@@ -133,6 +135,13 @@ export function TopicCompleteModal({
                 <Icon icon="solar:arrow-right-bold" width="18" height="18" />
               </button>
               <button
+                onClick={onQuizAction}
+                className="w-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-sm border border-amber-400/30 text-white font-medium py-3 px-6 rounded-xl flex items-center justify-center gap-2 hover:from-amber-500/30 hover:to-orange-500/30 transition-all"
+              >
+                <Icon icon="solar:question-circle-bold" width="16" height="16" />
+                Take {topicName} Quiz
+              </button>
+              <button
                 onClick={onRepeatAction}
                 className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white font-medium py-3 px-6 rounded-xl flex items-center justify-center gap-2 hover:bg-white/15 transition-all"
               >
@@ -149,10 +158,17 @@ export function TopicCompleteModal({
               </div>
             </div>
             <button
-              onClick={onRepeatAction}
+              onClick={onQuizAction}
               className="w-full bg-white text-gray-900 font-semibold py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 shadow-lg hover:bg-gray-50 transition-all transform hover:scale-[1.02]"
             >
-              <Icon icon="solar:refresh-bold" width="18" height="18" />
+              <Icon icon="solar:question-circle-bold" width="18" height="18" />
+              Take {topicName} Quiz
+            </button>
+            <button
+              onClick={onRepeatAction}
+              className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white font-medium py-3 px-6 rounded-xl flex items-center justify-center gap-2 hover:bg-white/15 transition-all"
+            >
+              <Icon icon="solar:refresh-bold" width="16" height="16" />
               Practice {topicName} again
             </button>
             <button
