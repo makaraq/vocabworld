@@ -270,6 +270,31 @@ class ProgressService {
     }
   }
 
+  async getTopicCompletionCounts(
+    userId: string,
+    targetLanguageCode: string
+  ): Promise<Record<number, number>> {
+    try {
+      const { data, error } = await supabase
+        .from('user_topic_completion')
+        .select('topic_id, completion_count')
+        .eq('user_id', userId)
+        .eq('target_language_code', targetLanguageCode)
+        .gt('completion_count', 0)
+
+      if (error) throw error
+
+      const counts: Record<number, number> = {}
+      data?.forEach(item => {
+        counts[item.topic_id] = item.completion_count
+      })
+      return counts
+    } catch (error) {
+      console.error('Error getting topic completion counts:', error)
+      return {}
+    }
+  }
+
   /**
    * Update login streak when user logs in (timezone-aware with 1-day grace period)
    */

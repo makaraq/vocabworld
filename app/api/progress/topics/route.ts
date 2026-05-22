@@ -30,7 +30,8 @@ export async function GET(request: NextRequest) {
     }
 
     const completedTopicIds = await progressService.getCompletedTopicIds(userId, targetLanguageCode)
-    return NextResponse.json({ completedTopicIds })
+    const topicCompletionCounts = await progressService.getTopicCompletionCounts(userId, targetLanguageCode)
+    return NextResponse.json({ completedTopicIds, topicCompletionCounts })
 
   } catch (error) {
     console.error('Error in topics API:', error)
