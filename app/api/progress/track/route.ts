@@ -8,6 +8,10 @@ export async function POST(request: NextRequest) {
   }
   const result = await progressService.trackWordPlayed(userId, vocabularyId, targetLanguageCode)
 
+  if (!result.isNewWord) {
+    await progressService.updateCompletionCountForWord(userId, vocabularyId, targetLanguageCode)
+  }
+
   // After tracking, get updated completed topics
   const completedTopics = await progressService.getAllTopicProgress(userId, targetLanguageCode)
   const completedTopicIds = Array.from(completedTopics.entries())

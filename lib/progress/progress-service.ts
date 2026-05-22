@@ -295,6 +295,62 @@ class ProgressService {
     }
   }
 
+  async updateCompletionCountForWord(
+    userId: string,
+    vocabularyId: number,
+    targetLanguageCode: string
+  ): Promise<void> {
+    try {
+      const { data: vocab } = await supabase
+        .from('vocabulary')
+        .select('topic_id')
+        .eq('id', vocabularyId)
+        .single()
+
+      if (!vocab) return
+
+      const { data: topicCompletion } = await supabase
+        .from('user_topic_completion')
+        .select('completion_count, is_completed')
+        .eq('user_id', userId)
+        .eq('topic_id', vocab.topic_id)
+        .eq('target_language_code', targetLanguageCode)
+        .single()
+
+      if (!topicCompletion || !topicCompletion.is_completed) return
+
+      const { data: topicVocab } = await supabase
+        .from('vocabulary')
+        .select('id')
+        .eq('topic_id', vocab.topic_id)
+
+      if (!topicVocab || topicVocab.length === 0) return
+
+      const { data: wordProgress } = await supabase
+        .from('user_word_progress')
+        .select('vocabulary_id, play_count')
+        .eq('user_id', userId)
+        .eq('target_language_code', targetLanguageCode)
+        .in('vocabulary_id', topicVocab.map(v => v.id))
+
+      if (!wordProgress) return
+
+      const playCountMap = new Map(wordProgress.map(w => [w.vocabulary_id, w.play_count]))
+      const minPlayCount = Math.min(...topicVocab.map(v => playCountMap.get(v.id) || 0))
+
+      if (minPlayCount > (topicCompletion.completion_count || 0)) {
+        await supabase
+          .from('user_topic_completion')
+          .update({ completion_count: minPlayCount })
+          .eq('user_id', userId)
+          .eq('topic_id', vocab.topic_id)
+          .eq('target_language_code', targetLanguageCode)
+      }
+    } catch (error) {
+      console.error('Error updating completion count:', error)
+    }
+  }
+
   /**
    * Update login streak when user logs in (timezone-aware with 1-day grace period)
    */
