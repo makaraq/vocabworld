@@ -2373,6 +2373,9 @@ export function LanguageSelector() {
   const [showPlaylistModal, setShowPlaylistModal] = useState(false)
   const [holdingCardIndex, setHoldingCardIndex] = useState<number | null>(null)
   const [holdingTopicId, setHoldingTopicId] = useState<number | null>(null)
+  const [tierInfoTopicId, setTierInfoTopicId] = useState<number | null>(null)
+  const topicHoldTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const longPressTriggeredRef = useRef(false)
   const [holdingLanguageCode, setHoldingLanguageCode] = useState<string | null>(null)
   const [holdingProgressBar, setHoldingProgressBar] = useState<boolean>(false)
   const [holdingSwapButton, setHoldingSwapButton] = useState<'native' | 'target' | null>(null)
@@ -4103,20 +4106,34 @@ export function LanguageSelector() {
       18: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M11 6h2V4h-2zm1 6q-1.9 0-3.625-.788T5 9.45V8q0-.825.588-1.412T7 6h2V3q0-.425.288-.712T10 2h4q.425 0 .713.288T15 3v3h2q.825 0 1.413.588T19 8v1.45q-1.65.975-3.375 1.763T12 12m-5 9q-.825 0-1.412-.587T5 19v-7.3q1.4.85 2.888 1.45t3.112.8V14q0 .425.288.713T12 15t.713-.288T13 14v-.05q1.625-.2 3.113-.8T19 11.7V19q0 .825-.587 1.413T17 21q0 .425-.288.713T16 22q-.4 0-.562-.363T15 21H9q0 .425-.288.713T8 22q-.4 0-.562-.363T7 21"/></svg>'
     }
     
-    let topicHoldTimer: NodeJS.Timeout | null = null
-
     const handleTopicHoldStart = (topicId: number) => {
       setHoldingTopicId(topicId)
+      longPressTriggeredRef.current = false
+      topicHoldTimerRef.current = setTimeout(() => {
+        longPressTriggeredRef.current = true
+        setHoldingTopicId(null)
+        setTierInfoTopicId(topicId)
+      }, 500)
     }
 
     const handleTopicHoldEnd = () => {
       setHoldingTopicId(null)
+      if (topicHoldTimerRef.current) {
+        clearTimeout(topicHoldTimerRef.current)
+        topicHoldTimerRef.current = null
+      }
     }
 
     return (
       <button
         key={topic.id}
-        onClick={async () => await handleTopicClick(topic)}
+        onClick={async () => {
+          if (longPressTriggeredRef.current) {
+            longPressTriggeredRef.current = false
+            return
+          }
+          await handleTopicClick(topic)
+        }}
         onTouchStart={() => handleTopicHoldStart(topic.id)}
         onTouchEnd={() => handleTopicHoldEnd()}
         onTouchCancel={() => handleTopicHoldEnd()}
@@ -5043,7 +5060,7 @@ export function LanguageSelector() {
       />
 
       {/* Paywall Modal */}
-      <PaywallModal 
+      <PaywallModal
         isOpen={showPaywall}
         onCloseAction={() => setShowPaywall(false)}
         onSuccessAction={() => {
@@ -5053,6 +5070,65 @@ export function LanguageSelector() {
         nativeLanguageCode={nativeLanguageCode}
         targetLanguageCode={targetLanguageCode}
       />
+
+      {/* Topic Tier Info Modal */}
+      {tierInfoTopicId !== null && (() => {
+        const topic = topics.find(t => t.id === tierInfoTopicId)
+        const count = topicCompletionCounts[tierInfoTopicId] || 0
+        const tiers = [
+          { level: 1, name: 'Beginner', color: 'border-white/80', bg: 'bg-white/20', text: 'text-white' },
+          { level: 2, name: 'Explorer', color: 'border-green-400', bg: 'bg-green-400/20', text: 'text-green-400' },
+          { level: 3, name: 'Adventurer', color: 'border-orange-400', bg: 'bg-orange-400/20', text: 'text-orange-400' },
+          { level: 4, name: 'Master', color: 'border-red-400', bg: 'bg-red-400/20', text: 'text-red-400' },
+          { level: 5, name: 'Legend', color: 'border-purple-400', bg: 'bg-purple-400/20', text: 'text-purple-400' },
+        ]
+        return (
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-end justify-center sm:items-center p-0 sm:p-4" onClick={() => setTierInfoTopicId(null)}>
+            <div className="bg-gray-900 border border-white/20 rounded-t-2xl sm:rounded-2xl w-full max-w-sm p-5 pb-8 sm:pb-5" onClick={e => e.stopPropagation()}>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-white font-semibold text-lg">Mastery Levels</h3>
+                <button
+                  onClick={() => setTierInfoTopicId(null)}
+                  className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center"
+                >
+                  <Icon icon="solar:close-circle-bold" width="20" height="20" className="text-white/60" />
+                </button>
+              </div>
+
+              {topic && (
+                <p className="text-white/50 text-sm mb-4">
+                  {getTopicDisplayName(topic.id, topic.name)} — {count > 0 ? `completed ${count}x` : 'not completed yet'}
+                </p>
+              )}
+
+              <div className="space-y-2">
+                {tiers.map(tier => {
+                  const isActive = count >= tier.level
+                  const isCurrent = count === tier.level || (tier.level === 5 && count >= 5)
+                  return (
+                    <div
+                      key={tier.level}
+                      className={`flex items-center gap-3 px-3 py-2 rounded-xl border-2 ${isActive ? tier.color : 'border-white/5'} ${isCurrent ? tier.bg : ''} transition-all`}
+                    >
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${isActive ? tier.color : 'border-white/20'}`}>
+                        {isActive && (
+                          <div className={`w-2.5 h-2.5 rounded-full ${tier.color.replace('border-', 'bg-')}`} />
+                        )}
+                      </div>
+                      <span className={`text-sm font-medium ${isActive ? tier.text : 'text-white/30'}`}>
+                        {tier.name}
+                      </span>
+                      <span className={`text-xs ml-auto ${isActive ? 'text-white/50' : 'text-white/20'}`}>
+                        {tier.level === 5 ? '5x+' : `${tier.level}x`}
+                      </span>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          </div>
+        )
+      })()}
     </div>
   )
 }
