@@ -14,6 +14,8 @@ export async function POST(request: NextRequest) {
     .filter(([_, progress]) => progress.isCompleted)
     .map(([topicId]) => topicId)
 
+  const topicCompletionCounts = await progressService.getTopicCompletionCounts(userId, targetLanguageCode)
+
   // For new-word events, also return current stats so the client can fire
   // achievement evaluation in real time during the learning session.
   let stats = null
@@ -24,6 +26,7 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({
     ...result,
     completedTopicIds,
+    topicCompletionCounts,
     stats,
   })
 }

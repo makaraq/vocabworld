@@ -1217,6 +1217,7 @@ export function LanguageSelector() {
   const [hasMoreWords, setHasMoreWords] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState(false)
   const [completedTopicIds, setCompletedTopicIds] = useState<number[]>([])
+  const [topicCompletionCounts, setTopicCompletionCounts] = useState<Record<number, number>>({})
 
   // Define the 7 sections with their topics and metadata (Account first, but FIRST AID KIT is default)
   // Sections with dynamic translations
@@ -1963,6 +1964,10 @@ export function LanguageSelector() {
                       evaluateTimeContext(userId);
                     }
 
+                    if (data.topicCompletionCounts) {
+                      setTopicCompletionCounts(data.topicCompletionCounts)
+                    }
+
                     // Update completed topics immediately from API response
                     if (data.completedTopicIds) {
                       setCompletedTopicIds((prev) => {
@@ -2428,6 +2433,9 @@ export function LanguageSelector() {
         if (response.ok) {
           const data = await response.json()
           setCompletedTopicIds(data.completedTopicIds || [])
+          if (data.topicCompletionCounts) {
+            setTopicCompletionCounts(data.topicCompletionCounts)
+          }
         } else {
           console.error('Failed to fetch completed topics:', response.status)
         }
@@ -4073,10 +4081,21 @@ export function LanguageSelector() {
     const hasCustomIcon = topic.icon
     const iconData = TOPIC_ICONS.find(icon => icon.id === topic.id)
     const isCompleted = completedTopicIds.includes(topic.id)
-    
-    // Debug logging
-    if (topic.id === 1) {
-    }
+    const completionCount = topicCompletionCounts[topic.id] || 0
+
+    const completionBorderClass = completionCount >= 5
+      ? 'border-2 border-purple-400'
+      : completionCount === 4
+      ? 'border-2 border-red-400'
+      : completionCount === 3
+      ? 'border-2 border-orange-400'
+      : completionCount === 2
+      ? 'border-2 border-green-400'
+      : completionCount === 1
+      ? 'border-2 border-white/80'
+      : isCompleted
+      ? 'border-2 border-white/80'
+      : ''
     
     // Direct mapping for custom SVG icons
     const customSVGIcons: { [key: number]: string } = {
@@ -4107,9 +4126,7 @@ export function LanguageSelector() {
           holdingTopicId === topic.id ? 'scale-105 transition-all duration-75' : 'scale-100 transition-all duration-300 hover:scale-[1.02]'
         } ${
           selectedTopic?.id === topic.id ? "bg-black/60 shadow-xl" : ""
-        } ${
-          isCompleted ? "shadow-[0_0_20px_rgba(255,255,255,0.5),0_0_40px_rgba(255,255,255,0.3)]" : ""
-        }`}
+        } ${completionBorderClass}`}
       >
         <div className="flex flex-col items-center justify-center h-full gap-2">
           <div className="flex-shrink-0 flex items-center justify-center">
