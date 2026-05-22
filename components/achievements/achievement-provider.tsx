@@ -134,6 +134,7 @@ export function AchievementProvider({ children }: { children: ReactNode }) {
             open={!!topicEvent}
             topicName={topicEvent?.topicName || ''}
             nextTopic={topicEvent?.nextTopic ?? null}
+            nextTopicIcon={topicEvent?.nextTopic?.icon}
             onContinueAction={handleContinue}
             onRepeatAction={handleRepeat}
             onCloseAction={closeTopic}

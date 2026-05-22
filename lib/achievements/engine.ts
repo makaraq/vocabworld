@@ -38,7 +38,7 @@ export interface UnlockEvent {
 export interface TopicCompleteEvent {
   topicId: number
   topicName: string
-  nextTopic: { id: number; name: string } | null
+  nextTopic: { id: number; name: string; icon?: string } | null
 }
 
 type UnlockListener = (e: UnlockEvent) => void
@@ -178,7 +178,7 @@ export function reportTopicComplete(
   userId: string | null,
   topicId: number,
   topicName: string,
-  nextTopic: { id: number; name: string } | null,
+  nextTopic: { id: number; name: string; icon?: string } | null,
 ): void {
   const evt: TopicCompleteEvent = { topicId, topicName, nextTopic }
   topicListeners.forEach((fn) => {

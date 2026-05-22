@@ -1992,12 +1992,15 @@ export function LanguageSelector() {
                               next,
                             );
                             const displayName = topicDisplayNameRef.current;
+                            const nextIcon = nextTopic
+                              ? TOPIC_ICONS.find((i) => i.id === nextTopic.id)?.icon
+                              : undefined;
                             reportTopicComplete(
                               userId,
                               finished.id,
                               displayName(finished.id, finished.name),
                               nextTopic
-                                ? { id: nextTopic.id, name: displayName(nextTopic.id, nextTopic.name) }
+                                ? { id: nextTopic.id, name: displayName(nextTopic.id, nextTopic.name), icon: typeof nextIcon === 'string' ? nextIcon : undefined }
                                 : null,
                             );
                           }

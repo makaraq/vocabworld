@@ -1,9 +1,21 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Icon } from '@iconify/react'
+import Lottie from 'lottie-react'
 import { hapticsSuccess } from '@/lib/haptics'
+import trophyAnim from '@/lib/animations/trophy.json'
+
+const CONGRATS_LINES = [
+  'Nice work — you finished',
+  'You nailed it — you completed',
+  'Way to go — you wrapped up',
+  'Solid effort — you finished',
+  'Great job — you conquered',
+  'Well done — you completed',
+  'Impressive — you mastered',
+]
 
 interface NextTopicInfo {
   id: number
@@ -14,6 +26,7 @@ interface Props {
   open: boolean
   topicName: string
   nextTopic: NextTopicInfo | null
+  nextTopicIcon?: string
   onContinueAction: () => void
   onRepeatAction: () => void
   onCloseAction: () => void
@@ -23,16 +36,24 @@ export function TopicCompleteModal({
   open,
   topicName,
   nextTopic,
+  nextTopicIcon,
   onContinueAction,
   onRepeatAction,
   onCloseAction,
 }: Props) {
   const [shown, setShown] = useState(false)
+  const [animKey, setAnimKey] = useState(0)
+
+  const congratsLine = useMemo(
+    () => CONGRATS_LINES[Math.floor(Math.random() * CONGRATS_LINES.length)],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [open],
+  )
 
   useEffect(() => {
     if (open) {
-      // Trigger entry animation on next frame.
       const raf = requestAnimationFrame(() => setShown(true))
+      setAnimKey((k) => k + 1)
       hapticsSuccess()
       return () => cancelAnimationFrame(raf)
     }
@@ -40,6 +61,8 @@ export function TopicCompleteModal({
   }, [open])
 
   if (!open || typeof document === 'undefined') return null
+
+  const isSvgIcon = nextTopicIcon?.startsWith('<svg')
 
   return createPortal(
     <div className="fixed inset-0 z-[80] flex items-center justify-center p-4">
@@ -51,31 +74,28 @@ export function TopicCompleteModal({
         onClick={onCloseAction}
       />
 
-      {/* Modal — same glass treatment as the welcome overlay */}
+      {/* Modal */}
       <div
         className={`relative bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 p-8 max-w-sm w-full text-center shadow-2xl transition-all duration-300 ${
           shown ? 'scale-100 opacity-100 translate-y-0' : 'scale-95 opacity-0 translate-y-4'
         }`}
       >
-        {/* Trophy + glow */}
+        {/* Trophy Lottie */}
         <div className="flex justify-center mb-5">
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-full blur-2xl opacity-60" />
-            <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-500 flex items-center justify-center shadow-2xl">
-              <Icon
-                icon="solar:cup-star-bold"
-                width="44"
-                height="44"
-                className="text-white drop-shadow-lg"
-              />
-            </div>
+          <div className="w-24 h-24">
+            <Lottie
+              key={animKey}
+              animationData={trophyAnim}
+              loop={false}
+              autoplay
+            />
           </div>
         </div>
 
         <h2 className="text-2xl font-bold text-white mb-2 tracking-wide drop-shadow-lg">
           Topic Complete!
         </h2>
-        <p className="text-white/90 text-base mb-1 drop-shadow">Nice work — you finished</p>
+        <p className="text-white/90 text-base mb-1 drop-shadow">{congratsLine}</p>
         <p className="text-white font-semibold text-lg mb-6 drop-shadow-lg">{topicName}</p>
 
         {nextTopic ? (
@@ -84,7 +104,24 @@ export function TopicCompleteModal({
               <div className="text-[11px] uppercase tracking-wider text-white/60 mb-0.5">
                 Up next
               </div>
-              <div className="text-white font-semibold text-base">{nextTopic.name}</div>
+              <div className="flex items-center justify-center gap-2">
+                {nextTopicIcon && (
+                  isSvgIcon ? (
+                    <span
+                      className="w-5 h-5 text-white/80 flex-shrink-0 [&>svg]:w-full [&>svg]:h-full"
+                      dangerouslySetInnerHTML={{ __html: nextTopicIcon }}
+                    />
+                  ) : (
+                    <Icon
+                      icon={nextTopicIcon}
+                      width="20"
+                      height="20"
+                      className="text-white/80 flex-shrink-0"
+                    />
+                  )
+                )}
+                <span className="text-white font-semibold text-base">{nextTopic.name}</span>
+              </div>
             </div>
 
             <div className="space-y-2.5">
