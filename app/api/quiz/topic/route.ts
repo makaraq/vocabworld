@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
       englishWord: w.word_en,
     }))
 
-    return NextResponse.json({ cards })
+    return NextResponse.json({ cards, totalWords: words.length })
   } catch (error: any) {
     console.error('Error fetching topic quiz cards:', error)
     return NextResponse.json({ error: 'Failed to fetch quiz cards' }, { status: 500 })

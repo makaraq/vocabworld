@@ -32,6 +32,7 @@ export function TopicQuizModal({
 }: TopicQuizModalProps) {
   const [mounted, setMounted] = useState(false)
   const [cards, setCards] = useState<QuizCard[]>([])
+  const [totalWords, setTotalWords] = useState(0)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [options, setOptions] = useState<string[]>([])
   const [selectedOption, setSelectedOption] = useState<string | null>(null)
@@ -40,6 +41,7 @@ export function TopicQuizModal({
   const [correctCount, setCorrectCount] = useState(0)
   const [loadingOptions, setLoadingOptions] = useState(false)
   const [isPlayingAudio, setIsPlayingAudio] = useState(false)
+  const [round, setRound] = useState(1)
   const audioElRef = useRef<HTMLAudioElement | null>(null)
 
   const playWordAudio = (card: QuizCard) => {
@@ -90,26 +92,32 @@ export function TopicQuizModal({
     }
   }, [])
 
-  useEffect(() => {
-    const fetchCards = async () => {
-      try {
-        const res = await fetch(
-          `/api/quiz/topic?topicId=${topicId}&targetLanguageCode=${targetLanguageCode}&sourceLanguageCode=${sourceLanguageCode}&limit=20`
-        )
-        if (!res.ok) throw new Error("Failed to fetch")
-        const data = await res.json()
-        if (data.cards && data.cards.length > 0) {
-          setCards(data.cards)
-          setSessionState("quiz")
-        } else {
-          setSessionState("complete")
-        }
-      } catch {
+  const fetchCards = useCallback(async () => {
+    setSessionState("loading")
+    try {
+      const res = await fetch(
+        `/api/quiz/topic?topicId=${topicId}&targetLanguageCode=${targetLanguageCode}&sourceLanguageCode=${sourceLanguageCode}&limit=20`
+      )
+      if (!res.ok) throw new Error("Failed to fetch")
+      const data = await res.json()
+      if (data.totalWords) setTotalWords(data.totalWords)
+      if (data.cards && data.cards.length > 0) {
+        setCards(data.cards)
+        setCurrentIndex(0)
+        setCorrectCount(0)
+        setSelectedOption(null)
+        setIsCorrect(null)
+        setOptions([])
+        setSessionState("quiz")
+      } else {
         setSessionState("complete")
       }
+    } catch {
+      setSessionState("complete")
     }
-    fetchCards()
   }, [topicId, targetLanguageCode, sourceLanguageCode])
+
+  useEffect(() => { fetchCards() }, [fetchCards])
 
   const loadDistractors = useCallback(
     async (card: QuizCard) => {
@@ -173,6 +181,12 @@ export function TopicQuizModal({
     }, 1000)
   }
 
+  const handleNextRound = () => {
+    hapticsLight()
+    setRound((r) => r + 1)
+    fetchCards()
+  }
+
   const getOptionStyle = (option: string) => {
     if (selectedOption === null) {
       return "bg-white/10 border-white/20 text-white hover:bg-white/20 active:scale-[0.97]"
@@ -212,11 +226,14 @@ export function TopicQuizModal({
               <h2 className="text-lg font-semibold text-white">{topicName} Quiz</h2>
               <div className="text-sm text-white/50">
                 {currentIndex + 1} of {cards.length}
+                {totalWords > cards.length && (
+                  <span className="text-white/30"> ({totalWords} total)</span>
+                )}
               </div>
             </div>
             <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-amber-500 to-orange-400 rounded-full transition-all duration-300"
+                className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full transition-all duration-300"
                 style={{
                   width: `${((currentIndex + (sessionState === "answered" ? 1 : 0)) / cards.length) * 100}%`,
                 }}
@@ -245,7 +262,7 @@ export function TopicQuizModal({
                   onClick={() => playWordAudio(cards[currentIndex])}
                   className={`w-10 h-10 rounded-full border flex items-center justify-center transition-all active:scale-95 mx-auto ${
                     isPlayingAudio
-                      ? "bg-amber-500/30 border-amber-400/50"
+                      ? "bg-blue-500/30 border-blue-400/50"
                       : "bg-white/10 border-white/20 hover:bg-white/20"
                   }`}
                 >
@@ -253,7 +270,7 @@ export function TopicQuizModal({
                     icon={isPlayingAudio ? "solar:volume-loud-bold" : "solar:volume-bold"}
                     width="20"
                     height="20"
-                    className={isPlayingAudio ? "text-amber-400" : "text-white/70"}
+                    className={isPlayingAudio ? "text-blue-400" : "text-white/70"}
                   />
                 </button>
               </div>
@@ -284,7 +301,7 @@ export function TopicQuizModal({
 
         {sessionState === "complete" && (
           <div className="flex-1 flex flex-col items-center justify-center gap-6">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
               <Icon
                 icon={pct >= 80 ? "solar:cup-star-bold" : "solar:check-circle-bold"}
                 width="44"
@@ -303,31 +320,55 @@ export function TopicQuizModal({
                   : "Quiz Complete!"}
               </div>
               {cards.length > 0 && (
-                <div className="text-white/70 space-y-1">
-                  <div>
-                    {correctCount} / {cards.length} correct ({pct}%)
+                <div className="space-y-3">
+                  <div className="flex items-center justify-center gap-6">
+                    <div className="flex items-center gap-1.5">
+                      <Icon icon="solar:check-circle-bold" width="20" height="20" className="text-emerald-400" />
+                      <span className="text-emerald-400 font-semibold text-lg">{correctCount}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Icon icon="solar:close-circle-bold" width="20" height="20" className="text-red-400" />
+                      <span className="text-red-400 font-semibold text-lg">{cards.length - correctCount}</span>
+                    </div>
                   </div>
+                  <div className="text-white/50 text-sm">{pct}% accuracy</div>
+                  {totalWords > cards.length && (
+                    <div className="text-white/30 text-sm">
+                      {cards.length} of {totalWords} words in this topic
+                    </div>
+                  )}
                 </div>
               )}
             </div>
           </div>
         )}
 
-        <div className="pt-4 pb-6 flex justify-center">
+        <div className="pt-4 pb-6 space-y-2.5">
           {sessionState === "complete" && cards.length > 0 ? (
-            <button
-              onClick={() => { hapticsLight(); onClose() }}
-              className="w-full py-3.5 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl text-white font-semibold text-base hover:opacity-90 transition-opacity"
-            >
-              Done
-            </button>
+            <>
+              <button
+                onClick={handleNextRound}
+                className="w-full py-3.5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl text-white font-semibold text-base hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+              >
+                <Icon icon="solar:refresh-bold" width="18" height="18" />
+                Try Another Round
+              </button>
+              <button
+                onClick={() => { hapticsLight(); onClose() }}
+                className="w-full py-3.5 bg-white/10 border border-white/15 rounded-2xl text-white/70 font-medium text-base hover:bg-white/15 transition-all"
+              >
+                Done
+              </button>
+            </>
           ) : (
-            <button
-              onPointerUp={() => { hapticsLight(); onClose() }}
-              className="w-14 h-14 rounded-full bg-white/10 border border-white/15 flex items-center justify-center"
-            >
-              <Icon icon="solar:close-circle-bold" width="28" height="28" className="text-white/50" />
-            </button>
+            <div className="flex justify-center">
+              <button
+                onPointerUp={() => { hapticsLight(); onClose() }}
+                className="w-14 h-14 rounded-full bg-white/10 border border-white/15 flex items-center justify-center"
+              >
+                <Icon icon="solar:close-circle-bold" width="28" height="28" className="text-white/50" />
+              </button>
+            </div>
           )}
         </div>
       </div>

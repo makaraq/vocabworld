@@ -136,7 +136,7 @@ export function TopicCompleteModal({
               </button>
               <button
                 onClick={onQuizAction}
-                className="w-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 backdrop-blur-sm border border-amber-400/30 text-white font-medium py-3 px-6 rounded-xl flex items-center justify-center gap-2 hover:from-amber-500/30 hover:to-orange-500/30 transition-all"
+                className="w-full bg-gradient-to-r from-blue-500/20 to-cyan-500/20 backdrop-blur-sm border border-blue-400/30 text-white font-medium py-3 px-6 rounded-xl flex items-center justify-center gap-2 hover:from-blue-500/30 hover:to-cyan-500/30 transition-all"
               >
                 <Icon icon="solar:question-circle-bold" width="16" height="16" />
                 Take {topicName} Quiz

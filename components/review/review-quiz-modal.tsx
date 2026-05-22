@@ -323,10 +323,19 @@ export function ReviewQuizModal({
                 {cards.length === 0 ? "No words to review!" : "Session Complete!"}
               </div>
               {cards.length > 0 && (
-                <div className="text-white/70 space-y-1">
-                  <div>
-                    {correctCount} / {cards.length} correct (
-                    {Math.round((correctCount / cards.length) * 100)}%)
+                <div className="space-y-3">
+                  <div className="flex items-center justify-center gap-6">
+                    <div className="flex items-center gap-1.5">
+                      <Icon icon="solar:check-circle-bold" width="20" height="20" className="text-emerald-400" />
+                      <span className="text-emerald-400 font-semibold text-lg">{correctCount}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Icon icon="solar:close-circle-bold" width="20" height="20" className="text-red-400" />
+                      <span className="text-red-400 font-semibold text-lg">{cards.length - correctCount}</span>
+                    </div>
+                  </div>
+                  <div className="text-white/50 text-sm">
+                    {Math.round((correctCount / cards.length) * 100)}% accuracy
                   </div>
                 </div>
               )}
