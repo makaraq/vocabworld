@@ -5076,50 +5076,37 @@ export function LanguageSelector() {
         const topic = topics.find(t => t.id === tierInfoTopicId)
         const count = topicCompletionCounts[tierInfoTopicId] || 0
         const tiers = [
-          { level: 1, name: 'Beginner', color: 'border-white/80', bg: 'bg-white/20', text: 'text-white' },
-          { level: 2, name: 'Explorer', color: 'border-green-400', bg: 'bg-green-400/20', text: 'text-green-400' },
-          { level: 3, name: 'Adventurer', color: 'border-orange-400', bg: 'bg-orange-400/20', text: 'text-orange-400' },
-          { level: 4, name: 'Master', color: 'border-red-400', bg: 'bg-red-400/20', text: 'text-red-400' },
-          { level: 5, name: 'Legend', color: 'border-purple-400', bg: 'bg-purple-400/20', text: 'text-purple-400' },
+          { level: 1, name: 'Beginner', dot: 'bg-white/80', text: 'text-white/90' },
+          { level: 2, name: 'Explorer', dot: 'bg-green-400', text: 'text-green-400' },
+          { level: 3, name: 'Adventurer', dot: 'bg-orange-400', text: 'text-orange-400' },
+          { level: 4, name: 'Master', dot: 'bg-red-400', text: 'text-red-400' },
+          { level: 5, name: 'Legend', dot: 'bg-purple-400', text: 'text-purple-400' },
         ]
         return (
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-end justify-center sm:items-center p-0 sm:p-4" onClick={() => setTierInfoTopicId(null)}>
-            <div className="bg-gray-900 border border-white/20 rounded-t-2xl sm:rounded-2xl w-full max-w-sm p-5 pb-8 sm:pb-5" onClick={e => e.stopPropagation()}>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-white font-semibold text-lg">Mastery Levels</h3>
-                <button
-                  onClick={() => setTierInfoTopicId(null)}
-                  className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center"
-                >
-                  <Icon icon="solar:close-circle-bold" width="20" height="20" className="text-white/60" />
-                </button>
-              </div>
-
+          <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center" onClick={() => setTierInfoTopicId(null)}>
+            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl w-56 shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
               {topic && (
-                <p className="text-white/50 text-sm mb-4">
-                  {getTopicDisplayName(topic.id, topic.name)} — {count > 0 ? `completed ${count}x` : 'not completed yet'}
-                </p>
+                <div className="px-3 pt-3 pb-2">
+                  <p className="text-white/50 text-[11px] text-center">
+                    {getTopicDisplayName(topic.id, topic.name)} {count > 0 ? `· ${count}x` : ''}
+                  </p>
+                </div>
               )}
-
-              <div className="space-y-2">
+              <div className="divide-y divide-white/10">
                 {tiers.map(tier => {
                   const isActive = count >= tier.level
                   const isCurrent = count === tier.level || (tier.level === 5 && count >= 5)
                   return (
                     <div
                       key={tier.level}
-                      className={`flex items-center gap-3 px-3 py-2 rounded-xl border-2 ${isActive ? tier.color : 'border-white/5'} ${isCurrent ? tier.bg : ''} transition-all`}
+                      className={`flex items-center gap-2.5 px-3.5 py-2 ${isCurrent ? 'bg-white/10' : ''}`}
                     >
-                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${isActive ? tier.color : 'border-white/20'}`}>
-                        {isActive && (
-                          <div className={`w-2.5 h-2.5 rounded-full ${tier.color.replace('border-', 'bg-')}`} />
-                        )}
-                      </div>
-                      <span className={`text-sm font-medium ${isActive ? tier.text : 'text-white/30'}`}>
+                      <div className={`w-2 h-2 rounded-full ${isActive ? tier.dot : 'bg-white/15'}`} />
+                      <span className={`text-[13px] ${isActive ? tier.text : 'text-white/25'}`}>
                         {tier.name}
                       </span>
-                      <span className={`text-xs ml-auto ${isActive ? 'text-white/50' : 'text-white/20'}`}>
-                        {tier.level === 5 ? '5x+' : `${tier.level}x`}
+                      <span className={`text-[10px] ml-auto ${isActive ? 'text-white/40' : 'text-white/15'}`}>
+                        {tier.level}x
                       </span>
                     </div>
                   )
