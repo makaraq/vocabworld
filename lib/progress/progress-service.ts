@@ -311,13 +311,13 @@ class ProgressService {
 
       const { data: topicCompletion } = await supabase
         .from('user_topic_completion')
-        .select('completion_count, is_completed')
+        .select('completion_count, is_completed, completed_at')
         .eq('user_id', userId)
         .eq('topic_id', vocab.topic_id)
         .eq('target_language_code', targetLanguageCode)
         .single()
 
-      if (!topicCompletion || !topicCompletion.is_completed) return
+      if (!topicCompletion || !topicCompletion.is_completed || !topicCompletion.completed_at) return
 
       const { data: topicVocab } = await supabase
         .from('vocabulary')
@@ -328,20 +328,26 @@ class ProgressService {
 
       const { data: wordProgress } = await supabase
         .from('user_word_progress')
-        .select('vocabulary_id, play_count')
+        .select('vocabulary_id, last_played_at')
         .eq('user_id', userId)
         .eq('target_language_code', targetLanguageCode)
         .in('vocabulary_id', topicVocab.map(v => v.id))
 
-      if (!wordProgress) return
+      if (!wordProgress || wordProgress.length < topicVocab.length) return
 
-      const playCountMap = new Map(wordProgress.map(w => [w.vocabulary_id, w.play_count]))
-      const minPlayCount = Math.min(...topicVocab.map(v => playCountMap.get(v.id) || 0))
+      const completedAt = new Date(topicCompletion.completed_at).getTime()
+      const allReplayedSinceCompletion = topicVocab.every(v => {
+        const wp = wordProgress.find(w => w.vocabulary_id === v.id)
+        return wp && new Date(wp.last_played_at).getTime() > completedAt
+      })
 
-      if (minPlayCount > (topicCompletion.completion_count || 0)) {
+      if (allReplayedSinceCompletion) {
         await supabase
           .from('user_topic_completion')
-          .update({ completion_count: minPlayCount })
+          .update({
+            completion_count: (topicCompletion.completion_count || 0) + 1,
+            completed_at: new Date().toISOString()
+          })
           .eq('user_id', userId)
           .eq('topic_id', vocab.topic_id)
           .eq('target_language_code', targetLanguageCode)
