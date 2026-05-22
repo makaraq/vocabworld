@@ -131,7 +131,7 @@ export function BadgesModal({ open, onCloseAction }: Props) {
                 { name: 'Explorer', desc: '2x completed', border: 'border-green-400', bg: 'bg-green-400/20', icon: 'solar:compass-bold' },
                 { name: 'Adventurer', desc: '3x completed', border: 'border-orange-400', bg: 'bg-orange-400/20', icon: 'solar:fire-bold' },
                 { name: 'Master', desc: '4x completed', border: 'border-red-400', bg: 'bg-red-400/20', icon: 'solar:crown-bold' },
-                { name: 'Legend', desc: '5x completed', border: 'border-purple-400', bg: 'bg-purple-400/20', icon: 'solar:crown-star-bold' },
+                { name: 'Legend', desc: '5x completed', border: 'border-purple-400', bg: 'bg-purple-400/20', icon: 'solar:shield-star-bold' },
               ] as const).map((tier) => (
                 <div
                   key={tier.name}
