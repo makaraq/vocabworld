@@ -324,14 +324,14 @@ export function ReviewQuizModal({
               </div>
               {cards.length > 0 && (
                 <div className="space-y-3">
-                  <div className="flex items-center justify-center gap-6">
-                    <div className="flex items-center gap-1.5">
-                      <Icon icon="solar:check-circle-bold" width="20" height="20" className="text-emerald-400" />
-                      <span className="text-emerald-400 font-semibold text-lg">{correctCount}</span>
+                  <div className="flex items-center justify-center gap-10 my-4">
+                    <div className="flex items-center gap-2.5">
+                      <Icon icon="solar:check-circle-bold" width="32" height="32" className="text-emerald-400" />
+                      <span className="text-emerald-400 font-bold text-2xl">{correctCount}</span>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <Icon icon="solar:close-circle-bold" width="20" height="20" className="text-red-400" />
-                      <span className="text-red-400 font-semibold text-lg">{cards.length - correctCount}</span>
+                    <div className="flex items-center gap-2.5">
+                      <Icon icon="solar:close-circle-bold" width="32" height="32" className="text-red-400" />
+                      <span className="text-red-400 font-bold text-2xl">{cards.length - correctCount}</span>
                     </div>
                   </div>
                   <div className="text-white/50 text-sm">
