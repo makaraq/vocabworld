@@ -237,10 +237,10 @@ export function DetailedProgressModal({
 
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" />
-      <div className="relative bg-white/15 backdrop-blur-2xl rounded-3xl border border-white/25 mx-4 max-w-2xl w-full shadow-2xl max-h-[90vh] overflow-hidden">
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-xl" />
+      <div className="relative bg-white/10 backdrop-blur-2xl rounded-3xl border border-white/20 mx-4 max-w-2xl w-full shadow-2xl max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="sticky top-0 bg-white/10 backdrop-blur-xl border-b border-white/20 p-6">
+        <div className="sticky top-0 bg-white/5 backdrop-blur-xl border-b border-white/15 p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Icon icon={getFlagIcon(targetLanguageCode)} className="w-8 h-8" />
