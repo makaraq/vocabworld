@@ -37,7 +37,8 @@ export function DetailedProgressModal({
   const [loading, setLoading] = useState(true)
   const [mounted, setMounted] = useState(false)
   const [topicsData, setTopicsData] = useState<any[]>([])
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set()) // All sections closed by default
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set())
+  const [autoExpandDone, setAutoExpandDone] = useState(false)
   const [sections, setSections] = useState<Array<{name: string, topicIds: number[], icon: string}>>([])
   const [topicTranslations, setTopicTranslations] = useState<Record<number, string>>({})
   const [uiTranslations, setUiTranslations] = useState<Record<string, string>>({})
@@ -214,14 +215,32 @@ export function DetailedProgressModal({
     fetchTopicProgress()
   }, [isOpen, user?.id, targetLanguageCode])
 
+  // Auto-expand: first incomplete section, or first section if all done
+  useEffect(() => {
+    if (autoExpandDone || loading || topicProgress.length === 0 || sections.length === 0) return
+    const target = sections.find((s) => {
+      const progress = getSectionProgress(s.topicIds)
+      return progress.completed < progress.total
+    }) || sections[0]
+    if (target) {
+      setExpandedSections(new Set([target.name]))
+    }
+    setAutoExpandDone(true)
+  }, [loading, topicProgress, sections]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Reset auto-expand state when modal reopens
+  useEffect(() => {
+    if (!isOpen) setAutoExpandDone(false)
+  }, [isOpen])
+
   if (!isOpen || !mounted) return null
 
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/20 backdrop-blur-md" />
-      <div className="relative bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 mx-4 max-w-2xl w-full shadow-2xl max-h-[90vh] overflow-hidden">
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-md" />
+      <div className="relative bg-white/10 backdrop-blur-2xl rounded-3xl border border-white/20 mx-4 max-w-2xl w-full shadow-2xl max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="sticky top-0 bg-white/10 backdrop-blur-xl border-b border-white/20 p-6">
+        <div className="sticky top-0 bg-white/5 backdrop-blur-xl border-b border-white/15 p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Icon icon={getFlagIcon(targetLanguageCode)} className="w-8 h-8" />
@@ -263,7 +282,7 @@ export function DetailedProgressModal({
                     const sectionTopics = topicProgress.filter(topic => section.topicIds.includes(topic.topicId))
 
                 return (
-                  <div key={section.name} className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 overflow-hidden">
+                  <div key={section.name} className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/15 overflow-hidden">
                     {/* Section Header */}
                     <button
                       onClick={() => toggleSection(section.name)}

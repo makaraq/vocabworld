@@ -41,92 +41,91 @@ export async function GET(request: NextRequest) {
 
 async function getDetailedTopicProgress(userId: string, languageCode: string) {
   try {
-    
-    // Get all topics with their word counts
-    const { data: allTopics, error: topicsError } = await supabase
-      .from('topics')
-      .select('id, name')
+    // Batch: fetch topics, completion records, and word counts in parallel
+    const [topicsRes, completionRes, wordCountsRes] = await Promise.all([
+      supabase.from('topics').select('id, name'),
+      supabase
+        .from('user_topic_completion')
+        .select('topic_id, total_words, words_learned, is_completed')
+        .eq('user_id', userId)
+        .eq('target_language_code', languageCode),
+      supabase.rpc('get_topic_word_counts', { lang_code: languageCode }).maybeSingle(),
+    ])
 
-    if (topicsError) {
-      console.error('❌ Error fetching topics:', topicsError)
-      return NextResponse.json({ error: 'Failed to fetch topics', details: topicsError.message }, { status: 500 })
+    if (topicsRes.error) {
+      return NextResponse.json({ error: 'Failed to fetch topics', details: topicsRes.error.message }, { status: 500 })
     }
 
-    
-    // Sort topics by ID (simplest approach that works in serverless)
-    const topics = allTopics?.sort((a, b) => a.id - b.id) || []
+    const topics = (topicsRes.data || []).sort((a, b) => a.id - b.id)
 
-    if (topics?.length > 0) {
+    const completionMap = new Map<number, { total_words: number; words_learned: number; is_completed: boolean }>()
+    for (const row of completionRes.data || []) {
+      completionMap.set(row.topic_id, row)
     }
 
-    // Get progress for each topic
-    const topicProgress = await Promise.all(
-      topics.map(async (topic) => {
-        // Get topic completion data (this is the correct table)
-        const { data: topicData, error: topicError } = await supabase
-          .from('user_topic_completion')
-          .select('*')
-          .eq('user_id', userId)
-          .eq('topic_id', topic.id)
-          .eq('target_language_code', languageCode)
-          .single()
+    // Word counts from RPC or fallback to a single grouped query
+    let wordCountMap = new Map<number, number>()
+    if (wordCountsRes.data) {
+      for (const row of Array.isArray(wordCountsRes.data) ? wordCountsRes.data : []) {
+        wordCountMap.set(row.topic_id, row.cnt)
+      }
+    }
 
-        if (topicError && topicError.code !== 'PGRST116') {
-          console.error(`❌ Error fetching topic completion for topic ${topic.id}:`, topicError)
+    // For topics without completion records and no RPC counts, do a single batch query
+    const missingIds = topics
+      .filter(t => !completionMap.has(t.id) && !wordCountMap.has(t.id))
+      .map(t => t.id)
+
+    if (missingIds.length > 0) {
+      const { data: vocabRows } = await supabase
+        .from('vocabulary')
+        .select('topic_id')
+        .in('topic_id', missingIds)
+
+      if (vocabRows) {
+        const counts = new Map<number, number>()
+        for (const row of vocabRows) {
+          counts.set(row.topic_id, (counts.get(row.topic_id) || 0) + 1)
         }
-
-        // If no progress record exists, get total words count and return default
-        if (!topicData) {
-          // Get total word count for this topic in the target language
-          const { count: totalWords, error: countError } = await supabase
-            .from('vocabulary')
-            .select(`
-              id,
-              vocabulary_translations!inner (
-                id,
-                language_code
-              )
-            `, { count: 'exact', head: true })
-            .eq('topic_id', topic.id)
-            .eq('vocabulary_translations.language_code', languageCode)
-
-          return {
-            topicId: topic.id,
-            topicName: topic.name,
-            totalWords: totalWords || 0,
-            learnedWords: 0,
-            completionPercentage: 0,
-            isCompleted: false
-          }
+        for (const [id, cnt] of counts) {
+          wordCountMap.set(id, cnt)
         }
+      }
+    }
 
-        // Use data from user_topic_completion table
-        const completionPercentage = topicData.total_words > 0 ? (topicData.words_learned / topicData.total_words) * 100 : 0
-        
-
+    const topicProgress = topics.map((topic) => {
+      const completion = completionMap.get(topic.id)
+      if (completion) {
+        const pct = completion.total_words > 0 ? (completion.words_learned / completion.total_words) * 100 : 0
         return {
           topicId: topic.id,
           topicName: topic.name,
-          totalWords: topicData.total_words,
-          learnedWords: topicData.words_learned,
-          completionPercentage,
-          isCompleted: topicData.is_completed
+          totalWords: completion.total_words,
+          learnedWords: completion.words_learned,
+          completionPercentage: pct,
+          isCompleted: completion.is_completed,
         }
-      })
-    )
+      }
+      return {
+        topicId: topic.id,
+        topicName: topic.name,
+        totalWords: wordCountMap.get(topic.id) || 0,
+        learnedWords: 0,
+        completionPercentage: 0,
+        isCompleted: false,
+      }
+    })
 
     return NextResponse.json({
       topics: topicProgress,
       languageCode,
-      languageName: getLanguageName(languageCode)
+      languageName: getLanguageName(languageCode),
     })
-
   } catch (error) {
     console.error('❌ Error fetching detailed topic progress:', error)
-    console.error('❌ Error stack:', error instanceof Error ? error.stack : 'No stack trace')
-    return NextResponse.json({ 
+    return NextResponse.json({
       error: 'Failed to fetch topic progress',
-      details: error instanceof Error ? error.message : String(error)
+      details: error instanceof Error ? error.message : String(error),
     }, { status: 500 })
   }
 }

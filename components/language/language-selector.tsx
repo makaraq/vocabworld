@@ -1994,7 +1994,7 @@ export function LanguageSelector() {
                             );
                             const displayName = topicDisplayNameRef.current;
                             const nextIcon = nextTopic
-                              ? TOPIC_ICONS.find((i) => i.id === nextTopic.id)?.icon
+                              ? (nextTopic.icon || TOPIC_ICONS.find((i) => i.id === nextTopic.id)?.icon)
                               : undefined;
                             reportTopicComplete(
                               userId,
@@ -2380,6 +2380,7 @@ export function LanguageSelector() {
   const [quizTopic, setQuizTopic] = useState<{ id: number; name: string } | null>(null)
   const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const longPressFiredRef = useRef(false)
+  const touchStartPos = useRef<{ x: number; y: number } | null>(null)
   const [holdingLanguageCode, setHoldingLanguageCode] = useState<string | null>(null)
   const [holdingProgressBar, setHoldingProgressBar] = useState<boolean>(false)
   const [holdingSwapButton, setHoldingSwapButton] = useState<'native' | 'target' | null>(null)
@@ -4116,9 +4117,10 @@ export function LanguageSelector() {
       18: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M11 6h2V4h-2zm1 6q-1.9 0-3.625-.788T5 9.45V8q0-.825.588-1.412T7 6h2V3q0-.425.288-.712T10 2h4q.425 0 .713.288T15 3v3h2q.825 0 1.413.588T19 8v1.45q-1.65.975-3.375 1.763T12 12m-5 9q-.825 0-1.412-.587T5 19v-7.3q1.4.85 2.888 1.45t3.112.8V14q0 .425.288.713T12 15t.713-.288T13 14v-.05q1.625-.2 3.113-.8T19 11.7V19q0 .825-.587 1.413T17 21q0 .425-.288.713T16 22q-.4 0-.562-.363T15 21H9q0 .425-.288.713T8 22q-.4 0-.562-.363T7 21"/></svg>'
     }
     
-    const handleTopicHoldStart = (topicId: number) => {
+    const handleTopicHoldStart = (e: React.TouchEvent, topicId: number) => {
       setHoldingTopicId(topicId)
       longPressFiredRef.current = false
+      touchStartPos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
       if (longPressTimerRef.current) clearTimeout(longPressTimerRef.current)
       if (isCompleted) {
         longPressTimerRef.current = setTimeout(() => {
@@ -4131,8 +4133,21 @@ export function LanguageSelector() {
       }
     }
 
+    const handleTopicHoldMove = (e: React.TouchEvent) => {
+      if (!touchStartPos.current || !longPressTimerRef.current) return
+      const dx = e.touches[0].clientX - touchStartPos.current.x
+      const dy = e.touches[0].clientY - touchStartPos.current.y
+      if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
+        clearTimeout(longPressTimerRef.current)
+        longPressTimerRef.current = null
+        setHoldingTopicId(null)
+        touchStartPos.current = null
+      }
+    }
+
     const handleTopicHoldEnd = () => {
       setHoldingTopicId(null)
+      touchStartPos.current = null
       if (longPressTimerRef.current) {
         clearTimeout(longPressTimerRef.current)
         longPressTimerRef.current = null
@@ -4146,7 +4161,8 @@ export function LanguageSelector() {
           if (longPressFiredRef.current) { longPressFiredRef.current = false; return }
           await handleTopicClick(topic)
         }}
-        onTouchStart={() => handleTopicHoldStart(topic.id)}
+        onTouchStart={(e) => handleTopicHoldStart(e, topic.id)}
+        onTouchMove={(e) => handleTopicHoldMove(e)}
         onTouchEnd={() => handleTopicHoldEnd()}
         onTouchCancel={() => handleTopicHoldEnd()}
         aria-label={`${getTopicDisplayName(topic.id, topic.name)} topic${isCompleted ? ', completed' : ''}`}
