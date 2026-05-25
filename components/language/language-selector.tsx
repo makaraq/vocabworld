@@ -3286,7 +3286,7 @@ export function LanguageSelector() {
             sourceWord: sourceWord,
             targetWord: targetWord,
             word_en: dictWord?.word_en,
-            isCustomWord: true // Flag to indicate this needs TTS fallback
+            isCustomWord: !dictWord?.id
           }
         })
         
@@ -5011,12 +5011,12 @@ export function LanguageSelector() {
       {/* Playlist Select Modal (opened from Add to Playlist button in Example Sentences) */}
       {showPlaylistModal && exampleModalData && user?.id && (
         <PlaylistSelectModal
-          word={exampleModalData.sourceWord}
-          translation={exampleModalData.targetWord}
+          word={exampleModalData.targetWord}
+          translation={exampleModalData.sourceWord}
           userId={user.id}
           translations={{
-            [nativeLanguageCode]: exampleModalData.sourceWord,
-            [targetLanguageCode]: exampleModalData.targetWord
+            [nativeLanguageCode]: exampleModalData.targetWord,
+            [targetLanguageCode]: exampleModalData.sourceWord
           }}
           nativeLanguageCode={nativeLanguageCode}
           targetLanguageCode={targetLanguageCode}
