@@ -250,6 +250,7 @@ export function PlaylistSelectModal({ word, translation, userId, translations, n
   const [newPlaylistName, setNewPlaylistName] = useState('')
   const [isCreating, setIsCreating] = useState(false)
   const [isAdding, setIsAdding] = useState<string | null>(null)
+  const [addedTo, setAddedTo] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   // Fetch user's playlists for this language pair
@@ -325,12 +326,14 @@ export function PlaylistSelectModal({ word, translation, userId, translations, n
         const errorData = await addResponse.json()
         throw new Error(errorData.error || 'Failed to add word to playlist')
       }
-      
+
+      setIsCreating(false)
+      setAddedTo(playlist.id)
+      await new Promise(resolve => setTimeout(resolve, 800))
       onSelect(playlist.id)
     } catch (err) {
       console.error('Create playlist error:', err)
       setError(err instanceof Error ? err.message : 'Failed to create playlist')
-    } finally {
       setIsCreating(false)
     }
   }
@@ -358,12 +361,14 @@ export function PlaylistSelectModal({ word, translation, userId, translations, n
         const errorData = await response.json()
         throw new Error(errorData.error || 'Failed to add word to playlist')
       }
-      
+
+      setIsAdding(null)
+      setAddedTo(playlistId)
+      await new Promise(resolve => setTimeout(resolve, 800))
       onSelect(playlistId)
     } catch (err) {
       console.error('Add to playlist error:', err)
       setError(err instanceof Error ? err.message : 'Failed to add word to playlist')
-    } finally {
       setIsAdding(null)
     }
   }
@@ -426,18 +431,20 @@ export function PlaylistSelectModal({ word, translation, userId, translations, n
                 <button
                   key={playlist.id}
                   onClick={() => handleSelectPlaylist(playlist.id)}
-                  disabled={isAdding === playlist.id}
-                  className="w-full bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg p-3 flex items-center justify-between transition-all disabled:opacity-50"
+                  disabled={isAdding === playlist.id || addedTo === playlist.id}
+                  className={`w-full border rounded-lg p-3 flex items-center justify-between transition-all disabled:opacity-80 ${addedTo === playlist.id ? 'bg-green-500/15 border-green-400/30' : 'bg-white/5 hover:bg-white/10 border-white/10'}`}
                 >
                   <div className="flex items-center gap-3">
-                    {isAdding === playlist.id ? (
+                    {addedTo === playlist.id ? (
+                      <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-green-400" />
+                    ) : isAdding === playlist.id ? (
                       <span className="w-5 h-5 border-2 border-purple-400/50 border-t-purple-400 rounded-full animate-spin" />
                     ) : (
                       <Icon icon="solar:playlist-bold" className="w-5 h-5 text-purple-400" />
                     )}
-                    <span className="text-white font-medium">{playlist.name}</span>
+                    <span className={addedTo === playlist.id ? 'text-green-300 font-medium' : 'text-white font-medium'}>{playlist.name}</span>
                   </div>
-                  <span className="text-white/40 text-sm">{playlist.word_count} words</span>
+                  <span className={addedTo === playlist.id ? 'text-green-400/60 text-sm' : 'text-white/40 text-sm'}>{addedTo === playlist.id ? 'Added!' : `${playlist.word_count} words`}</span>
                 </button>
               ))}
             </div>
