@@ -237,7 +237,6 @@ export interface PlaylistSelectModalProps {
   word: string
   translation: string
   userId: string
-  vocabularyId?: number
   translations?: Record<string, string>
   nativeLanguageCode: string
   targetLanguageCode: string
@@ -245,7 +244,7 @@ export interface PlaylistSelectModalProps {
   onSelect: (playlistId: string) => void
 }
 
-export function PlaylistSelectModal({ word, translation, userId, vocabularyId, translations, nativeLanguageCode, targetLanguageCode, onClose, onSelect }: PlaylistSelectModalProps) {
+export function PlaylistSelectModal({ word, translation, userId, translations, nativeLanguageCode, targetLanguageCode, onClose, onSelect }: PlaylistSelectModalProps) {
   const [playlists, setPlaylists] = useState<Array<{ id: string; name: string; word_count: number }>>([])
   const [isLoading, setIsLoading] = useState(true)
   const [newPlaylistName, setNewPlaylistName] = useState('')
@@ -318,7 +317,6 @@ export function PlaylistSelectModal({ word, translation, userId, vocabularyId, t
           userId,
           playlistId: playlist.id,
           word,
-          vocabularyId,
           translations: { ...translations, [nativeLanguageCode]: word, [targetLanguageCode]: translation }
         })
       })
@@ -352,7 +350,6 @@ export function PlaylistSelectModal({ word, translation, userId, vocabularyId, t
           userId,
           playlistId,
           word,
-          vocabularyId,
           translations: { ...translations, [nativeLanguageCode]: word, [targetLanguageCode]: translation }
         })
       })

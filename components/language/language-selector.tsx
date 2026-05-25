@@ -2412,6 +2412,7 @@ export function LanguageSelector() {
     vocabularyId: number
     sourceWord: string
     targetWord: string
+    englishWord: string
   } | null>(null)
   const [showPlaylistModal, setShowPlaylistModal] = useState(false)
   const [holdingCardIndex, setHoldingCardIndex] = useState<number | null>(null)
@@ -3898,7 +3899,8 @@ export function LanguageSelector() {
       setExampleModalData({
         vocabularyId: currentWord.id,
         sourceWord: getCurrentContent().sourceWord,
-        targetWord: getCurrentContent().targetWord
+        targetWord: getCurrentContent().targetWord,
+        englishWord: currentWord.english_word || currentWord.word_en || ''
       })
       setShowExampleModal(true)
       setHoldingCardIndex(null)
@@ -5051,10 +5053,9 @@ export function LanguageSelector() {
       {/* Playlist Select Modal (opened from Add to Playlist button in Example Sentences) */}
       {showPlaylistModal && exampleModalData && user?.id && (
         <PlaylistSelectModal
-          word={exampleModalData.targetWord}
+          word={exampleModalData.englishWord || exampleModalData.targetWord}
           translation={exampleModalData.sourceWord}
           userId={user.id}
-          vocabularyId={exampleModalData.vocabularyId}
           translations={{
             [nativeLanguageCode]: exampleModalData.targetWord,
             [targetLanguageCode]: exampleModalData.sourceWord

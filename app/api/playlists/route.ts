@@ -129,7 +129,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { name, playlistId, word, vocabularyId, translations, sourceLanguageCode, targetLanguageCode } = body
+    const { name, playlistId, word, translations, sourceLanguageCode, targetLanguageCode } = body
 
     // If playlistId and word provided, add word to playlist
     if (playlistId && word) {
@@ -145,11 +145,47 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Playlist not found' }, { status: 404 })
       }
 
+      const normalizedWord = word.toLowerCase().trim()
+
+      const { data: existingWord } = await supabaseAdmin
+        .from('dictionary_words')
+        .select('id')
+        .eq('word_en', normalizedWord)
+        .single()
+
       let dictionaryWordId: number
 
-      // If vocabularyId is provided (word added from a topic), use it directly
-      if (vocabularyId) {
-        dictionaryWordId = vocabularyId
+      if (!existingWord) {
+        const { data: newWord, error: insertError } = await supabaseAdmin
+          .from('dictionary_words')
+          .insert({ word_en: normalizedWord, translations: translations || {} })
+          .select('id')
+          .single()
+
+        if (insertError) {
+          if (insertError.code === '23505') {
+            const { data: raceWord } = await supabaseAdmin
+              .from('dictionary_words')
+              .select('id')
+              .eq('word_en', normalizedWord)
+              .single()
+            if (raceWord) {
+              dictionaryWordId = raceWord.id
+            } else {
+              console.error('Error creating dictionary word:', insertError)
+              return NextResponse.json({ error: 'Failed to add word' }, { status: 500 })
+            }
+          } else {
+            console.error('Error creating dictionary word:', insertError)
+            return NextResponse.json({ error: 'Failed to add word' }, { status: 500 })
+          }
+        } else if (!newWord) {
+          return NextResponse.json({ error: 'Failed to add word' }, { status: 500 })
+        } else {
+          dictionaryWordId = newWord.id
+        }
+      } else {
+        dictionaryWordId = existingWord.id
 
         if (translations && Object.keys(translations).length > 0) {
           const { data: currentWord } = await supabaseAdmin
@@ -158,67 +194,10 @@ export async function POST(request: NextRequest) {
             .eq('id', dictionaryWordId)
             .single()
 
-          if (currentWord) {
-            await supabaseAdmin
-              .from('dictionary_words')
-              .update({ translations: { ...(currentWord?.translations || {}), ...translations } })
-              .eq('id', dictionaryWordId)
-          }
-        }
-      } else {
-        // Fallback: look up by word_en text (for search-added words)
-        const normalizedWord = word.toLowerCase().trim()
-
-        const { data: existingWord } = await supabaseAdmin
-          .from('dictionary_words')
-          .select('id')
-          .eq('word_en', normalizedWord)
-          .single()
-
-        if (!existingWord) {
-          const { data: newWord, error: insertError } = await supabaseAdmin
+          await supabaseAdmin
             .from('dictionary_words')
-            .insert({ word_en: normalizedWord, translations: translations || {} })
-            .select('id')
-            .single()
-
-          if (insertError) {
-            if (insertError.code === '23505') {
-              const { data: raceWord } = await supabaseAdmin
-                .from('dictionary_words')
-                .select('id')
-                .eq('word_en', normalizedWord)
-                .single()
-              if (raceWord) {
-                dictionaryWordId = raceWord.id
-              } else {
-                console.error('Error creating dictionary word:', insertError)
-                return NextResponse.json({ error: 'Failed to add word' }, { status: 500 })
-              }
-            } else {
-              console.error('Error creating dictionary word:', insertError)
-              return NextResponse.json({ error: 'Failed to add word' }, { status: 500 })
-            }
-          } else if (!newWord) {
-            return NextResponse.json({ error: 'Failed to add word' }, { status: 500 })
-          } else {
-            dictionaryWordId = newWord.id
-          }
-        } else {
-          dictionaryWordId = existingWord.id
-
-          if (translations && Object.keys(translations).length > 0) {
-            const { data: currentWord } = await supabaseAdmin
-              .from('dictionary_words')
-              .select('translations')
-              .eq('id', dictionaryWordId)
-              .single()
-
-            await supabaseAdmin
-              .from('dictionary_words')
-              .update({ translations: { ...(currentWord?.translations || {}), ...translations } })
-              .eq('id', dictionaryWordId)
-          }
+            .update({ translations: { ...(currentWord?.translations || {}), ...translations } })
+            .eq('id', dictionaryWordId)
         }
       }
 
