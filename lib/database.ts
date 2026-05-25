@@ -26,6 +26,9 @@ export interface VocabularyWord {
   english_word?: string;
   turkish_word?: string;
   learning_order?: number;
+  isCustomWord?: boolean;
+  isPlaylistWord?: boolean;
+  word_en?: string;
 }
 
 export interface VocabularyResponse {

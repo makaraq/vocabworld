@@ -2111,7 +2111,7 @@ export function LanguageSelector() {
       const sourceWord = word.sourceWord || word.training_word || ''
       const targetWord = word.targetWord || word.main_word || ''
       const wordId = word.id
-      const englishWord = word.english_word || '' // English word for Verbs audio lookup
+      const englishWord = word.english_word || word.word_en || ''
       const isCustomWord = word.isCustomWord || false // Check if this is a playlist/custom word
 
       if (!sourceWord || typeof sourceWord !== 'string' || sourceWord.trim().length === 0) {
@@ -2245,7 +2245,7 @@ export function LanguageSelector() {
           }
           
           if (alnilamSuccess) {
-            
+
             // Track word progress when audio is played successfully
             if (user?.id && wordId && targetLanguageCode) {
               try {
@@ -2267,28 +2267,54 @@ export function LanguageSelector() {
                 console.error('Failed to track progress:', error)
               }
             }
-            
+
             setCurrentAudioStep('idle')
             setIsPlaying(false)
             return
-          } else {
-            setCurrentAudioStep('idle')
-            setIsPlaying(false)
           }
         } catch (error) {
           console.error('❌ Audio service error:', error)
+        }
+      }
+
+      // TTS fallback for playlist words when B2 audio is unavailable
+      if (word.isPlaylistWord) {
+        setActiveAudioService("TTS")
+        try {
+          const languageMappingsFallback: Record<string, string> = {
+            'Arabic': 'ar', 'German': 'de', 'Spanish': 'es', 'French': 'fr',
+            'Hindi': 'hi', 'Indonesian': 'id', 'Italian': 'it', 'Japanese': 'ja',
+            'Korean': 'ko', 'Portuguese': 'pt', 'Russian': 'ru', 'Dutch': 'nl',
+            'Polish': 'pl', 'Thai': 'th', 'Turkish': 'tr', 'Vietnamese': 'vi',
+            'Romanian': 'ro', 'Ukrainian': 'uk', 'Bengali': 'bn', 'English': 'en',
+            'Chinese': 'zh', 'Greek': 'el', 'Hebrew': 'he', 'Czech': 'cs',
+            'Hungarian': 'hu', 'Bulgarian': 'bg', 'Croatian': 'hr', 'Slovak': 'sk',
+            'Slovenian': 'sl', 'Estonian': 'et', 'Finnish': 'fi', 'Swedish': 'sv',
+            'Norwegian': 'no', 'Danish': 'da'
+          }
+          const targetLangCodeFb = languageMappingsFallback[targetLanguage] || targetLanguageCode || 'en'
+          const nativeLangCodeFb = languageMappingsFallback[nativeLanguage] || nativeLanguageCode || 'en'
+
+          setCurrentAudioStep('training')
+          try { await playAudioUniversal(`/api/custom-audio?text=${encodeURIComponent(sourceWord)}&languageCode=${targetLangCodeFb}`, 1.0); } catch (e) {}
+
+          await new Promise(resolve => setTimeout(resolve, settings.pauseBetweenTranslations || 1000))
+          if (stopRequestedRef.current) { setCurrentAudioStep('idle'); setIsPlaying(false); audioCallInProgress.current = false; return }
+
+          setCurrentAudioStep('main')
+          try { await playAudioUniversal(`/api/custom-audio?text=${encodeURIComponent(targetWord)}&languageCode=${nativeLangCodeFb}`, 1.0); } catch (e) {}
+
           setCurrentAudioStep('idle')
           setIsPlaying(false)
+          audioCallInProgress.current = false
+          return
+        } catch (error) {
+          console.error('❌ TTS fallback error:', error)
         }
-      } else {
-        console.warn('❌ Audio service not available:', {
-          hasService: !!currentAlnilamService,
-          hasWordId: !!wordId,
-          serviceType: typeof alnilamService
-        })
-        setCurrentAudioStep('idle')
-        setIsPlaying(false)
       }
+
+      setCurrentAudioStep('idle')
+      setIsPlaying(false)
 
     } catch (error) {
       console.error('Audio playback error:', error)
@@ -3286,7 +3312,9 @@ export function LanguageSelector() {
             sourceWord: sourceWord,
             targetWord: targetWord,
             word_en: dictWord?.word_en,
-            isCustomWord: !dictWord?.id
+            english_word: dictWord?.word_en,
+            isCustomWord: !dictWord?.id,
+            isPlaylistWord: true
           }
         })
         
@@ -3851,7 +3879,7 @@ export function LanguageSelector() {
 
   const handleFlashcardHoldStart = (cardIndex: number) => {
     const currentWord = vocabulary[currentWordIndex]
-    if (!currentWord || !currentWord.id) return
+    if (!currentWord || !currentWord.id || currentWord.isPlaylistWord) return
 
     setHoldingCardIndex(cardIndex)
     holdTimer = setTimeout(() => {
