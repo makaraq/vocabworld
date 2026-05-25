@@ -101,6 +101,7 @@ Be very specific and helpful for English speakers learning ${word.language}.`
               size="sm"
               onClick={handlePronunciation}
               disabled={isLoading}
+              aria-label="Play pronunciation"
             >
               <Volume2 className="h-4 w-4" />
             </Button>
@@ -108,6 +109,8 @@ Be very specific and helpful for English speakers learning ${word.language}.`
               variant="ghost"
               size="sm"
               onClick={() => setShowAiFeatures(!showAiFeatures)}
+              aria-label={showAiFeatures ? "Hide AI features" : "Show AI features"}
+              aria-expanded={showAiFeatures}
             >
               <Sparkles className="h-4 w-4" />
             </Button>

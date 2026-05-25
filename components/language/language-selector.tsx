@@ -142,7 +142,6 @@ const TOPIC_ICONS = [
   { id: 41, icon: 'solar:running-2-linear' }, // Verbs
   { id: 42, icon: 'solar:chat-round-dots-linear' }, // Daily Language
   { id: 43, icon: 'solar:code-square-linear' }, // Essential Words
-  { id: 44, icon: 'solar:close-circle-linear' }, // Bad Words
 ]
 
 // Question text translations for "Choose the language you want to learn"
@@ -548,6 +547,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                       onTopicSelect({ id: -1, name: 'Search Word', icon: '' } as Topic)
                     }}
                     className="flex-shrink-0 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl sm:rounded-2xl p-4 sm:p-5 text-center hover:bg-white/15 transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl relative"
+                    aria-label="Search for a word and get its translation"
                   >
 
                     <div className="flex flex-col items-center justify-center gap-3">
@@ -568,9 +568,10 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                         <Icon icon="solar:playlist-bold" width="20" height="20" className="text-purple-400" />
                         My Playlists
                       </h3>
-                      <button 
+                      <button
                         onClick={onCreatePlaylist}
                         className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-all"
+                        aria-label="Create new playlist"
                       >
                         <Icon icon="solar:add-circle-bold" width="20" height="20" className="text-white/80" />
                       </button>
@@ -1264,7 +1265,7 @@ export function LanguageSelector() {
     {
       name: getTranslatedSectionName('PROFESSIONAL', 'PROFESSIONAL'),
       icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-dasharray="64" stroke-dashoffset="64" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2l-9 3.5v6.5c0 3.5 3.5 9 8 10c4.5 -1 8 -6.5 8 -10v-6.5l-8 -3.5Z"><animate fill="freeze" attributeName="fill-opacity" begin="0.7s" dur="0.15s" values="0;0.3"/><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0"/></path></svg>',
-      topics: topics.slice(36, 44), // 8 topics: Common Collocations, Modern Expressions, Formal Language, Verbs, Daily Language, Essential Words, Bad Words, Example Sentences
+      topics: topics.slice(36, 43), // 7 topics: Common Collocations, Modern Expressions, Formal Language, Verbs, Daily Language, Essential Words, Example Sentences
       gridCols: 2
     },
     {

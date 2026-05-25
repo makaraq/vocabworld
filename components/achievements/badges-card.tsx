@@ -42,6 +42,7 @@ export function BadgesCard() {
       className={`bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20 w-full hover:bg-white/15 transition-all ${
         holding ? 'scale-[1.03]' : 'scale-100'
       }`}
+      aria-label={`Badges: ${count} of ${total} unlocked`}
     >
         <div className="flex items-start justify-between mb-1.5 sm:mb-2">
           <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center">

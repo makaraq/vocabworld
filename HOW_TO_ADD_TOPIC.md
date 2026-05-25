@@ -1,4 +1,4 @@
-# How to Add a New Topic to Vocab World
+# How to Add a New Topic to Sprind
 
 This guide walks you through adding a new vocabulary topic to your language learning app.
 

@@ -13,7 +13,7 @@ Visit: https://console.cloud.google.com/apis/credentials
 1. Go to "OAuth consent screen" in the left sidebar
 2. Choose "External" user type
 3. Fill in required fields:
-   - **App name**: "Vocab World"
+   - **App name**: "Sprind"
    - **User support email**: Your email
    - **Developer contact information**: Your email
 4. Add these scopes:
@@ -26,7 +26,7 @@ Visit: https://console.cloud.google.com/apis/credentials
 1. Go to "Credentials" in the left sidebar
 2. Click "Create Credentials" → "OAuth 2.0 Client ID"
 3. Choose "Web application"
-4. Name it "Vocab World Web Client"
+4. Name it "Sprind Web Client"
 
 ### 5. Configure Authorized URLs
 
@@ -80,7 +80,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.sprind.app',
-  appName: 'Vocab World',
+  appName: 'Sprind',
   webDir: 'out',
   server: {
     androidScheme: 'https'

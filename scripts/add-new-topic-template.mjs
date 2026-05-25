@@ -1,5 +1,5 @@
 /**
- * ADD NEW TOPIC TO VOCAB WORLD
+ * ADD NEW TOPIC TO SPRIND
  * 
  * This script helps you add a new topic to the app with all required data:
  * 1. Topic metadata (name, description)
@@ -356,7 +356,7 @@ Insert it in the appropriate position (topics are currently ordered by ID).
 
 async function main() {
   console.log('\n╔════════════════════════════════════════════════════════╗');
-  console.log('║       ADD NEW TOPIC TO VOCAB WORLD                    ║');
+  console.log('║       ADD NEW TOPIC TO SPRIND                    ║');
   console.log('╚════════════════════════════════════════════════════════╝');
   
   console.log(`\n📊 Topic Configuration:`);

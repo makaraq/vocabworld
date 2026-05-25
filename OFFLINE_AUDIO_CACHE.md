@@ -2,7 +2,7 @@
 
 ## Overview
 
-The offline audio cache system enables Vocab World users to download audio files for offline learning. It uses Service Workers and the Cache API to store audio locally on the device.
+The offline audio cache system enables Sprind users to download audio files for offline learning. It uses Service Workers and the Cache API to store audio locally on the device.
 
 ## Architecture
 

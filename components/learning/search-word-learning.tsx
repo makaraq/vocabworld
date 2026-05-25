@@ -123,6 +123,7 @@ export function SearchWordLearning({
         <button
           onClick={onBack}
           className="w-10 h-10 bg-black/30 border border-white/20 rounded-full flex items-center justify-center hover:bg-black/50 transition-all flex-shrink-0"
+          aria-label="Go back"
         >
           <ArrowLeft className="w-5 h-5 text-white/80" />
         </button>
@@ -171,6 +172,7 @@ export function SearchWordLearning({
           <button
             onClick={() => { setInputWord(""); setSuggestions([]); setError(null) }}
             className="text-white/40 hover:text-white/70 transition-colors flex-shrink-0"
+            aria-label="Clear search input"
           >
             <Icon icon="solar:close-circle-bold" className="w-5 h-5" />
           </button>

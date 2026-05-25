@@ -234,7 +234,7 @@ export default function TermsOfServicePage() {
                 If you have questions about these Terms, please contact us:
               </p>
               <div className="bg-white/10 border border-white/20 rounded-xl p-4 text-white/90">
-                <p><strong>Email:</strong> support@vocoapp.com</p>
+                <p><strong>Email:</strong> sprindapp@gmail.com</p>
               </div>
             </section>
 

@@ -143,10 +143,10 @@ export default function PrivacyPolicyPage() {
                 You have the following rights regarding your personal data:
               </p>
               <ul className="list-disc list-inside space-y-2 text-white/90 ml-4">
-                <li><strong>Access:</strong> Request a copy of your personal data by emailing privacy@vocoapp.com</li>
+                <li><strong>Access:</strong> Request a copy of your personal data by emailing sprindapp@gmail.com</li>
                 <li><strong>Correction:</strong> Update or correct inaccurate information</li>
                 <li><strong>Deletion:</strong> Delete your account and all associated data at any time via Account Settings → Delete Account</li>
-                <li><strong>Portability:</strong> Export your learning data by contacting privacy@vocoapp.com</li>
+                <li><strong>Portability:</strong> Export your learning data by contacting sprindapp@gmail.com</li>
                 <li><strong>Restriction:</strong> Learning progress data is required for core app functionality and cannot be disabled independently — deleting your account removes all data</li>
               </ul>
             </section>
@@ -212,8 +212,8 @@ export default function PrivacyPolicyPage() {
                 If you have any questions about this Privacy Policy or our data practices, please contact us:
               </p>
               <div className="bg-white/10 border border-white/20 rounded-xl p-4 text-white/90">
-                <p><strong>Email:</strong> privacy@vocoapp.com</p>
-                <p><strong>Support:</strong> support@vocoapp.com</p>
+                <p><strong>Email:</strong> sprindapp@gmail.com</p>
+                <p><strong>Support:</strong> sprindapp@gmail.com</p>
                 <p className="mt-2 text-sm text-white/70">
                   We will respond to your inquiry within 48 hours.
                 </p>

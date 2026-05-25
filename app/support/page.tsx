@@ -46,10 +46,10 @@ export default function SupportPage() {
                     Get help with technical issues, account problems, or general inquiries.
                   </p>
                   <a 
-                    href="mailto:support@vocoapp.com"
+                    href="mailto:sprindapp@gmail.com"
                     className="inline-block px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg font-medium transition-colors"
                   >
-                    support@vocoapp.com
+                    sprindapp@gmail.com
                   </a>
                   <p className="text-sm text-white/60 mt-3">
                     We typically respond within 24-48 hours
@@ -133,13 +133,13 @@ export default function SupportPage() {
               <h2 className="text-xl font-semibold mb-4">Other Inquiries</h2>
               <div className="space-y-3 text-sm text-white/90">
                 <p>
-                  <strong>Privacy concerns:</strong> privacy@vocoapp.com
+                  <strong>Privacy concerns:</strong> sprindapp@gmail.com
                 </p>
                 <p>
-                  <strong>Business inquiries:</strong> business@vocoapp.com
+                  <strong>Business inquiries:</strong> sprindapp@gmail.com
                 </p>
                 <p>
-                  <strong>Press & media:</strong> press@vocoapp.com
+                  <strong>Press & media:</strong> sprindapp@gmail.com
                 </p>
               </div>
             </div>

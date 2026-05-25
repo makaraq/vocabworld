@@ -92,7 +92,7 @@ export function DetailedProgressModal({
             },
             { 
               name: "PROFESSIONAL", 
-              topicIds: allTopics.slice(36, 44).map((t: any) => t.id), // Topics 37-44 (8 topics: Common Collocations, Modern Expressions, Formal Language, Verbs, Daily Language, Essential Words, Bad Words, Example Sentences)
+              topicIds: allTopics.slice(36, 43).map((t: any) => t.id), // Topics 37-43 (7 topics: Common Collocations, Modern Expressions, Formal Language, Verbs, Daily Language, Essential Words, Example Sentences)
               icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-dasharray="64" stroke-dashoffset="64" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2l-9 3.5v6.5c0 3.5 3.5 9 8 10c4.5 -1 8 -6.5 8 -10v-6.5l-8 -3.5 Z"><animate fill="freeze" attributeName="fill-opacity" begin="0.7s" dur="0.15s" values="0;0.3"/><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0"/></path></svg>'
             }
           ]
@@ -256,6 +256,7 @@ export function DetailedProgressModal({
             <button
               onClick={onCloseAction}
               className="p-2 hover:bg-white/10 rounded-full transition-colors text-white/80 hover:text-white"
+              aria-label="Close progress details"
             >
               <X className="w-6 h-6" />
             </button>
@@ -287,6 +288,8 @@ export function DetailedProgressModal({
                     <button
                       onClick={() => toggleSection(section.name)}
                       className="w-full p-4 flex items-center gap-4 hover:bg-white/5 transition-colors"
+                      aria-expanded={isExpanded}
+                      aria-label={`${section.name} section, ${sectionProgress.completed} of ${sectionProgress.total} topics completed`}
                     >
                       {/* Section Icon */}
                       <div className="w-10 h-10 bg-white/15 border border-white/25 rounded-xl flex items-center justify-center flex-shrink-0">

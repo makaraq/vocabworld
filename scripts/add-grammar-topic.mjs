@@ -1,5 +1,5 @@
 /**
- * ADD GRAMMAR TOPIC TO VOCAB WORLD
+ * ADD GRAMMAR TOPIC TO SPRIND
  * 
  * This script adds the Grammar topic with all grammatical words and generates
  * translations for 50 languages.

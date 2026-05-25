@@ -1,5 +1,5 @@
 /**
- * ADD EXAMPLE SENTENCES TOPIC TO VOCAB WORLD
+ * ADD EXAMPLE SENTENCES TOPIC TO SPRIND
  * 
  * This script adds a comprehensive "Example Sentences" topic with 90 common phrases
  * organized by practical use cases (introducing yourself, asking for help, at a restaurant, etc.)
@@ -485,7 +485,7 @@ async function generateTopicTranslations() {
 
 async function main() {
   console.log('\n╔═══════════════════════════════════════════════════════════╗');
-  console.log('║     ADD EXAMPLE SENTENCES TOPIC TO VOCAB WORLD            ║');
+  console.log('║     ADD EXAMPLE SENTENCES TOPIC TO SPRIND            ║');
   console.log('╚═══════════════════════════════════════════════════════════╝');
   
   console.log(`\n📊 Configuration:`);

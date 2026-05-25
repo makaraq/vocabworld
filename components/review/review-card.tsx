@@ -67,6 +67,7 @@ export function ReviewCard({ userId, targetLanguageCode, nativeLanguageCode }: R
       <button
         onClick={() => dueCount > 0 && setShowQuiz(true)}
         className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20 transition-all hover:bg-white/15 active:scale-[1.03]"
+        aria-label={loading ? "Loading review words" : totalCards === 0 ? "Start learning words to review" : dueCount > 0 ? `${dueCount} words to review` : "All caught up, no words to review"}
       >
         <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center mb-1.5 sm:mb-2 ${
           totalCards === 0

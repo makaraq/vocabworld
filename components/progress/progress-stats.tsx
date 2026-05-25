@@ -90,7 +90,7 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLa
   return (
     <>
       <div className="space-y-3 sm:space-y-4">
-        <div 
+        <div
           className={`bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-5 border border-white/20 cursor-pointer hover:bg-white/15 ${
             holdingProgressButton ? 'scale-105 transition-all duration-75' : 'scale-100 transition-all duration-300'
           }`}
@@ -98,6 +98,10 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLa
           onTouchStart={() => setHoldingProgressButton(true)}
           onTouchEnd={() => setHoldingProgressButton(false)}
           onTouchCancel={() => setHoldingProgressButton(false)}
+          role="button"
+          tabIndex={0}
+          aria-label={`${targetLanguageName} progress: ${Math.round(stats.languageCompletionPercentage)}% complete. Click to see details`}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setShowDetailedModal(true) } }}
         >
           <div className="flex items-start gap-3 sm:gap-4">
             {/* Flag on the left */}
@@ -148,6 +152,7 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLa
           <button
             onClick={() => setShowLeaderboard(true)}
             className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20 hover:bg-white/15 transition-all active:scale-95"
+            aria-label={bestRank ? `Leaderboard: rank #${bestRank}` : "View leaderboard"}
           >
             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center mb-1.5 sm:mb-2">
               <Icon icon="solar:cup-star-bold" className="w-4 h-4 sm:w-5 sm:h-5 text-white" />

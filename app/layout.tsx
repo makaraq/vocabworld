@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next"
 import { Space_Grotesk } from "next/font/google"
 import { AuthProvider } from "@/contexts/auth-context"
 import { AchievementProvider } from "@/components/achievements/achievement-provider"
+import { OfflineBanner } from "@/components/offline-banner"
 import "./globals.css"
 import "../styles/stripe-elements.css"
 
@@ -42,6 +43,7 @@ export default function RootLayout({
       <body className="font-sans" style={{ fontFamily: "var(--font-space-grotesk)" }}>
         <AuthProvider>
           <AchievementProvider>
+            <OfflineBanner />
             {children}
           </AchievementProvider>
         </AuthProvider>

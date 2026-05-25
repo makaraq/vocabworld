@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-        <string>Vocab World</string>
+        <string>Sprind</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -71,6 +71,6 @@
 		<string>audio</string>
 	</array>
 	<key>NSUserNotificationsUsageDescription</key>
-	<string>Vocab World uses notifications to remind you to study and protect your learning streak.</string>
+	<string>Sprind uses notifications to remind you to study and protect your learning streak.</string>
 </dict>
 </plist>

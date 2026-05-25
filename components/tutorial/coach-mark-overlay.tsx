@@ -211,6 +211,7 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
             <button
               onClick={onSkip}
               className="text-white/50 text-xs font-medium active:text-white/80 transition-colors"
+              aria-label="Skip tutorial"
             >
               Skip
             </button>
@@ -236,6 +237,7 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
                 <button
                   onClick={handleBack}
                   className="text-white/60 text-sm font-medium px-3 py-2 rounded-xl active:bg-white/5 transition-all"
+                  aria-label="Previous tutorial step"
                 >
                   Back
                 </button>
@@ -243,6 +245,7 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
               <button
                 onClick={handleNext}
                 className="bg-blue-500 hover:bg-blue-400 active:bg-blue-600 text-white text-sm font-semibold rounded-xl px-5 py-2.5 transition-all shadow-lg shadow-blue-500/25 flex items-center gap-1.5"
+                aria-label={isLast ? 'Finish tutorial' : 'Next tutorial step'}
               >
                 {isLast ? 'Got it' : 'Next'}
                 <Icon

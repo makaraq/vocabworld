@@ -273,6 +273,7 @@ export function ReviewQuizModal({
                       ? "bg-blue-500/30 border-blue-400/50"
                       : "bg-white/10 border-white/20 hover:bg-white/20"
                   }`}
+                  aria-label={isPlayingAudio ? "Stop audio" : `Play pronunciation of ${cards[currentIndex].targetWord}`}
                 >
                   <Icon
                     icon={isPlayingAudio ? "solar:volume-loud-bold" : "solar:volume-bold"}
@@ -299,6 +300,7 @@ export function ReviewQuizModal({
                       onClick={() => handleAnswer(option)}
                       disabled={selectedOption !== null}
                       className={`py-3.5 px-5 rounded-xl border text-base font-medium transition-all ${getOptionStyle(option)}`}
+                      aria-label={`Answer: ${option}`}
                     >
                       {option}
                     </button>
@@ -356,6 +358,7 @@ export function ReviewQuizModal({
             <button
               onPointerUp={() => { hapticsLight(); onClose() }}
               className="w-14 h-14 rounded-full bg-white/10 border border-white/15 flex items-center justify-center"
+              aria-label="Close review quiz"
             >
               <Icon icon="solar:close-circle-bold" width="28" height="28" className="text-white/50" />
             </button>

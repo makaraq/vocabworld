@@ -68,6 +68,10 @@ export function PaywallModal({
 
   if (!isOpen || !mounted) return null
 
+  const isNative = typeof window !== 'undefined' && !!(window as any)?.Capacitor?.isNativePlatform?.()
+  const isIOS = isNative && (window as any)?.Capacitor?.getPlatform?.() === 'ios'
+  const storeName = isIOS ? 'Apple ID Settings' : isNative ? 'Google Play' : 'your subscription settings'
+
   const handleSubscribe = async () => {
     if (!user) return
     clearError()
@@ -102,13 +106,6 @@ export function PaywallModal({
   const monthlyPrice = livePrices?.monthly ?? formatPrice(PRICING.monthly.price)
   const yearlyPrice = livePrices?.yearly ?? formatPrice(PRICING.yearly.price)
 
-  const billingDate = new Date()
-  billingDate.setDate(billingDate.getDate() + 7)
-  const billingDateLabel = billingDate.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
 
   const modalContent = (
     <div
@@ -186,7 +183,7 @@ export function PaywallModal({
                 <div className="flex-1 pt-1">
                   <p className="font-bold text-white text-base drop-shadow">In 7 Days - Billing Starts</p>
                   <p className="text-white/70 text-sm leading-snug drop-shadow">
-                    You&apos;ll be charged on {billingDateLabel} unless you cancel anytime before.
+                    You&apos;ll be charged after 7 days unless you cancel anytime before.
                   </p>
                 </div>
               </div>
@@ -361,13 +358,13 @@ export function PaywallModal({
             aria-hidden={selectedPlan !== 'yearly'}
             className={`col-start-1 row-start-1 text-center text-white/90 text-xs leading-relaxed drop-shadow font-medium ${selectedPlan === 'yearly' ? '' : 'invisible pointer-events-none'}`}
           >
-            7 days free, then {yearlyPrice} per year. Billed yearly.<br />Plan auto-renews unless you<br />cancel. Cancel in the App Store.
+            7 days free, then {yearlyPrice} per year. Billed yearly.<br />Plan auto-renews unless you<br />cancel. Cancel in {storeName}.
           </p>
           <p
             aria-hidden={selectedPlan !== 'monthly'}
             className={`col-start-1 row-start-1 self-center text-center text-white/90 text-xs leading-relaxed drop-shadow font-medium ${selectedPlan === 'monthly' ? '' : 'invisible pointer-events-none'}`}
           >
-            {monthlyPrice} per month. Plan auto-renews<br />unless you cancel. Cancel in the App Store.
+            {monthlyPrice} per month. Plan auto-renews<br />unless you cancel. Cancel in {storeName}.
           </p>
         </div>
 

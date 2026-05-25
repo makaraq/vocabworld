@@ -1,4 +1,4 @@
-# 🤖 Android Development Guide for Vocab World Language Learning App
+# 🤖 Android Development Guide for Sprind Language Learning App
 
 ## ✅ Setup Complete!
 
@@ -7,7 +7,7 @@ Your Android project has been successfully created and configured. Here's what w
 ### 📁 Project Structure Created
 - `android/` folder with complete Android Studio project
 - App ID: `com.sprind.app`
-- App Name: `Vocab World`
+- App Name: `Sprind`
 - Build system: Gradle with Capacitor integration
 
 ## 🚀 Testing in Android Studio
@@ -220,4 +220,4 @@ npx cap doctor                       # Check Capacitor setup
 adb logcat                          # View device logs
 ```
 
-Your Vocab World language learning app is now ready for Android testing! 🎉
+Your Sprind language learning app is now ready for Android testing! 🎉

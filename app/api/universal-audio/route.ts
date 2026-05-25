@@ -98,7 +98,7 @@ interface B2AuthCache {
 }
 
 let b2AuthCache: B2AuthCache | null = null;
-let b2AuthCache2: B2AuthCache | null = null; // Second bucket for topics 43-44
+let b2AuthCache2: B2AuthCache | null = null; // Second bucket for topics 43, 45
 
 async function getB2Auth(bucketNumber: 1 | 2 = 1): Promise<B2AuthCache> {
   const now = Date.now();
@@ -229,7 +229,7 @@ export async function GET(request: NextRequest) {
         filePath = mainHit.filePath;
       }
 
-      // Phrases CSV fallback (Common Phrases, Essential Words, Bad Words, Example Sentences)
+      // Phrases CSV fallback (Common Phrases, Essential Words, Example Sentences)
       if (!fileName && !filePath) {
         const wordIdNum = parseInt(wordId);
         if (wordIdNum >= 4172 && word) {
@@ -272,7 +272,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Determine which bucket based on topic folder in file path
-    const isSecondaryBucket = filePath.startsWith('BadWords/') || filePath.startsWith('EssentialWords/') || filePath.startsWith('ExampleSentences/');
+    const isSecondaryBucket = filePath.startsWith('EssentialWords/') || filePath.startsWith('ExampleSentences/');
     const bucketNumber: 1 | 2 = isSecondaryBucket ? 2 : 1;
     const bucketName = isSecondaryBucket ? 'voco-audio-library2' : 'voco-audio-library';
 

@@ -173,6 +173,7 @@ export function LeaderboardModal({
           <button
             onClick={onCloseAction}
             className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:bg-white/20 transition-all"
+            aria-label="Close leaderboard"
           >
             <Icon icon="solar:close-circle-bold" width="20" height="20" />
           </button>
@@ -181,7 +182,7 @@ export function LeaderboardModal({
         {/* Toggles */}
         <div className="px-5 pb-3 space-y-2">
           {/* Period toggle */}
-          <div className="flex bg-black/20 border border-white/10 rounded-xl overflow-hidden">
+          <div className="flex bg-black/20 border border-white/10 rounded-xl overflow-hidden" role="tablist" aria-label="Leaderboard time period">
             {([['week', 'This Week'], ['alltime', 'All Time']] as const).map(([key, label]) => (
               <button
                 key={key}
@@ -189,6 +190,9 @@ export function LeaderboardModal({
                 className={`flex-1 py-2 text-xs font-semibold transition-all ${
                   period === key ? 'bg-blue-500 text-white' : 'text-white/50 active:bg-white/10'
                 }`}
+                role="tab"
+                aria-selected={period === key}
+                aria-label={label}
               >
                 {label}
               </button>
@@ -196,12 +200,15 @@ export function LeaderboardModal({
           </div>
 
           {/* Scope toggle */}
-          <div className="flex bg-black/20 border border-white/10 rounded-xl overflow-hidden">
+          <div className="flex bg-black/20 border border-white/10 rounded-xl overflow-hidden" role="tablist" aria-label="Leaderboard scope">
             <button
               onClick={() => setScope('language')}
               className={`flex-1 py-2 text-xs font-semibold transition-all flex items-center justify-center gap-1.5 ${
                 scope === 'language' ? 'bg-blue-500 text-white' : 'text-white/50 active:bg-white/10'
               }`}
+              role="tab"
+              aria-selected={scope === 'language'}
+              aria-label={`${targetLanguageName} leaderboard`}
             >
               <Icon icon={getFlagIcon(targetLanguageCode)} width="14" />
               {targetLanguageName}
@@ -211,6 +218,9 @@ export function LeaderboardModal({
               className={`flex-1 py-2 text-xs font-semibold transition-all flex items-center justify-center gap-1.5 ${
                 scope === 'global' ? 'bg-blue-500 text-white' : 'text-white/50 active:bg-white/10'
               }`}
+              role="tab"
+              aria-selected={scope === 'global'}
+              aria-label="Global leaderboard"
             >
               <Icon icon="solar:global-bold" width="14" />
               Global

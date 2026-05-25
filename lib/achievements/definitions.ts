@@ -108,7 +108,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   { id: 'topics_20', title: 'Topic Tactician', description: 'Complete 20 topics', icon: 'solar:cup-first-bold', category: 'topics', tier: 'platinum', threshold: 20, metric: 'topicsCompleted' },
   { id: 'topics_25', title: 'Topic Champion', description: 'Complete 25 topics', icon: 'solar:cup-bold', category: 'topics', tier: 'platinum', threshold: 25, metric: 'topicsCompleted' },
   { id: 'topics_35', title: 'Almost There', description: 'Complete 35 topics', icon: 'solar:flag-bold', category: 'topics', tier: 'platinum', threshold: 35, metric: 'topicsCompleted' },
-  { id: 'topics_44', title: 'Completionist', description: 'Complete every topic in a language', icon: 'solar:medal-star-bold', category: 'topics', tier: 'diamond', threshold: 44, metric: 'topicsCompleted' },
+  { id: 'topics_43', title: 'Completionist', description: 'Complete every topic in a language', icon: 'solar:medal-star-bold', category: 'topics', tier: 'diamond', threshold: 43, metric: 'topicsCompleted' },
 
   // Streaks
   { id: 'streak_3', title: 'Sparked', description: '3-day learning streak', icon: 'solar:fire-bold', category: 'streak', tier: 'bronze', threshold: 3, metric: 'currentStreak' },
