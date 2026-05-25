@@ -3320,13 +3320,14 @@ export function LanguageSelector() {
           const targetWord = translations[nativeLanguageCode] || dictWord?.word_en || ''
           
           
+          const vocabId = dictWord?.vocabulary_id
           return {
-            id: dictWord?.id,
+            id: vocabId || dictWord?.id,
             sourceWord: sourceWord,
             targetWord: targetWord,
             word_en: dictWord?.word_en,
             english_word: dictWord?.word_en,
-            isCustomWord: !dictWord?.id,
+            isCustomWord: !vocabId,
             isPlaylistWord: true
           }
         })

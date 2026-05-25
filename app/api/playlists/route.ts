@@ -88,7 +88,29 @@ export async function GET(request: NextRequest) {
         console.error('Error fetching playlist words:', wordsError)
       }
 
-      return NextResponse.json({ playlist, words: playlistWords || [] })
+      // Resolve vocabulary IDs for B2 audio lookup
+      const words = playlistWords || []
+      const englishWords = words
+        .map((pw: any) => pw.dictionary_words?.word_en)
+        .filter(Boolean)
+
+      if (englishWords.length > 0) {
+        const { data: vocabRows } = await supabaseAdmin
+          .from('vocabulary')
+          .select('id, word_en')
+          .in('word_en', englishWords)
+
+        if (vocabRows) {
+          const vocabMap = new Map(vocabRows.map((v: any) => [v.word_en, v.id]))
+          for (const pw of words as any[]) {
+            if (pw.dictionary_words?.word_en) {
+              pw.dictionary_words.vocabulary_id = vocabMap.get(pw.dictionary_words.word_en) || null
+            }
+          }
+        }
+      }
+
+      return NextResponse.json({ playlist, words })
     }
 
     // Get all playlists for user with word counts (filtered by language pair if provided)
