@@ -1833,16 +1833,19 @@ export function LanguageSelector() {
                 });
               };
 
+              // Track whether any audio segment actually played
+              let audioDidPlay = false;
+
               // FIXED ORDER: Play TARGET language first (what user is learning)
               // Note: sourceWord actually contains the LEARNING language translation (inverted naming in vocabulary API)
               if (wordId && targetLangCode) {
                 const targetUrl = getAudioUrl(wordId, targetLangCode, englishWord, sourceWord);
-                
+
                 // Set visual indicator for target language
                 if (settings?.setCurrentAudioStep) {
                   settings.setCurrentAudioStep('training');
                 }
-                
+
                 // FIXED MAPPING: Target language repeats (what user is learning)
                 const targetRepeats = settings?.repeatTargetLanguage || 1;
                 for (let i = 0; i < targetRepeats; i++) {
@@ -1850,13 +1853,14 @@ export function LanguageSelector() {
                   if (abortSignal?.aborted || stopRequestedRef.current) {
                     throw new DOMException('Target audio aborted', 'AbortError');
                   }
-                  
+
                   try {
                     // 🔊 MOBILE FIX V3: Use Web Audio API for reliable playback
                     const speedRate = getSpeedRate(settings.pronunciationSpeed || 'Normal');
-                    
+
                     await playAudioUrl(targetUrl, `TARGET ${targetWord} - Repeat ${i + 1}`, speedRate);
-                    
+                    audioDidPlay = true;
+
                     // Small pause between repeats (except after last repeat)
                     if (i < targetRepeats - 1) {
                       await abortableSleep(300);
@@ -1873,12 +1877,20 @@ export function LanguageSelector() {
                 if (settings?.pauseBetweenTranslations) {
                   const pauseStartTime = performance.now();
                   const expectedPauseDuration = settings.pauseBetweenTranslations * 1000;
-                  
+
                   await abortableSleep(expectedPauseDuration);
-                  
+
                   const actualPauseDuration = performance.now() - pauseStartTime;
                   const difference = actualPauseDuration - expectedPauseDuration;
                 }
+              }
+
+              // If no audio played at all, return false early
+              if (!audioDidPlay) {
+                if (settings?.setCurrentAudioStep) {
+                  settings.setCurrentAudioStep('idle');
+                }
+                return false;
               }
 
               // Check if stop was requested between target and source
@@ -1892,12 +1904,12 @@ export function LanguageSelector() {
               if (settings?.playTargetOnly) {
               } else if (wordId && sourceLangCode) {
                 const sourceUrl = getAudioUrl(wordId, sourceLangCode, englishWord, targetWord);
-                
+
                 // Set visual indicator for source language
                 if (settings?.setCurrentAudioStep) {
                   settings.setCurrentAudioStep('main');
                 }
-                
+
                 // FIXED MAPPING: Source language repeats (main/native language)
                 const sourceRepeats = settings?.repeatMainLanguage || 1;
                 for (let i = 0; i < sourceRepeats; i++) {
@@ -1905,13 +1917,13 @@ export function LanguageSelector() {
                   if (abortSignal?.aborted || stopRequestedRef.current) {
                     throw new DOMException('Source audio aborted', 'AbortError');
                   }
-                  
+
                   try {
                     // 🔊 MOBILE FIX V3: Use Web Audio API for reliable playback
                     const speedRate = getSpeedRate(settings.pronunciationSpeed || 'Normal');
-                    
+
                     await playAudioUrl(sourceUrl, `SOURCE ${sourceWord} - Repeat ${i + 1}`, speedRate);
-                    
+
                     // Small pause between repeats (except after last repeat)
                     if (i < sourceRepeats - 1) {
                       await abortableSleep(300);
@@ -5042,6 +5054,7 @@ export function LanguageSelector() {
           word={exampleModalData.targetWord}
           translation={exampleModalData.sourceWord}
           userId={user.id}
+          vocabularyId={exampleModalData.vocabularyId}
           translations={{
             [nativeLanguageCode]: exampleModalData.targetWord,
             [targetLanguageCode]: exampleModalData.sourceWord
