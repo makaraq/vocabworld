@@ -122,6 +122,51 @@ export function PaywallModal({
   const yearlyPrice = livePrices?.yearly ?? formatPrice(PRICING.yearly.price)
 
 
+  if (purchaseSuccess) {
+    const celebrationContent = (
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/20 backdrop-blur-md">
+        <div className="relative bg-white/10 backdrop-blur-xl rounded-3xl max-w-md w-full border border-white/20 shadow-2xl flex flex-col items-center p-8">
+          {/* Lottie animation */}
+          <div className="w-56 h-56 -mb-2">
+            <Lottie
+              lottieRef={lottieRef}
+              animationData={celebrationAnim}
+              loop={false}
+              autoplay
+              onComplete={handleLottieComplete}
+            />
+          </div>
+
+          {/* Title */}
+          <h2
+            className="text-3xl font-extrabold text-white text-center mb-2"
+            style={{ animation: 'celebration-fade-up 0.5s ease-out 0.3s both' }}
+          >
+            You&apos;re in!
+          </h2>
+
+          {/* Subtitle */}
+          <p
+            className="text-white/70 text-center text-lg mb-8"
+            style={{ animation: 'celebration-fade-up 0.5s ease-out 0.5s both' }}
+          >
+            All 43 topics are now yours
+          </p>
+
+          {/* CTA */}
+          <button
+            onClick={handleCelebrationDismiss}
+            className="w-full max-w-xs py-4 bg-gray-900 hover:bg-black text-white font-bold text-base rounded-2xl shadow-lg active:scale-95 transition-all border border-white/10"
+            style={{ animation: 'celebration-fade-up 0.5s ease-out 0.7s both' }}
+          >
+            Start Exploring
+          </button>
+        </div>
+      </div>
+    )
+    return createPortal(celebrationContent, document.body)
+  }
+
   const modalContent = (
     <div
       className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/20 backdrop-blur-md"
@@ -130,46 +175,6 @@ export function PaywallModal({
       }}
     >
       <div className="relative bg-white/10 backdrop-blur-xl rounded-3xl max-w-md w-full border border-white/20 shadow-2xl max-h-[95vh] overflow-y-auto">
-        {purchaseSuccess && (
-          <div className="absolute inset-0 z-50 flex flex-col items-center justify-center p-8 bg-black/80 backdrop-blur-xl rounded-3xl overflow-hidden">
-            {/* Lottie animation */}
-            <div className="w-56 h-56 -mb-2">
-              <Lottie
-                lottieRef={lottieRef}
-                animationData={celebrationAnim}
-                loop={false}
-                autoplay
-                onComplete={handleLottieComplete}
-              />
-            </div>
-
-            {/* Title */}
-            <h2
-              className="relative z-10 text-3xl font-extrabold text-white text-center mb-2"
-              style={{ animation: 'celebration-fade-up 0.5s ease-out 0.3s both' }}
-            >
-              You&apos;re in!
-            </h2>
-
-            {/* Subtitle */}
-            <p
-              className="relative z-10 text-white/70 text-center text-lg mb-8"
-              style={{ animation: 'celebration-fade-up 0.5s ease-out 0.5s both' }}
-            >
-              All 43 topics are now yours
-            </p>
-
-            {/* CTA */}
-            <button
-              onClick={handleCelebrationDismiss}
-              className="relative z-10 w-full max-w-xs py-4 bg-white text-gray-900 font-bold text-base rounded-2xl shadow-lg hover:bg-white/90 active:scale-95 transition-all"
-              style={{ animation: 'celebration-fade-up 0.5s ease-out 0.7s both' }}
-            >
-              Start Exploring
-            </button>
-          </div>
-        )}
-
         {/* Close button */}
         <button
           onClick={onCloseAction}
