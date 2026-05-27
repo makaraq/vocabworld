@@ -68,5 +68,7 @@
 	<string>774773244025-8b6gqb41sudtrbvn2fvmkru6thkqjibj.apps.googleusercontent.com</string>
 	<key>NSUserNotificationsUsageDescription</key>
 	<string>Sprind uses notifications to remind you to study and protect your learning streak.</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>
