@@ -20,6 +20,7 @@ export interface UseRevenueCatReturn {
   purchasePackage: (plan: 'monthly' | 'yearly') => Promise<boolean>
   restorePurchases: () => Promise<boolean>
   getOfferings: () => Promise<RCPackageInfo[]>
+  checkTrialEligibility: () => Promise<boolean>
   loading: boolean
   error: string | null
   clearError: () => void
@@ -143,5 +144,30 @@ export function useRevenueCat(): UseRevenueCatReturn {
     }
   }, [])
 
-  return { purchasePackage, restorePurchases, getOfferings, loading, error, clearError }
+  const checkTrialEligibility = useCallback(async (): Promise<boolean> => {
+    try {
+      if (!isNative()) return true
+
+      const { Purchases, INTRO_ELIGIBILITY_STATUS } = await import('@revenuecat/purchases-capacitor')
+
+      const offerings = await Purchases.getOfferings()
+      const yearlyPkg = offerings.current?.availablePackages.find(
+        p => p.identifier === RC_YEARLY_PKG
+      )
+      if (!yearlyPkg) return false
+
+      const productId = yearlyPkg.product.identifier
+      const result = await Purchases.checkTrialOrIntroductoryPriceEligibility({
+        productIdentifiers: [productId]
+      })
+
+      const eligibility = result?.[productId]
+      return eligibility?.status === INTRO_ELIGIBILITY_STATUS.INTRO_ELIGIBILITY_STATUS_ELIGIBLE
+    } catch (err) {
+      console.error('[RC] checkTrialEligibility error:', err)
+      return true
+    }
+  }, [])
+
+  return { purchasePackage, restorePurchases, getOfferings, checkTrialEligibility, loading, error, clearError }
 }

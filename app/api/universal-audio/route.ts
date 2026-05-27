@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 // Universal Audio API - B2 Authenticated Access
 // Fetches audio from private B2 bucket using API credentials
@@ -177,6 +178,11 @@ async function getB2Auth(bucketNumber: 1 | 2 = 1): Promise<B2AuthCache> {
 
 export async function GET(request: NextRequest) {
   try {
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+    if (!checkRateLimit(ip, 120, 60_000)) {
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+    }
+
     const { searchParams } = new URL(request.url);
     const wordId = searchParams.get('wordId');
     const languageCode = searchParams.get('languageCode');

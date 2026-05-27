@@ -34,8 +34,9 @@ export function PaywallModal({
   const [livePrices, setLivePrices] = useState<LivePrices | null>(null)
   const [restoreStatus, setRestoreStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle')
   const [purchaseSuccess, setPurchaseSuccess] = useState(false)
+  const [trialEligible, setTrialEligible] = useState(true)
   const { user, refreshSubscription } = useAuth()
-  const { purchasePackage, restorePurchases, getOfferings, loading, error, clearError } = useRevenueCat()
+  const { purchasePackage, restorePurchases, getOfferings, checkTrialEligibility, loading, error, clearError } = useRevenueCat()
   const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const lottieRef = useRef<LottieRefCurrentProps>(null)
 
@@ -62,7 +63,11 @@ export function PaywallModal({
         })
       }
     }).catch(() => { /* fall back to hardcoded prices */ })
-  }, [isOpen, getOfferings])
+    checkTrialEligibility().then(eligible => {
+      setTrialEligible(eligible)
+      if (!eligible) setSelectedPlan('monthly')
+    }).catch(() => {})
+  }, [isOpen, getOfferings, checkTrialEligibility])
 
   useEffect(() => {
     if (error) {
@@ -81,6 +86,7 @@ export function PaywallModal({
   const isNative = typeof window !== 'undefined' && !!(window as any)?.Capacitor?.isNativePlatform?.()
   const isIOS = isNative && (window as any)?.Capacitor?.getPlatform?.() === 'ios'
   const storeName = isIOS ? 'Apple ID Settings' : isNative ? 'Google Play' : 'your subscription settings'
+  const showTrial = trialEligible && selectedPlan === 'yearly'
 
   const handleSubscribe = async () => {
     if (!user) return
@@ -150,7 +156,7 @@ export function PaywallModal({
             className="text-white/70 text-center text-lg mb-8"
             style={{ animation: 'celebration-fade-up 0.5s ease-out 0.5s both' }}
           >
-            All 43 topics are now yours
+            You have unlocked all topics and features
           </p>
 
           {/* CTA */}
@@ -187,7 +193,7 @@ export function PaywallModal({
         {/* Title */}
         <div className="px-6 pt-8 pb-6">
           <h2 className="text-2xl font-extrabold text-white text-center leading-tight drop-shadow-lg">
-            {selectedPlan === 'yearly' ? (
+            {showTrial ? (
               <>Start your 7-day FREE<br />trial to continue.</>
             ) : (
               <>Get the full Sprind<br />experience now</>
@@ -200,10 +206,10 @@ export function PaywallModal({
             The inactive one is `invisible` (still takes space, just hidden) to keep
             the modal height identical between plans. */}
         <div className="px-6 pb-2 grid">
-          {/* Yearly timeline */}
+          {/* Yearly timeline — only when trial eligible */}
           <div
-            aria-hidden={selectedPlan !== 'yearly'}
-            className={`col-start-1 row-start-1 ${selectedPlan === 'yearly' ? '' : 'invisible pointer-events-none'}`}
+            aria-hidden={!showTrial}
+            className={`col-start-1 row-start-1 ${showTrial ? '' : 'invisible pointer-events-none'}`}
           >
             <div className="relative">
               {/* Gradient connector bar */}
@@ -253,8 +259,8 @@ export function PaywallModal({
           {/* Monthly benefits — vertically centered within the cell so the
               shorter content sits in the same area as the yearly timeline. */}
           <div
-            aria-hidden={selectedPlan !== 'monthly'}
-            className={`col-start-1 row-start-1 self-center ${selectedPlan === 'monthly' ? '' : 'invisible pointer-events-none'}`}
+            aria-hidden={showTrial}
+            className={`col-start-1 row-start-1 self-center ${!showTrial ? '' : 'invisible pointer-events-none'}`}
           >
             <div className="space-y-7">
               <div className="relative flex items-start gap-4">
@@ -333,9 +339,11 @@ export function PaywallModal({
                 : 'border-white/20 bg-white/10 hover:bg-white/15 hover:border-white/30'
             }`}
           >
-            <span className="absolute -top-2.5 right-3 px-2.5 py-0.5 bg-gray-900 text-white text-[10px] font-bold rounded-full shadow-lg border border-white/20">
-              7 DAYS FREE
-            </span>
+            {trialEligible && (
+              <span className="absolute -top-2.5 right-3 px-2.5 py-0.5 bg-gray-900 text-white text-[10px] font-bold rounded-full shadow-lg border border-white/20">
+                7 DAYS FREE
+              </span>
+            )}
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-white font-semibold text-sm drop-shadow">Yearly</p>
@@ -358,7 +366,7 @@ export function PaywallModal({
         <div className="flex items-center justify-center gap-2 px-6 pt-5 pb-3">
           <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-white drop-shadow" />
           <span className="text-white font-semibold text-sm drop-shadow">
-            {selectedPlan === 'yearly' ? 'No Payment Due Now' : 'No Commitment - Cancel Anytime'}
+            {showTrial ? 'No Payment Due Now' : 'No Commitment - Cancel Anytime'}
           </span>
         </div>
 
@@ -382,7 +390,7 @@ export function PaywallModal({
                 <span>Processing...</span>
               </>
             ) : (
-              <span>{selectedPlan === 'yearly' ? 'Start My 7-Day Free Trial' : 'Start My Journey'}</span>
+              <span>{showTrial ? 'Start My 7-Day Free Trial' : 'Start My Journey'}</span>
             )}
           </button>
 
@@ -410,16 +418,23 @@ export function PaywallModal({
           </button>
         </div>
 
-        {/* Disclosure — App Store 3.1.2 requires clear, conspicuous subscription terms.
-            Both variants render in the same grid cell so the modal height stays
-            identical between plans (yearly disclosure is 3 lines, monthly is 2). */}
+        {/* Disclosure — App Store 3.1.2 requires clear, conspicuous subscription terms. */}
         <div className="grid px-8 pt-1 pb-4">
-          <p
-            aria-hidden={selectedPlan !== 'yearly'}
-            className={`col-start-1 row-start-1 text-center text-white/90 text-xs leading-relaxed drop-shadow font-medium ${selectedPlan === 'yearly' ? '' : 'invisible pointer-events-none'}`}
-          >
-            7 days free, then {yearlyPrice} per year. Billed yearly.<br />Plan auto-renews unless you<br />cancel. Cancel in {storeName}.
-          </p>
+          {trialEligible ? (
+            <p
+              aria-hidden={!showTrial}
+              className={`col-start-1 row-start-1 text-center text-white/90 text-xs leading-relaxed drop-shadow font-medium ${showTrial ? '' : 'invisible pointer-events-none'}`}
+            >
+              7 days free, then {yearlyPrice} per year. Billed yearly.<br />Plan auto-renews unless you<br />cancel. Cancel in {storeName}.
+            </p>
+          ) : (
+            <p
+              aria-hidden={selectedPlan !== 'yearly'}
+              className={`col-start-1 row-start-1 text-center text-white/90 text-xs leading-relaxed drop-shadow font-medium ${selectedPlan === 'yearly' ? '' : 'invisible pointer-events-none'}`}
+            >
+              {yearlyPrice} per year. Billed yearly.<br />Plan auto-renews unless you<br />cancel. Cancel in {storeName}.
+            </p>
+          )}
           <p
             aria-hidden={selectedPlan !== 'monthly'}
             className={`col-start-1 row-start-1 self-center text-center text-white/90 text-xs leading-relaxed drop-shadow font-medium ${selectedPlan === 'monthly' ? '' : 'invisible pointer-events-none'}`}

@@ -35,18 +35,7 @@ export async function middleware(request: NextRequest) {
 
   // IMPORTANT: Do NOT remove this getUser() call.
   // It refreshes the auth token and keeps the session alive.
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  // Optional: Log for debugging
-  if (request.nextUrl.pathname === '/' || request.nextUrl.pathname.startsWith('/subscription')) {
-    console.log('🔐 Middleware check:', {
-      path: request.nextUrl.pathname,
-      hasUser: !!user,
-      userId: user?.id,
-    })
-  }
+  await supabase.auth.getUser()
 
   return supabaseResponse
 }

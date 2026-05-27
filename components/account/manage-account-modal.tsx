@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/sheet"
 import { openAppSettings } from "@/lib/notifications"
 import type { NotificationPreferences } from "@/lib/notifications"
+import { logOutRevenueCat } from "@/lib/revenuecat-client"
+import { createClient } from "@/lib/supabase/browser-client"
 import type { PermissionState } from "@/hooks/use-notifications"
 
 interface ManageAccountModalProps {
@@ -215,7 +217,12 @@ export function ManageAccountModal({
         const data = await res.json().catch(() => ({}))
         throw new Error(data.error || 'Failed to delete account')
       }
-      onSignOutAction?.()
+      if (onSignOutAction) {
+        await onSignOutAction()
+      } else {
+        await logOutRevenueCat()
+        await createClient().auth.signOut()
+      }
       onCloseAction()
     } catch (err: any) {
       setDeleteError(err.message || 'Failed to delete account. Please try again.')
@@ -457,15 +464,13 @@ export function ManageAccountModal({
           <div className="h-px bg-white/10 my-1" />
 
           {/* Manage Subscription */}
-          {isPremium && (
-            <button
-              onClick={handleManageSubscription}
-              className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white py-3 px-4 rounded-2xl font-medium text-sm hover:bg-white/15 transition-all flex items-center justify-center space-x-2"
-            >
-              <Icon icon="solar:settings-bold" width="18" height="18" />
-              <span>Manage Subscription</span>
-            </button>
-          )}
+          <button
+            onClick={handleManageSubscription}
+            className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white py-3 px-4 rounded-2xl font-medium text-sm hover:bg-white/15 transition-all flex items-center justify-center space-x-2"
+          >
+            <Icon icon="solar:settings-bold" width="18" height="18" />
+            <span>Manage Subscription</span>
+          </button>
 
           {/* Delete Account */}
           <button

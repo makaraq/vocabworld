@@ -9,6 +9,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { checkRateLimit } from '@/lib/rate-limit'
 
 // Language code mapping for Google TTS
 const GOOGLE_TTS_LANGUAGES: Record<string, string> = {
@@ -107,6 +108,11 @@ async function generateResponsiveVoiceTTS(text: string, languageCode: string): P
 
 export async function GET(request: NextRequest) {
   try {
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+    if (!checkRateLimit(ip, 60, 60_000)) {
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+    }
+
     const searchParams = request.nextUrl.searchParams
     const text = searchParams.get('text')
     const languageCode = searchParams.get('languageCode') || 'en'
@@ -191,6 +197,11 @@ export async function GET(request: NextRequest) {
 // POST endpoint for batch audio generation (returns URLs)
 export async function POST(request: NextRequest) {
   try {
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+    if (!checkRateLimit(ip, 60, 60_000)) {
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+    }
+
     const body = await request.json()
     const { words, languageCode } = body
     

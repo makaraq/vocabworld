@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { checkRateLimit } from '@/lib/rate-limit'
 
 const VOICES: Record<string, string> = {
   ar: 'ar-SA-ZariyahNeural',
@@ -55,6 +56,11 @@ const VOICES: Record<string, string> = {
 
 export async function GET(request: NextRequest) {
   try {
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+    if (!checkRateLimit(ip, 60, 60_000)) {
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+    }
+
     const { searchParams } = new URL(request.url)
     const text = searchParams.get('text')
     const lang = searchParams.get('lang') || 'en'
