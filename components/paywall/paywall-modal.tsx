@@ -1,9 +1,12 @@
 'use client'
 
-import { useState, useEffect, useRef, useMemo } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { Icon } from '@iconify/react'
 import Link from 'next/link'
+import Lottie from 'lottie-react'
+import type { LottieRefCurrentProps } from 'lottie-react'
+import celebrationAnim from '@/lib/animations/celebration.json'
 import { PRICING, formatPrice } from '@/lib/pricing'
 import { useAuth } from '@/contexts/auth-context'
 import { useRevenueCat } from '@/hooks/use-revenuecat'
@@ -34,6 +37,12 @@ export function PaywallModal({
   const { user, refreshSubscription } = useAuth()
   const { purchasePackage, restorePurchases, getOfferings, loading, error, clearError } = useRevenueCat()
   const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const lottieRef = useRef<LottieRefCurrentProps>(null)
+
+  const handleLottieComplete = useCallback(() => {
+    // After full play, loop just the last 2 seconds (frames 90-150 at 30fps)
+    lottieRef.current?.playSegments([90, 150], true)
+  }, [])
 
   useEffect(() => {
     setMounted(true)
@@ -66,19 +75,6 @@ export function PaywallModal({
       if (errorTimerRef.current) clearTimeout(errorTimerRef.current)
     }
   }, [error, clearError])
-
-  const confettiParticles = useMemo(() => {
-    const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9']
-    return Array.from({ length: 40 }, (_, i) => ({
-      id: i,
-      color: colors[i % colors.length],
-      left: Math.random() * 100,
-      delay: Math.random() * 1.5,
-      duration: 2 + Math.random() * 2,
-      size: 6 + Math.random() * 6,
-      isCircle: Math.random() > 0.5,
-    }))
-  }, [])
 
   if (!isOpen || !mounted) return null
 
@@ -136,33 +132,15 @@ export function PaywallModal({
       <div className="relative bg-white/10 backdrop-blur-xl rounded-3xl max-w-md w-full border border-white/20 shadow-2xl max-h-[95vh] overflow-y-auto">
         {purchaseSuccess && (
           <div className="absolute inset-0 z-50 flex flex-col items-center justify-center p-8 bg-black/80 backdrop-blur-xl rounded-3xl overflow-hidden">
-            {/* Confetti particles */}
-            {confettiParticles.map(p => (
-              <div
-                key={p.id}
-                className="absolute pointer-events-none"
-                style={{
-                  left: `${p.left}%`,
-                  top: '-12px',
-                  width: `${p.size}px`,
-                  height: `${p.size}px`,
-                  backgroundColor: p.color,
-                  borderRadius: p.isCircle ? '50%' : '2px',
-                  animation: `confetti-fall ${p.duration}s ease-in ${p.delay}s both, confetti-sway ${p.duration * 0.6}s ease-in-out ${p.delay}s infinite`,
-                }}
+            {/* Lottie animation */}
+            <div className="w-56 h-56 -mb-2">
+              <Lottie
+                lottieRef={lottieRef}
+                animationData={celebrationAnim}
+                loop={false}
+                autoplay
+                onComplete={handleLottieComplete}
               />
-            ))}
-
-            {/* Crown icon */}
-            <div
-              className="relative z-10 w-24 h-24 rounded-full flex items-center justify-center mb-6"
-              style={{
-                background: 'linear-gradient(135deg, #F59E0B, #EF4444)',
-                boxShadow: '0 0 40px rgba(245, 158, 11, 0.4)',
-                animation: 'celebration-scale-in 0.6s ease-out both',
-              }}
-            >
-              <Icon icon="solar:crown-bold" className="w-14 h-14 text-white" />
             </div>
 
             {/* Title */}
