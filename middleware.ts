@@ -51,6 +51,6 @@ export const config = {
      * - API routes that don't need auth refresh
      * - Python serverless functions
      */
-    '/((?!_next/static|_next/image|favicon.ico|api/sentence-audio|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|mp3|wav)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|sw\\.js|api/sentence-audio|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|mp3|wav)$).*)',
   ],
 }

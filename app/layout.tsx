@@ -14,7 +14,7 @@ const spaceGrotesk = Space_Grotesk({
 })
 
 export const metadata: Metadata = {
-  title: "Sprind - AI Language Learning",
+  title: "Sprind - Learn Language Fast",
   description: "Learn vocabulary in 50 languages with audio pronunciation, progress tracking, and daily streaks.",
 }
 
