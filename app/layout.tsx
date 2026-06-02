@@ -37,6 +37,15 @@ export default function RootLayout({
           document.addEventListener('selectstart', function(e) { e.preventDefault(); }, true);
           if (window.Capacitor && window.Capacitor.isNativePlatform()) {
             document.documentElement.classList.add('cap-native');
+            if (window.location.hostname === 'localhost' && !window.location.port) {
+              var _f = window.fetch;
+              window.fetch = function(input, init) {
+                if (typeof input === 'string' && input.startsWith('/api/')) {
+                  input = 'https://sprind-x843.vercel.app' + input;
+                }
+                return _f.apply(window, arguments);
+              };
+            }
           }
         ` }} />
       </head>
