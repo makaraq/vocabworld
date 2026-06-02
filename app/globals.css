@@ -231,60 +231,84 @@ input, textarea, [contenteditable] {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   }
 
-  /* 🍎 iOS WebView Glass Effect Fixes */
-  /* Force proper glass morphism in Capacitor iOS WebView */
+  /* ── 60 fps performance on Capacitor native ──────────────────────────
+     Three rules that eliminate the biggest jank sources on iOS WKWebView:
+
+     1. Constrain `transition-all` → only compositor-friendly properties
+        (transform, opacity, bg-color, border-color). The Tailwind class
+        `transition-all` animates EVERY property including box-shadow,
+        width, padding etc. which trigger layout+paint on every frame.
+
+     2. Reduce backdrop-filter blur radii. backdrop-blur forces the GPU
+        to sample + gaussian-blur every pixel behind the element on every
+        composited frame. Halving the radius is ~4x cheaper.
+
+     3. Promote frequently-animated elements to their own GPU layer so
+        transforms/opacity changes stay on the compositor thread and
+        never block the main thread.
+  ────────────────────────────────────────────────────────────────────── */
+  .cap-native .transition-all {
+    transition-property: transform, opacity, background-color, border-color !important;
+  }
+
+  .cap-native .backdrop-blur-sm {
+    -webkit-backdrop-filter: blur(4px) !important;
+    backdrop-filter: blur(4px) !important;
+  }
+  .cap-native .backdrop-blur-md {
+    -webkit-backdrop-filter: blur(6px) !important;
+    backdrop-filter: blur(6px) !important;
+  }
+  .cap-native .backdrop-blur-lg {
+    -webkit-backdrop-filter: blur(8px) !important;
+    backdrop-filter: blur(8px) !important;
+  }
+  .cap-native .backdrop-blur-xl {
+    -webkit-backdrop-filter: blur(10px) !important;
+    backdrop-filter: blur(10px) !important;
+  }
+  .cap-native .backdrop-blur-2xl {
+    -webkit-backdrop-filter: blur(12px) saturate(120%) !important;
+    backdrop-filter: blur(12px) saturate(120%) !important;
+  }
+  .cap-native .backdrop-blur-3xl {
+    -webkit-backdrop-filter: blur(12px) !important;
+    backdrop-filter: blur(12px) !important;
+  }
+
+  /* GPU-promote buttons and cards so taps never drop frames */
+  .cap-native button,
+  .cap-native [class*="rounded-2xl"],
+  .cap-native [class*="rounded-xl"] {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+
+  /* ── Glass morphism (all platforms) ──────────────────────────────── */
   @supports (-webkit-backdrop-filter: blur(20px)) {
-    .backdrop-blur-2xl {
-      -webkit-backdrop-filter: blur(16px) saturate(120%);
-      backdrop-filter: blur(16px) saturate(120%);
-    }
-    
     .bg-white\/5 {
       background: rgba(255, 255, 255, 0.03) !important;
     }
-    
+
     .bg-white\/10 {
       background: rgba(255, 255, 255, 0.08) !important;
     }
-    
+
     .bg-white\/15 {
       background: rgba(255, 255, 255, 0.12) !important;
     }
-    
-    /* iOS-specific topic cards with perfect glass effect */
+
+    /* iOS-specific topic cards with glass effect */
     .bg-white\/5.backdrop-blur-2xl {
-      background: linear-gradient(135deg, 
-        rgba(255, 255, 255, 0.1) 0%, 
+      background: linear-gradient(135deg,
+        rgba(255, 255, 255, 0.1) 0%,
         rgba(255, 255, 255, 0.02) 50%,
         rgba(255, 255, 255, 0.05) 100%) !important;
       border: 1px solid rgba(255, 255, 255, 0.15) !important;
-      box-shadow: 
+      box-shadow:
         0 8px 32px rgba(0, 0, 0, 0.12),
         inset 0 1px 0 rgba(255, 255, 255, 0.1),
         0 1px 0 rgba(255, 255, 255, 0.1) !important;
-    }
-  }
-  
-  /* iOS detection and enhanced glass override */
-  @media screen and (-webkit-min-device-pixel-ratio: 2) {
-    .ios-glass-override {
-      background: linear-gradient(135deg, 
-        rgba(255, 255, 255, 0.08) 0%, 
-        rgba(255, 255, 255, 0.02) 50%,
-        rgba(255, 255, 255, 0.06) 100%) !important;
-      border: 1px solid rgba(255, 255, 255, 0.2) !important;
-      backdrop-filter: blur(12px) saturate(110%) !important;
-      -webkit-backdrop-filter: blur(12px) saturate(110%) !important;
-      box-shadow: 
-        0 4px 16px rgba(0, 0, 0, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
-    }
-    
-    .ios-glass-override:hover {
-      background: linear-gradient(135deg, 
-        rgba(255, 255, 255, 0.12) 0%, 
-        rgba(255, 255, 255, 0.04) 50%,
-        rgba(255, 255, 255, 0.08) 100%) !important;
     }
   }
 }

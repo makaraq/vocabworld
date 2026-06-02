@@ -272,16 +272,22 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
   setShowManageAccount,
   sections
 }) => {
-  const [touchStart, setTouchStart] = useState(0)
-  const [touchEnd, setTouchEnd] = useState(0)
-  const [isDragging, setIsDragging] = useState(false)
-  const [dragOffset, setDragOffset] = useState(0)
-  const [isTransitioning, setIsTransitioning] = useState(false)
-  
-  // Dots dragging state
-  const [dotsTouchStart, setDotsTouchStart] = useState<number | null>(null)
-  const [dotsTouchEnd, setDotsTouchEnd] = useState<number | null>(null)
-  const [isDraggingDots, setIsDraggingDots] = useState(false)
+  // ── Ref-based drag state (no re-renders during drag → 60 fps) ──
+  const sliderRef = useRef<HTMLDivElement>(null)
+  const drag = useRef({
+    startX: 0,
+    currentX: 0,
+    offset: 0,
+    dragging: false,
+    transitioning: false,
+    screenW: 0,
+    raf: 0,
+  })
+  const dots = useRef({
+    startX: null as number | null,
+    endX: null as number | null,
+    dragging: false,
+  })
   
   // Use a stable container ref that persists across re-renders
   const iconContainerRef = useRef<HTMLDivElement>(null)
@@ -337,141 +343,127 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
     }
   }, [currentSection])
 
-  // Enhanced touch handlers for drag gestures
+  // ── Direct-DOM drag helpers (no setState → no re-renders → 60 fps) ──
+  const applyTransform = (section: number, offset: number) => {
+    if (!sliderRef.current) return
+    const pct = -section * 100 + (offset / drag.current.screenW) * 100
+    sliderRef.current.style.transform = `translateX(${pct}%)`
+  }
+
+  const snapTo = (section: number) => {
+    if (!sliderRef.current) return
+    sliderRef.current.style.transition = 'transform 300ms cubic-bezier(0.25,0.46,0.45,0.94)'
+    sliderRef.current.style.transform = `translateX(${-section * 100}%)`
+  }
+
+  // Sync slider position whenever currentSection changes externally (dots, keyboard)
+  useEffect(() => {
+    snapTo(currentSection)
+  }, [currentSection])
+
+  // Clean up transition class after animation ends
+  useEffect(() => {
+    const el = sliderRef.current
+    if (!el) return
+    const handler = () => {
+      el.style.transition = ''
+      drag.current.transitioning = false
+    }
+    el.addEventListener('transitionend', handler)
+    return () => el.removeEventListener('transitionend', handler)
+  }, [])
+
   const handleTouchStart = (e: React.TouchEvent) => {
-    if (isTransitioning) return
-    
-    setTouchEnd(0) // Reset touchEnd
-    setTouchStart(e.targetTouches[0].clientX)
-    setIsDragging(false)
-    setDragOffset(0)
+    if (drag.current.transitioning) return
+    const d = drag.current
+    d.startX = e.targetTouches[0].clientX
+    d.currentX = d.startX
+    d.dragging = false
+    d.offset = 0
+    d.screenW = window.innerWidth
+    if (sliderRef.current) sliderRef.current.style.transition = 'none'
   }
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (isTransitioning) return
-    
-    const currentTouch = e.targetTouches[0].clientX
-    setTouchEnd(currentTouch)
-    
-    if (touchStart) {
-      const diff = currentTouch - touchStart
-      setIsDragging(true)
-      
-      // iPhone-like drag with resistance at edges
-      const screenWidth = window.innerWidth
-      let dragAmount = diff
-      
-      // Add resistance at edges
-      if ((currentSection === 0 && diff > 0) || (currentSection === sections.length - 1 && diff < 0)) {
-        dragAmount = diff * 0.3 // Rubber band effect
-      }
-      
-      const maxDrag = screenWidth * 0.8 // 80% of screen width for more freedom
-      const limitedDrag = Math.max(-maxDrag, Math.min(maxDrag, dragAmount))
-      setDragOffset(limitedDrag)
+    if (drag.current.transitioning) return
+    const d = drag.current
+    d.currentX = e.targetTouches[0].clientX
+    d.dragging = true
+    let diff = d.currentX - d.startX
+    // Rubber-band at edges
+    if ((currentSection === 0 && diff > 0) || (currentSection === sections.length - 1 && diff < 0)) {
+      diff *= 0.3
     }
+    d.offset = Math.max(-d.screenW * 0.8, Math.min(d.screenW * 0.8, diff))
+    cancelAnimationFrame(d.raf)
+    d.raf = requestAnimationFrame(() => applyTransform(currentSection, d.offset))
   }
 
   const handleTouchEnd = () => {
-    if (isTransitioning) return
-    
-    if (!touchStart || !touchEnd) {
-      setIsDragging(false)
-      setDragOffset(0)
-      return
-    }
-    
-    const distance = touchStart - touchEnd
-    const velocity = Math.abs(distance)
-    const screenWidth = window.innerWidth
-    
-    // iPhone-like: either 50px swipe OR 30% of screen drag
-    const threshold = Math.min(50, screenWidth * 0.15) // More sensitive
-    const dragPercentage = Math.abs(dragOffset) / screenWidth
-    
-    const isLeftSwipe = distance > threshold || (distance > 0 && dragPercentage > 0.3)
-    const isRightSwipe = distance < -threshold || (distance < 0 && dragPercentage > 0.3)
+    const d = drag.current
+    cancelAnimationFrame(d.raf)
+    if (!d.dragging) return
 
-    setIsTransitioning(true)
-    
-    if (isLeftSwipe && currentSection < sections.length - 1) {
-      setCurrentSection(currentSection + 1)
-    } else if (isRightSwipe && currentSection > 0) {
-      setCurrentSection(currentSection - 1)
+    const distance = d.startX - d.currentX
+    const threshold = Math.min(50, d.screenW * 0.15)
+    const dragPct = Math.abs(d.offset) / d.screenW
+
+    let next = currentSection
+    if ((distance > threshold || (distance > 0 && dragPct > 0.3)) && currentSection < sections.length - 1) {
+      next = currentSection + 1
+    } else if ((distance < -threshold || (distance < 0 && dragPct > 0.3)) && currentSection > 0) {
+      next = currentSection - 1
     }
-    
-    // Reset drag state
-    setIsDragging(false)
-    setDragOffset(0)
-    
-    // Reset transition state after animation
-    setTimeout(() => setIsTransitioning(false), 300)
+
+    d.dragging = false
+    d.offset = 0
+    d.transitioning = true
+    snapTo(next)
+    if (next !== currentSection) setCurrentSection(next)
   }
 
-  // Mouse event handlers for desktop drag support
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (isTransitioning) return
-    
-    setTouchEnd(0)
-    setTouchStart(e.clientX)
-    setIsDragging(false)
-    setDragOffset(0)
-    
-    const handleMouseMove = (moveEvent: MouseEvent) => {
-      if (isTransitioning) return
-      
-      setTouchEnd(moveEvent.clientX)
-      
-      if (touchStart) {
-        const diff = moveEvent.clientX - touchStart
-        setIsDragging(true)
-        
-        const screenWidth = window.innerWidth
-        let dragAmount = diff
-        
-        // Add resistance at edges
-        if ((currentSection === 0 && diff > 0) || (currentSection === sections.length - 1 && diff < 0)) {
-          dragAmount = diff * 0.3 // Rubber band effect
-        }
-        
-        const maxDrag = screenWidth * 0.8 // Match touch handler
-        const limitedDrag = Math.max(-maxDrag, Math.min(maxDrag, dragAmount))
-        setDragOffset(limitedDrag)
-      }
-    }
-    
-    const handleMouseUp = () => {
-      if (isTransitioning) return
-      
-      if (touchStart && touchEnd) {
-        const distance = touchStart - touchEnd
-        const screenWidth = window.innerWidth
-        const threshold = Math.min(50, screenWidth * 0.15)
-        const dragPercentage = Math.abs(dragOffset) / screenWidth
-        
-        const isLeftSwipe = distance > threshold || (distance > 0 && dragPercentage > 0.3)
-        const isRightSwipe = distance < -threshold || (distance < 0 && dragPercentage > 0.3)
+    if (drag.current.transitioning) return
+    const d = drag.current
+    d.startX = e.clientX
+    d.currentX = d.startX
+    d.dragging = false
+    d.offset = 0
+    d.screenW = window.innerWidth
+    if (sliderRef.current) sliderRef.current.style.transition = 'none'
 
-        setIsTransitioning(true)
-        
-        if (isLeftSwipe && currentSection < sections.length - 1) {
-          setCurrentSection(currentSection + 1)
-        } else if (isRightSwipe && currentSection > 0) {
-          setCurrentSection(currentSection - 1)
-        }
-        
-        setTimeout(() => setIsTransitioning(false), 300)
-      }
-      
-      setIsDragging(false)
-      setDragOffset(0)
-      
-      document.removeEventListener('mousemove', handleMouseMove)
-      document.removeEventListener('mouseup', handleMouseUp)
+    const onMove = (me: MouseEvent) => {
+      if (d.transitioning) return
+      d.currentX = me.clientX
+      d.dragging = true
+      let diff = d.currentX - d.startX
+      if ((currentSection === 0 && diff > 0) || (currentSection === sections.length - 1 && diff < 0)) diff *= 0.3
+      d.offset = Math.max(-d.screenW * 0.8, Math.min(d.screenW * 0.8, diff))
+      cancelAnimationFrame(d.raf)
+      d.raf = requestAnimationFrame(() => applyTransform(currentSection, d.offset))
     }
-    
-    document.addEventListener('mousemove', handleMouseMove)
-    document.addEventListener('mouseup', handleMouseUp)
+
+    const onUp = () => {
+      cancelAnimationFrame(d.raf)
+      if (d.dragging) {
+        const distance = d.startX - d.currentX
+        const threshold = Math.min(50, d.screenW * 0.15)
+        const dragPct = Math.abs(d.offset) / d.screenW
+        let next = currentSection
+        if ((distance > threshold || (distance > 0 && dragPct > 0.3)) && currentSection < sections.length - 1) next = currentSection + 1
+        else if ((distance < -threshold || (distance < 0 && dragPct > 0.3)) && currentSection > 0) next = currentSection - 1
+        d.transitioning = true
+        snapTo(next)
+        if (next !== currentSection) setCurrentSection(next)
+      }
+      d.dragging = false
+      d.offset = 0
+      document.removeEventListener('mousemove', onMove)
+      document.removeEventListener('mouseup', onUp)
+    }
+
+    document.addEventListener('mousemove', onMove)
+    document.addEventListener('mouseup', onUp)
   }
 
   const currentSectionData = sections[currentSection]
@@ -495,12 +487,10 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
         onTouchEnd={handleTouchEnd}
         onMouseDown={handleMouseDown}
       >
-        <div 
-          className={`flex h-full ${isDragging ? '' : 'transition-transform duration-300 ease-out'}`}
-          style={{ 
-            transform: `translateX(${-currentSection * 100 + (dragOffset / window.innerWidth) * 100}%)`,
-            cursor: isDragging ? 'grabbing' : 'grab'
-          }}
+        <div
+          ref={sliderRef}
+          className="flex h-full"
+          style={{ willChange: 'transform', cursor: 'grab' }}
         >
           {sections.map((section, sectionIndex) => (
             <div key={sectionIndex} className="w-full h-full flex-shrink-0 px-2 overflow-hidden">
@@ -546,7 +536,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                       lastTopicSectionRef.current = currentSection
                       onTopicSelect({ id: -1, name: 'Search Word', icon: '' } as Topic)
                     }}
-                    className="flex-shrink-0 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl sm:rounded-2xl p-4 sm:p-5 text-center hover:bg-white/15 transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl relative"
+                    className="flex-shrink-0 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl sm:rounded-2xl p-4 sm:p-5 text-center hover:bg-white/15 transition-[transform,background-color] duration-300 hover:scale-[1.02] shadow-lg relative"
                     aria-label="Search for a word and get its translation"
                   >
 
@@ -646,138 +636,77 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
         aria-label="Language learning sections"
         onTouchStart={(e) => {
           e.preventDefault()
-          setDotsTouchStart(e.touches[0].clientX)
-          setDotsTouchEnd(null)
-          setIsDraggingDots(false)
+          dots.current = { startX: e.touches[0].clientX, endX: null, dragging: false }
         }}
         onTouchMove={(e) => {
-          if (dotsTouchStart === null) return
+          const dt = dots.current
+          if (dt.startX === null) return
           e.preventDefault()
-          const currentTouch = e.touches[0].clientX
-          setDotsTouchEnd(currentTouch)
-          const diff = Math.abs(currentTouch - dotsTouchStart)
-          
-          // Start dragging after 10px movement
-          if (diff > 10) {
-            setIsDraggingDots(true)
-          }
+          dt.endX = e.touches[0].clientX
+          if (Math.abs(dt.endX - dt.startX) > 10) dt.dragging = true
         }}
         onTouchEnd={(e) => {
-          if (dotsTouchStart === null) {
-            setDotsTouchStart(null)
-            setDotsTouchEnd(null)
-            setIsDraggingDots(false)
-            return
-          }
-          
-          // If we have touchEnd, check for swipe
-          if (dotsTouchEnd !== null) {
-            const distance = dotsTouchStart - dotsTouchEnd
-            const threshold = 50 // 50px swipe threshold
-            
-            if (Math.abs(distance) > threshold) {
+          const dt = dots.current
+          if (dt.startX === null) { dots.current = { startX: null, endX: null, dragging: false }; return }
+
+          if (dt.endX !== null) {
+            const distance = dt.startX - dt.endX
+            if (Math.abs(distance) > 50) {
               e.stopPropagation()
-              const isLeftSwipe = distance > 0
-              const isRightSwipe = distance < 0
-              
-              if (isLeftSwipe && currentSection < sections.length - 1) {
-                setIsTransitioning(true)
-                setCurrentSection(currentSection + 1)
-                setTimeout(() => setIsTransitioning(false), 300)
-              } else if (isRightSwipe && currentSection > 0) {
-                setIsTransitioning(true)
-                setCurrentSection(currentSection - 1)
-                setTimeout(() => setIsTransitioning(false), 300)
+              if (distance > 0 && currentSection < sections.length - 1) {
+                drag.current.transitioning = true; setCurrentSection(currentSection + 1)
+              } else if (distance < 0 && currentSection > 0) {
+                drag.current.transitioning = true; setCurrentSection(currentSection - 1)
               }
-              
-              setDotsTouchStart(null)
-              setDotsTouchEnd(null)
-              setIsDraggingDots(false)
+              dots.current = { startX: null, endX: null, dragging: false }
               return
             }
           }
-          
-          // If not dragging or swipe too short, treat as tap
-          if (!isDraggingDots || dotsTouchEnd === null) {
+
+          if (!dt.dragging || dt.endX === null) {
             const touch = e.changedTouches[0]
-            const element = document.elementFromPoint(touch.clientX, touch.clientY)
-            const button = element?.closest('button[role="tab"]')
-            const tabId = button?.getAttribute('id') // "section-tab-{index}"
-            const targetIndex = tabId ? parseInt(tabId.replace('section-tab-', ''), 10) : -1
-            if (targetIndex >= 0 && targetIndex < sections.length && targetIndex !== currentSection) {
-              setIsTransitioning(true)
-              setCurrentSection(targetIndex)
-              setTimeout(() => setIsTransitioning(false), 300)
+            const el = document.elementFromPoint(touch.clientX, touch.clientY)
+            const btn = el?.closest('button[role="tab"]')
+            const tabId = btn?.getAttribute('id')
+            const idx = tabId ? parseInt(tabId.replace('section-tab-', ''), 10) : -1
+            if (idx >= 0 && idx < sections.length && idx !== currentSection) {
+              drag.current.transitioning = true; setCurrentSection(idx)
             }
           }
-          
-          setDotsTouchStart(null)
-          setDotsTouchEnd(null)
-          setIsDraggingDots(false)
+          dots.current = { startX: null, endX: null, dragging: false }
         }}
         onMouseDown={(e) => {
-          setDotsTouchStart(e.clientX)
-          setDotsTouchEnd(null)
-          setIsDraggingDots(false)
-          
-          const handleMouseMove = (moveEvent: MouseEvent) => {
-            if (dotsTouchStart === null) return
-            setDotsTouchEnd(moveEvent.clientX)
-            const diff = Math.abs(moveEvent.clientX - dotsTouchStart)
-            
-            if (diff > 10) {
-              setIsDraggingDots(true)
-            }
+          const dt = dots.current
+          dt.startX = e.clientX; dt.endX = null; dt.dragging = false
+
+          const onMove = (me: MouseEvent) => {
+            dt.endX = me.clientX
+            if (dt.startX !== null && Math.abs(me.clientX - dt.startX) > 10) dt.dragging = true
           }
-          
-          const handleMouseUp = (upEvent: MouseEvent) => {
-            if (dotsTouchStart === null) {
-              document.removeEventListener('mousemove', handleMouseMove)
-              document.removeEventListener('mouseup', handleMouseUp)
-              return
-            }
-            
-            if (dotsTouchEnd !== null) {
-              const distance = dotsTouchStart - dotsTouchEnd
-              const threshold = 50
-              
-              if (Math.abs(distance) > threshold) {
-                const isLeftSwipe = distance > 0
-                const isRightSwipe = distance < 0
-                
-                if (isLeftSwipe && currentSection < sections.length - 1) {
-                  setIsTransitioning(true)
-                  setCurrentSection(currentSection + 1)
-                  setTimeout(() => setIsTransitioning(false), 300)
-                } else if (isRightSwipe && currentSection > 0) {
-                  setIsTransitioning(true)
-                  setCurrentSection(currentSection - 1)
-                  setTimeout(() => setIsTransitioning(false), 300)
+          const onUp = (ue: MouseEvent) => {
+            if (dt.startX !== null && dt.endX !== null) {
+              const distance = dt.startX - dt.endX
+              if (Math.abs(distance) > 50) {
+                if (distance > 0 && currentSection < sections.length - 1) {
+                  drag.current.transitioning = true; setCurrentSection(currentSection + 1)
+                } else if (distance < 0 && currentSection > 0) {
+                  drag.current.transitioning = true; setCurrentSection(currentSection - 1)
                 }
-              } else if (!isDraggingDots) {
-                // If not dragging, treat as click
-                const dotsContainer = e.currentTarget
-                const rect = dotsContainer.getBoundingClientRect()
-                const x = upEvent.clientX - rect.left
-                const dotWidth = rect.width / sections.length
-                const targetIndex = Math.floor(x / dotWidth)
-                if (targetIndex >= 0 && targetIndex < sections.length && targetIndex !== currentSection) {
-                  setIsTransitioning(true)
-                  setCurrentSection(targetIndex)
-                  setTimeout(() => setIsTransitioning(false), 300)
+              } else if (!dt.dragging) {
+                const rect = e.currentTarget.getBoundingClientRect()
+                const x = ue.clientX - rect.left
+                const idx = Math.floor(x / (rect.width / sections.length))
+                if (idx >= 0 && idx < sections.length && idx !== currentSection) {
+                  drag.current.transitioning = true; setCurrentSection(idx)
                 }
               }
             }
-            
-            setDotsTouchStart(null)
-            setDotsTouchEnd(null)
-            setIsDraggingDots(false)
-            document.removeEventListener('mousemove', handleMouseMove)
-            document.removeEventListener('mouseup', handleMouseUp)
+            dots.current = { startX: null, endX: null, dragging: false }
+            document.removeEventListener('mousemove', onMove)
+            document.removeEventListener('mouseup', onUp)
           }
-          
-          document.addEventListener('mousemove', handleMouseMove)
-          document.addEventListener('mouseup', handleMouseUp)
+          document.addEventListener('mousemove', onMove)
+          document.addEventListener('mouseup', onUp)
         }}
       >
         {sections.map((section, index) => {
@@ -790,19 +719,17 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
               aria-label={`Navigate to ${section.name} section`}
               id={`section-tab-${index}`}
               onClick={() => {
-                if (!isDragging && !isTransitioning && !isDraggingDots) {
-                  setIsTransitioning(true)
+                if (!drag.current.dragging && !drag.current.transitioning && !dots.current.dragging) {
+                  drag.current.transitioning = true
                   setCurrentSection(index)
-                  setTimeout(() => setIsTransitioning(false), 300)
                 }
               }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault()
-                  if (!isDragging && !isTransitioning) {
-                    setIsTransitioning(true)
+                  if (!drag.current.dragging && !drag.current.transitioning) {
+                    drag.current.transitioning = true
                     setCurrentSection(index)
-                    setTimeout(() => setIsTransitioning(false), 300)
                   }
                 }
                 if (e.key === 'ArrowRight' && index < sections.length - 1) {
@@ -4211,8 +4138,8 @@ export function LanguageSelector() {
         onTouchCancel={() => handleTopicHoldEnd()}
         aria-label={`${getTopicDisplayName(topic.id, topic.name)} topic${isCompleted ? ', completed' : ''}`}
         aria-pressed={selectedTopic?.id === topic.id}
-        className={`bg-black/40 rounded-xl xs:rounded-2xl sm:rounded-2xl p-3 xs:p-4 sm:p-5 text-center hover:bg-black/50 h-32 xs:h-36 sm:h-40 shadow-lg hover:shadow-xl ${
-          holdingTopicId === topic.id ? 'scale-105 transition-all duration-75' : 'scale-100 transition-all duration-300 hover:scale-[1.02]'
+        className={`bg-black/40 rounded-xl xs:rounded-2xl sm:rounded-2xl p-3 xs:p-4 sm:p-5 text-center hover:bg-black/50 h-32 xs:h-36 sm:h-40 shadow-lg ${
+          holdingTopicId === topic.id ? 'scale-105 transition-transform duration-75' : 'scale-100 transition-[transform,background-color] duration-300 hover:scale-[1.02]'
         } ${
           selectedTopic?.id === topic.id ? "bg-black/60 shadow-xl" : ""
         } ${completionBorderClass}`}
@@ -4252,7 +4179,7 @@ export function LanguageSelector() {
 
   return (
     <div className="w-full max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-2 sm:px-3 h-full max-h-[95vh] flex items-center">
-      <div className={`bg-white/5 backdrop-blur-3xl border border-white/15 rounded-2xl sm:rounded-3xl px-3 sm:px-5 md:px-7 py-4 sm:py-5 md:py-6 shadow-2xl transform transition-all duration-300 hover:scale-[1.02] hover:shadow-3xl w-full max-h-full overflow-hidden ${isTransitioning ? 'bg-white/10' : 'bg-white/5'}`}>
+      <div className={`bg-white/5 backdrop-blur-3xl border border-white/15 rounded-2xl sm:rounded-3xl px-3 sm:px-5 md:px-7 py-4 sm:py-5 md:py-6 shadow-2xl w-full max-h-full overflow-hidden ${isTransitioning ? 'bg-white/10' : 'bg-white/5'}`}>
         {isLoading && (
           <div className="text-center mb-4">
             <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
