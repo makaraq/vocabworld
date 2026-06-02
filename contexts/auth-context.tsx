@@ -177,8 +177,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const signInWithApple = async () => {
-    if (Capacitor.isNativePlatform()) {
-      const result = await SignInWithApple.authorize()
+    if (Capacitor.getPlatform() === 'ios') {
+      // clientId/redirectURI are required by the plugin's types but are ignored
+      // by the native iOS flow (it uses the app's bundle ID). `scopes` is the part
+      // that matters here — it makes Apple include email/name in the identity token.
+      const result = await SignInWithApple.authorize({
+        clientId: 'com.sprind.app',
+        redirectURI: 'https://ripkorbuxnoljiprhlyk.supabase.co/auth/v1/callback',
+        scopes: 'email name',
+      })
       if (!result?.response?.identityToken) throw new Error('No ID token from Apple')
       const { error } = await supabase.auth.signInWithIdToken({
         provider: 'apple',
