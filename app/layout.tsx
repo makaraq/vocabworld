@@ -41,9 +41,16 @@ export default function RootLayout({
               var _f = window.fetch;
               window.fetch = function(input, init) {
                 if (typeof input === 'string' && input.startsWith('/api/')) {
-                  input = 'https://sprind-x843.vercel.app' + input;
+                  input = 'https://vocabworld-x843.vercel.app' + input;
+                  init = init || {};
+                  init.headers = new Headers(init.headers || {});
+                  var sk = 'sb-ripkorbuxnoljiprhlyk-auth-token';
+                  var raw = localStorage.getItem(sk);
+                  if (raw) {
+                    try { init.headers.set('Authorization', 'Bearer ' + JSON.parse(raw).access_token); } catch(e) {}
+                  }
                 }
-                return _f.apply(window, arguments);
+                return _f.call(window, input, init);
               };
             }
           }

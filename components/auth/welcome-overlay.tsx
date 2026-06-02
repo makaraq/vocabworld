@@ -71,10 +71,11 @@ export function WelcomeOverlay() {
         const { Browser } = await import('@capacitor/browser')
         const listener = await Browser.addListener('browserFinished', () => {
           listener.remove()
-          // Small delay — if auth succeeded the user state will update and
-          // showOverlay will go false on its own. Only reset if still no user.
           setTimeout(() => setIsSigningIn(false), 500)
         })
+        // Safety timeout — Browser.close() called programmatically
+        // doesn't fire browserFinished, so reset after 10s max
+        setTimeout(() => setIsSigningIn(false), 10000)
       }
 
       await signInWithGoogle()

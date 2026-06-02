@@ -1,7 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback, useRef } from 'react'
-import { User, Session } from '@supabase/supabase-js'
+import { User, Session, createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { Capacitor } from '@capacitor/core'
 import { App } from '@capacitor/app'
 import { Browser } from '@capacitor/browser'
@@ -140,8 +140,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ============================================
   const signInWithGoogle = async () => {
     if (Capacitor.isNativePlatform()) {
-      // Get OAuth URL from Supabase without auto-opening
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      // Use @supabase/supabase-js directly for native OAuth.
+      // The @supabase/ssr browser client stores PKCE verifiers in cookies
+      // which don't persist correctly in Capacitor's WKWebView.
+      const nativeAuth = createSupabaseClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        { auth: { storage: window.localStorage, flowType: 'pkce', persistSession: true } }
+      )
+
+      const { data, error } = await nativeAuth.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: 'com.sprind.app://auth/callback',
@@ -151,7 +159,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (error) throw error
       if (!data.url) throw new Error('No OAuth URL returned')
 
-      // Listen for deep link before opening browser
       const listener = await App.addListener('appUrlOpen', async ({ url }) => {
         if (url.includes('auth/callback')) {
           listener.remove()
@@ -159,13 +166,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const urlObj = new URL(url)
           const code = urlObj.searchParams.get('code')
           if (code) {
-            const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
-            if (exchangeError) console.error('🔴 Code exchange error:', exchangeError)
+            const { error: exchangeError } = await nativeAuth.auth.exchangeCodeForSession(code)
+            if (exchangeError) {
+              console.error('Code exchange error:', exchangeError)
+              return
+            }
+            // Sync the session to the main SSR client so onAuthStateChange fires
+            const { data: { session: newSession } } = await nativeAuth.auth.getSession()
+            if (newSession) {
+              await supabase.auth.setSession({
+                access_token: newSession.access_token,
+                refresh_token: newSession.refresh_token,
+              })
+            }
           }
         }
       })
 
-      // Open SFSafariViewController (in-app overlay, app stays active)
       await Browser.open({ url: data.url, presentationStyle: 'popover' })
     } else {
       const { error } = await supabase.auth.signInWithOAuth({
