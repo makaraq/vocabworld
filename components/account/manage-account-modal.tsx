@@ -13,6 +13,7 @@ import type { NotificationPreferences } from "@/lib/notifications"
 import { logOutRevenueCat } from "@/lib/revenuecat-client"
 import { createClient } from "@/lib/supabase/browser-client"
 import type { PermissionState } from "@/hooks/use-notifications"
+import { hapticsLight, hapticsMedium, hapticsWarning } from "@/lib/haptics"
 
 interface ManageAccountModalProps {
   open: boolean
@@ -76,11 +77,11 @@ function DailyTimePicker({ value, onChange }: { value: string; onChange: (v: str
     <div className="flex items-center gap-2 ml-[30px]">
       {/* Hour stepper */}
       <div className="flex items-center bg-black/20 border border-white/10 rounded-xl overflow-hidden">
-        <button onClick={prevHour} className="px-2.5 py-2 text-white/60 active:bg-white/10 transition-colors">
+        <button onClick={() => { hapticsLight(); prevHour() }} className="px-2.5 py-2 text-white/60 active:bg-white/10 transition-colors">
           <Icon icon="solar:alt-arrow-left-bold" width="14" />
         </button>
         <span className="w-7 text-center text-white text-sm font-semibold tabular-nums">{hour12}</span>
-        <button onClick={nextHour} className="px-2.5 py-2 text-white/60 active:bg-white/10 transition-colors">
+        <button onClick={() => { hapticsLight(); nextHour() }} className="px-2.5 py-2 text-white/60 active:bg-white/10 transition-colors">
           <Icon icon="solar:alt-arrow-right-bold" width="14" />
         </button>
       </div>
@@ -89,11 +90,11 @@ function DailyTimePicker({ value, onChange }: { value: string; onChange: (v: str
 
       {/* Minute stepper */}
       <div className="flex items-center bg-black/20 border border-white/10 rounded-xl overflow-hidden">
-        <button onClick={prevMinute} className="px-2.5 py-2 text-white/60 active:bg-white/10 transition-colors">
+        <button onClick={() => { hapticsLight(); prevMinute() }} className="px-2.5 py-2 text-white/60 active:bg-white/10 transition-colors">
           <Icon icon="solar:alt-arrow-left-bold" width="14" />
         </button>
         <span className="w-7 text-center text-white text-sm font-semibold tabular-nums">{minute.toString().padStart(2, '0')}</span>
-        <button onClick={nextMinute} className="px-2.5 py-2 text-white/60 active:bg-white/10 transition-colors">
+        <button onClick={() => { hapticsLight(); nextMinute() }} className="px-2.5 py-2 text-white/60 active:bg-white/10 transition-colors">
           <Icon icon="solar:alt-arrow-right-bold" width="14" />
         </button>
       </div>
@@ -103,7 +104,7 @@ function DailyTimePicker({ value, onChange }: { value: string; onChange: (v: str
         {(['AM', 'PM'] as const).map(period => (
           <button
             key={period}
-            onClick={() => setAmpm(period)}
+            onClick={() => { hapticsLight(); setAmpm(period) }}
             className={`px-3 py-2 text-xs font-semibold transition-all ${
               ampm === period ? 'bg-blue-500 text-white' : 'text-white/50 active:bg-white/10'
             }`}
@@ -377,6 +378,7 @@ export function ManageAccountModal({
                     </div>
                     <button
                       onClick={() => {
+                        hapticsMedium()
                         const next = !notifPrefs.enabled
                         onNotifSetEnabled(next)
                         if (!next) setShowTimePicker(false)
@@ -446,7 +448,7 @@ export function ManageAccountModal({
                   </div>
                 </div>
                 <button
-                  onClick={() => onLeaderboardToggle?.(!showOnLeaderboard)}
+                  onClick={() => { hapticsMedium(); onLeaderboardToggle?.(!showOnLeaderboard) }}
                   aria-pressed={showOnLeaderboard}
                   className={`w-11 h-6 rounded-full transition-all duration-300 flex-shrink-0 relative ${
                     showOnLeaderboard ? 'bg-blue-500' : 'bg-black/30 border border-white/20'
@@ -465,7 +467,7 @@ export function ManageAccountModal({
 
           {/* Manage Subscription */}
           <button
-            onClick={handleManageSubscription}
+            onClick={() => { hapticsLight(); handleManageSubscription() }}
             className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white py-3 px-4 rounded-2xl font-medium text-sm hover:bg-white/15 transition-all flex items-center justify-center space-x-2"
           >
             <Icon icon="solar:settings-bold" width="18" height="18" />
@@ -474,7 +476,7 @@ export function ManageAccountModal({
 
           {/* Delete Account */}
           <button
-            onClick={() => setDeleteStep('confirm')}
+            onClick={() => { hapticsWarning(); setDeleteStep('confirm') }}
             className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white py-3 px-4 rounded-2xl font-medium text-sm hover:bg-white/15 transition-all flex items-center justify-center space-x-2"
           >
             <Icon icon="solar:trash-bin-trash-bold" width="18" height="18" />
@@ -483,7 +485,7 @@ export function ManageAccountModal({
 
           {/* Sign Out */}
           <button
-            onClick={() => { onSignOutAction?.(); onCloseAction() }}
+            onClick={() => { hapticsLight(); onSignOutAction?.(); onCloseAction() }}
             className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white py-3 px-4 rounded-2xl font-medium text-sm hover:bg-white/15 transition-all flex items-center justify-center space-x-2"
           >
             <Icon icon="solar:logout-3-bold" width="18" height="18" />

@@ -1,0 +1,15 @@
+diff --git a/node_modules/@capacitor-community/apple-sign-in/ios/Sources/SignInWithApple/Plugin.swift b/node_modules/@capacitor-community/apple-sign-in/ios/Sources/SignInWithApple/Plugin.swift
+index f53087c..cdc1343 100755
+--- a/node_modules/@capacitor-community/apple-sign-in/ios/Sources/SignInWithApple/Plugin.swift
++++ b/node_modules/@capacitor-community/apple-sign-in/ios/Sources/SignInWithApple/Plugin.swift
+@@ -64,8 +64,8 @@ extension SignInWithApple: ASAuthorizationControllerDelegate {
+                 "email": appleIDCredential.email,
+                 "givenName": appleIDCredential.fullName?.givenName,
+                 "familyName": appleIDCredential.fullName?.familyName,
+-                "identityToken": String(data: appleIDCredential.identityToken!, encoding: .utf8),
+-                "authorizationCode": String(data: appleIDCredential.authorizationCode!, encoding: .utf8)
++                "identityToken": appleIDCredential.identityToken.flatMap { String(data: $0, encoding: .utf8) } ?? "",
++                "authorizationCode": appleIDCredential.authorizationCode.flatMap { String(data: $0, encoding: .utf8) } ?? ""
+             ]
+         ]
+ 

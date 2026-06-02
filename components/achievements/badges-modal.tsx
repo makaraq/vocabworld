@@ -11,6 +11,7 @@ import {
 } from '@/lib/achievements/definitions'
 import { getUnlocked, UnlockedRecord } from '@/lib/achievements/storage'
 import { useAuth } from '@/contexts/auth-context'
+import { hapticsLight } from '@/lib/haptics'
 
 interface Props {
   open: boolean
@@ -99,7 +100,7 @@ export function BadgesModal({ open, onCloseAction }: Props) {
             </p>
           </div>
           <button
-            onClick={onCloseAction}
+            onClick={() => { hapticsLight(); onCloseAction() }}
             className="w-9 h-9 rounded-full bg-white/10 border border-white/20 flex items-center justify-center hover:bg-white/20 transition-colors"
             aria-label="Close"
           >

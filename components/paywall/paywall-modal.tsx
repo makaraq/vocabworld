@@ -10,6 +10,7 @@ import celebrationAnim from '@/lib/animations/celebration.json'
 import { PRICING, formatPrice } from '@/lib/pricing'
 import { useAuth } from '@/contexts/auth-context'
 import { useRevenueCat } from '@/hooks/use-revenuecat'
+import { hapticsLight, hapticsMedium, hapticsSuccess } from '@/lib/haptics'
 
 interface PaywallModalProps {
   isOpen: boolean
@@ -90,11 +91,13 @@ export function PaywallModal({
 
   const handleSubscribe = async () => {
     if (!user) return
+    hapticsLight()
     clearError()
 
     const success = await purchasePackage(selectedPlan)
 
     if (success) {
+      hapticsSuccess()
       try {
         await fetch('/api/subscription/sync-rc', { method: 'POST' })
       } catch {
@@ -106,12 +109,14 @@ export function PaywallModal({
   }
 
   const handleCelebrationDismiss = () => {
+    hapticsLight()
     onSuccessAction?.()
     onCloseAction()
     setPurchaseSuccess(false)
   }
 
   const handleRestore = async () => {
+    hapticsLight()
     setRestoreStatus('loading')
     const success = await restorePurchases()
     if (success) {
@@ -306,7 +311,7 @@ export function PaywallModal({
         <div className="px-6 pt-6 pb-2 grid grid-cols-2 gap-3">
           {/* Monthly */}
           <button
-            onClick={() => setSelectedPlan('monthly')}
+            onClick={() => { hapticsMedium(); setSelectedPlan('monthly') }}
             className={`relative p-4 rounded-2xl border-2 text-left transition-all backdrop-blur-sm ${
               selectedPlan === 'monthly'
                 ? 'border-white/70 bg-white/15'
@@ -332,7 +337,7 @@ export function PaywallModal({
 
           {/* Yearly */}
           <button
-            onClick={() => setSelectedPlan('yearly')}
+            onClick={() => { hapticsMedium(); setSelectedPlan('yearly') }}
             className={`relative p-4 rounded-2xl border-2 text-left transition-all backdrop-blur-sm ${
               selectedPlan === 'yearly'
                 ? 'border-white/70 bg-white/15'

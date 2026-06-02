@@ -3,12 +3,10 @@
  * All calls are no-ops on web and gracefully swallowed on unsupported devices.
  */
 
-import { Capacitor } from '@capacitor/core'
-
-const isNative = Capacitor.isNativePlatform()
-
 async function getHaptics() {
-  if (!isNative) return null
+  if (typeof window === 'undefined') return null
+  const cap = (window as any).Capacitor
+  if (!cap?.isNativePlatform?.()) return null
   const { Haptics } = await import('@capacitor/haptics')
   return Haptics
 }

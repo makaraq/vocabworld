@@ -5,6 +5,7 @@ import Lottie from 'lottie-react'
 import { Button } from '@/components/ui/button'
 import { Capacitor } from '@capacitor/core'
 import { useAuth } from '@/contexts/auth-context'
+import { hapticsLight } from '@/lib/haptics'
 import languageTranslatorAnim from '@/lib/animations/language-translator.json'
 
 export function WelcomeOverlay() {
@@ -62,6 +63,7 @@ export function WelcomeOverlay() {
   }, [loading, user])
   
   const handleGoogleSignIn = async () => {
+    hapticsLight()
     setIsSigningIn(true)
     try {
       // On native, listen for the in-app browser closing so we can reset the
@@ -87,6 +89,7 @@ export function WelcomeOverlay() {
   }
 
   const handleAppleSignIn = async () => {
+    hapticsLight()
     setIsSigningIn(true)
     try {
       // Native Apple sheet on iOS — resolves in-app, no browser redirect.

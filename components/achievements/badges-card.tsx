@@ -6,6 +6,7 @@ import { ACHIEVEMENTS, tierGradient } from '@/lib/achievements/definitions'
 import { getUnlocked, UnlockedRecord } from '@/lib/achievements/storage'
 import { useAuth } from '@/contexts/auth-context'
 import { openBadgesGallery, subscribeUnlock } from '@/lib/achievements/engine'
+import { hapticsLight } from '@/lib/haptics'
 
 export function BadgesCard() {
   const { user } = useAuth()
@@ -35,7 +36,7 @@ export function BadgesCard() {
 
   return (
     <button
-      onClick={() => openBadgesGallery()}
+      onClick={() => { hapticsLight(); openBadgesGallery() }}
       onTouchStart={() => setHolding(true)}
       onTouchEnd={() => setHolding(false)}
       onTouchCancel={() => setHolding(false)}

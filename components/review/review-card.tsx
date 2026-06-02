@@ -1,6 +1,7 @@
 "use client"
 import { useState, useEffect } from "react"
 import { Icon } from "@iconify/react"
+import { hapticsLight } from "@/lib/haptics"
 import { ReviewQuizModal } from "./review-quiz-modal"
 
 interface ReviewCardProps {
@@ -65,7 +66,7 @@ export function ReviewCard({ userId, targetLanguageCode, nativeLanguageCode }: R
   return (
     <>
       <button
-        onClick={() => dueCount > 0 && setShowQuiz(true)}
+        onClick={() => { if (dueCount > 0) { hapticsLight(); setShowQuiz(true) } }}
         className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20 transition-all hover:bg-white/15 active:scale-[1.03]"
         aria-label={loading ? "Loading review words" : totalCards === 0 ? "Start learning words to review" : dueCount > 0 ? `${dueCount} words to review` : "All caught up, no words to review"}
       >

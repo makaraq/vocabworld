@@ -16,7 +16,8 @@
     "check-examples-setup": "tsx scripts/check-example-sentences-setup.ts",
     "build:cap": "node scripts/build-capacitor.js",
     "sync:cap": "node scripts/build-capacitor.js && npx cap sync",
-    "build:ios": "node scripts/build-ios.mjs && LANG=en_US.UTF-8 npx cap sync ios"
+    "build:ios": "node scripts/build-ios.mjs && LANG=en_US.UTF-8 npx cap sync ios",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@capacitor-community/apple-sign-in": "^7.1.0",
@@ -25,7 +26,7 @@
     "@capacitor/browser": "^7.0.0",
     "@capacitor/cli": "^7.4.3",
     "@capacitor/core": "^7.4.3",
-    "@capacitor/haptics": "^8.0.2",
+    "@capacitor/haptics": "^7.0.5",
     "@capacitor/ios": "^7.4.3",
     "@capacitor/local-notifications": "^7.0.0",
     "@google-cloud/text-to-speech": "^6.4.0",
@@ -113,6 +114,7 @@
     "dotenv": "^17.2.3",
     "eslint": "9.37.0",
     "eslint-config-next": "15.5.4",
+    "patch-package": "^8.0.1",
     "postcss": "^8.5",
     "tailwindcss": "^4.1.9",
     "tsx": "^4.21.0",
