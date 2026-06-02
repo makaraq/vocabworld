@@ -1,14 +1,14 @@
 // Pricing configuration
 export const PRICING = {
   monthly: {
-    price: 4.99,
+    price: 5.99,
     interval: 'month' as const,
     name: 'Monthly',
     // RevenueCat package identifier (set in RC Dashboard)
     rcPackageId: '$rc_monthly',
   },
   yearly: {
-    price: 29.99,
+    price: 49.99,
     interval: 'year' as const,
     name: 'Yearly',
     savings: '50%',
