@@ -146,6 +146,15 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
   const content = (
     <div className="fixed inset-0 z-[10000] pointer-events-none">
 
+      {/* Full-screen blocker — sits below everything else in the overlay but above the app.
+          Captures all pointer and touch events so nothing in the app can be tapped or dragged
+          while the tutorial is active. touch-action:none also prevents scroll/zoom gestures. */}
+      <div
+        aria-hidden
+        className="absolute inset-0 pointer-events-auto"
+        style={{ touchAction: 'none' }}
+      />
+
       {/* Spotlight: when target exists, use a div with massive box-shadow to dim everything except the cutout */}
       {rect && !missing ? (
         <div
@@ -157,6 +166,7 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
             width: rect.width + padding * 2,
             height: rect.height + padding * 2,
             boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.7)',
+            touchAction: 'none',
           }}
           onClick={handleNext}
         />
@@ -165,6 +175,7 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
         <div
           aria-hidden
           className="absolute inset-0 bg-black/70 backdrop-blur-sm pointer-events-auto"
+          style={{ touchAction: 'none' }}
           onClick={handleNext}
         />
       )}

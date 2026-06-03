@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useEffect, useRef, useCallback, useMemo } from "react"
+import React, { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Topic, VocabularyWord, VocabularyResponse, getTopics, getVocabularyForTopic } from "@/lib/database"
@@ -355,6 +355,12 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
     sliderRef.current.style.transition = 'transform 300ms cubic-bezier(0.25,0.46,0.45,0.94)'
     sliderRef.current.style.transform = `translateX(${-section * 100}%)`
   }
+
+  // Set initial position before first paint to prevent flash of section 0 (Account) on remount
+  useLayoutEffect(() => {
+    if (!sliderRef.current) return
+    sliderRef.current.style.transform = `translateX(${-currentSection * 100}%)`
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Sync slider position whenever currentSection changes externally (dots, keyboard)
   useEffect(() => {
