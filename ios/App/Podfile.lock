@@ -14,6 +14,8 @@ PODS:
     - Capacitor
   - CapacitorRateApp (4.0.3):
     - Capacitor
+  - CapacitorSplashScreen (7.0.5):
+    - Capacitor
   - PurchasesHybridCommon (17.25.0):
     - RevenueCat (= 5.51.1)
   - RevenueCat (5.51.1)
@@ -30,6 +32,7 @@ DEPENDENCIES:
   - "CapacitorHaptics (from `../../node_modules/@capacitor/haptics`)"
   - "CapacitorLocalNotifications (from `../../node_modules/@capacitor/local-notifications`)"
   - CapacitorRateApp (from `../../node_modules/capacitor-rate-app`)
+  - "CapacitorSplashScreen (from `../../node_modules/@capacitor/splash-screen`)"
   - "RevenuecatPurchasesCapacitor (from `../../node_modules/@revenuecat/purchases-capacitor`)"
 
 SPEC REPOS:
@@ -54,6 +57,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/local-notifications"
   CapacitorRateApp:
     :path: "../../node_modules/capacitor-rate-app"
+  CapacitorSplashScreen:
+    :path: "../../node_modules/@capacitor/splash-screen"
   RevenuecatPurchasesCapacitor:
     :path: "../../node_modules/@revenuecat/purchases-capacitor"
 
@@ -66,10 +71,11 @@ SPEC CHECKSUMS:
   CapacitorHaptics: 1b145fa83c622e5383a3bac04ea81e2514f0b0f5
   CapacitorLocalNotifications: 2e3f5b717ec9cd2bd64d93c99a9470941e1c80be
   CapacitorRateApp: 20928fa996851647e912bbf119af59a48a171712
+  CapacitorSplashScreen: 409eeaaeac603d264f209c0fcb718aa22fe1f7bb
   PurchasesHybridCommon: 6a79a873ab52f777bfa36e9516f3fcd84d3b3428
   RevenueCat: eab035bbab271faccfef5c36eaff2a1ffef14dc0
   RevenuecatPurchasesCapacitor: fa376932f9967c7ab4b5eac477e824d90393b91a
 
-PODFILE CHECKSUM: 3c76ab04aa5cf82a41d373061a61a16672111655
+PODFILE CHECKSUM: fbd7bd25298f7ade38807b74ad3f05e53d138842
 
 COCOAPODS: 1.16.2

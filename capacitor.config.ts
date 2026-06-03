@@ -21,6 +21,14 @@ const config: CapacitorConfig = {
       iconColor: '#6366f1',
       sound: 'default',
     },
+    SplashScreen: {
+      launchAutoHide: true,
+      launchShowDuration: 2000,
+      backgroundColor: '#ffffff',
+      showSpinner: false,
+      splashFullScreen: true,
+      splashImmersive: true,
+    },
   }
 };
 

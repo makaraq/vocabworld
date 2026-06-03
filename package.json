@@ -29,6 +29,7 @@
     "@capacitor/haptics": "^7.0.5",
     "@capacitor/ios": "^7.4.3",
     "@capacitor/local-notifications": "^7.0.0",
+    "@capacitor/splash-screen": "^7.0.5",
     "@google-cloud/text-to-speech": "^6.4.0",
     "@google-cloud/vertexai": "^1.10.0",
     "@google/genai": "^1.15.0",
