@@ -273,7 +273,24 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
   sections
 }) => {
   // ── Ref-based drag state (no re-renders during drag → 60 fps) ──
-  const sliderRef = useRef<HTMLDivElement>(null)
+  const sliderRef = useRef<HTMLDivElement | null>(null)
+
+  // Always-current section value for the ref callback (avoids stale closure)
+  const currentSectionForRefCallback = useRef(currentSection)
+  currentSectionForRefCallback.current = currentSection
+
+  // Ref callback fires synchronously when the DOM element is created — before
+  // useLayoutEffect and before the browser paints — so the slider is already at
+  // the correct position on the very first frame. This prevents the flash of the
+  // Account section (index 0) that appeared when TopicSlider remounted after
+  // leaving the learning page.
+  const sliderRefCallback = useCallback((el: HTMLDivElement | null) => {
+    sliderRef.current = el
+    if (el) {
+      el.style.transform = `translateX(${-currentSectionForRefCallback.current * 100}%)`
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   const drag = useRef({
     startX: 0,
     currentX: 0,
@@ -494,12 +511,12 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
         onMouseDown={handleMouseDown}
       >
         <div
-          ref={sliderRef}
+          ref={sliderRefCallback}
           className="flex h-full"
           style={{ willChange: 'transform', cursor: 'grab' }}
         >
           {sections.map((section, sectionIndex) => (
-            <div key={sectionIndex} className="w-full h-full flex-shrink-0 px-2 overflow-hidden">
+            <div key={sectionIndex} className="w-full h-full flex-shrink-0 px-2">
               {/* Account section special content */}
               {section.isAccount ? (
                 <div className="h-full flex flex-col space-y-2.5 sm:space-y-3">
@@ -542,7 +559,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                       lastTopicSectionRef.current = currentSection
                       onTopicSelect({ id: -1, name: 'Search Word', icon: '' } as Topic)
                     }}
-                    className="flex-shrink-0 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl sm:rounded-2xl p-4 sm:p-5 text-center hover:bg-white/15 transition-[transform,background-color] duration-300 hover:scale-[1.02] shadow-lg relative"
+                    className="flex-shrink-0 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl sm:rounded-2xl p-4 sm:p-5 text-center hover:bg-white/15 transition-colors duration-300 shadow-lg relative"
                     aria-label="Search for a word and get its translation"
                   >
 
@@ -1506,6 +1523,54 @@ export function LanguageSelector() {
     }
   }
   
+  // Silent audio pause — keeps the iOS audio session alive while the screen is
+  // locked so that autoplay can continue advancing through words in background.
+  // iOS suspends the WebView (and all JS timers) when no <audio> element is
+  // actively playing, even with UIBackgroundModes=audio. By playing a silent WAV
+  // through an HTML <audio> element during pauses, the OS keeps the process alive.
+  const getSilentWavUrl = (durationMs: number): string => {
+    const sampleRate = 22050
+    const numSamples = Math.ceil(sampleRate * durationMs / 1000)
+    const dataSize = numSamples * 2
+    const buffer = new ArrayBuffer(44 + dataSize)
+    const view = new DataView(buffer)
+    const w = (o: number, s: string) => { for (let i = 0; i < s.length; i++) view.setUint8(o + i, s.charCodeAt(i)) }
+    w(0, 'RIFF'); view.setUint32(4, 36 + dataSize, true); w(8, 'WAVE'); w(12, 'fmt ')
+    view.setUint32(16, 16, true); view.setUint16(20, 1, true); view.setUint16(22, 1, true)
+    view.setUint32(24, sampleRate, true); view.setUint32(28, sampleRate * 2, true)
+    view.setUint16(32, 2, true); view.setUint16(34, 16, true); w(36, 'data'); view.setUint32(40, dataSize, true)
+    const blob = new Blob([buffer], { type: 'audio/wav' })
+    return URL.createObjectURL(blob)
+  }
+
+  const playSilence = (durationMs: number, signal?: AbortSignal): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      if (signal?.aborted || stopRequestedRef.current) {
+        reject(new DOMException('Silence aborted', 'AbortError'))
+        return
+      }
+      const url = getSilentWavUrl(durationMs)
+      const audio = new Audio(url)
+      audioElementsRef.current.push(audio)
+      const cleanup = () => {
+        audio.pause()
+        audio.removeAttribute('src')
+        audioElementsRef.current = audioElementsRef.current.filter(a => a !== audio)
+        URL.revokeObjectURL(url)
+      }
+      audio.onended = () => { cleanup(); resolve() }
+      audio.onerror = () => { cleanup(); resolve() }
+      const onAbort = () => { cleanup(); reject(new DOMException('Silence aborted', 'AbortError')) }
+      if (signal) signal.addEventListener('abort', onAbort, { once: true })
+      const stopCheck = setInterval(() => {
+        if (stopRequestedRef.current || signal?.aborted) { clearInterval(stopCheck); onAbort() }
+      }, 100)
+      audio.addEventListener('ended', () => clearInterval(stopCheck), { once: true })
+      audio.addEventListener('error', () => clearInterval(stopCheck), { once: true })
+      audio.play().catch(() => { clearInterval(stopCheck); cleanup(); resolve() })
+    })
+  }
+
   // Audio request queue to prevent concurrent B2 API calls
   const audioRequestQueue = useRef<Array<() => Promise<void>>>([])
   const isProcessingAudioQueue = useRef(false)
@@ -1589,32 +1654,9 @@ export function LanguageSelector() {
               const targetLangCode = (languageMappings as any)[targetLanguage] || targetLanguage.toLowerCase();
 
 
-              // Helper function: Interruptible sleep that respects abort signal
+              // Interruptible pause that keeps iOS audio session alive in background
               const abortableSleep = (ms: number): Promise<void> => {
-                return new Promise((resolve, reject) => {
-                  const timeoutId = setTimeout(() => resolve(), ms);
-                  
-                  // If abort signal exists, listen for abort
-                  if (abortSignal) {
-                    const abortHandler = () => {
-                      clearTimeout(timeoutId);
-                      reject(new DOMException('Sleep aborted', 'AbortError'));
-                    };
-                    abortSignal.addEventListener('abort', abortHandler, { once: true });
-                  }
-                  
-                  // Also check stopRequestedRef
-                  const checkInterval = setInterval(() => {
-                    if (stopRequestedRef.current || abortSignal?.aborted) {
-                      clearTimeout(timeoutId);
-                      clearInterval(checkInterval);
-                      reject(new DOMException('Sleep aborted', 'AbortError'));
-                    }
-                  }, 50); // Check every 50ms
-                  
-                  // Clean up interval when done
-                  setTimeout(() => clearInterval(checkInterval), ms);
-                });
+                return playSilence(ms, abortSignal || undefined);
               };
 
               // Helper function: Play audio with abort support
@@ -1695,28 +1737,29 @@ export function LanguageSelector() {
               // 🔊 MOBILE FIX V3: Use Web Audio API for reliable mobile playback
               // Falls back to HTML Audio if Web Audio fails
               const playAudioUrl = async (url: string, description: string, playbackRate: number = 1.0): Promise<void> => {
-                // Check abort before starting
                 if (abortSignal?.aborted || stopRequestedRef.current) {
                   throw new DOMException('Audio playback aborted', 'AbortError');
                 }
-                
-                // Try Web Audio API first (more reliable on mobile)
-                if (audioContextRef.current && audioUnlockedRef.current) {
-                  try {
-                    await playAudioWithWebAudio(url, playbackRate);
-                    return;
-                  } catch (error: any) {
-                    if (error.name === 'AbortError') throw error;
-                  }
-                }
-                
-                // Fallback to HTML Audio
+
+                // Prefer HTML <audio> — it's the only path iOS keeps alive in
+                // background (lock screen). Web Audio API is invisible to the
+                // OS media session and will cause the process to be suspended.
                 const audio = new Audio(url);
                 audio.crossOrigin = 'anonymous';
                 audio.preload = 'auto';
                 audioElementsRef.current.push(audio);
-                
-                await playAudioWithAbort(audio, description, playbackRate);
+
+                try {
+                  await playAudioWithAbort(audio, description, playbackRate);
+                } catch (error: any) {
+                  if (error.name === 'AbortError') throw error;
+                  // Last-resort fallback to Web Audio API (foreground only)
+                  if (audioContextRef.current && audioUnlockedRef.current) {
+                    await playAudioWithWebAudio(url, playbackRate);
+                  } else {
+                    throw error;
+                  }
+                }
               };
 
               // CRITICAL: Enable audio context for autoplay policy
@@ -2104,17 +2147,15 @@ export function LanguageSelector() {
           } catch (e) {
           }
           
-          // Pause between words
-          await new Promise(resolve => setTimeout(resolve, settings.pauseBetweenTranslations || 1000))
-          
+          await playSilence((settings.pauseBetweenTranslations || 1) * 1000, autoplayAbortController.current?.signal || undefined)
+
           if (stopRequestedRef.current) {
             setCurrentAudioStep('idle')
             setIsPlaying(false)
             audioCallInProgress.current = false
             return
           }
-          
-          // Play native word using Web Audio API
+
           setCurrentAudioStep('main')
           const nativeAudioUrl = `/api/custom-audio?text=${encodeURIComponent(targetWord)}&languageCode=${nativeLangCode}`
           
@@ -2243,7 +2284,7 @@ export function LanguageSelector() {
           setCurrentAudioStep('training')
           try { await playAudioUniversal(`/api/custom-audio?text=${encodeURIComponent(sourceWord)}&languageCode=${targetLangCodeFb}`, 1.0); } catch (e) {}
 
-          await new Promise(resolve => setTimeout(resolve, settings.pauseBetweenTranslations || 1000))
+          await playSilence((settings.pauseBetweenTranslations || 1) * 1000, autoplayAbortController.current?.signal || undefined)
           if (stopRequestedRef.current) { setCurrentAudioStep('idle'); setIsPlaying(false); audioCallInProgress.current = false; return }
 
           setCurrentAudioStep('main')
@@ -2349,7 +2390,13 @@ export function LanguageSelector() {
   } | null>(null)
   const [showPlaylistModal, setShowPlaylistModal] = useState(false)
   const [holdingCardIndex, setHoldingCardIndex] = useState<number | null>(null)
-  const [holdingTopicId, setHoldingTopicId] = useState<number | null>(null)
+  const pressedTileRef = useRef<{ el: HTMLElement | null; timer: number | null }>({ el: null, timer: null })
+  const releasePressedTile = () => {
+    const { el, timer } = pressedTileRef.current
+    if (timer) clearTimeout(timer)
+    if (el) el.style.transform = ''
+    pressedTileRef.current = { el: null, timer: null }
+  }
   const [quizTopic, setQuizTopic] = useState<{ id: number; name: string } | null>(null)
   const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const longPressFiredRef = useRef(false)
@@ -2838,25 +2885,7 @@ export function LanguageSelector() {
         // Pause before next word / before rewind
         if (hasNext) {
           setCurrentAudioStep('pause');
-          
-          const pauseStartTime = performance.now();
-          const expectedPauseDuration = settings.pauseForNextWord * 1000;
-          
-          // Interruptible sleep using abort signal
-          await new Promise<void>((resolve, reject) => {
-            const timeoutId = setTimeout(() => {
-              const actualPauseDuration = performance.now() - pauseStartTime;
-              const difference = actualPauseDuration - expectedPauseDuration;
-              resolve();
-            }, expectedPauseDuration);
-            
-            // Listen for abort signal during sleep
-            signal.addEventListener('abort', () => {
-              clearTimeout(timeoutId);
-              const actualPauseDuration = performance.now() - pauseStartTime;
-              reject(new DOMException('Autoplay aborted during pause', 'AbortError'));
-            });
-          });
+          await playSilence(settings.pauseForNextWord * 1000, signal);
         }
 
         // Check abort after pause
@@ -4094,36 +4123,43 @@ export function LanguageSelector() {
       18: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M11 6h2V4h-2zm1 6q-1.9 0-3.625-.788T5 9.45V8q0-.825.588-1.412T7 6h2V3q0-.425.288-.712T10 2h4q.425 0 .713.288T15 3v3h2q.825 0 1.413.588T19 8v1.45q-1.65.975-3.375 1.763T12 12m-5 9q-.825 0-1.412-.587T5 19v-7.3q1.4.85 2.888 1.45t3.112.8V14q0 .425.288.713T12 15t.713-.288T13 14v-.05q1.625-.2 3.113-.8T19 11.7V19q0 .825-.587 1.413T17 21q0 .425-.288.713T16 22q-.4 0-.562-.363T15 21H9q0 .425-.288.713T8 22q-.4 0-.562-.363T7 21"/></svg>'
     }
     
-    const handleTopicHoldStart = (e: React.TouchEvent, topicId: number) => {
-      setHoldingTopicId(topicId)
+    const handleTopicHoldStart = (e: React.TouchEvent) => {
+      releasePressedTile()
       longPressFiredRef.current = false
       touchStartPos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
       if (longPressTimerRef.current) clearTimeout(longPressTimerRef.current)
+      const btn = e.currentTarget as HTMLElement
+      pressedTileRef.current.timer = window.setTimeout(() => {
+        btn.style.transform = 'scale(0.97)'
+        pressedTileRef.current = { el: btn, timer: null }
+      }, 60)
       if (isCompleted) {
         longPressTimerRef.current = setTimeout(() => {
           longPressFiredRef.current = true
           longPressTimerRef.current = null
           hapticsMedium()
           setQuizTopic({ id: topic.id, name: getTopicDisplayName(topic.id, topic.name) })
-          setHoldingTopicId(null)
+          releasePressedTile()
         }, 500)
       }
     }
 
     const handleTopicHoldMove = (e: React.TouchEvent) => {
-      if (!touchStartPos.current || !longPressTimerRef.current) return
+      if (!touchStartPos.current) return
       const dx = e.touches[0].clientX - touchStartPos.current.x
       const dy = e.touches[0].clientY - touchStartPos.current.y
       if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
-        clearTimeout(longPressTimerRef.current)
-        longPressTimerRef.current = null
-        setHoldingTopicId(null)
+        releasePressedTile()
+        if (longPressTimerRef.current) {
+          clearTimeout(longPressTimerRef.current)
+          longPressTimerRef.current = null
+        }
         touchStartPos.current = null
       }
     }
 
     const handleTopicHoldEnd = () => {
-      setHoldingTopicId(null)
+      releasePressedTile()
       touchStartPos.current = null
       if (longPressTimerRef.current) {
         clearTimeout(longPressTimerRef.current)
@@ -4138,15 +4174,13 @@ export function LanguageSelector() {
           if (longPressFiredRef.current) { longPressFiredRef.current = false; return }
           await handleTopicClick(topic)
         }}
-        onTouchStart={(e) => handleTopicHoldStart(e, topic.id)}
+        onTouchStart={(e) => handleTopicHoldStart(e)}
         onTouchMove={(e) => handleTopicHoldMove(e)}
         onTouchEnd={() => handleTopicHoldEnd()}
         onTouchCancel={() => handleTopicHoldEnd()}
         aria-label={`${getTopicDisplayName(topic.id, topic.name)} topic${isCompleted ? ', completed' : ''}`}
         aria-pressed={selectedTopic?.id === topic.id}
-        className={`bg-black/40 rounded-xl xs:rounded-2xl sm:rounded-2xl p-3 xs:p-4 sm:p-5 text-center hover:bg-black/50 h-32 xs:h-36 sm:h-40 shadow-lg ${
-          holdingTopicId === topic.id ? 'scale-105 transition-transform duration-75' : 'scale-100 transition-[transform,background-color] duration-300 hover:scale-[1.02]'
-        } ${
+        className={`bg-black/40 rounded-xl xs:rounded-2xl sm:rounded-2xl p-3 xs:p-4 sm:p-5 text-center hover:bg-black/50 h-32 xs:h-36 sm:h-40 shadow-lg scale-100 transition-[transform,background-color] duration-150 ease-out ${
           selectedTopic?.id === topic.id ? "bg-black/60 shadow-xl" : ""
         } ${completionBorderClass}`}
       >

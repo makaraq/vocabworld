@@ -41,12 +41,26 @@ export function ReviewQuizModal({
   const [loadingOptions, setLoadingOptions] = useState(false)
   const [isPlayingAudio, setIsPlayingAudio] = useState(false)
   const audioElRef = useRef<HTMLAudioElement | null>(null)
+  const audioContextRef = useRef<AudioContext | null>(null)
+  const activeSourceRef = useRef<AudioBufferSourceNode | null>(null)
 
-  const playWordAudio = (card: QuizCard) => {
-    // Toggle off if already playing
-    if (isPlayingAudio && audioElRef.current) {
-      audioElRef.current.pause()
-      audioElRef.current = null
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !audioContextRef.current) {
+      try {
+        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
+      } catch (e) {}
+    }
+    return () => {
+      if (audioContextRef.current) {
+        audioContextRef.current.close().catch(() => {})
+      }
+    }
+  }, [])
+
+  const playWordAudio = async (card: QuizCard) => {
+    if (isPlayingAudio) {
+      if (audioElRef.current) { audioElRef.current.pause(); audioElRef.current = null }
+      if (activeSourceRef.current) { try { activeSourceRef.current.stop() } catch(e) {} activeSourceRef.current = null }
       setIsPlayingAudio(false)
       return
     }
@@ -54,7 +68,6 @@ export function ReviewQuizModal({
     hapticsLight()
     setIsPlayingAudio(true)
 
-    // Use the same B2 audio endpoint as the main learning flow
     let url = `/api/universal-audio?wordId=${card.vocabularyId}&languageCode=${targetLanguageCode}`
     if (card.englishWord) {
       url += `&word=${encodeURIComponent(card.englishWord)}`
@@ -63,11 +76,36 @@ export function ReviewQuizModal({
       url += `&targetWord=${encodeURIComponent(card.targetWord)}`
     }
 
-    const audio = new Audio(url)
-    audioElRef.current = audio
-    audio.onended = () => { setIsPlayingAudio(false); audioElRef.current = null }
-    audio.onerror = () => { setIsPlayingAudio(false); audioElRef.current = null }
-    audio.play().catch(() => { setIsPlayingAudio(false); audioElRef.current = null })
+    const done = () => { setIsPlayingAudio(false); audioElRef.current = null; activeSourceRef.current = null }
+
+    try {
+      const audio = new Audio(url)
+      audioElRef.current = audio
+      audio.onended = done
+      audio.onerror = () => { throw new Error('HTMLAudio failed') }
+      await audio.play()
+    } catch {
+      audioElRef.current = null
+      try {
+        const ctx = audioContextRef.current
+        if (ctx) {
+          if (ctx.state === 'suspended') await ctx.resume()
+          const resp = await fetch(url)
+          if (!resp.ok) throw new Error('fetch failed')
+          const buf = await ctx.decodeAudioData(await resp.arrayBuffer())
+          const source = ctx.createBufferSource()
+          source.buffer = buf
+          source.connect(ctx.destination)
+          source.onended = done
+          activeSourceRef.current = source
+          source.start(0)
+        } else {
+          done()
+        }
+      } catch {
+        done()
+      }
+    }
   }
 
   // Mount + fully freeze background (prevent scroll + swipe on the page behind)
@@ -144,12 +182,15 @@ export function ReviewQuizModal({
 
   useEffect(() => {
     if (sessionState === "quiz" && cards[currentIndex]) {
-      // Stop any playing audio when moving to next card
       if (audioElRef.current) {
         audioElRef.current.pause()
         audioElRef.current = null
-        setIsPlayingAudio(false)
       }
+      if (activeSourceRef.current) {
+        try { activeSourceRef.current.stop() } catch(e) {}
+        activeSourceRef.current = null
+      }
+      setIsPlayingAudio(false)
       setSelectedOption(null)
       setIsCorrect(null)
       // Only show skeletons on the very first card load
@@ -227,12 +268,12 @@ export function ReviewQuizModal({
     >
       <div className="absolute inset-0 bg-black/40 backdrop-blur-xl" />
 
-      <div className="relative flex flex-col h-full p-4 sm:p-6 max-w-lg mx-auto w-full">
+      <div className="relative flex flex-col h-full p-4 pt-14 sm:p-6 sm:pt-14 max-w-lg mx-auto w-full">
         {/* Header — title + counter + progress bar */}
         {sessionState !== "complete" && cards.length > 0 && (
           <div className="mb-6">
+            <h2 className="text-lg font-semibold text-white text-center mb-3">Quick Recall</h2>
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-lg font-semibold text-white">Quick Recall</h2>
               <div className="text-sm text-white/50">
                 {currentIndex + 1} of {cards.length}
               </div>
