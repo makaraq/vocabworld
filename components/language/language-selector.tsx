@@ -80,6 +80,8 @@ declare global {
 }
 import { Icon } from '@iconify/react'
 import { Capacitor } from '@capacitor/core'
+import BackgroundAudio from '@/lib/plugins/background-audio'
+import type { BackgroundAudioWord } from '@/lib/plugins/background-audio'
 import { getFlagIcon } from '@/utils/flags'
 import {
   Search,
@@ -920,6 +922,8 @@ export function LanguageSelector() {
   // Autoplay state machine
   const autoplayAbortController = useRef<AbortController | null>(null)
   const isAutoplayActive = useRef(false)
+  const nativeAudioActive = useRef(false)
+  const nativeListeners = useRef<Array<{ remove: () => void }>>([])
   
   // Swipe gesture state
   const [touchStart, setTouchStart] = useState<number | null>(null)
@@ -2315,22 +2319,30 @@ export function LanguageSelector() {
 
   // Stop audio function with abort controller
   const stopAudio = () => {
-    
+
+    // Stop native background audio player (iOS)
+    if (nativeAudioActive.current) {
+      BackgroundAudio.stop().catch(() => {});
+      nativeAudioActive.current = false;
+      nativeListeners.current.forEach(h => h.remove());
+      nativeListeners.current = [];
+    }
+
     // Abort any ongoing autoplay loop immediately
     if (autoplayAbortController.current) {
       autoplayAbortController.current.abort();
       autoplayAbortController.current = null;
     }
-    
+
     // Set legacy stop flags for backward compatibility
     stopRequestedRef.current = true;
     autoPlayRef.current = false;
     isAutoplayActive.current = false;
-    
+
     // Clear the audio request queue
     audioRequestQueue.current = [];
     isProcessingAudioQueue.current = false;
-    
+
     // Immediately stop all audio elements
     audioElementsRef.current.forEach(audio => {
       try {
@@ -2340,13 +2352,13 @@ export function LanguageSelector() {
       } catch (error) {
       }
     });
-    
+
     // Clear the audio elements array
     audioElementsRef.current = [];
-    
+
     // Cancel the auto-play loop - CRITICAL: Do this BEFORE resetting other states
     autoPlayRef.current = false
-    
+
     // Reset all audio states - must happen AFTER autoPlayRef is set to false
     setIsPlaying(false)
     setCurrentAudioStep('idle')
@@ -2803,112 +2815,165 @@ export function LanguageSelector() {
     }
   }
 
-  // Auto-play controller function with AbortController pattern
+  // Auto-play controller — delegates to native AVPlayer on iOS for reliable
+  // background (lock-screen) playback, falls back to JS loop on web.
   const startAutoPlay = async () => {
-    if (!vocabulary.length || !settings.autoPlay) {
-      return;
-    }
-    
-    // Prevent multiple simultaneous autoplay instances
-    if (isAutoplayActive.current) {
-      return;
-    }
-    
-    
-    // Create new AbortController for this autoplay session
-    autoplayAbortController.current = new AbortController();
-    const { signal } = autoplayAbortController.current;
-    
-    // Set state flags
+    if (!vocabulary.length || !settings.autoPlay) return;
+    if (isAutoplayActive.current) return;
+
     isAutoplayActive.current = true;
     autoPlayRef.current = true;
     stopRequestedRef.current = false;
     setAutoPlayActive(true);
-    
-    // Capture the rewind anchor — where autoplay was started from
+
+    // ── iOS native path ─────────────────────────────────────────────
+    if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios') {
+      nativeAudioActive.current = true;
+
+      // Build absolute audio URLs
+      const BASE = 'https://vocabworld-x843.vercel.app';
+      const authRaw = localStorage.getItem('sb-ripkorbuxnoljiprhlyk-auth-token');
+      let authToken: string | undefined;
+      try { authToken = authRaw ? JSON.parse(authRaw)?.access_token : undefined } catch {}
+
+      const words: BackgroundAudioWord[] = vocabulary.slice(currentWordIndex).map((word, i) => {
+        const wId = word.id;
+        const eng = (word as any).english_word || (word as any).word_en || '';
+        const tw  = word.targetWord || (word as any).main_word || '';
+        const sw  = word.sourceWord || (word as any).training_word || '';
+
+        let tUrl = `${BASE}/api/universal-audio?wordId=${wId}&languageCode=${targetLanguageCode}`;
+        if (eng) tUrl += `&word=${encodeURIComponent(eng)}`;
+        if (sw)  tUrl += `&targetWord=${encodeURIComponent(sw)}`;
+
+        let sUrl = `${BASE}/api/universal-audio?wordId=${wId}&languageCode=${nativeLanguageCode}`;
+        if (eng) sUrl += `&word=${encodeURIComponent(eng)}`;
+        if (tw)  sUrl += `&targetWord=${encodeURIComponent(tw)}`;
+
+        return {
+          index: currentWordIndex + i,
+          targetUrl: tUrl,
+          sourceUrl: settings.playTargetOnly ? undefined : sUrl,
+          targetWord: tw,
+          sourceWord: sw,
+          topicName: selectedTopic?.name || '',
+        };
+      });
+
+      // Clean up any previous listeners
+      nativeListeners.current.forEach(h => h.remove());
+      nativeListeners.current = [];
+
+      const h1 = await BackgroundAudio.addListener('wordChanged', (data) => {
+        setCurrentWordIndex(data.index);
+        setCurrentAudioStep(data.phase === 'target' ? 'training' : data.phase === 'source' ? 'main' : 'pause');
+      });
+      const h2 = await BackgroundAudio.addListener('wordPlayed', (data) => {
+        // Track progress for this word (same as the JS path)
+        const wordData = vocabulary[data.index];
+        if (user?.id && wordData?.id && targetLanguageCode) {
+          fetch('/api/progress/track', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              userId: user.id,
+              vocabularyId: wordData.id,
+              targetLanguageCode,
+            }),
+          })
+            .then(r => r.ok ? r.json() : null)
+            .then(resData => {
+              if (resData?.stats) {
+                reportProgress({
+                  userId: user!.id,
+                  wordsLearned: resData.stats.wordsLearned,
+                  currentStreak: resData.stats.dailyLoginStreak,
+                  wordsToday: resData.stats.wordsLearnedToday,
+                  topicsCompleted: resData.stats.topicsCompleted,
+                  targetLanguageCode: targetLanguageCode || undefined,
+                });
+                evaluateTimeContext(user!.id);
+              }
+              if (resData?.completedTopicIds) {
+                setCompletedTopicIds(resData.completedTopicIds);
+              }
+              if (resData?.topicCompletionCounts) {
+                setTopicCompletionCounts(resData.topicCompletionCounts);
+              }
+            })
+            .catch(() => {});
+          fetch('/api/notifications/context')
+            .then(r => r.ok ? r.json() : null)
+            .then(ctx => ctx && notificationsHook.onWordPlayed(ctx))
+            .catch(() => {});
+        }
+      });
+      const resetState = () => {
+        nativeAudioActive.current = false;
+        isAutoplayActive.current = false;
+        autoPlayRef.current = false;
+        setAutoPlayActive(false);
+        setIsPlaying(false);
+        setCurrentAudioStep('idle');
+        nativeListeners.current.forEach(h => h.remove());
+        nativeListeners.current = [];
+      };
+      const h3 = await BackgroundAudio.addListener('complete', resetState);
+      const h4 = await BackgroundAudio.addListener('stopped', resetState);
+      nativeListeners.current = [h1, h2, h3, h4];
+
+      const speedMap: Record<string, number> = { Slow: 0.9, Normal: 1.0, Fast: 1.1 };
+
+      await BackgroundAudio.startQueue({
+        words,
+        startIndex: 0,
+        repeatTarget: settings.repeatTargetLanguage || 1,
+        repeatSource: settings.repeatMainLanguage || 1,
+        pauseBetweenMs: Math.round((settings.pauseBetweenTranslations || 0.5) * 1000),
+        pauseAfterMs: Math.round((settings.pauseForNextWord || 0.7) * 1000),
+        playbackRate: speedMap[settings.pronunciationSpeed] || 1.0,
+        playTargetOnly: settings.playTargetOnly || false,
+        authToken,
+        rewindEnabled: settings.rewindEnabled || false,
+        rewindAfterWords: settings.rewindAfterWords || 5,
+      });
+
+      return; // native path done – the listeners handle the rest
+    }
+
+    // ── Web / non-iOS fallback: JS-driven loop ──────────────────────
+    autoplayAbortController.current = new AbortController();
+    const { signal } = autoplayAbortController.current;
     const loopStartIndex = currentWordIndex;
     let wordCount = 0;
 
     try {
       let i = currentWordIndex;
       while (true) {
-        // Check abort signal FIRST - highest priority check
-        if (signal.aborted) {
-          throw new DOMException('Autoplay aborted', 'AbortError');
-        }
-
-        // End of word list reached
+        if (signal.aborted) throw new DOMException('Autoplay aborted', 'AbortError');
         if (i >= vocabulary.length) {
-          if (settings.rewindEnabled) {
-            i = loopStartIndex;
-            wordCount = 0;
-            continue;
-          } else {
-            // Natural completion
-            break;
-          }
+          if (settings.rewindEnabled) { i = loopStartIndex; wordCount = 0; continue; }
+          else break;
         }
-        
         const word = vocabulary[i];
-        if (!word || !word.sourceWord || !word.targetWord) {
-          i++;
-          continue;
-        }
-        
-        
-        // Update display ONLY if not aborted
-        if (!signal.aborted) {
-          setCurrentWordIndex(i);
-        }
-        
-        // Check abort BEFORE playing
-        if (signal.aborted) {
-          throw new DOMException('Autoplay aborted', 'AbortError');
-        }
-        
-        // Play the word - this is async and may take time
+        if (!word || !word.sourceWord || !word.targetWord) { i++; continue; }
+        if (!signal.aborted) setCurrentWordIndex(i);
+        if (signal.aborted) throw new DOMException('Autoplay aborted', 'AbortError');
         await playAudio(word, false);
-        
-        // Check abort AFTER playing
-        if (signal.aborted) {
-          throw new DOMException('Autoplay aborted', 'AbortError');
-        }
-
+        if (signal.aborted) throw new DOMException('Autoplay aborted', 'AbortError');
         wordCount++;
-
-        // Rewind check: did we just complete the N-word cycle?
         const rewindNow = settings.rewindEnabled && wordCount >= (settings.rewindAfterWords || 5);
-
-        // Determine whether there's a "next" step to pause before
         const hasNext = rewindNow || i < vocabulary.length - 1;
-
-        // Pause before next word / before rewind
         if (hasNext) {
           setCurrentAudioStep('pause');
           await playSilence(settings.pauseForNextWord * 1000, signal);
         }
-
-        // Check abort after pause
         if (signal.aborted) throw new DOMException('Autoplay aborted', 'AbortError');
-
-        if (rewindNow) {
-          hapticsMedium()
-          i = loopStartIndex;
-          wordCount = 0;
-        } else {
-          i++;
-        }
+        if (rewindNow) { hapticsMedium(); i = loopStartIndex; wordCount = 0; } else { i++; }
       }
-      
-      // Natural completion (not aborted)
-      
     } catch (error: any) {
-      if (error.name === 'AbortError') {
-      } else {
-        console.error('❌ Autoplay error:', error);
-      }
+      if (error.name !== 'AbortError') console.error('Autoplay error:', error);
     } finally {
-      // Always clean up state
       isAutoplayActive.current = false;
       autoPlayRef.current = false;
       setAutoPlayActive(false);

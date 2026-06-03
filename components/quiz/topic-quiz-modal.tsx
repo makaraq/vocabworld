@@ -43,26 +43,12 @@ export function TopicQuizModal({
   const [isPlayingAudio, setIsPlayingAudio] = useState(false)
   const [round, setRound] = useState(1)
   const audioElRef = useRef<HTMLAudioElement | null>(null)
-  const audioContextRef = useRef<AudioContext | null>(null)
-  const activeSourceRef = useRef<AudioBufferSourceNode | null>(null)
 
-  useEffect(() => {
-    if (typeof window !== 'undefined' && !audioContextRef.current) {
-      try {
-        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
-      } catch (e) {}
-    }
-    return () => {
-      if (audioContextRef.current) {
-        audioContextRef.current.close().catch(() => {})
-      }
-    }
-  }, [])
-
-  const playWordAudio = async (card: QuizCard) => {
-    if (isPlayingAudio) {
-      if (audioElRef.current) { audioElRef.current.pause(); audioElRef.current = null }
-      if (activeSourceRef.current) { try { activeSourceRef.current.stop() } catch(e) {} activeSourceRef.current = null }
+  const playWordAudio = (card: QuizCard) => {
+    if (isPlayingAudio && audioElRef.current) {
+      audioElRef.current.pause()
+      audioElRef.current.src = ''
+      audioElRef.current = null
       setIsPlayingAudio(false)
       return
     }
@@ -74,36 +60,29 @@ export function TopicQuizModal({
     if (card.englishWord) url += `&word=${encodeURIComponent(card.englishWord)}`
     if (card.targetWord) url += `&targetWord=${encodeURIComponent(card.targetWord)}`
 
-    const done = () => { setIsPlayingAudio(false); audioElRef.current = null; activeSourceRef.current = null }
+    const audio = new Audio(url)
+    audio.crossOrigin = 'anonymous'
+    audio.preload = 'auto'
+    audioElRef.current = audio
 
-    try {
-      const audio = new Audio(url)
-      audioElRef.current = audio
-      audio.onended = done
-      audio.onerror = () => { throw new Error('HTMLAudio failed') }
-      await audio.play()
-    } catch {
+    const cleanup = () => {
+      clearTimeout(timeout)
+      audio.onended = null
+      audio.onerror = null
+      audio.oncanplaythrough = null
+      setIsPlayingAudio(false)
       audioElRef.current = null
-      try {
-        const ctx = audioContextRef.current
-        if (ctx) {
-          if (ctx.state === 'suspended') await ctx.resume()
-          const resp = await fetch(url)
-          if (!resp.ok) throw new Error('fetch failed')
-          const buf = await ctx.decodeAudioData(await resp.arrayBuffer())
-          const source = ctx.createBufferSource()
-          source.buffer = buf
-          source.connect(ctx.destination)
-          source.onended = done
-          activeSourceRef.current = source
-          source.start(0)
-        } else {
-          done()
-        }
-      } catch {
-        done()
-      }
     }
+
+    const timeout = setTimeout(() => { cleanup() }, 10000)
+
+    audio.onended = () => { cleanup() }
+    audio.onerror = () => { cleanup() }
+    audio.oncanplaythrough = () => {
+      audio.play().catch(() => { cleanup() })
+    }
+
+    audio.load()
   }
 
   useEffect(() => {
@@ -185,11 +164,8 @@ export function TopicQuizModal({
     if (sessionState === "quiz" && cards[currentIndex]) {
       if (audioElRef.current) {
         audioElRef.current.pause()
+        audioElRef.current.src = ''
         audioElRef.current = null
-      }
-      if (activeSourceRef.current) {
-        try { activeSourceRef.current.stop() } catch(e) {}
-        activeSourceRef.current = null
       }
       setIsPlayingAudio(false)
       setSelectedOption(null)
