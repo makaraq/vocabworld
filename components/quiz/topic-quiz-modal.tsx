@@ -239,11 +239,11 @@ export function TopicQuizModal({
     >
       <div className="absolute inset-0 bg-black/40 backdrop-blur-xl" />
 
-      <div className="relative flex flex-col h-full p-4 sm:p-6 max-w-lg mx-auto w-full">
+      <div className="relative flex flex-col h-full p-4 pt-14 sm:p-6 sm:pt-14 max-w-lg mx-auto w-full">
         {sessionState !== "complete" && cards.length > 0 && (
           <div className="mb-6">
+            <h2 className="text-lg font-semibold text-white text-center mb-3">{topicName} Quiz</h2>
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-lg font-semibold text-white">{topicName} Quiz</h2>
               <div className="text-sm text-white/50">
                 {currentIndex + 1} of {cards.length}
                 {totalWords > cards.length && (
