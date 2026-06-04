@@ -49,7 +49,6 @@ public class BackgroundAudioPlugin: CAPPlugin, CAPBridgedPlugin {
     private var pauseAfterMs  = 700
     private var rate: Float   = 1.0
     private var targetOnly    = false
-    private var authToken: String?
     private var rewindEnabled = false
     private var rewindAfter   = 5
     private var anchor        = 0
@@ -93,7 +92,6 @@ public class BackgroundAudioPlugin: CAPPlugin, CAPBridgedPlugin {
         pauseAfterMs   = call.getInt("pauseAfterMs")    ?? 700
         rate           = call.getFloat("playbackRate")  ?? 1.0
         targetOnly     = call.getBool("playTargetOnly") ?? false
-        authToken      = call.getString("authToken")
         rewindEnabled  = call.getBool("rewindEnabled")  ?? false
         rewindAfter    = call.getInt("rewindAfterWords") ?? 5
         cursor         = 0
@@ -216,11 +214,7 @@ public class BackgroundAudioPlugin: CAPPlugin, CAPBridgedPlugin {
         removeEndObservers()
         stallTimer?.invalidate()
 
-        var opts: [String: Any] = [:]
-        if let tk = authToken {
-            opts["AVURLAssetHTTPHeaderFieldsKey"] = ["Authorization": "Bearer \(tk)"]
-        }
-        let asset = AVURLAsset(url: url, options: opts.isEmpty ? nil : opts)
+        let asset = AVURLAsset(url: url)
         let item = AVPlayerItem(asset: asset)
 
         endObserver = NotificationCenter.default.addObserver(

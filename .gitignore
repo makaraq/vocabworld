@@ -34,7 +34,6 @@ yarn-error.log*
 !vercel.json
 !next.config.json
 !lib/animations/*.json
-!ios/App/App/Assets.xcassets/**/Contents.json
 
 # vercel
 .vercel

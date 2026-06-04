@@ -18,7 +18,6 @@ export interface StartQueueOptions {
   pauseAfterMs: number
   playbackRate: number
   playTargetOnly: boolean
-  authToken?: string
   rewindEnabled: boolean
   rewindAfterWords: number
 }

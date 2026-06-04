@@ -16,9 +16,6 @@ class ViewController: CAPBridgeViewController {
     """
 
     override func capacitorDidLoad() {
-        // Register native background audio plugin
-        bridge?.registerPluginInstance(BackgroundAudioPlugin())
-
         // Add as a persistent user script (runs on every page load/navigation)
         let userScript = WKUserScript(
             source: disableSelectionJS,
