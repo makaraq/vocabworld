@@ -62,6 +62,10 @@ public class BackgroundAudioPlugin: CAPPlugin, CAPBridgedPlugin {
     private var failObserver: Any?
     private var stallTimer: Timer?
 
+    // Session lifecycle
+    private var sessionObserversRegistered = false
+    private var wasActiveBeforeInterruption = false
+
     // MARK: – Plugin entry points
 
     @objc func startQueue(_ call: CAPPluginCall) {
@@ -98,6 +102,7 @@ public class BackgroundAudioPlugin: CAPPlugin, CAPBridgedPlugin {
         isActive       = true
 
         ensureAudioSession()
+        registerSessionObservers()
         startSilentKeepAlive()
         setupRemoteCommands()
         playCurrentWord()
@@ -194,8 +199,10 @@ public class BackgroundAudioPlugin: CAPPlugin, CAPBridgedPlugin {
 
     private func cleanUpAudio() {
         isActive = false
+        wasActiveBeforeInterruption = false
         stallTimer?.invalidate(); stallTimer = nil
         removeEndObservers()
+        unregisterSessionObservers()
         player?.pause(); player = nil
         silentPlayer?.stop(); silentPlayer = nil
         clearRemoteCommands()
@@ -227,6 +234,9 @@ public class BackgroundAudioPlugin: CAPPlugin, CAPBridgedPlugin {
         if player == nil { player = AVPlayer(playerItem: item) }
         else { player?.replaceCurrentItem(with: item) }
 
+        // Start as soon as possible instead of waiting to buffer – more reliable
+        // when the screen is locked and the app is running in the background.
+        player?.automaticallyWaitsToMinimizeStalling = false
         player?.play()
         if rate != 1.0 { player?.rate = rate }
 
@@ -249,13 +259,29 @@ public class BackgroundAudioPlugin: CAPPlugin, CAPBridgedPlugin {
 
     // MARK: – Silent keep-alive
 
+    /// Loops near-silent audio so iOS keeps the app running during the gaps
+    /// between words (when the AVPlayer is idle). Without this the OS suspends
+    /// the process the moment the screen locks and the queue stops advancing.
     private func startSilentKeepAlive() {
-        guard silentPlayer == nil else { return }
+        // Already created – just make sure it is running (e.g. after an interruption).
+        if let p = silentPlayer {
+            if !p.isPlaying { p.play() }
+            return
+        }
         let data = makeSilentWAV(ms: 1000)
-        silentPlayer = try? AVAudioPlayer(data: data)
-        silentPlayer?.numberOfLoops = -1
-        silentPlayer?.volume = 0.01
-        silentPlayer?.play()
+        do {
+            // The fileTypeHint is essential: AVAudioPlayer(data:) cannot reliably
+            // recognise raw in-memory WAV bytes without it and would otherwise
+            // throw, leaving us with no keep-alive and silent failure on lock.
+            let p = try AVAudioPlayer(data: data, fileTypeHint: AVFileType.wav.rawValue)
+            p.numberOfLoops = -1
+            p.volume = 0.01
+            p.prepareToPlay()
+            p.play()
+            silentPlayer = p
+        } catch {
+            print("[BackgroundAudio] keep-alive init failed: \(error)")
+        }
     }
 
     private func makeSilentWAV(ms: Int) -> Data {
@@ -281,6 +307,72 @@ public class BackgroundAudioPlugin: CAPPlugin, CAPBridgedPlugin {
         } catch {
             print("[BackgroundAudio] audio session error: \(error)")
         }
+    }
+
+    // MARK: – Interruptions / route changes
+
+    private func registerSessionObservers() {
+        guard !sessionObserversRegistered else { return }
+        sessionObserversRegistered = true
+        let nc = NotificationCenter.default
+        nc.addObserver(self, selector: #selector(handleInterruption(_:)),
+                       name: AVAudioSession.interruptionNotification, object: nil)
+        nc.addObserver(self, selector: #selector(handleMediaReset(_:)),
+                       name: AVAudioSession.mediaServicesWereResetNotification, object: nil)
+    }
+
+    private func unregisterSessionObservers() {
+        guard sessionObserversRegistered else { return }
+        sessionObserversRegistered = false
+        let nc = NotificationCenter.default
+        nc.removeObserver(self, name: AVAudioSession.interruptionNotification, object: nil)
+        nc.removeObserver(self, name: AVAudioSession.mediaServicesWereResetNotification, object: nil)
+    }
+
+    /// A phone call / Siri / other-app audio interrupts us. iOS deactivates our
+    /// session; we must reactivate and resume or the queue dies silently on the
+    /// lock screen. Also covers the WebView's AudioContext being suspended on lock.
+    @objc private func handleInterruption(_ note: Notification) {
+        guard let info = note.userInfo,
+              let raw  = info[AVAudioSessionInterruptionTypeKey] as? UInt,
+              let type = AVAudioSession.InterruptionType(rawValue: raw) else { return }
+
+        switch type {
+        case .began:
+            wasActiveBeforeInterruption = isActive
+
+        case .ended:
+            guard isActive, wasActiveBeforeInterruption else { return }
+            var shouldResume = true
+            if let optRaw = info[AVAudioSessionInterruptionOptionKey] as? UInt {
+                shouldResume = AVAudioSession.InterruptionOptions(rawValue: optRaw).contains(.shouldResume)
+            }
+            if shouldResume {
+                DispatchQueue.main.async { [weak self] in self?.resumeAfterInterruption() }
+            }
+
+        @unknown default:
+            break
+        }
+    }
+
+    /// The media server crashed/reset – every audio object is now invalid.
+    @objc private func handleMediaReset(_ note: Notification) {
+        guard isActive else { return }
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self, self.isActive else { return }
+            self.silentPlayer = nil
+            self.ensureAudioSession()
+            self.startSilentKeepAlive()
+            self.playCurrentWord()
+        }
+    }
+
+    private func resumeAfterInterruption() {
+        guard isActive else { return }
+        ensureAudioSession()
+        startSilentKeepAlive()      // restart the keep-alive if iOS stopped it
+        playCurrentWord()           // replay the current word so the queue advances
     }
 
     // MARK: – Now Playing / Remote Commands
