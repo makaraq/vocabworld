@@ -18,9 +18,8 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
-// Verify the session cookie and return the authenticated user's ID.
-// Returns null if the request is unauthenticated.
-async function getSessionUserId(): Promise<string | null> {
+async function getSessionUserId(request: NextRequest): Promise<string | null> {
+  // 1. Try cookie-based auth (web)
   const cookieStore = await cookies()
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -39,13 +38,23 @@ async function getSessionUserId(): Promise<string | null> {
     }
   )
   const { data: { user } } = await supabase.auth.getUser()
-  return user?.id ?? null
+  if (user?.id) return user.id
+
+  // 2. Fall back to Authorization header (native/Capacitor)
+  const authHeader = request.headers.get('authorization')
+  if (authHeader?.startsWith('Bearer ')) {
+    const token = authHeader.slice(7)
+    const { data: { user: tokenUser } } = await supabaseAdmin.auth.getUser(token)
+    return tokenUser?.id ?? null
+  }
+
+  return null
 }
 
 // GET - List user's playlists
 export async function GET(request: NextRequest) {
   try {
-    const userId = await getSessionUserId()
+    const userId = await getSessionUserId(request)
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -145,7 +154,7 @@ export async function GET(request: NextRequest) {
 // POST - Create new playlist or add word to playlist
 export async function POST(request: NextRequest) {
   try {
-    const userId = await getSessionUserId()
+    const userId = await getSessionUserId(request)
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -295,7 +304,7 @@ export async function POST(request: NextRequest) {
 // PUT - Update playlist (rename)
 export async function PUT(request: NextRequest) {
   try {
-    const userId = await getSessionUserId()
+    const userId = await getSessionUserId(request)
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -331,7 +340,7 @@ export async function PUT(request: NextRequest) {
 // DELETE - Delete playlist or remove word from playlist
 export async function DELETE(request: NextRequest) {
   try {
-    const userId = await getSessionUserId()
+    const userId = await getSessionUserId(request)
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
