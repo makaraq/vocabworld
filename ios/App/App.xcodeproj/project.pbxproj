@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2FAD9763203C412B000D30F8 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2FAD9762203C412B000D30F8 /* config.xml */; };
+		448E04AE2FDA527300F7FD55 /* products.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 448E04AD2FDA527300F7FD55 /* products.storekit */; };
 		50379B232058CBB4000EE86E /* capacitor.config.json in Resources */ = {isa = PBXBuildFile; fileRef = 50379B222058CBB4000EE86E /* capacitor.config.json */; };
 		504EC3081FED79650016851F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504EC3071FED79650016851F /* AppDelegate.swift */; };
 		504EC30D1FED79650016851F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC30B1FED79650016851F /* Main.storyboard */; };
@@ -21,8 +22,9 @@
 /* Begin PBXFileReference section */
 		197A63ADC3E32D30D4FCBBD7 /* Pods_App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2FAD9762203C412B000D30F8 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = config.xml; sourceTree = "<group>"; };
+		448E04AD2FDA527300F7FD55 /* products.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = products.storekit; path = App/products.storekit; sourceTree = "<group>"; };
 		50379B222058CBB4000EE86E /* capacitor.config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = capacitor.config.json; sourceTree = "<group>"; };
-		504EC3041FED79650016851F /* App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = App.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		504EC3041FED79650016851F /* App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = App.app; path = "/Volumes/Macintosh_HD/Users/user291850/Documents/GitHub/vocabworld/ios/App/build/Debug-iphoneos/App.app"; sourceTree = "<absolute>"; };
 		504EC3071FED79650016851F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		504EC30C1FED79650016851F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		504EC30E1FED79650016851F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -57,19 +59,11 @@
 		504EC2FB1FED79650016851F = {
 			isa = PBXGroup;
 			children = (
+				448E04AD2FDA527300F7FD55 /* products.storekit */,
 				504EC3061FED79650016851F /* App */,
-				504EC3051FED79650016851F /* Products */,
 				9D591E983B7F2767AB4EABC4 /* Pods */,
 				16909CAD77C181DE4BDAB0EC /* Frameworks */,
 			);
-			sourceTree = "<group>";
-		};
-		504EC3051FED79650016851F /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				504EC3041FED79650016851F /* App.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		504EC3061FED79650016851F /* App */ = {
@@ -144,7 +138,7 @@
 				Base,
 			);
 			mainGroup = 504EC2FB1FED79650016851F;
-			productRefGroup = 504EC3051FED79650016851F /* Products */;
+			productRefGroup = 504EC2FB1FED79650016851F;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -158,6 +152,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				448E04AE2FDA527300F7FD55 /* products.storekit in Resources */,
 				504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */,
 				50B271D11FEDC1A000F3C39B /* public in Resources */,
 				504EC30F1FED79650016851F /* Assets.xcassets in Resources */,
