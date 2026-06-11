@@ -10,6 +10,7 @@ import { createClient } from "@/lib/supabase/browser-client"
 import type { PermissionState } from "@/hooks/use-notifications"
 import { hapticsLight, hapticsMedium, hapticsWarning } from "@/lib/haptics"
 import { NotificationTester, isNotifDebugEnabled, setNotifDebugEnabled } from "@/components/dev/notification-tester"
+import { OfflineDownloadsSection } from "@/components/offline/offline-downloads-section"
 
 interface ManageAccountModalProps {
   open: boolean
@@ -644,6 +645,9 @@ export function ManageAccountModal({
                 </div>
               </div>
             </div>
+
+            {/* Offline downloads */}
+            <OfflineDownloadsSection />
 
             {/* Divider */}
             <div className="h-px bg-white/10 my-1" />
