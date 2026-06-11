@@ -11,6 +11,7 @@ import {
   rescheduleAllNotifications,
   cancelAllNotifications,
   cancelTodaysStreakNotification,
+  fetchNotificationContext,
 } from '@/lib/notifications'
 
 export type PermissionState = 'granted' | 'denied' | 'prompt' | 'loading' | 'not-native'
@@ -52,6 +53,17 @@ export function useNotifications(
     getNotificationPermission().then(setPermissionState)
   }, [])
 
+  // Returns the cached scheduling context, fetching it from the API when the
+  // cache is empty. Before this existed, every "enable" path was guarded by
+  // `if (ctxRef.current)` — and since nothing reliably populated ctxRef,
+  // toggling notifications ON scheduled nothing at all.
+  const ensureCtx = useCallback(async (): Promise<NotificationContext | null> => {
+    if (ctxRef.current) return ctxRef.current
+    const ctx = await fetchNotificationContext()
+    if (ctx) ctxRef.current = ctx
+    return ctx
+  }, [])
+
   const loadPrefsFromSettings = useCallback((settings: Record<string, any>) => {
     const saved = settings?.notifications
     if (saved && typeof saved === 'object') {
@@ -68,12 +80,17 @@ export function useNotifications(
     const newPrefs = { ...prefs, enabled }
     setPrefs(newPrefs)
     persistPrefsRef.current('notifications', newPrefs)   // ← use ref, not stale closure
-    if (!enabled) {
-      await cancelAllNotifications()
-    } else if (ctxRef.current) {
-      await rescheduleAllNotifications(newPrefs, ctxRef.current)
+    try {
+      if (!enabled) {
+        await cancelAllNotifications()
+      } else {
+        const ctx = await ensureCtx()
+        if (ctx) await rescheduleAllNotifications(newPrefs, ctx)
+      }
+    } catch (e) {
+      console.error('Notification scheduling failed:', e)
     }
-  }, [prefs])  // persistPrefs intentionally removed from deps — ref handles it
+  }, [prefs, ensureCtx])  // persistPrefs intentionally removed from deps — ref handles it
 
   // Atomically enables notifications AND sets the reminder time in one prefs
   // write, avoiding the stale-closure bug that occurs when updatePref and
@@ -90,11 +107,14 @@ export function useNotifications(
     }
     setPrefs(newPrefs)
     persistPrefsRef.current('notifications', newPrefs)
-    if (ctxRef.current) {
-      await rescheduleAllNotifications(newPrefs, ctxRef.current)
+    try {
+      const ctx = await ensureCtx()
+      if (ctx) await rescheduleAllNotifications(newPrefs, ctx)
+    } catch (e) {
+      console.error('Notification scheduling failed:', e)
     }
     return true
-  }, [prefs])
+  }, [prefs, ensureCtx])
 
   const updatePref = useCallback(async <K extends keyof NotificationPreferences>(
     key: K,
@@ -103,10 +123,15 @@ export function useNotifications(
     const newPrefs = { ...prefs, [key]: value }
     setPrefs(newPrefs)
     persistPrefsRef.current('notifications', newPrefs)   // ← use ref
-    if (newPrefs.enabled && ctxRef.current) {
-      await rescheduleAllNotifications(newPrefs, ctxRef.current)
+    if (newPrefs.enabled) {
+      try {
+        const ctx = await ensureCtx()
+        if (ctx) await rescheduleAllNotifications(newPrefs, ctx)
+      } catch (e) {
+        console.error('Notification scheduling failed:', e)
+      }
     }
-  }, [prefs])
+  }, [prefs, ensureCtx])
 
   // Re-check OS permission state — call on app resume so the UI updates
   // after the user returns from iOS Settings where they may have toggled permissions.
@@ -122,11 +147,14 @@ export function useNotifications(
       const newPrefs = { ...prefs, enabled: true }
       setPrefs(newPrefs)
       persistPrefsRef.current('notifications', newPrefs)
-      if (ctxRef.current) {
-        await rescheduleAllNotifications(newPrefs, ctxRef.current)
+      try {
+        const ctx = await ensureCtx()
+        if (ctx) await rescheduleAllNotifications(newPrefs, ctx)
+      } catch (e) {
+        console.error('Notification scheduling failed:', e)
       }
     }
-  }, [prefs])
+  }, [prefs, ensureCtx])
 
   const reschedule = useCallback(async (ctx: NotificationContext) => {
     ctxRef.current = ctx

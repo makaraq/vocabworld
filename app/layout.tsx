@@ -46,7 +46,7 @@ export default function RootLayout({
                   init.headers = new Headers(init.headers || {});
                   var sk = 'sb-ripkorbuxnoljiprhlyk-auth-token';
                   var raw = localStorage.getItem(sk);
-                  if (raw) {
+                  if (raw && !init.headers.has('Authorization')) {
                     try { init.headers.set('Authorization', 'Bearer ' + JSON.parse(raw).access_token); } catch(e) {}
                   }
                 }

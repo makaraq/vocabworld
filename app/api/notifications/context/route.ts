@@ -2,21 +2,21 @@
  * GET /api/notifications/context
  *
  * Returns the data needed for on-device notification scheduling.
- * Requires an authenticated session (reads from the session cookie).
+ * Auth: session cookie (web) OR Authorization Bearer header (native).
  *
  * Response:
  * {
  *   currentStreak: number
  *   lastTopicName: string | null
  *   lastStudiedAt: string | null   // ISO timestamp
- *   userLanguage: string           // language code, e.g. "pt"
+ *   userLanguage: string           // display name, e.g. "Portuguese"
  *   timezone: string               // IANA timezone stored in user_profiles
+ *   dueReviewCount: number
  * }
  */
 
 import { NextResponse } from 'next/server'
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { getApiUser, getAdminClient } from '@/lib/auth/api-auth'
 import { languageNamesTranslations } from '@/lib/i18n/language-names-translations'
 
 // Topic ID → display name map (matches app/api/topics/route.ts)
@@ -35,31 +35,15 @@ const TOPIC_NAMES: Record<number, string> = {
   43: 'Essential Words', 45: 'Example Sentences',
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const cookieStore = await cookies()
-
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() { return cookieStore.getAll() },
-          setAll(cookiesToSet) {
-            try {
-              cookiesToSet.forEach(({ name, value, options }) =>
-                cookieStore.set(name, value, options)
-              )
-            } catch {}
-          },
-        },
-      }
-    )
-
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    if (authError || !user) {
+    const user = await getApiUser(request)
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+
+    // Service-role client — auth is already verified, queries filter by user id
+    const supabase = getAdminClient()
 
     // Run all three queries in parallel
     const [streakResult, langResult, profileResult] = await Promise.all([

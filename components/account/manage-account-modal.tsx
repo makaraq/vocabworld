@@ -9,6 +9,7 @@ import { logOutRevenueCat } from "@/lib/revenuecat-client"
 import { createClient } from "@/lib/supabase/browser-client"
 import type { PermissionState } from "@/hooks/use-notifications"
 import { hapticsLight, hapticsMedium, hapticsWarning } from "@/lib/haptics"
+import { NotificationTester, isNotifDebugEnabled, setNotifDebugEnabled } from "@/components/dev/notification-tester"
 
 interface ManageAccountModalProps {
   open: boolean
@@ -131,6 +132,28 @@ export function ManageAccountModal({
   const [showTimePicker, setShowTimePicker] = useState(false)
   const [shown, setShown] = useState(false)
   const notifSectionRef = useRef<HTMLDivElement>(null)
+
+  // Hidden notification tester — unlocked by tapping "Daily Reminder" 5×
+  const [notifDebug, setNotifDebug] = useState(false)
+  const debugTaps = useRef<{ count: number; last: number }>({ count: 0, last: 0 })
+  useEffect(() => {
+    setNotifDebug(isNotifDebugEnabled())
+    const off = () => setNotifDebug(false)
+    window.addEventListener('vw-notif-debug-off', off)
+    return () => window.removeEventListener('vw-notif-debug-off', off)
+  }, [])
+  const handleDebugTap = useCallback(() => {
+    const now = Date.now()
+    const t = debugTaps.current
+    t.count = now - t.last < 600 ? t.count + 1 : 1
+    t.last = now
+    if (t.count >= 5) {
+      t.count = 0
+      hapticsMedium()
+      setNotifDebugEnabled(true)
+      setNotifDebug(true)
+    }
+  }, [])
 
   const modalRef = useRef<HTMLDivElement>(null)
   const backdropRef = useRef<HTMLDivElement>(null)
@@ -529,7 +552,7 @@ export function ManageAccountModal({
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2.5">
                         <Icon icon="solar:bell-bold" width="18" className={notifPrefs.enabled ? 'text-blue-400' : 'text-white/50'} />
-                        <span className="text-white font-medium text-sm">Daily Reminder</span>
+                        <span className="text-white font-medium text-sm" onClick={handleDebugTap}>Daily Reminder</span>
                       </div>
                       <button
                         onClick={() => {
@@ -573,7 +596,7 @@ export function ManageAccountModal({
                   <div className="px-4 py-3.5 space-y-3">
                     <div className="flex items-center gap-2.5">
                       <Icon icon="solar:bell-bold" width="18" className="text-white/50" />
-                      <span className="text-white font-medium text-sm">Daily Reminder</span>
+                      <span className="text-white font-medium text-sm" onClick={handleDebugTap}>Daily Reminder</span>
                       <span className="text-xs bg-white/10 text-white/40 border border-white/10 px-2 py-0.5 rounded-full">Off</span>
                     </div>
                     <p className="text-white/50 text-xs leading-relaxed">
@@ -589,6 +612,11 @@ export function ManageAccountModal({
                   </div>
                 )}
               </div>
+            )}
+
+            {/* Hidden notification tester (5 taps on "Daily Reminder" to unlock) */}
+            {notifDebug && notifPrefs && (
+              <NotificationTester prefs={notifPrefs} />
             )}
 
             {/* Leaderboard opt-in */}

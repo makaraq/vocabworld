@@ -82,18 +82,6 @@ export async function requestNotificationPermission(): Promise<boolean> {
 
 // ── Date helpers ─────────────────────────────────────────────────────────────
 
-/**
- * Returns a Date set to HH:MM today. If that time has already passed,
- * advances by 1 day so the notification fires tomorrow at that time.
- */
-function todayAt(timeStr: string): Date {
-  const [h, m] = timeStr.split(':').map(Number)
-  const d = new Date()
-  d.setHours(h, m, 0, 0)
-  if (d <= new Date()) d.setDate(d.getDate() + 1)
-  return d
-}
-
 /** Returns a Date set to 20:00 (8 PM) on today + dayOffset days. */
 function streakTimeOnDay(dayOffset: number): Date {
   const d = new Date()
@@ -218,13 +206,19 @@ async function scheduleDailyReminder(
   if (!prefs.dailyReminderEnabled) return
 
   const { title, body } = pick(DAILY_COPY, daySeed())(ctx)
+  const [hour, minute] = prefs.dailyReminderTime.split(':').map(Number)
 
+  // IMPORTANT: use a calendar match (`on`), NOT `at` + every:'day'.
+  // The iOS plugin ignores `every` when `at` is present and builds a
+  // UNTimeIntervalNotificationTrigger whose repeat interval equals the gap
+  // between scheduling time and first fire — i.e. the reminder drifts around
+  // the clock instead of firing daily at the chosen time.
   await LocalNotifications.schedule({
     notifications: [{
       id: DAILY_REMINDER_ID,
       title,
       body,
-      schedule: { at: todayAt(prefs.dailyReminderTime), repeats: true, every: 'day' },
+      schedule: { on: { hour, minute } },
       smallIcon: 'ic_notification',
       iconColor: '#6366f1',
       sound: 'default',
@@ -417,4 +411,112 @@ export async function setupNotificationTapListener(): Promise<() => void> {
     }
   )
   return () => listener.remove()
+}
+
+/**
+ * Fetches fresh scheduling context from the API. Returns null on any failure
+ * (offline, 401, server error) — callers treat null as "skip scheduling".
+ * On native, the fetch shim in app/layout.tsx routes this to the production
+ * API with a Bearer token.
+ */
+export async function fetchNotificationContext(): Promise<NotificationContext | null> {
+  try {
+    const res = await fetch('/api/notifications/context')
+    if (!res.ok) return null
+    const ctx = await res.json()
+    if (typeof ctx?.currentStreak !== 'number') return null
+    return ctx as NotificationContext
+  } catch {
+    return null
+  }
+}
+
+// ── Testing / debugging helpers ──────────────────────────────────────────────
+
+export interface PendingNotificationInfo {
+  id: number
+  title: string
+  body: string
+  at: string | null      // ISO timestamp, null for calendar repeats
+  on: string | null      // "daily @ HH:MM" for calendar repeats
+}
+
+/** Lists all pending (scheduled, not yet fired) notifications. */
+export async function getPendingNotifications(): Promise<PendingNotificationInfo[]> {
+  if (!isNative()) return []
+  const { LocalNotifications } = await import('@capacitor/local-notifications')
+  const { notifications } = await LocalNotifications.getPending()
+  return notifications
+    .map(n => {
+      const schedule = (n as any).schedule ?? {}
+      const on = schedule.on
+      return {
+        id: n.id,
+        title: n.title ?? '',
+        body: n.body ?? '',
+        at: schedule.at ? new Date(schedule.at).toISOString() : null,
+        on: on ? `daily @ ${String(on.hour ?? 0).padStart(2, '0')}:${String(on.minute ?? 0).padStart(2, '0')}` : null,
+      }
+    })
+    .sort((a, b) => (a.at ?? '').localeCompare(b.at ?? ''))
+}
+
+const TEST_BASE_ID = 9000
+
+/** Stub context used by the test panel when the API is unreachable. */
+export const STUB_NOTIFICATION_CONTEXT: NotificationContext = {
+  currentStreak: 5,
+  lastTopicName: 'Food',
+  lastStudiedAt: new Date(Date.now() - 26 * 3600_000).toISOString(),
+  userLanguage: 'Portuguese',
+  timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+  dueReviewCount: 14,
+}
+
+/**
+ * Schedules one notification of each type (daily / streak / review) a few
+ * seconds from now using the real copy pools, so the full pipeline —
+ * permission, plugin bridge, OS delivery — can be verified on a simulator
+ * or device. Background the app to see the banners.
+ * Returns the fire times keyed by type.
+ */
+export async function scheduleTestNotifications(
+  ctx: NotificationContext,
+  startInSeconds = 8,
+  gapSeconds = 7
+): Promise<{ type: string; at: Date }[]> {
+  if (!isNative()) throw new Error('Test notifications require a native platform')
+  const { LocalNotifications } = await import('@capacitor/local-notifications')
+
+  // Clear previous test runs
+  await LocalNotifications.cancel({
+    notifications: [0, 1, 2].map(i => ({ id: TEST_BASE_ID + i })),
+  })
+
+  const enriched = { ...ctx, projected: Math.max(ctx.currentStreak, 1) }
+  const daily  = pick(DAILY_COPY, daySeed())(enriched)
+  const streak = (enriched.projected > 1 ? pick(STREAK_COPY, daySeed()) : pick(STREAK_START_COPY, daySeed()))(enriched)
+  const review = pick(REVIEW_COPY, daySeed())(enriched)
+
+  const fireAt = (i: number) => new Date(Date.now() + (startInSeconds + i * gapSeconds) * 1000)
+  const plan = [
+    { type: 'daily',  copy: daily,  color: '#6366f1', extra: undefined },
+    { type: 'streak', copy: streak, color: '#f59e0b', extra: undefined },
+    { type: 'review', copy: review, color: '#10b981', extra: { action: 'open_review' } },
+  ]
+
+  await LocalNotifications.schedule({
+    notifications: plan.map((p, i) => ({
+      id: TEST_BASE_ID + i,
+      title: `[TEST] ${p.copy.title}`,
+      body: p.copy.body,
+      schedule: { at: fireAt(i) },
+      smallIcon: 'ic_notification',
+      iconColor: p.color,
+      sound: 'default',
+      ...(p.extra ? { extra: p.extra } : {}),
+    })),
+  })
+
+  return plan.map((p, i) => ({ type: p.type, at: fireAt(i) }))
 }

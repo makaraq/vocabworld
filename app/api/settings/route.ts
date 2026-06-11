@@ -1,37 +1,40 @@
 import { NextResponse } from 'next/server'
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { getApiUser, getAdminClient } from '@/lib/auth/api-auth'
+
+const DEFAULT_SETTINGS = {
+  autoPlay: true,
+  trainingLanguageVoice: "Male",
+  mainLanguageVoice: "Male",
+  pronunciationSpeed: "Normal",
+  pauseBetweenTranslations: 0.5,
+  pauseForNextWord: 0.7,
+  repeatTargetLanguage: 1,
+  repeatMainLanguage: 1,
+  playTargetOnly: false,
+  showPhonetics: false,
+  rewindEnabled: false,
+  rewindAfterWords: 5,
+  notifications: {
+    enabled: false,
+    dailyReminderEnabled: true,
+    dailyReminderTime: '09:00',
+    streakProtectionEnabled: true,
+    reviewReminderEnabled: true,
+  },
+}
 
 // GET - Fetch user settings
+// Auth: session cookie (web) OR Authorization Bearer header (native)
 export async function GET(request: Request) {
   try {
-    const cookieStore = await cookies()
-    
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll()
-          },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
-          },
-        },
-      }
-    )
-    
-    // Get authenticated user
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
-    if (authError || !user) {
+    const user = await getApiUser(request)
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Fetch user profile with settings
+    // Service-role client — auth verified above, query filters by user id
+    const supabase = getAdminClient()
+
     const { data: profile, error: profileError } = await supabase
       .from('user_profiles')
       .select('learning_settings')
@@ -39,70 +42,23 @@ export async function GET(request: Request) {
       .single()
 
     if (profileError) {
-      console.error('❌ Error fetching user settings:', profileError)
-      console.error('❌ Full error details:', JSON.stringify(profileError, null, 2))
-      
       // If no row exists, return defaults (this is fine)
       if (profileError.code === 'PGRST116') {
-        const defaultSettings = {
-          autoPlay: true,
-          trainingLanguageVoice: "Male",
-          mainLanguageVoice: "Male",
-          pronunciationSpeed: "Normal",
-          pauseBetweenTranslations: 0.5,
-          pauseForNextWord: 0.7,
-          repeatTargetLanguage: 1,
-          repeatMainLanguage: 1,
-          playTargetOnly: false,
-          showPhonetics: false,
-          rewindEnabled: false,
-          rewindAfterWords: 5,
-          notifications: {
-            enabled: false,
-            dailyReminderEnabled: true,
-            dailyReminderTime: '09:00',
-            streakProtectionEnabled: true,
-            reviewReminderEnabled: true,
-          },
-        }
-        return NextResponse.json({ settings: defaultSettings })
+        return NextResponse.json({ settings: DEFAULT_SETTINGS })
       }
-      
-      return NextResponse.json({ 
+
+      console.error('❌ Error fetching user settings:', profileError)
+      return NextResponse.json({
         error: 'Failed to fetch settings',
         details: profileError.message,
         code: profileError.code,
         hint: profileError.hint
       }, { status: 500 })
     }
-    
-
-    // Return default settings if none exist
-    const defaultSettings = {
-      autoPlay: true,
-      trainingLanguageVoice: "Male",
-      mainLanguageVoice: "Male",
-      pronunciationSpeed: "Normal",
-      pauseBetweenTranslations: 0.5,
-      pauseForNextWord: 0.7,
-      repeatTargetLanguage: 1,
-      repeatMainLanguage: 1,
-      playTargetOnly: false,
-      showPhonetics: false,
-      rewindEnabled: false,
-      rewindAfterWords: 5,
-      notifications: {
-        enabled: false,
-        dailyReminderEnabled: true,
-        dailyReminderTime: '09:00',
-        streakProtectionEnabled: true,
-        reviewReminderEnabled: true,
-      },
-    }
 
     // Merge defaults with saved settings to ensure new fields are included
     const mergedSettings = {
-      ...defaultSettings,
+      ...DEFAULT_SETTINGS,
       ...(profile?.learning_settings || {})
     }
 
@@ -117,33 +73,15 @@ export async function GET(request: Request) {
 }
 
 // POST - Save user settings
+// Auth: session cookie (web) OR Authorization Bearer header (native)
 export async function POST(request: Request) {
   try {
-    const cookieStore = await cookies()
-    
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll()
-          },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
-          },
-        },
-      }
-    )
-    
-    // Get authenticated user
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
-    if (authError || !user) {
+    const user = await getApiUser(request)
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+
+    const supabase = getAdminClient()
 
     // Parse settings from request body
     const { settings } = await request.json()
@@ -158,33 +96,30 @@ export async function POST(request: Request) {
       showPhonetics: settings.showPhonetics ?? false
     }
 
-
-    // Use UPSERT to insert or update user profile
-    // For insert: include required fields
-    // For update: only update learning_settings
+    // Use UPSERT to insert or update user profile.
+    // Only include email when present so a tokenless email never nulls out
+    // an existing value on conflict-update.
     const { error: upsertError } = await supabase
       .from('user_profiles')
-      .upsert({ 
+      .upsert({
         id: user.id,
-        email: user.email,
+        ...(user.email ? { email: user.email } : {}),
         learning_settings: settingsToSave,
         updated_at: new Date().toISOString()
       }, {
         onConflict: 'id',
         ignoreDuplicates: false
       })
-      
+
     if (upsertError) {
       console.error('❌ Error saving user settings:', upsertError)
-      console.error('❌ Full error details:', JSON.stringify(upsertError, null, 2))
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: 'Failed to save settings',
         details: upsertError.message,
         code: upsertError.code,
         hint: upsertError.hint
       }, { status: 500 })
     }
-
 
     return NextResponse.json({
       success: true,
