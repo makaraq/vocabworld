@@ -1996,18 +1996,6 @@ export function LanguageSelector() {
                           }
                         }
 
-                        // First-ever topic completion → ask for a store review (once only)
-                        if (
-                          prev.length === 0 &&
-                          next.length > 0 &&
-                          !localStorage.getItem('vw_review_requested') &&
-                          Capacitor.isNativePlatform()
-                        ) {
-                          localStorage.setItem('vw_review_requested', 'true');
-                          import('capacitor-rate-app').then(({ RateApp }) => {
-                            RateApp.requestReview().catch(() => {});
-                          });
-                        }
                         return next;
                       });
                     }
@@ -5104,7 +5092,6 @@ export function LanguageSelector() {
         onCloseAction={() => setShowPaywall(false)}
         onSuccessAction={() => {
           setShowPaywall(false)
-          refreshSubscription()
         }}
         nativeLanguageCode={nativeLanguageCode}
         targetLanguageCode={targetLanguageCode}

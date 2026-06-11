@@ -36,7 +36,7 @@ export function PaywallModal({
   const [restoreStatus, setRestoreStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle')
   const [purchaseSuccess, setPurchaseSuccess] = useState(false)
   const [trialEligible, setTrialEligible] = useState(true)
-  const { user, refreshSubscription } = useAuth()
+  const { user, refreshSubscription, setOptimisticPremium } = useAuth()
   const { purchasePackage, restorePurchases, getOfferings, checkTrialEligibility, loading, error, clearError } = useRevenueCat()
   const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const lottieRef = useRef<LottieRefCurrentProps>(null)
@@ -98,13 +98,9 @@ export function PaywallModal({
 
     if (success) {
       hapticsSuccess()
-      try {
-        await fetch('/api/subscription/sync-rc', { method: 'POST' })
-      } catch {
-        // Non-fatal: webhook will eventually sync the DB
-      }
-      await refreshSubscription()
+      setOptimisticPremium(selectedPlan)
       setPurchaseSuccess(true)
+      fetch('/api/subscription/sync-rc', { method: 'POST' }).catch(() => {})
     }
   }
 
@@ -120,9 +116,10 @@ export function PaywallModal({
     setRestoreStatus('loading')
     const success = await restorePurchases()
     if (success) {
-      await refreshSubscription()
+      setOptimisticPremium(selectedPlan)
       setRestoreStatus('done')
       setTimeout(() => setPurchaseSuccess(true), 400)
+      fetch('/api/subscription/sync-rc', { method: 'POST' }).catch(() => {})
     } else {
       setRestoreStatus('error')
       setTimeout(() => setRestoreStatus('idle'), 3000)

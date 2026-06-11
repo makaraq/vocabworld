@@ -42,6 +42,7 @@ interface AuthContextType {
   
   // Subscription methods
   refreshSubscription: () => Promise<void>
+  setOptimisticPremium: (plan: 'monthly' | 'yearly') => void
   canAccessTopic: (topicId: number) => boolean
   
   // Token for API calls
@@ -61,6 +62,27 @@ export function useAuth() {
   return context
 }
 
+// Module-level purchase flag — survives React re-renders and state resets.
+// Cleared on sign-out or when DB confirms premium.
+let _purchaseConfirmed = false
+
+const PURCHASE_FLAG_KEY = 'sprind_purchase_confirmed'
+
+function setPurchaseFlag() {
+  _purchaseConfirmed = true
+  try { localStorage.setItem(PURCHASE_FLAG_KEY, '1') } catch {}
+}
+
+function clearPurchaseFlag() {
+  _purchaseConfirmed = false
+  try { localStorage.removeItem(PURCHASE_FLAG_KEY) } catch {}
+}
+
+function hasPurchaseFlag(): boolean {
+  if (_purchaseConfirmed) return true
+  try { return localStorage.getItem(PURCHASE_FLAG_KEY) === '1' } catch { return false }
+}
+
 // ============================================
 // PROVIDER
 // ============================================
@@ -73,6 +95,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   
   const supabase = createClient()
   const initializingRef = useRef(false)
+  const optimisticPremiumRef = useRef(false)
   const cleanupTapListenerRef = useRef<(() => void) | null>(null)
 
   // Fetch fresh scheduling context and reschedule all local notifications.
@@ -107,15 +130,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ============================================
   const fetchSubscriptionStatus = useCallback(async (userId: string) => {
     if (!userId) return
-    
+
     setSubscriptionLoading(true)
     try {
       const response = await fetch('/api/subscription/status')
       const data = await response.json()
-      setSubscriptionStatus(data)
+
+      if (data.isPremium) {
+        clearPurchaseFlag()
+        optimisticPremiumRef.current = false
+        setSubscriptionStatus(data)
+      } else if (!hasPurchaseFlag()) {
+        setSubscriptionStatus(data)
+      }
     } catch (error) {
-      console.error('❌ Failed to fetch subscription:', error)
-      setSubscriptionStatus({ isPremium: false, subscription: null })
+      console.error('Failed to fetch subscription:', error)
+      if (!hasPurchaseFlag()) {
+        setSubscriptionStatus({ isPremium: false, subscription: null })
+      }
     } finally {
       setSubscriptionLoading(false)
     }
@@ -127,11 +159,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [user?.id, fetchSubscriptionStatus])
 
+  const setOptimisticPremium = useCallback((plan: 'monthly' | 'yearly') => {
+    setPurchaseFlag()
+    optimisticPremiumRef.current = true
+    setSubscriptionStatus({
+      isPremium: true,
+      subscription: {
+        id: user?.id ?? '',
+        status: 'active',
+        planType: plan,
+        currentPeriodEnd: '',
+        cancelAtPeriodEnd: false,
+      },
+    })
+  }, [user?.id])
+
   // ============================================
   // TOPIC ACCESS
   // ============================================
   const canAccessTopic = useCallback((topicId: number): boolean => {
     if (FREE_TOPIC_IDS.includes(topicId)) return true
+    if (hasPurchaseFlag()) return true
     return subscriptionStatus?.isPremium ?? false
   }, [subscriptionStatus])
 
@@ -221,6 +269,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = async () => {
     await logOutRevenueCat()
     await supabase.auth.signOut()
+    clearPurchaseFlag()
+    optimisticPremiumRef.current = false
     setUser(null)
     setSession(null)
     setSubscriptionStatus(null)
@@ -377,7 +427,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ============================================
   // RENDER
   // ============================================
-  const isPremium = subscriptionStatus?.isPremium ?? false
+  const isPremium = subscriptionStatus?.isPremium || hasPurchaseFlag()
 
   return (
     <AuthContext.Provider
@@ -392,6 +442,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signInWithApple,
         signOut,
         refreshSubscription,
+        setOptimisticPremium,
         canAccessTopic,
         getAccessToken,
       }}

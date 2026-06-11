@@ -7,8 +7,9 @@ import {
   useEffect,
   useRef,
   useState,
-  ReactNode,
+  type ReactNode,
 } from 'react'
+import { Capacitor } from '@capacitor/core'
 import { createPortal } from 'react-dom'
 import { AchievementDef } from '@/lib/achievements/definitions'
 import {
@@ -93,7 +94,22 @@ export function AchievementProvider({ children }: { children: ReactNode }) {
   const dismissToast = (key: number) =>
     setQueue((prev) => prev.filter((t) => t.key !== key))
 
-  const closeTopic = () => setTopicEvent(null)
+  const requestAppReviewOnce = () => {
+    if (
+      !localStorage.getItem('vw_review_requested') &&
+      Capacitor.isNativePlatform()
+    ) {
+      localStorage.setItem('vw_review_requested', 'true')
+      import('capacitor-rate-app').then(({ RateApp }) => {
+        RateApp.requestReview().catch(() => {})
+      })
+    }
+  }
+
+  const closeTopic = () => {
+    requestAppReviewOnce()
+    setTopicEvent(null)
+  }
 
   const handleContinue = () => {
     if (!topicEvent) return
@@ -102,18 +118,21 @@ export function AchievementProvider({ children }: { children: ReactNode }) {
       'continue',
       topicEvent.nextTopic?.id ?? null,
     )
+    requestAppReviewOnce()
     setTopicEvent(null)
   }
 
   const handleRepeat = () => {
     if (!topicEvent) return
     handlerRef.current?.(topicEvent.topicId, 'repeat', null)
+    requestAppReviewOnce()
     setTopicEvent(null)
   }
 
   const handleQuiz = () => {
     if (!topicEvent) return
     handlerRef.current?.(topicEvent.topicId, 'quiz', null)
+    requestAppReviewOnce()
     setTopicEvent(null)
   }
 
