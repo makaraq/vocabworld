@@ -59,6 +59,7 @@ export async function GET(request: NextRequest) {
         'Cache-Control': 'public, max-age=31536000',
         'Content-Disposition': `inline; filename="${resolved.fileName}"`,
         'Access-Control-Allow-Origin': '*',
+        'X-Audio-Source': audio.source,
       },
     });
 

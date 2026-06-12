@@ -270,8 +270,37 @@ export class B2CapExceededError extends Error {
   }
 }
 
-// Download a resolved audio file from the appropriate B2 bucket.
+// Download a resolved audio file. When AUDIO_CDN_BASE is set (Cloudflare R2
+// custom domain, e.g. https://audio.example.com), fetch from the CDN — free
+// egress, no daily caps, edge-cached. Falls back to the authorized B2 path
+// when the env var is unset or the CDN fetch fails, so the rollout is
+// zero-risk: removing the env var reverts instantly.
 export async function fetchAudioFromB2(
+  filePath: string,
+  fileName: string,
+): Promise<{ buffer: ArrayBuffer; contentType: string; source: 'cdn' | 'b2' } | null> {
+  const cdnBase = process.env.AUDIO_CDN_BASE?.replace(/\/+$/, '');
+  if (cdnBase) {
+    try {
+      // encodeURI keeps slashes but escapes spaces etc. in file names
+      const res = await fetch(`${cdnBase}/${encodeURI(filePath)}`);
+      if (res.ok) {
+        const buffer = await res.arrayBuffer();
+        if (buffer.byteLength > 0) {
+          const contentType = fileName.endsWith('.mp3') ? 'audio/mpeg' : 'audio/wav';
+          return { buffer, contentType, source: 'cdn' };
+        }
+      }
+    } catch (e) {
+      console.error('[audio] CDN fetch failed, falling back to B2:', e);
+    }
+  }
+  const direct = await fetchAudioFromB2Direct(filePath, fileName);
+  return direct ? { ...direct, source: 'b2' } : null;
+}
+
+// Original authorized-B2 download path (fallback).
+async function fetchAudioFromB2Direct(
   filePath: string,
   fileName: string,
 ): Promise<{ buffer: ArrayBuffer; contentType: string } | null> {
