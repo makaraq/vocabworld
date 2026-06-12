@@ -42,7 +42,7 @@ export default function RootLayout({
               var _f = window.fetch;
               window.fetch = function(input, init) {
                 if (typeof input === 'string' && input.startsWith('/api/')) {
-                  input = 'https://vocabworld-x843.vercel.app' + input;
+                  input = 'https://www.sprind.uk' + input;
                   init = init || {};
                   init.headers = new Headers(init.headers || {});
                   var sk = 'sb-ripkorbuxnoljiprhlyk-auth-token';
