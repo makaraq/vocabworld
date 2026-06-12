@@ -1,12 +1,27 @@
 "use client"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
+import { Capacitor } from "@capacitor/core"
 import { Toaster } from "@/components/ui/toaster"
 import { LanguageSelector } from "@/components/language/language-selector"
 import { WelcomeOverlay } from "@/components/auth/welcome-overlay"
+import { LandingPage } from "@/components/landing/landing-page"
+import { useAuth } from "@/contexts/auth-context"
 import { createClient } from '@/lib/supabase/browser-client'
 
 export default function LanguagePage() {
   const supabase = createClient()
+  const { user, loading } = useAuth()
+
+  // Signed-out web visitors see a public landing page first (required by
+  // Google OAuth branding verification: the home page must be viewable
+  // without login and explain the app's purpose). The native app and
+  // signed-in users go straight into the app.
+  const [entered, setEntered] = useState(false)
+  const [isWeb, setIsWeb] = useState(false)
+  useEffect(() => {
+    setIsWeb(!Capacitor.isNativePlatform())
+  }, [])
+  const showLanding = isWeb && !loading && !user && !entered
 
   useEffect(() => {
     const checkPaymentReturn = async () => {
@@ -35,8 +50,14 @@ export default function LanguagePage() {
         backgroundRepeat: "no-repeat",
       }}
     >
-      <LanguageSelector />
-      <WelcomeOverlay />
+      {showLanding ? (
+        <LandingPage onGetStartedAction={() => setEntered(true)} />
+      ) : (
+        <>
+          <LanguageSelector />
+          <WelcomeOverlay />
+        </>
+      )}
       <Toaster />
     </div>
   )
