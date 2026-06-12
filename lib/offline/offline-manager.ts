@@ -93,6 +93,8 @@ const BATCH_CONCURRENCY = 2
 const AUDIO_CONCURRENCY = 4
 const MIN_REQUEST_INTERVAL_MS = 125
 const MAX_RETRIES = 5
+// Sentinel error message: the audio backend hit its daily download limit
+const AUDIO_SERVICE_LIMIT = 'AUDIO_SERVICE_LIMIT'
 
 export const audioKey = (languageCode: string, wordId: string | number) => `a:${languageCode}:${wordId}`
 export const vocabKey = (topicId: string | number, learnCode: string, nativeCode: string) =>
@@ -246,11 +248,13 @@ class OfflineManager {
       }
       console.error('[Offline] download failed:', err)
       pack.status = 'error'
-      pack.error = isQuotaError(err)
-        ? 'Your device ran out of storage space. Free up some space and resume.'
-        : !isOnline()
-          ? 'Connection lost. Reconnect and resume the download.'
-          : 'Download failed. Check your connection and try again.'
+      pack.error = err?.message === AUDIO_SERVICE_LIMIT
+        ? 'The audio service hit its daily download limit. Resume the download later — your progress is saved.'
+        : isQuotaError(err)
+          ? 'Your device ran out of storage space. Free up some space and resume.'
+          : !isOnline()
+            ? 'Connection lost. Reconnect and resume the download.'
+            : 'Download failed. Check your connection and try again.'
       await this.savePack(pack)
       this.emit(true)
     } finally {
@@ -428,6 +432,11 @@ class OfflineManager {
         }
 
         if (!res.ok) {
+          const body = await res.json().catch(() => null)
+          if (body?.error === 'audio_unavailable') {
+            // B2 daily download cap exhausted — retrying now is pointless
+            throw new Error(AUDIO_SERVICE_LIMIT)
+          }
           if ((res.status === 429 || res.status >= 500) && attempt < MAX_RETRIES) {
             const retryAfter = parseInt(res.headers.get('retry-after') || '0', 10)
             const backoff = retryAfter > 0 ? retryAfter * 1000 : Math.min(30_000, 2000 * 2 ** attempt)
@@ -485,6 +494,10 @@ class OfflineManager {
     let index = 0
     let sinceSave = 0
     let firstError: any = null
+    // Many failures in a row without a single success means the audio
+    // backend is down (e.g. daily cap) — stop instead of marking the whole
+    // pack as missing audio.
+    let consecutiveFailures = 0
 
     // Global pacer shared by all workers
     let nextSlot = 0
@@ -518,10 +531,16 @@ class OfflineManager {
           if (blob.size > 0) {
             await idbPut('audio', { key: job.key, blob, size: blob.size, savedAt: Date.now() })
             pack.bytes += blob.size
+            consecutiveFailures = 0
           } else {
             pack.audioMissing++
           }
           return
+        }
+
+        if (res.status === 503) {
+          const body = await res.json().catch(() => null)
+          if (body?.error === 'audio_unavailable') throw new Error(AUDIO_SERVICE_LIMIT)
         }
 
         if ((res.status === 429 || res.status >= 500) && attempt < MAX_RETRIES) {
@@ -534,6 +553,7 @@ class OfflineManager {
 
         // Definitive miss (no audio exists for this word/language)
         pack.audioMissing++
+        if (++consecutiveFailures >= 30) throw new Error(AUDIO_SERVICE_LIMIT)
         return
       }
     }

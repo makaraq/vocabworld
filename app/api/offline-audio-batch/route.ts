@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit } from '@/lib/rate-limit';
-import { resolveAudioFile, fetchAudioFromB2 } from '@/lib/audio/universal-audio-core';
+import { resolveAudioFile, fetchAudioFromB2, B2CapExceededError } from '@/lib/audio/universal-audio-core';
 
 // Bulk audio fetch for offline language-pack downloads.
 // One request returns up to MAX_ITEMS clips (base64), so a full pack needs
@@ -12,6 +12,10 @@ import { resolveAudioFile, fetchAudioFromB2 } from '@/lib/audio/universal-audio-
 //   missing: ["lang:wordId"],                   // no audio exists
 //   skipped: [items]                            // not processed (size budget) — resend
 // }
+
+// Each request makes up to 50 B2 fetches — allow headroom beyond the
+// default serverless timeout so slow B2 responses don't 504.
+export const maxDuration = 60;
 
 const MAX_ITEMS = 50;
 const B2_CONCURRENCY = 10;
@@ -61,6 +65,7 @@ export async function POST(request: NextRequest) {
 
     let bytesUsed = 0;
     let budgetExceeded = false;
+    let capExceeded = false;
     let index = 0;
 
     const worker = async () => {
@@ -68,7 +73,7 @@ export async function POST(request: NextRequest) {
         const i = index++;
         const item = items[i];
         if (!item) return;
-        if (budgetExceeded) {
+        if (budgetExceeded || capExceeded) {
           skipped.push(item);
           continue;
         }
@@ -81,7 +86,8 @@ export async function POST(request: NextRequest) {
           }
           const audio = await fetchAudioFromB2(resolved.filePath, resolved.fileName);
           if (!audio || audio.buffer.byteLength === 0) {
-            missing.push(key);
+            // Resolved but B2 fetch failed — likely transient, let the client retry
+            skipped.push(item);
             continue;
           }
           if (bytesUsed + audio.buffer.byteLength > BYTE_BUDGET) {
@@ -95,6 +101,10 @@ export async function POST(request: NextRequest) {
             type: audio.contentType,
           };
         } catch (e) {
+          if (e instanceof B2CapExceededError) {
+            // Account-wide daily cap — every further attempt will fail too
+            capExceeded = true;
+          }
           // Transient B2 failure — let the client retry this item
           skipped.push(item);
         }
@@ -102,6 +112,13 @@ export async function POST(request: NextRequest) {
     };
 
     await Promise.all(Array.from({ length: Math.min(B2_CONCURRENCY, items.length) }, () => worker()));
+
+    if (capExceeded && Object.keys(files).length === 0) {
+      return NextResponse.json(
+        { error: 'audio_unavailable', message: 'Audio storage download limit reached. Try again later.' },
+        { status: 503, headers: { 'Retry-After': '3600' } }
+      );
+    }
 
     return NextResponse.json({ files, missing, skipped });
   } catch (error) {

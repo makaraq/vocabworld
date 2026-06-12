@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit } from '@/lib/rate-limit';
-import { resolveAudioFile, fetchAudioFromB2, getAudioLanguageCode } from '@/lib/audio/universal-audio-core';
+import { resolveAudioFile, fetchAudioFromB2, getAudioLanguageCode, B2CapExceededError } from '@/lib/audio/universal-audio-core';
 
 // Universal Audio API - B2 Authenticated Access
 // Fetches audio from private B2 bucket using API credentials
@@ -63,6 +63,12 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
+    if (error instanceof B2CapExceededError) {
+      return NextResponse.json(
+        { error: 'audio_unavailable', message: 'Audio storage download limit reached. Try again later.' },
+        { status: 503, headers: { 'Retry-After': '3600' } }
+      );
+    }
     console.error('Audio API Error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },

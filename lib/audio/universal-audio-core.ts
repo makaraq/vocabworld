@@ -260,6 +260,16 @@ export async function resolveAudioFile(
   return { fileName, filePath };
 }
 
+// Thrown when the B2 account's daily download cap (bandwidth or Class B
+// transactions) is exhausted — callers should stop immediately rather than
+// keep attempting downloads that will all fail until the cap resets.
+export class B2CapExceededError extends Error {
+  constructor() {
+    super('B2 download cap exceeded')
+    this.name = 'B2CapExceededError'
+  }
+}
+
 // Download a resolved audio file from the appropriate B2 bucket.
 export async function fetchAudioFromB2(
   filePath: string,
@@ -278,7 +288,13 @@ export async function fetchAudioFromB2(
     headers: { 'Authorization': b2Auth.downloadAuthToken }
   });
 
-  if (!audioResponse.ok) return null;
+  if (!audioResponse.ok) {
+    if (audioResponse.status === 403) {
+      const body = await audioResponse.text().catch(() => '');
+      if (body.includes('cap_exceeded')) throw new B2CapExceededError();
+    }
+    return null;
+  }
 
   const buffer = await audioResponse.arrayBuffer();
   const contentType = fileName.endsWith('.mp3') ? 'audio/mpeg' : 'audio/wav';
