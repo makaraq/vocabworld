@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { progressService } from '@/lib/progress/progress-service'
+import { getApiUser } from '@/lib/auth/api-auth'
 
 export async function POST(request: NextRequest) {
-  const { userId, vocabularyId, targetLanguageCode } = await request.json()
-  if (!userId || !vocabularyId || !targetLanguageCode) {
+  const user = await getApiUser(request)
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+  const userId = user.id
+  const { vocabularyId, targetLanguageCode } = await request.json()
+  if (!vocabularyId || !targetLanguageCode) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
   }
   const result = await progressService.trackWordPlayed(userId, vocabularyId, targetLanguageCode)

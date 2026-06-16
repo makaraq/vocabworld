@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { getApiUser } from '@/lib/auth/api-auth'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -7,12 +8,11 @@ const supabase = createClient(
 )
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url)
-  const userId = searchParams.get('userId')
-
-  if (!userId) {
-    return NextResponse.json({ error: 'userId is required' }, { status: 400 })
+  const user = await getApiUser(request)
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
+  const userId = user.id
 
   try {
     const { data, error } = await supabase
@@ -36,9 +36,14 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId, showOnLeaderboard } = await request.json()
+    const user = await getApiUser(request)
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    const { showOnLeaderboard } = await request.json()
+    const userId = user.id
 
-    if (!userId || typeof showOnLeaderboard !== 'boolean') {
+    if (typeof showOnLeaderboard !== 'boolean') {
       return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
     }
 

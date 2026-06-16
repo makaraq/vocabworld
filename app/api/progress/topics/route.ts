@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { progressService } from '@/lib/progress/progress-service'
 import { createClient } from '@supabase/supabase-js'
+import { getApiUser } from '@/lib/auth/api-auth'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -9,15 +10,15 @@ const supabase = createClient(
 
 export async function GET(request: NextRequest) {
   try {
+    const user = await getApiUser(request)
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    const userId = user.id
     const { searchParams } = new URL(request.url)
-    const userId = searchParams.get('userId')
     const targetLanguageCode = searchParams.get('targetLanguageCode')
     const languageCode = searchParams.get('languageCode')
     const detailed = searchParams.get('detailed')
-
-    if (!userId) {
-      return NextResponse.json({ error: 'Missing userId' }, { status: 400 })
-    }
 
     // If requesting detailed progress for modal
     if (detailed === 'true' && languageCode) {

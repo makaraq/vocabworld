@@ -1,17 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSupabaseServer } from '@/lib/supabase-server'
+import { getApiUser } from '@/lib/auth/api-auth'
 
 export async function GET(request: NextRequest) {
   const supabase = getSupabaseServer()
   try {
+    const user = await getApiUser(request)
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    const userId = user.id
     const { searchParams } = new URL(request.url)
-    const userId = searchParams.get('userId')
     const targetLanguageCode = searchParams.get('targetLanguageCode')
     const sourceLanguageCode = searchParams.get('sourceLanguageCode')
     const countOnly = searchParams.get('countOnly') === 'true'
     const limit = parseInt(searchParams.get('limit') || '20')
 
-    if (!userId || !targetLanguageCode) {
+    if (!targetLanguageCode) {
       return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 })
     }
 

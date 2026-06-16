@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { getApiUser } from '@/lib/auth/api-auth'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -17,15 +18,15 @@ interface LeaderboardEntry {
 }
 
 export async function GET(request: NextRequest) {
+  const user = await getApiUser(request)
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+  const userId = user.id
   const { searchParams } = new URL(request.url)
-  const userId = searchParams.get('userId')
   const targetLanguageCode = searchParams.get('targetLanguageCode')
   const period = searchParams.get('period') || 'alltime'
   const scope = searchParams.get('scope') || 'language'
-
-  if (!userId) {
-    return NextResponse.json({ error: 'userId is required' }, { status: 400 })
-  }
 
   if (scope === 'language' && !targetLanguageCode) {
     return NextResponse.json({ error: 'targetLanguageCode is required for language scope' }, { status: 400 })

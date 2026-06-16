@@ -1,13 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSupabaseServer } from '@/lib/supabase-server'
+import { getApiUser } from '@/lib/auth/api-auth'
 import { schedule, Rating, State, type SRCard } from '@/lib/sr/fsrs'
 
 export async function POST(request: NextRequest) {
   const supabase = getSupabaseServer()
   try {
-    const { cardId, rating, userId, targetLanguageCode } = await request.json()
+    const user = await getApiUser(request)
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    const userId = user.id
+    const { cardId, rating, targetLanguageCode } = await request.json()
 
-    if (!cardId || !rating || !userId || !targetLanguageCode) {
+    if (!cardId || !rating || !targetLanguageCode) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 

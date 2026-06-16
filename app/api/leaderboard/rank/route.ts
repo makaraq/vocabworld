@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { getApiUser } from '@/lib/auth/api-auth'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -7,12 +8,16 @@ const supabase = createClient(
 )
 
 export async function GET(request: NextRequest) {
+  const user = await getApiUser(request)
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+  const userId = user.id
   const { searchParams } = new URL(request.url)
-  const userId = searchParams.get('userId')
   const targetLanguageCode = searchParams.get('targetLanguageCode')
 
-  if (!userId || !targetLanguageCode) {
-    return NextResponse.json({ error: 'userId and targetLanguageCode required' }, { status: 400 })
+  if (!targetLanguageCode) {
+    return NextResponse.json({ error: 'targetLanguageCode required' }, { status: 400 })
   }
 
   try {

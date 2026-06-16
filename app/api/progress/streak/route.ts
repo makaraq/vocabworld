@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { progressService } from '@/lib/progress/progress-service'
+import { getApiUser } from '@/lib/auth/api-auth'
 
 /**
  * POST /api/progress/streak
@@ -7,7 +8,12 @@ import { progressService } from '@/lib/progress/progress-service'
  */
 export async function POST(request: NextRequest) {
   try {
-    const { userId, timezone } = await request.json()
+    const user = await getApiUser(request)
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    const userId = user.id
+    const { timezone } = await request.json()
     
     if (!userId) {
       return NextResponse.json(

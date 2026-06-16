@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient } from '@supabase/ssr'
 import { createClient } from '@supabase/supabase-js'
-import { cookies } from 'next/headers'
+import { getApiUser } from '@/lib/auth/api-auth'
 import { checkRateLimit } from '@/lib/rate-limit'
 
 /**
@@ -30,33 +29,10 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    // ── 1. Authenticate ────────────────────────────────────────────────────
-    const cookieStore = await cookies()
+    // ── 1. Authenticate (session cookies on web, Bearer token on native) ────
+    const user = await getApiUser(req)
 
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll()
-          },
-          setAll(cookiesToSet) {
-            try {
-              cookiesToSet.forEach(({ name, value, options }) =>
-                cookieStore.set(name, value, options)
-              )
-            } catch {
-              // Ignore from Server Component context
-            }
-          },
-        },
-      }
-    )
-
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.json({ isPremium: false }, { status: 401 })
     }
 
