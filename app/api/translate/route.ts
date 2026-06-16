@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { checkRateLimit } from '@/lib/rate-limit'
+import { getApiUser } from '@/lib/auth/api-auth'
 
 // Wiktionary API endpoint for translations
 const WIKTIONARY_API = 'https://en.wiktionary.org/api/rest_v1/page/definition'
@@ -383,11 +384,16 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const { word, playlistId, userId, sourceLanguageCode, targetLanguageCode, translation, translations: providedTranslations } = body
+    const user = await getApiUser(request)
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    const userId = user.id
+    const { word, playlistId, sourceLanguageCode, targetLanguageCode, translation, translations: providedTranslations } = body
     
-    if (!word || !playlistId || !userId) {
+    if (!word || !playlistId) {
       return NextResponse.json(
-        { error: 'Missing required fields: word, playlistId, userId' },
+        { error: 'Missing required fields: word, playlistId' },
         { status: 400 }
       )
     }
@@ -395,6 +401,17 @@ export async function POST(request: NextRequest) {
     
     const supabase = getSupabaseAdmin()
     
+    // Verify the playlist belongs to the authenticated user before writing to it
+    const { data: ownedPlaylist } = await supabase
+      .from('user_playlists')
+      .select('id')
+      .eq('id', playlistId)
+      .eq('user_id', userId)
+      .single()
+    if (!ownedPlaylist) {
+      return NextResponse.json({ error: 'Playlist not found' }, { status: 404 })
+    }
+
     // Normalize the word for storage
     const normalizedWord = word.toLowerCase().trim()
     

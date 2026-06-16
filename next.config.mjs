@@ -7,7 +7,9 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   typescript: {
-    ignoreBuildErrors: true,
+    // Type errors now fail the build — tsc is clean, so this is the safety net
+    // that catches the kind of inconsistency the API-auth audit surfaced.
+    ignoreBuildErrors: false,
   },
   images: {
     domains: ['lh3.googleusercontent.com', 'avatars.githubusercontent.com'],
