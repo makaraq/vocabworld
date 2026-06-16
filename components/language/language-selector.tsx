@@ -809,8 +809,6 @@ export function LanguageSelector() {
       localStorage.removeItem('targetLanguageCode')
       localStorage.removeItem('currentPage')
       localStorage.removeItem('prePaymentState')
-      // Clear skip flag so the welcome overlay shows for the next user/session
-      localStorage.removeItem('welcome-skipped')
       
       // Then sign out from authentication
       await signOut()

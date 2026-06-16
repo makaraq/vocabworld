@@ -49,13 +49,6 @@ export function WelcomeOverlay() {
       return
     }
     
-    // Check if user previously skipped
-    const hasSkipped = localStorage.getItem('welcome-skipped') === 'true'
-    if (hasSkipped) {
-      setShowOverlay(false)
-      return
-    }
-    
     // Show overlay immediately for unauthenticated users
     if (!user) {
       setShowOverlay(true)
@@ -102,11 +95,6 @@ export function WelcomeOverlay() {
     }
   }
 
-  const handleSkip = () => {
-    setShowOverlay(false)
-    localStorage.setItem('welcome-skipped', 'true')
-  }
-  
   // Don't render if conditions not met
   if (loading || user || !showOverlay) {
     return null
