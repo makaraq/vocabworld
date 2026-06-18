@@ -14,6 +14,7 @@
     "generate-examples": "tsx scripts/generate-example-sentences.ts",
     "generate-examples-consistent": "tsx scripts/generate-examples-consistent.ts",
     "check-examples-setup": "tsx scripts/check-example-sentences-setup.ts",
+    "generate-offline-icons": "node scripts/generate-offline-icons.mjs",
     "build:cap": "node scripts/build-capacitor.js",
     "sync:cap": "node scripts/build-capacitor.js && npx cap sync",
     "build:ios": "node scripts/build-ios.mjs && LANG=en_US.UTF-8 npx cap sync ios",

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react"
 import { Icon } from "@iconify/react"
 import { hapticsLight } from "@/lib/haptics"
 import { ReviewQuizModal } from "./review-quiz-modal"
+import { REVIEW_SYNCED_EVENT } from "@/lib/offline/review-queue"
 
 interface ReviewCardProps {
   userId?: string
@@ -41,6 +42,18 @@ export function ReviewCard({ userId, targetLanguageCode, nativeLanguageCode }: R
 
     fetchDueCount()
   }, [userId, targetLanguageCode])
+
+  // After offline review grades replay on reconnect, refresh the due count live.
+  useEffect(() => {
+    const onSynced = (e: Event) => {
+      const detail = (e as CustomEvent).detail
+      if (!detail || detail.targetLanguageCode !== targetLanguageCode) return
+      if (typeof detail.totalDue === 'number') setDueCount(detail.totalDue)
+      if (typeof detail.totalCards === 'number') setTotalCards(detail.totalCards)
+    }
+    window.addEventListener(REVIEW_SYNCED_EVENT, onSynced)
+    return () => window.removeEventListener(REVIEW_SYNCED_EVENT, onSynced)
+  }, [targetLanguageCode])
 
   useEffect(() => {
     const handler = (e: Event) => {

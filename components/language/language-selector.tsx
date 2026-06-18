@@ -81,6 +81,7 @@ declare global {
 import { Icon } from '@iconify/react'
 import { Capacitor } from '@capacitor/core'
 import { getFlagIcon } from '@/utils/flags'
+import { PROGRESS_SYNCED_EVENT } from '@/lib/offline/progress-queue'
 import {
   Search,
   Languages,
@@ -124,7 +125,7 @@ const TOPIC_ICONS = [
   { id: 23, icon: 'solar:music-note-4-linear' }, // Arts & Entertainment
   { id: 24, icon: 'solar:smartphone-linear' }, // Technology & Gadgets
   { id: 25, icon: 'solar:case-round-linear' }, // Work & Professions
-  { id: 26, icon: 'solar:graduation-cap-linear' }, // Education & School Life
+  { id: 26, icon: 'solar:square-academic-cap-linear' }, // Education & School Life
   { id: 27, icon: 'solar:microphone-linear' }, // Communication & Media
   { id: 28, icon: 'solar:leaf-linear' }, // Environment & Sustainability
   { id: 29, icon: 'solar:graph-up-linear' }, // Business & Economics
@@ -622,7 +623,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                               }}
                               className="w-full flex items-center gap-3 p-3 bg-white/5 hover:bg-white/10 rounded-lg transition-all text-left"
                             >
-                              <Icon icon={playlist.icon || "solar:playlist-minimalistic-linear"} width="22" height="22" className="text-purple-400 flex-shrink-0" />
+                              <Icon icon={playlist.icon || "solar:playlist-minimalistic-2-linear"} width="22" height="22" className="text-purple-400 flex-shrink-0" />
                               <div className="flex-1 min-w-0">
                                 <p className="text-white font-medium truncate">{playlist.name}</p>
                                 <p className="text-white/50 text-xs">{playlist.word_count || 0} words</p>
@@ -933,8 +934,8 @@ export function LanguageSelector() {
     trainingLanguageVoice: "Male" as "Female" | "Male", // Changed to Male
     mainLanguageVoice: "Male" as "Female" | "Male",
     pronunciationSpeed: "Normal" as "Slow" | "Normal" | "Fast",
-    pauseBetweenTranslations: 0.5, // 0.5 seconds by default
-    pauseForNextWord: 0.7, // 0.7 seconds by default
+    pauseBetweenTranslations: 0.2, // 0.2 seconds by default
+    pauseForNextWord: 0.2, // 0.2 seconds by default
     repeatTargetLanguage: 1, // 1x by default
     repeatMainLanguage: 1, // 1x by default
     playTargetOnly: false, // Play only target language (skip native translation)
@@ -2459,6 +2460,19 @@ export function LanguageSelector() {
     
     fetchCompletedTopics()
   }, [user?.id, targetLanguageCode])
+
+  // After an offline-progress flush, reconcile borders/tiers to server truth
+  // for the language currently on screen (the queue replay emits this event).
+  useEffect(() => {
+    const onSynced = (e: Event) => {
+      const detail = (e as CustomEvent).detail
+      if (!detail || detail.targetLanguageCode !== targetLanguageCode) return
+      if (Array.isArray(detail.completedTopicIds)) setCompletedTopicIds(detail.completedTopicIds)
+      if (detail.topicCompletionCounts) setTopicCompletionCounts(detail.topicCompletionCounts)
+    }
+    window.addEventListener(PROGRESS_SYNCED_EVENT, onSynced)
+    return () => window.removeEventListener(PROGRESS_SYNCED_EVENT, onSynced)
+  }, [targetLanguageCode])
 
   // 🏆 Achievement bridge: re-evaluate section/topic-count achievements
   // any time the completed list changes (initial load + user actions).
@@ -4646,24 +4660,24 @@ export function LanguageSelector() {
             <div className="flex items-center justify-end mb-4 sm:mb-6 md:mb-8">
               <button
                 onClick={handleSettingsClose}
-                className="w-8 h-8 sm:w-10 sm:h-10 bg-black/20 backdrop-blur-sm border border-white/10 rounded-full flex items-center justify-center hover:bg-black/30 transition-all duration-300 flex-shrink-0"
+                className="w-10 h-10 sm:w-11 sm:h-11 bg-black/20 backdrop-blur-sm border border-white/10 rounded-full flex items-center justify-center hover:bg-black/30 transition-all duration-300 flex-shrink-0"
               >
-                <X className="w-4 h-4 sm:w-5 sm:h-5 text-white/80" />
+                <X className="w-5 h-5 sm:w-6 sm:h-6 text-white/80" />
               </button>
             </div>
 
             <div className="space-y-6 sm:space-y-8">
               {/* Playback Options */}
               <div>
-                <h3 className="text-base sm:text-lg font-medium text-white mb-3 sm:mb-4">Settings</h3>
+                <h3 className="text-lg sm:text-xl font-medium text-white mb-3 sm:mb-4">Settings</h3>
                 <div className="space-y-4 sm:space-y-5">
                   <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
-                        <Icon icon="solar:play-circle-bold" width="15" height="15" className="text-white/60 flex-shrink-0" />
-                        <p className="text-white text-sm">Auto-play</p>
+                        <Icon icon="solar:play-circle-bold" width="20" height="20" className="text-white/60 flex-shrink-0" />
+                        <p className="text-white text-base">Auto-play</p>
                       </div>
-                      <p className="text-white/50 text-xs mt-0.5">Automatically play audio when words change</p>
+                      <p className="text-white/50 text-sm mt-0.5">Automatically play audio when words change</p>
                     </div>
                     <button
                       onClick={() => updateSetting("autoPlay", !settings.autoPlay)}
@@ -4682,10 +4696,10 @@ export function LanguageSelector() {
                   <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
-                        <Icon icon="solar:volume-loud-bold" width="15" height="15" className="text-white/60 flex-shrink-0" />
-                        <p className="text-white text-sm">Play target language only</p>
+                        <Icon icon="solar:volume-loud-bold" width="20" height="20" className="text-white/60 flex-shrink-0" />
+                        <p className="text-white text-base">Play target language only</p>
                       </div>
-                      <p className="text-white/50 text-xs mt-0.5">Skip native language translation</p>
+                      <p className="text-white/50 text-sm mt-0.5">Skip native language translation</p>
                     </div>
                     <button
                       onClick={() => updateSetting("playTargetOnly", !settings.playTargetOnly)}
@@ -4704,10 +4718,10 @@ export function LanguageSelector() {
                   <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
-                        <Icon icon="solar:text-bold" width="15" height="15" className="text-white/60 flex-shrink-0" />
-                        <p className="text-white text-sm">Show phonetic pronunciation</p>
+                        <Icon icon="solar:text-bold" width="20" height="20" className="text-white/60 flex-shrink-0" />
+                        <p className="text-white text-base">Show phonetic pronunciation</p>
                       </div>
-                      <p className="text-white/50 text-xs mt-0.5">Display IPA pronunciation guide</p>
+                      <p className="text-white/50 text-sm mt-0.5">Display IPA pronunciation guide</p>
                     </div>
                     <button
                       onClick={() => updateSetting("showPhonetics", !settings.showPhonetics)}
@@ -4730,10 +4744,10 @@ export function LanguageSelector() {
                 <div className="flex items-center justify-between gap-3 mb-2 sm:mb-3">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <Icon icon="solar:rewind-back-bold" width="15" height="15" className="text-white/60 flex-shrink-0" />
-                      <p className="text-white text-sm font-medium">Rewind</p>
+                      <Icon icon="solar:rewind-back-bold" width="20" height="20" className="text-white/60 flex-shrink-0" />
+                      <p className="text-white text-base font-medium">Rewind</p>
                     </div>
-                    <p className="text-white/50 text-xs mt-0.5">Replay a set of words on a loop</p>
+                    <p className="text-white/50 text-sm mt-0.5">Replay a set of words on a loop</p>
                   </div>
                   <button
                     onClick={() => updateSetting("rewindEnabled", !settings.rewindEnabled)}
@@ -4759,7 +4773,7 @@ export function LanguageSelector() {
                       onChange={(e) => updateSetting("rewindAfterWords", Number.parseInt(e.target.value))}
                       className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
                     />
-                    <div className="flex justify-between text-white/60 text-xs mt-2">
+                    <div className="flex justify-between text-white/60 text-sm mt-2">
                       <span>2 words</span>
                       <span className="text-white font-medium">{settings.rewindAfterWords} words</span>
                       <span>20 words</span>
@@ -4770,13 +4784,13 @@ export function LanguageSelector() {
 
               {/* Pace Section */}
               <div>
-                <h3 className="text-base sm:text-lg font-medium text-white mb-3 sm:mb-4">Pace</h3>
+                <h3 className="text-lg sm:text-xl font-medium text-white mb-3 sm:mb-4">Pace</h3>
 
                 <div className="space-y-4 sm:space-y-6">
                   <div>
                     <div className="flex items-center gap-2 mb-2 sm:mb-3">
-                      <Icon icon="solar:soundwave-bold" width="15" height="15" className="text-white/60 flex-shrink-0" />
-                      <p className="text-white text-sm">Pronunciation speed</p>
+                      <Icon icon="solar:soundwave-bold" width="20" height="20" className="text-white/60 flex-shrink-0" />
+                      <p className="text-white text-base">Pronunciation speed</p>
                     </div>
                     <div className="flex gap-2 sm:gap-3">
                       {["Slow", "Normal", "Fast"].map((speed) => (
@@ -4799,8 +4813,8 @@ export function LanguageSelector() {
 
                   <div>
                     <div className="flex items-center gap-2 mb-2 sm:mb-3">
-                      <Icon icon="solar:pause-circle-bold" width="15" height="15" className="text-white/60 flex-shrink-0" />
-                      <p className="text-white text-sm">Pause between translations</p>
+                      <Icon icon="solar:pause-circle-bold" width="20" height="20" className="text-white/60 flex-shrink-0" />
+                      <p className="text-white text-base">Pause between translations</p>
                     </div>
                     <div className="bg-black/20 backdrop-blur-sm border border-white/10 rounded-xl p-3 sm:p-4">
                       <input
@@ -4812,7 +4826,7 @@ export function LanguageSelector() {
                         onChange={(e) => updateSetting("pauseBetweenTranslations", Number.parseFloat(e.target.value))}
                         className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
                       />
-                      <div className="flex justify-between text-white/60 text-xs mt-2">
+                      <div className="flex justify-between text-white/60 text-sm mt-2">
                         <span>0.2s</span>
                         <span className="text-white font-medium">{settings.pauseBetweenTranslations}s</span>
                         <span>10s</span>
@@ -4822,8 +4836,8 @@ export function LanguageSelector() {
 
                   <div>
                     <div className="flex items-center gap-2 mb-2 sm:mb-3">
-                      <Icon icon="solar:skip-next-bold" width="15" height="15" className="text-white/60 flex-shrink-0" />
-                      <p className="text-white text-sm">Pause before next word</p>
+                      <Icon icon="solar:skip-next-bold" width="20" height="20" className="text-white/60 flex-shrink-0" />
+                      <p className="text-white text-base">Pause before next word</p>
                     </div>
                     <div className="bg-black/20 backdrop-blur-sm border border-white/10 rounded-xl p-3 sm:p-4">
                       <input
@@ -4835,7 +4849,7 @@ export function LanguageSelector() {
                         onChange={(e) => updateSetting("pauseForNextWord", Number.parseFloat(e.target.value))}
                         className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
                       />
-                      <div className="flex justify-between text-white/60 text-xs mt-2">
+                      <div className="flex justify-between text-white/60 text-sm mt-2">
                         <span>0.2s</span>
                         <span className="text-white font-medium">{settings.pauseForNextWord}s</span>
                         <span>10s</span>
@@ -4845,8 +4859,8 @@ export function LanguageSelector() {
 
                   <div>
                     <div className="flex items-center gap-2 mb-2 sm:mb-3">
-                      <Icon icon="solar:repeat-bold" width="15" height="15" className="text-white/60 flex-shrink-0" />
-                      <p className="text-white text-sm">Repeat target language</p>
+                      <Icon icon="solar:repeat-bold" width="20" height="20" className="text-white/60 flex-shrink-0" />
+                      <p className="text-white text-base">Repeat target language</p>
                     </div>
                     <div className="bg-black/20 backdrop-blur-sm border border-white/10 rounded-xl p-3 sm:p-4">
                       <input
@@ -4858,7 +4872,7 @@ export function LanguageSelector() {
                         onChange={(e) => updateSetting("repeatTargetLanguage", Number.parseInt(e.target.value))}
                         className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
                       />
-                      <div className="flex justify-between text-white/60 text-xs mt-2">
+                      <div className="flex justify-between text-white/60 text-sm mt-2">
                         <span>1x</span>
                         <span className="text-white font-medium">{settings.repeatTargetLanguage}x</span>
                         <span>5x</span>
@@ -4868,8 +4882,8 @@ export function LanguageSelector() {
 
                   <div>
                     <div className="flex items-center gap-2 mb-2 sm:mb-3">
-                      <Icon icon="solar:repeat-one-bold" width="15" height="15" className="text-white/60 flex-shrink-0" />
-                      <p className="text-white text-sm">Repeat main language</p>
+                      <Icon icon="solar:repeat-one-bold" width="20" height="20" className="text-white/60 flex-shrink-0" />
+                      <p className="text-white text-base">Repeat main language</p>
                     </div>
                     <div className="bg-black/20 backdrop-blur-sm border border-white/10 rounded-xl p-3 sm:p-4">
                       <input
@@ -4881,7 +4895,7 @@ export function LanguageSelector() {
                         onChange={(e) => updateSetting("repeatMainLanguage", Number.parseInt(e.target.value))}
                         className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
                       />
-                      <div className="flex justify-between text-white/60 text-xs mt-2">
+                      <div className="flex justify-between text-white/60 text-sm mt-2">
                         <span>1x</span>
                         <span className="text-white font-medium">{settings.repeatMainLanguage}x</span>
                         <span>5x</span>

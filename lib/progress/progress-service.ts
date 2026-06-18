@@ -35,9 +35,15 @@ class ProgressService {
   async trackWordPlayed(
     userId: string,
     vocabularyId: number,
-    targetLanguageCode: string
+    targetLanguageCode: string,
+    // When a play happened, ISO string. Offline events replayed on reconnect
+    // pass their original time so leaderboard weekly windows and daily counts
+    // land on the right day; live plays omit it and default to now.
+    playedAt?: string
   ): Promise<{ success: boolean; error?: string; isNewWord?: boolean }> {
     try {
+      const playedTs = playedAt || new Date().toISOString()
+      const now = new Date().toISOString()
       // Check if word already exists in progress
       const { data: existing, error: checkError } = await supabase
         .from('user_word_progress')
@@ -57,9 +63,9 @@ class ProgressService {
         const { error: updateError } = await supabase
           .from('user_word_progress')
           .update({
-            last_played_at: new Date().toISOString(),
+            last_played_at: playedTs,
             play_count: existing.play_count + 1,
-            updated_at: new Date().toISOString()
+            updated_at: now
           })
           .eq('id', existing.id)
 
@@ -77,11 +83,11 @@ class ProgressService {
             user_id: userId,
             vocabulary_id: vocabularyId,
             target_language_code: targetLanguageCode,
-            first_played_at: new Date().toISOString(),
-            last_played_at: new Date().toISOString(),
+            first_played_at: playedTs,
+            last_played_at: playedTs,
             play_count: 1,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
+            created_at: now,
+            updated_at: now
           })
 
         if (insertError) throw insertError
@@ -90,6 +96,39 @@ class ProgressService {
     } catch (error: any) {
       console.error('Error tracking word:', error)
       return { success: false, error: error.message }
+    }
+  }
+
+  /**
+   * Idempotency for offline replay: a client generates a stable clientEventId
+   * per word-played event. We record processed ids so a replayed/retried event
+   * (ambiguous reconnect) never double-counts play_count / leaderboard score.
+   */
+  async isEventProcessed(clientEventId: string): Promise<boolean> {
+    try {
+      const { data, error } = await supabase
+        .from('processed_progress_events')
+        .select('client_event_id')
+        .eq('client_event_id', clientEventId)
+        .single()
+      if (error && error.code !== 'PGRST116') throw error
+      return !!data
+    } catch (error) {
+      console.error('Error checking processed event:', error)
+      // Fail open (treat as unprocessed) — a missed dedup is better than
+      // dropping a real play because the dedup table was briefly unavailable.
+      return false
+    }
+  }
+
+  async markEventProcessed(clientEventId: string, userId: string): Promise<void> {
+    try {
+      await supabase
+        .from('processed_progress_events')
+        .insert({ client_event_id: clientEventId, user_id: userId })
+    } catch (error) {
+      // Unique-violation just means a concurrent request already marked it.
+      console.error('Error marking processed event:', error)
     }
   }
 
@@ -360,10 +399,14 @@ class ProgressService {
   /**
    * Update login streak when user logs in (timezone-aware with 1-day grace period)
    */
-  async updateLoginStreak(userId: string, userTimezone?: string): Promise<void> {
+  async updateLoginStreak(userId: string, userTimezone?: string, activeDate?: string): Promise<void> {
     try {
-      // Get user's local date (not UTC)
-      const today = userTimezone 
+      // Get user's local date (not UTC). Offline-active days replayed on
+      // reconnect pass their original local date (YYYY-MM-DD) so the streak
+      // credits the day they actually learned, not the reconnect day.
+      const today = activeDate
+        ? activeDate
+        : userTimezone
         ? new Date().toLocaleDateString('en-CA', { timeZone: userTimezone })
         : new Date().toLocaleDateString('en-CA') // Fallback to system timezone
       

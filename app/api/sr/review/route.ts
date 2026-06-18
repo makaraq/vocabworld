@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSupabaseServer } from '@/lib/supabase-server'
 import { getApiUser } from '@/lib/auth/api-auth'
 import { schedule, Rating, State, type SRCard } from '@/lib/sr/fsrs'
+import { progressService } from '@/lib/progress/progress-service'
 
 export async function POST(request: NextRequest) {
   const supabase = getSupabaseServer()
@@ -11,7 +12,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     const userId = user.id
-    const { cardId, rating, targetLanguageCode } = await request.json()
+    // `clientEventId`/`reviewedAt` are sent when replaying a review graded
+    // offline: the id dedups (FSRS is a state transition — a double-apply
+    // corrupts the schedule), and the timestamp keeps interval math anchored to
+    // when the user actually reviewed.
+    const { cardId, rating, targetLanguageCode, clientEventId, reviewedAt } = await request.json()
 
     if (!cardId || !rating || !targetLanguageCode) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -19,6 +24,11 @@ export async function POST(request: NextRequest) {
 
     if (rating !== Rating.Again && rating !== Rating.Good) {
       return NextResponse.json({ error: 'Invalid rating (must be 1 or 3)' }, { status: 400 })
+    }
+
+    // Idempotency: a replayed review must not re-run the scheduler.
+    if (clientEventId && (await progressService.isEventProcessed(clientEventId))) {
+      return NextResponse.json({ success: true, duplicate: true })
     }
 
     const { data: cardRow, error: fetchError } = await supabase
@@ -42,7 +52,7 @@ export async function POST(request: NextRequest) {
       lapses: cardRow.lapses,
     }
 
-    const now = new Date()
+    const now = reviewedAt ? new Date(reviewedAt) : new Date()
     const updated = schedule(card, rating, now)
 
     const { error: updateError } = await supabase
@@ -82,6 +92,10 @@ export async function POST(request: NextRequest) {
       if (incrementError) {
         console.error('Failed to update daily progress:', incrementError)
       }
+    }
+
+    if (clientEventId) {
+      await progressService.markEventProcessed(clientEventId, userId)
     }
 
     return NextResponse.json({

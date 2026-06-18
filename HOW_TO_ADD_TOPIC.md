@@ -279,7 +279,6 @@ By default, new topics are **premium-only**. To make a topic free:
 - **Example Topic**: See Topic 42 (Daily Language) implementation
 - **Translation Script**: `scripts/generate-topic-translations.ts`
 - **Common Phrases Example**: `scripts/insert-common-phrases-to-supabase.mjs`
-- **Audio Documentation**: `OFFLINE_AUDIO_CACHE.md`
 - **Example Sentences Guide**: `EXAMPLE_SENTENCES_SETUP.md`
 
 ## Support

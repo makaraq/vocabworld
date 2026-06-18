@@ -118,7 +118,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   { id: 'streak_30', title: 'Streak Master', description: '30-day learning streak', icon: 'solar:flame-bold', category: 'streak', tier: 'platinum', threshold: 30, metric: 'currentStreak' },
   { id: 'streak_50', title: 'Iron Will', description: '50-day learning streak', icon: 'solar:shield-star-bold', category: 'streak', tier: 'platinum', threshold: 50, metric: 'currentStreak' },
   { id: 'streak_100', title: 'Unstoppable', description: '100-day learning streak', icon: 'solar:bolt-bold', category: 'streak', tier: 'diamond', threshold: 100, metric: 'currentStreak' },
-  { id: 'streak_200', title: 'Phenomenon', description: '200-day learning streak', icon: 'solar:meteor-bold', category: 'streak', tier: 'diamond', threshold: 200, metric: 'currentStreak' },
+  { id: 'streak_200', title: 'Phenomenon', description: '200-day learning streak', icon: 'solar:stars-bold', category: 'streak', tier: 'diamond', threshold: 200, metric: 'currentStreak' },
   { id: 'streak_365', title: 'Year-Round', description: '365-day learning streak', icon: 'solar:calendar-bold', category: 'streak', tier: 'diamond', threshold: 365, metric: 'currentStreak' },
 
   // Section clears
@@ -130,7 +130,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   { id: 'section_professional', title: 'Pro Speaker', description: 'Complete every topic in Professional', icon: 'solar:case-bold', category: 'section', tier: 'gold', threshold: 8, metric: 'sectionTopicsCompleted', sectionKey: 'professional' },
 
   // Languages
-  { id: 'languages_2', title: 'Bilingual', description: 'Start learning a 2nd language', icon: 'solar:translate-bold', category: 'language', tier: 'silver', threshold: 2, metric: 'languagesStarted' },
+  { id: 'languages_2', title: 'Bilingual', description: 'Start learning a 2nd language', icon: 'solar:translation-bold', category: 'language', tier: 'silver', threshold: 2, metric: 'languagesStarted' },
   { id: 'languages_3', title: 'Trilingual', description: 'Start learning a 3rd language', icon: 'solar:dialog-bold', category: 'language', tier: 'gold', threshold: 3, metric: 'languagesStarted' },
   { id: 'languages_5', title: 'Polyglot', description: 'Start learning 5 languages', icon: 'solar:global-bold', category: 'language', tier: 'platinum', threshold: 5, metric: 'languagesStarted' },
   { id: 'languages_7', title: 'Hyperglot', description: 'Start learning 7 languages', icon: 'solar:earth-bold', category: 'language', tier: 'diamond', threshold: 7, metric: 'languagesStarted' },

@@ -13,16 +13,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     const userId = user.id
-    const { timezone } = await request.json()
-    
+    // `activeDate` (YYYY-MM-DD) is sent when replaying an offline-active day so
+    // the streak credits that day rather than the reconnect day. Live logins
+    // omit it and default to today.
+    const { timezone, activeDate } = await request.json()
+
     if (!userId) {
       return NextResponse.json(
-        { error: 'Missing userId' }, 
+        { error: 'Missing userId' },
         { status: 400 }
       )
     }
 
-    await progressService.updateLoginStreak(userId, timezone)
+    await progressService.updateLoginStreak(userId, timezone, activeDate)
     
     return NextResponse.json({ success: true })
   } catch (error: any) {

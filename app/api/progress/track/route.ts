@@ -8,14 +8,25 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   const userId = user.id
-  const { vocabularyId, targetLanguageCode } = await request.json()
+  const { vocabularyId, targetLanguageCode, clientEventId, playedAt } = await request.json()
   if (!vocabularyId || !targetLanguageCode) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
   }
-  const result = await progressService.trackWordPlayed(userId, vocabularyId, targetLanguageCode)
 
-  if (!result.isNewWord) {
-    await progressService.updateCompletionCountForWord(userId, vocabularyId, targetLanguageCode)
+  // Idempotency: if this exact event was already applied (offline replay or a
+  // retry after an ambiguous reconnect), skip the increment but still return the
+  // current derived state so the client reconciles correctly.
+  const duplicate = clientEventId ? await progressService.isEventProcessed(clientEventId) : false
+
+  let result: { success: boolean; error?: string; isNewWord?: boolean } = { success: true, isNewWord: false }
+  if (!duplicate) {
+    result = await progressService.trackWordPlayed(userId, vocabularyId, targetLanguageCode, playedAt)
+    if (!result.isNewWord) {
+      await progressService.updateCompletionCountForWord(userId, vocabularyId, targetLanguageCode)
+    }
+    if (clientEventId && result.success) {
+      await progressService.markEventProcessed(clientEventId, userId)
+    }
   }
 
   // After tracking, get updated completed topics
@@ -35,6 +46,7 @@ export async function POST(request: NextRequest) {
 
   return NextResponse.json({
     ...result,
+    duplicate,
     completedTopicIds,
     topicCompletionCounts,
     stats,
