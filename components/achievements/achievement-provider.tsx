@@ -11,21 +11,13 @@ import {
 } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { createPortal } from 'react-dom'
-import { AchievementDef } from '@/lib/achievements/definitions'
 import {
-  subscribeUnlock,
   subscribeTopicComplete,
   subscribeOpenBadgesGallery,
   TopicCompleteEvent,
 } from '@/lib/achievements/engine'
-import { AchievementToast } from './achievement-toast'
 import { TopicCompleteModal } from './topic-complete-modal'
 import { BadgesModal } from './badges-modal'
-
-interface QueuedToast {
-  key: number
-  achievement: AchievementDef
-}
 
 type TopicChoiceHandler = (
   topicId: number,
@@ -50,27 +42,12 @@ export function useAchievementContext(): AchievementContextValue {
 }
 
 export function AchievementProvider({ children }: { children: ReactNode }) {
-  // Toasts play one-at-a-time: only the head of the queue is rendered, the
-  // rest wait their turn so they don't pile up on screen.
-  const [queue, setQueue] = useState<QueuedToast[]>([])
   const [topicEvent, setTopicEvent] = useState<TopicCompleteEvent | null>(null)
   const [showBadges, setShowBadges] = useState(false)
   const [mounted, setMounted] = useState(false)
   const handlerRef = useRef<TopicChoiceHandler | null>(null)
-  const keyRef = useRef(0)
 
   useEffect(() => setMounted(true), [])
-
-  // Subscribe to unlocks → enqueue. We never drop unlocks; the head plays,
-  // the rest wait until the current one fades out.
-  useEffect(() => {
-    const off = subscribeUnlock((e) => {
-      keyRef.current += 1
-      const queued: QueuedToast = { key: keyRef.current, achievement: e.achievement }
-      setQueue((prev) => [...prev, queued])
-    })
-    return off
-  }, [])
 
   // Subscribe to topic-complete events.
   useEffect(() => {
@@ -90,9 +67,6 @@ export function AchievementProvider({ children }: { children: ReactNode }) {
     },
     [],
   )
-
-  const dismissToast = (key: number) =>
-    setQueue((prev) => prev.filter((t) => t.key !== key))
 
   const requestAppReviewOnce = () => {
     if (
@@ -142,19 +116,6 @@ export function AchievementProvider({ children }: { children: ReactNode }) {
   const overlays = mounted
     ? createPortal(
         <>
-          <div
-            className="fixed top-0 left-0 right-0 z-[90] pt-[max(env(safe-area-inset-top),12px)] px-3 flex flex-col items-center gap-2 pointer-events-none"
-            aria-live="polite"
-          >
-            {queue[0] && (
-              <AchievementToast
-                key={queue[0].key}
-                achievement={queue[0].achievement}
-                onDismissAction={() => dismissToast(queue[0].key)}
-              />
-            )}
-          </div>
-
           <TopicCompleteModal
             open={!!topicEvent}
             topicName={topicEvent?.topicName || ''}

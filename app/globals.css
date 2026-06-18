@@ -6,6 +6,15 @@
   -webkit-touch-callout: none !important;
   -webkit-user-select: none !important;
   user-select: none !important;
+  /* Prevent WebKit from starting a native drag (the translucent "ghost"
+     that follows the finger diagonally) when an icon/image is pressed. */
+  -webkit-user-drag: none !important;
+}
+
+/* Belt-and-suspenders: images and icons must never be draggable */
+img, svg {
+  -webkit-user-drag: none !important;
+  user-drag: none !important;
 }
 
 /* iOS WKWebView renders fonts thinner than desktop browsers.

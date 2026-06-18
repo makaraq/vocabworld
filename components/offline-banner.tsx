@@ -73,7 +73,7 @@ export function OfflineBanner() {
   if (covered) {
     if (!showPill) return null
     return (
-      <div className="fixed inset-x-0 top-0 z-[10000] flex justify-center px-4 pt-[max(env(safe-area-inset-top),12px)] pointer-events-none">
+      <div className="fixed inset-x-0 top-0 z-[10000] flex justify-center px-4 pt-[calc(env(safe-area-inset-top,0px)+12px)] pointer-events-none">
         <div className="flex items-center gap-2.5 bg-white/10 backdrop-blur-xl border border-emerald-400/30 rounded-2xl px-4 py-2.5 shadow-2xl">
           <Icon icon="solar:cloud-check-bold" className="w-5 h-5 text-emerald-400 flex-shrink-0" />
           <p className="text-white text-xs font-semibold">Offline mode — your downloaded lessons are ready</p>
@@ -83,7 +83,7 @@ export function OfflineBanner() {
   }
 
   return (
-    <div className="fixed inset-x-0 top-0 z-[10000] flex justify-center px-4 pt-[max(env(safe-area-inset-top),12px)]">
+    <div className="fixed inset-x-0 top-0 z-[10000] flex justify-center px-4 pt-[calc(env(safe-area-inset-top,0px)+12px)]">
       <div className="flex items-center gap-3 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl px-5 py-3 shadow-2xl max-w-sm w-full">
         <Icon icon="solar:cloud-cross-bold" className="w-6 h-6 text-orange-400 flex-shrink-0" />
         <div>

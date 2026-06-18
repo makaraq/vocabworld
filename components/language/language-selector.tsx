@@ -2388,7 +2388,6 @@ export function LanguageSelector() {
   const longPressFiredRef = useRef(false)
   const touchStartPos = useRef<{ x: number; y: number } | null>(null)
   const [holdingLanguageCode, setHoldingLanguageCode] = useState<string | null>(null)
-  const [holdingProgressBar, setHoldingProgressBar] = useState<boolean>(false)
   const [holdingSwapButton, setHoldingSwapButton] = useState<'native' | 'target' | null>(null)
   const [holdingNavButton, setHoldingNavButton] = useState<'back' | 'settings' | 'previous' | 'play' | 'next' | null>(null)
 
@@ -3836,15 +3835,20 @@ export function LanguageSelector() {
     return () => window.removeEventListener('keydown', onKeyDown)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Hold gesture handlers for flashcard example sentences
-  let holdTimer: NodeJS.Timeout | null = null
+  // Hold gesture handlers for flashcard example sentences.
+  // The timer lives in a ref (not a render-scoped `let`) so it survives the
+  // re-render triggered by setHoldingCardIndex — otherwise a quick tap could
+  // never clear it and the example modal would open on every tap.
+  const flashcardHoldTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const handleFlashcardHoldStart = (cardIndex: number) => {
     const currentWord = vocabulary[currentWordIndex]
     if (!currentWord || !currentWord.id || currentWord.isPlaylistWord) return
 
+    if (flashcardHoldTimerRef.current) clearTimeout(flashcardHoldTimerRef.current)
     setHoldingCardIndex(cardIndex)
-    holdTimer = setTimeout(() => {
+    flashcardHoldTimerRef.current = setTimeout(() => {
+      hapticsMedium() // confirm the long-press revealed the example sentences
       setExampleModalData({
         vocabularyId: currentWord.id,
         sourceWord: getCurrentContent().sourceWord,
@@ -3853,14 +3857,15 @@ export function LanguageSelector() {
       })
       setShowExampleModal(true)
       setHoldingCardIndex(null)
-    }, 275) // 275ms hold time
+      flashcardHoldTimerRef.current = null
+    }, 450) // 450ms hold time
   }
 
   const handleFlashcardHoldEnd = () => {
     setHoldingCardIndex(null)
-    if (holdTimer) {
-      clearTimeout(holdTimer)
-      holdTimer = null
+    if (flashcardHoldTimerRef.current) {
+      clearTimeout(flashcardHoldTimerRef.current)
+      flashcardHoldTimerRef.current = null
     }
   }
 
@@ -4247,11 +4252,11 @@ export function LanguageSelector() {
                   onTouchStart={() => setHoldingNavButton('back')}
                   onTouchEnd={() => setHoldingNavButton(null)}
                   onTouchCancel={() => setHoldingNavButton(null)}
-                  className={`w-10 h-10 sm:w-12 sm:h-12 bg-black/40 border border-white/20 rounded-full flex items-center justify-center hover:bg-black/50 shadow-lg flex-shrink-0 ${
+                  className={`w-12 h-12 sm:w-14 sm:h-14 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full flex items-center justify-center hover:bg-white/15 shadow-lg flex-shrink-0 ${
                     holdingNavButton === 'back' ? 'scale-105 transition-all duration-75' : 'scale-100 transition-all duration-300 hover:scale-110'
                   }`}
                 >
-                  <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 text-white/80" />
+                  <ArrowLeft className="w-6 h-6 sm:w-7 sm:h-7 text-white/80" />
                 </button>
 
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 justify-center">
@@ -4259,14 +4264,14 @@ export function LanguageSelector() {
                   {(() => {
                     // Special case: Playlist learning (id === -2) - show notepad icon
                     if (selectedTopic?.id === -2) {
-                      return <Icon icon="solar:notebook-bold" className="w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0" style={{ color: 'rgba(255,255,255,0.8)' }} />
+                      return <Icon icon="solar:notebook-bold" className="w-8 h-8 sm:w-9 sm:h-9 flex-shrink-0" style={{ color: 'rgba(255,255,255,0.8)' }} />
                     }
                     
                     // First check if topic has an SVG icon in the JSON data
                     if (selectedTopic?.icon) {
                       return (
                         <div 
-                          className="w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0 [&>svg]:w-full [&>svg]:h-full" 
+                          className="w-8 h-8 sm:w-9 sm:h-9 flex-shrink-0 [&>svg]:w-full [&>svg]:h-full" 
                           style={{ color: 'rgba(255,255,255,0.8)' }}
                           dangerouslySetInnerHTML={{ __html: selectedTopic.icon! }}
                         />
@@ -4277,14 +4282,14 @@ export function LanguageSelector() {
                     const iconData = TOPIC_ICONS.find(icon => icon.id === selectedTopic?.id)
                     if (iconData) {
                       if (typeof iconData.icon === 'string') {
-                        return <Icon icon={iconData.icon} className="w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0" style={{ color: 'rgba(255,255,255,0.8)' }} />
+                        return <Icon icon={iconData.icon} className="w-8 h-8 sm:w-9 sm:h-9 flex-shrink-0" style={{ color: 'rgba(255,255,255,0.8)' }} />
                       }
                       const IconComponent = iconData.icon as any
-                      return <IconComponent className="w-7 h-7 sm:w-8 sm:h-8 text-white/80 flex-shrink-0" />
+                      return <IconComponent className="w-8 h-8 sm:w-9 sm:h-9 text-white/80 flex-shrink-0" />
                     }
-                    return <BookOpen className="w-7 h-7 sm:w-8 sm:h-8 text-white/80 flex-shrink-0" />
+                    return <BookOpen className="w-8 h-8 sm:w-9 sm:h-9 text-white/80 flex-shrink-0" />
                   })()}
-                  <h1 className="text-lg sm:text-xl md:text-2xl font-medium text-white text-center truncate">
+                  <h1 className="text-xl sm:text-2xl md:text-3xl font-medium text-white text-center truncate">
                     {selectedTopic ? getTopicDisplayName(selectedTopic.id, selectedTopic.name) : ''}
                   </h1>
                 </div>
@@ -4295,33 +4300,17 @@ export function LanguageSelector() {
                   onTouchStart={() => setHoldingNavButton('settings')}
                   onTouchEnd={() => setHoldingNavButton(null)}
                   onTouchCancel={() => setHoldingNavButton(null)}
-                  className={`w-10 h-10 sm:w-12 sm:h-12 bg-black/40 border border-white/20 rounded-full flex items-center justify-center hover:bg-black/50 shadow-lg flex-shrink-0 ${
+                  className={`w-12 h-12 sm:w-14 sm:h-14 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full flex items-center justify-center hover:bg-white/15 shadow-lg flex-shrink-0 ${
                     holdingNavButton === 'settings' ? 'scale-105 transition-all duration-75' : 'scale-100 transition-all duration-300 hover:scale-110'
                   }`}
                 >
-                  <Settings className="w-5 h-5 sm:w-6 sm:h-6 text-white/80" />
+                  <Settings className="w-6 h-6 sm:w-7 sm:h-7 text-white/80" />
                 </button>
               </div>
 
               {/* Progress indicator */}
-              {vocabulary.length > 0 && (() => {
-                const handleProgressHoldStart = () => {
-                  setHoldingProgressBar(true)
-                }
-
-                const handleProgressHoldEnd = () => {
-                  setHoldingProgressBar(false)
-                }
-
-                return (
-                  <div 
-                    className={`mb-6 text-center ${
-                      holdingProgressBar ? 'scale-105 transition-all duration-75' : 'scale-100 transition-all duration-300'
-                    }`}
-                    onTouchStart={() => handleProgressHoldStart()}
-                    onTouchEnd={() => handleProgressHoldEnd()}
-                    onTouchCancel={() => handleProgressHoldEnd()}
-                  >
+              {vocabulary.length > 0 && (
+                <div className="mb-6 text-center">
                     <p className="text-white/60 text-sm">
                       {(() => {
                         const progress = getCategoryProgress()
@@ -4340,8 +4329,7 @@ export function LanguageSelector() {
                       />
                     </div>
                   </div>
-                )
-              })()}
+              )}
 
               {/* Category indicator - shown for topics with categories */}
               {getCurrentContent().category && (
