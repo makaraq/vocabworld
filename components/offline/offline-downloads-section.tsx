@@ -5,13 +5,13 @@
 // both languages) for offline learning, with live progress, storage warnings,
 // pause/resume/cancel, and management of previously downloaded packs.
 
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Icon } from '@iconify/react'
 import { getFlagIcon } from '@/utils/flags'
 import { hapticsLight, hapticsMedium, hapticsWarning } from '@/lib/haptics'
 import {
   offlineManager, packId, languageName, formatBytes,
-  type OfflinePack, type StorageInfo,
+  type OfflinePack,
 } from '@/lib/offline/offline-manager'
 
 // Rough size hint shown before a download starts (≈4100 words × 2 languages
@@ -74,23 +74,16 @@ function PairFlags({ nativeCode, targetCode }: { nativeCode: string; targetCode:
 
 export function OfflineDownloadsSection() {
   const [packs, setPacks] = useState<OfflinePack[]>([])
-  const [storage, setStorage] = useState<StorageInfo | null>(null)
   const [nativeCode, setNativeCode] = useState('')
   const [targetCode, setTargetCode] = useState('')
   const [isOnline, setIsOnline] = useState(true)
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
   const confirmTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const statusSignature = useRef('')
-
-  const refreshStorage = useCallback(() => {
-    offlineManager.getStorageInfo().then(setStorage).catch(() => {})
-  }, [])
 
   useEffect(() => {
     setNativeCode(localStorage.getItem('nativeLanguageCode') || '')
     setTargetCode(localStorage.getItem('targetLanguageCode') || '')
     setIsOnline(navigator.onLine)
-    refreshStorage()
 
     const goOnline = () => setIsOnline(true)
     const goOffline = () => setIsOnline(false)
@@ -98,16 +91,7 @@ export function OfflineDownloadsSection() {
     window.addEventListener('offline', goOffline)
 
     offlineManager.init()
-    const unsubscribe = offlineManager.subscribe((next) => {
-      setPacks(next)
-      // Re-read the storage estimate when a pack changes state (not on every
-      // progress tick — that would spam the Storage API)
-      const sig = next.map(p => `${p.id}:${p.status}`).join('|')
-      if (sig !== statusSignature.current) {
-        statusSignature.current = sig
-        refreshStorage()
-      }
-    })
+    const unsubscribe = offlineManager.subscribe(setPacks)
 
     return () => {
       unsubscribe()
@@ -115,7 +99,7 @@ export function OfflineDownloadsSection() {
       window.removeEventListener('offline', goOffline)
       if (confirmTimer.current) clearTimeout(confirmTimer.current)
     }
-  }, [refreshStorage])
+  }, [])
 
   if (!offlineManager.isSupported() || !nativeCode || !targetCode || nativeCode === targetCode) {
     return null
@@ -228,14 +212,9 @@ export function OfflineDownloadsSection() {
               <ProgressRing percent={percent} indeterminate={currentPack.phase === 'words'} />
               <div className="flex-1 min-w-0 space-y-1.5">
                 {currentPack.phase === 'words' ? (
-                  <>
-                    <p className="text-white text-xs font-medium">
-                      Preparing word lists…
-                    </p>
-                    <p className="text-white/50 text-[11px] tabular-nums">
-                      Topic {currentPack.topicsDone}/{currentPack.topicsTotal || '…'} · {currentPack.wordCount.toLocaleString()} words found
-                    </p>
-                  </>
+                  <p className="text-white text-xs font-medium">
+                    Preparing word lists…
+                  </p>
                 ) : (
                   <>
                     <p className="text-white text-xs font-medium flex items-center gap-1.5">
@@ -243,8 +222,7 @@ export function OfflineDownloadsSection() {
                       Downloading audio
                     </p>
                     <p className="text-white/50 text-[11px] tabular-nums">
-                      {currentPack.audioDone.toLocaleString()} / {currentPack.audioTotal.toLocaleString()} files · {formatBytes(currentPack.bytes)}
-                      {formatEta(currentPack.etaSeconds)}
+                      {formatBytes(currentPack.bytes)}{formatEta(currentPack.etaSeconds)}
                     </p>
                     {/* Thin shimmer bar */}
                     <div className="h-1 rounded-full bg-white/10 overflow-hidden relative">
@@ -294,7 +272,7 @@ export function OfflineDownloadsSection() {
                     {currentPack.status === 'paused' ? 'Download paused' : 'Download interrupted'}
                   </p>
                   <p className="text-white/50 text-[11px] tabular-nums">
-                    {currentPack.audioDone.toLocaleString()} / {currentPack.audioTotal.toLocaleString()} files · {formatBytes(currentPack.bytes)}
+                    {formatBytes(currentPack.bytes)}
                   </p>
                   {currentPack.status === 'error' && currentPack.error && (
                     <p className="text-red-400 text-[11px] mt-1 leading-snug">{currentPack.error}</p>
@@ -418,26 +396,6 @@ export function OfflineDownloadsSection() {
                 </button>
               </div>
             ))}
-          </div>
-        )}
-
-        {/* Device storage */}
-        {storage?.supported && storage.quotaBytes > 0 && (
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between">
-              <span className="text-white/40 text-[11px] font-medium">Device storage for Sprind</span>
-              <span className="text-white/40 text-[11px] tabular-nums">
-                {formatBytes(storage.usageBytes)} of {formatBytes(storage.quotaBytes)}
-              </span>
-            </div>
-            <div className="h-1 rounded-full bg-white/10 overflow-hidden">
-              <div
-                className={`h-full rounded-full transition-all duration-500 ${
-                  storage.usageBytes / storage.quotaBytes > 0.85 ? 'bg-red-400' : 'bg-white/40'
-                }`}
-                style={{ width: `${Math.min(100, Math.max(1, (storage.usageBytes / storage.quotaBytes) * 100))}%` }}
-              />
-            </div>
           </div>
         )}
       </div>
