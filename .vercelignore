@@ -76,6 +76,7 @@ stripe-cli/
 !components.json
 !vercel.json
 !lib/animations/*.json
+!lib/icons/data/*.json
 
 # SQL files
 *.sql
