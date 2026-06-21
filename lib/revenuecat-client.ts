@@ -125,3 +125,56 @@ export async function getRCCustomerInfo(): Promise<{
     return null
   }
 }
+
+/**
+ * Returns the active entitlement's expiration date (ISO string) IF the user is
+ * currently in a free trial, otherwise null. Used to schedule the on-device
+ * "trial ends in 2 days" reminder. Returns null when RC isn't initialised yet
+ * or on any error.
+ */
+export async function getActiveTrialEnd(): Promise<string | null> {
+  if (typeof window === 'undefined' || !_rcInitialised) return null
+
+  try {
+    let entitlement: any
+    if (isNative()) {
+      const { Purchases } = await import('@revenuecat/purchases-capacitor')
+      const { customerInfo } = await Purchases.getCustomerInfo()
+      entitlement = customerInfo.entitlements.active[RC_ENTITLEMENT]
+    } else {
+      const { Purchases } = await import('@revenuecat/purchases-js')
+      const info = await Purchases.getSharedInstance().getCustomerInfo()
+      entitlement = info.entitlements.active[RC_ENTITLEMENT]
+    }
+
+    if (!entitlement) return null
+    // periodType is 'TRIAL' | 'INTRO' | 'NORMAL' (casing varies by SDK).
+    const isTrial = String(entitlement.periodType).toUpperCase() === 'TRIAL'
+    if (!isTrial || !entitlement.expirationDate) return null
+
+    // Normalise to an ISO string (capacitor gives a string, web gives a Date).
+    return new Date(entitlement.expirationDate).toISOString()
+  } catch (err) {
+    console.error('[RC] getActiveTrialEnd failed:', err)
+    return null
+  }
+}
+
+/**
+ * Reads the live trial state from RevenueCat and (re)schedules — or cancels —
+ * the on-device trial-ending reminder accordingly. Safe to call on every app
+ * open and right after a purchase/restore; idempotent. No-op on web or before
+ * RC is initialised (so we never wrongly cancel a scheduled reminder when we
+ * simply don't know the trial state yet).
+ */
+export async function syncTrialReminder(): Promise<void> {
+  if (typeof window === 'undefined' || !isNative() || !_rcInitialised) return
+
+  try {
+    const trialEnd = await getActiveTrialEnd()
+    const { scheduleTrialReminder } = await import('@/lib/notifications')
+    await scheduleTrialReminder(trialEnd)
+  } catch (err) {
+    console.error('[RC] syncTrialReminder failed:', err)
+  }
+}

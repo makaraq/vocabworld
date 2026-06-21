@@ -10,6 +10,7 @@ import celebrationAnim from '@/lib/animations/celebration.json'
 import { PRICING, formatPrice } from '@/lib/pricing'
 import { useAuth } from '@/contexts/auth-context'
 import { useRevenueCat } from '@/hooks/use-revenuecat'
+import { syncTrialReminder } from '@/lib/revenuecat-client'
 import { hapticsLight, hapticsMedium, hapticsSuccess } from '@/lib/haptics'
 
 interface PaywallModalProps {
@@ -101,6 +102,8 @@ export function PaywallModal({
       setOptimisticPremium(selectedPlan)
       setPurchaseSuccess(true)
       fetch('/api/subscription/sync-rc', { method: 'POST' }).catch(() => {})
+      // Schedule the "trial ends in 2 days" reminder (no-op unless this was a trial).
+      syncTrialReminder().catch(() => {})
     }
   }
 
@@ -120,6 +123,8 @@ export function PaywallModal({
       setRestoreStatus('done')
       setTimeout(() => setPurchaseSuccess(true), 400)
       fetch('/api/subscription/sync-rc', { method: 'POST' }).catch(() => {})
+      // Re-sync the trial reminder in case the restored entitlement is a trial.
+      syncTrialReminder().catch(() => {})
     } else {
       setRestoreStatus('error')
       setTimeout(() => setRestoreStatus('idle'), 3000)

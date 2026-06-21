@@ -63,6 +63,22 @@ export async function POST(req: NextRequest) {
     updateData.subscription_period_end = subscription_period_end
   }
 
+  // ── Trial-ending reminder tracking ───────────────────────────────────────
+  // When a free trial starts, record when it ends and clear any previous
+  // "reminder sent" flag so the daily cron (/api/cron/trial-reminders) can
+  // email this user ~2 days before they're charged. For every other event
+  // (converted, cancelled, expired) clear trial_ends_at so we stop reminding.
+  if (
+    event.type === 'INITIAL_PURCHASE' &&
+    event.period_type === 'TRIAL' &&
+    event.expiration_at_ms
+  ) {
+    updateData.trial_ends_at = new Date(event.expiration_at_ms).toISOString()
+    updateData.trial_reminder_sent_at = null
+  } else {
+    updateData.trial_ends_at = null
+  }
+
   const { error: dbError } = await supabase
     .from('user_profiles')
     .upsert(updateData, { onConflict: 'id', ignoreDuplicates: false })

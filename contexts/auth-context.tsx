@@ -8,7 +8,7 @@ import { Browser } from '@capacitor/browser'
 import { SignInWithApple } from '@capacitor-community/apple-sign-in'
 import { createClient } from '@/lib/supabase/browser-client'
 import { FREE_TOPIC_IDS } from '@/lib/pricing'
-import { initRevenueCat, logOutRevenueCat } from '@/lib/revenuecat-client'
+import { initRevenueCat, logOutRevenueCat, syncTrialReminder } from '@/lib/revenuecat-client'
 
 // ============================================
 // TYPES
@@ -102,6 +102,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Fire-and-forget — never throws, won't block the auth flow.
   async function triggerNotificationReschedule() {
     if (typeof window === 'undefined' || !Capacitor.isNativePlatform()) return
+    // Trial-ending reminder is independent of the study-notification settings —
+    // re-sync it from RevenueCat's live entitlement state on every app open so
+    // it cancels itself once the user converts/cancels.
+    syncTrialReminder().catch(() => {})
     try {
       const [ctxRes, settingsRes] = await Promise.all([
         fetch('/api/notifications/context'),
@@ -321,8 +325,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           // Fetch subscription
           await fetchSubscriptionStatus(initialSession.user.id)
 
-          // Initialise RevenueCat with Supabase user ID as appUserId
-          initRevenueCat(initialSession.user.id).catch(console.error)
+          // Initialise RevenueCat with Supabase user ID as appUserId, then
+          // re-sync the trial-ending reminder once RC knows the entitlement
+          // (triggerNotificationReschedule below may run before RC is ready).
+          initRevenueCat(initialSession.user.id)
+            .then(() => syncTrialReminder())
+            .catch(console.error)
           
           // Update login streak (timezone-aware)
           try {

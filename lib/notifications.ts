@@ -8,6 +8,7 @@
  *   1000        — Daily study reminder (repeating daily)
  *   2000–2029   — Streak protection (one per calendar day, next 30 days)
  *   3000        — Review reminder (one-time, ~24h after last study)
+ *   4000        — Trial-ending reminder (one-time, 2 days before trial expires)
  *
  * All functions guard with isNative() so they are safe to call during SSR
  * and on the web build. Dynamic imports prevent the Capacitor module from
@@ -48,6 +49,7 @@ export const DEFAULT_NOTIFICATION_PREFS: NotificationPreferences = {
 const DAILY_REMINDER_ID = 1000
 const STREAK_BASE_ID    = 2000
 const REVIEW_ID         = 3000
+const TRIAL_REMINDER_ID = 4000
 const STREAK_DAYS       = 30
 
 // ── Platform guard ───────────────────────────────────────────────────────────
@@ -315,6 +317,66 @@ async function scheduleReviewReminder(
       extra: { action: 'open_review' },
       smallIcon: 'ic_notification',
       iconColor: '#10b981',
+      sound: 'default',
+    }],
+  })
+}
+
+// ── Trial-ending reminder ────────────────────────────────────────────────────
+
+/**
+ * Schedules (or cancels) the trial-ending reminder — a one-time notification
+ * that fires 2 days before the free trial expires (i.e. "day 5" of a 7-day
+ * trial, the reminder promised on the paywall).
+ *
+ * IMPORTANT: unlike the study reminders, this is gated ONLY on OS notification
+ * permission — NOT on the user's notification preferences. It's a commitment
+ * made at the paywall, so it must fire even when the daily/streak/review
+ * reminders are switched off. For the same reason it is deliberately NOT part
+ * of cancelAllNotifications() (which only clears the study reminders).
+ *
+ * Pass the trial expiration timestamp (ISO string) to schedule; pass null to
+ * cancel — e.g. when the user is no longer in a trial (converted/cancelled).
+ */
+export async function scheduleTrialReminder(trialEndsAt: string | null): Promise<void> {
+  if (!isNative()) return
+  const { LocalNotifications } = await import('@capacitor/local-notifications')
+
+  // Clear any existing reminder first so repeated syncs never stack.
+  await LocalNotifications.cancel({ notifications: [{ id: TRIAL_REMINDER_ID }] })
+
+  if (!trialEndsAt) return
+
+  // Only schedule when the OS has actually granted permission.
+  const permission = await getNotificationPermission()
+  if (permission !== 'granted') return
+
+  const now = new Date()
+  const end = new Date(trialEndsAt)
+  if (isNaN(end.getTime()) || end <= now) return  // invalid or already expired
+
+  // Fire 2 days before expiry, snapped to a friendly local hour (noon).
+  let fireAt = new Date(end)
+  fireAt.setDate(fireAt.getDate() - 2)
+  fireAt.setHours(12, 0, 0, 0)
+
+  // Late opener: if noon-two-days-before is already in the past but the trial
+  // is still running, warn them shortly (1h out) — provided that's still
+  // before the trial actually ends.
+  if (fireAt <= now) {
+    const soon = new Date(now.getTime() + 60 * 60 * 1000)
+    if (soon >= end) return  // too close to the end to be useful
+    fireAt = soon
+  }
+
+  await LocalNotifications.schedule({
+    notifications: [{
+      id: TRIAL_REMINDER_ID,
+      title: '2 days left in your free trial',
+      body: "You'll be charged when it ends. Keep learning, or cancel anytime in Settings.",
+      schedule: { at: fireAt },
+      smallIcon: 'ic_notification',
+      iconColor: '#6366f1',
       sound: 'default',
     }],
   })
