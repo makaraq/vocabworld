@@ -341,8 +341,7 @@ export function OfflineDownloadsSection() {
                 <div className="flex-1 min-w-0">
                   <p className="text-white text-xs font-medium">Available offline</p>
                   <p className="text-white/50 text-[11px] tabular-nums">
-                    {currentPack.wordCount.toLocaleString()} words · {formatBytes(currentPack.bytes)}
-                    {currentPack.audioMissing > 0 && ` · ${currentPack.audioMissing} clips unavailable`}
+                    {formatBytes(currentPack.bytes)}
                   </p>
                 </div>
                 <button
@@ -377,7 +376,7 @@ export function OfflineDownloadsSection() {
                     {languageName(pack.nativeCode)} → {languageName(pack.targetCode)}
                   </p>
                   <p className="text-white/45 text-[11px] tabular-nums">
-                    {pack.status === 'complete' && `${pack.wordCount.toLocaleString()} words · ${formatBytes(pack.bytes)}`}
+                    {pack.status === 'complete' && formatBytes(pack.bytes)}
                     {pack.status === 'downloading' && `Downloading ${pack.audioTotal ? Math.round((pack.audioDone / pack.audioTotal) * 100) : 0}%…`}
                     {(pack.status === 'paused' || pack.status === 'error') && `Paused · ${formatBytes(pack.bytes)}`}
                     {pack.status === 'storage-warning' && 'Waiting — low storage'}
