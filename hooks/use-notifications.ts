@@ -20,12 +20,8 @@ export interface UseNotificationsReturn {
   prefs: NotificationPreferences
   permissionState: PermissionState
   loadPrefsFromSettings: (settings: Record<string, any>) => void
-  setEnabled: (enabled: boolean) => Promise<void>
-  enableWithTime: (reminderTime: string) => Promise<boolean>
-  updatePref: <K extends keyof NotificationPreferences>(
-    key: K,
-    value: NotificationPreferences[K]
-  ) => Promise<void>
+  /** Returns true when notifications ended up enabled (permission granted). */
+  setEnabled: (enabled: boolean) => Promise<boolean>
   refreshPermissionState: () => Promise<void>
   reschedule: (ctx: NotificationContext) => Promise<void>
   onWordPlayed: (ctx: NotificationContext) => Promise<void>
@@ -71,11 +67,11 @@ export function useNotifications(
     }
   }, [])
 
-  const setEnabled = useCallback(async (enabled: boolean) => {
+  const setEnabled = useCallback(async (enabled: boolean): Promise<boolean> => {
     if (enabled) {
       const granted = await requestNotificationPermission()
       setPermissionState(granted ? 'granted' : 'denied')
-      if (!granted) return
+      if (!granted) return false
     }
     const newPrefs = { ...prefs, enabled }
     setPrefs(newPrefs)
@@ -90,48 +86,8 @@ export function useNotifications(
     } catch (e) {
       console.error('Notification scheduling failed:', e)
     }
+    return enabled
   }, [prefs, ensureCtx])  // persistPrefs intentionally removed from deps — ref handles it
-
-  // Atomically enables notifications AND sets the reminder time in one prefs
-  // write, avoiding the stale-closure bug that occurs when updatePref and
-  // setEnabled are called sequentially (each closes over an older prefs snapshot).
-  const enableWithTime = useCallback(async (reminderTime: string): Promise<boolean> => {
-    const granted = await requestNotificationPermission()
-    setPermissionState(granted ? 'granted' : 'denied')
-    if (!granted) return false
-    const newPrefs: NotificationPreferences = {
-      ...prefs,
-      enabled: true,
-      dailyReminderEnabled: true,
-      dailyReminderTime: reminderTime,
-    }
-    setPrefs(newPrefs)
-    persistPrefsRef.current('notifications', newPrefs)
-    try {
-      const ctx = await ensureCtx()
-      if (ctx) await rescheduleAllNotifications(newPrefs, ctx)
-    } catch (e) {
-      console.error('Notification scheduling failed:', e)
-    }
-    return true
-  }, [prefs, ensureCtx])
-
-  const updatePref = useCallback(async <K extends keyof NotificationPreferences>(
-    key: K,
-    value: NotificationPreferences[K]
-  ) => {
-    const newPrefs = { ...prefs, [key]: value }
-    setPrefs(newPrefs)
-    persistPrefsRef.current('notifications', newPrefs)   // ← use ref
-    if (newPrefs.enabled) {
-      try {
-        const ctx = await ensureCtx()
-        if (ctx) await rescheduleAllNotifications(newPrefs, ctx)
-      } catch (e) {
-        console.error('Notification scheduling failed:', e)
-      }
-    }
-  }, [prefs, ensureCtx])
 
   // Re-check OS permission state — call on app resume so the UI updates
   // after the user returns from iOS Settings where they may have toggled permissions.
@@ -165,9 +121,9 @@ export function useNotifications(
   const onWordPlayed = useCallback(async (ctx: NotificationContext) => {
     ctxRef.current = ctx
     if (!prefs.enabled) return
-    if (prefs.streakProtectionEnabled) await cancelTodaysStreakNotification()
-    if (prefs.reviewReminderEnabled) await rescheduleAllNotifications(prefs, ctx)
+    await cancelTodaysStreakNotification()
+    await rescheduleAllNotifications(prefs, ctx)
   }, [prefs])
 
-  return { prefs, permissionState, loadPrefsFromSettings, setEnabled, enableWithTime, updatePref, refreshPermissionState, reschedule, onWordPlayed }
+  return { prefs, permissionState, loadPrefsFromSettings, setEnabled, refreshPermissionState, reschedule, onWordPlayed }
 }

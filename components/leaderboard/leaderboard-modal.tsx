@@ -225,10 +225,13 @@ export function LeaderboardModal({
     return () => window.removeEventListener('keydown', onKey)
   }, [open, animateClose])
 
-  const rankEmoji = (rank: number) => {
-    if (rank === 1) return '🥇'
-    if (rank === 2) return '🥈'
-    if (rank === 3) return '🥉'
+  // Medal icons for the top 3 — iconify (not emoji), so they render reliably
+  // in every environment (simulator, web preview, screenshots) and match the
+  // app's solar icon set.
+  const rankMedal = (rank: number): { icon: string; color: string } | null => {
+    if (rank === 1) return { icon: 'solar:medal-ribbons-star-bold', color: '#FFCE3A' } // gold
+    if (rank === 2) return { icon: 'solar:medal-ribbons-star-bold', color: '#C7D0DB' } // silver
+    if (rank === 3) return { icon: 'solar:medal-ribbons-star-bold', color: '#E08C4F' } // bronze
     return null
   }
 
@@ -252,12 +255,15 @@ export function LeaderboardModal({
           : 'bg-white/5'
       }`}
     >
-      <div className="w-8 text-center flex-shrink-0">
-        {rankEmoji(entry.rank) ? (
-          <span className="text-lg">{rankEmoji(entry.rank)}</span>
-        ) : (
-          <span className="text-white/50 text-sm font-semibold">{entry.rank}</span>
-        )}
+      <div className="w-8 flex items-center justify-center flex-shrink-0">
+        {(() => {
+          const medal = rankMedal(entry.rank)
+          return medal ? (
+            <Icon icon={medal.icon} width="22" height="22" style={{ color: medal.color }} />
+          ) : (
+            <span className="text-white/50 text-sm font-semibold">{entry.rank}</span>
+          )
+        })()}
       </div>
 
       <div

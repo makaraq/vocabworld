@@ -18,9 +18,8 @@ COMMENT ON COLUMN user_profiles.timezone IS
 -- Expected shape (added to learning_settings):
 --
 -- "notifications": {
---   "enabled": false,
---   "dailyReminderEnabled": true,
---   "dailyReminderTime": "09:00",
---   "streakProtectionEnabled": true,
---   "reviewReminderEnabled": true
+--   "enabled": false
 -- }
+--
+-- A single master switch. When enabled, streak-protection (8 PM) and review
+-- reminders are scheduled on-device. (The daily study reminder was removed.)

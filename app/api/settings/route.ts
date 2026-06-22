@@ -16,10 +16,6 @@ const DEFAULT_SETTINGS = {
   rewindAfterWords: 5,
   notifications: {
     enabled: false,
-    dailyReminderEnabled: true,
-    dailyReminderTime: '09:00',
-    streakProtectionEnabled: true,
-    reviewReminderEnabled: true,
   },
 }
 

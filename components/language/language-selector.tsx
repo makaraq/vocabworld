@@ -12,7 +12,6 @@ import { PlaylistSelectModal } from "@/components/learning/search-word-learning"
 import { ManageAccountModal } from "@/components/account/manage-account-modal"
 import { useNotifications } from "@/hooks/use-notifications"
 import { NotificationPromptModal } from "@/components/notifications/notification-prompt-modal"
-import { NotificationSetupScreen } from "@/components/notifications/notification-setup-screen"
 import { CoachMarkOverlay, type CoachMarkStep } from "@/components/tutorial/coach-mark-overlay"
 import { hapticsLight, hapticsMedium, hapticsSuccess, hapticsWarning } from "@/lib/haptics"
 import { BadgesCard } from "@/components/achievements/badges-card"
@@ -831,7 +830,6 @@ export function LanguageSelector() {
   const [showOnLeaderboard, setShowOnLeaderboard] = useState(false)
   const [showNotifPrompt, setShowNotifPrompt] = useState(false)
   const [notifPromptVariant, setNotifPromptVariant] = useState<'enable' | 'settings'>('settings')
-  const [showNotifSetup, setShowNotifSetup] = useState(false)
   const [showTutorial, setShowTutorial] = useState(false)
   const [showLearningTutorial, setShowLearningTutorial] = useState(false)
 
@@ -3945,36 +3943,12 @@ export function LanguageSelector() {
   // captures the latest version, so no stale-closure issue here.
   const notificationsHook = useNotifications(updateSetting)
 
-  // Declared here so both notificationsHook and state setters are in scope.
-  const handleNotifSetupEnable = async (reminderTime: string) => {
-    setShowNotifSetup(false)
-    localStorage.setItem('vw_notif_prompted', 'true')
-    const granted = await notificationsHook.enableWithTime(reminderTime)
-    if (!granted) {
-      // OS dialog was dismissed/denied → only path forward is iOS Settings.
-      setNotifPromptVariant('settings')
-      setShowNotifPrompt(true)
-    }
-  }
-
-  // "Not now" on the setup screen → show the benefits prompt with a direct
-  // "Enable notifications" CTA that triggers the OS permission dialog.
-  // We do NOT mark vw_notif_prompted yet so this second pass actually runs.
-  const handleNotifSetupDismiss = () => {
-    setShowNotifSetup(false)
-    setNotifPromptVariant('enable')
-    setShowNotifPrompt(true)
-  }
-
   const handleNotifPromptPrimary = async () => {
     if (notifPromptVariant === 'enable') {
-      // Trigger the OS permission dialog directly with the user's current
-      // reminder-time preference. If the dialog is denied, switch this same
-      // modal to the 'settings' variant so the next CTA opens iOS Settings.
+      // Trigger the OS permission dialog. If denied, switch this same modal to
+      // the 'settings' variant so the next CTA opens iOS Settings.
       localStorage.setItem('vw_notif_prompted', 'true')
-      const granted = await notificationsHook.enableWithTime(
-        notificationsHook.prefs.dailyReminderTime
-      )
+      const granted = await notificationsHook.setEnabled(true)
       if (granted) {
         setShowNotifPrompt(false)
       } else {
@@ -4011,7 +3985,7 @@ export function LanguageSelector() {
       !localStorage.getItem('vw_notif_prompted') &&
       parseInt(localStorage.getItem('vw_words_played_count') || '0', 10) >= 10
     ) {
-      const t = setTimeout(() => setShowNotifSetup(true), 500)
+      const t = setTimeout(() => { setNotifPromptVariant('enable'); setShowNotifPrompt(true) }, 500)
       return () => clearTimeout(t)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -5033,7 +5007,9 @@ export function LanguageSelector() {
       <ManageAccountModal
         open={showManageAccount}
         onCloseAction={() => { setShowManageAccount(false); setOpenNotificationsInAccount(false) }}
-        name={user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'User'}
+        name={user?.app_metadata?.provider === 'email'
+          ? (user?.email || 'User')
+          : (user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'User')}
         email={user?.email || ''}
         avatarUrl={user?.user_metadata?.avatar_url || user?.user_metadata?.picture}
         isPremium={isPremium}
@@ -5047,18 +5023,10 @@ export function LanguageSelector() {
         notifPrefs={notificationsHook.prefs}
         notifPermission={notificationsHook.permissionState}
         onNotifSetEnabled={notificationsHook.setEnabled}
-        onNotifUpdatePref={notificationsHook.updatePref}
         openNotifications={openNotificationsInAccount}
         showOnLeaderboard={showOnLeaderboard}
         onLeaderboardToggle={handleLeaderboardToggle}
-      />
-
-      {/* Step 1: Set reminder time + trigger OS permission dialog */}
-      <NotificationSetupScreen
-        open={showNotifSetup}
-        onEnable={handleNotifSetupEnable}
-        onDismiss={handleNotifSetupDismiss}
-        initialTime={notificationsHook.prefs.dailyReminderTime}
+        showLeaderboardOption={user?.app_metadata?.provider !== 'email'}
       />
 
       {/* Benefits prompt — variant 'enable' triggers the OS permission dialog;

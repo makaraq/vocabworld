@@ -31,11 +31,11 @@ const BENEFITS = [
     desc: 'Without a reminder you could forget and lose your streak overnight',
   },
   {
-    icon: 'solar:clock-circle-bold',
+    icon: 'solar:bell-bing-bold',
     color: 'text-blue-400',
     bg: 'bg-blue-400/10',
-    title: 'Daily practice habit',
-    desc: 'A nudge at your chosen time keeps the momentum going every day',
+    title: 'Gentle nudges',
+    desc: "A timely reminder so a busy day doesn't cost you your progress",
   },
   {
     icon: 'solar:refresh-circle-bold',

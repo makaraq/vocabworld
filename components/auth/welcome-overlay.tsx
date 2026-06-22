@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, type FormEvent } from 'react'
 import Lottie from 'lottie-react'
 import { Button } from '@/components/ui/button'
 import { Capacitor } from '@capacitor/core'
@@ -9,10 +9,16 @@ import { hapticsLight } from '@/lib/haptics'
 import languageTranslatorAnim from '@/lib/animations/language-translator.json'
 
 export function WelcomeOverlay() {
-  const { user, signInWithGoogle, signInWithApple, loading } = useAuth()
+  const { user, signInWithGoogle, signInWithApple, signInWithEmail, signUpWithEmail, resetPassword, loading } = useAuth()
   const [isSigningIn, setIsSigningIn] = useState(false)
   const [showOverlay, setShowOverlay] = useState(false)
   const [isIOS, setIsIOS] = useState(false)
+  const [showEmailForm, setShowEmailForm] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [isSignUp, setIsSignUp] = useState(false)
+  const [emailError, setEmailError] = useState<string | null>(null)
+  const [emailNotice, setEmailNotice] = useState<string | null>(null)
   
   // Reset sign-in spinner whenever the user is signed out (e.g. after account
   // deletion). The component stays mounted while the user is logged in (it just
@@ -95,6 +101,69 @@ export function WelcomeOverlay() {
     }
   }
 
+  const handleEmailSubmit = async (e: FormEvent) => {
+    e.preventDefault()
+    hapticsLight()
+    setEmailError(null)
+    setEmailNotice(null)
+
+    const trimmedEmail = email.trim()
+    if (!trimmedEmail || !password) {
+      setEmailError('Enter your email and password.')
+      return
+    }
+    if (isSignUp && password.length < 8) {
+      setEmailError('Password must be at least 8 characters.')
+      return
+    }
+
+    setIsSigningIn(true)
+    try {
+      if (isSignUp) {
+        const { needsEmailConfirmation } = await signUpWithEmail(trimmedEmail, password)
+        if (needsEmailConfirmation) {
+          // No session yet — prompt them to confirm, then switch to sign-in mode.
+          setEmailNotice('Check your email to confirm your account, then sign in.')
+          setIsSignUp(false)
+          setPassword('')
+          setIsSigningIn(false)
+        }
+        // Otherwise a session exists and the auth listener hides this overlay.
+      } else {
+        await signInWithEmail(trimmedEmail, password)
+        // On success the auth listener updates `user` and the overlay hides itself.
+      }
+    } catch (err: any) {
+      console.error('Email auth failed:', err)
+      setEmailError(err?.message || 'Something went wrong. Please try again.')
+      setIsSigningIn(false)
+    }
+  }
+
+  const handleForgotPassword = async () => {
+    hapticsLight()
+    setEmailError(null)
+    setEmailNotice(null)
+
+    const trimmedEmail = email.trim()
+    if (!trimmedEmail) {
+      setEmailError('Enter your email above first, then tap “Forgot password.”')
+      return
+    }
+
+    setIsSigningIn(true)
+    try {
+      await resetPassword(trimmedEmail)
+      // Don't reveal whether the email maps to an account.
+      setEmailNotice('If an account exists for that email, a reset link is on its way. Open it, set a new password, then sign in here.')
+    } catch (err: any) {
+      console.error('Password reset failed:', err)
+      setEmailError(err?.message || 'Could not send the reset email. Please try again.')
+    } finally {
+      setIsSigningIn(false)
+    }
+  }
+
   // Don't render if conditions not met
   if (loading || user || !showOverlay) {
     return null
@@ -125,6 +194,64 @@ export function WelcomeOverlay() {
             <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
             <span>Signing in...</span>
           </div>
+        ) : showEmailForm ? (
+          <form onSubmit={handleEmailSubmit} className="flex flex-col gap-3 text-left">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
+              autoCapitalize="none"
+              autoCorrect="off"
+              autoComplete="email"
+              className="w-full h-14 bg-white/90 text-gray-800 placeholder-gray-500 px-4 rounded-xl text-base outline-none focus:ring-2 focus:ring-white/70"
+            />
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              autoComplete={isSignUp ? 'new-password' : 'current-password'}
+              className="w-full h-14 bg-white/90 text-gray-800 placeholder-gray-500 px-4 rounded-xl text-base outline-none focus:ring-2 focus:ring-white/70"
+            />
+
+            {!isSignUp && (
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                disabled={loading || isSigningIn}
+                className="self-end text-sm text-white/80 underline underline-offset-2 -mt-1"
+              >
+                Forgot password?
+              </button>
+            )}
+
+            {emailError && <p className="text-sm text-red-200 px-1">{emailError}</p>}
+            {emailNotice && <p className="text-sm text-green-100 px-1">{emailNotice}</p>}
+
+            <Button
+              type="submit"
+              disabled={loading || isSigningIn}
+              className="w-full h-14 bg-white hover:bg-gray-50 text-gray-800 font-semibold px-6 rounded-xl transition-all duration-200 flex items-center justify-center text-lg shadow-lg hover:shadow-xl transform hover:scale-105"
+            >
+              {isSignUp ? 'Create account' : 'Sign in'}
+            </Button>
+
+            <button
+              type="button"
+              onClick={() => { setIsSignUp(!isSignUp); setEmailError(null); setEmailNotice(null) }}
+              className="text-sm text-white/90 underline underline-offset-2"
+            >
+              {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Create one"}
+            </button>
+            <button
+              type="button"
+              onClick={() => { setShowEmailForm(false); setEmailError(null); setEmailNotice(null) }}
+              className="text-sm text-white/60"
+            >
+              ← Back
+            </button>
+          </form>
         ) : (
           <div className="flex flex-col gap-3">
             {isIOS && (
@@ -152,6 +279,18 @@ export function WelcomeOverlay() {
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
               Continue with Google
+            </Button>
+
+            <Button
+              onClick={() => { hapticsLight(); setShowEmailForm(true); setEmailError(null); setEmailNotice(null) }}
+              disabled={loading || isSigningIn}
+              className="w-full h-14 bg-white/15 hover:bg-white/25 text-white font-semibold px-6 rounded-xl border border-white/30 transition-all duration-200 flex items-center justify-center gap-3 text-lg shadow-lg hover:shadow-xl transform hover:scale-105"
+            >
+              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <rect x="2" y="4" width="20" height="16" rx="2" />
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+              </svg>
+              Continue with Email
             </Button>
           </div>
         )}

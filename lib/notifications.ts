@@ -5,7 +5,8 @@
  * Uses @capacitor/local-notifications — no APNS/FCM setup required.
  *
  * Notification ID assignments:
- *   1000        — Daily study reminder (repeating daily)
+ *   1000        — (legacy) Daily study reminder — REMOVED; only cancelled now
+ *                 so it clears off devices that scheduled it before the change.
  *   2000–2029   — Streak protection (one per calendar day, next 30 days)
  *   3000        — Review reminder (one-time, ~24h after last study)
  *   4000        — Trial-ending reminder (one-time, 2 days before trial expires)
@@ -20,11 +21,8 @@ import { Capacitor } from '@capacitor/core'
 // ── Types ────────────────────────────────────────────────────────────────────
 
 export interface NotificationPreferences {
+  /** Master switch. When on, streak-protection + review reminders are scheduled. */
   enabled: boolean
-  dailyReminderEnabled: boolean
-  dailyReminderTime: string        // "HH:MM" 24-hour local time
-  streakProtectionEnabled: boolean
-  reviewReminderEnabled: boolean
 }
 
 export interface NotificationContext {
@@ -38,19 +36,18 @@ export interface NotificationContext {
 
 export const DEFAULT_NOTIFICATION_PREFS: NotificationPreferences = {
   enabled: false,
-  dailyReminderEnabled: true,
-  dailyReminderTime: '09:00',
-  streakProtectionEnabled: true,
-  reviewReminderEnabled: true,
 }
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
-const DAILY_REMINDER_ID = 1000
+const DAILY_REMINDER_ID = 1000   // legacy — only cancelled now (daily reminder removed)
 const STREAK_BASE_ID    = 2000
 const REVIEW_ID         = 3000
 const TRIAL_REMINDER_ID = 4000
 const STREAK_DAYS       = 30
+
+// Review reminder fires at this local time (the user-chosen daily time was removed).
+const DEFAULT_REVIEW_TIME = '09:00'
 
 // ── Platform guard ───────────────────────────────────────────────────────────
 
@@ -104,37 +101,6 @@ function daySeed(): number {
   const d = new Date()
   return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate()
 }
-
-const DAILY_COPY: CopyFn[] = [
-  (ctx) => ({
-    title: `Your ${ctx.userLanguage} is waiting`,
-    body: 'Five minutes now saves you an hour of forgetting later.',
-  }),
-  (ctx) => ({
-    title: 'Small steps, big fluency',
-    body: `A few ${ctx.userLanguage} words today and future-you will be grateful.`,
-  }),
-  (ctx) => ({
-    title: `📖 Ready to learn ${ctx.userLanguage}?`,
-    body: "Today's words won't study themselves. Let's knock them out.",
-  }),
-  (ctx) => ({
-    title: 'Your brain is freshest right now',
-    body: `Perfect time to pick up some ${ctx.userLanguage}. Just a quick round.`,
-  }),
-  (ctx) => ({
-    title: "⛓️ Don't break the chain",
-    body: `Open Sprind, learn a few ${ctx.userLanguage} words, close Sprind. Easy.`,
-  }),
-  (ctx) => ({
-    title: `Quick ${ctx.userLanguage} round?`,
-    body: 'Even one word a day keeps the language alive in your head.',
-  }),
-  (ctx) => ({
-    title: 'Consistency beats intensity',
-    body: `Two minutes of ${ctx.userLanguage} now beats an hour crammed on Sunday.`,
-  }),
-]
 
 const STREAK_COPY: CopyFn[] = [
   (ctx) => ({
@@ -199,37 +165,7 @@ const REVIEW_COPY: CopyFn[] = [
 
 // ── Scheduling helpers ───────────────────────────────────────────────────────
 
-async function scheduleDailyReminder(
-  prefs: NotificationPreferences,
-  ctx: NotificationContext
-): Promise<void> {
-  const { LocalNotifications } = await import('@capacitor/local-notifications')
-  await LocalNotifications.cancel({ notifications: [{ id: DAILY_REMINDER_ID }] })
-  if (!prefs.dailyReminderEnabled) return
-
-  const { title, body } = pick(DAILY_COPY, daySeed())(ctx)
-  const [hour, minute] = prefs.dailyReminderTime.split(':').map(Number)
-
-  // IMPORTANT: use a calendar match (`on`), NOT `at` + every:'day'.
-  // The iOS plugin ignores `every` when `at` is present and builds a
-  // UNTimeIntervalNotificationTrigger whose repeat interval equals the gap
-  // between scheduling time and first fire — i.e. the reminder drifts around
-  // the clock instead of firing daily at the chosen time.
-  await LocalNotifications.schedule({
-    notifications: [{
-      id: DAILY_REMINDER_ID,
-      title,
-      body,
-      schedule: { on: { hour, minute } },
-      smallIcon: 'ic_notification',
-      iconColor: '#6366f1',
-      sound: 'default',
-    }],
-  })
-}
-
 async function scheduleStreakProtection(
-  prefs: NotificationPreferences,
   ctx: NotificationContext,
   studiedToday: boolean
 ): Promise<void> {
@@ -240,7 +176,7 @@ async function scheduleStreakProtection(
     notifications: Array.from({ length: STREAK_DAYS }, (_, i) => ({ id: STREAK_BASE_ID + i })),
   })
 
-  if (!prefs.streakProtectionEnabled || ctx.currentStreak === 0) return
+  if (ctx.currentStreak === 0) return
 
   const toSchedule: Parameters<typeof LocalNotifications.schedule>[0]['notifications'] = []
   for (let i = 0; i < STREAK_DAYS; i++) {
@@ -293,18 +229,15 @@ function nextReminderTimeAfter(anchor: Date, reminderTime: string, minHoursAfter
 const REVIEW_THRESHOLD = 10
 
 async function scheduleReviewReminder(
-  prefs: NotificationPreferences,
   ctx: NotificationContext
 ): Promise<void> {
   const { LocalNotifications } = await import('@capacitor/local-notifications')
   await LocalNotifications.cancel({ notifications: [{ id: REVIEW_ID }] })
-  if (!prefs.reviewReminderEnabled) return
   if (ctx.dueReviewCount <= REVIEW_THRESHOLD) return
 
-  // Schedule for the next daily reminder time (at least 1h from now so it
-  // doesn't fire immediately when the app reschedules on foreground)
-  const reminderTime = prefs.dailyReminderEnabled ? prefs.dailyReminderTime : '09:00'
-  const reviewAt = nextReminderTimeAfter(new Date(), reminderTime, 1)
+  // Schedule for the default review time (at least 1h from now so it doesn't
+  // fire immediately when the app reschedules on foreground).
+  const reviewAt = nextReminderTimeAfter(new Date(), DEFAULT_REVIEW_TIME, 1)
 
   const { title, body } = pick(REVIEW_COPY, daySeed())(ctx)
 
@@ -412,11 +345,14 @@ export async function rescheduleAllNotifications(
   const permission = await getNotificationPermission()
   if (permission !== 'granted') return
 
+  // Clean up any legacy daily reminder still scheduled on upgraded installs.
+  const { LocalNotifications } = await import('@capacitor/local-notifications')
+  await LocalNotifications.cancel({ notifications: [{ id: DAILY_REMINDER_ID }] })
+
   const studied = hasStudiedToday(ctx)
   await Promise.all([
-    scheduleDailyReminder(prefs, ctx),
-    scheduleStreakProtection(prefs, ctx, studied),
-    scheduleReviewReminder(prefs, ctx),
+    scheduleStreakProtection(ctx, studied),
+    scheduleReviewReminder(ctx),
   ])
 }
 
@@ -556,13 +492,11 @@ export async function scheduleTestNotifications(
   })
 
   const enriched = { ...ctx, projected: Math.max(ctx.currentStreak, 1) }
-  const daily  = pick(DAILY_COPY, daySeed())(enriched)
   const streak = (enriched.projected > 1 ? pick(STREAK_COPY, daySeed()) : pick(STREAK_START_COPY, daySeed()))(enriched)
   const review = pick(REVIEW_COPY, daySeed())(enriched)
 
   const fireAt = (i: number) => new Date(Date.now() + (startInSeconds + i * gapSeconds) * 1000)
   const plan = [
-    { type: 'daily',  copy: daily,  color: '#6366f1', extra: undefined },
     { type: 'streak', copy: streak, color: '#f59e0b', extra: undefined },
     { type: 'review', copy: review, color: '#10b981', extra: { action: 'open_review' } },
   ]

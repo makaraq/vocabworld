@@ -25,88 +25,16 @@ interface ManageAccountModalProps {
   onUpgradeAction?: () => void
   notifPrefs?: NotificationPreferences
   notifPermission?: PermissionState
-  onNotifSetEnabled?: (enabled: boolean) => Promise<void>
-  onNotifUpdatePref?: <K extends keyof NotificationPreferences>(key: K, value: NotificationPreferences[K]) => Promise<void>
+  onNotifSetEnabled?: (enabled: boolean) => Promise<unknown>
   openNotifications?: boolean
   showOnLeaderboard?: boolean
   onLeaderboardToggle?: (enabled: boolean) => Promise<void>
+  // Email/password accounts have no name or photo to display, so the leaderboard
+  // opt-in is hidden for them (they stay anonymized as "Learner #XXXX").
+  showLeaderboardOption?: boolean
 }
 
 // ── Time helpers ──────────────────────────────────────────────────────────────
-
-function parseTime(timeStr: string): { hour12: number; minute: number; ampm: 'AM' | 'PM' } {
-  const [h, m] = timeStr.split(':').map(Number)
-  return {
-    hour12: h === 0 ? 12 : h > 12 ? h - 12 : h,
-    minute: m,
-    ampm: h >= 12 ? 'PM' : 'AM',
-  }
-}
-
-function toTimeStr(hour12: number, minute: number, ampm: 'AM' | 'PM'): string {
-  let h = hour12
-  if (ampm === 'AM' && hour12 === 12) h = 0
-  else if (ampm === 'PM' && hour12 !== 12) h = hour12 + 12
-  return `${h.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
-}
-
-function displayTime(timeStr: string): string {
-  const { hour12, minute, ampm } = parseTime(timeStr)
-  return `${hour12}:${minute.toString().padStart(2, '0')} ${ampm}`
-}
-
-function DailyTimePicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
-  const { hour12, minute, ampm } = parseTime(value)
-
-  const setHour = (h: number) => onChange(toTimeStr(h, minute, ampm))
-  const setMinute = (m: number) => onChange(toTimeStr(hour12, m, ampm))
-  const setAmpm = (a: 'AM' | 'PM') => onChange(toTimeStr(hour12, minute, a))
-
-  const prevHour = () => setHour(hour12 === 1 ? 12 : hour12 - 1)
-  const nextHour = () => setHour(hour12 === 12 ? 1 : hour12 + 1)
-  const prevMinute = () => setMinute(minute === 0 ? 59 : minute - 1)
-  const nextMinute = () => setMinute(minute === 59 ? 0 : minute + 1)
-
-  return (
-    <div className="flex items-center gap-2 ml-[30px]">
-      <div className="flex items-center bg-black/20 border border-white/10 rounded-xl overflow-hidden">
-        <button onClick={() => { hapticsLight(); prevHour() }} className="px-2.5 py-2 text-white/60 active:bg-white/10 transition-colors">
-          <Icon icon="solar:alt-arrow-left-bold" width="14" />
-        </button>
-        <span className="w-7 text-center text-white text-sm font-semibold tabular-nums">{hour12}</span>
-        <button onClick={() => { hapticsLight(); nextHour() }} className="px-2.5 py-2 text-white/60 active:bg-white/10 transition-colors">
-          <Icon icon="solar:alt-arrow-right-bold" width="14" />
-        </button>
-      </div>
-
-      <span className="text-white/40 text-sm font-bold">:</span>
-
-      <div className="flex items-center bg-black/20 border border-white/10 rounded-xl overflow-hidden">
-        <button onClick={() => { hapticsLight(); prevMinute() }} className="px-2.5 py-2 text-white/60 active:bg-white/10 transition-colors">
-          <Icon icon="solar:alt-arrow-left-bold" width="14" />
-        </button>
-        <span className="w-7 text-center text-white text-sm font-semibold tabular-nums">{minute.toString().padStart(2, '0')}</span>
-        <button onClick={() => { hapticsLight(); nextMinute() }} className="px-2.5 py-2 text-white/60 active:bg-white/10 transition-colors">
-          <Icon icon="solar:alt-arrow-right-bold" width="14" />
-        </button>
-      </div>
-
-      <div className="flex bg-black/20 border border-white/10 rounded-xl overflow-hidden">
-        {(['AM', 'PM'] as const).map(period => (
-          <button
-            key={period}
-            onClick={() => { hapticsLight(); setAmpm(period) }}
-            className={`px-3 py-2 text-xs font-semibold transition-all ${
-              ampm === period ? 'bg-blue-500 text-white' : 'text-white/50 active:bg-white/10'
-            }`}
-          >
-            {period}
-          </button>
-        ))}
-      </div>
-    </div>
-  )
-}
 
 export function ManageAccountModal({
   open,
@@ -122,15 +50,14 @@ export function ManageAccountModal({
   notifPrefs,
   notifPermission,
   onNotifSetEnabled,
-  onNotifUpdatePref,
   openNotifications = false,
   showOnLeaderboard = false,
   onLeaderboardToggle,
+  showLeaderboardOption = true,
 }: ManageAccountModalProps) {
   const [deleteStep, setDeleteStep] = useState<'idle' | 'confirm' | 'deleting' | 'error'>('idle')
   const [deleteError, setDeleteError] = useState<string | null>(null)
   const [deleteConfirmText, setDeleteConfirmText] = useState('')
-  const [showTimePicker, setShowTimePicker] = useState(false)
   const [shown, setShown] = useState(false)
   const notifSectionRef = useRef<HTMLDivElement>(null)
 
@@ -168,7 +95,6 @@ export function ManageAccountModal({
     setDeleteStep('idle')
     setDeleteError(null)
     setDeleteConfirmText('')
-    setShowTimePicker(false)
   }, [])
 
   const animateClose = useCallback(() => {
@@ -304,7 +230,6 @@ export function ManageAccountModal({
 
   useEffect(() => {
     if (open && openNotifications) {
-      setShowTimePicker(true)
       setTimeout(() => {
         notifSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       }, 200)
@@ -507,7 +432,9 @@ export function ManageAccountModal({
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-white font-semibold text-base truncate">{name}</p>
-                <p className="text-white/55 text-sm truncate">{email}</p>
+                {email && email !== name && (
+                  <p className="text-white/55 text-sm truncate">{email}</p>
+                )}
               </div>
             </div>
 
@@ -545,23 +472,21 @@ export function ManageAccountModal({
               )}
             </div>
 
-            {/* Daily Reminder */}
+            {/* Notifications */}
             {notifPermission && notifPermission !== 'not-native' && notifPermission !== 'loading' && (
               <div ref={notifSectionRef} className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/15 overflow-hidden">
-                {notifPermission === 'granted' && notifPrefs && onNotifSetEnabled && onNotifUpdatePref ? (
-                  <div className="px-4 py-3.5 space-y-2.5">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2.5">
+                {notifPermission === 'granted' && notifPrefs && onNotifSetEnabled ? (
+                  <div className="px-4 py-3.5">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-2.5 min-w-0">
                         <Icon icon="solar:bell-bold" width="18" className={notifPrefs.enabled ? 'text-blue-400' : 'text-white/50'} />
-                        <span className="text-white font-medium text-sm" onClick={handleDebugTap}>Daily Reminder</span>
+                        <div className="min-w-0">
+                          <span className="text-white font-medium text-sm block" onClick={handleDebugTap}>Notifications</span>
+                          <span className="text-white/45 text-xs">Streak protection &amp; review reminders</span>
+                        </div>
                       </div>
                       <button
-                        onClick={() => {
-                          hapticsMedium()
-                          const next = !notifPrefs.enabled
-                          onNotifSetEnabled(next)
-                          if (!next) setShowTimePicker(false)
-                        }}
+                        onClick={() => { hapticsMedium(); onNotifSetEnabled(!notifPrefs.enabled) }}
                         aria-pressed={notifPrefs.enabled}
                         className={`w-11 h-6 rounded-full transition-all duration-300 flex-shrink-0 relative ${
                           notifPrefs.enabled ? 'bg-blue-500' : 'bg-black/30 border border-white/20'
@@ -572,36 +497,16 @@ export function ManageAccountModal({
                         }`} />
                       </button>
                     </div>
-
-                    {notifPrefs.enabled && (
-                      <>
-                        <button
-                          onClick={() => setShowTimePicker(v => !v)}
-                          className="ml-[30px] flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all bg-white/10 border border-white/15 text-white/70 active:bg-white/20"
-                        >
-                          <Icon icon="solar:clock-circle-bold" width="13" className="text-blue-400" />
-                          {displayTime(notifPrefs.dailyReminderTime)}
-                          <Icon icon="solar:pen-bold" width="11" className="text-white/40" />
-                        </button>
-
-                        {showTimePicker && (
-                          <DailyTimePicker
-                            value={notifPrefs.dailyReminderTime}
-                            onChange={v => onNotifUpdatePref('dailyReminderTime', v)}
-                          />
-                        )}
-                      </>
-                    )}
                   </div>
                 ) : (
                   <div className="px-4 py-3.5 space-y-3">
                     <div className="flex items-center gap-2.5">
                       <Icon icon="solar:bell-bold" width="18" className="text-white/50" />
-                      <span className="text-white font-medium text-sm" onClick={handleDebugTap}>Daily Reminder</span>
+                      <span className="text-white font-medium text-sm" onClick={handleDebugTap}>Notifications</span>
                       <span className="text-xs bg-white/10 text-white/40 border border-white/10 px-2 py-0.5 rounded-full">Off</span>
                     </div>
                     <p className="text-white/50 text-xs leading-relaxed">
-                      Enable notifications in your device settings to get daily study reminders.
+                      Enable notifications in your device settings to get streak and review reminders.
                     </p>
                     <button
                       onClick={() => openAppSettings()}
@@ -620,31 +525,33 @@ export function ManageAccountModal({
               <NotificationTester prefs={notifPrefs} />
             )}
 
-            {/* Leaderboard opt-in */}
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/15 overflow-hidden">
-              <div className="px-4 py-3.5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <Icon icon="solar:users-group-rounded-bold" width="18" className={showOnLeaderboard ? 'text-yellow-400' : 'text-white/50'} />
-                    <div>
-                      <span className="text-white font-medium text-sm">Show on Leaderboard</span>
-                      <p className="text-white/40 text-[11px] leading-tight mt-0.5">Display your first name and photo</p>
+            {/* Leaderboard opt-in — hidden for email accounts (no name/photo to show) */}
+            {showLeaderboardOption && (
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/15 overflow-hidden">
+                <div className="px-4 py-3.5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <Icon icon="solar:users-group-rounded-bold" width="18" className={showOnLeaderboard ? 'text-yellow-400' : 'text-white/50'} />
+                      <div>
+                        <span className="text-white font-medium text-sm">Show on Leaderboard</span>
+                        <p className="text-white/40 text-[11px] leading-tight mt-0.5">Display your first name and photo</p>
+                      </div>
                     </div>
+                    <button
+                      onClick={() => { hapticsMedium(); onLeaderboardToggle?.(!showOnLeaderboard) }}
+                      aria-pressed={showOnLeaderboard}
+                      className={`w-11 h-6 rounded-full transition-all duration-300 flex-shrink-0 relative ${
+                        showOnLeaderboard ? 'bg-blue-500' : 'bg-black/30 border border-white/20'
+                      }`}
+                    >
+                      <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all duration-300 ${
+                        showOnLeaderboard ? 'left-[calc(100%-1.375rem)]' : 'left-0.5'
+                      }`} />
+                    </button>
                   </div>
-                  <button
-                    onClick={() => { hapticsMedium(); onLeaderboardToggle?.(!showOnLeaderboard) }}
-                    aria-pressed={showOnLeaderboard}
-                    className={`w-11 h-6 rounded-full transition-all duration-300 flex-shrink-0 relative ${
-                      showOnLeaderboard ? 'bg-blue-500' : 'bg-black/30 border border-white/20'
-                    }`}
-                  >
-                    <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all duration-300 ${
-                      showOnLeaderboard ? 'left-[calc(100%-1.375rem)]' : 'left-0.5'
-                    }`} />
-                  </button>
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Offline downloads */}
             <OfflineDownloadsSection />
