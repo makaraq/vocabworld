@@ -25,6 +25,17 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* iPad-only upscale.
+   The layout is phone-first, so on a large tablet screen everything looks
+   small. Tailwind v4 spacing and type are rem-based, so enlarging the root
+   font-size scales the whole UI proportionally. Gated on a tablet-sized
+   viewport in BOTH dimensions so it never affects iPhones — including an
+   iPhone Pro Max in landscape (short height excludes it). Adjust the single
+   font-size value below to make the UI bigger or smaller on iPad. */
+@media (min-width: 768px) and (min-height: 768px) {
+  html { font-size: 128%; }
+}
+
 /* Elements with no explicit font-weight class */
 .cap-native body { font-weight: 500; }
 
