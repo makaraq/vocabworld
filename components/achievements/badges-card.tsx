@@ -40,13 +40,13 @@ export function BadgesCard() {
       onTouchStart={() => setHolding(true)}
       onTouchEnd={() => setHolding(false)}
       onTouchCancel={() => setHolding(false)}
-      className={`bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20 w-full hover:bg-white/15 transition-all ${
+      className={`bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 xs:p-3.5 sm:p-4 border border-white/20 w-full hover:bg-white/15 transition-all ${
         holding ? 'scale-[1.03]' : 'scale-100'
       }`}
       aria-label={`Badges: ${count} of ${total} unlocked`}
     >
-        <div className="flex items-start justify-between mb-1.5 sm:mb-2">
-          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center">
+        <div className="flex items-start justify-between mb-1.5 xs:mb-1.5 sm:mb-2">
+          <div className="w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center">
             <Icon icon="solar:medal-star-bold" width="18" height="18" className="text-white" />
           </div>
           {recent.length > 0 && (
@@ -54,7 +54,7 @@ export function BadgesCard() {
               {recent.map((a) => (
                 <div
                   key={a.id}
-                  className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gradient-to-br ${tierGradient(
+                  className={`w-5 h-5 xs:w-6 xs:h-6 sm:w-6 sm:h-6 rounded-full bg-gradient-to-br ${tierGradient(
                     a.tier,
                   )} ring-2 ring-black/20 flex items-center justify-center`}
                   title={a.title}
@@ -65,11 +65,11 @@ export function BadgesCard() {
             </div>
           )}
         </div>
-        <div className="text-2xl sm:text-3xl font-bold text-white">
+        <div className="text-2xl xs:text-3xl sm:text-3xl font-bold text-white">
           {count}
-          <span className="text-white/50 text-sm sm:text-base font-medium"> / {total}</span>
+          <span className="text-white/50 text-sm xs:text-base sm:text-base font-medium"> / {total}</span>
         </div>
-        <div className="text-xs sm:text-sm text-white/90">Badges</div>
+        <div className="text-xs xs:text-sm sm:text-sm text-white/90">Badges</div>
     </button>
   )
 }

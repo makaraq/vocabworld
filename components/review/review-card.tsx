@@ -80,10 +80,10 @@ export function ReviewCard({ userId, targetLanguageCode, nativeLanguageCode }: R
     <>
       <button
         onClick={() => { if (dueCount > 0) { hapticsLight(); setShowQuiz(true) } }}
-        className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20 transition-all hover:bg-white/15 active:scale-[1.03]"
+        className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 xs:p-3.5 sm:p-4 border border-white/20 transition-all hover:bg-white/15 active:scale-[1.03]"
         aria-label={loading ? "Loading review words" : totalCards === 0 ? "Start learning words to review" : dueCount > 0 ? `${dueCount} words to review` : "All caught up, no words to review"}
       >
-        <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center mb-1.5 sm:mb-2 ${
+        <div className={`w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center mb-1.5 xs:mb-1.5 sm:mb-2 ${
           totalCards === 0
             ? "bg-gradient-to-br from-white/20 to-white/10"
             : "bg-gradient-to-br from-blue-500 to-cyan-500"
@@ -98,23 +98,23 @@ export function ReviewCard({ userId, targetLanguageCode, nativeLanguageCode }: R
         </div>
         {loading ? (
           <>
-            <div className="text-2xl sm:text-3xl font-bold text-white/40">...</div>
-            <div className="text-xs sm:text-sm text-white/50">Loading</div>
+            <div className="text-2xl xs:text-3xl sm:text-3xl font-bold text-white/40">...</div>
+            <div className="text-xs xs:text-sm sm:text-sm text-white/50">Loading</div>
           </>
         ) : totalCards === 0 ? (
           <>
-            <div className="text-2xl sm:text-3xl font-bold text-white/40">—</div>
-            <div className="text-xs sm:text-sm text-white/50">Start learning</div>
+            <div className="text-2xl xs:text-3xl sm:text-3xl font-bold text-white/40">—</div>
+            <div className="text-xs xs:text-sm sm:text-sm text-white/50">Start learning</div>
           </>
         ) : dueCount > 0 ? (
           <>
-            <div className="text-2xl sm:text-3xl font-bold text-white">{dueCount}</div>
-            <div className="text-xs sm:text-sm text-white/90">Words to Review</div>
+            <div className="text-2xl xs:text-3xl sm:text-3xl font-bold text-white">{dueCount}</div>
+            <div className="text-xs xs:text-sm sm:text-sm text-white/90">Words to Review</div>
           </>
         ) : (
           <>
-            <div className="text-2xl sm:text-3xl font-bold text-white/70">0</div>
-            <div className="text-xs sm:text-sm text-white/90">All caught up!</div>
+            <div className="text-2xl xs:text-3xl sm:text-3xl font-bold text-white/70">0</div>
+            <div className="text-xs xs:text-sm sm:text-sm text-white/90">All caught up!</div>
           </>
         )}
       </button>

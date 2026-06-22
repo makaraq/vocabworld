@@ -519,7 +519,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
             <div key={sectionIndex} className="w-full h-full flex-shrink-0 px-2">
               {/* Account section special content */}
               {section.isAccount ? (
-                <div className="h-full flex flex-col space-y-2.5 sm:space-y-3">
+                <div className="h-full flex flex-col space-y-2.5 xs:space-y-3 sm:space-y-3">
                   {/* Progress Section with Real Data */}
                   {targetLanguageCode && (
                     <ProgressStats 
@@ -530,7 +530,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                   )}
 
                   {/* Daily Reminder & Goal Cards */}
-                  <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                  <div className="grid grid-cols-2 gap-2 xs:gap-3 sm:gap-3">
                     <ReviewCard userId={user?.id} targetLanguageCode={targetLanguageCode} nativeLanguageCode={nativeLanguageCode} />
                     <BadgesCard />
                   </div>
@@ -538,7 +538,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                   {/* Manage Account Button */}
                   <button
                     onClick={() => setShowManageAccount(true)}
-                    className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white py-3 px-4 rounded-2xl font-semibold text-sm hover:bg-white/15 transition-all flex items-center justify-center space-x-2"
+                    className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white py-3 xs:py-3.5 px-4 rounded-2xl font-semibold text-sm hover:bg-white/15 transition-all flex items-center justify-center space-x-2"
                   >
                     <Icon icon="solar:user-circle-bold" width="18" height="18" className="text-white/70" />
                     <span>Manage Account</span>

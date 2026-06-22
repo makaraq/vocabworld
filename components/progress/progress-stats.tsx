@@ -89,9 +89,9 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLa
 
   return (
     <>
-      <div className="space-y-3 sm:space-y-4">
+      <div className="space-y-3 xs:space-y-3.5 sm:space-y-4">
         <div
-          className={`bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-5 border border-white/20 cursor-pointer hover:bg-white/15 ${
+          className={`bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 xs:p-3.5 sm:p-5 border border-white/20 cursor-pointer hover:bg-white/15 ${
             holdingProgressButton ? 'scale-105 transition-all duration-75' : 'scale-100 transition-all duration-300'
           }`}
           onClick={() => setShowDetailedModal(true)}
@@ -103,64 +103,64 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLa
           aria-label={`${targetLanguageName} progress: ${Math.round(stats.languageCompletionPercentage)}% complete. Click to see details`}
           onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setShowDetailedModal(true) } }}
         >
-          <div className="flex items-start gap-3 sm:gap-4">
+          <div className="flex items-start gap-3 xs:gap-4 sm:gap-4">
             {/* Flag on the left */}
-            <Icon icon={getFlagIcon(targetLanguageCode)} className="w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0 mt-1" />
+            <Icon icon={getFlagIcon(targetLanguageCode)} className="w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 flex-shrink-0 mt-1" />
             
             {/* Progress content in the middle */}
             <div className="flex-1 min-w-0">
-              <div className="flex items-baseline justify-between gap-2 mb-2">
-                <h3 className="font-semibold text-white text-sm sm:text-base truncate">{targetLanguageName} Progress</h3>
-                <p className="text-sm sm:text-base font-bold text-white whitespace-nowrap">{Math.round(stats.languageCompletionPercentage)}%</p>
+              <div className="flex items-baseline justify-between gap-2 mb-2 xs:mb-1.5">
+                <h3 className="font-semibold text-white text-sm xs:text-base sm:text-base truncate">{targetLanguageName} Progress</h3>
+                <p className="text-sm xs:text-base sm:text-base font-bold text-white whitespace-nowrap">{Math.round(stats.languageCompletionPercentage)}%</p>
               </div>
-              <div className="h-2 sm:h-3 bg-white/10 rounded-full overflow-hidden mb-2">
-                <div 
-                  className="h-full bg-gradient-to-r from-indigo-500 to-pink-500 transition-all duration-500" 
-                  style={{ width: `${Math.min(stats.languageCompletionPercentage, 100)}%` }} 
+              <div className="h-2 xs:h-3 sm:h-3 bg-white/10 rounded-full overflow-hidden mb-2 xs:mb-1.5">
+                <div
+                  className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full transition-all duration-300"
+                  style={{ width: `${Math.min(stats.languageCompletionPercentage, 100)}%` }}
                 />
               </div>
-              <p className="text-xs text-white/50 text-left">Click to see details</p>
+              <p className="text-xs xs:text-sm text-white/50 text-left">Click to see details</p>
             </div>
           </div>
         </div>
       
-        <div className="grid grid-cols-2 gap-2 sm:gap-3">
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-1.5 sm:mb-2">
-              <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+        <div className="grid grid-cols-2 gap-2 xs:gap-3 sm:gap-3">
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 xs:p-3.5 sm:p-4 border border-white/20">
+            <div className="w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-1.5 xs:mb-1.5 sm:mb-2">
+              <BookOpen className="w-4 h-4 xs:w-5 xs:h-5 sm:w-5 sm:h-5 text-white" />
             </div>
-            <div className="text-2xl sm:text-3xl font-bold text-white">{stats.wordsLearned}</div>
-            <div className="text-xs sm:text-sm text-white/90">Words Learned</div>
+            <div className="text-2xl xs:text-3xl sm:text-3xl font-bold text-white">{stats.wordsLearned}</div>
+            <div className="text-xs xs:text-sm sm:text-sm text-white/90">Words Learned</div>
           </div>
           
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center mb-1.5 sm:mb-2">
-              <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 xs:p-3.5 sm:p-4 border border-white/20">
+            <div className="w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center mb-1.5 xs:mb-1.5 sm:mb-2">
+              <Flame className="w-4 h-4 xs:w-5 xs:h-5 sm:w-5 sm:h-5 text-white" />
             </div>
-            <div className="text-2xl sm:text-3xl font-bold text-white">{stats.dailyLoginStreak}</div>
-            <div className="text-xs sm:text-sm text-white/90">Day Streak</div>
+            <div className="text-2xl xs:text-3xl sm:text-3xl font-bold text-white">{stats.dailyLoginStreak}</div>
+            <div className="text-xs xs:text-sm sm:text-sm text-white/90">Day Streak</div>
           </div>
           
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center mb-1.5 sm:mb-2">
-              <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 xs:p-3.5 sm:p-4 border border-white/20">
+            <div className="w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center mb-1.5 xs:mb-1.5 sm:mb-2">
+              <TrendingUp className="w-4 h-4 xs:w-5 xs:h-5 sm:w-5 sm:h-5 text-white" />
             </div>
-            <div className="text-2xl sm:text-3xl font-bold text-white">{stats.wordsLearnedToday}</div>
-            <div className="text-xs sm:text-sm text-white/90">Today</div>
+            <div className="text-2xl xs:text-3xl sm:text-3xl font-bold text-white">{stats.wordsLearnedToday}</div>
+            <div className="text-xs xs:text-sm sm:text-sm text-white/90">Today</div>
           </div>
           
           <button
             onClick={() => setShowLeaderboard(true)}
-            className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/20 hover:bg-white/15 transition-all active:scale-95"
+            className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 xs:p-3.5 sm:p-4 border border-white/20 hover:bg-white/15 transition-all active:scale-95"
             aria-label={bestRank ? `Leaderboard: rank #${bestRank}` : "View leaderboard"}
           >
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center mb-1.5 sm:mb-2">
-              <Icon icon="solar:cup-star-bold" className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+            <div className="w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center mb-1.5 xs:mb-1.5 sm:mb-2">
+              <Icon icon="solar:cup-star-bold" className="w-4 h-4 xs:w-5 xs:h-5 sm:w-5 sm:h-5 text-white" />
             </div>
-            <div className="text-2xl sm:text-3xl font-bold text-white">
+            <div className="text-2xl xs:text-3xl sm:text-3xl font-bold text-white">
               {bestRank ? `#${bestRank}` : '—'}
             </div>
-            <div className="text-xs sm:text-sm text-white/90">Leaderboard</div>
+            <div className="text-xs xs:text-sm sm:text-sm text-white/90">Leaderboard</div>
           </button>
         </div>
       </div>
