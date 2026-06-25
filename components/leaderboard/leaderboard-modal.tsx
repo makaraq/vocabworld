@@ -8,7 +8,7 @@ import { getFlagIcon } from "@/utils/flags"
 
 interface LeaderboardEntry {
   rank: number
-  userId: string
+  displayId: string
   firstName: string | null
   avatarUrl: string | null
   wordsPlayed: number
@@ -49,7 +49,7 @@ export function LeaderboardModal({
     if (!user?.id) return
     setLoading(true)
     try {
-      const params = new URLSearchParams({ userId: user.id, period, scope })
+      const params = new URLSearchParams({ period, scope })
       if (scope === 'language') params.set('targetLanguageCode', targetLanguageCode)
       const res = await fetch(`/api/leaderboard?${params}`)
       if (res.ok) {
@@ -242,13 +242,13 @@ export function LeaderboardModal({
 
   const getDisplayName = (entry: LeaderboardEntry) => {
     if (entry.firstName) return entry.firstName
-    const hash = entry.userId.slice(-4).toUpperCase()
+    const hash = entry.displayId.slice(0, 4).toUpperCase()
     return `Learner #${hash}`
   }
 
   const renderRow = (entry: LeaderboardEntry) => (
     <div
-      key={entry.userId}
+      key={entry.displayId}
       className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${
         entry.isCurrentUser
           ? 'bg-blue-500/20 border border-blue-400/30'

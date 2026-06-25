@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { createHash } from 'node:crypto'
 import { getApiUser } from '@/lib/auth/api-auth'
 
 const supabase = createClient(
@@ -7,9 +8,16 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
+// Non-reversible short token derived from a user's UUID. Used by the client as
+// a stable React key and to render an anonymous "Learner #XXXX" label, so the
+// raw user_id never leaves the server (prevents UUID harvesting).
+function displayIdFor(uuid: string): string {
+  return createHash('sha256').update(uuid).digest('hex').slice(0, 8)
+}
+
 interface LeaderboardEntry {
   rank: number
-  userId: string
+  displayId: string
   firstName: string | null
   avatarUrl: string | null
   wordsPlayed: number
@@ -47,7 +55,7 @@ export async function GET(request: NextRequest) {
 
     const entries: LeaderboardEntry[] = leaderboardRows.map((row, i) => ({
       rank: i + 1,
-      userId: row.user_id,
+      displayId: displayIdFor(row.user_id),
       firstName: extractFirstName(row.full_name),
       avatarUrl: row.avatar_url,
       wordsPlayed: row.words_played,
@@ -59,7 +67,7 @@ export async function GET(request: NextRequest) {
     if (currentUserEntry && currentUserIndex === -1) {
       currentUserRank = {
         rank: currentUserEntry.rank,
-        userId: currentUserEntry.user_id,
+        displayId: displayIdFor(currentUserEntry.user_id),
         firstName: extractFirstName(currentUserEntry.full_name),
         avatarUrl: currentUserEntry.avatar_url,
         wordsPlayed: currentUserEntry.words_played,
