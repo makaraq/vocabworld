@@ -35,7 +35,7 @@ export default function PrivacyPolicyPage() {
           {/* Content */}
           <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 text-white space-y-6">
             <div>
-              <p className="text-white/80 text-sm">Last updated: January 24, 2026</p>
+              <p className="text-white/80 text-sm">Last updated: June 26, 2026</p>
             </div>
 
             <section>
@@ -65,6 +65,8 @@ export default function PrivacyPolicyPage() {
                     <li>Selected native and target languages</li>
                     <li>Custom playlists and word collections</li>
                     <li>Topic completion status</li>
+                    <li>Quiz and spaced-repetition review results</li>
+                    <li>Achievements and milestones earned</li>
                   </ul>
                 </div>
                 <div>
@@ -83,6 +85,14 @@ export default function PrivacyPolicyPage() {
                     <li>Device information (for mobile app functionality)</li>
                   </ul>
                 </div>
+                <div>
+                  <h3 className="text-lg font-medium mb-2">Leaderboard Information (Optional)</h3>
+                  <ul className="list-disc list-inside space-y-1 ml-4">
+                    <li>The leaderboard is turned <strong>off by default</strong>. It is shown only if you choose to opt in from your settings.</li>
+                    <li>When you opt in, other users can see your first name, profile picture, number of words played, and current learning streak.</li>
+                    <li>You can leave the leaderboard at any time, which immediately removes your information from public view.</li>
+                  </ul>
+                </div>
               </div>
             </section>
 
@@ -95,8 +105,9 @@ export default function PrivacyPolicyPage() {
                 <li>Providing personalized language learning experiences</li>
                 <li>Managing your subscription and account access</li>
                 <li>Tracking your learning progress across devices</li>
+                <li>Displaying your first name and progress on the leaderboard (only if you opt in)</li>
                 <li>Improving app features and user experience</li>
-                <li>Sending important service notifications</li>
+                <li>Scheduling optional learning reminders on your device</li>
                 <li>Providing customer support</li>
               </ul>
             </section>
@@ -138,15 +149,24 @@ export default function PrivacyPolicyPage() {
             </section>
 
             <section>
+              <h2 className="text-2xl font-semibold mb-4">Notifications</h2>
+              <p className="text-white/90 leading-relaxed">
+                Learning reminders and streak notifications are scheduled locally on your device. They are optional,
+                can be turned on or off at any time in your settings, and require your permission. We do not use
+                push notification tokens and do not send your notification data to our servers.
+              </p>
+            </section>
+
+            <section>
               <h2 className="text-2xl font-semibold mb-4">Your Rights</h2>
               <p className="text-white/90 leading-relaxed mb-3">
                 You have the following rights regarding your personal data:
               </p>
               <ul className="list-disc list-inside space-y-2 text-white/90 ml-4">
-                <li><strong>Access:</strong> Request a copy of your personal data by emailing sprindapp@gmail.com</li>
+                <li><strong>Access:</strong> Request a copy of your personal data by emailing support@sprind.uk</li>
                 <li><strong>Correction:</strong> Update or correct inaccurate information</li>
                 <li><strong>Deletion:</strong> Delete your account and all associated data at any time via Account Settings → Delete Account</li>
-                <li><strong>Portability:</strong> Export your learning data by contacting sprindapp@gmail.com</li>
+                <li><strong>Portability:</strong> Export your learning data by contacting support@sprind.uk</li>
                 <li><strong>Restriction:</strong> Learning progress data is required for core app functionality and cannot be disabled independently — deleting your account removes all data</li>
               </ul>
             </section>
@@ -212,8 +232,8 @@ export default function PrivacyPolicyPage() {
                 If you have any questions about this Privacy Policy or our data practices, please contact us:
               </p>
               <div className="bg-white/10 border border-white/20 rounded-xl p-4 text-white/90">
-                <p><strong>Email:</strong> sprindapp@gmail.com</p>
-                <p><strong>Support:</strong> sprindapp@gmail.com</p>
+                <p><strong>Email:</strong> support@sprind.uk</p>
+                <p><strong>Support:</strong> support@sprind.uk</p>
                 <p className="mt-2 text-sm text-white/70">
                   We will respond to your inquiry within 48 hours.
                 </p>

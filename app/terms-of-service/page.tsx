@@ -35,7 +35,7 @@ export default function TermsOfServicePage() {
           {/* Content */}
           <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 text-white space-y-6">
             <div>
-              <p className="text-white/80 text-sm">Last updated: January 24, 2026</p>
+              <p className="text-white/80 text-sm">Last updated: June 26, 2026</p>
             </div>
 
             <section>
@@ -53,11 +53,12 @@ export default function TermsOfServicePage() {
                 Sprind is a language learning application that provides:
               </p>
               <ul className="list-disc list-inside space-y-2 text-white/90 ml-4">
-                <li>Vocabulary learning across 50 languages</li>
-                <li>Audio pronunciation for vocabulary words</li>
-                <li>Progress tracking and statistics</li>
-                <li>Custom playlists and practice modes (Premium)</li>
-                <li>Access to 43 vocabulary topics (some require Premium subscription)</li>
+                <li>Vocabulary translations in over 100 languages, with audio pronunciation in 50 languages</li>
+                <li>43 vocabulary topics (3 free, the rest require a Premium subscription)</li>
+                <li>Quizzes and spaced-repetition practice to reinforce learning</li>
+                <li>Progress tracking, daily streaks, and achievements</li>
+                <li>An optional, opt-in leaderboard</li>
+                <li>Custom playlists and word search (Premium)</li>
               </ul>
             </section>
 
@@ -141,6 +142,7 @@ export default function TermsOfServicePage() {
                 <li>Attempt to circumvent payment or subscription systems</li>
                 <li>Download, copy, or redistribute audio files</li>
                 <li>Use the App for any illegal or unauthorized purpose</li>
+                <li>Use the leaderboard or other shared features to harass, impersonate, or display offensive content</li>
                 <li>Interfere with or disrupt the App's functionality</li>
                 <li>Violate any applicable laws or regulations</li>
               </ul>
@@ -234,7 +236,7 @@ export default function TermsOfServicePage() {
                 If you have questions about these Terms, please contact us:
               </p>
               <div className="bg-white/10 border border-white/20 rounded-xl p-4 text-white/90">
-                <p><strong>Email:</strong> sprindapp@gmail.com</p>
+                <p><strong>Email:</strong> support@sprind.uk</p>
               </div>
             </section>
 

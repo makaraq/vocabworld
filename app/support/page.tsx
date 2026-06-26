@@ -45,11 +45,11 @@ export default function SupportPage() {
                   <p className="text-white/80 mb-4">
                     Get help with technical issues, account problems, or general inquiries.
                   </p>
-                  <a 
-                    href="mailto:sprindapp@gmail.com"
+                  <a
+                    href="mailto:support@sprind.uk"
                     className="inline-block px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg font-medium transition-colors"
                   >
-                    sprindapp@gmail.com
+                    support@sprind.uk
                   </a>
                   <p className="text-sm text-white/60 mt-3">
                     We typically respond within 24-48 hours
@@ -133,13 +133,13 @@ export default function SupportPage() {
               <h2 className="text-xl font-semibold mb-4">Other Inquiries</h2>
               <div className="space-y-3 text-sm text-white/90">
                 <p>
-                  <strong>Privacy concerns:</strong> sprindapp@gmail.com
+                  <strong>Privacy concerns:</strong> support@sprind.uk
                 </p>
                 <p>
-                  <strong>Business inquiries:</strong> sprindapp@gmail.com
+                  <strong>Business inquiries:</strong> support@sprind.uk
                 </p>
                 <p>
-                  <strong>Press & media:</strong> sprindapp@gmail.com
+                  <strong>Press & media:</strong> support@sprind.uk
                 </p>
               </div>
             </div>
