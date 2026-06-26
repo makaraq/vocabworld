@@ -5,6 +5,7 @@ brew install node
 
 cd "$CI_PRIMARY_REPOSITORY_PATH"
 npm ci --legacy-peer-deps
+npm run build:ios
 
 cd "$CI_PRIMARY_REPOSITORY_PATH/ios/App"
 pod install
