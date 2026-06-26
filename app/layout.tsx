@@ -6,7 +6,6 @@ import { AchievementProvider } from "@/components/achievements/achievement-provi
 import { OfflineBanner } from "@/components/offline-banner"
 import { OfflineProvider } from "@/components/providers/offline-provider"
 import "./globals.css"
-import "../styles/stripe-elements.css"
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
