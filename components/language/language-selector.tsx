@@ -1520,11 +1520,10 @@ export function LanguageSelector() {
     }
   }
   
-  // Silent audio pause — keeps the iOS audio session alive while the screen is
-  // locked so that autoplay can continue advancing through words in background.
-  // iOS suspends the WebView (and all JS timers) when no <audio> element is
-  // actively playing, even with UIBackgroundModes=audio. By playing a silent WAV
-  // through an HTML <audio> element during pauses, the OS keeps the process alive.
+  // Silent audio pause — plays a short silent WAV through an HTML <audio> element
+  // to create the gap between words during autoplay. The app is foreground-only
+  // (no background audio mode is declared), so autoplay naturally stops when the
+  // app is backgrounded or the screen locks.
   const getSilentWavUrl = (durationMs: number): string => {
     const sampleRate = 22050
     const numSamples = Math.ceil(sampleRate * durationMs / 1000)

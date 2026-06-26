@@ -8,10 +8,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Configure audio session for background playback and lock screen controls
+        // Foreground audio session for word pronunciation. `.playback` lets audio
+        // play through the silent/ring switch. The app does NOT declare a background
+        // audio mode, and we intentionally do NOT activate the session at launch —
+        // activating here would needlessly interrupt other apps' audio (music /
+        // podcasts). iOS activates the session implicitly when the WebView plays.
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
-            try AVAudioSession.sharedInstance().setActive(true)
         } catch {
             print("Failed to configure AVAudioSession: \(error)")
         }
