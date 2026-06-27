@@ -4,7 +4,6 @@ import React, { useState, useRef, useEffect, useCallback } from "react"
 import { createPortal } from "react-dom"
 import { Icon } from "@iconify/react"
 import { openAppSettings } from "@/lib/notifications"
-import type { NotificationPreferences } from "@/lib/notifications"
 import { logOutRevenueCat } from "@/lib/revenuecat-client"
 import { createClient } from "@/lib/supabase/browser-client"
 import type { PermissionState } from "@/hooks/use-notifications"
@@ -22,9 +21,7 @@ interface ManageAccountModalProps {
   renewalDate?: string
   onSignOutAction?: () => void
   onUpgradeAction?: () => void
-  notifPrefs?: NotificationPreferences
   notifPermission?: PermissionState
-  onNotifSetEnabled?: (enabled: boolean) => Promise<unknown>
   openNotifications?: boolean
   showOnLeaderboard?: boolean
   onLeaderboardToggle?: (enabled: boolean) => Promise<void>
@@ -46,9 +43,7 @@ export function ManageAccountModal({
   renewalDate,
   onSignOutAction,
   onUpgradeAction,
-  notifPrefs,
   notifPermission,
-  onNotifSetEnabled,
   openNotifications = false,
   showOnLeaderboard = false,
   onLeaderboardToggle,
@@ -450,52 +445,38 @@ export function ManageAccountModal({
             </div>
 
             {/* Notifications */}
-            {notifPermission && notifPermission !== 'not-native' && notifPermission !== 'loading' && (
+            {notifPermission && notifPermission !== 'not-native' && notifPermission !== 'loading' && (() => {
+              const notifsOn = notifPermission === 'granted'
+              return (
               <div ref={notifSectionRef} className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/15 overflow-hidden">
-                {notifPermission === 'granted' && notifPrefs && onNotifSetEnabled ? (
-                  <div className="px-4 py-3.5">
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <Icon icon="solar:bell-bold" width="18" className={notifPrefs.enabled ? 'text-blue-400' : 'text-white/50'} />
-                        <div className="min-w-0">
-                          <span className="text-white font-medium text-sm block">Notifications</span>
-                          <span className="text-white/45 text-xs">Streak protection &amp; review reminders</span>
-                        </div>
+                <div className="px-4 py-3.5 space-y-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <Icon icon="solar:bell-bold" width="18" className={notifsOn ? 'text-blue-400' : 'text-white/50'} />
+                      <div className="min-w-0">
+                        <span className="text-white font-medium text-sm block">Notifications</span>
+                        <span className="text-white/45 text-xs">Streak protection &amp; review reminders</span>
                       </div>
-                      <button
-                        onClick={() => { hapticsMedium(); onNotifSetEnabled(!notifPrefs.enabled) }}
-                        aria-pressed={notifPrefs.enabled}
-                        className={`w-11 h-6 rounded-full transition-all duration-300 flex-shrink-0 relative ${
-                          notifPrefs.enabled ? 'bg-blue-500' : 'bg-black/30 border border-white/20'
-                        }`}
-                      >
-                        <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all duration-300 ${
-                          notifPrefs.enabled ? 'left-[calc(100%-1.375rem)]' : 'left-0.5'
-                        }`} />
-                      </button>
                     </div>
+                    <span className={`text-xs px-2 py-0.5 rounded-full flex-shrink-0 ${
+                      notifsOn
+                        ? 'bg-blue-500/20 text-blue-300 border border-blue-400/30'
+                        : 'bg-white/10 text-white/40 border border-white/10'
+                    }`}>
+                      {notifsOn ? 'On' : 'Off'}
+                    </span>
                   </div>
-                ) : (
-                  <div className="px-4 py-3.5 space-y-3">
-                    <div className="flex items-center gap-2.5">
-                      <Icon icon="solar:bell-bold" width="18" className="text-white/50" />
-                      <span className="text-white font-medium text-sm">Notifications</span>
-                      <span className="text-xs bg-white/10 text-white/40 border border-white/10 px-2 py-0.5 rounded-full">Off</span>
-                    </div>
-                    <p className="text-white/50 text-xs leading-relaxed">
-                      Enable notifications in your device settings to get streak and review reminders.
-                    </p>
-                    <button
-                      onClick={() => openAppSettings()}
-                      className="w-full bg-blue-500/20 border border-blue-400/30 text-blue-300 py-2.5 rounded-xl font-medium text-sm hover:bg-blue-500/30 transition-all flex items-center justify-center gap-2"
-                    >
-                      <Icon icon="solar:settings-bold" width="16" />
-                      Open Settings
-                    </button>
-                  </div>
-                )}
+                  <button
+                    onClick={() => { hapticsMedium(); openAppSettings() }}
+                    className="w-full bg-blue-500/20 border border-blue-400/30 text-blue-300 py-2.5 rounded-xl font-medium text-sm hover:bg-blue-500/30 transition-all flex items-center justify-center gap-2"
+                  >
+                    <Icon icon="solar:settings-bold" width="16" />
+                    Open Notification Settings
+                  </button>
+                </div>
               </div>
-            )}
+              )
+            })()}
 
             {/* Leaderboard opt-in — hidden for email accounts (no name/photo to show) */}
             {showLeaderboardOption && (

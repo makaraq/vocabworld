@@ -32,6 +32,7 @@ yarn-error.log*
 !components.json
 !capacitor.config.json
 !vercel.json
+!ios/**/Contents.json
 !next.config.json
 !lib/animations/*.json
 !lib/icons/data/*.json

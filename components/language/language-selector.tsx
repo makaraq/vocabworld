@@ -5019,9 +5019,7 @@ export function LanguageSelector() {
             : undefined
         }
         onSignOutAction={handleSignOut}
-        notifPrefs={notificationsHook.prefs}
         notifPermission={notificationsHook.permissionState}
-        onNotifSetEnabled={notificationsHook.setEnabled}
         openNotifications={openNotificationsInAccount}
         showOnLeaderboard={showOnLeaderboard}
         onLeaderboardToggle={handleLeaderboardToggle}
