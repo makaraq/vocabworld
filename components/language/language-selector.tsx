@@ -578,7 +578,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                   <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 sm:p-4 lg:p-5 border border-white/20 flex flex-col overflow-hidden max-h-[340px] lg:max-h-[480px] min-h-[100px]">
                     <div className="flex items-center justify-between mb-3 flex-shrink-0">
                       <h3 className="text-white font-semibold text-base sm:text-lg flex items-center gap-2">
-                        <Icon icon="solar:playlist-bold" width="20" height="20" className="text-purple-400" />
+                        <Icon icon="solar:playlist-bold" width="20" height="20" className="text-blue-400" />
                         My Playlists
                       </h3>
                       <button
@@ -622,7 +622,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                               }}
                               className="w-full flex items-center gap-3 p-3 bg-white/5 hover:bg-white/10 rounded-lg transition-all text-left"
                             >
-                              <Icon icon={playlist.icon || "solar:playlist-minimalistic-2-linear"} width="22" height="22" className="text-purple-400 flex-shrink-0" />
+                              <Icon icon={playlist.icon || "solar:playlist-minimalistic-2-linear"} width="22" height="22" className="text-blue-400 flex-shrink-0" />
                               <div className="flex-1 min-w-0">
                                 <p className="text-white font-medium truncate">{playlist.name}</p>
                                 <p className="text-white/50 text-xs">{playlist.word_count || 0} words</p>
@@ -4946,7 +4946,7 @@ export function LanguageSelector() {
               <button
                 onClick={handleCreatePlaylist}
                 disabled={!newPlaylistName.trim() || isCreatingPlaylist}
-                className="flex-1 py-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-white font-medium transition-all flex items-center justify-center gap-2"
+                className="flex-1 py-3 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-white font-medium transition-all flex items-center justify-center gap-2"
               >
                 {isCreatingPlaylist ? (
                   <>
