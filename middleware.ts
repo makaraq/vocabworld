@@ -48,9 +48,8 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - public folder files (images, etc.)
-     * - API routes that don't need auth refresh
      * - Python serverless functions
      */
-    '/((?!_next/static|_next/image|favicon.ico|sw\\.js|api/sentence-audio|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|mp3|wav)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|sw\\.js|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|mp3|wav)$).*)',
   ],
 }
