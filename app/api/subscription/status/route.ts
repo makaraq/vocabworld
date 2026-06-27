@@ -3,10 +3,18 @@ import { createClient } from '@supabase/supabase-js'
 import { getApiUser } from '@/lib/auth/api-auth'
 
 // Service role client for reading subscription data (bypasses RLS)
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+// Lazy service-role client: defers createClient so importing this route during
+// the static-export build does not require Supabase env vars at build time.
+let _client: ReturnType<typeof createClient<any>> | null = null
+function getSupabaseAdmin() {
+  if (!_client) {
+    _client = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+  }
+  return _client
+}
 
 export async function GET(req: NextRequest) {
   try {
@@ -18,7 +26,7 @@ export async function GET(req: NextRequest) {
     }
     
     // Read subscription state from our DB — kept up to date by RC webhooks
-    const { data: profile, error: profileError } = await supabaseAdmin
+    const { data: profile, error: profileError } = await getSupabaseAdmin()
       .from('user_profiles')
       .select('subscription_status, subscription_plan, subscription_period_end')
       .eq('id', user.id)

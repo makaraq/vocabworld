@@ -5,10 +5,18 @@
 
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
+// Lazily create the service-role client so that importing this module during
+// the Next.js build (page-data collection) does not crash when Supabase env
+// vars are absent in the CI environment.
+let _supabase: ReturnType<typeof createClient<any>> | null = null
+function getSupabase() {
+  if (!_supabase) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+    _supabase = createClient(supabaseUrl, supabaseServiceKey)
+  }
+  return _supabase
+}
 
 export interface ProgressStats {
   wordsLearned: number
@@ -45,7 +53,7 @@ class ProgressService {
       const playedTs = playedAt || new Date().toISOString()
       const now = new Date().toISOString()
       // Check if word already exists in progress
-      const { data: existing, error: checkError } = await supabase
+      const { data: existing, error: checkError } = await getSupabase()
         .from('user_word_progress')
         .select('id, play_count')
         .eq('user_id', userId)
@@ -60,7 +68,7 @@ class ProgressService {
 
       if (existing) {
         // Word already played - update play count and timestamp
-        const { error: updateError } = await supabase
+        const { error: updateError } = await getSupabase()
           .from('user_word_progress')
           .update({
             last_played_at: playedTs,
@@ -77,7 +85,7 @@ class ProgressService {
         // 1. Update topic completion
         // 2. Update language progress
         // 3. Update daily progress
-        const { error: insertError } = await supabase
+        const { error: insertError } = await getSupabase()
           .from('user_word_progress')
           .insert({
             user_id: userId,
@@ -106,7 +114,7 @@ class ProgressService {
    */
   async isEventProcessed(clientEventId: string): Promise<boolean> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await getSupabase()
         .from('processed_progress_events')
         .select('client_event_id')
         .eq('client_event_id', clientEventId)
@@ -123,7 +131,7 @@ class ProgressService {
 
   async markEventProcessed(clientEventId: string, userId: string): Promise<void> {
     try {
-      await supabase
+      await getSupabase()
         .from('processed_progress_events')
         .insert({ client_event_id: clientEventId, user_id: userId })
     } catch (error) {
@@ -141,7 +149,7 @@ class ProgressService {
   ): Promise<ProgressStats> {
     try {
       // Get language progress summary
-      const { data: languageProgress } = await supabase
+      const { data: languageProgress } = await getSupabase()
         .from('user_language_progress')
         .select('*')
         .eq('user_id', userId)
@@ -150,7 +158,7 @@ class ProgressService {
 
       // Get daily progress for today
       const today = new Date().toISOString().split('T')[0]
-      const { data: dailyProgress } = await supabase
+      const { data: dailyProgress } = await getSupabase()
         .from('user_daily_progress')
         .select('words_learned_count')
         .eq('user_id', userId)
@@ -159,19 +167,19 @@ class ProgressService {
         .single()
 
       // Get login streak
-      const { data: loginStreak } = await supabase
+      const { data: loginStreak } = await getSupabase()
         .from('user_login_streaks')
         .select('current_streak')
         .eq('user_id', userId)
         .single()
 
       // Get total words in database
-      const { count: totalWords } = await supabase
+      const { count: totalWords } = await getSupabase()
         .from('vocabulary')
         .select('*', { count: 'exact', head: true })
 
       // Count completed topics from topic completion table
-      const { count: completedTopics } = await supabase
+      const { count: completedTopics } = await getSupabase()
         .from('user_topic_completion')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', userId)
@@ -209,7 +217,7 @@ class ProgressService {
     targetLanguageCode: string
   ): Promise<TopicProgress | null> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await getSupabase()
         .from('user_topic_completion')
         .select('*')
         .eq('user_id', userId)
@@ -223,7 +231,7 @@ class ProgressService {
 
       if (!data) {
         // Topic not started yet - get total words count
-        const { count } = await supabase
+        const { count } = await getSupabase()
           .from('vocabulary')
           .select('*', { count: 'exact', head: true })
           .eq('topic_id', topicId)
@@ -258,7 +266,7 @@ class ProgressService {
     targetLanguageCode: string
   ): Promise<Map<number, TopicProgress>> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await getSupabase()
         .from('user_topic_completion')
         .select('*')
         .eq('user_id', userId)
@@ -293,7 +301,7 @@ class ProgressService {
     targetLanguageCode: string
   ): Promise<number[]> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await getSupabase()
         .from('user_topic_completion')
         .select('topic_id')
         .eq('user_id', userId)
@@ -314,7 +322,7 @@ class ProgressService {
     targetLanguageCode: string
   ): Promise<Record<number, number>> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await getSupabase()
         .from('user_topic_completion')
         .select('topic_id, completion_count')
         .eq('user_id', userId)
@@ -340,7 +348,7 @@ class ProgressService {
     targetLanguageCode: string
   ): Promise<void> {
     try {
-      const { data: vocab } = await supabase
+      const { data: vocab } = await getSupabase()
         .from('vocabulary')
         .select('topic_id')
         .eq('id', vocabularyId)
@@ -348,7 +356,7 @@ class ProgressService {
 
       if (!vocab) return
 
-      const { data: topicCompletion } = await supabase
+      const { data: topicCompletion } = await getSupabase()
         .from('user_topic_completion')
         .select('completion_count, is_completed, completed_at')
         .eq('user_id', userId)
@@ -358,14 +366,14 @@ class ProgressService {
 
       if (!topicCompletion || !topicCompletion.is_completed || !topicCompletion.completed_at) return
 
-      const { data: topicVocab } = await supabase
+      const { data: topicVocab } = await getSupabase()
         .from('vocabulary')
         .select('id')
         .eq('topic_id', vocab.topic_id)
 
       if (!topicVocab || topicVocab.length === 0) return
 
-      const { data: wordProgress } = await supabase
+      const { data: wordProgress } = await getSupabase()
         .from('user_word_progress')
         .select('vocabulary_id, last_played_at')
         .eq('user_id', userId)
@@ -381,7 +389,7 @@ class ProgressService {
       })
 
       if (allReplayedSinceCompletion) {
-        await supabase
+        await getSupabase()
           .from('user_topic_completion')
           .update({
             completion_count: (topicCompletion.completion_count || 0) + 1,
@@ -411,7 +419,7 @@ class ProgressService {
         : new Date().toLocaleDateString('en-CA') // Fallback to system timezone
       
       // Get existing streak data
-      const { data: existing, error: checkError } = await supabase
+      const { data: existing, error: checkError } = await getSupabase()
         .from('user_login_streaks')
         .select('*')
         .eq('user_id', userId)
@@ -423,7 +431,7 @@ class ProgressService {
 
       if (!existing) {
         // First login ever - create new streak
-        await supabase
+        await getSupabase()
           .from('user_login_streaks')
           .insert({
             user_id: userId,
@@ -459,7 +467,7 @@ class ProgressService {
       }
 
       // Update streak
-      await supabase
+      await getSupabase()
         .from('user_login_streaks')
         .update({
           current_streak: newStreak,
@@ -493,7 +501,7 @@ class ProgressService {
     targetLanguageCode: string
   ): Promise<boolean> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await getSupabase()
         .from('user_topic_completion')
         .select('is_completed')
         .eq('user_id', userId)

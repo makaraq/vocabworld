@@ -2,9 +2,18 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { getApiUser } from '@/lib/auth/api-auth'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
+// Lazy service-role client: defers createClient so importing this route during
+// the static-export build does not require Supabase env vars at build time.
+let _client: ReturnType<typeof createClient<any>> | null = null
+function getServiceClient() {
+  if (!_client) {
+    _client = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+  }
+  return _client
+}
 
 // GET: Retrieve user's position in a topic
 export async function GET(request: NextRequest) {
@@ -22,7 +31,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const { data, error } = await supabase
+    const { data, error } = await getServiceClient()
       .from('user_topic_position')
       .select('*')
       .eq('user_id', userId)
@@ -59,7 +68,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { data, error } = await supabase
+    const { data, error } = await getServiceClient()
       .from('user_topic_position')
       .upsert({
         user_id: userId,

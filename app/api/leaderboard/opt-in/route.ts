@@ -2,10 +2,18 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { getApiUser } from '@/lib/auth/api-auth'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+// Lazy service-role client: defers createClient so importing this route during
+// the static-export build does not require Supabase env vars at build time.
+let _client: ReturnType<typeof createClient<any>> | null = null
+function getServiceClient() {
+  if (!_client) {
+    _client = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+  }
+  return _client
+}
 
 export async function GET(request: NextRequest) {
   const user = await getApiUser(request)
@@ -15,7 +23,7 @@ export async function GET(request: NextRequest) {
   const userId = user.id
 
   try {
-    const { data, error } = await supabase
+    const { data, error } = await getServiceClient()
       .from('user_profiles')
       .select('show_on_leaderboard')
       .eq('id', userId)
@@ -47,7 +55,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
     }
 
-    const { error } = await supabase
+    const { error } = await getServiceClient()
       .from('user_profiles')
       .update({
         show_on_leaderboard: showOnLeaderboard,

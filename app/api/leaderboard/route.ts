@@ -3,10 +3,18 @@ import { createClient } from '@supabase/supabase-js'
 import { createHash } from 'node:crypto'
 import { getApiUser } from '@/lib/auth/api-auth'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+// Lazy service-role client: defers createClient so importing this route during
+// the static-export build does not require Supabase env vars at build time.
+let _client: ReturnType<typeof createClient<any>> | null = null
+function getServiceClient() {
+  if (!_client) {
+    _client = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+  }
+  return _client
+}
 
 // Non-reversible short token derived from a user's UUID. Used by the client as
 // a stable React key and to render an anonymous "Learner #XXXX" label, so the
@@ -101,7 +109,7 @@ async function fetchLeaderboard(
   isGlobal: boolean,
   targetLanguageCode: string | null
 ): Promise<LeaderboardRow[]> {
-  let query = supabase
+  let query = getServiceClient()
     .from('user_word_progress')
     .select('user_id, play_count, last_played_at, target_language_code')
 
@@ -128,12 +136,12 @@ async function fetchLeaderboard(
 
   const userIds = Array.from(userScores.keys())
 
-  const { data: profiles } = await supabase
+  const { data: profiles } = await getServiceClient()
     .from('user_profiles')
     .select('id, full_name, avatar_url, show_on_leaderboard')
     .in('id', userIds)
 
-  const { data: streaks } = await supabase
+  const { data: streaks } = await getServiceClient()
     .from('user_login_streaks')
     .select('user_id, current_streak')
     .in('user_id', userIds)
@@ -163,7 +171,7 @@ async function fetchUserRank(
   isGlobal: boolean,
   targetLanguageCode: string | null
 ): Promise<(LeaderboardRow & { rank: number }) | null> {
-  let query = supabase
+  let query = getServiceClient()
     .from('user_word_progress')
     .select('user_id, play_count, last_played_at, target_language_code')
 
@@ -190,13 +198,13 @@ async function fetchUserRank(
 
   if (userIndex === -1) return null
 
-  const { data: profile } = await supabase
+  const { data: profile } = await getServiceClient()
     .from('user_profiles')
     .select('id, full_name, avatar_url, show_on_leaderboard')
     .eq('id', userId)
     .single()
 
-  const { data: streak } = await supabase
+  const { data: streak } = await getServiceClient()
     .from('user_login_streaks')
     .select('current_streak')
     .eq('user_id', userId)

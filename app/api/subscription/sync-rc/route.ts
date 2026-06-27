@@ -17,10 +17,18 @@ import { checkRateLimit } from '@/lib/rate-limit'
 const RC_API_BASE = 'https://api.revenuecat.com/v1'
 const RC_ENTITLEMENT = 'Vocab World Unlimited'
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+// Lazy service-role client: defers createClient so importing this route during
+// the static-export build does not require Supabase env vars at build time.
+let _client: ReturnType<typeof createClient<any>> | null = null
+function getSupabaseAdmin() {
+  if (!_client) {
+    _client = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+  }
+  return _client
+}
 
 export async function POST(req: NextRequest) {
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
@@ -98,7 +106,7 @@ export async function POST(req: NextRequest) {
       if (subscription_plan) updateData.subscription_plan = subscription_plan
       if (expirationDate) updateData.subscription_period_end = expirationDate
 
-      const { error: dbError } = await supabaseAdmin
+      const { error: dbError } = await getSupabaseAdmin()
         .from('user_profiles')
         .upsert(updateData, { onConflict: 'id', ignoreDuplicates: false })
 

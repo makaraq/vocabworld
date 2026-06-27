@@ -2,10 +2,18 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { getApiUser } from '@/lib/auth/api-auth'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+// Lazy service-role client: defers createClient so importing this route during
+// the static-export build does not require Supabase env vars at build time.
+let _client: ReturnType<typeof createClient<any>> | null = null
+function getServiceClient() {
+  if (!_client) {
+    _client = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+  }
+  return _client
+}
 
 export async function GET(request: NextRequest) {
   const user = await getApiUser(request)
@@ -45,7 +53,7 @@ async function computeRank(
   targetLanguageCode: string,
   isWeekly: boolean,
 ): Promise<number | null> {
-  let query = supabase
+  let query = getServiceClient()
     .from('user_word_progress')
     .select('user_id, play_count, last_played_at')
     .eq('target_language_code', targetLanguageCode)

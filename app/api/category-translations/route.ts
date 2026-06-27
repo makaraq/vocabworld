@@ -1,10 +1,16 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-
-const supabase = createClient(supabaseUrl, supabaseKey)
+// Lazy client: defers createClient so importing this route during the
+// static-export build does not require Supabase env vars at build time.
+let _client: ReturnType<typeof createClient<any>> | null = null
+function getServiceClient() {
+  if (!_client) {
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    _client = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, supabaseKey)
+  }
+  return _client
+}
 
 export async function GET(request: Request) {
   try {
@@ -19,7 +25,7 @@ export async function GET(request: Request) {
     }
 
     // Fetch category translations for the specified language
-    const { data, error } = await supabase
+    const { data, error } = await getServiceClient()
       .from('category_translations')
       .select('category, translated_category')
       .eq('language_code', languageCode)

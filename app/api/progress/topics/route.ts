@@ -3,10 +3,18 @@ import { progressService } from '@/lib/progress/progress-service'
 import { createClient } from '@supabase/supabase-js'
 import { getApiUser } from '@/lib/auth/api-auth'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+// Lazy service-role client: defers createClient so importing this route during
+// the static-export build does not require Supabase env vars at build time.
+let _client: ReturnType<typeof createClient<any>> | null = null
+function getServiceClient() {
+  if (!_client) {
+    _client = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+  }
+  return _client
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -44,13 +52,13 @@ async function getDetailedTopicProgress(userId: string, languageCode: string) {
   try {
     // Batch: fetch topics, completion records, and word counts in parallel
     const [topicsRes, completionRes, wordCountsRes] = await Promise.all([
-      supabase.from('topics').select('id, name'),
-      supabase
+      getServiceClient().from('topics').select('id, name'),
+      getServiceClient()
         .from('user_topic_completion')
         .select('topic_id, total_words, words_learned, is_completed')
         .eq('user_id', userId)
         .eq('target_language_code', languageCode),
-      supabase.rpc('get_topic_word_counts', { lang_code: languageCode }).maybeSingle(),
+      getServiceClient().rpc('get_topic_word_counts', { lang_code: languageCode }).maybeSingle(),
     ])
 
     if (topicsRes.error) {
@@ -78,7 +86,7 @@ async function getDetailedTopicProgress(userId: string, languageCode: string) {
       .map(t => t.id)
 
     if (missingIds.length > 0) {
-      const { data: vocabRows } = await supabase
+      const { data: vocabRows } = await getServiceClient()
         .from('vocabulary')
         .select('topic_id')
         .in('topic_id', missingIds)

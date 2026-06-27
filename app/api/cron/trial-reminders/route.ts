@@ -21,10 +21,18 @@ import { createClient } from '@supabase/supabase-js'
 export const dynamic = 'force-dynamic'
 
 // Service-role client — bypasses RLS so the cron can read/write every profile.
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+// Lazy: defers createClient so importing this route during the static-export
+// build does not require Supabase env vars at build time.
+let _client: ReturnType<typeof createClient<any>> | null = null
+function getServiceClient() {
+  if (!_client) {
+    _client = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+  }
+  return _client
+}
 
 const FROM_ADDRESS = 'Sprind <noreply@sprind.uk>'
 const MAX_PER_RUN = 100 // stay within Resend's free-tier daily cap
@@ -94,7 +102,7 @@ export async function GET(request: Request) {
   const now = new Date()
   const twoDaysOut = new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000)
 
-  const { data: users, error } = await supabase
+  const { data: users, error } = await getServiceClient()
     .from('user_profiles')
     .select('id, email, trial_ends_at')
     .gt('trial_ends_at', now.toISOString())
@@ -116,7 +124,7 @@ export async function GET(request: Request) {
     const ok = await sendTrialEmail(u.email, u.trial_ends_at)
     if (ok) {
       // Mark as reminded so we never email this user twice.
-      const { error: updErr } = await supabase
+      const { error: updErr } = await getServiceClient()
         .from('user_profiles')
         .update({ trial_reminder_sent_at: new Date().toISOString() })
         .eq('id', u.id)

@@ -13,10 +13,18 @@ import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
 // Service-role client — used for data operations after auth is verified
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+// Lazy service-role client: defers createClient so importing this route during
+// the static-export build does not require Supabase env vars at build time.
+let _client: ReturnType<typeof createClient<any>> | null = null
+function getSupabaseAdmin() {
+  if (!_client) {
+    _client = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+  }
+  return _client
+}
 
 async function getSessionUserId(request: NextRequest): Promise<string | null> {
   // 1. Try cookie-based auth (web)
@@ -44,7 +52,7 @@ async function getSessionUserId(request: NextRequest): Promise<string | null> {
   const authHeader = request.headers.get('authorization')
   if (authHeader?.startsWith('Bearer ')) {
     const token = authHeader.slice(7)
-    const { data: { user: tokenUser } } = await supabaseAdmin.auth.getUser(token)
+    const { data: { user: tokenUser } } = await getSupabaseAdmin().auth.getUser(token)
     return tokenUser?.id ?? null
   }
 
@@ -66,7 +74,7 @@ export async function GET(request: NextRequest) {
 
     // If playlistId is provided, get single playlist with words
     if (playlistId) {
-      const { data: playlist, error: playlistError } = await supabaseAdmin
+      const { data: playlist, error: playlistError } = await getSupabaseAdmin()
         .from('user_playlists')
         .select('*')
         .eq('id', playlistId)
@@ -77,7 +85,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'Playlist not found' }, { status: 404 })
       }
 
-      const { data: playlistWords, error: wordsError } = await supabaseAdmin
+      const { data: playlistWords, error: wordsError } = await getSupabaseAdmin()
         .from('user_playlist_words')
         .select(`
           id,
@@ -104,7 +112,7 @@ export async function GET(request: NextRequest) {
         .filter(Boolean)
 
       if (englishWords.length > 0) {
-        const { data: vocabRows } = await supabaseAdmin
+        const { data: vocabRows } = await getSupabaseAdmin()
           .from('vocabulary')
           .select('id, word_en')
           .in('word_en', englishWords)
@@ -123,7 +131,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get all playlists for user with word counts (filtered by language pair if provided)
-    let query = supabaseAdmin
+    let query = getSupabaseAdmin()
       .from('user_playlists')
       .select(`*, user_playlist_words(count)`)
       .eq('user_id', userId)
@@ -165,7 +173,7 @@ export async function POST(request: NextRequest) {
     // If playlistId and word provided, add word to playlist
     if (playlistId && word) {
       // Verify the playlist belongs to this user before adding a word
-      const { data: playlistCheck } = await supabaseAdmin
+      const { data: playlistCheck } = await getSupabaseAdmin()
         .from('user_playlists')
         .select('id')
         .eq('id', playlistId)
@@ -178,7 +186,7 @@ export async function POST(request: NextRequest) {
 
       const normalizedWord = word.toLowerCase().trim()
 
-      const { data: existingWord } = await supabaseAdmin
+      const { data: existingWord } = await getSupabaseAdmin()
         .from('dictionary_words')
         .select('id')
         .eq('word_en', normalizedWord)
@@ -187,7 +195,7 @@ export async function POST(request: NextRequest) {
       let dictionaryWordId: number
 
       if (!existingWord) {
-        const { data: newWord, error: insertError } = await supabaseAdmin
+        const { data: newWord, error: insertError } = await getSupabaseAdmin()
           .from('dictionary_words')
           .insert({ word_en: normalizedWord, translations: translations || {} })
           .select('id')
@@ -195,7 +203,7 @@ export async function POST(request: NextRequest) {
 
         if (insertError) {
           if (insertError.code === '23505') {
-            const { data: raceWord } = await supabaseAdmin
+            const { data: raceWord } = await getSupabaseAdmin()
               .from('dictionary_words')
               .select('id')
               .eq('word_en', normalizedWord)
@@ -219,20 +227,20 @@ export async function POST(request: NextRequest) {
         dictionaryWordId = existingWord.id
 
         if (translations && Object.keys(translations).length > 0) {
-          const { data: currentWord } = await supabaseAdmin
+          const { data: currentWord } = await getSupabaseAdmin()
             .from('dictionary_words')
             .select('translations')
             .eq('id', dictionaryWordId)
             .single()
 
-          await supabaseAdmin
+          await getSupabaseAdmin()
             .from('dictionary_words')
             .update({ translations: { ...(currentWord?.translations || {}), ...translations } })
             .eq('id', dictionaryWordId)
         }
       }
 
-      const { data: existingEntry } = await supabaseAdmin
+      const { data: existingEntry } = await getSupabaseAdmin()
         .from('user_playlist_words')
         .select('id')
         .eq('playlist_id', playlistId)
@@ -243,7 +251,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ success: true, message: 'Word already in playlist', wordId: existingEntry.id })
       }
 
-      const { data: playlistWord, error: addError } = await supabaseAdmin
+      const { data: playlistWord, error: addError } = await getSupabaseAdmin()
         .from('user_playlist_words')
         .insert({ playlist_id: playlistId, dictionary_word_id: dictionaryWordId })
         .select()
@@ -254,7 +262,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Failed to add word to playlist' }, { status: 500 })
       }
 
-      await supabaseAdmin.rpc('increment_playlist_word_count', { playlist_id: playlistId })
+      await getSupabaseAdmin().rpc('increment_playlist_word_count', { playlist_id: playlistId })
 
       return NextResponse.json({ success: true, wordId: playlistWord.id })
     }
@@ -271,7 +279,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { data: playlist, error } = await supabaseAdmin
+    const { data: playlist, error } = await getSupabaseAdmin()
       .from('user_playlists')
       .insert({
         user_id: userId,
@@ -316,7 +324,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Playlist ID and name required' }, { status: 400 })
     }
 
-    const { data: playlist, error } = await supabaseAdmin
+    const { data: playlist, error } = await getSupabaseAdmin()
       .from('user_playlists')
       .update({ name: name.trim(), updated_at: new Date().toISOString() })
       .eq('id', playlistId)
@@ -354,7 +362,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Verify playlist ownership before any mutation
-    const { data: playlistCheck } = await supabaseAdmin
+    const { data: playlistCheck } = await getSupabaseAdmin()
       .from('user_playlists')
       .select('id')
       .eq('id', playlistId)
@@ -366,7 +374,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     if (wordId) {
-      const { error } = await supabaseAdmin
+      const { error } = await getSupabaseAdmin()
         .from('user_playlist_words')
         .delete()
         .eq('id', wordId)
@@ -377,13 +385,13 @@ export async function DELETE(request: NextRequest) {
         return NextResponse.json({ error: 'Failed to remove word' }, { status: 500 })
       }
 
-      await supabaseAdmin.rpc('decrement_playlist_word_count', { playlist_id: playlistId })
+      await getSupabaseAdmin().rpc('decrement_playlist_word_count', { playlist_id: playlistId })
 
       return NextResponse.json({ success: true })
     }
 
     // Delete entire playlist (cascade will delete words)
-    const { error } = await supabaseAdmin
+    const { error } = await getSupabaseAdmin()
       .from('user_playlists')
       .delete()
       .eq('id', playlistId)

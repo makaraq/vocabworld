@@ -7,10 +7,18 @@ import {
 } from '@/lib/revenuecat-server'
 
 // Service-role client — bypasses RLS so we can write from the webhook handler
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+// Lazy service-role client: defers createClient so importing this route during
+// the static-export build does not require Supabase env vars at build time.
+let _client: ReturnType<typeof createClient<any>> | null = null
+function getServiceClient() {
+  if (!_client) {
+    _client = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+  }
+  return _client
+}
 
 export async function POST(req: NextRequest) {
   // ── 1. Authenticate the webhook ──────────────────────────────────────────
@@ -79,7 +87,7 @@ export async function POST(req: NextRequest) {
     updateData.trial_ends_at = null
   }
 
-  const { error: dbError } = await supabase
+  const { error: dbError } = await getServiceClient()
     .from('user_profiles')
     .upsert(updateData, { onConflict: 'id', ignoreDuplicates: false })
 
@@ -90,7 +98,7 @@ export async function POST(req: NextRequest) {
 
   // Best-effort: also write the RC app user id (requires add-revenuecat-schema.sql migration).
   // Runs after the primary upsert and never fails the webhook response.
-  supabase
+  getServiceClient()
     .from('user_profiles')
     .update({ revenuecat_app_user_id: event.app_user_id })
     .eq('id', event.app_user_id)
