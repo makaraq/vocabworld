@@ -247,18 +247,22 @@ export function ManageAccountModal({
       const cap = (window as any)?.Capacitor
       const platform: string = cap?.getPlatform?.() ?? 'web'
 
-      if (platform === 'ios' || platform === 'android') {
+      if (platform === 'ios') {
+        // Native App Store subscriptions should always deep-link to Settings.
+        // RC's managementURL now also resolves to an apps.apple.com URL here,
+        // but opening it via Browser.open() shows an in-app Safari popover
+        // instead of the native Settings app — so skip it and go straight
+        // to the itms-apps:// scheme, which the WebView hands off to the OS.
+        window.open('itms-apps://apps.apple.com/account/subscriptions', '_self')
+      } else if (platform === 'android') {
         const { getRCCustomerInfo } = await import('@/lib/revenuecat-client')
         const info = await getRCCustomerInfo()
         const mgmtUrl = info?.managementURL
 
+        const { Browser } = await import('@capacitor/browser')
         if (mgmtUrl) {
-          const { Browser } = await import('@capacitor/browser')
           await Browser.open({ url: mgmtUrl, presentationStyle: 'popover' })
-        } else if (platform === 'ios') {
-          window.open('itms-apps://apps.apple.com/account/subscriptions', '_self')
         } else {
-          const { Browser } = await import('@capacitor/browser')
           await Browser.open({ url: 'https://play.google.com/store/account/subscriptions' })
         }
       } else {

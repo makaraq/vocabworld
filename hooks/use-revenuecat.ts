@@ -52,9 +52,7 @@ export function useRevenueCat(): UseRevenueCatReturn {
         if (!offering) throw new Error('No offering available')
 
         const pkg = offering.availablePackages.find(p => p.identifier === packageId)
-          ?? offering.availablePackages[0]
-
-        if (!pkg) throw new Error('Package not found')
+        if (!pkg) throw new Error(`Package "${packageId}" not found in current offering`)
 
         const { customerInfo } = await Purchases.purchasePackage({ aPackage: pkg })
         const hasPremium = RC_ENTITLEMENT in customerInfo.entitlements.active
@@ -69,9 +67,7 @@ export function useRevenueCat(): UseRevenueCatReturn {
         if (!offering) throw new Error('No offering available')
 
         const pkg = offering.availablePackages.find(p => p.identifier === packageId)
-          ?? offering.availablePackages[0]
-
-        if (!pkg) throw new Error('Package not found')
+        if (!pkg) throw new Error(`Package "${packageId}" not found in current offering`)
 
         const { customerInfo } = await instance.purchase({ rcPackage: pkg })
         const hasPremium = RC_ENTITLEMENT in customerInfo.entitlements.active

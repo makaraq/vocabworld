@@ -4080,8 +4080,9 @@ export function LanguageSelector() {
     const iconData = TOPIC_ICONS.find(icon => icon.id === topic.id)
     const isCompleted = completedTopicIds.includes(topic.id)
     const completionCount = topicCompletionCounts[topic.id] || 0
+    const hideCompletionBorder = user?.email === 'screenshots@sprind.uk'
 
-    const completionBorderClass = completionCount >= 5
+    const completionBorderClass = hideCompletionBorder ? '' : completionCount >= 5
       ? 'border-2 border-purple-400'
       : completionCount === 4
       ? 'border-2 border-red-400'

@@ -18,6 +18,7 @@
     "build:cap": "node scripts/build-capacitor.js",
     "sync:cap": "node scripts/build-capacitor.js && npx cap sync",
     "build:ios": "node scripts/build-ios.mjs && LANG=en_US.UTF-8 npx cap sync ios",
+    "build:android": "node scripts/build-static.mjs && npx cap sync android",
     "postinstall": "patch-package"
   },
   "dependencies": {

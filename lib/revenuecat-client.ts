@@ -41,8 +41,13 @@ export async function initRevenueCat(supabaseUserId: string): Promise<void> {
   try {
     if (isNative()) {
       const { Purchases, LOG_LEVEL } = await import('@revenuecat/purchases-capacitor')
-      const apiKey = process.env.NEXT_PUBLIC_REVENUECAT_IOS_API_KEY || 
-                     process.env.NEXT_PUBLIC_REVENUECAT_ANDROID_API_KEY || ''
+      // Pick the platform-specific key. Both may be set in .env.local (iOS + Android builds
+      // share one file), so we must branch on the runtime platform rather than fall back —
+      // otherwise Android would configure with the iOS (appl_) key and fail.
+      const platform = (window as any)?.Capacitor?.getPlatform?.()
+      const apiKey = platform === 'android'
+        ? (process.env.NEXT_PUBLIC_REVENUECAT_ANDROID_API_KEY || '')
+        : (process.env.NEXT_PUBLIC_REVENUECAT_IOS_API_KEY || '')
 
       if (!_rcInitialised) {
         // LOG_LEVEL.DEBUG useful in development — set to ERROR for production builds

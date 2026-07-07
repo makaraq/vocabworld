@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Sprind</string>
+    <string name="title_activity_main">Sprind</string>
+    <string name="package_name">com.sprind.app</string>
+    <string name="custom_url_scheme">com.sprind.app</string>
+</resources>
