@@ -4162,7 +4162,7 @@ export function LanguageSelector() {
         aria-label={`${getTopicDisplayName(topic.id, topic.name)} topic${isCompleted ? ', completed' : ''}`}
         aria-pressed={selectedTopic?.id === topic.id}
         className={`bg-black/40 rounded-xl xs:rounded-2xl sm:rounded-2xl p-3 xs:p-4 sm:p-5 text-center hover:bg-black/50 h-32 xs:h-36 sm:h-40 shadow-lg scale-100 transition-[transform,background-color] duration-150 ease-out ${
-          selectedTopic?.id === topic.id ? "bg-black/60 shadow-xl" : ""
+          !hideCompletionBorder && selectedTopic?.id === topic.id ? "bg-black/60 shadow-xl" : ""
         } ${completionBorderClass}`}
       >
         <div className="flex flex-col items-center justify-center h-full gap-2">
