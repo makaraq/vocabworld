@@ -794,6 +794,7 @@ export function LanguageSelector() {
       
       // First, reset all local state immediately to prevent UI issues
       setCurrentPage("native")
+      setCurrentSection(1) // Back to FIRST AID KIT so re-login doesn't strand the user on ACCOUNT
       setNativeLanguage("")
       setNativeLanguageCode("")
       setTargetLanguage("")
@@ -819,6 +820,7 @@ export function LanguageSelector() {
       console.error('Sign out failed:', error)
       // Even if sign out fails, reset the local state
       setCurrentPage("native")
+      setCurrentSection(1)
       setQuestionText("What language do you speak?")
     }
   }
