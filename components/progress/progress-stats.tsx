@@ -3,10 +3,12 @@ import { useEffect, useState } from "react"
 import { Flame, TrendingUp, BookOpen } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { Icon } from "@iconify/react"
-import { DetailedProgressModal } from "./detailed-progress-modal"
+import { DetailedProgressModal, prefetchDetailedProgress } from "./detailed-progress-modal"
+import { readCached, writeCached } from "@/lib/instant-cache"
 import { LeaderboardModal } from "@/components/leaderboard/leaderboard-modal"
 import { getFlagIcon } from "@/utils/flags"
 import { reportProgress } from "@/lib/achievements/engine"
+import { useT } from "@/components/providers/translation-provider"
 
 interface ProgressStats {
   wordsLearned: number
@@ -18,6 +20,7 @@ interface ProgressStats {
 }
 
 export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLanguageCode }: { targetLanguageCode: string, targetLanguageName: string, nativeLanguageCode?: string }) {
+  const { t } = useT()
   const { user } = useAuth()
   const [stats, setStats] = useState<ProgressStats | null>(null)
   const [loading, setLoading] = useState(true)
@@ -32,22 +35,33 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLa
       setLoading(false)
       return
     }
-    
+
     // Create cache key to prevent duplicate calls
     const cacheKey = `${user.id}-${targetLanguageCode}`
-    
+
     // Skip if we just fetched for the same user/language combination
     if (cacheKey === lastFetchKey) {
       setLoading(false)
       return
     }
-    
+
+    // Last known stats paint immediately (no skeleton); the fetch refreshes
+    // them silently. Also warm the detailed-progress modal's cache so opening
+    // it never shows a loading state.
+    const cachedStats = readCached<ProgressStats>(`progress-stats:${cacheKey}`)
+    if (cachedStats) {
+      setStats(cachedStats)
+      setLoading(false)
+    }
+    prefetchDetailedProgress(user.id, targetLanguageCode)
+
     const fetchStats = async () => {
       try {
         const response = await fetch(`/api/progress/stats?userId=${user.id}&targetLanguageCode=${targetLanguageCode}`)
         if (response.ok) {
           const data = await response.json()
           setStats(data)
+          writeCached(`progress-stats:${cacheKey}`, data)
           setLastFetchKey(cacheKey)
           // 🏆 Evaluate badge unlocks against the freshest stats.
           reportProgress({
@@ -100,7 +114,7 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLa
           onTouchCancel={() => setHoldingProgressButton(false)}
           role="button"
           tabIndex={0}
-          aria-label={`${targetLanguageName} progress: ${Math.round(stats.languageCompletionPercentage)}% complete. Click to see details`}
+          aria-label={t('progress.aria.card', { language: targetLanguageName, pct: Math.round(stats.languageCompletionPercentage) })}
           onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setShowDetailedModal(true) } }}
         >
           <div className="flex items-start gap-3 xs:gap-4 sm:gap-4">
@@ -110,7 +124,7 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLa
             {/* Progress content in the middle */}
             <div className="flex-1 min-w-0">
               <div className="flex items-baseline justify-between gap-2 mb-2 xs:mb-1.5">
-                <h3 className="font-semibold text-white text-sm xs:text-base sm:text-base truncate">{targetLanguageName} Progress</h3>
+                <h3 className="font-semibold text-white text-sm xs:text-base sm:text-base truncate">{t('progress.title', { language: targetLanguageName })}</h3>
                 <p className="text-sm xs:text-base sm:text-base font-bold text-white whitespace-nowrap">{Math.round(stats.languageCompletionPercentage)}%</p>
               </div>
               <div className="h-2 xs:h-3 sm:h-3 bg-white/10 rounded-full overflow-hidden mb-2 xs:mb-1.5">
@@ -119,7 +133,7 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLa
                   style={{ width: `${Math.min(stats.languageCompletionPercentage, 100)}%` }}
                 />
               </div>
-              <p className="text-xs xs:text-sm text-white/50 text-left">Click to see details</p>
+              <p className="text-xs xs:text-sm text-white/50 text-left">{t('progress.clickDetails')}</p>
             </div>
           </div>
         </div>
@@ -130,7 +144,7 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLa
               <BookOpen className="w-4 h-4 xs:w-5 xs:h-5 sm:w-5 sm:h-5 text-white" />
             </div>
             <div className="text-2xl xs:text-3xl sm:text-3xl font-bold text-white">{stats.wordsLearned}</div>
-            <div className="text-xs xs:text-sm sm:text-sm text-white/90">Words Learned</div>
+            <div className="text-xs xs:text-sm sm:text-sm text-white/90">{t('progress.wordsLearned')}</div>
           </div>
           
           <div className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 xs:p-3.5 sm:p-4 border border-white/20">
@@ -138,7 +152,7 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLa
               <Flame className="w-4 h-4 xs:w-5 xs:h-5 sm:w-5 sm:h-5 text-white" />
             </div>
             <div className="text-2xl xs:text-3xl sm:text-3xl font-bold text-white">{stats.dailyLoginStreak}</div>
-            <div className="text-xs xs:text-sm sm:text-sm text-white/90">Day Streak</div>
+            <div className="text-xs xs:text-sm sm:text-sm text-white/90">{t('progress.dayStreak')}</div>
           </div>
           
           <div className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 xs:p-3.5 sm:p-4 border border-white/20">
@@ -146,13 +160,13 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLa
               <TrendingUp className="w-4 h-4 xs:w-5 xs:h-5 sm:w-5 sm:h-5 text-white" />
             </div>
             <div className="text-2xl xs:text-3xl sm:text-3xl font-bold text-white">{stats.wordsLearnedToday}</div>
-            <div className="text-xs xs:text-sm sm:text-sm text-white/90">Today</div>
+            <div className="text-xs xs:text-sm sm:text-sm text-white/90">{t('progress.today')}</div>
           </div>
           
           <button
             onClick={() => setShowLeaderboard(true)}
             className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 xs:p-3.5 sm:p-4 border border-white/20 hover:bg-white/15 transition-all active:scale-95"
-            aria-label={bestRank ? `Leaderboard: rank #${bestRank}` : "View leaderboard"}
+            aria-label={bestRank ? t('progress.aria.rank', { rank: bestRank }) : t('progress.aria.viewLeaderboard')}
           >
             <div className="w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center mb-1.5 xs:mb-1.5 sm:mb-2">
               <Icon icon="solar:cup-star-bold" className="w-4 h-4 xs:w-5 xs:h-5 sm:w-5 sm:h-5 text-white" />
@@ -160,7 +174,7 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLa
             <div className="text-2xl xs:text-3xl sm:text-3xl font-bold text-white">
               {bestRank ? `#${bestRank}` : '—'}
             </div>
-            <div className="text-xs xs:text-sm sm:text-sm text-white/90">Leaderboard</div>
+            <div className="text-xs xs:text-sm sm:text-sm text-white/90">{t('progress.leaderboard')}</div>
           </button>
         </div>
       </div>

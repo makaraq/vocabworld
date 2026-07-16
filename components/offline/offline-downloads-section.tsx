@@ -13,16 +13,12 @@ import {
   offlineManager, packId, languageName, formatBytes,
   type OfflinePack,
 } from '@/lib/offline/offline-manager'
+import { useT } from '@/components/providers/translation-provider'
+import { languageNamesTranslations } from '@/lib/i18n/language-names-translations'
 
 // Rough size hint shown before a download starts (≈4100 words × 2 languages
 // at ~21 KB per clip, measured)
 const EST_PACK_LABEL = '≈200 MB'
-
-function formatEta(seconds?: number): string {
-  if (!seconds || seconds <= 0) return ''
-  if (seconds < 90) return ' · under a minute left'
-  return ` · ~${Math.round(seconds / 60)} min left`
-}
 
 function ProgressRing({ percent, indeterminate }: { percent: number; indeterminate?: boolean }) {
   const size = 58
@@ -73,6 +69,7 @@ function PairFlags({ nativeCode, targetCode }: { nativeCode: string; targetCode:
 }
 
 export function OfflineDownloadsSection() {
+  const { t, tMarkup, uiLang } = useT()
   const [packs, setPacks] = useState<OfflinePack[]>([])
   const [nativeCode, setNativeCode] = useState('')
   const [targetCode, setTargetCode] = useState('')
@@ -108,6 +105,16 @@ export function OfflineDownloadsSection() {
   const currentId = packId(nativeCode, targetCode)
   const currentPack = packs.find(p => p.id === currentId)
   const otherPacks = packs.filter(p => p.id !== currentId)
+
+  // Language names localized to the UI language, falling back to English.
+  const langName = (code: string) =>
+    languageNamesTranslations[uiLang]?.[code] || languageName(code)
+
+  const formatEta = (seconds?: number): string => {
+    if (!seconds || seconds <= 0) return ''
+    if (seconds < 90) return ` ${t('offline.eta.underMinute')}`
+    return ` ${t('offline.eta.minutes', { n: Math.round(seconds / 60) })}`
+  }
 
   const askDelete = (id: string, action: () => void) => {
     if (confirmDeleteId === id) {
@@ -154,22 +161,22 @@ export function OfflineDownloadsSection() {
               width="18"
               className={currentPack?.status === 'complete' ? 'text-emerald-400' : currentPack?.status === 'downloading' ? 'text-blue-400' : 'text-white/50'}
             />
-            <span className="text-white font-medium text-sm">Offline Mode</span>
+            <span className="text-white font-medium text-sm">{t('offline.title')}</span>
           </div>
           {currentPack?.status === 'complete' && (
             <span className="text-[11px] font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-400/25 px-2 py-0.5 rounded-full">
-              Downloaded
+              {t('offline.status.downloaded')}
             </span>
           )}
           {currentPack?.status === 'downloading' && (
             <span className="text-[11px] font-semibold bg-blue-500/15 text-blue-300 border border-blue-400/25 px-2 py-0.5 rounded-full flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
-              Downloading
+              {t('offline.status.downloading')}
             </span>
           )}
           {currentPack?.status === 'paused' && (
             <span className="text-[11px] font-semibold bg-white/10 text-white/60 border border-white/15 px-2 py-0.5 rounded-full">
-              Paused
+              {t('offline.status.paused')}
             </span>
           )}
         </div>
@@ -180,9 +187,9 @@ export function OfflineDownloadsSection() {
             <PairFlags nativeCode={nativeCode} targetCode={targetCode} />
             <div className="min-w-0">
               <p className="text-white text-sm font-semibold truncate">
-                {languageName(nativeCode)} → {languageName(targetCode)}
+                {langName(nativeCode)} → {langName(targetCode)}
               </p>
-              <p className="text-white/45 text-[11px]">Your current languages</p>
+              <p className="text-white/45 text-[11px]">{t('offline.currentLanguages')}</p>
             </div>
           </div>
 
@@ -190,7 +197,7 @@ export function OfflineDownloadsSection() {
           {(!currentPack || (currentPack.status === 'error' && currentPack.audioTotal === 0)) && (
             <>
               <p className="text-white/50 text-xs leading-relaxed">
-                Download every word and its audio in both languages to keep learning without internet. {EST_PACK_LABEL} of storage needed.
+                {t('offline.idleDesc', { size: EST_PACK_LABEL })}
               </p>
               {currentPack?.error && (
                 <p className="text-red-400 text-xs">{currentPack.error}</p>
@@ -201,7 +208,7 @@ export function OfflineDownloadsSection() {
                 className="w-full bg-blue-500/20 border border-blue-400/30 text-blue-300 py-2.5 rounded-xl font-medium text-sm hover:bg-blue-500/30 active:bg-blue-500/30 transition-all flex items-center justify-center gap-2 disabled:opacity-40"
               >
                 <Icon icon="solar:download-minimalistic-bold" width="16" />
-                {isOnline ? 'Download for Offline Use' : 'Connect to internet to download'}
+                {isOnline ? t('offline.download') : t('offline.connectToDownload')}
               </button>
             </>
           )}
@@ -213,13 +220,13 @@ export function OfflineDownloadsSection() {
               <div className="flex-1 min-w-0 space-y-1.5">
                 {currentPack.phase === 'words' ? (
                   <p className="text-white text-xs font-medium">
-                    Preparing word lists…
+                    {t('offline.preparingWords')}
                   </p>
                 ) : (
                   <>
                     <p className="text-white text-xs font-medium flex items-center gap-1.5">
                       <Icon icon="solar:download-minimalistic-bold" width="13" className="text-blue-300" style={{ animation: 'vw-dl-bounce 1s ease-in-out infinite' }} />
-                      Downloading audio
+                      {t('offline.downloadingAudio')}
                     </p>
                     <p className="text-white/50 text-[11px] tabular-nums">
                       {formatBytes(currentPack.bytes)}{formatEta(currentPack.etaSeconds)}
@@ -243,7 +250,7 @@ export function OfflineDownloadsSection() {
                 <button
                   onClick={() => { hapticsLight(); offlineManager.pauseDownload(currentId) }}
                   className="w-8 h-8 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-white/70 active:bg-white/20 transition-all"
-                  aria-label="Pause download"
+                  aria-label={t('offline.aria.pause')}
                 >
                   <Icon icon="solar:pause-bold" width="13" />
                 </button>
@@ -254,7 +261,7 @@ export function OfflineDownloadsSection() {
                       ? 'bg-red-500/80 border-red-400 text-white'
                       : 'bg-white/10 border-white/15 text-white/70 active:bg-white/20'
                   }`}
-                  aria-label="Cancel download"
+                  aria-label={t('offline.aria.cancel')}
                 >
                   <Icon icon="solar:close-circle-bold" width="14" />
                 </button>
@@ -269,7 +276,7 @@ export function OfflineDownloadsSection() {
                 <ProgressRing percent={percent} />
                 <div className="flex-1 min-w-0">
                   <p className="text-white text-xs font-medium">
-                    {currentPack.status === 'paused' ? 'Download paused' : 'Download interrupted'}
+                    {currentPack.status === 'paused' ? t('offline.paused') : t('offline.interrupted')}
                   </p>
                   <p className="text-white/50 text-[11px] tabular-nums">
                     {formatBytes(currentPack.bytes)}
@@ -286,7 +293,7 @@ export function OfflineDownloadsSection() {
                   className="flex-1 bg-blue-500/20 border border-blue-400/30 text-blue-300 py-2 rounded-xl font-medium text-xs active:bg-blue-500/30 transition-all flex items-center justify-center gap-1.5 disabled:opacity-40"
                 >
                   <Icon icon="solar:play-bold" width="12" />
-                  {isOnline ? 'Resume' : 'Offline — reconnect to resume'}
+                  {isOnline ? t('offline.resume') : t('offline.reconnectResume')}
                 </button>
                 <button
                   onClick={() => askDelete(currentId, () => offlineManager.cancelDownload(currentId))}
@@ -296,7 +303,7 @@ export function OfflineDownloadsSection() {
                       : 'bg-white/10 border-white/15 text-white/60 active:bg-white/20'
                   }`}
                 >
-                  {confirmDeleteId === currentId ? 'Confirm' : 'Remove'}
+                  {confirmDeleteId === currentId ? t('offline.confirm') : t('offline.remove')}
                 </button>
               </div>
             </div>
@@ -308,10 +315,10 @@ export function OfflineDownloadsSection() {
               <div className="bg-yellow-500/10 border border-yellow-400/30 rounded-xl p-2.5 flex items-start gap-2">
                 <Icon icon="solar:danger-triangle-bold" width="16" className="text-yellow-400 flex-shrink-0 mt-0.5" />
                 <p className="text-yellow-300 text-[11px] leading-relaxed">
-                  Your device may not have enough free space. This download needs about{' '}
-                  <strong>{formatBytes(currentPack.neededBytes || 0)}</strong>, but only{' '}
-                  <strong>{formatBytes(currentPack.availableBytes || 0)}</strong> looks available.
-                  Free up space, or continue anyway.
+                  {tMarkup('offline.storageWarning', {
+                    needed: formatBytes(currentPack.neededBytes || 0),
+                    available: formatBytes(currentPack.availableBytes || 0),
+                  })}
                 </p>
               </div>
               <div className="flex gap-2">
@@ -319,13 +326,13 @@ export function OfflineDownloadsSection() {
                   onClick={() => startDownload(true)}
                   className="flex-1 bg-yellow-500/20 border border-yellow-400/30 text-yellow-300 py-2 rounded-xl font-medium text-xs active:bg-yellow-500/30 transition-all"
                 >
-                  Download Anyway
+                  {t('offline.downloadAnyway')}
                 </button>
                 <button
                   onClick={() => { hapticsLight(); offlineManager.cancelDownload(currentId) }}
                   className="px-4 py-2 rounded-xl font-medium text-xs bg-white/10 border border-white/15 text-white/60 active:bg-white/20 transition-all"
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </button>
               </div>
             </div>
@@ -339,7 +346,7 @@ export function OfflineDownloadsSection() {
                   <Icon icon="solar:check-circle-bold" width="20" className="text-emerald-400" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-white text-xs font-medium">Available offline</p>
+                  <p className="text-white text-xs font-medium">{t('offline.availableOffline')}</p>
                   <p className="text-white/50 text-[11px] tabular-nums">
                     {formatBytes(currentPack.bytes)}
                   </p>
@@ -351,14 +358,14 @@ export function OfflineDownloadsSection() {
                       ? 'bg-red-500/80 border-red-400 text-white'
                       : 'bg-white/10 border-white/15 text-white/60 active:bg-white/20'
                   }`}
-                  aria-label="Delete download"
+                  aria-label={t('offline.aria.delete')}
                 >
                   <Icon icon="solar:trash-bin-trash-bold" width="13" />
-                  {confirmDeleteId === currentId ? 'Confirm' : ''}
+                  {confirmDeleteId === currentId ? t('offline.confirm') : ''}
                 </button>
               </div>
               <p className="text-white/40 text-[11px] leading-relaxed">
-                You can learn {languageName(targetCode)} without internet — no offline warnings for these languages.
+                {t('offline.learnWithoutInternet', { language: langName(targetCode) })}
               </p>
             </div>
           )}
@@ -367,19 +374,19 @@ export function OfflineDownloadsSection() {
         {/* Other downloaded packs */}
         {otherPacks.length > 0 && (
           <div className="space-y-1.5">
-            <p className="text-white/40 text-[11px] font-medium uppercase tracking-wide px-0.5">Other downloads</p>
+            <p className="text-white/40 text-[11px] font-medium uppercase tracking-wide px-0.5">{t('offline.otherDownloads')}</p>
             {otherPacks.map(pack => (
               <div key={pack.id} className="bg-black/20 border border-white/10 rounded-xl px-3 py-2.5 flex items-center gap-2.5">
                 <PairFlags nativeCode={pack.nativeCode} targetCode={pack.targetCode} />
                 <div className="flex-1 min-w-0">
                   <p className="text-white text-xs font-medium truncate">
-                    {languageName(pack.nativeCode)} → {languageName(pack.targetCode)}
+                    {langName(pack.nativeCode)} → {langName(pack.targetCode)}
                   </p>
                   <p className="text-white/45 text-[11px] tabular-nums">
                     {pack.status === 'complete' && formatBytes(pack.bytes)}
-                    {pack.status === 'downloading' && `Downloading ${pack.audioTotal ? Math.round((pack.audioDone / pack.audioTotal) * 100) : 0}%…`}
-                    {(pack.status === 'paused' || pack.status === 'error') && `Paused · ${formatBytes(pack.bytes)}`}
-                    {pack.status === 'storage-warning' && 'Waiting — low storage'}
+                    {pack.status === 'downloading' && t('offline.other.downloadingPct', { pct: pack.audioTotal ? Math.round((pack.audioDone / pack.audioTotal) * 100) : 0 })}
+                    {(pack.status === 'paused' || pack.status === 'error') && t('offline.other.paused', { size: formatBytes(pack.bytes) })}
+                    {pack.status === 'storage-warning' && t('offline.other.waitingStorage')}
                   </p>
                 </div>
                 <button
@@ -389,7 +396,7 @@ export function OfflineDownloadsSection() {
                       ? 'bg-red-500/80 border-red-400 text-white'
                       : 'bg-white/10 border-white/15 text-white/60 active:bg-white/20'
                   }`}
-                  aria-label={`Delete ${languageName(pack.nativeCode)} to ${languageName(pack.targetCode)} download`}
+                  aria-label={t('offline.aria.deletePack', { from: langName(pack.nativeCode), to: langName(pack.targetCode) })}
                 >
                   <Icon icon="solar:trash-bin-trash-bold" width="13" />
                 </button>

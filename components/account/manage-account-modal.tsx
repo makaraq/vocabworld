@@ -9,6 +9,7 @@ import { createClient } from "@/lib/supabase/browser-client"
 import type { PermissionState } from "@/hooks/use-notifications"
 import { hapticsLight, hapticsMedium, hapticsWarning } from "@/lib/haptics"
 import { OfflineDownloadsSection } from "@/components/offline/offline-downloads-section"
+import { useT } from "@/components/providers/translation-provider"
 
 interface ManageAccountModalProps {
   open: boolean
@@ -49,6 +50,7 @@ export function ManageAccountModal({
   onLeaderboardToggle,
   showLeaderboardOption = true,
 }: ManageAccountModalProps) {
+  const { t, tMarkup } = useT()
   const [deleteStep, setDeleteStep] = useState<'idle' | 'confirm' | 'deleting' | 'error'>('idle')
   const [deleteError, setDeleteError] = useState<string | null>(null)
   const [deleteConfirmText, setDeleteConfirmText] = useState('')
@@ -297,7 +299,7 @@ export function ManageAccountModal({
       }
       onCloseAction()
     } catch (err: any) {
-      setDeleteError(err.message || 'Failed to delete account. Please try again.')
+      setDeleteError(err.message || t('account.delete.failed'))
       setDeleteStep('error')
     }
   }
@@ -305,7 +307,7 @@ export function ManageAccountModal({
   if (!open || typeof document === 'undefined') return null
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-end justify-center" role="dialog" aria-modal="true" aria-label="Account">
+    <div className="fixed inset-0 z-50 flex items-end justify-center" role="dialog" aria-modal="true" aria-label={t('account.title')}>
       <div
         ref={backdropRef}
         className={`absolute inset-0 bg-black/50 backdrop-blur-md transition-opacity duration-300 ${
@@ -329,11 +331,11 @@ export function ManageAccountModal({
         </div>
 
         <div data-drag-handle className="flex items-center justify-between px-5 pt-2 pb-4 cursor-grab active:cursor-grabbing">
-          <h2 className="text-white font-bold text-lg tracking-wide">Account</h2>
+          <h2 className="text-white font-bold text-lg tracking-wide">{t('account.title')}</h2>
           <button
             onClick={animateClose}
             className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:bg-white/20 transition-all cursor-pointer"
-            aria-label="Close account"
+            aria-label={t('account.aria.close')}
           >
             <Icon icon="solar:close-circle-bold" width="20" height="20" />
           </button>
@@ -341,23 +343,22 @@ export function ManageAccountModal({
 
         {deleteStep !== 'idle' ? (
           <div className="px-5 pb-8 space-y-4">
-            <h2 className="text-white font-bold text-lg text-center">Delete Account?</h2>
+            <h2 className="text-white font-bold text-lg text-center">{t('account.delete.title')}</h2>
 
             {isPremium && (
               <div className="bg-yellow-500/10 border border-yellow-400/30 rounded-2xl p-3">
                 <p className="text-yellow-300 text-xs leading-relaxed text-center">
-                  You have an active subscription. Deleting your account will <strong>not</strong> cancel it — you will continue to be charged.
-                  Cancel it first via <strong>Apple ID → Subscriptions</strong> (iOS) or <strong>Google Play → Subscriptions</strong> (Android).
+                  {tMarkup('account.delete.subscriptionWarning')}
                 </p>
               </div>
             )}
 
             <p className="text-white/60 text-xs leading-relaxed text-center">
-              This will permanently delete your account and all your data. This action cannot be undone.
+              {t('account.delete.permanent')}
             </p>
 
             <div className="space-y-1.5">
-              <p className="text-white/50 text-xs text-center">Type <strong className="text-white/80">delete</strong> to confirm</p>
+              <p className="text-white/50 text-xs text-center">{tMarkup('account.delete.confirmHint', { word: 'delete' })}</p>
               <input
                 type="text"
                 value={deleteConfirmText}
@@ -382,14 +383,14 @@ export function ManageAccountModal({
                 disabled={deleteStep === 'deleting'}
                 className="flex-1 border border-white/20 bg-white/10 text-white/70 py-3 rounded-2xl font-medium text-sm hover:bg-white/15 transition-all disabled:opacity-40"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 onClick={handleDeleteAccount}
                 disabled={deleteStep === 'deleting' || deleteConfirmText.toLowerCase() !== 'delete'}
                 className="flex-1 bg-red-500/80 text-white py-3 rounded-2xl font-medium text-sm hover:bg-red-500 transition-all disabled:opacity-40"
               >
-                {deleteStep === 'deleting' ? 'Deleting...' : 'Yes, Delete'}
+                {deleteStep === 'deleting' ? t('account.delete.deleting') : t('account.delete.confirm')}
               </button>
             </div>
           </div>
@@ -419,15 +420,15 @@ export function ManageAccountModal({
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <Icon icon="solar:crown-bold" width="20" height="20" className="text-yellow-400" />
-                  <span className="text-white font-semibold text-sm">Subscription</span>
+                  <span className="text-white font-semibold text-sm">{t('account.subscription')}</span>
                 </div>
                 {isPremium ? (
                   <span className="px-3 py-0.5 rounded-full text-xs font-semibold bg-gradient-to-r from-yellow-500 to-orange-500 text-white">
-                    Premium
+                    {t('account.premium')}
                   </span>
                 ) : (
                   <span className="px-3 py-0.5 rounded-full text-xs font-semibold bg-white/10 text-white/60 border border-white/20">
-                    Free
+                    {t('account.free')}
                   </span>
                 )}
               </div>
@@ -436,12 +437,12 @@ export function ManageAccountModal({
                 <div className="space-y-1">
                   {planType && (
                     <div className="text-white/60 text-xs">
-                      {planType === 'yearly' ? 'Yearly plan' : 'Monthly plan'}
+                      {planType === 'yearly' ? t('account.plan.yearly') : t('account.plan.monthly')}
                     </div>
                   )}
                   {renewalDate && (
                     <div className="text-white/60 text-xs">
-                      Renews on {renewalDate}
+                      {t('account.renewsOn', { date: renewalDate })}
                     </div>
                   )}
                 </div>
@@ -458,8 +459,8 @@ export function ManageAccountModal({
                     <div className="flex items-center gap-2.5 min-w-0">
                       <Icon icon="solar:bell-bold" width="18" className={notifsOn ? 'text-blue-400' : 'text-white/50'} />
                       <div className="min-w-0">
-                        <span className="text-white font-medium text-sm block">Notifications</span>
-                        <span className="text-white/45 text-xs">Streak protection &amp; review reminders</span>
+                        <span className="text-white font-medium text-sm block">{t('account.notifications')}</span>
+                        <span className="text-white/45 text-xs">{t('account.notifications.desc')}</span>
                       </div>
                     </div>
                     <span className={`text-xs px-2 py-0.5 rounded-full flex-shrink-0 ${
@@ -467,7 +468,7 @@ export function ManageAccountModal({
                         ? 'bg-blue-500/20 text-blue-300 border border-blue-400/30'
                         : 'bg-white/10 text-white/40 border border-white/10'
                     }`}>
-                      {notifsOn ? 'On' : 'Off'}
+                      {notifsOn ? t('account.notifications.on') : t('account.notifications.off')}
                     </span>
                   </div>
                   <button
@@ -475,7 +476,7 @@ export function ManageAccountModal({
                     className="w-full bg-blue-500/20 border border-blue-400/30 text-blue-300 py-2.5 rounded-xl font-medium text-sm hover:bg-blue-500/30 transition-all flex items-center justify-center gap-2"
                   >
                     <Icon icon="solar:settings-bold" width="16" />
-                    Open Notification Settings
+                    {t('account.notifications.openSettings')}
                   </button>
                 </div>
               </div>
@@ -490,8 +491,8 @@ export function ManageAccountModal({
                     <div className="flex items-center gap-2.5">
                       <Icon icon="solar:users-group-rounded-bold" width="18" className={showOnLeaderboard ? 'text-yellow-400' : 'text-white/50'} />
                       <div>
-                        <span className="text-white font-medium text-sm">Show on Leaderboard</span>
-                        <p className="text-white/40 text-[11px] leading-tight mt-0.5">Display your first name and photo</p>
+                        <span className="text-white font-medium text-sm">{t('account.leaderboard.show')}</span>
+                        <p className="text-white/40 text-[11px] leading-tight mt-0.5">{t('account.leaderboard.desc')}</p>
                       </div>
                     </div>
                     <button
@@ -522,7 +523,7 @@ export function ManageAccountModal({
               className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white py-3 px-4 rounded-2xl font-medium text-sm hover:bg-white/15 transition-all flex items-center justify-center space-x-2"
             >
               <Icon icon="solar:settings-bold" width="18" height="18" />
-              <span>Manage Subscription</span>
+              <span>{t('account.manageSubscription')}</span>
             </button>
 
             {/* Delete Account */}
@@ -531,7 +532,7 @@ export function ManageAccountModal({
               className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white py-3 px-4 rounded-2xl font-medium text-sm hover:bg-white/15 transition-all flex items-center justify-center space-x-2"
             >
               <Icon icon="solar:trash-bin-trash-bold" width="18" height="18" />
-              <span>Delete Account</span>
+              <span>{t('account.deleteAccount')}</span>
             </button>
 
             {/* Sign Out */}
@@ -540,7 +541,7 @@ export function ManageAccountModal({
               className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white py-3 px-4 rounded-2xl font-medium text-sm hover:bg-white/15 transition-all flex items-center justify-center space-x-2"
             >
               <Icon icon="solar:logout-3-bold" width="18" height="18" />
-              <span>Sign Out</span>
+              <span>{t('account.signOut')}</span>
             </button>
           </div>
         )}

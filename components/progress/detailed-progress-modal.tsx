@@ -5,6 +5,8 @@ import { X, BookOpen, CheckCircle, Circle, ChevronDown, ChevronRight } from "luc
 import { useAuth } from "@/contexts/auth-context"
 import { Icon } from "@iconify/react"
 import { getFlagIcon } from "@/utils/flags"
+import { useT } from "@/components/providers/translation-provider"
+import { readCached, writeCached } from "@/lib/instant-cache"
 
 interface TopicProgress {
   topicId: number
@@ -25,6 +27,20 @@ interface DetailedProgressModalProps {
 
 // Map language codes to flag icons (same as progress-stats)
 
+const progressCacheKey = (userId: string, targetLanguageCode: string) =>
+  `progress-topics:${userId}:${targetLanguageCode}`
+
+// Warm the progress cache before the modal is ever opened (called from the
+// stats card on mount) so the first open paints instantly with no spinner.
+export function prefetchDetailedProgress(userId: string, targetLanguageCode: string): void {
+  fetch(`/api/progress/topics?userId=${userId}&languageCode=${targetLanguageCode}&detailed=true`)
+    .then(res => (res.ok ? res.json() : null))
+    .then(data => {
+      if (data?.topics) writeCached(progressCacheKey(userId, targetLanguageCode), data.topics)
+    })
+    .catch(() => {})
+}
+
 export function DetailedProgressModal({ 
   isOpen, 
   onCloseAction, 
@@ -32,6 +48,7 @@ export function DetailedProgressModal({
   targetLanguageName,
   nativeLanguageCode
 }: DetailedProgressModalProps) {
+  const { t } = useT()
   const { user } = useAuth()
   const [topicProgress, setTopicProgress] = useState<TopicProgress[]>([])
   const [loading, setLoading] = useState(true)
@@ -53,15 +70,13 @@ export function DetailedProgressModal({
     'PROFESSIONAL': 'PROFESSIONAL',
   }
 
-  // Load sections structure from topics API - dynamically generated
+  // Load sections structure from topics API - dynamically generated.
+  // The topics list is cached under the same key language-selector uses, so
+  // sections render on the first frame; the fetch below only refreshes them.
   useEffect(() => {
-    const loadSectionsFromTopics = async () => {
-      try {
-        const response = await fetch('/api/topics')
-        if (response.ok) {
-          const allTopics = await response.json()
+    const applyTopics = (allTopics: any[]) => {
           setTopicsData(allTopics)
-          
+
           // Define sections based on the actual topics loaded from API
           // This matches the language-selector.tsx structure exactly
           const dynamicSections = [
@@ -96,14 +111,26 @@ export function DetailedProgressModal({
               icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-dasharray="64" stroke-dashoffset="64" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2l-9 3.5v6.5c0 3.5 3.5 9 8 10c4.5 -1 8 -6.5 8 -10v-6.5l-8 -3.5 Z"><animate fill="freeze" attributeName="fill-opacity" begin="0.7s" dur="0.15s" values="0;0.3"/><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="64;0"/></path></svg>'
             }
           ]
-          
+
           setSections(dynamicSections)
+    }
+
+    const cachedTopics = readCached<any[]>('topics')
+    if (Array.isArray(cachedTopics) && cachedTopics.length > 0) applyTopics(cachedTopics)
+
+    const loadSectionsFromTopics = async () => {
+      try {
+        const response = await fetch('/api/topics')
+        if (response.ok) {
+          const allTopics = await response.json()
+          applyTopics(allTopics)
+          writeCached('topics', allTopics)
         }
       } catch (error) {
         console.error('Failed to load sections structure:', error)
       }
     }
-    
+
     loadSectionsFromTopics()
   }, [])
 
@@ -185,28 +212,35 @@ export function DetailedProgressModal({
       return
     }
 
+    // Last known progress paints immediately; the fetch below refreshes it
+    // silently so the modal opens without a loading state.
+    const cacheKey = progressCacheKey(user.id, targetLanguageCode)
+    const cached = readCached<TopicProgress[]>(cacheKey)
+    if (cached) {
+      setTopicProgress(cached)
+      setLoading(false)
+    } else {
+      setLoading(true)
+    }
+
     const fetchTopicProgress = async () => {
       try {
-        setLoading(true)
         const url = `/api/progress/topics?userId=${user.id}&languageCode=${targetLanguageCode}&detailed=true`
-        
+
         const response = await fetch(url)
-        
+
         if (response.ok) {
           const data = await response.json()
-          
-          if (data.topics && data.topics.length > 0) {
-          }
-          
           setTopicProgress(data.topics || [])
+          writeCached(cacheKey, data.topics || [])
         } else {
           const errorData = await response.text()
           console.error('❌ Failed to fetch topic progress:', response.status, errorData)
-          setTopicProgress([])
+          if (!cached) setTopicProgress([])
         }
       } catch (error) {
         console.error('❌ Error fetching topic progress:', error)
-        setTopicProgress([])
+        if (!cached) setTopicProgress([])
       } finally {
         setLoading(false)
       }
@@ -246,17 +280,17 @@ export function DetailedProgressModal({
               <Icon icon={getFlagIcon(targetLanguageCode)} className="w-8 h-8" />
               <div>
                 <h2 className="text-2xl font-bold text-white drop-shadow-lg">
-                  {targetLanguageName} Progress
+                  {t('progress.title', { language: targetLanguageName })}
                 </h2>
                 <p className="text-sm text-white/80 drop-shadow">
-                  Topic completion details
+                  {t('progress.detail.subtitle')}
                 </p>
               </div>
             </div>
             <button
               onClick={onCloseAction}
               className="p-2 hover:bg-white/10 rounded-full transition-colors text-white/80 hover:text-white"
-              aria-label="Close progress details"
+              aria-label={t('progress.detail.aria.close')}
             >
               <X className="w-6 h-6" />
             </button>
@@ -266,14 +300,14 @@ export function DetailedProgressModal({
         {/* Content */}
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
           {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-            </div>
+            /* No loading animation: the cache/prefetch path makes this state
+               near-invisible, so an empty block just holds the height. */
+            <div className="py-12" />
           ) : (
             <div className="space-y-3">
               {topicProgress.length === 0 ? (
                 <div className="text-center py-8 text-white/70">
-                  No progress data available yet. Start learning to see your progress!
+                  {t('progress.detail.empty')}
                 </div>
               ) : (
                 <>
@@ -289,7 +323,7 @@ export function DetailedProgressModal({
                       onClick={() => toggleSection(section.name)}
                       className="w-full p-4 flex items-center gap-4 hover:bg-white/5 transition-colors"
                       aria-expanded={isExpanded}
-                      aria-label={`${section.name} section, ${sectionProgress.completed} of ${sectionProgress.total} topics completed`}
+                      aria-label={t('progress.detail.aria.section', { section: uiTranslations[SECTION_KEYS[section.name]] || section.name, completed: sectionProgress.completed, total: sectionProgress.total })}
                     >
                       {/* Section Icon */}
                       <div className="w-10 h-10 bg-white/15 border border-white/25 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -302,7 +336,7 @@ export function DetailedProgressModal({
                           <h3 className="font-semibold text-white drop-shadow text-sm">{uiTranslations[SECTION_KEYS[section.name]] || section.name}</h3>
                           <div className="flex items-center gap-2">
                             <span className="text-xs text-white/70 drop-shadow">
-                              {sectionProgress.completed}/{sectionProgress.total} topics • {Math.round(sectionProgress.percentage)}%
+                              {t('progress.detail.topicsPct', { completed: sectionProgress.completed, total: sectionProgress.total, pct: Math.round(sectionProgress.percentage) })}
                             </span>
                             {isExpanded ? (
                               <ChevronDown className="w-4 h-4 text-white/60" />
@@ -322,7 +356,7 @@ export function DetailedProgressModal({
 
                         {/* Section Stats */}
                         <div className="mt-1 text-xs text-white/60">
-                          {sectionProgress.learnedWords} / {sectionProgress.totalWords} words
+                          {t('progress.detail.wordsRatio', { learned: sectionProgress.learnedWords, total: sectionProgress.totalWords })}
                         </div>
                       </div>
                     </button>
@@ -379,7 +413,7 @@ export function DetailedProgressModal({
 
                                   {/* Topic Stats */}
                                   <div className="text-xs text-white/60">
-                                    {topic.learnedWords} / {topic.totalWords} words
+                                    {t('progress.detail.wordsRatio', { learned: topic.learnedWords, total: topic.totalWords })}
                                   </div>
                                 </div>
                               </div>
@@ -397,8 +431,8 @@ export function DetailedProgressModal({
             {topicProgress.length === 0 && !loading && (
               <div className="text-center py-12 text-white/70">
                 <BookOpen className="w-12 h-12 mx-auto mb-4 opacity-50 drop-shadow" />
-                <p className="drop-shadow">No progress data available yet.</p>
-                <p className="text-sm text-white/50 drop-shadow">Start learning to see your progress!</p>
+                <p className="drop-shadow">{t('progress.detail.emptyTitle')}</p>
+                <p className="text-sm text-white/50 drop-shadow">{t('progress.detail.emptyHint')}</p>
               </div>
             )}
             </div>

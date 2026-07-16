@@ -12,20 +12,22 @@ import {
 import { getUnlocked, UnlockedRecord } from '@/lib/achievements/storage'
 import { useAuth } from '@/contexts/auth-context'
 import { hapticsLight } from '@/lib/haptics'
+import { useT } from '@/components/providers/translation-provider'
+import type { UiKey } from '@/lib/i18n/ui-strings'
 
 interface Props {
   open: boolean
   onCloseAction: () => void
 }
 
-const CATEGORY_LABEL: Record<AchievementCategory, string> = {
-  words: 'Words',
-  topics: 'Topics',
-  streak: 'Streaks',
-  section: 'Sections',
-  language: 'Languages',
-  time: 'Special Times',
-  special: 'Special',
+const CATEGORY_LABEL_KEY: Record<AchievementCategory, UiKey> = {
+  words: 'badges.category.words',
+  topics: 'badges.category.topics',
+  streak: 'badges.category.streak',
+  section: 'badges.category.section',
+  language: 'badges.category.language',
+  time: 'badges.category.time',
+  special: 'badges.category.special',
 }
 
 const CATEGORY_ORDER: AchievementCategory[] = [
@@ -33,6 +35,7 @@ const CATEGORY_ORDER: AchievementCategory[] = [
 ]
 
 export function BadgesModal({ open, onCloseAction }: Props) {
+  const { t, tRaw } = useT()
   const { user } = useAuth()
   const [unlocked, setUnlocked] = useState<UnlockedRecord[]>([])
   const [shown, setShown] = useState(false)
@@ -221,7 +224,7 @@ export function BadgesModal({ open, onCloseAction }: Props) {
   if (!open || typeof document === 'undefined') return null
 
   return createPortal(
-    <div className="fixed inset-0 z-[60] flex items-end justify-center" role="dialog" aria-modal="true" aria-label="Badges">
+    <div className="fixed inset-0 z-[60] flex items-end justify-center" role="dialog" aria-modal="true" aria-label={t('badges.modal.title')}>
       <div
         ref={backdropRef}
         className={`absolute inset-0 bg-black/40 backdrop-blur-md transition-opacity duration-300 ${
@@ -247,15 +250,15 @@ export function BadgesModal({ open, onCloseAction }: Props) {
         {/* Header */}
         <div data-drag-handle className="flex items-center justify-between px-5 pt-2 pb-3 flex-shrink-0 cursor-grab active:cursor-grabbing">
           <div>
-            <h2 className="text-xl font-bold text-white tracking-wide drop-shadow-lg">Badges</h2>
+            <h2 className="text-xl font-bold text-white tracking-wide drop-shadow-lg">{t('badges.modal.title')}</h2>
             <p className="text-white/70 text-sm">
-              {stats.unlocked} of {stats.total} unlocked
+              {t('badges.modal.unlockedOf', { unlocked: stats.unlocked, total: stats.total })}
             </p>
           </div>
           <button
             onClick={animateClose}
             className="w-9 h-9 rounded-full bg-white/10 border border-white/20 flex items-center justify-center hover:bg-white/20 transition-colors cursor-pointer"
-            aria-label="Close"
+            aria-label={t('common.close')}
           >
             <Icon icon="solar:close-circle-linear" width="20" height="20" className="text-white" />
           </button>
@@ -276,19 +279,19 @@ export function BadgesModal({ open, onCloseAction }: Props) {
           {/* Borders section */}
           <section>
             <h3 className="text-white/90 font-semibold text-sm uppercase tracking-wider mb-2.5">
-              Borders
+              {t('badges.borders.title')}
             </h3>
-            <p className="text-white/50 text-[11px] mb-2.5">Complete a topic multiple times to earn border colors.</p>
+            <p className="text-white/50 text-[11px] mb-2.5">{t('badges.borders.desc')}</p>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
               {([
-                { name: 'Beginner', desc: '1x completed', border: 'border-white/80', bg: 'bg-white/20', icon: 'solar:star-bold' },
-                { name: 'Explorer', desc: '2x completed', border: 'border-green-400', bg: 'bg-green-400/20', icon: 'solar:compass-bold' },
-                { name: 'Adventurer', desc: '3x completed', border: 'border-orange-400', bg: 'bg-orange-400/20', icon: 'solar:fire-bold' },
-                { name: 'Master', desc: '4x completed', border: 'border-red-400', bg: 'bg-red-400/20', icon: 'solar:crown-bold' },
-                { name: 'Legend', desc: '5x completed', border: 'border-purple-400', bg: 'bg-purple-400/20', icon: 'solar:shield-star-bold' },
+                { nameKey: 'badges.border.beginner', times: 1, border: 'border-white/80', bg: 'bg-white/20', icon: 'solar:star-bold' },
+                { nameKey: 'badges.border.explorer', times: 2, border: 'border-green-400', bg: 'bg-green-400/20', icon: 'solar:compass-bold' },
+                { nameKey: 'badges.border.adventurer', times: 3, border: 'border-orange-400', bg: 'bg-orange-400/20', icon: 'solar:fire-bold' },
+                { nameKey: 'badges.border.master', times: 4, border: 'border-red-400', bg: 'bg-red-400/20', icon: 'solar:crown-bold' },
+                { nameKey: 'badges.border.legend', times: 5, border: 'border-purple-400', bg: 'bg-purple-400/20', icon: 'solar:shield-star-bold' },
               ] as const).map((tier) => (
                 <div
-                  key={tier.name}
+                  key={tier.nameKey}
                   className={`relative rounded-xl border-2 ${tier.border} p-3 ${tier.bg}`}
                 >
                   <div className="flex items-start gap-2.5">
@@ -297,10 +300,10 @@ export function BadgesModal({ open, onCloseAction }: Props) {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="text-white font-semibold text-[13px] leading-tight">
-                        {tier.name}
+                        {t(tier.nameKey)}
                       </div>
                       <div className="text-white/60 text-[11px] leading-snug mt-0.5">
-                        {tier.desc}
+                        {t('badges.border.completedTimes', { n: tier.times })}
                       </div>
                     </div>
                   </div>
@@ -315,7 +318,7 @@ export function BadgesModal({ open, onCloseAction }: Props) {
             return (
               <section key={cat}>
                 <h3 className="text-white/90 font-semibold text-sm uppercase tracking-wider mb-2.5">
-                  {CATEGORY_LABEL[cat]}
+                  {t(CATEGORY_LABEL_KEY[cat])}
                 </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                   {list.map((a) => {
@@ -346,10 +349,10 @@ export function BadgesModal({ open, onCloseAction }: Props) {
                           </div>
                           <div className="min-w-0 flex-1">
                             <div className="text-white font-semibold text-[13px] leading-tight">
-                              {a.title}
+                              {tRaw(`achievements.${a.id}.title`)}
                             </div>
                             <div className="text-white/60 text-[11px] leading-snug mt-0.5">
-                              {a.description}
+                              {tRaw(`achievements.${a.id}.description`)}
                             </div>
                           </div>
                         </div>

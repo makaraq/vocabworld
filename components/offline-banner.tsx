@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Icon } from '@iconify/react'
 import { isPairAvailableOffline, PACKS_CHANGED_EVENT } from '@/lib/offline/offline-manager'
+import { useT } from '@/components/providers/translation-provider'
 
 // Shows the "You're offline" warning ONLY when the currently selected
 // language pair has not been downloaded for offline use. If the pair is
@@ -10,6 +11,7 @@ import { isPairAvailableOffline, PACKS_CHANGED_EVENT } from '@/lib/offline/offli
 // the user can keep learning uninterrupted. Switching to a non-downloaded
 // language while offline brings the warning back.
 export function OfflineBanner() {
+  const { t } = useT()
   const [isOffline, setIsOffline] = useState(false)
   const [covered, setCovered] = useState(false)
   const [showPill, setShowPill] = useState(false)
@@ -76,7 +78,7 @@ export function OfflineBanner() {
       <div className="fixed inset-x-0 top-0 z-[10000] flex justify-center px-4 pt-[calc(env(safe-area-inset-top,0px)+12px)] pointer-events-none">
         <div className="flex items-center gap-2.5 bg-white/10 backdrop-blur-xl border border-emerald-400/30 rounded-2xl px-4 py-2.5 shadow-2xl">
           <Icon icon="solar:cloud-check-bold" className="w-5 h-5 text-emerald-400 flex-shrink-0" />
-          <p className="text-white text-xs font-semibold">Offline mode — your downloaded lessons are ready</p>
+          <p className="text-white text-xs font-semibold">{t('offlineBanner.ready')}</p>
         </div>
       </div>
     )
@@ -87,8 +89,8 @@ export function OfflineBanner() {
       <div className="flex items-center gap-3 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl px-5 py-3 shadow-2xl max-w-sm w-full">
         <Icon icon="solar:cloud-cross-bold" className="w-6 h-6 text-orange-400 flex-shrink-0" />
         <div>
-          <p className="text-white text-sm font-semibold">You&apos;re offline</p>
-          <p className="text-white/60 text-xs">Check your connection to keep learning.</p>
+          <p className="text-white text-sm font-semibold">{t('offlineBanner.offline')}</p>
+          <p className="text-white/60 text-xs">{t('offlineBanner.checkConnection')}</p>
         </div>
       </div>
     </div>

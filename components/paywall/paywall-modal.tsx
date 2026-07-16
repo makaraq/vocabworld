@@ -12,6 +12,7 @@ import { useAuth } from '@/contexts/auth-context'
 import { useRevenueCat } from '@/hooks/use-revenuecat'
 import { syncTrialReminder } from '@/lib/revenuecat-client'
 import { hapticsLight, hapticsMedium, hapticsSuccess } from '@/lib/haptics'
+import { useT } from '@/components/providers/translation-provider'
 
 interface PaywallModalProps {
   isOpen: boolean
@@ -31,6 +32,7 @@ export function PaywallModal({
   onCloseAction,
   onSuccessAction,
 }: PaywallModalProps) {
+  const { t } = useT()
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('yearly')
   const [mounted, setMounted] = useState(false)
   const [livePrices, setLivePrices] = useState<LivePrices | null>(null)
@@ -87,7 +89,7 @@ export function PaywallModal({
 
   const isNative = typeof window !== 'undefined' && !!(window as any)?.Capacitor?.isNativePlatform?.()
   const isIOS = isNative && (window as any)?.Capacitor?.getPlatform?.() === 'ios'
-  const storeName = isIOS ? 'Apple ID Settings' : isNative ? 'Google Play' : 'your subscription settings'
+  const storeName = isIOS ? t('paywall.store.ios') : isNative ? t('paywall.store.android') : t('paywall.store.web')
   const showTrial = trialEligible && selectedPlan === 'yearly'
 
   const handleSubscribe = async () => {
@@ -155,7 +157,7 @@ export function PaywallModal({
             className="text-3xl font-extrabold text-white text-center mb-2"
             style={{ animation: 'celebration-fade-up 0.5s ease-out 0.3s both' }}
           >
-            You&apos;re in!
+            {t('paywall.celebration.title')}
           </h2>
 
           {/* Subtitle */}
@@ -163,7 +165,7 @@ export function PaywallModal({
             className="text-white/70 text-center text-lg mb-8"
             style={{ animation: 'celebration-fade-up 0.5s ease-out 0.5s both' }}
           >
-            You have unlocked all topics and features
+            {t('paywall.celebration.subtitle')}
           </p>
 
           {/* CTA */}
@@ -172,7 +174,7 @@ export function PaywallModal({
             className="w-full max-w-xs py-4 bg-gray-900 hover:bg-black text-white font-bold text-base rounded-2xl shadow-lg active:scale-95 transition-all border border-white/10"
             style={{ animation: 'celebration-fade-up 0.5s ease-out 0.7s both' }}
           >
-            Start Exploring
+            {t('paywall.celebration.cta')}
           </button>
         </div>
       </div>
@@ -192,19 +194,15 @@ export function PaywallModal({
         <button
           onClick={onCloseAction}
           className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:bg-white/20 hover:text-white transition-all z-10"
-          aria-label="Close"
+          aria-label={t('common.close')}
         >
           <Icon icon="solar:close-circle-bold" className="w-5 h-5" />
         </button>
 
         {/* Title */}
         <div className="px-6 pt-8 pb-6">
-          <h2 className="text-2xl font-extrabold text-white text-center leading-tight drop-shadow-lg">
-            {showTrial ? (
-              <>Start your 7-day FREE<br />trial to continue.</>
-            ) : (
-              <>Get the full Sprind<br />experience now</>
-            )}
+          <h2 className="text-2xl font-extrabold text-white text-center leading-tight drop-shadow-lg whitespace-pre-line">
+            {showTrial ? t('paywall.title.trial') : t('paywall.title.noTrial')}
           </h2>
         </div>
 
@@ -228,9 +226,9 @@ export function PaywallModal({
                   <Icon icon="solar:lock-keyhole-unlocked-bold" className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1 pt-1">
-                  <p className="font-bold text-white text-base drop-shadow">Today</p>
+                  <p className="font-bold text-white text-base drop-shadow">{t('paywall.timeline.today.title')}</p>
                   <p className="text-white/70 text-sm leading-snug drop-shadow">
-                    Unlock all premium features: every topic, custom playlists, and word search.
+                    {t('paywall.timeline.today.desc')}
                   </p>
                 </div>
               </div>
@@ -241,9 +239,9 @@ export function PaywallModal({
                   <Icon icon="solar:bell-bold" className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1 pt-1">
-                  <p className="font-bold text-white text-base drop-shadow">In 5 Days - Reminder</p>
+                  <p className="font-bold text-white text-base drop-shadow">{t('paywall.timeline.reminder.title')}</p>
                   <p className="text-white/70 text-sm leading-snug drop-shadow">
-                    We&apos;ll send you a reminder that your trial is ending soon if you&apos;ve allowed us to notify you.
+                    {t('paywall.timeline.reminder.desc')}
                   </p>
                 </div>
               </div>
@@ -254,9 +252,9 @@ export function PaywallModal({
                   <Icon icon="solar:crown-bold" className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1 pt-1">
-                  <p className="font-bold text-white text-base drop-shadow">In 7 Days - Billing Starts</p>
+                  <p className="font-bold text-white text-base drop-shadow">{t('paywall.timeline.billing.title')}</p>
                   <p className="text-white/70 text-sm leading-snug drop-shadow">
-                    You&apos;ll be charged after 7 days unless you cancel anytime before.
+                    {t('paywall.timeline.billing.desc')}
                   </p>
                 </div>
               </div>
@@ -275,9 +273,9 @@ export function PaywallModal({
                   <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1 pt-1">
-                  <p className="font-bold text-white text-base drop-shadow">Access to all topics</p>
+                  <p className="font-bold text-white text-base drop-shadow">{t('paywall.benefit.topics.title')}</p>
                   <p className="text-white/70 text-sm leading-snug drop-shadow">
-                    Every category unlocked — no topic is off-limits.
+                    {t('paywall.benefit.topics.desc')}
                   </p>
                 </div>
               </div>
@@ -287,9 +285,9 @@ export function PaywallModal({
                   <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1 pt-1">
-                  <p className="font-bold text-white text-base drop-shadow">Build playlists</p>
+                  <p className="font-bold text-white text-base drop-shadow">{t('paywall.benefit.playlists.title')}</p>
                   <p className="text-white/70 text-sm leading-snug drop-shadow">
-                    Create custom lists for the words you actually need.
+                    {t('paywall.benefit.playlists.desc')}
                   </p>
                 </div>
               </div>
@@ -299,9 +297,9 @@ export function PaywallModal({
                   <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1 pt-1">
-                  <p className="font-bold text-white text-base drop-shadow">Search any word</p>
+                  <p className="font-bold text-white text-base drop-shadow">{t('paywall.benefit.search.title')}</p>
                   <p className="text-white/70 text-sm leading-snug drop-shadow">
-                    Find a specific word and save it for later.
+                    {t('paywall.benefit.search.desc')}
                   </p>
                 </div>
               </div>
@@ -322,8 +320,8 @@ export function PaywallModal({
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-white font-semibold text-sm drop-shadow">Monthly</p>
-                <p className="text-white font-bold text-base mt-1 drop-shadow">{monthlyPrice} <span className="font-normal text-white/60 text-sm">/mo</span></p>
+                <p className="text-white font-semibold text-sm drop-shadow">{t('paywall.plan.monthly')}</p>
+                <p className="text-white font-bold text-base mt-1 drop-shadow">{monthlyPrice} <span className="font-normal text-white/60 text-sm">{t('paywall.plan.perMonth')}</span></p>
               </div>
               <div
                 className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
@@ -348,12 +346,12 @@ export function PaywallModal({
           >
             {trialEligible && (
               <span className="absolute -top-2.5 right-3 px-2.5 py-0.5 bg-gray-900 text-white text-[10px] font-bold rounded-full shadow-lg border border-white/20">
-                7 DAYS FREE
+                {t('paywall.plan.trialBadge')}
               </span>
             )}
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-white font-semibold text-sm drop-shadow">Yearly</p>
+                <p className="text-white font-semibold text-sm drop-shadow">{t('paywall.plan.yearly')}</p>
                 <p className="text-white font-bold text-base mt-1 drop-shadow">{yearlyPrice}</p>
               </div>
               <div
@@ -373,7 +371,7 @@ export function PaywallModal({
         <div className="flex items-center justify-center gap-2 px-6 pt-5 pb-3">
           <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-white drop-shadow" />
           <span className="text-white font-semibold text-sm drop-shadow">
-            {showTrial ? 'No Payment Due Now' : 'No Commitment - Cancel Anytime'}
+            {showTrial ? t('paywall.reassure.noPayment') : t('paywall.reassure.noCommitment')}
           </span>
         </div>
 
@@ -394,16 +392,16 @@ export function PaywallModal({
             {loading ? (
               <>
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                <span>Processing...</span>
+                <span>{t('paywall.cta.processing')}</span>
               </>
             ) : (
-              <span>{showTrial ? 'Start My 7-Day Free Trial' : 'Start My Journey'}</span>
+              <span>{showTrial ? t('paywall.cta.startTrial') : t('paywall.cta.startJourney')}</span>
             )}
           </button>
 
           {!user && (
             <p className="text-center text-white/60 text-sm mt-3">
-              Please sign in to subscribe
+              {t('paywall.signInFirst')}
             </p>
           )}
         </div>
@@ -416,12 +414,12 @@ export function PaywallModal({
             className="text-white/85 hover:text-white text-sm font-medium drop-shadow transition-colors disabled:opacity-50"
           >
             {restoreStatus === 'loading'
-              ? 'Restoring…'
+              ? t('paywall.restore.loading')
               : restoreStatus === 'done'
-                ? 'Restored ✓'
+                ? t('paywall.restore.done')
                 : restoreStatus === 'error'
-                  ? 'Nothing to restore'
-                  : 'Already purchased?'}
+                  ? t('paywall.restore.nothing')
+                  : t('paywall.restore.prompt')}
           </button>
         </div>
 
@@ -430,23 +428,23 @@ export function PaywallModal({
           {trialEligible ? (
             <p
               aria-hidden={!showTrial}
-              className={`col-start-1 row-start-1 text-center text-white/90 text-xs leading-relaxed drop-shadow font-medium ${showTrial ? '' : 'invisible pointer-events-none'}`}
+              className={`col-start-1 row-start-1 text-center text-white/90 text-xs leading-relaxed drop-shadow font-medium whitespace-pre-line ${showTrial ? '' : 'invisible pointer-events-none'}`}
             >
-              7 days free, then {yearlyPrice} per year. Billed yearly.<br />Plan auto-renews unless you<br />cancel. Cancel in {storeName}.
+              {t('paywall.legal.trial', { price: yearlyPrice, storeName })}
             </p>
           ) : (
             <p
               aria-hidden={selectedPlan !== 'yearly'}
-              className={`col-start-1 row-start-1 text-center text-white/90 text-xs leading-relaxed drop-shadow font-medium ${selectedPlan === 'yearly' ? '' : 'invisible pointer-events-none'}`}
+              className={`col-start-1 row-start-1 text-center text-white/90 text-xs leading-relaxed drop-shadow font-medium whitespace-pre-line ${selectedPlan === 'yearly' ? '' : 'invisible pointer-events-none'}`}
             >
-              {yearlyPrice} per year. Billed yearly.<br />Plan auto-renews unless you<br />cancel. Cancel in {storeName}.
+              {t('paywall.legal.yearly', { price: yearlyPrice, storeName })}
             </p>
           )}
           <p
             aria-hidden={selectedPlan !== 'monthly'}
-            className={`col-start-1 row-start-1 self-center text-center text-white/90 text-xs leading-relaxed drop-shadow font-medium ${selectedPlan === 'monthly' ? '' : 'invisible pointer-events-none'}`}
+            className={`col-start-1 row-start-1 self-center text-center text-white/90 text-xs leading-relaxed drop-shadow font-medium whitespace-pre-line ${selectedPlan === 'monthly' ? '' : 'invisible pointer-events-none'}`}
           >
-            {monthlyPrice} per month. Plan auto-renews<br />unless you cancel. Cancel in {storeName}.
+            {t('paywall.legal.monthly', { price: monthlyPrice, storeName })}
           </p>
         </div>
 
@@ -456,14 +454,14 @@ export function PaywallModal({
             href="/terms-of-service"
             className="text-white/85 hover:text-white text-xs font-medium drop-shadow transition-colors"
           >
-            Terms
+            {t('paywall.terms')}
           </Link>
           <span className="text-white/60 text-xs drop-shadow">·</span>
           <Link
             href="/privacy-policy"
             className="text-white/85 hover:text-white text-xs font-medium drop-shadow transition-colors"
           >
-            Privacy
+            {t('paywall.privacy')}
           </Link>
           <span className="text-white/60 text-xs drop-shadow">·</span>
           <button
@@ -471,7 +469,7 @@ export function PaywallModal({
             disabled={loading || restoreStatus === 'loading'}
             className="text-white/85 hover:text-white text-xs font-medium drop-shadow transition-colors disabled:opacity-50"
           >
-            Restore
+            {t('paywall.restore.link')}
           </button>
         </div>
       </div>

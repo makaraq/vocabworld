@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback, useRef } from "react"
 import { createPortal } from "react-dom"
 import { Icon } from "@iconify/react"
 import { hapticsSuccess, hapticsWarning, hapticsLight } from "@/lib/haptics"
+import { useT } from "@/components/providers/translation-provider"
 
 interface QuizCard {
   vocabularyId: number
@@ -30,6 +31,7 @@ export function TopicQuizModal({
   sourceLanguageCode,
   onClose,
 }: TopicQuizModalProps) {
+  const { t } = useT()
   const [mounted, setMounted] = useState(false)
   const [cards, setCards] = useState<QuizCard[]>([])
   const [totalWords, setTotalWords] = useState(0)
@@ -266,12 +268,12 @@ export function TopicQuizModal({
       <div className="relative flex flex-col h-full p-4 pt-14 sm:p-6 sm:pt-14 max-w-lg mx-auto w-full">
         {sessionState !== "complete" && cards.length > 0 && (
           <div className="mb-6">
-            <h2 className="text-lg font-semibold text-white text-center mb-3">{topicName} Quiz</h2>
+            <h2 className="text-lg font-semibold text-white text-center mb-3">{t('quiz.topic.title', { topic: topicName })}</h2>
             <div className="flex items-center justify-between mb-3">
               <div className="text-sm text-white/50">
-                {currentIndex + 1} of {cards.length}
+                {t('quiz.progress', { current: currentIndex + 1, total: cards.length })}
                 {totalWords > cards.length && (
-                  <span className="text-white/30"> ({totalWords} total)</span>
+                  <span className="text-white/30"> {t('quiz.topic.totalSuffix', { total: totalWords })}</span>
                 )}
               </div>
             </div>
@@ -288,7 +290,7 @@ export function TopicQuizModal({
 
         {sessionState === "loading" && (
           <div className="flex-1 flex items-center justify-center">
-            <div className="text-white/50 text-lg">Loading quiz...</div>
+            <div className="text-white/50 text-lg">{t('quiz.topic.loading')}</div>
           </div>
         )}
 
@@ -297,7 +299,7 @@ export function TopicQuizModal({
             <div className="flex-1 flex flex-col justify-center gap-6">
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 p-8 text-center relative">
                 <div className="text-sm text-white/50 mb-2">
-                  What does this mean?
+                  {t('quiz.question')}
                 </div>
                 <div className="text-3xl sm:text-4xl font-bold text-white mb-3">
                   {cards[currentIndex].targetWord}
@@ -309,7 +311,7 @@ export function TopicQuizModal({
                       ? "bg-blue-500/30 border-blue-400/50"
                       : "bg-white/10 border-white/20 hover:bg-white/20"
                   }`}
-                  aria-label={isPlayingAudio ? "Stop audio" : `Play pronunciation of ${cards[currentIndex].targetWord}`}
+                  aria-label={isPlayingAudio ? t('quiz.aria.stopAudio') : t('quiz.aria.playWord', { word: cards[currentIndex].targetWord })}
                 >
                   <Icon
                     icon={isPlayingAudio ? "solar:volume-loud-bold" : "solar:volume-bold"}
@@ -335,7 +337,7 @@ export function TopicQuizModal({
                       onClick={() => handleAnswer(option)}
                       disabled={selectedOption !== null}
                       className={`py-3.5 px-5 rounded-xl border text-base font-medium transition-all ${getOptionStyle(option)}`}
-                      aria-label={`Answer: ${option}`}
+                      aria-label={t('quiz.aria.answer', { option })}
                     >
                       {option}
                     </button>
@@ -358,12 +360,12 @@ export function TopicQuizModal({
             <div className="text-center">
               <div className="text-2xl font-bold text-white mb-2">
                 {cards.length === 0
-                  ? "No words in this topic yet!"
+                  ? t('quiz.topic.noWords')
                   : pct === 100
-                  ? "Perfect Score!"
+                  ? t('quiz.topic.perfect')
                   : pct >= 80
-                  ? "Great Job!"
-                  : "Quiz Complete!"}
+                  ? t('quiz.topic.great')
+                  : t('quiz.topic.complete')}
               </div>
               {cards.length > 0 && (
                 <div className="space-y-3">
@@ -377,10 +379,10 @@ export function TopicQuizModal({
                       <span className="text-red-400 font-bold text-2xl">{cards.length - correctCount}</span>
                     </div>
                   </div>
-                  <div className="text-white/50 text-sm">{pct}% accuracy</div>
+                  <div className="text-white/50 text-sm">{t('quiz.accuracy', { pct })}</div>
                   {totalWords > cards.length && (
                     <div className="text-white/30 text-sm">
-                      {cards.length} of {totalWords} words in this topic
+                      {t('quiz.topic.coverage', { count: cards.length, total: totalWords })}
                     </div>
                   )}
                 </div>
@@ -397,13 +399,13 @@ export function TopicQuizModal({
                 className="w-full py-3.5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl text-white font-semibold text-base hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
               >
                 <Icon icon="solar:refresh-bold" width="18" height="18" />
-                Try Another Round
+                {t('quiz.topic.tryAnother')}
               </button>
               <button
                 onClick={() => { hapticsLight(); onClose() }}
                 className="w-full py-3.5 bg-white/10 border border-white/15 rounded-2xl text-white/70 font-medium text-base hover:bg-white/15 transition-all"
               >
-                Done
+                {t('common.done')}
               </button>
             </>
           ) : (
@@ -411,7 +413,7 @@ export function TopicQuizModal({
               <button
                 onPointerUp={() => { hapticsLight(); onClose() }}
                 className="w-14 h-14 rounded-full bg-white/10 border border-white/15 flex items-center justify-center"
-                aria-label="Close quiz"
+                aria-label={t('quiz.topic.aria.close')}
               >
                 <Icon icon="solar:close-circle-bold" width="28" height="28" className="text-white/50" />
               </button>

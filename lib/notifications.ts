@@ -17,6 +17,8 @@
  */
 
 import { Capacitor } from '@capacitor/core'
+import { getCurrentUiLang, loadUiStrings, lookup, type UiVars } from '@/lib/i18n/ui-strings'
+import { languageNamesTranslations } from '@/lib/i18n/language-names-translations'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -90,8 +92,10 @@ function streakTimeOnDay(dayOffset: number): Date {
 }
 
 // ── Notification copy pools ──────────────────────────────────────────────────
-
-type CopyFn = (ctx: NotificationContext & { projected?: number }) => { title: string; body: string }
+// Copy lives in the ui-strings catalog (lib/i18n/ui-strings) so notifications
+// arrive in the user's chosen main language. Pools hold key BASES; the actual
+// `.title` / `.body` strings are resolved at schedule time after loading the
+// language chunk.
 
 function pick<T>(pool: T[], seed: number): T {
   return pool[Math.abs(seed) % pool.length]
@@ -102,66 +106,39 @@ function daySeed(): number {
   return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate()
 }
 
-const STREAK_COPY: CopyFn[] = [
-  (ctx) => ({
-    title: `🔥 ${ctx.projected} days — don't stop now`,
-    body: `You're building real ${ctx.userLanguage} muscle. One word keeps it alive.`,
-  }),
-  (ctx) => ({
-    title: `${ctx.projected}-day streak on the line`,
-    body: "Tonight's the cutoff. Tap in before bed and you're safe.",
-  }),
-  (ctx) => ({
-    title: `🔥 Protect your ${ctx.projected}-day streak`,
-    body: 'It took real effort to get here. A quick session keeps it going.',
-  }),
-  (ctx) => ({
-    title: `${ctx.projected} days and counting`,
-    body: `That's ${ctx.projected} days of showing up for ${ctx.userLanguage}. Keep it going.`,
-  }),
-  (ctx) => ({
-    title: '⚠️ Your streak expires tonight',
-    body: `${ctx.projected} days of progress — 30 seconds is all it takes to save it.`,
-  }),
-  (ctx) => ({
-    title: `🔥 ${ctx.projected} days strong`,
-    body: "Don't let a busy evening erase the habit. One quick round.",
-  }),
+const STREAK_KEYS = [
+  'notif.streak.1', 'notif.streak.2', 'notif.streak.3',
+  'notif.streak.4', 'notif.streak.5', 'notif.streak.6',
 ]
 
-const STREAK_START_COPY: CopyFn[] = [
-  () => ({
-    title: 'Start a streak today',
-    body: 'Learn one word and your streak clock starts ticking.',
-  }),
-  () => ({
-    title: 'Day 1 starts now',
-    body: 'Every long streak started with a single session. Make it today.',
-  }),
+const STREAK_START_KEYS = ['notif.streakStart.1', 'notif.streakStart.2']
+
+const REVIEW_KEYS = [
+  'notif.review.1', 'notif.review.2', 'notif.review.3',
+  'notif.review.4', 'notif.review.5',
 ]
 
-const REVIEW_COPY: CopyFn[] = [
-  (ctx) => ({
-    title: `📖 ${ctx.dueReviewCount} ${ctx.userLanguage} words to review`,
-    body: 'Tap to quiz yourself — a quick round locks them in.',
-  }),
-  (ctx) => ({
-    title: `${ctx.dueReviewCount} words are piling up`,
-    body: `Your ${ctx.userLanguage} review queue is waiting. Tap to start.`,
-  }),
-  (ctx) => ({
-    title: `✏️ You have ${ctx.dueReviewCount} words waiting`,
-    body: `A quick ${ctx.userLanguage} review now saves you relearning later.`,
-  }),
-  (ctx) => ({
-    title: `${ctx.dueReviewCount} ${ctx.userLanguage} words — ready?`,
-    body: "Your brain's had time to sleep on them. Tap to see what stuck.",
-  }),
-  (ctx) => ({
-    title: `Don't let ${ctx.dueReviewCount} words slip away`,
-    body: `Quick ${ctx.userLanguage} review inside. Takes about a minute.`,
-  }),
-]
+function resolveCopy(lang: string, baseKey: string, vars: UiVars): { title: string; body: string } {
+  return {
+    title: lookup(lang, `${baseKey}.title`, vars),
+    body: lookup(lang, `${baseKey}.body`, vars),
+  }
+}
+
+/**
+ * The API's ctx.userLanguage is the ENGLISH name of the target language.
+ * Localize it to the UI language via the static names map; fall back to the
+ * English name when the pair is missing.
+ */
+function localizedTargetLanguageName(uiLang: string, fallback: string): string {
+  try {
+    const code = localStorage.getItem('targetLanguageCode')
+    if (code) return languageNamesTranslations[uiLang]?.[code] || fallback
+  } catch {
+    // localStorage unavailable — fallback below.
+  }
+  return fallback
+}
 
 // ── Scheduling helpers ───────────────────────────────────────────────────────
 
@@ -178,6 +155,10 @@ async function scheduleStreakProtection(
 
   if (ctx.currentStreak === 0) return
 
+  const uiLang = getCurrentUiLang()
+  await loadUiStrings(uiLang)
+  const language = localizedTargetLanguageName(uiLang, ctx.userLanguage)
+
   const toSchedule: Parameters<typeof LocalNotifications.schedule>[0]['notifications'] = []
   for (let i = 0; i < STREAK_DAYS; i++) {
     if (i === 0 && studiedToday) continue
@@ -185,10 +166,10 @@ async function scheduleStreakProtection(
     if (at <= new Date()) continue
 
     const projected = ctx.currentStreak + i
-    const enrichedCtx = { ...ctx, projected }
+    const vars = { projected, language }
     const { title, body } = projected > 1
-      ? pick(STREAK_COPY, daySeed() + i)(enrichedCtx)
-      : pick(STREAK_START_COPY, daySeed() + i)(enrichedCtx)
+      ? resolveCopy(uiLang, pick(STREAK_KEYS, daySeed() + i), vars)
+      : resolveCopy(uiLang, pick(STREAK_START_KEYS, daySeed() + i), vars)
 
     toSchedule.push({
       id: STREAK_BASE_ID + i,
@@ -239,7 +220,13 @@ async function scheduleReviewReminder(
   // fire immediately when the app reschedules on foreground).
   const reviewAt = nextReminderTimeAfter(new Date(), DEFAULT_REVIEW_TIME, 1)
 
-  const { title, body } = pick(REVIEW_COPY, daySeed())(ctx)
+  const uiLang = getCurrentUiLang()
+  await loadUiStrings(uiLang)
+  const language = localizedTargetLanguageName(uiLang, ctx.userLanguage)
+  const { title, body } = resolveCopy(uiLang, pick(REVIEW_KEYS, daySeed()), {
+    n: ctx.dueReviewCount,
+    language,
+  })
 
   await LocalNotifications.schedule({
     notifications: [{
@@ -302,11 +289,14 @@ export async function scheduleTrialReminder(trialEndsAt: string | null): Promise
     fireAt = soon
   }
 
+  const uiLang = getCurrentUiLang()
+  await loadUiStrings(uiLang)
+
   await LocalNotifications.schedule({
     notifications: [{
       id: TRIAL_REMINDER_ID,
-      title: '2 days left in your free trial',
-      body: "You'll be charged when it ends. Keep learning, or cancel anytime in Settings.",
+      title: lookup(uiLang, 'notif.trial.title'),
+      body: lookup(uiLang, 'notif.trial.body'),
       schedule: { at: fireAt },
       smallIcon: 'ic_notification',
       iconColor: '#6366f1',

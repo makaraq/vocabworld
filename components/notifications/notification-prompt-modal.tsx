@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Icon } from '@iconify/react'
 import { hapticsLight } from '@/lib/haptics'
+import { useT } from '@/components/providers/translation-provider'
+import type { UiKey } from '@/lib/i18n/ui-strings'
 
 type Variant = 'enable' | 'settings'
 
@@ -22,27 +24,27 @@ interface Props {
   onDismiss: () => void
 }
 
-const BENEFITS = [
+const BENEFITS: { icon: string; color: string; bg: string; titleKey: UiKey; descKey: UiKey }[] = [
   {
     icon: 'solar:fire-bold',
     color: 'text-amber-400',
     bg: 'bg-amber-400/10',
-    title: 'Your streak is at risk',
-    desc: 'Without a reminder you could forget and lose your streak overnight',
+    titleKey: 'notifPrompt.benefit.streak.title',
+    descKey: 'notifPrompt.benefit.streak.desc',
   },
   {
     icon: 'solar:bell-bing-bold',
     color: 'text-blue-400',
     bg: 'bg-blue-400/10',
-    title: 'Gentle nudges',
-    desc: "A timely reminder so a busy day doesn't cost you your progress",
+    titleKey: 'notifPrompt.benefit.nudges.title',
+    descKey: 'notifPrompt.benefit.nudges.desc',
   },
   {
     icon: 'solar:refresh-circle-bold',
     color: 'text-emerald-400',
     bg: 'bg-emerald-400/10',
-    title: 'Review sessions',
-    desc: "Revisit yesterday's words 24 h later to lock them into long-term memory",
+    titleKey: 'notifPrompt.benefit.review.title',
+    descKey: 'notifPrompt.benefit.review.desc',
   },
 ]
 
@@ -52,6 +54,7 @@ export function NotificationPromptModal({
   onPrimary,
   onDismiss,
 }: Props) {
+  const { t } = useT()
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -62,7 +65,7 @@ export function NotificationPromptModal({
   if (!open || !mounted) return null
 
   const isEnable = variant === 'enable'
-  const primaryLabel = isEnable ? 'Enable notifications' : 'Enable in Settings'
+  const primaryLabel = isEnable ? t('notifPrompt.enable') : t('notifPrompt.enableSettings')
   const primaryIcon = isEnable ? 'solar:bell-bing-bold' : 'solar:settings-bold'
 
   const content = (
@@ -86,22 +89,22 @@ export function NotificationPromptModal({
 
           {/* Headline */}
           <div className="text-center space-y-1.5">
-            <h2 className="text-white text-xl font-bold">Don't lose your streak</h2>
+            <h2 className="text-white text-xl font-bold">{t('notifPrompt.headline')}</h2>
             <p className="text-white/60 text-sm leading-relaxed">
-              Notifications help you stay consistent — without them your streak, daily habit, and review sessions are all at risk.
+              {t('notifPrompt.subtitle')}
             </p>
           </div>
 
           {/* Benefit rows */}
           <div className="space-y-2.5">
             {BENEFITS.map(b => (
-              <div key={b.title} className="flex items-center gap-3">
+              <div key={b.titleKey} className="flex items-center gap-3">
                 <div className={`w-9 h-9 rounded-xl ${b.bg} flex items-center justify-center flex-shrink-0`}>
                   <Icon icon={b.icon} width="18" className={b.color} />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-white text-sm font-medium">{b.title}</p>
-                  <p className="text-white/50 text-xs">{b.desc}</p>
+                  <p className="text-white text-sm font-medium">{t(b.titleKey)}</p>
+                  <p className="text-white/50 text-xs">{t(b.descKey)}</p>
                 </div>
               </div>
             ))}
@@ -120,7 +123,7 @@ export function NotificationPromptModal({
               onClick={() => { hapticsLight(); onDismiss() }}
               className="w-full text-white/40 text-sm py-2.5 rounded-2xl active:bg-white/5 transition-all"
             >
-              Not now
+              {t('notifPrompt.notNow')}
             </button>
           </div>
         </div>

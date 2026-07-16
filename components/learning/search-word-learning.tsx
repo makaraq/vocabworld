@@ -3,6 +3,7 @@
 import React, { useState, useRef, useCallback, useEffect } from "react"
 import { Icon } from "@iconify/react"
 import { ArrowLeft, ChevronRight } from "lucide-react"
+import { useT } from "@/components/providers/translation-provider"
 
 interface SearchWordLearningProps {
   nativeLanguage: string
@@ -31,6 +32,7 @@ export function SearchWordLearning({
   onSettingsClick,
   onPlaylistUpdate
 }: SearchWordLearningProps) {
+  const { t } = useT()
   // Direction state: true = nativeLang → targetLang, false = targetLang → nativeLang
   const [sourceIsNative, setSourceIsNative] = useState(true)
 
@@ -44,7 +46,8 @@ export function SearchWordLearning({
   const [inputWord, setInputWord] = useState("")
   const [suggestions, setSuggestions] = useState<string[]>([])
   const [isSearching, setIsSearching] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  // Catalog key + vars, translated at render time.
+  const [error, setError] = useState<{ key: 'searchWord.noResults' | 'searchWord.failed'; word?: string } | null>(null)
 
   // Playlist state
   const [showPlaylistModal, setShowPlaylistModal] = useState(false)
@@ -87,10 +90,10 @@ export function SearchWordLearning({
       const data = await res.json()
       if (searchId !== lastSearchIdRef.current) return
       setSuggestions(data.suggestions || [])
-      if ((data.suggestions || []).length === 0) setError(`No translations found for "${word}"`)
+      if ((data.suggestions || []).length === 0) setError({ key: 'searchWord.noResults', word })
     } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') return
-      if (searchId === lastSearchIdRef.current) setError('Translation failed')
+      if (searchId === lastSearchIdRef.current) setError({ key: 'searchWord.failed' })
     } finally {
       if (searchId === lastSearchIdRef.current) setIsSearching(false)
     }
@@ -123,11 +126,11 @@ export function SearchWordLearning({
         <button
           onClick={onBack}
           className="w-10 h-10 bg-black/30 border border-white/20 rounded-full flex items-center justify-center hover:bg-black/50 transition-all flex-shrink-0"
-          aria-label="Go back"
+          aria-label={t('searchWord.aria.back')}
         >
           <ArrowLeft className="w-5 h-5 text-white/80" />
         </button>
-        <h1 className="text-xl font-semibold text-white flex-1 text-center pr-10">Add word</h1>
+        <h1 className="text-xl font-semibold text-white flex-1 text-center pr-10">{t('searchWord.title')}</h1>
       </div>
 
       {/* Language swap row */}
@@ -138,7 +141,7 @@ export function SearchWordLearning({
         <button
           onClick={() => setSourceIsNative(prev => !prev)}
           className="w-9 h-9 bg-white/10 border border-white/20 rounded-full flex items-center justify-center hover:bg-white/20 transition-all flex-shrink-0"
-          aria-label="Swap languages"
+          aria-label={t('searchWord.aria.swap')}
         >
           <Icon icon="solar:transfer-horizontal-bold" className="w-5 h-5 text-white/80" />
         </button>
@@ -153,7 +156,7 @@ export function SearchWordLearning({
           type="text"
           value={inputWord}
           onChange={(e) => handleInput(e.target.value)}
-          placeholder={`Type ${fromLanguage} word...`}
+          placeholder={t('searchWord.placeholder', { language: fromLanguage })}
           className="flex-1 bg-transparent text-white text-xl font-medium outline-none placeholder:text-white/30"
           autoComplete="off"
           spellCheck={false}
@@ -172,7 +175,7 @@ export function SearchWordLearning({
           <button
             onClick={() => { setInputWord(""); setSuggestions([]); setError(null) }}
             className="text-white/40 hover:text-white/70 transition-colors flex-shrink-0"
-            aria-label="Clear search input"
+            aria-label={t('searchWord.aria.clear')}
           >
             <Icon icon="solar:close-circle-bold" className="w-5 h-5" />
           </button>
@@ -181,7 +184,7 @@ export function SearchWordLearning({
 
       {/* Error */}
       {error && (
-        <p className="text-red-300 text-sm text-center mb-3 px-2">{error}</p>
+        <p className="text-red-300 text-sm text-center mb-3 px-2">{t(error.key, { word: error.word ?? '' })}</p>
       )}
 
       {/* Suggestions list */}
@@ -245,6 +248,7 @@ export interface PlaylistSelectModalProps {
 }
 
 export function PlaylistSelectModal({ word, translation, userId, translations, nativeLanguageCode, targetLanguageCode, onClose, onSelect }: PlaylistSelectModalProps) {
+  const { t, tPlural } = useT()
   const [playlists, setPlaylists] = useState<Array<{ id: string; name: string; word_count: number }>>([])
   const [isLoading, setIsLoading] = useState(true)
   const [newPlaylistName, setNewPlaylistName] = useState('')
@@ -333,7 +337,7 @@ export function PlaylistSelectModal({ word, translation, userId, translations, n
       onSelect(playlist.id)
     } catch (err) {
       console.error('Create playlist error:', err)
-      setError(err instanceof Error ? err.message : 'Failed to create playlist')
+      setError(err instanceof Error ? err.message : t('playlistSelect.createFailed'))
       setIsCreating(false)
     }
   }
@@ -368,7 +372,7 @@ export function PlaylistSelectModal({ word, translation, userId, translations, n
       onSelect(playlistId)
     } catch (err) {
       console.error('Add to playlist error:', err)
-      setError(err instanceof Error ? err.message : 'Failed to add word to playlist')
+      setError(err instanceof Error ? err.message : t('playlistSelect.addFailed'))
       setIsAdding(null)
     }
   }
@@ -378,7 +382,7 @@ export function PlaylistSelectModal({ word, translation, userId, translations, n
       <div className="bg-gray-900 border border-white/20 rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md flex flex-col max-h-[90vh]">
         {/* Header */}
         <div className="p-4 border-b border-white/10 flex items-center justify-between flex-shrink-0">
-          <h3 className="text-white font-semibold text-lg">Add to Playlist</h3>
+          <h3 className="text-white font-semibold text-lg">{t('playlistSelect.title')}</h3>
           <button
             onClick={onClose}
             className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all"
@@ -400,7 +404,7 @@ export function PlaylistSelectModal({ word, translation, userId, translations, n
               type="text"
               value={newPlaylistName}
               onChange={(e) => setNewPlaylistName(e.target.value)}
-              placeholder="New playlist name..."
+              placeholder={t('playlistSelect.newPlaceholder')}
               className="flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-blue-400/50"
             />
             <button
@@ -408,7 +412,7 @@ export function PlaylistSelectModal({ word, translation, userId, translations, n
               disabled={!newPlaylistName.trim() || isCreating}
               className="bg-blue-500 text-white px-4 py-2 rounded-lg font-medium text-sm hover:bg-blue-600 disabled:opacity-50 transition-all"
             >
-              {isCreating ? '...' : 'Create'}
+              {isCreating ? '...' : t('playlistSelect.create')}
             </button>
           </div>
         </div>
@@ -422,8 +426,8 @@ export function PlaylistSelectModal({ word, translation, userId, translations, n
           ) : playlists.length === 0 ? (
             <div className="text-center py-8">
               <Icon icon="solar:folder-with-files-bold-duotone" className="w-12 h-12 text-white/20 mx-auto mb-2" />
-              <p className="text-white/40 text-sm">No playlists yet</p>
-              <p className="text-white/30 text-xs">Create your first playlist above</p>
+              <p className="text-white/40 text-sm">{t('playlistSelect.empty')}</p>
+              <p className="text-white/30 text-xs">{t('playlistSelect.emptyHint')}</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -444,7 +448,7 @@ export function PlaylistSelectModal({ word, translation, userId, translations, n
                     )}
                     <span className={addedTo === playlist.id ? 'text-green-300 font-medium' : 'text-white font-medium'}>{playlist.name}</span>
                   </div>
-                  <span className={addedTo === playlist.id ? 'text-green-400/60 text-sm' : 'text-white/40 text-sm'}>{addedTo === playlist.id ? 'Added!' : `${playlist.word_count} words`}</span>
+                  <span className={addedTo === playlist.id ? 'text-green-400/60 text-sm' : 'text-white/40 text-sm'}>{addedTo === playlist.id ? t('playlistSelect.added') : tPlural('playlistSelect.wordCount', playlist.word_count)}</span>
                 </button>
               ))}
             </div>

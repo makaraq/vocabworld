@@ -5,6 +5,7 @@ import { createPortal } from "react-dom"
 import { Icon } from "@iconify/react"
 import { useAuth } from "@/contexts/auth-context"
 import { getFlagIcon } from "@/utils/flags"
+import { useT } from "@/components/providers/translation-provider"
 
 interface LeaderboardEntry {
   rank: number
@@ -29,6 +30,7 @@ export function LeaderboardModal({
   targetLanguageCode,
   targetLanguageName,
 }: LeaderboardModalProps) {
+  const { t } = useT()
   const { user } = useAuth()
   const [period, setPeriod] = useState<'week' | 'alltime'>('week')
   const [scope, setScope] = useState<'language' | 'global'>('language')
@@ -243,7 +245,7 @@ export function LeaderboardModal({
   const getDisplayName = (entry: LeaderboardEntry) => {
     if (entry.firstName) return entry.firstName
     const hash = entry.displayId.slice(0, 4).toUpperCase()
-    return `Learner #${hash}`
+    return t('leaderboard.learnerHash', { hash })
   }
 
   const renderRow = (entry: LeaderboardEntry) => (
@@ -283,7 +285,7 @@ export function LeaderboardModal({
         }`}>
           {getDisplayName(entry)}
           {entry.isCurrentUser && !entry.firstName && (
-            <span className="text-blue-300/70 text-xs ml-1.5">(you)</span>
+            <span className="text-blue-300/70 text-xs ml-1.5">{t('leaderboard.you')}</span>
           )}
         </p>
       </div>
@@ -291,7 +293,7 @@ export function LeaderboardModal({
       <div className="flex items-center gap-3 flex-shrink-0">
         <div className="text-right">
           <span className="text-white font-bold text-sm">{entry.wordsPlayed.toLocaleString()}</span>
-          <span className="text-white/40 text-xs ml-1">plays</span>
+          <span className="text-white/40 text-xs ml-1">{t('leaderboard.plays')}</span>
         </div>
         <div className="flex items-center gap-0.5">
           <Icon icon="solar:fire-bold" width="14" className="text-orange-400" />
@@ -304,7 +306,7 @@ export function LeaderboardModal({
   if (!open || typeof document === 'undefined') return null
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-end justify-center" role="dialog" aria-modal="true" aria-label="Leaderboard">
+    <div className="fixed inset-0 z-50 flex items-end justify-center" role="dialog" aria-modal="true" aria-label={t('leaderboard.title')}>
       <div
         ref={backdropRef}
         className={`absolute inset-0 bg-black/50 backdrop-blur-md transition-opacity duration-300 ${
@@ -330,20 +332,20 @@ export function LeaderboardModal({
         <div data-drag-handle className="flex items-center justify-between px-5 pt-2 pb-3 cursor-grab active:cursor-grabbing">
           <h2 className="text-white font-bold text-lg tracking-wide flex items-center gap-2">
             <Icon icon="solar:cup-star-bold" width="22" className="text-yellow-400" />
-            Leaderboard
+            {t('leaderboard.title')}
           </h2>
           <button
             onClick={animateClose}
             className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:bg-white/20 transition-all cursor-pointer"
-            aria-label="Close leaderboard"
+            aria-label={t('leaderboard.aria.close')}
           >
             <Icon icon="solar:close-circle-bold" width="20" height="20" />
           </button>
         </div>
 
         <div className="px-5 pb-3 space-y-2">
-          <div className="flex bg-black/20 border border-white/10 rounded-xl overflow-hidden" role="tablist" aria-label="Leaderboard time period">
-            {([['week', 'This Week'], ['alltime', 'All Time']] as const).map(([key, label]) => (
+          <div className="flex bg-black/20 border border-white/10 rounded-xl overflow-hidden" role="tablist" aria-label={t('leaderboard.aria.period')}>
+            {([['week', t('leaderboard.thisWeek')], ['alltime', t('leaderboard.allTime')]] as const).map(([key, label]) => (
               <button
                 key={key}
                 onClick={() => setPeriod(key)}
@@ -359,7 +361,7 @@ export function LeaderboardModal({
             ))}
           </div>
 
-          <div className="flex bg-black/20 border border-white/10 rounded-xl overflow-hidden" role="tablist" aria-label="Leaderboard scope">
+          <div className="flex bg-black/20 border border-white/10 rounded-xl overflow-hidden" role="tablist" aria-label={t('leaderboard.aria.scope')}>
             <button
               onClick={() => setScope('language')}
               className={`flex-1 py-2 text-xs font-semibold transition-all flex items-center justify-center gap-1.5 ${
@@ -367,7 +369,7 @@ export function LeaderboardModal({
               }`}
               role="tab"
               aria-selected={scope === 'language'}
-              aria-label={`${targetLanguageName} leaderboard`}
+              aria-label={t('leaderboard.aria.languageBoard', { language: targetLanguageName })}
             >
               <Icon icon={getFlagIcon(targetLanguageCode)} width="14" />
               {targetLanguageName}
@@ -379,10 +381,10 @@ export function LeaderboardModal({
               }`}
               role="tab"
               aria-selected={scope === 'global'}
-              aria-label="Global leaderboard"
+              aria-label={t('leaderboard.aria.globalBoard')}
             >
               <Icon icon="solar:global-bold" width="14" />
-              Global
+              {t('leaderboard.global')}
             </button>
           </div>
         </div>
@@ -395,8 +397,8 @@ export function LeaderboardModal({
           ) : entries.length === 0 ? (
             <div className="text-center py-12">
               <Icon icon="solar:cup-star-bold" width="40" className="text-white/20 mx-auto mb-3" />
-              <p className="text-white/40 text-sm">No activity yet</p>
-              <p className="text-white/25 text-xs mt-1">Start learning to appear on the leaderboard!</p>
+              <p className="text-white/40 text-sm">{t('leaderboard.noActivity')}</p>
+              <p className="text-white/25 text-xs mt-1">{t('leaderboard.noActivityHint')}</p>
             </div>
           ) : (
             <div className="space-y-1.5">
@@ -408,7 +410,7 @@ export function LeaderboardModal({
             <>
               <div className="flex items-center gap-2 py-2 px-3">
                 <div className="flex-1 h-px bg-white/10" />
-                <span className="text-white/30 text-[10px]">Your position</span>
+                <span className="text-white/30 text-[10px]">{t('leaderboard.yourPosition')}</span>
                 <div className="flex-1 h-px bg-white/10" />
               </div>
               {renderRow(currentUserRank)}

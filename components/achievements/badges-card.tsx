@@ -7,8 +7,10 @@ import { getUnlocked, UnlockedRecord } from '@/lib/achievements/storage'
 import { useAuth } from '@/contexts/auth-context'
 import { openBadgesGallery, subscribeUnlock } from '@/lib/achievements/engine'
 import { hapticsLight } from '@/lib/haptics'
+import { useT } from '@/components/providers/translation-provider'
 
 export function BadgesCard() {
+  const { t, tRaw } = useT()
   const { user } = useAuth()
   const [unlocked, setUnlocked] = useState<UnlockedRecord[]>([])
   const [holding, setHolding] = useState(false)
@@ -43,7 +45,7 @@ export function BadgesCard() {
       className={`bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 xs:p-3.5 sm:p-4 border border-white/20 w-full hover:bg-white/15 transition-all ${
         holding ? 'scale-[1.03]' : 'scale-100'
       }`}
-      aria-label={`Badges: ${count} of ${total} unlocked`}
+      aria-label={t('badges.card.aria', { count, total })}
     >
         <div className="flex items-start justify-between mb-1.5 xs:mb-1.5 sm:mb-2">
           <div className="w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center">
@@ -57,7 +59,7 @@ export function BadgesCard() {
                   className={`w-5 h-5 xs:w-6 xs:h-6 sm:w-6 sm:h-6 rounded-full bg-gradient-to-br ${tierGradient(
                     a.tier,
                   )} ring-2 ring-black/20 flex items-center justify-center`}
-                  title={a.title}
+                  title={tRaw(`achievements.${a.id}.title`)}
                 >
                   <Icon icon={a.icon} width="11" height="11" className="text-white" />
                 </div>
@@ -69,7 +71,7 @@ export function BadgesCard() {
           {count}
           <span className="text-white/50 text-sm xs:text-base sm:text-base font-medium"> / {total}</span>
         </div>
-        <div className="text-xs xs:text-sm sm:text-sm text-white/90">Badges</div>
+        <div className="text-xs xs:text-sm sm:text-sm text-white/90">{t('badges.card.label')}</div>
     </button>
   )
 }

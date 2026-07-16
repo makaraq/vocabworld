@@ -2,6 +2,7 @@ import type React from "react"
 import type { Metadata, Viewport } from "next"
 import { Space_Grotesk } from "next/font/google"
 import { AuthProvider } from "@/contexts/auth-context"
+import { TranslationProvider } from "@/components/providers/translation-provider"
 import { AchievementProvider } from "@/components/achievements/achievement-provider"
 import { OfflineBanner } from "@/components/offline-banner"
 import { OfflineProvider } from "@/components/providers/offline-provider"
@@ -62,11 +63,13 @@ export default function RootLayout({
       </head>
       <body className="font-sans" style={{ fontFamily: "var(--font-space-grotesk)" }}>
         <AuthProvider>
-          <AchievementProvider>
-            <OfflineProvider />
-            <OfflineBanner />
-            {children}
-          </AchievementProvider>
+          <TranslationProvider>
+            <AchievementProvider>
+              <OfflineProvider />
+              <OfflineBanner />
+              {children}
+            </AchievementProvider>
+          </TranslationProvider>
         </AuthProvider>
       </body>
     </html>

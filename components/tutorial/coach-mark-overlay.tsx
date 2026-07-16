@@ -3,6 +3,7 @@
 import React, { useEffect, useLayoutEffect, useState, useCallback, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { Icon } from '@iconify/react'
+import { useT } from '@/components/providers/translation-provider'
 
 export interface CoachMarkStep {
   selector: string
@@ -31,6 +32,7 @@ const TOOLTIP_GAP = 14
 const VIEWPORT_MARGIN = 16
 
 export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
+  const { t } = useT()
   const [mounted, setMounted] = useState(false)
   const [stepIndex, setStepIndex] = useState(0)
   const [rect, setRect] = useState<Rect | null>(null)
@@ -222,9 +224,9 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
             <button
               onClick={onSkip}
               className="text-white/50 text-xs font-medium active:text-white/80 transition-colors"
-              aria-label="Skip tutorial"
+              aria-label={t('tutorial.skip.aria')}
             >
-              Skip
+              {t('tutorial.skip')}
             </button>
           </div>
 
@@ -241,24 +243,24 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
           {/* Footer */}
           <div className="flex items-center justify-between pt-1">
             <span className="text-white/40 text-xs tabular-nums">
-              {stepIndex + 1} of {steps.length}
+              {t('tutorial.stepOf', { current: stepIndex + 1, total: steps.length })}
             </span>
             <div className="flex items-center gap-2">
               {stepIndex > 0 && (
                 <button
                   onClick={handleBack}
                   className="text-white/60 text-sm font-medium px-3 py-2 rounded-xl active:bg-white/5 transition-all"
-                  aria-label="Previous tutorial step"
+                  aria-label={t('tutorial.back.aria')}
                 >
-                  Back
+                  {t('tutorial.back')}
                 </button>
               )}
               <button
                 onClick={handleNext}
                 className="bg-blue-500 hover:bg-blue-400 active:bg-blue-600 text-white text-sm font-semibold rounded-xl px-5 py-2.5 transition-all shadow-lg shadow-blue-500/25 flex items-center gap-1.5"
-                aria-label={isLast ? 'Finish tutorial' : 'Next tutorial step'}
+                aria-label={isLast ? t('tutorial.finish.aria') : t('tutorial.next.aria')}
               >
-                {isLast ? 'Got it' : 'Next'}
+                {isLast ? t('tutorial.finish') : t('tutorial.next')}
                 <Icon
                   icon={isLast ? 'solar:check-circle-bold' : 'solar:arrow-right-bold'}
                   width="14"

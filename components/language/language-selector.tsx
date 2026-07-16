@@ -7,7 +7,10 @@ import { useAuth } from "@/contexts/auth-context"
 import { ProgressStats } from "@/components/progress/progress-stats"
 import { SearchWordLearning } from "@/components/learning/search-word-learning"
 import { PaywallModal } from "@/components/paywall/paywall-modal"
-import { ExampleSentencesModal } from "@/components/learning/example-sentences-modal"
+import { ExampleSentencesModal, prefetchExampleSentences } from "@/components/learning/example-sentences-modal"
+import { readCached, writeCached } from "@/lib/instant-cache"
+import { idbGet, idbPut } from "@/lib/offline/offline-storage"
+import { normalizeLangParam, vocabKey } from "@/lib/offline/offline-manager"
 import { PlaylistSelectModal } from "@/components/learning/search-word-learning"
 import { ManageAccountModal } from "@/components/account/manage-account-modal"
 import { useNotifications } from "@/hooks/use-notifications"
@@ -24,53 +27,63 @@ import {
   evaluateTimeContext,
   findNextTopicAfter,
 } from "@/lib/achievements/engine"
+import { useT } from "@/components/providers/translation-provider"
+import type { UiKey, UiVars } from "@/lib/i18n/ui-strings"
 
-const TUTORIAL_STEPS: CoachMarkStep[] = [
-  {
-    selector: '[data-tour="topic-grid"] > button:first-child',
-    title: 'Pick a topic to start',
-    body: 'Tap any topic tile to begin learning vocabulary. New words come with audio, translations, and example sentences.',
-    padding: 4,
-  },
-  {
-    selector: '[data-tour="section-nav"]',
-    title: 'Swipe between sections',
-    body: 'Drag these dots or swipe the screen to explore everyday topics, work, travel, your saved words, and your account.',
-    placement: 'top',
-    padding: 8,
-  },
-  {
-    selector: '[data-tour="language-switcher"]',
-    title: 'Switch languages anytime',
-    body: 'Tap either side to change your native or target language. Your progress is saved per language pair.',
-    placement: 'top',
-    padding: 6,
-  },
-]
+type TFn = (key: UiKey, vars?: UiVars) => string
 
-const LEARNING_TUTORIAL_STEPS: CoachMarkStep[] = [
-  {
-    selector: '[data-tour="learning-flashcards"]',
-    title: 'Each word in two languages',
-    body: 'The top card shows the word you\'re learning. Below is the translation in your native language. Tap and hold either card to focus.',
-    placement: 'bottom',
-    padding: 6,
-  },
-  {
-    selector: '[data-tour="learning-controls"]',
-    title: 'Move at your own pace',
-    body: 'Tap play to hear pronunciation, or use the arrows to step forward and back. Take as long as you need on each word.',
-    placement: 'top',
-    padding: 10,
-  },
-  {
-    selector: '[data-tour="learning-settings"]',
-    title: 'Make it yours',
-    body: 'Open settings to adjust playback speed, turn auto-play on or off, and customize how the audio plays — so you can learn the way that works for you.',
-    placement: 'bottom',
-    padding: 6,
-  },
-]
+// Coach-mark content comes from the ui-strings catalog so tours follow the
+// user's main language. Built per-render via useMemo(getTutorialSteps(t), [t]).
+function getTutorialSteps(t: TFn): CoachMarkStep[] {
+  return [
+    {
+      selector: '[data-tour="topic-grid"] > button:first-child',
+      title: t('tutorial.topics.1.title'),
+      body: t('tutorial.topics.1.body'),
+      padding: 4,
+    },
+    {
+      selector: '[data-tour="section-nav"]',
+      title: t('tutorial.topics.2.title'),
+      body: t('tutorial.topics.2.body'),
+      placement: 'top',
+      padding: 8,
+    },
+    {
+      selector: '[data-tour="language-switcher"]',
+      title: t('tutorial.topics.3.title'),
+      body: t('tutorial.topics.3.body'),
+      placement: 'top',
+      padding: 6,
+    },
+  ]
+}
+
+function getLearningTutorialSteps(t: TFn): CoachMarkStep[] {
+  return [
+    {
+      selector: '[data-tour="learning-flashcards"]',
+      title: t('tutorial.learning.1.title'),
+      body: t('tutorial.learning.1.body'),
+      placement: 'bottom',
+      padding: 6,
+    },
+    {
+      selector: '[data-tour="learning-controls"]',
+      title: t('tutorial.learning.2.title'),
+      body: t('tutorial.learning.2.body'),
+      placement: 'top',
+      padding: 10,
+    },
+    {
+      selector: '[data-tour="learning-settings"]',
+      title: t('tutorial.learning.3.title'),
+      body: t('tutorial.learning.3.body'),
+      placement: 'bottom',
+      padding: 6,
+    },
+  ]
+}
 
 declare global {
   interface Window {
@@ -272,6 +285,8 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
   setShowManageAccount,
   sections
 }) => {
+  const { t, tPlural } = useT()
+
   // ── Ref-based drag state (no re-renders during drag → 60 fps) ──
   const sliderRef = useRef<HTMLDivElement | null>(null)
 
@@ -541,7 +556,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                     className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white py-3 xs:py-3.5 px-4 rounded-2xl font-semibold text-sm hover:bg-white/15 transition-all flex items-center justify-center space-x-2"
                   >
                     <Icon icon="solar:user-circle-bold" width="18" height="18" className="text-white/70" />
-                    <span>Manage Account</span>
+                    <span>{t('accountSection.manageAccount')}</span>
                     <Icon icon="solar:alt-arrow-right-bold" width="16" height="16" className="text-white/40 ml-auto" />
                   </button>
                 </div>
@@ -560,7 +575,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                       onTopicSelect({ id: -1, name: 'Search Word', icon: '' } as Topic)
                     }}
                     className="flex-shrink-0 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl sm:rounded-2xl p-4 sm:p-5 text-center hover:bg-white/15 transition-colors duration-300 shadow-lg relative"
-                    aria-label="Search for a word and get its translation"
+                    aria-label={t('myWords.searchWord.aria')}
                   >
 
                     <div className="flex flex-col items-center justify-center gap-3">
@@ -568,8 +583,8 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                         <Icon icon="solar:magnifer-bold" width="32" height="32" className="sm:w-10 sm:h-10 text-white" />
                       </div>
                       <div>
-                        <p className="text-white text-lg sm:text-xl font-semibold">Search Word</p>
-                        <p className="text-white/60 text-sm mt-1">Find any word & get translation</p>
+                        <p className="text-white text-lg sm:text-xl font-semibold">{t('myWords.searchWord')}</p>
+                        <p className="text-white/60 text-sm mt-1">{t('myWords.searchWordDesc')}</p>
                       </div>
                     </div>
                   </button>
@@ -579,12 +594,12 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                     <div className="flex items-center justify-between mb-3 flex-shrink-0">
                       <h3 className="text-white font-semibold text-base sm:text-lg flex items-center gap-2">
                         <Icon icon="solar:playlist-bold" width="20" height="20" className="text-blue-400" />
-                        My Playlists
+                        {t('myWords.myPlaylists')}
                       </h3>
                       <button
                         onClick={onCreatePlaylist}
                         className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-all"
-                        aria-label="Create new playlist"
+                        aria-label={t('myWords.createPlaylist.aria')}
                       >
                         <Icon icon="solar:add-circle-bold" width="20" height="20" className="text-white/80" />
                       </button>
@@ -596,7 +611,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                       {isLoadingPlaylists && (
                         <div className="text-center py-6">
                           <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-2" />
-                          <p className="text-white/50 text-sm">Loading playlists...</p>
+                          <p className="text-white/50 text-sm">{t('myWords.loadingPlaylists')}</p>
                         </div>
                       )}
                       
@@ -604,8 +619,8 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                       {!isLoadingPlaylists && userPlaylists.length === 0 && (
                         <div className="text-center py-6">
                           <Icon icon="solar:folder-with-files-bold-duotone" width="48" height="48" className="text-white/30 mx-auto mb-3" />
-                          <p className="text-white/50 text-sm">No playlists yet</p>
-                          <p className="text-white/40 text-xs mt-1">Search words and add them to playlists</p>
+                          <p className="text-white/50 text-sm">{t('myWords.noPlaylists')}</p>
+                          <p className="text-white/40 text-xs mt-1">{t('myWords.noPlaylistsHint')}</p>
                         </div>
                       )}
                       
@@ -625,7 +640,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                               <Icon icon={playlist.icon || "solar:playlist-minimalistic-2-linear"} width="22" height="22" className="text-blue-400 flex-shrink-0" />
                               <div className="flex-1 min-w-0">
                                 <p className="text-white font-medium truncate">{playlist.name}</p>
-                                <p className="text-white/50 text-xs">{playlist.word_count || 0} words</p>
+                                <p className="text-white/50 text-xs">{tPlural('myWords.wordCount', playlist.word_count || 0)}</p>
                               </div>
                               <Icon icon="solar:alt-arrow-right-linear" width="16" height="16" className="text-white/40 flex-shrink-0" />
                             </button>
@@ -656,7 +671,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
         data-tour="section-nav"
         className="flex justify-center gap-3 mt-3 pb-2 pt-2 px-4 flex-shrink-0 cursor-grab active:cursor-grabbing"
         role="tablist"
-        aria-label="Language learning sections"
+        aria-label={t('sections.aria.nav')}
         onTouchStart={(e) => {
           e.preventDefault()
           dots.current = { startX: e.touches[0].clientX, endX: null, dragging: false }
@@ -739,7 +754,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
               role="tab"
               aria-selected={index === currentSection}
               aria-controls={`section-panel-${index}`}
-              aria-label={`Navigate to ${section.name} section`}
+              aria-label={t('sections.aria.navigateTo', { section: section.name })}
               id={`section-tab-${index}`}
               onClick={() => {
                 if (!drag.current.dragging && !drag.current.transitioning && !dots.current.dragging) {
@@ -774,7 +789,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
               {/* Show the section name only for the active dot to avoid overlap */}
               {index === currentSection && (index === 0 || index === 1) && (
                 <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs text-white/80 whitespace-nowrap">
-                  {index === 0 ? 'Account' : 'First Aid'}
+                  {index === 0 ? t('sections.dot.account') : t('sections.dot.firstAid')}
                 </span>
               )}
             </button>
@@ -788,6 +803,10 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
 type PageState = "native" | "target" | "confirmation" | "learning"
 
 export function LanguageSelector() {
+  const { t, tPlural, setUiLanguage } = useT()
+  const tutorialSteps = useMemo(() => getTutorialSteps(t), [t])
+  const learningTutorialSteps = useMemo(() => getLearningTutorialSteps(t), [t])
+
   // Custom sign out handler that resets to first page
   const handleSignOut = async () => {
     try {
@@ -1005,9 +1024,14 @@ export function LanguageSelector() {
 
   // 💾 Persist language selection so the app reopens on the topic page
   useEffect(() => {
-    if (nativeLanguageCode) localStorage.setItem('nativeLanguageCode', nativeLanguageCode)
+    if (nativeLanguageCode) {
+      localStorage.setItem('nativeLanguageCode', nativeLanguageCode)
+      // Keep the UI-string language in sync with the chosen main language
+      // (fires on both manual selection and cold-start restore).
+      void setUiLanguage(nativeLanguageCode)
+    }
     if (targetLanguageCode) localStorage.setItem('targetLanguageCode', targetLanguageCode)
-  }, [nativeLanguageCode, targetLanguageCode])
+  }, [nativeLanguageCode, targetLanguageCode, setUiLanguage])
 
   // 🔄 Restore last language selection on every cold start (and after payment)
   useEffect(() => {
@@ -1038,11 +1062,20 @@ export function LanguageSelector() {
     }
   }, [user?.id, targetLanguageCode]);
 
-  // 📋 Fetch playlists function - can be called from child components
+  // 📋 Fetch playlists function - can be called from child components.
+  // The last known playlists paint immediately from localStorage and the
+  // fetch refreshes them silently — the loading state only exists for the
+  // very first load on a device.
   const refreshPlaylists = useCallback(async () => {
     if (!user?.id || !nativeLanguageCode || !targetLanguageCode) return
-    
-    setIsLoadingPlaylists(true)
+
+    const cacheKey = `playlists:${user.id}:${nativeLanguageCode}:${targetLanguageCode}`
+    const cached = readCached<any[]>(cacheKey)
+    if (cached) {
+      setUserPlaylists(cached)
+    } else {
+      setIsLoadingPlaylists(true)
+    }
     try {
       const response = await fetch(
         `/api/playlists?userId=${user.id}&sourceLanguageCode=${nativeLanguageCode}&targetLanguageCode=${targetLanguageCode}`
@@ -1050,6 +1083,7 @@ export function LanguageSelector() {
       if (response.ok) {
         const data = await response.json()
         setUserPlaylists(data.playlists || [])
+        writeCached(cacheKey, data.playlists || [])
       }
     } catch (error) {
       console.error('Error fetching playlists:', error)
@@ -1058,12 +1092,18 @@ export function LanguageSelector() {
     }
   }, [user?.id, nativeLanguageCode, targetLanguageCode])
 
-  // 📋 Fetch playlists when MY WORDS section is visible or languages change
+  // 📋 Prefetch playlists as soon as user + languages are known so the
+  // MY WORDS section is already populated before the user swipes to it.
+  useEffect(() => {
+    refreshPlaylists()
+  }, [refreshPlaylists])
+
+  // 📋 Refresh (silently) whenever the MY WORDS section becomes visible
   useEffect(() => {
     // MY WORDS section is index 7 (8th section, 0-based)
     const MY_WORDS_SECTION_INDEX = 7
     if (currentSection !== MY_WORDS_SECTION_INDEX) return
-    
+
     refreshPlaylists()
   }, [currentSection, refreshPlaylists]);
 
@@ -2400,29 +2440,38 @@ export function LanguageSelector() {
     vocabularyCache: {}
   })
 
-  // Load data from JSON file (reordered topics) on mount
+  // Load data from JSON file (reordered topics) on mount.
+  // The last known topics list paints immediately from localStorage; the
+  // network fetch below just refreshes it silently, so after the very first
+  // launch the topic grid never shows a loading state.
   useEffect(() => {
+    const applyTopics = (topicsData: Topic[]) => {
+      setTopics(topicsData)
+      setDataCache(prev => ({
+        ...prev,
+        topics: topicsData
+      }))
+    }
+
+    const cachedTopics = readCached<Topic[]>('topics')
+    const hasCache = Array.isArray(cachedTopics) && cachedTopics.length > 0
+    if (hasCache) applyTopics(cachedTopics!)
+
     const loadData = async () => {
-      setIsLoading(true)
+      if (!hasCache) setIsLoading(true)
       try {
         // Load topics from API endpoint to ensure it works in production
         const topicsResponse = await fetch('/api/topics')
         const topicsData = await topicsResponse.json()
-        setTopics(topicsData)
-        setDataCache(prev => ({
-          ...prev,
-          topics: topicsData
-        }))
+        applyTopics(topicsData)
+        writeCached('topics', topicsData)
       } catch (error) {
         console.error('Failed to load data:', error)
         // Fallback to database if JSON file fails
         try {
           const topicsData = await getTopics()
-          setTopics(topicsData)
-          setDataCache(prev => ({
-            ...prev,
-            topics: topicsData
-          }))
+          applyTopics(topicsData)
+          writeCached('topics', topicsData)
         } catch (dbError) {
           console.error('Failed to load data from database:', dbError)
         }
@@ -2556,6 +2605,8 @@ export function LanguageSelector() {
         // Reset server-side resume position so handleTopicSelect starts at 0.
         const resetThenOpen = async () => {
           if (userId && langCode) {
+            // Reset the local mirror first — handleTopicSelect reads it.
+            writeCached(`pos:${userId}:${cur.id}:${langCode}`, 0)
             try {
               await fetch('/api/progress/position', {
                 method: 'POST',
@@ -2584,6 +2635,10 @@ export function LanguageSelector() {
     if (!user?.id || !selectedTopic || !targetLanguageCode || vocabulary.length === 0) {
       return
     }
+
+    // Mirror the position locally right away (synchronous) — this is what
+    // lets handleTopicSelect resume instantly without asking the server.
+    writeCached(`pos:${user.id}:${selectedTopic.id}:${targetLanguageCode}`, currentWordIndex)
 
     // Clear any existing timeout
     if (savePositionTimeoutRef.current) {
@@ -2680,46 +2735,72 @@ export function LanguageSelector() {
     }
   }, [settingsInitialized, settings.showPhonetics, vocabulary.length, targetLanguageCode, nativeLanguageCode, selectedTopic?.id])
 
-  // Smart background preloading - invisible to user
+  // 📖 Warm the example-sentences cache for the word on screen so the modal
+  // opens instantly with no loading state. Debounced slightly so flipping
+  // quickly through words doesn't fire a request per word.
+  useEffect(() => {
+    if (currentPage !== 'learning' || vocabulary.length === 0) return
+    const word = vocabulary[currentWordIndex]
+    if (!word?.id || !nativeLanguageCode || !targetLanguageCode) return
+    const timer = setTimeout(() => {
+      prefetchExampleSentences(word.id, targetLanguageCode, nativeLanguageCode)
+    }, 250)
+    return () => clearTimeout(timer)
+  }, [currentPage, vocabulary, currentWordIndex, nativeLanguageCode, targetLanguageCode])
+
+  // Smart background preloading - invisible to user.
+  // Downloads every topic's full vocabulary into IndexedDB (same keys/shape
+  // as the offline pack "words" phase), so opening any topic reads locally
+  // and never shows a loading state. Topics already stored are skipped, so
+  // after the first session this loop is pure cache hits and no network.
+  const preloadedPairRef = useRef<string | null>(null)
   const preloadVocabularyInBackground = async (nativeLang: string, targetLang: string) => {
     if (!dataCache.topics.length) return
-    
-    
-    // Preload vocabulary for all topics with these languages (sequential to avoid overwhelming DB)
-    const topicsToPreload = dataCache.topics.slice(0, 3); // Reduced from 5 to 3 topics
-    
-    for (const topic of topicsToPreload) {
-      const cacheKey = `${topic.id}-${targetLang}-${nativeLang}`
-      
-      if (!dataCache.vocabularyCache[cacheKey]) {
-        try {
-          const vocabularyResponse = await getVocabularyForTopic(
-            topic.id,
-            targetLang,
-            nativeLang,
-            100, // Reduced from 10000 to 100 for faster initial load
-            0
-          )
-          
-          setDataCache(prev => ({
-            ...prev,
-            vocabularyCache: {
-              ...prev.vocabularyCache,
-              [cacheKey]: vocabularyResponse.vocabulary || []
-            }
-          }))
-          
-          
-          // Small delay between requests to avoid overwhelming the database
-          await new Promise(resolve => setTimeout(resolve, 100));
-          
-        } catch (error) {
-          console.error(`Failed to cache vocabulary for topic ${topic.id}:`, error)
-        }
+    if (typeof navigator !== 'undefined' && !navigator.onLine) return
+
+    const learnCode = normalizeLangParam(targetLang)
+    const natCode = normalizeLangParam(nativeLang)
+    const pairKey = `${natCode}>${learnCode}`
+    if (preloadedPairRef.current === pairKey) return
+    preloadedPairRef.current = pairKey
+
+    for (const topic of dataCache.topics) {
+      if (typeof topic.id !== 'number' || topic.id <= 0) continue
+      try {
+        const existing = await idbGet<{ json: any }>('data', vocabKey(topic.id, learnCode, natCode))
+        if (Array.isArray(existing?.json?.vocabulary) && existing.json.vocabulary.length > 0) continue
+
+        const vocabularyResponse = await getVocabularyForTopic(
+          topic.id,
+          targetLang,
+          nativeLang,
+          1000, // Full topic, same params as the learn flow and offline packs
+          0
+        )
+        await idbPut('data', {
+          key: vocabKey(topic.id, learnCode, natCode),
+          json: vocabularyResponse,
+          savedAt: Date.now(),
+        })
+
+        // Space requests out so preloading never competes with the UI
+        await new Promise(resolve => setTimeout(resolve, 250));
+      } catch (error) {
+        // Network dropped or storage full — stop and let a later call retry
+        console.error(`Failed to preload vocabulary for topic ${topic.id}:`, error)
+        preloadedPairRef.current = null
+        return
       }
     }
-    
   }
+
+  // Kick off preloading whenever the topic grid is reachable with a chosen
+  // language pair (covers both fresh selection and cold-start restore).
+  useEffect(() => {
+    if (currentPage !== 'confirmation' && currentPage !== 'learning') return
+    if (!nativeLanguage || !targetLanguage || !dataCache.topics.length) return
+    preloadVocabularyInBackground(nativeLanguage, targetLanguage)
+  }, [currentPage, nativeLanguage, targetLanguage, dataCache.topics.length]) // eslint-disable-line react-hooks/exhaustive-deps
   // Vocabulary is now preloaded in handleTopicSelect before page transition
   /*
   useEffect(() => {
@@ -3343,104 +3424,129 @@ export function LanguageSelector() {
 
     // User has access, proceed with topic selection
     const cacheKey = `${topic.id}-${targetLanguage}-${nativeLanguage}`
-    
-    // Load saved position for this topic (if user is authenticated)
-    let savedPosition = 0
-    if (user?.id && targetLanguageCode) {
+    const learnCode = normalizeLangParam(targetLanguage)
+    const natCode = normalizeLangParam(nativeLanguage)
+
+    // Resume position: the local mirror (written on every position save)
+    // answers synchronously, so opening a topic never waits on the network
+    // for it. The server is only asked the first time a topic is opened on
+    // this device — and then in parallel with the vocabulary load.
+    const posKey = user?.id && targetLanguageCode
+      ? `pos:${user.id}:${topic.id}:${targetLanguageCode}`
+      : null
+    const mirroredPosition = posKey ? readCached<number>(posKey) : null
+    const fetchSavedPosition = async (): Promise<number> => {
+      if (mirroredPosition != null) return mirroredPosition
+      if (!posKey || !user?.id) return 0
       try {
         const positionResponse = await fetch(`/api/progress/position?userId=${user.id}&topicId=${topic.id}&targetLanguageCode=${targetLanguageCode}`)
         if (positionResponse.ok) {
           const positionData = await positionResponse.json()
-          savedPosition = positionData.currentWordIndex || 0
-        } else {
+          const position = positionData.currentWordIndex || 0
+          writeCached(posKey, position)
+          return position
         }
       } catch (error) {
         console.error('Failed to load saved position:', error)
       }
-    } else {
+      return 0
     }
-    
-    // Check if we have cached vocabulary
-    if (dataCache.vocabularyCache[cacheKey]) {
-      
-      // Set data from cache instantly
-      const cachedVocabulary = dataCache.vocabularyCache[cacheKey]
-      setVocabulary(cachedVocabulary)
-      setTotalWords(cachedVocabulary.length)
-      setCurrentOffset(cachedVocabulary.length)
+
+    // Shared open path once vocabulary + resume position are known
+    const openTopic = (vocab: VocabularyWord[], totalWordCount: number, savedPosition: number) => {
+      setVocabulary(vocab)
+      setTotalWords(totalWordCount)
+      setCurrentOffset(vocab.length)
       setHasMoreWords(false)
-      setCurrentWordIndex(savedPosition) // Resume from saved position
+      setCurrentWordIndex(savedPosition < vocab.length ? savedPosition : 0) // Resume from saved position
       setSelectedTopic(topic)
-      
+
       // Reset audio states
       setIsPlaying(false)
       setCurrentAudioStep('idle')
       setAutoPlayActive(false)
       autoPlayRef.current = false
-      
+
       // Instant transition
       setIsTransitioning(true)
       setTimeout(() => {
         setCurrentPage("learning")
         setIsTransitioning(false)
       }, 150)
-      
-    } else {
-      // Fallback: load data if not cached (should be rare)
-      setIsLoading(true)
-      
-      try {
-        const vocabularyResponse = await getVocabularyForTopic(
+    }
+
+    // 1) In-memory cache (topics already opened this session) — instant
+    const inMemoryVocab = dataCache.vocabularyCache[cacheKey]
+    if (inMemoryVocab && inMemoryVocab.length > 0) {
+      openTopic(inMemoryVocab, inMemoryVocab.length, await fetchSavedPosition())
+      return
+    }
+
+    // 2) IndexedDB (background preload / offline pack / earlier session) —
+    // reads locally in a few ms, so this is instant too
+    try {
+      const stored = await idbGet<{ json: any }>('data', vocabKey(topic.id, learnCode, natCode))
+      const storedVocab: VocabularyWord[] | undefined = stored?.json?.vocabulary
+      if (Array.isArray(storedVocab) && storedVocab.length > 0) {
+        setDataCache(prev => ({
+          ...prev,
+          vocabularyCache: {
+            ...prev.vocabularyCache,
+            [cacheKey]: storedVocab
+          }
+        }))
+        setPhonetics({})
+        openTopic(storedVocab, stored?.json?.totalWords ?? storedVocab.length, await fetchSavedPosition())
+        return
+      }
+    } catch {}
+
+    // 3) Network — only the very first open of a topic on this device, and
+    // the position lookup runs in parallel instead of blocking beforehand
+    setIsLoading(true)
+
+    try {
+      const [vocabularyResponse, savedPosition] = await Promise.all([
+        getVocabularyForTopic(
           topic.id,
           targetLanguage,
           nativeLanguage,
           1000, // Increased to handle larger topics like Common Phrases (838 words)
           0
-        )
-        
-        // Cache for future use
-        setDataCache(prev => ({
-          ...prev,
-          vocabularyCache: {
-            ...prev.vocabularyCache,
-            [cacheKey]: vocabularyResponse.vocabulary || []
-          }
-        }))
-        
-        // Set all data at once
-        setVocabulary(vocabularyResponse.vocabulary || [])
-        setTotalWords(vocabularyResponse.totalWords || 0)
-        setCurrentOffset(vocabularyResponse.vocabulary?.length || 0)
-        setHasMoreWords(false)
-        setCurrentWordIndex(savedPosition) // Resume from saved position
-        setSelectedTopic(topic)
-        
-        // Clear and refetch phonetics for new vocabulary
-        setPhonetics({})
-        if (settings.showPhonetics) {
-          fetchPhonetics(vocabularyResponse.vocabulary || [], targetLanguageCode, nativeLanguageCode)
+        ),
+        fetchSavedPosition(),
+      ])
+
+      const fetchedVocab = vocabularyResponse.vocabulary || []
+
+      // Cache for future use (memory + IndexedDB so it stays instant across sessions)
+      setDataCache(prev => ({
+        ...prev,
+        vocabularyCache: {
+          ...prev.vocabularyCache,
+          [cacheKey]: fetchedVocab
         }
-        
-        // Reset audio states
-        setIsPlaying(false)
-        setCurrentAudioStep('idle')
-        setAutoPlayActive(false)
-        autoPlayRef.current = false
-        
-        // Transition to learning page
-        setIsTransitioning(true)
-        setTimeout(() => {
-          setCurrentPage("learning")
-          setIsTransitioning(false)
-          setIsLoading(false)
-        }, 150)
-        
-      } catch (error) {
-        console.error('Failed to load vocabulary:', error)
-        setIsLoading(false)
-        setSelectedTopic(topic)
-        setCurrentPage("learning")
+      }))
+      idbPut('data', {
+        key: vocabKey(topic.id, learnCode, natCode),
+        json: vocabularyResponse,
+        savedAt: Date.now(),
+      }).catch(() => {})
+
+      // Clear and refetch phonetics for new vocabulary
+      setPhonetics({})
+      if (settings.showPhonetics) {
+        fetchPhonetics(fetchedVocab, targetLanguageCode, nativeLanguageCode)
       }
+
+      openTopic(fetchedVocab, vocabularyResponse.totalWords || 0, savedPosition)
+      setTimeout(() => setIsLoading(false), 150)
+
+    } catch (error) {
+      console.error('Failed to load vocabulary:', error)
+      setIsLoading(false)
+      setSelectedTopic(topic)
+      setCurrentPage("learning")
     }
   }
 
@@ -3733,11 +3839,11 @@ export function LanguageSelector() {
       } else {
         const error = await response.json()
         console.error('Failed to create playlist:', error)
-        alert(error.error || 'Failed to create playlist')
+        alert(error.error || t('playlistSelect.createFailed'))
       }
     } catch (error) {
       console.error('Error creating playlist:', error)
-      alert('Failed to create playlist')
+      alert(t('playlistSelect.createFailed'))
     } finally {
       setIsCreatingPlaylist(false)
     }
@@ -4159,7 +4265,7 @@ export function LanguageSelector() {
         onTouchMove={(e) => handleTopicHoldMove(e)}
         onTouchEnd={() => handleTopicHoldEnd()}
         onTouchCancel={() => handleTopicHoldEnd()}
-        aria-label={`${getTopicDisplayName(topic.id, topic.name)} topic${isCompleted ? ', completed' : ''}`}
+        aria-label={isCompleted ? t('learning.aria.topicCompleted', { topic: getTopicDisplayName(topic.id, topic.name) }) : t('learning.aria.topic', { topic: getTopicDisplayName(topic.id, topic.name) })}
         aria-pressed={selectedTopic?.id === topic.id}
         className={`bg-black/40 rounded-xl xs:rounded-2xl sm:rounded-2xl p-3 xs:p-4 sm:p-5 text-center hover:bg-black/50 h-32 xs:h-36 sm:h-40 shadow-lg scale-100 transition-[transform,background-color] duration-150 ease-out ${
           !hideCompletionBorder && selectedTopic?.id === topic.id ? "bg-black/60 shadow-xl" : ""
@@ -4201,13 +4307,6 @@ export function LanguageSelector() {
   return (
     <div className="w-full max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-2 sm:px-3 h-full max-h-[95vh] flex items-center">
       <div className={`bg-white/5 backdrop-blur-3xl border border-white/15 rounded-2xl sm:rounded-3xl px-3 sm:px-5 md:px-7 py-4 sm:py-5 md:py-6 shadow-2xl w-full max-h-full overflow-hidden ${isTransitioning ? 'bg-white/10' : 'bg-white/5'}`}>
-        {isLoading && (
-          <div className="text-center mb-4">
-            <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-            <p className="text-white/60 text-sm mt-2">Loading...</p>
-          </div>
-        )}
-        
         {currentPage === "learning" && selectedTopic?.id === -1 && (
           /* Search Word Learning - Custom word search mode */
           <div 
@@ -4304,7 +4403,7 @@ export function LanguageSelector() {
                     <p className="text-white/60 text-sm">
                       {(() => {
                         const progress = getCategoryProgress()
-                        return `${progress.current} of ${progress.total} words`
+                        return t('learning.wordsProgress', { current: progress.current, total: progress.total })
                       })()}
                     </p>
                     <div className="w-full bg-white/10 rounded-full h-2 mt-2">
@@ -4330,7 +4429,7 @@ export function LanguageSelector() {
                       onClick={handlePreviousCategory}
                       className="w-8 h-8 bg-white/5 border border-white/10 rounded-full flex items-center justify-center hover:bg-white/10 transition-all duration-200 transform hover:scale-110"
                       disabled={vocabulary.length === 0}
-                      title="Previous category"
+                      title={t('learning.aria.prevCategory')}
                     >
                       <ChevronLeft className="w-4 h-4 text-white/60" />
                     </button>
@@ -4344,7 +4443,7 @@ export function LanguageSelector() {
                       onClick={handleNextCategory}
                       className="w-8 h-8 bg-white/5 border border-white/10 rounded-full flex items-center justify-center hover:bg-white/10 transition-all duration-200 transform hover:scale-110"
                       disabled={vocabulary.length === 0}
-                      aria-label="Next category"
+                      aria-label={t('learning.aria.nextCategory')}
                     >
                       <ChevronRight className="w-4 h-4 text-white/60" aria-hidden="true" />
                     </button>
@@ -4358,7 +4457,7 @@ export function LanguageSelector() {
                 onTouchStart={(e) => e.stopPropagation()}
                 aria-live="polite"
                 aria-atomic="true"
-                aria-label={`Word ${currentWordIndex + 1} of ${vocabulary.length}`}
+                aria-label={t('learning.aria.wordOf', { current: currentWordIndex + 1, total: vocabulary.length })}
               >
                 <div
                   role="region"
@@ -4396,7 +4495,7 @@ export function LanguageSelector() {
                   </div>
                   <p className="text-white text-2xl font-medium">{getCurrentContent().sourceWord}</p>
                   {settings.showPhonetics && phonetics[currentWordIndex]?.target && (
-                    <p className="text-white/50 text-sm italic mt-2" aria-label={`Pronunciation: ${phonetics[currentWordIndex].target}`}>/{phonetics[currentWordIndex].target}/</p>
+                    <p className="text-white/50 text-sm italic mt-2" aria-label={t('learning.aria.pronunciation', { ipa: phonetics[currentWordIndex].target })}>/{phonetics[currentWordIndex].target}/</p>
                   )}
                 </div>
                 <div
@@ -4443,7 +4542,7 @@ export function LanguageSelector() {
                     onClick={handleBackToTopics}
                     className="bg-white/20 backdrop-blur-sm border border-white/30 hover:bg-white/30 text-white font-medium rounded-2xl h-12 px-8"
                   >
-                    Try Different Topic or Languages
+                    {t('learning.tryDifferent')}
                   </Button>
                 </div>
               ) : (
@@ -4453,7 +4552,7 @@ export function LanguageSelector() {
                     onTouchStart={() => setHoldingNavButton('previous')}
                     onTouchEnd={() => setHoldingNavButton(null)}
                     onTouchCancel={() => setHoldingNavButton(null)}
-                    aria-label={`Go to previous word${vocabulary.length > 0 ? ': ' + vocabulary[Math.max(0, currentWordIndex - 1)]?.targetWord : ''}`}
+                    aria-label={vocabulary.length > 0 ? t('learning.aria.prevWordNamed', { word: vocabulary[Math.max(0, currentWordIndex - 1)]?.targetWord ?? '' }) : t('learning.aria.prevWord')}
                     className={`w-14 h-14 bg-black/40 border border-white/20 rounded-full flex items-center justify-center hover:bg-black/50 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 ${
                       holdingNavButton === 'previous' ? 'scale-105 transition-all duration-75' : 'scale-100 transition-all duration-300 hover:scale-110'
                     } ${isPlaying || autoPlayActive ? 'opacity-30 cursor-not-allowed' : ''}`}
@@ -4467,7 +4566,7 @@ export function LanguageSelector() {
                     onTouchStart={() => setHoldingNavButton('play')}
                     onTouchEnd={() => setHoldingNavButton(null)}
                     onTouchCancel={() => setHoldingNavButton(null)}
-                    aria-label={isPlaying || autoPlayActive ? 'Stop audio playback' : `Play pronunciation of ${vocabulary[currentWordIndex]?.targetWord || 'current word'} in ${targetLanguage}`}
+                    aria-label={isPlaying || autoPlayActive ? t('learning.aria.stopAudio') : t('learning.aria.playWordIn', { word: vocabulary[currentWordIndex]?.targetWord || '', language: getTranslatedLanguageName(targetLanguageCode) })}
                     aria-pressed={isPlaying || autoPlayActive}
                     className={`w-16 h-16 border border-white/20 rounded-full flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 ${
                       isPlaying || autoPlayActive
@@ -4494,7 +4593,7 @@ export function LanguageSelector() {
                     onTouchStart={() => setHoldingNavButton('next')}
                     onTouchEnd={() => setHoldingNavButton(null)}
                     onTouchCancel={() => setHoldingNavButton(null)}
-                    aria-label={`Go to next word${vocabulary.length > 0 ? ': ' + vocabulary[Math.min(vocabulary.length - 1, currentWordIndex + 1)]?.targetWord : ''}`}
+                    aria-label={vocabulary.length > 0 ? t('learning.aria.nextWordNamed', { word: vocabulary[Math.min(vocabulary.length - 1, currentWordIndex + 1)]?.targetWord ?? '' }) : t('learning.aria.nextWord')}
                     className={`w-14 h-14 bg-black/40 border border-white/20 rounded-full flex items-center justify-center hover:bg-black/50 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 ${
                       holdingNavButton === 'next' ? 'scale-105 transition-all duration-75' : 'scale-100 transition-all duration-300 hover:scale-110'
                     } ${isPlaying || autoPlayActive ? 'opacity-30 cursor-not-allowed' : ''}`}
@@ -4522,7 +4621,7 @@ export function LanguageSelector() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="bg-black/40 border border-white/20 rounded-2xl h-12 text-white placeholder:text-white/60 focus:border-white/30 focus:ring-0 pl-12 text-base shadow-lg"
-                  placeholder="Search languages..."
+                  placeholder={t('learning.searchLanguages')}
                 />
               </div>
             </div>
@@ -4645,15 +4744,15 @@ export function LanguageSelector() {
             <div className="space-y-6 sm:space-y-8">
               {/* Playback Options */}
               <div>
-                <h3 className="text-lg sm:text-xl font-medium text-white mb-3 sm:mb-4">Settings</h3>
+                <h3 className="text-lg sm:text-xl font-medium text-white mb-3 sm:mb-4">{t('settings.title')}</h3>
                 <div className="space-y-4 sm:space-y-5">
                   <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
                         <Icon icon="solar:play-circle-bold" width="20" height="20" className="text-white/60 flex-shrink-0" />
-                        <p className="text-white text-base">Auto-play</p>
+                        <p className="text-white text-base">{t('settings.autoplay.label')}</p>
                       </div>
-                      <p className="text-white/50 text-sm mt-0.5">Automatically play audio when words change</p>
+                      <p className="text-white/50 text-sm mt-0.5">{t('settings.autoplay.desc')}</p>
                     </div>
                     <button
                       onClick={() => updateSetting("autoPlay", !settings.autoPlay)}
@@ -4673,9 +4772,9 @@ export function LanguageSelector() {
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
                         <Icon icon="solar:volume-loud-bold" width="20" height="20" className="text-white/60 flex-shrink-0" />
-                        <p className="text-white text-base">Play target language only</p>
+                        <p className="text-white text-base">{t('settings.targetOnly.label')}</p>
                       </div>
-                      <p className="text-white/50 text-sm mt-0.5">Skip native language translation</p>
+                      <p className="text-white/50 text-sm mt-0.5">{t('settings.targetOnly.desc')}</p>
                     </div>
                     <button
                       onClick={() => updateSetting("playTargetOnly", !settings.playTargetOnly)}
@@ -4695,9 +4794,9 @@ export function LanguageSelector() {
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
                         <Icon icon="solar:text-bold" width="20" height="20" className="text-white/60 flex-shrink-0" />
-                        <p className="text-white text-base">Show phonetic pronunciation</p>
+                        <p className="text-white text-base">{t('settings.phonetics.label')}</p>
                       </div>
-                      <p className="text-white/50 text-sm mt-0.5">Display IPA pronunciation guide</p>
+                      <p className="text-white/50 text-sm mt-0.5">{t('settings.phonetics.desc')}</p>
                     </div>
                     <button
                       onClick={() => updateSetting("showPhonetics", !settings.showPhonetics)}
@@ -4721,9 +4820,9 @@ export function LanguageSelector() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <Icon icon="solar:rewind-back-bold" width="20" height="20" className="text-white/60 flex-shrink-0" />
-                      <p className="text-white text-base font-medium">Rewind</p>
+                      <p className="text-white text-base font-medium">{t('settings.rewind.label')}</p>
                     </div>
-                    <p className="text-white/50 text-sm mt-0.5">Replay a set of words on a loop</p>
+                    <p className="text-white/50 text-sm mt-0.5">{t('settings.rewind.desc')}</p>
                   </div>
                   <button
                     onClick={() => updateSetting("rewindEnabled", !settings.rewindEnabled)}
@@ -4750,9 +4849,9 @@ export function LanguageSelector() {
                       className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
                     />
                     <div className="flex justify-between text-white/60 text-sm mt-2">
-                      <span>2 words</span>
-                      <span className="text-white font-medium">{settings.rewindAfterWords} words</span>
-                      <span>20 words</span>
+                      <span>{tPlural('settings.words', 2)}</span>
+                      <span className="text-white font-medium">{tPlural('settings.words', settings.rewindAfterWords)}</span>
+                      <span>{tPlural('settings.words', 20)}</span>
                     </div>
                   </div>
                 )}
@@ -4760,16 +4859,17 @@ export function LanguageSelector() {
 
               {/* Pace Section */}
               <div>
-                <h3 className="text-lg sm:text-xl font-medium text-white mb-3 sm:mb-4">Pace</h3>
+                <h3 className="text-lg sm:text-xl font-medium text-white mb-3 sm:mb-4">{t('settings.pace')}</h3>
 
                 <div className="space-y-4 sm:space-y-6">
                   <div>
                     <div className="flex items-center gap-2 mb-2 sm:mb-3">
                       <Icon icon="solar:soundwave-bold" width="20" height="20" className="text-white/60 flex-shrink-0" />
-                      <p className="text-white text-base">Pronunciation speed</p>
+                      <p className="text-white text-base">{t('settings.speed.label')}</p>
                     </div>
                     <div className="flex gap-2 sm:gap-3">
-                      {["Slow", "Normal", "Fast"].map((speed) => (
+                      {/* Stored value stays the English keyword — only the label is translated */}
+                      {([["Slow", t('settings.speed.slow')], ["Normal", t('settings.speed.normal')], ["Fast", t('settings.speed.fast')]] as const).map(([speed, label]) => (
                         <button
                           key={speed}
                           onClick={() => {
@@ -4781,7 +4881,7 @@ export function LanguageSelector() {
                               : "bg-black/20 border border-white/10 text-white/70 hover:bg-black/30"
                           }`}
                         >
-                          {speed}
+                          {label}
                         </button>
                       ))}
                     </div>
@@ -4790,7 +4890,7 @@ export function LanguageSelector() {
                   <div>
                     <div className="flex items-center gap-2 mb-2 sm:mb-3">
                       <Icon icon="solar:pause-circle-bold" width="20" height="20" className="text-white/60 flex-shrink-0" />
-                      <p className="text-white text-base">Pause between translations</p>
+                      <p className="text-white text-base">{t('settings.pauseTranslations.label')}</p>
                     </div>
                     <div className="bg-black/20 backdrop-blur-sm border border-white/10 rounded-xl p-3 sm:p-4">
                       <input
@@ -4803,9 +4903,9 @@ export function LanguageSelector() {
                         className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
                       />
                       <div className="flex justify-between text-white/60 text-sm mt-2">
-                        <span>0.2s</span>
-                        <span className="text-white font-medium">{settings.pauseBetweenTranslations}s</span>
-                        <span>10s</span>
+                        <span>{t('settings.seconds', { n: 0.2 })}</span>
+                        <span className="text-white font-medium">{t('settings.seconds', { n: settings.pauseBetweenTranslations })}</span>
+                        <span>{t('settings.seconds', { n: 10 })}</span>
                       </div>
                     </div>
                   </div>
@@ -4813,7 +4913,7 @@ export function LanguageSelector() {
                   <div>
                     <div className="flex items-center gap-2 mb-2 sm:mb-3">
                       <Icon icon="solar:skip-next-bold" width="20" height="20" className="text-white/60 flex-shrink-0" />
-                      <p className="text-white text-base">Pause before next word</p>
+                      <p className="text-white text-base">{t('settings.pauseNextWord.label')}</p>
                     </div>
                     <div className="bg-black/20 backdrop-blur-sm border border-white/10 rounded-xl p-3 sm:p-4">
                       <input
@@ -4826,9 +4926,9 @@ export function LanguageSelector() {
                         className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
                       />
                       <div className="flex justify-between text-white/60 text-sm mt-2">
-                        <span>0.2s</span>
-                        <span className="text-white font-medium">{settings.pauseForNextWord}s</span>
-                        <span>10s</span>
+                        <span>{t('settings.seconds', { n: 0.2 })}</span>
+                        <span className="text-white font-medium">{t('settings.seconds', { n: settings.pauseForNextWord })}</span>
+                        <span>{t('settings.seconds', { n: 10 })}</span>
                       </div>
                     </div>
                   </div>
@@ -4836,7 +4936,7 @@ export function LanguageSelector() {
                   <div>
                     <div className="flex items-center gap-2 mb-2 sm:mb-3">
                       <Icon icon="solar:repeat-bold" width="20" height="20" className="text-white/60 flex-shrink-0" />
-                      <p className="text-white text-base">Repeat target language</p>
+                      <p className="text-white text-base">{t('settings.repeatTarget.label')}</p>
                     </div>
                     <div className="bg-black/20 backdrop-blur-sm border border-white/10 rounded-xl p-3 sm:p-4">
                       <input
@@ -4849,9 +4949,9 @@ export function LanguageSelector() {
                         className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
                       />
                       <div className="flex justify-between text-white/60 text-sm mt-2">
-                        <span>1x</span>
-                        <span className="text-white font-medium">{settings.repeatTargetLanguage}x</span>
-                        <span>5x</span>
+                        <span>{t('settings.times', { n: 1 })}</span>
+                        <span className="text-white font-medium">{t('settings.times', { n: settings.repeatTargetLanguage })}</span>
+                        <span>{t('settings.times', { n: 5 })}</span>
                       </div>
                     </div>
                   </div>
@@ -4859,7 +4959,7 @@ export function LanguageSelector() {
                   <div>
                     <div className="flex items-center gap-2 mb-2 sm:mb-3">
                       <Icon icon="solar:repeat-one-bold" width="20" height="20" className="text-white/60 flex-shrink-0" />
-                      <p className="text-white text-base">Repeat main language</p>
+                      <p className="text-white text-base">{t('settings.repeatMain.label')}</p>
                     </div>
                     <div className="bg-black/20 backdrop-blur-sm border border-white/10 rounded-xl p-3 sm:p-4">
                       <input
@@ -4872,9 +4972,9 @@ export function LanguageSelector() {
                         className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
                       />
                       <div className="flex justify-between text-white/60 text-sm mt-2">
-                        <span>1x</span>
-                        <span className="text-white font-medium">{settings.repeatMainLanguage}x</span>
-                        <span>5x</span>
+                        <span>{t('settings.times', { n: 1 })}</span>
+                        <span className="text-white font-medium">{t('settings.times', { n: settings.repeatMainLanguage })}</span>
+                        <span>{t('settings.times', { n: 5 })}</span>
                       </div>
                     </div>
                   </div>
@@ -4887,7 +4987,7 @@ export function LanguageSelector() {
               onClick={handleSettingsClose}
               className="w-full mt-6 sm:mt-8 bg-black/20 backdrop-blur-sm border border-white/10 hover:bg-black/30 text-white font-medium rounded-xl sm:rounded-2xl h-11 sm:h-12"
             >
-              Done
+              {t('common.done')}
             </Button>
           </div>
         </div>
@@ -4898,7 +4998,7 @@ export function LanguageSelector() {
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-gray-900 border border-white/20 rounded-2xl w-full max-w-md p-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-white font-semibold text-lg">Create New Playlist</h3>
+              <h3 className="text-white font-semibold text-lg">{t('createPlaylist.title')}</h3>
               <button
                 onClick={() => {
                   setShowCreatePlaylistModal(false)
@@ -4912,7 +5012,7 @@ export function LanguageSelector() {
             
             <div className="mb-4">
               <p className="text-white/60 text-sm mb-2">
-                This playlist will be for <span className="text-blue-400">{getTranslatedLanguageName(nativeLanguageCode)}</span> → <span className="text-green-400">{getTranslatedLanguageName(targetLanguageCode)}</span>
+                {t('createPlaylist.forPair')} <span className="text-blue-400">{getTranslatedLanguageName(nativeLanguageCode)}</span> → <span className="text-green-400">{getTranslatedLanguageName(targetLanguageCode)}</span>
               </p>
             </div>
             
@@ -4921,7 +5021,7 @@ export function LanguageSelector() {
                 type="text"
                 value={newPlaylistName}
                 onChange={(e) => setNewPlaylistName(e.target.value.slice(0, 22))}
-                placeholder="Enter playlist name..."
+                placeholder={t('createPlaylist.placeholder')}
                 maxLength={22}
                 className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white outline-none focus:border-blue-400/50"
                 autoFocus
@@ -4944,7 +5044,7 @@ export function LanguageSelector() {
                 }}
                 className="flex-1 py-3 bg-white/10 hover:bg-white/20 rounded-lg text-white font-medium transition-all"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 onClick={handleCreatePlaylist}
@@ -4954,10 +5054,10 @@ export function LanguageSelector() {
                 {isCreatingPlaylist ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Creating...
+                    {t('createPlaylist.creating')}
                   </>
                 ) : (
-                  'Create Playlist'
+                  t('createPlaylist.create')
                 )}
               </button>
             </div>
@@ -5041,7 +5141,7 @@ export function LanguageSelector() {
       {/* First-time coach-mark tutorial (home / topic grid) */}
       <CoachMarkOverlay
         open={showTutorial}
-        steps={TUTORIAL_STEPS}
+        steps={tutorialSteps}
         onComplete={handleTutorialDone}
         onSkip={handleTutorialDone}
       />
@@ -5049,7 +5149,7 @@ export function LanguageSelector() {
       {/* First-time coach-mark tutorial (inside a topic) */}
       <CoachMarkOverlay
         open={showLearningTutorial}
-        steps={LEARNING_TUTORIAL_STEPS}
+        steps={learningTutorialSteps}
         onComplete={handleLearningTutorialDone}
         onSkip={handleLearningTutorialDone}
       />

@@ -6,16 +6,10 @@ import { Icon } from '@iconify/react'
 import Lottie from 'lottie-react'
 import { hapticsSuccess } from '@/lib/haptics'
 import trophyAnim from '@/lib/animations/trophy.json'
+import { useT } from '@/components/providers/translation-provider'
 
-const CONGRATS_LINES = [
-  'Nice work — you finished',
-  'You nailed it — you completed',
-  'Way to go — you wrapped up',
-  'Solid effort — you finished',
-  'Great job — you conquered',
-  'Well done — you completed',
-  'Impressive — you mastered',
-]
+// Number of congrats.{i} keys in the ui-strings catalog.
+const CONGRATS_COUNT = 7
 
 interface NextTopicInfo {
   id: number
@@ -43,11 +37,12 @@ export function TopicCompleteModal({
   onQuizAction,
   onCloseAction,
 }: Props) {
+  const { t, tRaw } = useT()
   const [shown, setShown] = useState(false)
   const [animKey, setAnimKey] = useState(0)
 
   const congratsLine = useMemo(
-    () => CONGRATS_LINES[Math.floor(Math.random() * CONGRATS_LINES.length)],
+    () => tRaw(`congrats.${Math.floor(Math.random() * CONGRATS_COUNT)}`),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [open],
   )
@@ -95,7 +90,7 @@ export function TopicCompleteModal({
         </div>
 
         <h2 className="text-2xl font-bold text-white mb-2 tracking-wide drop-shadow-lg">
-          Topic Complete!
+          {t('topicComplete.title')}
         </h2>
         <p className="text-white/90 text-base mb-1 drop-shadow">{congratsLine}</p>
         <p className="text-white font-semibold text-lg mb-6 drop-shadow-lg">{topicName}</p>
@@ -104,7 +99,7 @@ export function TopicCompleteModal({
           <>
             <div className="bg-white/5 border border-white/15 rounded-xl px-4 py-3 mb-5">
               <div className="text-[11px] uppercase tracking-wider text-white/60 mb-0.5">
-                Up next
+                {t('topicComplete.upNext')}
               </div>
               <div className="flex items-center justify-center gap-2">
                 {nextTopicIcon && (
@@ -131,7 +126,7 @@ export function TopicCompleteModal({
                 onClick={onContinueAction}
                 className="w-full bg-white text-gray-900 font-semibold py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 shadow-lg hover:bg-gray-50 transition-all transform hover:scale-[1.02]"
               >
-                Continue to {nextTopic.name}
+                {t('topicComplete.continueTo', { topic: nextTopic.name })}
                 <Icon icon="solar:arrow-right-bold" width="18" height="18" />
               </button>
               <button
@@ -139,14 +134,14 @@ export function TopicCompleteModal({
                 className="w-full bg-gradient-to-r from-blue-500/20 to-cyan-500/20 backdrop-blur-sm border border-blue-400/30 text-white font-medium py-3 px-6 rounded-xl flex items-center justify-center gap-2 hover:from-blue-500/30 hover:to-cyan-500/30 transition-all"
               >
                 <Icon icon="solar:question-circle-bold" width="16" height="16" />
-                Take {topicName} Quiz
+                {t('topicComplete.takeQuiz', { topic: topicName })}
               </button>
               <button
                 onClick={onRepeatAction}
                 className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white font-medium py-3 px-6 rounded-xl flex items-center justify-center gap-2 hover:bg-white/15 transition-all"
               >
                 <Icon icon="solar:refresh-bold" width="16" height="16" />
-                Practice {topicName} again
+                {t('topicComplete.practiceAgain', { topic: topicName })}
               </button>
             </div>
           </>
@@ -154,7 +149,7 @@ export function TopicCompleteModal({
           <div className="space-y-2.5">
             <div className="bg-white/5 border border-white/15 rounded-xl px-4 py-3 mb-5">
               <div className="text-white/90 text-sm">
-                You've completed every topic. Legend status unlocked.
+                {t('topicComplete.allDone')}
               </div>
             </div>
             <button
@@ -162,20 +157,20 @@ export function TopicCompleteModal({
               className="w-full bg-white text-gray-900 font-semibold py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 shadow-lg hover:bg-gray-50 transition-all transform hover:scale-[1.02]"
             >
               <Icon icon="solar:question-circle-bold" width="18" height="18" />
-              Take {topicName} Quiz
+              {t('topicComplete.takeQuiz', { topic: topicName })}
             </button>
             <button
               onClick={onRepeatAction}
               className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white font-medium py-3 px-6 rounded-xl flex items-center justify-center gap-2 hover:bg-white/15 transition-all"
             >
               <Icon icon="solar:refresh-bold" width="16" height="16" />
-              Practice {topicName} again
+              {t('topicComplete.practiceAgain', { topic: topicName })}
             </button>
             <button
               onClick={onCloseAction}
               className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white font-medium py-3 px-6 rounded-xl hover:bg-white/15 transition-all"
             >
-              Back to topics
+              {t('topicComplete.backToTopics')}
             </button>
           </div>
         )}

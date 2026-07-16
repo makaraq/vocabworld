@@ -4,6 +4,7 @@ import { createPortal } from "react-dom"
 import { Icon } from "@iconify/react"
 import { hapticsSuccess, hapticsWarning, hapticsLight } from "@/lib/haptics"
 import { Rating } from "@/lib/sr/fsrs"
+import { useT } from "@/components/providers/translation-provider"
 
 interface QuizCard {
   cardId: number
@@ -30,6 +31,7 @@ export function ReviewQuizModal({
   sourceLanguageCode,
   onClose,
 }: ReviewQuizModalProps) {
+  const { t } = useT()
   const [mounted, setMounted] = useState(false)
   const [cards, setCards] = useState<QuizCard[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -272,10 +274,10 @@ export function ReviewQuizModal({
         {/* Header — title + counter + progress bar */}
         {sessionState !== "complete" && cards.length > 0 && (
           <div className="mb-6">
-            <h2 className="text-lg font-semibold text-white text-center mb-3">Quick Recall</h2>
+            <h2 className="text-lg font-semibold text-white text-center mb-3">{t('quiz.review.title')}</h2>
             <div className="flex items-center justify-between mb-3">
               <div className="text-sm text-white/50">
-                {currentIndex + 1} of {cards.length}
+                {t('quiz.progress', { current: currentIndex + 1, total: cards.length })}
               </div>
             </div>
             <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
@@ -292,7 +294,7 @@ export function ReviewQuizModal({
         {/* Content */}
         {sessionState === "loading" && (
           <div className="flex-1 flex items-center justify-center">
-            <div className="text-white/50 text-lg">Loading review...</div>
+            <div className="text-white/50 text-lg">{t('quiz.review.loading')}</div>
           </div>
         )}
 
@@ -302,7 +304,7 @@ export function ReviewQuizModal({
               {/* Question card */}
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 p-8 text-center relative">
                 <div className="text-sm text-white/50 mb-2">
-                  What does this mean?
+                  {t('quiz.question')}
                 </div>
                 <div className="text-3xl sm:text-4xl font-bold text-white mb-3">
                   {cards[currentIndex].targetWord}
@@ -314,7 +316,7 @@ export function ReviewQuizModal({
                       ? "bg-blue-500/30 border-blue-400/50"
                       : "bg-white/10 border-white/20 hover:bg-white/20"
                   }`}
-                  aria-label={isPlayingAudio ? "Stop audio" : `Play pronunciation of ${cards[currentIndex].targetWord}`}
+                  aria-label={isPlayingAudio ? t('quiz.aria.stopAudio') : t('quiz.aria.playWord', { word: cards[currentIndex].targetWord })}
                 >
                   <Icon
                     icon={isPlayingAudio ? "solar:volume-loud-bold" : "solar:volume-bold"}
@@ -341,7 +343,7 @@ export function ReviewQuizModal({
                       onClick={() => handleAnswer(option)}
                       disabled={selectedOption !== null}
                       className={`py-3.5 px-5 rounded-xl border text-base font-medium transition-all ${getOptionStyle(option)}`}
-                      aria-label={`Answer: ${option}`}
+                      aria-label={t('quiz.aria.answer', { option })}
                     >
                       {option}
                     </button>
@@ -363,7 +365,7 @@ export function ReviewQuizModal({
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-white mb-2">
-                {cards.length === 0 ? "No words to review!" : "Session Complete!"}
+                {cards.length === 0 ? t('quiz.review.noWords') : t('quiz.review.complete')}
               </div>
               {cards.length > 0 && (
                 <div className="space-y-3">
@@ -378,7 +380,7 @@ export function ReviewQuizModal({
                     </div>
                   </div>
                   <div className="text-white/50 text-sm">
-                    {Math.round((correctCount / cards.length) * 100)}% accuracy
+                    {t('quiz.accuracy', { pct: Math.round((correctCount / cards.length) * 100) })}
                   </div>
                 </div>
               )}
@@ -393,13 +395,13 @@ export function ReviewQuizModal({
               onClick={() => { hapticsLight(); onClose() }}
               className="w-full py-3.5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl text-white font-semibold text-base hover:opacity-90 transition-opacity"
             >
-              Done
+              {t('common.done')}
             </button>
           ) : (
             <button
               onPointerUp={() => { hapticsLight(); onClose() }}
               className="w-14 h-14 rounded-full bg-white/10 border border-white/15 flex items-center justify-center"
-              aria-label="Close review quiz"
+              aria-label={t('quiz.review.aria.close')}
             >
               <Icon icon="solar:close-circle-bold" width="28" height="28" className="text-white/50" />
             </button>
