@@ -3326,9 +3326,10 @@ export function LanguageSelector() {
   // page in. Used for topic open ↔ back-to-menu so pages never pop abruptly.
   // beginPageFade() can be called early (on tap) so data loading overlaps the
   // fade-out instead of delaying it; transitionToPage() then only waits out
-  // whatever remains of the 200ms fade. The 50ms delay lets the new page
-  // mount at opacity-0 for one frame so the fade-in transition actually runs
-  // (a batched swap would skip it).
+  // whatever remains of the FADE_MS fade. The 16ms delay is one animation
+  // frame — just enough for the new page to mount at opacity-0 before the
+  // fade-in transition kicks off (a batched swap would skip it).
+  const FADE_MS = 50
   const fadeOutStartRef = useRef(0)
   const beginPageFade = () => {
     fadeOutStartRef.current = Date.now()
@@ -3336,11 +3337,11 @@ export function LanguageSelector() {
   }
   const transitionToPage = (page: "learning" | "confirmation") => {
     if (!fadeOutStartRef.current) beginPageFade()
-    const remaining = Math.max(0, 200 - (Date.now() - fadeOutStartRef.current))
+    const remaining = Math.max(0, FADE_MS - (Date.now() - fadeOutStartRef.current))
     setTimeout(() => {
       fadeOutStartRef.current = 0
       setCurrentPage(page)
-      setTimeout(() => setIsTransitioning(false), 50)
+      setTimeout(() => setIsTransitioning(false), 16)
     }, remaining)
   }
 
@@ -4323,7 +4324,7 @@ export function LanguageSelector() {
         {currentPage === "learning" && selectedTopic?.id === -1 && (
           /* Search Word Learning - Custom word search mode */
           <div
-            className={`transition-opacity duration-200 ease-in-out ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
+            className={`transition-opacity duration-[50ms] ease-in-out ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
             onTouchStart={onTouchStart}
             onTouchMove={onTouchMove}
             onTouchEnd={onTouchEnd}
@@ -4343,7 +4344,7 @@ export function LanguageSelector() {
         
         {currentPage === "learning" && selectedTopic?.id !== -1 && (
           <div
-            className={`text-center transition-opacity duration-200 ease-in-out ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
+            className={`text-center transition-opacity duration-[50ms] ease-in-out ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
             onTouchStart={onTouchStart}
             onTouchMove={onTouchMove}
             onTouchEnd={onTouchEnd}
@@ -4675,7 +4676,7 @@ export function LanguageSelector() {
 
         {/* Page 3: Confirmation */}
         {currentPage === "confirmation" && (
-          <div className={`text-center transition-opacity duration-200 ease-in-out h-full flex flex-col min-h-0 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
+          <div className={`text-center transition-opacity duration-[50ms] ease-in-out h-full flex flex-col min-h-0 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
             {/* iPhone-style sliding topics interface */}
             <div className="flex-1 mb-4 min-h-0 overflow-hidden">
               <TopicSlider 
