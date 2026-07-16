@@ -3322,6 +3322,28 @@ export function LanguageSelector() {
     }, 300)
   }
 
+  // 🎬 Fade the current page out, swap it while hidden, then fade the new
+  // page in. Used for topic open ↔ back-to-menu so pages never pop abruptly.
+  // beginPageFade() can be called early (on tap) so data loading overlaps the
+  // fade-out instead of delaying it; transitionToPage() then only waits out
+  // whatever remains of the 200ms fade. The 50ms delay lets the new page
+  // mount at opacity-0 for one frame so the fade-in transition actually runs
+  // (a batched swap would skip it).
+  const fadeOutStartRef = useRef(0)
+  const beginPageFade = () => {
+    fadeOutStartRef.current = Date.now()
+    setIsTransitioning(true)
+  }
+  const transitionToPage = (page: "learning" | "confirmation") => {
+    if (!fadeOutStartRef.current) beginPageFade()
+    const remaining = Math.max(0, 200 - (Date.now() - fadeOutStartRef.current))
+    setTimeout(() => {
+      fadeOutStartRef.current = 0
+      setCurrentPage(page)
+      setTimeout(() => setIsTransitioning(false), 50)
+    }, remaining)
+  }
+
   const handleTopicSelect = async (topic: Topic) => {
     
     // Special case: Playlist learning - topic id -2
@@ -3388,12 +3410,8 @@ export function LanguageSelector() {
         setAutoPlayActive(false)
         autoPlayRef.current = false
         
-        // Navigate to learning page
-        setIsTransitioning(true)
-        setTimeout(() => {
-          setCurrentPage("learning")
-          setIsTransitioning(false)
-        }, 150)
+        // Navigate to learning page with a fade
+        transitionToPage("learning")
       } catch (error) {
         console.error('Error loading playlist:', error)
       }
@@ -3410,11 +3428,7 @@ export function LanguageSelector() {
       
       // Allow search access
       setSelectedTopic(topic)
-      setIsTransitioning(true)
-      setTimeout(() => {
-        setCurrentPage("learning")
-        setIsTransitioning(false)
-      }, 150)
+      transitionToPage("learning")
       return
     }
     
@@ -3422,7 +3436,10 @@ export function LanguageSelector() {
     // Note: For regular topics called directly (e.g., from post-payment flow), 
     // we trust that the caller has verified access
 
-    // User has access, proceed with topic selection
+    // User has access, proceed with topic selection.
+    // Start fading the topic grid out right away — the cache/position reads
+    // below run while the fade plays, so the transition never feels stalled.
+    beginPageFade()
     const cacheKey = `${topic.id}-${targetLanguage}-${nativeLanguage}`
     const learnCode = normalizeLangParam(targetLanguage)
     const natCode = normalizeLangParam(nativeLanguage)
@@ -3467,12 +3484,8 @@ export function LanguageSelector() {
       setAutoPlayActive(false)
       autoPlayRef.current = false
 
-      // Instant transition
-      setIsTransitioning(true)
-      setTimeout(() => {
-        setCurrentPage("learning")
-        setIsTransitioning(false)
-      }, 150)
+      // Fade over to the learning page
+      transitionToPage("learning")
     }
 
     // 1) In-memory cache (topics already opened this session) — instant
@@ -3540,13 +3553,13 @@ export function LanguageSelector() {
       }
 
       openTopic(fetchedVocab, vocabularyResponse.totalWords || 0, savedPosition)
-      setTimeout(() => setIsLoading(false), 150)
+      setIsLoading(false)
 
     } catch (error) {
       console.error('Failed to load vocabulary:', error)
       setIsLoading(false)
       setSelectedTopic(topic)
-      setCurrentPage("learning")
+      transitionToPage("learning")
     }
   }
 
@@ -3851,31 +3864,31 @@ export function LanguageSelector() {
 
   const handleBackToTopics = async () => {
     hapticsLight()
-    // Save current position before going back
+    // Save current position before going back — fire-and-forget so the back
+    // navigation never waits on the network (the local mirror written by the
+    // auto-save effect already has the position for instant resume).
     if (user?.id && selectedTopic && targetLanguageCode && vocabulary.length > 0) {
-      try {
-        await fetch('/api/progress/position', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            userId: user.id,
-            topicId: selectedTopic.id,
-            targetLanguageCode: targetLanguageCode,
-            currentWordIndex: currentWordIndex,
-            totalWords: vocabulary.length
-          })
+      fetch('/api/progress/position', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.id,
+          topicId: selectedTopic.id,
+          targetLanguageCode: targetLanguageCode,
+          currentWordIndex: currentWordIndex,
+          totalWords: vocabulary.length
         })
-      } catch (error) {
+      }).catch(error => {
         console.error('Failed to save position:', error)
-      }
+      })
     }
-    
+
     // Restore the section where the topic was selected from
     setCurrentSection(lastTopicSectionRef.current)
-    
+
     // Stop any currently playing audio when navigating back
     stopAudio()
-    setCurrentPage("confirmation")
+    transitionToPage("confirmation")
   }
 
   // 🔒 LOCK SCREEN & BACKGROUND PLAYBACK
@@ -4309,7 +4322,8 @@ export function LanguageSelector() {
       <div className={`bg-white/5 backdrop-blur-3xl border border-white/15 rounded-2xl sm:rounded-3xl px-3 sm:px-5 md:px-7 py-4 sm:py-5 md:py-6 shadow-2xl w-full max-h-full overflow-hidden ${isTransitioning ? 'bg-white/10' : 'bg-white/5'}`}>
         {currentPage === "learning" && selectedTopic?.id === -1 && (
           /* Search Word Learning - Custom word search mode */
-          <div 
+          <div
+            className={`transition-opacity duration-200 ease-in-out ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
             onTouchStart={onTouchStart}
             onTouchMove={onTouchMove}
             onTouchEnd={onTouchEnd}
@@ -4328,8 +4342,8 @@ export function LanguageSelector() {
         )}
         
         {currentPage === "learning" && selectedTopic?.id !== -1 && (
-          <div 
-            className="text-center transition-all duration-500 ease-in-out"
+          <div
+            className={`text-center transition-opacity duration-200 ease-in-out ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
             onTouchStart={onTouchStart}
             onTouchMove={onTouchMove}
             onTouchEnd={onTouchEnd}
@@ -4661,7 +4675,7 @@ export function LanguageSelector() {
 
         {/* Page 3: Confirmation */}
         {currentPage === "confirmation" && (
-          <div className="text-center transition-all duration-500 ease-in-out h-full flex flex-col min-h-0">
+          <div className={`text-center transition-opacity duration-200 ease-in-out h-full flex flex-col min-h-0 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
             {/* iPhone-style sliding topics interface */}
             <div className="flex-1 mb-4 min-h-0 overflow-hidden">
               <TopicSlider 

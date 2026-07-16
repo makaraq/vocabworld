@@ -5,6 +5,7 @@ import { hapticsLight } from "@/lib/haptics"
 import { ReviewQuizModal } from "./review-quiz-modal"
 import { REVIEW_SYNCED_EVENT } from "@/lib/offline/review-queue"
 import { useT } from "@/components/providers/translation-provider"
+import { readCached, writeCached } from "@/lib/instant-cache"
 
 interface ReviewCardProps {
   userId?: string
@@ -12,17 +13,39 @@ interface ReviewCardProps {
   nativeLanguageCode: string
 }
 
+interface DueSnapshot {
+  totalDue: number
+  totalCards: number
+}
+
+const dueCacheKey = (userId: string, targetLanguageCode: string) =>
+  `sr-due:${userId}:${targetLanguageCode}`
+
 export function ReviewCard({ userId, targetLanguageCode, nativeLanguageCode }: ReviewCardProps) {
   const { t, tPlural } = useT()
-  const [dueCount, setDueCount] = useState(0)
-  const [totalCards, setTotalCards] = useState(0)
-  const [loading, setLoading] = useState(true)
+  // The card remounts every time the user comes back to the topic grid, so
+  // seed it with the last known counts — the fetch below refreshes silently
+  // and the "Loading" placeholder only exists for the first-ever mount.
+  const seeded = userId && targetLanguageCode
+    ? readCached<DueSnapshot>(dueCacheKey(userId, targetLanguageCode))
+    : null
+  const [dueCount, setDueCount] = useState(seeded?.totalDue ?? 0)
+  const [totalCards, setTotalCards] = useState(seeded?.totalCards ?? 0)
+  const [loading, setLoading] = useState(!seeded && !!userId && !!targetLanguageCode)
   const [showQuiz, setShowQuiz] = useState(false)
 
   useEffect(() => {
     if (!userId || !targetLanguageCode) {
       setLoading(false)
       return
+    }
+
+    const cacheKey = dueCacheKey(userId, targetLanguageCode)
+    const cached = readCached<DueSnapshot>(cacheKey)
+    if (cached) {
+      setDueCount(cached.totalDue)
+      setTotalCards(cached.totalCards)
+      setLoading(false)
     }
 
     const fetchDueCount = async () => {
@@ -34,6 +57,7 @@ export function ReviewCard({ userId, targetLanguageCode, nativeLanguageCode }: R
           const data = await res.json()
           setDueCount(data.totalDue || 0)
           setTotalCards(data.totalCards || 0)
+          writeCached(cacheKey, { totalDue: data.totalDue || 0, totalCards: data.totalCards || 0 })
         }
       } catch {
         // silently fail, show 0
@@ -52,10 +76,16 @@ export function ReviewCard({ userId, targetLanguageCode, nativeLanguageCode }: R
       if (!detail || detail.targetLanguageCode !== targetLanguageCode) return
       if (typeof detail.totalDue === 'number') setDueCount(detail.totalDue)
       if (typeof detail.totalCards === 'number') setTotalCards(detail.totalCards)
+      if (userId && typeof detail.totalDue === 'number' && typeof detail.totalCards === 'number') {
+        writeCached(dueCacheKey(userId, targetLanguageCode), {
+          totalDue: detail.totalDue,
+          totalCards: detail.totalCards,
+        })
+      }
     }
     window.addEventListener(REVIEW_SYNCED_EVENT, onSynced)
     return () => window.removeEventListener(REVIEW_SYNCED_EVENT, onSynced)
-  }, [targetLanguageCode])
+  }, [targetLanguageCode, userId])
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -73,7 +103,14 @@ export function ReviewCard({ userId, targetLanguageCode, nativeLanguageCode }: R
         `/api/sr/due?userId=${userId}&targetLanguageCode=${targetLanguageCode}&countOnly=true`
       )
         .then(res => res.json())
-        .then(data => { setDueCount(data.totalDue || 0); setTotalCards(data.totalCards || 0) })
+        .then(data => {
+          setDueCount(data.totalDue || 0)
+          setTotalCards(data.totalCards || 0)
+          writeCached(dueCacheKey(userId, targetLanguageCode), {
+            totalDue: data.totalDue || 0,
+            totalCards: data.totalCards || 0,
+          })
+        })
         .catch(() => {})
     }
   }
