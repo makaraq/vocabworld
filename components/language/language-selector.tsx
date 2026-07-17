@@ -3322,14 +3322,13 @@ export function LanguageSelector() {
     }, 300)
   }
 
-  // 🎬 Fade the current page out, swap it while hidden, then fade the new
-  // page in. Used for topic open ↔ back-to-menu so pages never pop abruptly.
+  // 🎬 Same dip-and-recover transition as the flag picker (handleLanguageSelect):
+  // 300ms scale/opacity dip, page swapped at the same 300ms mark. Used for
+  // topic open ↔ back-to-menu so pages never pop abruptly.
   // beginPageFade() can be called early (on tap) so data loading overlaps the
-  // fade-out instead of delaying it; transitionToPage() then only waits out
-  // whatever remains of the FADE_MS fade. The 16ms delay is one animation
-  // frame — just enough for the new page to mount at opacity-0 before the
-  // fade-in transition kicks off (a batched swap would skip it).
-  const FADE_MS = 50
+  // dip instead of delaying it; transitionToPage() then only waits out
+  // whatever remains of the FADE_MS window before swapping.
+  const FADE_MS = 300
   const fadeOutStartRef = useRef(0)
   const beginPageFade = () => {
     fadeOutStartRef.current = Date.now()
@@ -3341,7 +3340,7 @@ export function LanguageSelector() {
     setTimeout(() => {
       fadeOutStartRef.current = 0
       setCurrentPage(page)
-      setTimeout(() => setIsTransitioning(false), 16)
+      setIsTransitioning(false)
     }, remaining)
   }
 
@@ -4324,7 +4323,7 @@ export function LanguageSelector() {
         {currentPage === "learning" && selectedTopic?.id === -1 && (
           /* Search Word Learning - Custom word search mode */
           <div
-            className={`transition-opacity duration-[50ms] ease-in-out ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
+            className={`transition-all duration-300 ease-in-out ${isTransitioning ? 'opacity-30 scale-95' : 'opacity-100 scale-100'}`}
             onTouchStart={onTouchStart}
             onTouchMove={onTouchMove}
             onTouchEnd={onTouchEnd}
@@ -4344,7 +4343,7 @@ export function LanguageSelector() {
         
         {currentPage === "learning" && selectedTopic?.id !== -1 && (
           <div
-            className={`text-center transition-opacity duration-[50ms] ease-in-out ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
+            className={`text-center transition-all duration-300 ease-in-out ${isTransitioning ? 'opacity-30 scale-95' : 'opacity-100 scale-100'}`}
             onTouchStart={onTouchStart}
             onTouchMove={onTouchMove}
             onTouchEnd={onTouchEnd}
@@ -4676,7 +4675,7 @@ export function LanguageSelector() {
 
         {/* Page 3: Confirmation */}
         {currentPage === "confirmation" && (
-          <div className={`text-center transition-opacity duration-[50ms] ease-in-out h-full flex flex-col min-h-0 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
+          <div className={`text-center transition-all duration-300 ease-in-out h-full flex flex-col min-h-0 ${isTransitioning ? 'opacity-30 scale-95' : 'opacity-100 scale-100'}`}>
             {/* iPhone-style sliding topics interface */}
             <div className="flex-1 mb-4 min-h-0 overflow-hidden">
               <TopicSlider 
