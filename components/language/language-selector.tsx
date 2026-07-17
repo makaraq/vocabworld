@@ -3255,7 +3255,7 @@ export function LanguageSelector() {
           setCurrentPage("target")
         }
         setIsTransitioning(false)
-      }, 300)
+      }, 200)
     } else if (currentPage === "target") {
       setTargetLanguage(language.name)
       setTargetLanguageCode(language.code)
@@ -3269,7 +3269,7 @@ export function LanguageSelector() {
       setTimeout(() => {
         setCurrentPage("confirmation")
         setIsTransitioning(false)
-      }, 300)
+      }, 200)
     }
     setSearchQuery("")
   }
@@ -3296,7 +3296,7 @@ export function LanguageSelector() {
       }
       setSearchQuery("")
       setIsTransitioning(false)
-    }, 300)
+    }, 200)
   }
 
   const handleLanguageCardClick = (type: "native" | "target") => {
@@ -3319,16 +3319,16 @@ export function LanguageSelector() {
       }
       setSearchQuery("")
       setIsTransitioning(false)
-    }, 300)
+    }, 200)
   }
 
   // 🎬 Same dip-and-recover transition as the flag picker (handleLanguageSelect):
-  // 300ms scale/opacity dip, page swapped at the same 300ms mark. Used for
+  // 200ms scale/opacity dip, page swapped at the same 200ms mark. Used for
   // topic open ↔ back-to-menu so pages never pop abruptly.
   // beginPageFade() can be called early (on tap) so data loading overlaps the
   // dip instead of delaying it; transitionToPage() then only waits out
   // whatever remains of the FADE_MS window before swapping.
-  const FADE_MS = 300
+  const FADE_MS = 200
   const fadeOutStartRef = useRef(0)
   const beginPageFade = () => {
     fadeOutStartRef.current = Date.now()
@@ -4323,7 +4323,7 @@ export function LanguageSelector() {
         {currentPage === "learning" && selectedTopic?.id === -1 && (
           /* Search Word Learning - Custom word search mode */
           <div
-            className={`transition-all duration-300 ease-in-out ${isTransitioning ? 'opacity-30 scale-95' : 'opacity-100 scale-100'}`}
+            className={`transition-all duration-200 ease-in-out ${isTransitioning ? 'opacity-30 scale-95' : 'opacity-100 scale-100'}`}
             onTouchStart={onTouchStart}
             onTouchMove={onTouchMove}
             onTouchEnd={onTouchEnd}
@@ -4343,7 +4343,7 @@ export function LanguageSelector() {
         
         {currentPage === "learning" && selectedTopic?.id !== -1 && (
           <div
-            className={`text-center transition-all duration-300 ease-in-out ${isTransitioning ? 'opacity-30 scale-95' : 'opacity-100 scale-100'}`}
+            className={`text-center transition-all duration-200 ease-in-out ${isTransitioning ? 'opacity-30 scale-95' : 'opacity-100 scale-100'}`}
             onTouchStart={onTouchStart}
             onTouchMove={onTouchMove}
             onTouchEnd={onTouchEnd}
@@ -4623,7 +4623,7 @@ export function LanguageSelector() {
 
         {/* Single interface - only text changes */}
         {currentPage !== "confirmation" && currentPage !== "learning" && (
-          <div className={`text-center mb-12 transition-all duration-300 ease-in-out ${isTransitioning ? 'opacity-30 scale-95' : 'opacity-100 scale-100'}`}>
+          <div className={`text-center mb-12 transition-all duration-200 ease-in-out ${isTransitioning ? 'opacity-30 scale-95' : 'opacity-100 scale-100'}`}>
             <h1 className="text-3xl font-normal text-white mb-8 transition-all duration-500">{questionText}</h1>
 
             {/* Search Bar */}
