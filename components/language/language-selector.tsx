@@ -124,7 +124,7 @@ const QUESTION_TEXT_TRANSLATIONS: Record<string, string> = {
   'da': 'Vælg det sprog, du vil lære',
   'de': 'Wählen Sie die Sprache aus, die Sie lernen möchten',
   'el': 'Επιλέξτε τη γλώσσα που θέλετε να μάθετε',
-  'en': 'Choose the language you want to learn',
+  'en': 'I want to learn',
   'es': 'Elige el idioma que quieres aprender',
   'et': 'Valige keel, mida soovite õppida',
   'eu': 'Aukeratu ikasi nahi duzun hizkuntza',
@@ -3097,7 +3097,7 @@ export function LanguageSelector() {
     if (code && QUESTION_TEXT_TRANSLATIONS[code]) {
       return QUESTION_TEXT_TRANSLATIONS[code]
     }
-    return 'Choose the language you want to learn'
+    return 'I want to learn'
   }
 
   // All 50 languages from Alnilam Audio Library - matching available audio files
