@@ -7,6 +7,7 @@ import { Icon } from "@iconify/react"
 import { getFlagIcon } from "@/utils/flags"
 import { useT } from "@/components/providers/translation-provider"
 import { readCached, writeCached } from "@/lib/instant-cache"
+import { getTopicIcon } from "@/lib/icons/topic-icons"
 
 interface TopicProgress {
   topicId: number
@@ -181,31 +182,6 @@ export function DetailedProgressModal({
     }
   }
 
-  // Custom SVG icons for topics that don't have them in the JSON
-  const customSVGIcons: { [key: number]: string } = {
-    11: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12.74 5.47c2.36 1.03 3.61 3.56 3.18 5.99A6 6 0 0 1 18 16v.17a3 3 0 0 1 1-.17a3 3 0 0 1 3 3a3 3 0 0 1-3 3H6a4 4 0 0 1-4-4a4 4 0 0 1 4-4h.27C5 12.45 4.6 10.24 5.5 8.26a5.49 5.49 0 0 1 7.24-2.79m-.81 1.83c-1.77-.8-3.84.01-4.62 1.77c-.46 1.02-.38 2.15.1 3.06A5.99 5.99 0 0 1 12 10c.7 0 1.38.12 2 .34a3.51 3.51 0 0 0-2.07-3.04"/></svg>',
-    18: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M11 6h2V4h-2zm1 6q-1.9 0-3.625-.788T5 9.45V8q0-.825.588-1.412T7 6h2V3q0-.425.288-.712T10 2h4q.425 0 .713.288T15 3v3h2q.825 0 1.413.588T19 8v1.45q-1.65.975-3.375 1.763T12 12m-5 9q-.825 0-1.412-.587T5 19v-7.3q1.4.85 2.888 1.45t3.112.8V14q0 .425.288.713T12 15t.713-.288T13 14v-.05q1.625-.2 3.113-.8T19 11.7V19q0 .825-.587 1.413T17 21q0 .425-.288.713T16 22q-.4 0-.562-.363T15 21H9q0 .425-.288.713T8 22q-.4 0-.562-.363T7 21"/></svg>'
-  }
-
-  // Get the correct icon for a topic (always returns SVG content)
-  const getTopicIcon = (topic: TopicProgress) => {
-    // First check if topic has an SVG icon from the topics.json data
-    const topicData = topicsData.find(t => t.id === topic.topicId)
-    if (topicData?.icon) {
-      return { content: topicData.icon }
-    }
-    
-    // Check custom SVG icons (same as topic slider)
-    if (customSVGIcons[topic.topicId]) {
-      return { content: customSVGIcons[topic.topicId] }
-    }
-    
-    // Final fallback - default chat icon as SVG
-    return { 
-      content: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>'
-    }
-  }
-
   useEffect(() => {
     if (!isOpen || !user?.id || !targetLanguageCode) {
       setLoading(false)
@@ -373,16 +349,11 @@ export function DetailedProgressModal({
                               <div className="flex items-center gap-3">
                                 {/* Topic Icon */}
                                 <div className={`w-8 h-8 ${topic.isCompleted ? 'bg-green-500/20 border-green-400/40' : 'bg-white/15 border-white/25'} border rounded-lg flex items-center justify-center flex-shrink-0`}>
-                                  {(() => {
-                                    const iconInfo = getTopicIcon(topic)
-                                    return (
-                                      <div 
-                                        className="w-5 h-5 flex items-center justify-center" 
-                                        style={{ color: 'rgba(255,255,255,0.8)' }}
-                                        dangerouslySetInnerHTML={{ __html: iconInfo.content }}
-                                      />
-                                    )
-                                  })()}
+                                  <Icon
+                                    icon={getTopicIcon(topic.topicId)}
+                                    className="w-5 h-5"
+                                    style={{ color: 'rgba(255,255,255,0.8)' }}
+                                  />
                                 </div>
 
                                 {/* Topic Info */}

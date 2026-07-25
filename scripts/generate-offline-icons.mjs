@@ -2,9 +2,10 @@
 // renders — so <Icon> resolves from bundled data instead of fetching
 // api.iconify.design at runtime (which fails offline → missing icons/flags).
 //
-// It scans the source for `solar:*` and `flag:*-1x1` literals, fetches just
-// those from the Iconify API, and writes self-contained collection JSON:
+// It scans the source for `solar:*`, `mdi:*` and `flag:*-1x1` literals, fetches
+// just those from the Iconify API, and writes self-contained collection JSON:
 //   lib/icons/data/solar.json
+//   lib/icons/data/mdi.json
 //   lib/icons/data/flag.json
 // committed to the repo, so no network is needed at build or runtime.
 //
@@ -41,14 +42,17 @@ function walk(dir, acc = []) {
 function collectNames() {
   const files = SCAN_DIRS.flatMap((d) => walk(join(ROOT, d)))
   const solar = new Set()
+  const mdi = new Set()
   const flag = new Set()
   for (const file of files) {
     const text = readFileSync(file, 'utf8')
     for (const m of text.matchAll(/solar:([a-z0-9-]+)/g)) solar.add(m[1])
+    for (const m of text.matchAll(/\bmdi:([a-z0-9-]+)/g)) mdi.add(m[1])
     for (const m of text.matchAll(/flag:([a-z0-9-]+-1x1)/g)) flag.add(m[1])
   }
   return {
     solar: [...solar].sort(),
+    mdi: [...mdi].sort(),
     flag: [...flag].sort(),
   }
 }
@@ -86,11 +90,16 @@ async function buildCollection(prefix, names) {
 
 async function main() {
   console.log('Scanning source for icon references…')
-  const { solar, flag } = collectNames()
-  console.log(`Found ${solar.length} solar + ${flag.length} flag icons`)
-  await buildCollection('solar', solar)
-  await buildCollection('flag', flag)
-  console.log('Done → lib/icons/data/{solar,flag}.json')
+  const sets = collectNames()
+  console.log(
+    Object.entries(sets)
+      .map(([prefix, names]) => `${names.length} ${prefix}`)
+      .join(' + ') + ' icons found',
+  )
+  for (const [prefix, names] of Object.entries(sets)) {
+    await buildCollection(prefix, names)
+  }
+  console.log('Done → lib/icons/data/{solar,mdi,flag}.json')
 }
 
 main().catch((err) => {

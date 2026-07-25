@@ -109,53 +109,9 @@ import {
   Square,
 } from "lucide-react"
 
-// Topic icon mapping for our new 39 topics
-// Iconify Solar set icons (solar by 480 Design) — use icon names, render with <Icon icon="solar:..." />
-const TOPIC_ICONS = [
-  { id: 1, icon: 'solar:chat-round-linear' }, // Greetings
-  { id: 2, icon: 'solar:calculator-linear' }, // Numbers
-  { id: 3, icon: 'solar:clock-circle-linear' }, // Time & Dates
-  { id: 4, icon: 'solar:map-point-linear' }, // Directions & Transportation
-  { id: 5, icon: 'solar:cart-3-linear' }, // Shopping & Money
-  { id: 6, icon: 'solar:cup-hot-linear' }, // Food, Drinks & Restaurants
-  { id: 7, icon: 'solar:danger-triangle-linear' }, // Emergency & Safety
-  { id: 8, icon: 'solar:heart-pulse-linear' }, // Health
-  { id: 9, icon: 'solar:home-2-linear' }, // Home & Household Items
-  { id: 10, icon: 'solar:t-shirt-linear' }, // Clothing & Personal Style
-  { id: 11, icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12.74 5.47c2.36 1.03 3.61 3.56 3.18 5.99A6 6 0 0 1 18 16v.17a3 3 0 0 1 1-.17a3 3 0 0 1 3 3a3 3 0 0 1-3 3H6a4 4 0 0 1-4-4a4 4 0 0 1 4-4h.27C5 12.45 4.6 10.24 5.5 8.26a5.49 5.49 0 0 1 7.24-2.79m-.81 1.83c-1.77-.8-3.84.01-4.62 1.77c-.46 1.02-.38 2.15.1 3.06A5.99 5.99 0 0 1 12 10c.7 0 1.38.12 2 .34a3.51 3.51 0 0 0-2.07-3.04m1.62-3.66c-.55-.24-1.1-.41-1.67-.52l2.49-1.3l.9 2.89a7.7 7.7 0 0 0-1.72-1.07m-7.46.8c-.49.35-.92.75-1.29 1.19l.11-2.81l2.96.68c-.62.21-1.22.53-1.78.94M18 9.71c-.09-.59-.22-1.16-.41-1.71l2.38 1.5l-2.05 2.23c.11-.65.13-1.33.08-2.02M3.04 11.3c.07.6.2 1.17.39 1.7l-2.37-1.5L3.1 9.28c-.1.65-.13 1.33-.06 2.02M19 18h-3v-2a4 4 0 0 0-4-4a4 4 0 0 0-4 4H6a2 2 0 0 0-2 2a2 2 0 0 0 2 2h13a1 1 0 0 0 1-1a1 1 0 0 0-1-1"/></svg>' }, // Weather
-  { id: 12, icon: 'solar:users-group-rounded-linear' }, // Family
-  { id: 13, icon: 'solar:emoji-funny-square-linear' }, // Emotions & Feelings
-  { id: 14, icon: 'solar:user-circle-linear' }, // Personality & Character
-  { id: 15, icon: 'solar:gameboy-linear' }, // Hobbies & Leisure Activities
-  { id: 16, icon: 'solar:basketball-linear' }, // Sports & Fitness
-  { id: 17, icon: 'solar:buildings-2-linear' }, // City
-  { id: 18, icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M11 6h2V4h-2zm1 6q-1.9 0-3.625-.788T5 9.45V8q0-.825.588-1.412T7 6h2V3q0-.425.288-.712T10 2h4q.425 0 .713.288T15 3v3h2q.825 0 1.413.588T19 8v1.45q-1.65.975-3.375 1.763T12 12m-5 9q-.825 0-1.412-.587T5 19v-7.3q1.4.85 2.888 1.45t3.112.8V14q0 .425.288.713T12 15t.713-.288T13 14v-.05q1.625-.2 3.113-.8T19 11.7V19q0 .825-.587 1.413T17 21q0 .425-.288.713T16 22q-.4 0-.562-.363T15 21H9q0 .425-.288.713T8 22q-.4 0-.562-.363T7 21"/></svg>' }, // Travel
-  { id: 19, icon: 'solar:star-bold' }, // Colors & Shapes  
-  { id: 20, icon: 'solar:sun-bold' }, // Nature
-  { id: 21, icon: 'solar:walking-linear' }, // Actions
-  { id: 22, icon: 'solar:document-text-linear' }, // Adjectives
-  { id: 23, icon: 'solar:music-note-4-linear' }, // Arts & Entertainment
-  { id: 24, icon: 'solar:smartphone-linear' }, // Technology & Gadgets
-  { id: 25, icon: 'solar:case-round-linear' }, // Work & Professions
-  { id: 26, icon: 'solar:square-academic-cap-linear' }, // Education & School Life
-  { id: 27, icon: 'solar:microphone-linear' }, // Communication & Media
-  { id: 28, icon: 'solar:leaf-linear' }, // Environment & Sustainability
-  { id: 29, icon: 'solar:graph-up-linear' }, // Business & Economics
-  { id: 30, icon: 'solar:book-2-linear' }, // Common Collocations
-  { id: 31, icon: 'solar:chat-square-like-linear' }, // Slang & Modern Expressions
-  { id: 32, icon: 'solar:atom-linear' }, // Science & Technology
-  { id: 33, icon: 'solar:calculator-minimalistic-linear' }, // Mathematics & Geometry
-  { id: 34, icon: 'solar:history-linear' }, // History & Culture
-  { id: 35, icon: 'solar:scale-linear' }, // Politics & Law
-  { id: 36, icon: 'solar:meditation-round-linear' }, // Religion & Philosophy
-  { id: 37, icon: 'solar:magic-stick-3-linear' }, // Mythology & Fantasy
-  { id: 38, icon: 'solar:confetti-minimalistic-linear' }, // Celebrations & Holidays
-  { id: 39, icon: 'solar:document-medicine-linear' }, // Advanced Communication & Formal Language
-  { id: 40, icon: 'solar:global-linear' }, // Cultural Integration & Global Perspectives
-  { id: 41, icon: 'solar:running-2-linear' }, // Verbs
-  { id: 42, icon: 'solar:chat-round-dots-linear' }, // Daily Language
-  { id: 43, icon: 'solar:code-square-linear' }, // Essential Words
-]
+// One mdi set for every topic, so no page shows a different icon style than
+// its neighbours.
+import { getTopicIcon } from "@/lib/icons/topic-icons"
 
 // Question text translations for "Choose the language you want to learn"
 const QUESTION_TEXT_TRANSLATIONS: Record<string, string> = {
@@ -216,7 +172,6 @@ interface TopicSliderProps {
   topics: Topic[]
   selectedTopic: Topic | null
   onTopicSelect: (topic: Topic) => void
-  TOPIC_ICONS: Array<{ id: number; icon: string | any }>
   getTopicDisplayName: (id: number, name: string) => string
   isIOS?: boolean
   user: any
@@ -260,8 +215,7 @@ interface TopicSliderProps {
 const TopicSlider: React.FC<TopicSliderProps> = ({ 
   topics, 
   selectedTopic, 
-  onTopicSelect, 
-  TOPIC_ICONS, 
+  onTopicSelect,
   getTopicDisplayName,
   isIOS = false,
   user,
@@ -2020,9 +1974,7 @@ export function LanguageSelector() {
                               next,
                             );
                             const displayName = topicDisplayNameRef.current;
-                            const nextIcon = nextTopic
-                              ? (nextTopic.icon || TOPIC_ICONS.find((i) => i.id === nextTopic.id)?.icon)
-                              : undefined;
+                            const nextIcon = nextTopic ? getTopicIcon(nextTopic.id) : undefined;
                             reportTopicComplete(
                               userId,
                               finished.id,
@@ -4197,8 +4149,6 @@ export function LanguageSelector() {
 
   // renderTopicButton function - defined after handleTopicClick to access it
   const renderTopicButton = (topic: Topic) => {
-    const hasCustomIcon = topic.icon
-    const iconData = TOPIC_ICONS.find(icon => icon.id === topic.id)
     const isCompleted = completedTopicIds.includes(topic.id)
     const completionCount = topicCompletionCounts[topic.id] || 0
     const hideCompletionBorder = user?.email === 'screenshots@sprind.uk'
@@ -4216,13 +4166,7 @@ export function LanguageSelector() {
       : isCompleted
       ? 'border-2 border-white/80'
       : ''
-    
-    // Direct mapping for custom SVG icons
-    const customSVGIcons: { [key: number]: string } = {
-      11: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12.74 5.47c2.36 1.03 3.61 3.56 3.18 5.99A6 6 0 0 1 18 16v.17a3 3 0 0 1 1-.17a3 3 0 0 1 3 3a3 3 0 0 1-3 3H6a4 4 0 0 1-4-4a4 4 0 0 1 4-4h.27C5 12.45 4.6 10.24 5.5 8.26a5.49 5.49 0 0 1 7.24-2.79m-.81 1.83c-1.77-.8-3.84.01-4.62 1.77c-.46 1.02-.38 2.15.1 3.06A5.99 5.99 0 0 1 12 10c.7 0 1.38.12 2 .34a3.51 3.51 0 0 0-2.07-3.04m1.62-3.66c-.55-.24-1.1-.41-1.67-.52l2.49-1.3l.9 2.89a7.7 7.7 0 0 0-1.72-1.07m-7.46.8c-.49.35-.92.75-1.29 1.19l.11-2.81l2.96.68c-.62.21-1.22.53-1.78.94M18 9.71c-.09-.59-.22-1.16-.41-1.71l2.38 1.5l-2.05 2.23c.11-.65.13-1.33.08-2.02M3.04 11.3c.07.6.2 1.17.39 1.7l-2.37-1.5L3.1 9.28c-.1.65-.13 1.33-.06 2.02M19 18h-3v-2a4 4 0 0 0-4-4a4 4 0 0 0-4 4H6a2 2 0 0 0-2 2a2 2 0 0 0 2 2h13a1 1 0 0 0 1-1a1 1 0 0 0-1-1"/></svg>',
-      18: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M11 6h2V4h-2zm1 6q-1.9 0-3.625-.788T5 9.45V8q0-.825.588-1.412T7 6h2V3q0-.425.288-.712T10 2h4q.425 0 .713.288T15 3v3h2q.825 0 1.413.588T19 8v1.45q-1.65.975-3.375 1.763T12 12m-5 9q-.825 0-1.412-.587T5 19v-7.3q1.4.85 2.888 1.45t3.112.8V14q0 .425.288.713T12 15t.713-.288T13 14v-.05q1.625-.2 3.113-.8T19 11.7V19q0 .825-.587 1.413T17 21q0 .425-.288.713T16 22q-.4 0-.562-.363T15 21H9q0 .425-.288.713T8 22q-.4 0-.562-.363T7 21"/></svg>'
-    }
-    
+
     const handleTopicHoldStart = (e: React.TouchEvent) => {
       releasePressedTile()
       longPressFiredRef.current = false
@@ -4286,25 +4230,7 @@ export function LanguageSelector() {
       >
         <div className="flex flex-col items-center justify-center h-full gap-2">
           <div className="flex-shrink-0 flex items-center justify-center">
-            {hasCustomIcon ? (
-              <div 
-                className="w-12 h-12 xs:w-14 xs:h-14 sm:w-16 sm:h-16 flex items-center justify-center mx-auto [&>svg]:w-full [&>svg]:h-full" 
-                style={{ color: 'rgba(255,255,255,0.8)' }}
-                dangerouslySetInnerHTML={{ __html: topic.icon! }}
-              />
-            ) : customSVGIcons[topic.id] ? (
-              <div 
-                className="w-12 h-12 xs:w-14 xs:h-14 sm:w-16 sm:h-16 flex items-center justify-center mx-auto [&>svg]:w-full [&>svg]:h-full" 
-                style={{ color: 'rgba(255,255,255,0.8)' }}
-                dangerouslySetInnerHTML={{ __html: customSVGIcons[topic.id] }}
-              />
-            ) : iconData && typeof iconData.icon === 'string' ? (
-              <Icon icon={iconData.icon} className="w-12 h-12 xs:w-14 xs:h-14 sm:w-16 sm:h-16 mx-auto" style={{ color: 'rgba(255,255,255,0.8)' }} />
-            ) : iconData ? (
-              (iconData.icon as any)({ className: 'w-12 h-12 xs:w-14 xs:h-14 sm:w-16 sm:h-16 text-white/80 mx-auto' })
-            ) : (
-              <MessageCircle className="w-12 h-12 xs:w-14 xs:h-14 sm:w-16 sm:h-16 text-white/80 mx-auto" />
-            )}
+            <Icon icon={getTopicIcon(topic.id)} className="w-12 h-12 xs:w-14 xs:h-14 sm:w-16 sm:h-16 mx-auto" style={{ color: 'rgba(255,255,255,0.8)' }} />
           </div>
           <p className="text-white/90 text-base xs:text-lg sm:text-xl font-medium leading-tight px-1 text-center w-full">{getTopicDisplayName(topic.id, topic.name)}</p>
         </div>
@@ -4364,34 +4290,11 @@ export function LanguageSelector() {
 
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 justify-center">
                   {/* Topic Icon */}
-                  {(() => {
-                    // Special case: Playlist learning (id === -2) - show notepad icon
-                    if (selectedTopic?.id === -2) {
-                      return <Icon icon="solar:notebook-bold" className="w-8 h-8 sm:w-9 sm:h-9 flex-shrink-0" style={{ color: 'rgba(255,255,255,0.8)' }} />
-                    }
-                    
-                    // First check if topic has an SVG icon in the JSON data
-                    if (selectedTopic?.icon) {
-                      return (
-                        <div 
-                          className="w-8 h-8 sm:w-9 sm:h-9 flex-shrink-0 [&>svg]:w-full [&>svg]:h-full" 
-                          style={{ color: 'rgba(255,255,255,0.8)' }}
-                          dangerouslySetInnerHTML={{ __html: selectedTopic.icon! }}
-                        />
-                      );
-                    }
-                    
-                    // Fall back to hardcoded iconify icons
-                    const iconData = TOPIC_ICONS.find(icon => icon.id === selectedTopic?.id)
-                    if (iconData) {
-                      if (typeof iconData.icon === 'string') {
-                        return <Icon icon={iconData.icon} className="w-8 h-8 sm:w-9 sm:h-9 flex-shrink-0" style={{ color: 'rgba(255,255,255,0.8)' }} />
-                      }
-                      const IconComponent = iconData.icon as any
-                      return <IconComponent className="w-8 h-8 sm:w-9 sm:h-9 text-white/80 flex-shrink-0" />
-                    }
-                    return <BookOpen className="w-8 h-8 sm:w-9 sm:h-9 text-white/80 flex-shrink-0" />
-                  })()}
+                  <Icon
+                    icon={getTopicIcon(selectedTopic?.id)}
+                    className="w-8 h-8 sm:w-9 sm:h-9 flex-shrink-0"
+                    style={{ color: 'rgba(255,255,255,0.8)' }}
+                  />
                   <h1 className="text-xl sm:text-2xl md:text-3xl font-medium text-white text-center truncate">
                     {selectedTopic ? getTopicDisplayName(selectedTopic.id, selectedTopic.name) : ''}
                   </h1>
@@ -4682,7 +4585,6 @@ export function LanguageSelector() {
                 topics={topics}
                 selectedTopic={selectedTopic}
                 onTopicSelect={handleTopicSelect}
-                TOPIC_ICONS={TOPIC_ICONS}
                 getTopicDisplayName={getTopicDisplayName}
                 isIOS={isIOS}
                 user={user}
