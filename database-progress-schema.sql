@@ -214,10 +214,21 @@ CREATE OR REPLACE FUNCTION update_daily_progress()
 RETURNS TRIGGER AS $$
 DECLARE
   topic_id_var INTEGER;
+  user_tz TEXT;
+  local_date DATE;
 BEGIN
   -- Get the topic_id for this vocabulary word
   SELECT topic_id INTO topic_id_var FROM vocabulary WHERE id = NEW.vocabulary_id;
-  
+
+  -- Bucket by the USER'S calendar day so daily counters roll over at the same
+  -- midnight the login streak does (CURRENT_DATE is the server's UTC day).
+  SELECT timezone INTO user_tz FROM user_profiles WHERE id = NEW.user_id;
+  BEGIN
+    local_date := (COALESCE(NEW.last_played_at, NOW()) AT TIME ZONE COALESCE(user_tz, 'UTC'))::DATE;
+  EXCEPTION WHEN OTHERS THEN
+    local_date := (COALESCE(NEW.last_played_at, NOW()) AT TIME ZONE 'UTC')::DATE;
+  END;
+
   INSERT INTO user_daily_progress (
     user_id,
     target_language_code,
@@ -229,7 +240,7 @@ BEGIN
   VALUES (
     NEW.user_id,
     NEW.target_language_code,
-    CURRENT_DATE,
+    local_date,
     1,
     ARRAY[topic_id_var::TEXT],
     NOW()

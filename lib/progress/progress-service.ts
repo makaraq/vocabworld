@@ -35,6 +35,84 @@ export interface TopicProgress {
   completionPercentage: number
 }
 
+/** True when `timezone` is an IANA zone this runtime can actually resolve. */
+export function isValidTimeZone(timezone: unknown): timezone is string {
+  if (typeof timezone !== 'string' || !timezone) return false
+  try {
+    new Intl.DateTimeFormat('en-CA', { timeZone: timezone })
+    return true
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Calendar date (YYYY-MM-DD) of `at` in `timezone`, falling back to the running
+ * process's zone when it can't be resolved.
+ */
+export function localDateInTimeZone(
+  timezone: string | null | undefined,
+  at: Date = new Date()
+): string {
+  if (isValidTimeZone(timezone)) return at.toLocaleDateString('en-CA', { timeZone: timezone })
+  return at.toLocaleDateString('en-CA')
+}
+
+/** Calendar-day difference between two YYYY-MM-DD strings (positive when `date2` is later). */
+export function dayDifference(date1: string, date2: string): number {
+  const d1 = new Date(date1 + 'T00:00:00')
+  const d2 = new Date(date2 + 'T00:00:00')
+  return Math.round((d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24))
+}
+
+/**
+ * A login this many calendar days after the previous one still keeps the streak
+ * alive (see the grace branch in updateLoginStreak). Beyond it, the next login
+ * resets the streak to 1.
+ */
+export const STREAK_GRACE_DAYS = 2
+
+/**
+ * `user_login_streaks.current_streak` is a *last known* value — it is only
+ * recomputed when the user opens the app. Anything that reads it while the user
+ * is away (notification scheduling) would otherwise keep quoting a streak that
+ * the next login is going to reset. This resolves the stored value against
+ * today, returning 0 once the streak is beyond saving.
+ */
+export function effectiveStreak(
+  currentStreak: number,
+  lastLoginDate: string | null,
+  today: string
+): number {
+  if (!currentStreak || !lastLoginDate) return 0
+  const diff = dayDifference(lastLoginDate, today)
+  if (isNaN(diff)) return currentStreak
+  // diff < 0 means the stored date is ahead of "today" (timezone skew) — the
+  // streak is certainly not stale, so trust it.
+  if (diff < 0) return currentStreak
+  return diff <= STREAK_GRACE_DAYS ? currentStreak : 0
+}
+
+/**
+ * How many days from `today` the streak can still be rescued: 0 means tonight is
+ * genuinely the last chance, 2 means they could skip today and tomorrow and
+ * still save it. 0 when there is no live streak left to save.
+ *
+ * Lets a caller that is scheduling ahead (notifications) know exactly how far
+ * the streak it just read stays true, instead of assuming the user shows up
+ * every day.
+ */
+export function streakDaysRemaining(
+  currentStreak: number,
+  lastLoginDate: string | null,
+  today: string
+): number {
+  if (!effectiveStreak(currentStreak, lastLoginDate, today) || !lastLoginDate) return 0
+  const diff = dayDifference(lastLoginDate, today)
+  if (isNaN(diff)) return 0
+  return Math.min(STREAK_GRACE_DAYS, Math.max(0, STREAK_GRACE_DAYS - diff))
+}
+
 class ProgressService {
   /**
    * Track a word being played by the user
@@ -78,6 +156,11 @@ class ProgressService {
           .eq('id', existing.id)
 
         if (updateError) throw updateError
+
+        // The user_language_progress trigger only fires AFTER INSERT, so a word
+        // the user already knows would leave last_activity_at frozen.
+        await this.touchLanguageActivity(userId, targetLanguageCode, playedTs)
+
         return { success: true, isNewWord: false }
       } else {
         // First time playing this word - insert new record
@@ -148,16 +231,17 @@ class ProgressService {
     targetLanguageCode: string
   ): Promise<ProgressStats> {
     try {
-      // Get language progress summary
-      const { data: languageProgress } = await getSupabase()
-        .from('user_language_progress')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('target_language_code', targetLanguageCode)
-        .single()
-
-      // Get daily progress for today
-      const today = new Date().toISOString().split('T')[0]
+      // Resolving the user's own "today" costs a lookup — run it alongside the
+      // language summary rather than adding a round trip to this screen.
+      const [{ data: languageProgress }, today] = await Promise.all([
+        getSupabase()
+          .from('user_language_progress')
+          .select('*')
+          .eq('user_id', userId)
+          .eq('target_language_code', targetLanguageCode)
+          .single(),
+        this.getUserLocalDate(userId),
+      ])
       const { data: dailyProgress } = await getSupabase()
         .from('user_daily_progress')
         .select('words_learned_count')
@@ -169,7 +253,7 @@ class ProgressService {
       // Get login streak
       const { data: loginStreak } = await getSupabase()
         .from('user_login_streaks')
-        .select('current_streak')
+        .select('current_streak, last_login_date')
         .eq('user_id', userId)
         .single()
 
@@ -189,7 +273,15 @@ class ProgressService {
       return {
         wordsLearned: languageProgress?.total_words_learned || 0,
         wordsLearnedToday: dailyProgress?.words_learned_count || 0,
-        dailyLoginStreak: loginStreak?.current_streak || 0,
+        // Resolved against today, not the raw stored value: the app screen and
+        // the notification layer must not be able to disagree about the streak,
+        // and the stored number only gets normalised when the user opens the
+        // app — which this read can race.
+        dailyLoginStreak: effectiveStreak(
+          loginStreak?.current_streak || 0,
+          loginStreak?.last_login_date ?? null,
+          today
+        ),
         topicsCompleted: completedTopics || 0,
         languageCompletionPercentage: parseFloat(languageProgress?.completion_percentage || '0'),
         totalWordsInLanguage: totalWords || 0
@@ -405,6 +497,85 @@ class ProgressService {
   }
 
   /**
+   * The user's own calendar date for `at`.
+   *
+   * Daily counters have to agree with the streak beside them, and the streak
+   * counts local days. Bucketing them by the server's UTC date rolled "today"
+   * over at 09:00 in Tokyo and 17:00 in Los Angeles.
+   */
+  async getUserLocalDate(userId: string, at?: Date): Promise<string> {
+    try {
+      const { data } = await getSupabase()
+        .from('user_profiles')
+        .select('timezone')
+        .eq('id', userId)
+        .single()
+      return localDateInTimeZone(data?.timezone, at)
+    } catch {
+      return localDateInTimeZone(null, at)
+    }
+  }
+
+  /**
+   * Mark the user as active in a language right now.
+   *
+   * `last_activity_at` is what the notification layer reads to answer "have they
+   * studied today?", but the trigger that maintains it only fires when a word is
+   * inserted for the first time — so replaying a known word or grading a review
+   * left it frozen, and the streak reminder went out on days the user had in
+   * fact studied. Every path that counts as studying should call this.
+   *
+   * Never moves the timestamp backwards: offline replay hands us historical
+   * times, and an old event must not undo a newer session.
+   */
+  async touchLanguageActivity(
+    userId: string,
+    targetLanguageCode: string,
+    activityTs: string
+  ): Promise<void> {
+    try {
+      const { error } = await getSupabase()
+        .from('user_language_progress')
+        .update({ last_activity_at: activityTs, updated_at: new Date().toISOString() })
+        .eq('user_id', userId)
+        .eq('target_language_code', targetLanguageCode)
+        .or(`last_activity_at.is.null,last_activity_at.lt."${activityTs}"`)
+      if (error) throw error
+    } catch (error) {
+      // Non-fatal: the activity it rides along with is already recorded.
+      console.error('Error updating last_activity_at:', error)
+    }
+  }
+
+  /**
+   * Store the timezone the client is currently in.
+   *
+   * This used to be written by the browser client alongside the streak POST,
+   * but that update ran under RLS with no error check and was silently not
+   * landing — 31 of 32 profiles were still sitting on the 'UTC' column default.
+   * Everything that decides "has the user studied today?" then ran in UTC while
+   * the streak itself counted local days, so the two disagreed for anyone far
+   * from UTC. Writing it here, with the service-role client and the very same
+   * value the streak day was computed from, keeps both on one clock.
+   */
+  async saveUserTimezone(userId: string, timezone?: string): Promise<void> {
+    if (!isValidTimeZone(timezone)) return
+    try {
+      // Skip the write when it already matches, so a foreground on every app
+      // switch doesn't churn the row.
+      const { error } = await getSupabase()
+        .from('user_profiles')
+        .update({ timezone, updated_at: new Date().toISOString() })
+        .eq('id', userId)
+        .or(`timezone.is.null,timezone.neq."${timezone}"`)
+      if (error) throw error
+    } catch (error) {
+      // Non-fatal: the streak update it rides along with still stands.
+      console.error('Error saving user timezone:', error)
+    }
+  }
+
+  /**
    * Update login streak when user logs in (timezone-aware with 1-day grace period)
    */
   async updateLoginStreak(userId: string, userTimezone?: string, activeDate?: string): Promise<void> {
@@ -414,7 +585,7 @@ class ProgressService {
       // credits the day they actually learned, not the reconnect day.
       const today = activeDate
         ? activeDate
-        : userTimezone
+        : isValidTimeZone(userTimezone)
         ? new Date().toLocaleDateString('en-CA', { timeZone: userTimezone })
         : new Date().toLocaleDateString('en-CA') // Fallback to system timezone
       
@@ -451,7 +622,15 @@ class ProgressService {
       }
 
       // Calculate calendar day difference (not time-based)
-      const daysDiff = this.calculateDayDifference(existing.last_login_date, today)
+      const daysDiff = dayDifference(existing.last_login_date, today)
+
+      // Offline replay can hand us a day OLDER than the last recorded login —
+      // reconnecting fires a live login first, then flush() replays the queued
+      // active days. Writing that older date back would rewind last_login_date
+      // and make the next real login look like a long gap, silently resetting a
+      // healthy streak. The day is already behind the recorded streak, so there
+      // is nothing to credit.
+      if (daysDiff < 0) return
 
       let newStreak = existing.current_streak
       
@@ -480,16 +659,6 @@ class ProgressService {
     } catch (error) {
       console.error('Error updating login streak:', error)
     }
-  }
-
-  /**
-   * Calculate calendar day difference between two date strings
-   */
-  private calculateDayDifference(date1: string, date2: string): number {
-    const d1 = new Date(date1 + 'T00:00:00')
-    const d2 = new Date(date2 + 'T00:00:00')
-    const diffTime = d2.getTime() - d1.getTime()
-    return Math.round(diffTime / (1000 * 60 * 60 * 24))
   }
 
   /**

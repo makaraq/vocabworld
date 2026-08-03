@@ -358,7 +358,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             .then(() => syncTrialReminder())
             .catch(console.error)
           
-          // Update login streak (timezone-aware)
+          // Update login streak (timezone-aware). The route also persists the
+          // timezone to user_profiles — doing it here from the browser client
+          // ran under RLS with no error check and was not landing.
           try {
             const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
             await fetch('/api/progress/streak', {
@@ -369,11 +371,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 timezone
               })
             })
-            // Persist timezone for the notifications context API (fire-and-forget)
-            void supabase
-              .from('user_profiles')
-              .update({ timezone, updated_at: new Date().toISOString() })
-              .eq('id', initialSession.user.id)
             // Reschedule notifications with fresh context
             triggerNotificationReschedule().catch(() => {})
             // Listen for notification taps (e.g. open_review)

@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback, useRef } from "react"
 import { createPortal } from "react-dom"
 import { Icon } from "@iconify/react"
 import { hapticsSuccess, hapticsWarning, hapticsLight } from "@/lib/haptics"
+import { preloadSoundEffects, playCorrectSound, playWrongSound } from "@/lib/sound-effects"
 import { useT } from "@/components/providers/translation-provider"
 
 interface QuizCard {
@@ -49,6 +50,7 @@ export function TopicQuizModal({
   const activeSourceRef = useRef<AudioBufferSourceNode | null>(null)
 
   useEffect(() => {
+    preloadSoundEffects()
     if (typeof window !== 'undefined' && !audioContextRef.current) {
       try {
         audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
@@ -212,9 +214,11 @@ export function TopicQuizModal({
 
     if (correct) {
       hapticsSuccess()
+      playCorrectSound()
       setCorrectCount((c) => c + 1)
     } else {
       hapticsWarning()
+      playWrongSound()
     }
 
     setTimeout(() => {

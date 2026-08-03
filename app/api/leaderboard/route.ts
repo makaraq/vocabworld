@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { createHash } from 'node:crypto'
 import { getApiUser } from '@/lib/auth/api-auth'
+import { effectiveStreak, localDateInTimeZone } from '@/lib/progress/progress-service'
 
 // Lazy service-role client: defers createClient so importing this route during
 // the static-export build does not require Supabase env vars at build time.
@@ -138,16 +139,28 @@ async function fetchLeaderboard(
 
   const { data: profiles } = await getServiceClient()
     .from('user_profiles')
-    .select('id, full_name, avatar_url, show_on_leaderboard')
+    .select('id, full_name, avatar_url, show_on_leaderboard, timezone')
     .in('id', userIds)
 
   const { data: streaks } = await getServiceClient()
     .from('user_login_streaks')
-    .select('user_id, current_streak')
+    .select('user_id, current_streak, last_login_date')
     .in('user_id', userIds)
 
   const profileMap = new Map((profiles || []).map(p => [p.id, p]))
-  const streakMap = new Map((streaks || []).map(s => [s.user_id, s.current_streak || 0]))
+  // These are other people's rows, and current_streak is only recomputed when
+  // its owner opens the app — so the raw column is full of streaks that already
+  // lapsed. Resolve each one against that user's own today.
+  const streakMap = new Map(
+    (streaks || []).map(s => [
+      s.user_id,
+      effectiveStreak(
+        s.current_streak || 0,
+        s.last_login_date ?? null,
+        localDateInTimeZone(profileMap.get(s.user_id)?.timezone)
+      ),
+    ])
+  )
 
   const results: LeaderboardRow[] = userIds.map(uid => {
     const profile = profileMap.get(uid)
@@ -200,13 +213,13 @@ async function fetchUserRank(
 
   const { data: profile } = await getServiceClient()
     .from('user_profiles')
-    .select('id, full_name, avatar_url, show_on_leaderboard')
+    .select('id, full_name, avatar_url, show_on_leaderboard, timezone')
     .eq('id', userId)
     .single()
 
   const { data: streak } = await getServiceClient()
     .from('user_login_streaks')
-    .select('current_streak')
+    .select('current_streak, last_login_date')
     .eq('user_id', userId)
     .single()
 
@@ -216,7 +229,11 @@ async function fetchUserRank(
     rank: userIndex + 1,
     user_id: userId,
     words_played: sorted[userIndex][1],
-    streak: streak?.current_streak || 0,
+    streak: effectiveStreak(
+      streak?.current_streak || 0,
+      streak?.last_login_date ?? null,
+      localDateInTimeZone(profile?.timezone)
+    ),
     full_name: showInfo ? (profile?.full_name || null) : null,
     avatar_url: showInfo ? (profile?.avatar_url || null) : null,
   }

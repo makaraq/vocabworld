@@ -25,8 +25,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    await progressService.updateLoginStreak(userId, timezone, activeDate)
-    
+    await Promise.all([
+      progressService.updateLoginStreak(userId, timezone, activeDate),
+      // Persist the same timezone the streak day was just computed in, so the
+      // notification layer resolves "today" against an identical clock.
+      progressService.saveUserTimezone(userId, timezone),
+    ])
+
+
     return NextResponse.json({ success: true })
   } catch (error: any) {
     console.error('Error updating login streak:', error)

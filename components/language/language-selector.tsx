@@ -197,6 +197,7 @@ interface TopicSliderProps {
   }>
   isLoadingPlaylists: boolean
   onCreatePlaylist: () => void
+  onDeletePlaylist: (playlist: { id: string; name: string; word_count?: number }) => void
   renderTopicButton: (topic: Topic) => React.ReactElement
   isPremium: boolean
   setShowPaywall: (show: boolean) => void
@@ -233,6 +234,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
   userPlaylists,
   isLoadingPlaylists,
   onCreatePlaylist,
+  onDeletePlaylist,
   renderTopicButton,
   isPremium,
   setShowPaywall,
@@ -582,22 +584,33 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                       {!isLoadingPlaylists && userPlaylists.length > 0 && (
                         <div className="space-y-2 pr-1">
                           {userPlaylists.map((playlist) => (
-                            <button
+                            <div
                               key={playlist.id}
-                              onClick={() => {
-                                // Open playlist learning view
-                                lastTopicSectionRef.current = currentSection
-                                onTopicSelect({ id: -2, name: playlist.name, icon: '', playlistId: playlist.id } as any)
-                              }}
-                              className="w-full flex items-center gap-3 p-3 bg-white/5 hover:bg-white/10 rounded-lg transition-all text-left"
+                              className="w-full flex items-center gap-1 pr-2 bg-white/5 hover:bg-white/10 rounded-lg transition-all"
                             >
-                              <Icon icon={playlist.icon || "solar:playlist-minimalistic-2-linear"} width="22" height="22" className="text-blue-400 flex-shrink-0" />
-                              <div className="flex-1 min-w-0">
-                                <p className="text-white font-medium truncate">{playlist.name}</p>
-                                <p className="text-white/50 text-xs">{tPlural('myWords.wordCount', playlist.word_count || 0)}</p>
-                              </div>
-                              <Icon icon="solar:alt-arrow-right-linear" width="16" height="16" className="text-white/40 flex-shrink-0" />
-                            </button>
+                              <button
+                                onClick={() => {
+                                  // Open playlist learning view
+                                  lastTopicSectionRef.current = currentSection
+                                  onTopicSelect({ id: -2, name: playlist.name, icon: '', playlistId: playlist.id } as any)
+                                }}
+                                className="flex-1 min-w-0 flex items-center gap-3 p-3 text-left"
+                              >
+                                <Icon icon={playlist.icon || "solar:playlist-minimalistic-2-linear"} width="22" height="22" className="text-blue-400 flex-shrink-0" />
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-white font-medium truncate">{playlist.name}</p>
+                                  <p className="text-white/50 text-xs">{tPlural('myWords.wordCount', playlist.word_count || 0)}</p>
+                                </div>
+                                <Icon icon="solar:alt-arrow-right-linear" width="16" height="16" className="text-white/40 flex-shrink-0" />
+                              </button>
+                              <button
+                                onClick={() => onDeletePlaylist(playlist)}
+                                className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 hover:bg-red-500/20 active:bg-red-500/30 transition-all group"
+                                aria-label={t('myWords.deletePlaylist.aria', { name: playlist.name })}
+                              >
+                                <Icon icon="solar:trash-bin-trash-bold" width="18" height="18" className="text-white/40 group-hover:text-red-400 transition-colors" />
+                              </button>
+                            </div>
                           ))}
                         </div>
                       )}
@@ -757,7 +770,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
 type PageState = "native" | "target" | "confirmation" | "learning"
 
 export function LanguageSelector() {
-  const { t, tPlural, setUiLanguage } = useT()
+  const { t, tPlural, tMarkup, setUiLanguage } = useT()
   const tutorialSteps = useMemo(() => getTutorialSteps(t), [t])
   const learningTutorialSteps = useMemo(() => getLearningTutorialSteps(t), [t])
 
@@ -888,7 +901,10 @@ export function LanguageSelector() {
   const [showCreatePlaylistModal, setShowCreatePlaylistModal] = useState(false)
   const [newPlaylistName, setNewPlaylistName] = useState("")
   const [isCreatingPlaylist, setIsCreatingPlaylist] = useState(false)
-  
+  // Playlist pending deletion — drives the confirmation modal
+  const [playlistToDelete, setPlaylistToDelete] = useState<{ id: string; name: string; word_count?: number } | null>(null)
+  const [isDeletingPlaylist, setIsDeletingPlaylist] = useState(false)
+
   // Autoplay state machine
   const autoplayAbortController = useRef<AbortController | null>(null)
   const isAutoplayActive = useRef(false)
@@ -3814,6 +3830,38 @@ export function LanguageSelector() {
     }
   }
 
+  // Delete a playlist (cascade removes its saved words)
+  const handleDeletePlaylist = async () => {
+    if (!playlistToDelete || !user?.id) return
+
+    setIsDeletingPlaylist(true)
+    try {
+      const response = await fetch(`/api/playlists?playlistId=${playlistToDelete.id}`, {
+        method: 'DELETE'
+      })
+
+      if (response.ok) {
+        const remaining = userPlaylists.filter(p => p.id !== playlistToDelete.id)
+        setUserPlaylists(remaining)
+        // Keep the instant-cache mirror in sync so the deleted playlist does
+        // not reappear on the next cold start / section revisit.
+        if (nativeLanguageCode && targetLanguageCode) {
+          writeCached(`playlists:${user.id}:${nativeLanguageCode}:${targetLanguageCode}`, remaining)
+        }
+        setPlaylistToDelete(null)
+      } else {
+        const error = await response.json().catch(() => ({}))
+        console.error('Failed to delete playlist:', error)
+        alert(error.error || t('deletePlaylist.failed'))
+      }
+    } catch (error) {
+      console.error('Error deleting playlist:', error)
+      alert(t('deletePlaylist.failed'))
+    } finally {
+      setIsDeletingPlaylist(false)
+    }
+  }
+
   const handleBackToTopics = async () => {
     hapticsLight()
     // Save current position before going back — fire-and-forget so the back
@@ -4602,6 +4650,7 @@ export function LanguageSelector() {
                 userPlaylists={userPlaylists}
                 isLoadingPlaylists={isLoadingPlaylists}
                 onCreatePlaylist={() => setShowCreatePlaylistModal(true)}
+                onDeletePlaylist={(playlist) => setPlaylistToDelete(playlist)}
                 renderTopicButton={renderTopicButton}
                 isPremium={isPremium}
                 setShowPaywall={setShowPaywall}
@@ -4974,6 +5023,58 @@ export function LanguageSelector() {
                   </>
                 ) : (
                   t('createPlaylist.create')
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Playlist Confirmation Modal */}
+      {playlistToDelete && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-gray-900 border border-white/20 rounded-2xl w-full max-w-md p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-white font-semibold text-lg flex items-center gap-2">
+                <Icon icon="solar:trash-bin-trash-bold" width="22" height="22" className="text-red-400" />
+                {t('deletePlaylist.title')}
+              </h3>
+              <button
+                onClick={() => setPlaylistToDelete(null)}
+                disabled={isDeletingPlaylist}
+                className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 disabled:opacity-50 transition-all"
+              >
+                <Icon icon="solar:close-circle-bold" width="20" height="20" className="text-white/60" />
+              </button>
+            </div>
+
+            <p className="text-white/60 text-sm mb-2">
+              {tMarkup('deletePlaylist.warning', { name: playlistToDelete.name })}
+            </p>
+            <p className="text-white/40 text-xs mb-6">
+              {tPlural('myWords.wordCount', playlistToDelete.word_count || 0)}
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setPlaylistToDelete(null)}
+                disabled={isDeletingPlaylist}
+                className="flex-1 py-3 bg-white/10 hover:bg-white/20 disabled:opacity-50 rounded-lg text-white font-medium transition-all"
+              >
+                {t('common.cancel')}
+              </button>
+              <button
+                onClick={handleDeletePlaylist}
+                disabled={isDeletingPlaylist}
+                className="flex-1 py-3 bg-red-500 hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-white font-medium transition-all flex items-center justify-center gap-2"
+              >
+                {isDeletingPlaylist ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    {t('deletePlaylist.deleting')}
+                  </>
+                ) : (
+                  t('deletePlaylist.delete')
                 )}
               </button>
             </div>

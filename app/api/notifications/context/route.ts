@@ -6,7 +6,8 @@
  *
  * Response:
  * {
- *   currentStreak: number
+ *   currentStreak: number         // resolved against today, 0 once it has lapsed
+ *   streakDaysRemaining: number   // day offsets it stays savable (0 = tonight only)
  *   lastTopicName: string | null
  *   lastStudiedAt: string | null   // ISO timestamp
  *   userLanguage: string           // display name, e.g. "Portuguese"
@@ -18,6 +19,7 @@
 import { NextResponse } from 'next/server'
 import { getApiUser, getAdminClient } from '@/lib/auth/api-auth'
 import { languageNamesTranslations } from '@/lib/i18n/language-names-translations'
+import { effectiveStreak, streakDaysRemaining } from '@/lib/progress/progress-service'
 
 // Topic ID → display name map (matches app/api/topics/route.ts)
 const TOPIC_NAMES: Record<number, string> = {
@@ -35,6 +37,15 @@ const TOPIC_NAMES: Record<number, string> = {
   43: 'Essential Words', 45: 'Example Sentences',
 }
 
+/** Today's date (YYYY-MM-DD) in `timezone`, falling back to UTC for a bad value. */
+function localToday(timezone: string): string {
+  try {
+    return new Date().toLocaleDateString('en-CA', { timeZone: timezone })
+  } catch {
+    return new Date().toLocaleDateString('en-CA', { timeZone: 'UTC' })
+  }
+}
+
 export async function GET(request: Request) {
   try {
     const user = await getApiUser(request)
@@ -49,7 +60,7 @@ export async function GET(request: Request) {
     const [streakResult, langResult, profileResult] = await Promise.all([
       supabase
         .from('user_login_streaks')
-        .select('current_streak')
+        .select('current_streak, last_login_date')
         .eq('user_id', user.id)
         .single(),
 
@@ -106,12 +117,24 @@ export async function GET(request: Request) {
       lastTopicName = TOPIC_NAMES[lastTopicId] ?? null
     }
 
+    const timezone = profileResult.data?.timezone ?? 'UTC'
+
+    // current_streak is only recomputed when the user opens the app, so a
+    // lapsed user's row still holds whatever they had on their last login.
+    // Scheduling 30 days of reminders off that raw number makes them quote a
+    // streak the next login will reset — resolve it against today first.
+    const storedStreak = streakResult.data?.current_streak ?? 0
+    const lastLoginDate = streakResult.data?.last_login_date ?? null
+    const today = localToday(timezone)
+    const currentStreak = effectiveStreak(storedStreak, lastLoginDate, today)
+
     return NextResponse.json({
-      currentStreak: streakResult.data?.current_streak ?? 0,
+      currentStreak,
+      streakDaysRemaining: streakDaysRemaining(storedStreak, lastLoginDate, today),
       lastTopicName,
       lastStudiedAt: langResult.data?.last_activity_at ?? null,
       userLanguage,
-      timezone: profileResult.data?.timezone ?? 'UTC',
+      timezone,
       dueReviewCount: dueResult.count ?? 0,
     })
   } catch (error) {

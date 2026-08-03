@@ -70,7 +70,9 @@ export async function POST(request: NextRequest) {
 
     if (updateError) throw updateError
 
-    const today = now.toISOString().split('T')[0]
+    // The user's calendar day, not the server's — daily counters have to roll
+    // over at the same midnight the streak does.
+    const today = await progressService.getUserLocalDate(userId, now)
     const { error: dailyError } = await supabase
       .from('user_daily_progress')
       .upsert(
@@ -93,6 +95,11 @@ export async function POST(request: NextRequest) {
         console.error('Failed to update daily progress:', incrementError)
       }
     }
+
+    // Grading a review is studying — without this the streak reminder still
+    // goes out tonight, because nothing else moves last_activity_at on a
+    // review-only session.
+    await progressService.touchLanguageActivity(userId, targetLanguageCode, now.toISOString())
 
     if (clientEventId) {
       await progressService.markEventProcessed(clientEventId, userId)

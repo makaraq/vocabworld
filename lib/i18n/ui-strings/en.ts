@@ -468,6 +468,7 @@ export const en = {
   'myWords.noPlaylistsHint': 'Search words and add them to playlists',
   'myWords.wordCount.one': '{n} word',
   'myWords.wordCount.other': '{n} words',
+  'myWords.deletePlaylist.aria': 'Delete playlist {name}',
   'accountSection.manageAccount': 'Manage Account',
   'sections.aria.nav': 'Language learning sections',
 
@@ -502,6 +503,13 @@ export const en = {
   'createPlaylist.placeholder': 'Enter playlist name...',
   'createPlaylist.creating': 'Creating...',
   'createPlaylist.create': 'Create Playlist',
+
+  // ---------- Delete playlist confirmation ----------
+  'deletePlaylist.title': 'Delete Playlist?',
+  'deletePlaylist.warning': '<b>{name}</b> and all its saved words will be permanently deleted. This cannot be undone.',
+  'deletePlaylist.deleting': 'Deleting...',
+  'deletePlaylist.delete': 'Delete Playlist',
+  'deletePlaylist.failed': 'Failed to delete playlist',
 
   // ---------- Learning view misc ----------
   'sections.dot.account': 'Account',

@@ -8,7 +8,7 @@
  *   1000        — (legacy) Daily study reminder — REMOVED; only cancelled now
  *                 so it clears off devices that scheduled it before the change.
  *   2000–2029   — Streak protection (one per calendar day, next 30 days)
- *   3000        — Review reminder (one-time, ~24h after last study)
+ *   3000–3014   — Review reminder (every other day, next 30 days)
  *   4000        — Trial-ending reminder (one-time, 2 days before trial expires)
  *
  * All functions guard with isNative() so they are safe to call during SSR
@@ -29,6 +29,8 @@ export interface NotificationPreferences {
 
 export interface NotificationContext {
   currentStreak: number
+  /** Day offsets on which the streak can still be saved (0 = tonight is the last chance). */
+  streakDaysRemaining: number
   lastTopicName: string | null
   lastStudiedAt: string | null     // ISO timestamp or null
   userLanguage: string             // e.g. "Portuguese"
@@ -44,9 +46,15 @@ export const DEFAULT_NOTIFICATION_PREFS: NotificationPreferences = {
 
 const DAILY_REMINDER_ID = 1000   // legacy — only cancelled now (daily reminder removed)
 const STREAK_BASE_ID    = 2000
-const REVIEW_ID         = 3000
+const REVIEW_BASE_ID    = 3000
 const TRIAL_REMINDER_ID = 4000
 const STREAK_DAYS       = 30
+
+// Review reminders go out every other day, covering the same 30-day horizon as
+// the streak block. Every-other-day keeps them from reading as a second daily
+// nag on top of the 20:00 streak reminder.
+const REVIEW_INTERVAL_DAYS = 2
+const REVIEW_SLOTS         = 15
 
 // Review reminder fires at this local time (the user-chosen daily time was removed).
 const DEFAULT_REVIEW_TIME = '09:00'
@@ -106,10 +114,15 @@ function daySeed(): number {
   return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate()
 }
 
+// Two pools, because half the streak copy claims tonight is the deadline.
+// Those only go out on the night that genuinely is one; the rest carry the
+// no-deadline framing.
 const STREAK_KEYS = [
-  'notif.streak.1', 'notif.streak.2', 'notif.streak.3',
-  'notif.streak.4', 'notif.streak.5', 'notif.streak.6',
+  'notif.streak.1', 'notif.streak.3', 'notif.streak.4', 'notif.streak.6',
 ]
+
+/** "Tonight's the cutoff" / "expires tonight" — true only on the last savable day. */
+const STREAK_FINAL_KEYS = ['notif.streak.2', 'notif.streak.5']
 
 const STREAK_START_KEYS = ['notif.streakStart.1', 'notif.streakStart.2']
 
@@ -142,6 +155,19 @@ function localizedTargetLanguageName(uiLang: string, fallback: string): string {
 
 // ── Scheduling helpers ───────────────────────────────────────────────────────
 
+/**
+ * Fills the 30 daily 8 PM slots.
+ *
+ * Only the days on which the streak is still rescuable can honestly name it,
+ * and across that window the streak is worth exactly what it is worth today —
+ * a login can only ever add one, so there is nothing to count up. Every slot
+ * past it belongs to a streak that will already be gone, so it carries the
+ * start-a-streak invite instead. Users with no live streak get that invite
+ * throughout, rather than silence.
+ *
+ * The whole window is rebuilt on every app open, so a user who does show up
+ * moves their real streak forward and gets re-scheduled off the new value.
+ */
 async function scheduleStreakProtection(
   ctx: NotificationContext,
   studiedToday: boolean
@@ -153,7 +179,9 @@ async function scheduleStreakProtection(
     notifications: Array.from({ length: STREAK_DAYS }, (_, i) => ({ id: STREAK_BASE_ID + i })),
   })
 
-  if (ctx.currentStreak === 0) return
+  // Older API builds don't send streakDaysRemaining — 0 keeps day 0 honest and
+  // degrades the rest to the start-a-streak copy.
+  const lastSavableDay = ctx.currentStreak > 0 ? (ctx.streakDaysRemaining ?? 0) : -1
 
   const uiLang = getCurrentUiLang()
   await loadUiStrings(uiLang)
@@ -165,11 +193,15 @@ async function scheduleStreakProtection(
     const at = streakTimeOnDay(i)
     if (at <= new Date()) continue
 
-    const projected = ctx.currentStreak + i
-    const vars = { projected, language }
-    const { title, body } = projected > 1
-      ? resolveCopy(uiLang, pick(STREAK_KEYS, daySeed() + i), vars)
-      : resolveCopy(uiLang, pick(STREAK_START_KEYS, daySeed() + i), vars)
+    // `projected` is the streak at risk, not a forecast: it stays flat across
+    // the savable window because one login adds one day no matter which day of
+    // the window it lands on.
+    const vars = { projected: ctx.currentStreak, language }
+    const pool =
+      i > lastSavableDay || ctx.currentStreak <= 1 ? STREAK_START_KEYS
+      : i === lastSavableDay ? STREAK_FINAL_KEYS
+      : STREAK_KEYS
+    const { title, body } = resolveCopy(uiLang, pick(pool, daySeed() + i), vars)
 
     toSchedule.push({
       id: STREAK_BASE_ID + i,
@@ -209,37 +241,59 @@ function nextReminderTimeAfter(anchor: Date, reminderTime: string, minHoursAfter
 
 const REVIEW_THRESHOLD = 10
 
+/**
+ * Fills the review slots — one every other day, at the review hour.
+ *
+ * The count in the copy is the queue as it stands right now. It can only be an
+ * under-count by the time a later slot fires: cards keep coming due while the
+ * user is away, and clearing any of them means opening the app, which rebuilds
+ * this whole block. So the number is a floor, never a claim of more work than
+ * actually exists.
+ */
 async function scheduleReviewReminder(
   ctx: NotificationContext
 ): Promise<void> {
   const { LocalNotifications } = await import('@capacitor/local-notifications')
-  await LocalNotifications.cancel({ notifications: [{ id: REVIEW_ID }] })
+
+  // Clear the whole block first. The legacy single-notification id is the base
+  // of this range, so upgraded installs are covered by the same cancel.
+  await LocalNotifications.cancel({
+    notifications: Array.from({ length: REVIEW_SLOTS }, (_, i) => ({ id: REVIEW_BASE_ID + i })),
+  })
+
   if (ctx.dueReviewCount <= REVIEW_THRESHOLD) return
 
-  // Schedule for the default review time (at least 1h from now so it doesn't
-  // fire immediately when the app reschedules on foreground).
-  const reviewAt = nextReminderTimeAfter(new Date(), DEFAULT_REVIEW_TIME, 1)
+  // First slot keeps the original timing: the next review hour that is at least
+  // 1h out, so a foreground reschedule can't make one fire immediately.
+  const first = nextReminderTimeAfter(new Date(), DEFAULT_REVIEW_TIME, 1)
 
   const uiLang = getCurrentUiLang()
   await loadUiStrings(uiLang)
   const language = localizedTargetLanguageName(uiLang, ctx.userLanguage)
-  const { title, body } = resolveCopy(uiLang, pick(REVIEW_KEYS, daySeed()), {
-    n: ctx.dueReviewCount,
-    language,
-  })
+  const vars = { n: ctx.dueReviewCount, language }
 
-  await LocalNotifications.schedule({
-    notifications: [{
-      id: REVIEW_ID,
+  const toSchedule: Parameters<typeof LocalNotifications.schedule>[0]['notifications'] = []
+  for (let i = 0; i < REVIEW_SLOTS; i++) {
+    const at = new Date(first)
+    at.setDate(at.getDate() + i * REVIEW_INTERVAL_DAYS)
+    if (at <= new Date()) continue
+
+    const { title, body } = resolveCopy(uiLang, pick(REVIEW_KEYS, daySeed() + i), vars)
+    toSchedule.push({
+      id: REVIEW_BASE_ID + i,
       title,
       body,
-      schedule: { at: reviewAt },
+      schedule: { at },
       extra: { action: 'open_review' },
       smallIcon: 'ic_notification',
       iconColor: '#10b981',
       sound: 'default',
-    }],
-  })
+    })
+  }
+
+  if (toSchedule.length > 0) {
+    await LocalNotifications.schedule({ notifications: toSchedule })
+  }
 }
 
 // ── Trial-ending reminder ────────────────────────────────────────────────────
@@ -307,16 +361,34 @@ export async function scheduleTrialReminder(trialEndsAt: string | null): Promise
 
 // ── Public API ───────────────────────────────────────────────────────────────
 
+/** Calendar date (YYYY-MM-DD) of `date` in `timezone`, falling back to system local. */
+function localDateIn(date: Date, timezone: string | null): string {
+  try {
+    if (timezone) return date.toLocaleDateString('en-CA', { timeZone: timezone })
+  } catch {
+    // Unresolvable zone — system local below.
+  }
+  return date.toLocaleDateString('en-CA')
+}
+
 /**
- * Returns true if the user has already studied today according to their
- * stored timezone. Used to suppress the streak notification for today.
+ * Returns true if the user has already studied today. Used to suppress the
+ * streak notification for today.
+ *
+ * The device's own zone wins over ctx.timezone: it is where the user actually
+ * is right now, it is the zone the streak day was recorded in, and it stays
+ * right even if the stored copy is stale (travel) or was never written.
  */
 export function hasStudiedToday(ctx: NotificationContext): boolean {
   if (!ctx.lastStudiedAt) return false
-  const tz = ctx.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone
-  const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: tz })
-  const lastStr  = new Date(ctx.lastStudiedAt).toLocaleDateString('en-CA', { timeZone: tz })
-  return todayStr === lastStr
+  let tz: string | null = null
+  try {
+    tz = Intl.DateTimeFormat().resolvedOptions().timeZone || null
+  } catch {
+    // No resolvable device zone — fall back to the server's copy.
+  }
+  tz = tz || ctx.timezone || null
+  return localDateIn(new Date(), tz) === localDateIn(new Date(ctx.lastStudiedAt), tz)
 }
 
 /**
@@ -375,8 +447,8 @@ export async function cancelAllNotifications(): Promise<void> {
   await LocalNotifications.cancel({
     notifications: [
       { id: DAILY_REMINDER_ID },
-      { id: REVIEW_ID },
       ...Array.from({ length: STREAK_DAYS }, (_, i) => ({ id: STREAK_BASE_ID + i })),
+      ...Array.from({ length: REVIEW_SLOTS }, (_, i) => ({ id: REVIEW_BASE_ID + i })),
     ],
   })
 }
