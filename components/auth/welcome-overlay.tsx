@@ -5,10 +5,12 @@ import Lottie from 'lottie-react'
 import { Button } from '@/components/ui/button'
 import { Capacitor } from '@capacitor/core'
 import { useAuth } from '@/contexts/auth-context'
+import { useT } from '@/components/providers/translation-provider'
 import { hapticsLight } from '@/lib/haptics'
 import languageTranslatorAnim from '@/lib/animations/language-translator.json'
 
 export function WelcomeOverlay() {
+  const { t } = useT()
   const { user, signInWithGoogle, signInWithApple, signInWithEmail, signUpWithEmail, resetPassword, loading } = useAuth()
   const [isSigningIn, setIsSigningIn] = useState(false)
   const [showOverlay, setShowOverlay] = useState(false)
@@ -109,11 +111,11 @@ export function WelcomeOverlay() {
 
     const trimmedEmail = email.trim()
     if (!trimmedEmail || !password) {
-      setEmailError('Enter your email and password.')
+      setEmailError(t('auth.error.missingFields'))
       return
     }
     if (isSignUp && password.length < 8) {
-      setEmailError('Password must be at least 8 characters.')
+      setEmailError(t('auth.error.passwordTooShort'))
       return
     }
 
@@ -123,7 +125,7 @@ export function WelcomeOverlay() {
         const { needsEmailConfirmation } = await signUpWithEmail(trimmedEmail, password)
         if (needsEmailConfirmation) {
           // No session yet — prompt them to confirm, then switch to sign-in mode.
-          setEmailNotice('Check your email to confirm your account, then sign in.')
+          setEmailNotice(t('auth.notice.confirmEmail'))
           setIsSignUp(false)
           setPassword('')
           setIsSigningIn(false)
@@ -135,7 +137,7 @@ export function WelcomeOverlay() {
       }
     } catch (err: any) {
       console.error('Email auth failed:', err)
-      setEmailError(err?.message || 'Something went wrong. Please try again.')
+      setEmailError(err?.message || t('auth.error.generic'))
       setIsSigningIn(false)
     }
   }
@@ -147,7 +149,7 @@ export function WelcomeOverlay() {
 
     const trimmedEmail = email.trim()
     if (!trimmedEmail) {
-      setEmailError('Enter your email above first, then tap “Forgot password.”')
+      setEmailError(t('auth.error.emailFirst'))
       return
     }
 
@@ -155,10 +157,10 @@ export function WelcomeOverlay() {
     try {
       await resetPassword(trimmedEmail)
       // Don't reveal whether the email maps to an account.
-      setEmailNotice('If an account exists for that email, a reset link is on its way. Open it, set a new password, then sign in here.')
+      setEmailNotice(t('auth.notice.resetSent'))
     } catch (err: any) {
       console.error('Password reset failed:', err)
-      setEmailError(err?.message || 'Could not send the reset email. Please try again.')
+      setEmailError(err?.message || t('auth.error.resetFailed'))
     } finally {
       setIsSigningIn(false)
     }
@@ -184,7 +186,7 @@ export function WelcomeOverlay() {
         {/* Welcome Text */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white leading-tight drop-shadow-lg">
-            Thousands of words. Organized on Sprind.
+            {t('auth.headline')}
           </h1>
         </div>
         
@@ -192,7 +194,7 @@ export function WelcomeOverlay() {
         {isSigningIn ? (
           <div className="w-full bg-white/90 text-gray-800 font-medium py-4 px-6 rounded-xl flex items-center justify-center gap-3 text-base shadow-lg">
             <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
-            <span>Signing in...</span>
+            <span>{t('auth.signingIn')}</span>
           </div>
         ) : showEmailForm ? (
           <form onSubmit={handleEmailSubmit} className="flex flex-col gap-3 text-left">
@@ -200,7 +202,7 @@ export function WelcomeOverlay() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email"
+              placeholder={t('auth.email')}
               autoCapitalize="none"
               autoCorrect="off"
               autoComplete="email"
@@ -210,7 +212,7 @@ export function WelcomeOverlay() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
+              placeholder={t('auth.password')}
               autoComplete={isSignUp ? 'new-password' : 'current-password'}
               className="w-full h-14 bg-white/90 text-gray-800 placeholder-gray-500 px-4 rounded-xl text-base outline-none focus:ring-2 focus:ring-white/70"
             />
@@ -222,7 +224,7 @@ export function WelcomeOverlay() {
                 disabled={loading || isSigningIn}
                 className="self-end text-sm text-white/80 underline underline-offset-2 -mt-1"
               >
-                Forgot password?
+                {t('auth.forgotPassword')}
               </button>
             )}
 
@@ -234,7 +236,7 @@ export function WelcomeOverlay() {
               disabled={loading || isSigningIn}
               className="w-full h-14 bg-white hover:bg-gray-50 text-gray-800 font-semibold px-6 rounded-xl transition-all duration-200 flex items-center justify-center text-lg shadow-lg hover:shadow-xl transform hover:scale-105"
             >
-              {isSignUp ? 'Create account' : 'Sign in'}
+              {isSignUp ? t('auth.createAccount') : t('auth.signIn')}
             </Button>
 
             <button
@@ -242,14 +244,14 @@ export function WelcomeOverlay() {
               onClick={() => { setIsSignUp(!isSignUp); setEmailError(null); setEmailNotice(null) }}
               className="text-sm text-white/90 underline underline-offset-2"
             >
-              {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Create one"}
+              {isSignUp ? t('auth.haveAccount') : t('auth.noAccount')}
             </button>
             <button
               type="button"
               onClick={() => { setShowEmailForm(false); setEmailError(null); setEmailNotice(null) }}
               className="text-sm text-white/60"
             >
-              ← Back
+              {'← ' + t('auth.back')}
             </button>
           </form>
         ) : (
@@ -263,7 +265,7 @@ export function WelcomeOverlay() {
                 <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                   <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
                 </svg>
-                Continue with Apple
+                {t('auth.continueApple')}
               </Button>
             )}
 
@@ -278,7 +280,7 @@ export function WelcomeOverlay() {
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
-              Continue with Google
+              {t('auth.continueGoogle')}
             </Button>
 
             <Button
@@ -290,7 +292,7 @@ export function WelcomeOverlay() {
                 <rect x="2" y="4" width="20" height="16" rx="2" />
                 <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
               </svg>
-              Continue with Email
+              {t('auth.continueEmail')}
             </Button>
           </div>
         )}

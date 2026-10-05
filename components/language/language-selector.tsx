@@ -4427,11 +4427,16 @@ export function LanguageSelector() {
                 <div
                   role="region"
                   aria-label={`${getTranslatedLanguageName(targetLanguageCode)}: ${getCurrentContent().sourceWord}`}
-                  className={`bg-black/40 border border-white/20 rounded-2xl p-8 transition-all duration-300 shadow-lg ${
+                  data-scale={
                     currentAudioStep === 'training'
-                      ? 'bg-blue-500/20 border-blue-400/30 scale-105'
+                      ? 'audio'
                       : holdingCardIndex === 0
-                      ? 'scale-105'
+                      ? 'press'
+                      : undefined
+                  }
+                  className={`flashcard-scale bg-black/40 border border-white/20 rounded-2xl p-8 shadow-lg ${
+                    currentAudioStep === 'training'
+                      ? 'bg-blue-500/20 border-blue-400/30'
                       : 'bg-black/40'
                   }`}
                   onTouchStart={(e) => {
@@ -4466,11 +4471,16 @@ export function LanguageSelector() {
                 <div
                   role="region"
                   aria-label={`${getTranslatedLanguageName(nativeLanguageCode)}: ${getCurrentContent().targetWord}`}
-                  className={`bg-black/40 border border-white/20 rounded-2xl p-8 transition-all duration-300 shadow-lg ${
+                  data-scale={
                     currentAudioStep === 'main'
-                      ? 'bg-blue-500/20 border-blue-400/30 scale-105'
+                      ? 'audio'
                       : holdingCardIndex === 1
-                      ? 'scale-105'
+                      ? 'press'
+                      : undefined
+                  }
+                  className={`flashcard-scale bg-black/40 border border-white/20 rounded-2xl p-8 shadow-lg ${
+                    currentAudioStep === 'main'
+                      ? 'bg-blue-500/20 border-blue-400/30'
                       : 'bg-black/40'
                   }`}
                   onTouchStart={(e) => {

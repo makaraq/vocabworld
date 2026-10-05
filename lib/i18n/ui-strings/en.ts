@@ -511,6 +511,30 @@ export const en = {
   'deletePlaylist.delete': 'Delete Playlist',
   'deletePlaylist.failed': 'Failed to delete playlist',
 
+  // ---------- Auth / welcome overlay ----------
+  // Shown before sign-in. First-time visitors have no main language yet, so
+  // this renders in English; returning users get their persisted language.
+  'auth.headline': 'Thousands of words. Organized on Sprind.',
+  'auth.signingIn': 'Signing in...',
+  'auth.email': 'Email',
+  'auth.password': 'Password',
+  'auth.forgotPassword': 'Forgot password?',
+  'auth.createAccount': 'Create account',
+  'auth.signIn': 'Sign in',
+  'auth.haveAccount': 'Already have an account? Sign in',
+  'auth.noAccount': "Don't have an account? Create one",
+  'auth.back': 'Back',
+  'auth.continueApple': 'Continue with Apple',
+  'auth.continueGoogle': 'Continue with Google',
+  'auth.continueEmail': 'Continue with Email',
+  'auth.error.missingFields': 'Enter your email and password.',
+  'auth.error.passwordTooShort': 'Password must be at least 8 characters.',
+  'auth.error.generic': 'Something went wrong. Please try again.',
+  'auth.error.emailFirst': 'Enter your email above first, then tap “Forgot password.”',
+  'auth.error.resetFailed': 'Could not send the reset email. Please try again.',
+  'auth.notice.confirmEmail': 'Check your email to confirm your account, then sign in.',
+  'auth.notice.resetSent': 'If an account exists for that email, a reset link is on its way. Open it, set a new password, then sign in here.',
+
   // ---------- Learning view misc ----------
   'sections.dot.account': 'Account',
   'sections.dot.firstAid': 'First Aid',
