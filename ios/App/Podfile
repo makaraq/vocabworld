@@ -28,4 +28,19 @@ end
 
 post_install do |installer|
   assertDeploymentTarget(installer)
+
+  # Capacitor's assertDeploymentTarget() only raises pods that are BELOW 14.0 up
+  # to 14.0 — it has a hardcoded ceiling and never goes higher (see
+  # node_modules/@capacitor/ios/scripts/pods_helpers.rb). So every pod stays at
+  # 14.0 while the app targets 16.0, and Xcode 16+ warns on anything under 15.0.
+  # Pin every pod to the app's own deployment target to silence that and keep
+  # pods and app in step. Safe: the app already requires iOS 16.
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      current = config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f
+      if current != 0.0 && current < 16.0
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
+      end
+    end
+  end
 end
