@@ -31,6 +31,14 @@ missing=""
 if [ -n "$missing" ]; then
   echo "ERROR: missing required build env var(s):$missing" >&2
   echo "Set them in Xcode Cloud workflow Environment, then re-run." >&2
+  # Names only, never values. If a variable is set in the Xcode Cloud UI but the
+  # script still sees it as empty, the usual causes are a typo/trailing space in
+  # the name, it being attached to a different workflow than the one that ran, or
+  # the build having been started before it was saved. Listing what actually
+  # reached this process distinguishes those without another guessing round.
+  echo "--- NEXT_PUBLIC_* visible to this script (names only) ---" >&2
+  env | grep -oE '^NEXT_PUBLIC_[A-Za-z0-9_]+' | sort | sed 's/^/  /' >&2 || true
+  echo "--- end ---" >&2
   exit 1
 fi
 echo "Supabase env present (URL length: ${#NEXT_PUBLIC_SUPABASE_URL})"
