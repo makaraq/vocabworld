@@ -1,7 +1,15 @@
 #!/bin/sh
 set -e
 
-brew install node
+# Pin Node instead of taking whatever `brew install node` resolves to that day:
+# Next 16 declares node >=20.9.0 with no upper bound, so an unpinned install
+# silently moves to each new major and can break a build you did not change.
+# Keep this in step with .nvmrc and package.json "engines".
+# `brew list` guard keeps it idempotent — a plain re-install of an existing
+# formula can exit non-zero and `set -e` would abort the whole script.
+brew list node@22 >/dev/null 2>&1 || brew install node@22
+export PATH="$(brew --prefix node@22)/bin:$PATH"
+echo "node $(node -v) / npm $(npm -v)"
 
 cd "$CI_PRIMARY_REPOSITORY_PATH"
 npm ci --legacy-peer-deps
@@ -30,4 +38,8 @@ echo "Supabase env present (URL length: ${#NEXT_PUBLIC_SUPABASE_URL})"
 npm run build:ios
 
 cd "$CI_PRIMARY_REPOSITORY_PATH/ios/App"
-pod install
+# --repo-update refreshes the spec index first. Without it a freshly pinned pod
+# version (PurchasesHybridCommon 18.12.0) can fail on a CI machine whose cached
+# CocoaPods index predates it: "none of your spec sources contain a spec
+# satisfying the dependency".
+pod install --repo-update
