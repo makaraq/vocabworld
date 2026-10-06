@@ -1,0 +1,12 @@
+diff --git a/node_modules/@revenuecat/purchases-capacitor/RevenuecatPurchasesCapacitor.podspec b/node_modules/@revenuecat/purchases-capacitor/RevenuecatPurchasesCapacitor.podspec
+index 35ecdea..092cf72 100644
+--- a/node_modules/@revenuecat/purchases-capacitor/RevenuecatPurchasesCapacitor.podspec
++++ b/node_modules/@revenuecat/purchases-capacitor/RevenuecatPurchasesCapacitor.podspec
+@@ -13,6 +13,6 @@ Pod::Spec.new do |s|
+   s.source_files = 'ios/Sources/**/*.{swift,h,m,c,cc,mm,cpp}'
+   s.ios.deployment_target = '14.0'
+   s.dependency 'Capacitor'
+-  s.dependency 'PurchasesHybridCommon', '17.25.0'
++  s.dependency 'PurchasesHybridCommon', '18.12.0'
+   s.swift_version = '5.1'
+ end
