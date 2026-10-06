@@ -46,8 +46,7 @@ echo "Supabase env present (URL length: ${#NEXT_PUBLIC_SUPABASE_URL})"
 npm run build:ios
 
 cd "$CI_PRIMARY_REPOSITORY_PATH/ios/App"
-# --repo-update refreshes the spec index first. Without it a freshly pinned pod
-# version (PurchasesHybridCommon 18.12.0) can fail on a CI machine whose cached
-# CocoaPods index predates it: "none of your spec sources contain a spec
-# satisfying the dependency".
-pod install --repo-update
+# `npm run build:ios` above already runs `cap sync ios`, which runs pod install
+# itself — so by here the Pods are normally resolved and this is a cheap no-op
+# that simply fails loudly if they are not.
+pod install
