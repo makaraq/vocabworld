@@ -53,22 +53,32 @@ async function computeRank(
   targetLanguageCode: string,
   isWeekly: boolean,
 ): Promise<number | null> {
-  let query = getServiceClient()
-    .from('user_word_progress')
-    .select('user_id, play_count, last_played_at')
-    .eq('target_language_code', targetLanguageCode)
+  // PostgREST caps a response at 1000 rows, so page through the table — a
+  // partial scan would hand the user a rank computed from an arbitrary slice.
+  const PAGE = 1000
+  const data: { user_id: string; play_count: number }[] = []
+  for (let from = 0; ; from += PAGE) {
+    let query = getServiceClient()
+      .from('user_word_progress')
+      .select('user_id, play_count, last_played_at')
+      .eq('target_language_code', targetLanguageCode)
+      .order('user_id', { ascending: true })
+      .range(from, from + PAGE - 1)
 
-  if (isWeekly) {
-    const now = new Date()
-    const day = now.getDay()
-    const diff = now.getDate() - day + (day === 0 ? -6 : 1)
-    const weekStart = new Date(now.setDate(diff))
-    weekStart.setHours(0, 0, 0, 0)
-    query = query.gte('last_played_at', weekStart.toISOString())
+    if (isWeekly) {
+      const now = new Date()
+      const day = now.getDay()
+      const diff = now.getDate() - day + (day === 0 ? -6 : 1)
+      const weekStart = new Date(now.setDate(diff))
+      weekStart.setHours(0, 0, 0, 0)
+      query = query.gte('last_played_at', weekStart.toISOString())
+    }
+
+    const { data: page, error } = await query
+    if (error || !page) return null
+    data.push(...page)
+    if (page.length < PAGE) break
   }
-
-  const { data, error } = await query
-  if (error || !data) return null
 
   const scores = new Map<string, number>()
   for (const row of data) {
