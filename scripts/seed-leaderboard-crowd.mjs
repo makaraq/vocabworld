@@ -2,6 +2,7 @@
  * Seeds a crowd of 2000 synthetic leaderboard users.
  *
  *   node scripts/seed-leaderboard-crowd.mjs            # create the crowd
+ *   node scripts/seed-leaderboard-crowd.mjs --update   # recut the curve for the existing crowd
  *   node scripts/seed-leaderboard-crowd.mjs --refresh  # only bump streak dates
  *   node scripts/seed-leaderboard-crowd.mjs --dry-run  # print the curve, touch nothing
  *
@@ -22,12 +23,20 @@ import { createClient } from '@supabase/supabase-js'
 
 const DRY_RUN = process.argv.includes('--dry-run')
 const REFRESH_ONLY = process.argv.includes('--refresh')
+const UPDATE_ONLY = process.argv.includes('--update')
 const TOTAL = 2000
-const TOP_PLAYS = 2_000_000
+// Ceiling for the curve. No one is parked exactly on it: rank 1 lands on a
+// random number just under 3M, so the top of the board never looks rounded.
+const TOP_PLAYS = 3_000_000
 const TOP_STREAK = 39
 const NAMED_SHARE = 0.10
-const NAMED_IN_FIRST_25 = 3
+const NAMED_IN_FIRST_25 = 10
 const LEDGER = 'leaderboard-crowd.json'
+// `in` filters ride in the query string, and a few hundred UUIDs is already
+// enough URL for the request to be dropped before PostgREST sees it.
+const ID_CHUNK = 100
+// Upserts travel in the POST body, so they can go in bigger batches.
+const BATCH = 500
 
 // Languages people actually learn in this app, weighted by how busy they are.
 const LANGUAGES = [
@@ -106,32 +115,35 @@ function handleFor() {
 // One independent curve per language: rank 1 at TOP_PLAYS, the top 1% still
 // within a whisker of it, then a jittered power decay down to the tail.
 function buildGroup(lang, size) {
+  // Each language gets its own ceiling a little way under TOP_PLAYS, and the
+  // top 1% are scattered beneath that — so no two boards share a leader number
+  // and nothing lands on a suspiciously round one.
+  const groupTop = Math.round(TOP_PLAYS * between(0.93, 0.999))
   const topBand = Math.max(1, Math.round(size * 0.01))
   const floorPlays = Math.round(between(260, 900))
   const rows = []
   for (let i = 0; i < size; i++) {
     let plays
     if (i < topBand) {
-      plays = Math.round(TOP_PLAYS * between(0.962, 1))
+      plays = Math.round(groupTop * between(0.93, 1))
     } else {
       const t = (i - topBand) / Math.max(1, size - topBand - 1)
-      const decayed = TOP_PLAYS * Math.pow(floorPlays / TOP_PLAYS, Math.pow(t, 0.78))
-      plays = Math.round(decayed * between(0.9, 1.1))
+      const decayed = groupTop * Math.pow(floorPlays / groupTop, Math.pow(t, 0.78))
+      plays = Math.round(decayed * between(0.9, 1.08))
     }
-    rows.push({ lang, plays: Math.max(40, plays) })
+    rows.push({ lang, plays: Math.min(groupTop, Math.max(40, plays)) })
   }
   rows.sort((a, b) => b.plays - a.plays)
-  rows[0].plays = TOP_PLAYS
 
   // Streaks follow the plays: 39 at the top, randomly easing down to 1.
   for (const row of rows) {
-    const base = TOP_STREAK * Math.pow(row.plays / TOP_PLAYS, 0.33)
+    const base = TOP_STREAK * Math.pow(row.plays / groupTop, 0.33)
     row.streak = Math.min(TOP_STREAK, Math.max(1, Math.round(base * between(0.78, 1.18))))
   }
   rows[0].streak = TOP_STREAK
 
-  // Names: exactly NAMED_IN_FIRST_25 inside the first 25 rows, then fill the
-  // rest of the group at random until the group hits NAMED_SHARE.
+  // Names: NAMED_IN_FIRST_25 of the first 25 rows, then fill the rest of the
+  // group at random until the group hits NAMED_SHARE.
   const target = Math.round(size * NAMED_SHARE)
   const head = Math.min(25, size)
   const headPicks = new Set()
@@ -167,9 +179,14 @@ function buildCrowd() {
   })
   crowd.sort((a, b) => b.plays - a.plays)
 
-  // Merging the per-language groups dilutes the head, so re-fix the global
-  // first 25 at NAMED_IN_FIRST_25 and pay for it out of the tail to keep the
-  // crowd at NAMED_SHARE overall.
+  fixGlobalHead(crowd)
+  return crowd
+}
+
+// Merging the per-language groups dilutes the head, so re-fix the global first
+// 25 at NAMED_IN_FIRST_25 and pay for it out of the tail, keeping the crowd as
+// a whole near NAMED_SHARE. Expects `crowd` already sorted by plays, desc.
+function fixGlobalHead(crowd) {
   const head = crowd.slice(0, 25)
   let headNamed = head.filter(r => r.named).length
   while (headNamed < NAMED_IN_FIRST_25) {
@@ -189,8 +206,6 @@ function buildCrowd() {
     if (take) take.named = true
   }
   for (const row of crowd) row.handle = row.named ? (row.handle ?? handleFor()) : null
-
-  return crowd
 }
 
 // ------------------------------------------------------------------ plumbing
@@ -244,14 +259,119 @@ async function main() {
   if (REFRESH_ONLY) {
     if (!existsSync(LEDGER)) throw new Error(`${LEDGER} not found - nothing to refresh`)
     const { ids } = JSON.parse(readFileSync(LEDGER, 'utf8'))
-    for (let i = 0; i < ids.length; i += 500) {
+    for (let i = 0; i < ids.length; i += ID_CHUNK) {
       const { error } = await db.from('user_login_streaks')
         .update({ last_login_date: todayUtc })
-        .in('user_id', ids.slice(i, i + 500))
+        .in('user_id', ids.slice(i, i + ID_CHUNK))
       if (error) console.error('  refresh failed:', error.message)
-      process.stdout.write(`\r  refreshed ${Math.min(i + 500, ids.length)}/${ids.length}`)
+      process.stdout.write(`\r  refreshed ${Math.min(i + ID_CHUNK, ids.length)}/${ids.length}`)
     }
     console.log(`\n${ids.length} streak dates moved to ${todayUtc}`)
+    return
+  }
+
+  if (UPDATE_ONLY) {
+    if (!existsSync(LEDGER)) throw new Error(`${LEDGER} not found - nothing to update`)
+    const { ids } = JSON.parse(readFileSync(LEDGER, 'utf8'))
+
+    // Read the crowd back as it stands. Each learner keeps their language and
+    // their two vocabulary rows, so re-cutting the curve only rewrites numbers
+    // and names - it never strands a row or shifts anyone between boards.
+    const existing = []
+    for (let i = 0; i < ids.length; i += ID_CHUNK) {
+      const { data, error } = await db
+        .from('user_word_progress')
+        .select('user_id, vocabulary_id, target_language_code, play_count')
+        .in('user_id', ids.slice(i, i + ID_CHUNK))
+        .order('user_id', { ascending: true })
+      if (error) throw error
+      existing.push(...data)
+    }
+
+    const byUser = new Map()
+    for (const row of existing) {
+      const entry = byUser.get(row.user_id) ?? { id: row.user_id, lang: row.target_language_code, rows: [], total: 0 }
+      entry.rows.push(row)
+      entry.total += row.play_count
+      byUser.set(row.user_id, entry)
+    }
+
+    // Rebuild each language group at its real size and hand the new rows out
+    // in the crowd's current order, so the board reshuffles as little as it can.
+    const byLang = new Map()
+    for (const person of byUser.values()) {
+      if (!byLang.has(person.lang)) byLang.set(person.lang, [])
+      byLang.get(person.lang).push(person)
+    }
+
+    const profiles = []
+    const streaks = []
+    const progress = []
+    const assigned = []
+    for (const [lang, people] of byLang) {
+      people.sort((a, b) => b.total - a.total)
+      const curve = buildGroup(lang, people.length)
+      people.forEach((person, i) => {
+        const cut = curve[i]
+        const recent = Math.max(1, Math.round(cut.plays * between(0.012, 0.04)))
+        const [bulkRow, recentRow] = person.rows
+        progress.push({ ...bulkRow, play_count: cut.plays - recent })
+        if (recentRow) progress.push({ ...recentRow, play_count: recent })
+        profiles.push({ id: person.id, full_name: cut.handle, show_on_leaderboard: Boolean(cut.handle) })
+        streaks.push({ user_id: person.id, current_streak: cut.streak, last_login_date: todayUtc })
+        assigned.push({ ...cut, id: person.id })
+      })
+    }
+
+    // Same dilution applies here: the per-language groups each fixed their own
+    // first 25, which leaves the merged board's head short.
+    assigned.sort((a, b) => b.plays - a.plays)
+    fixGlobalHead(assigned)
+    for (const cut of assigned) {
+      const profile = profiles.find(pr => pr.id === cut.id)
+      if (profile) {
+        profile.full_name = cut.handle
+        profile.show_on_leaderboard = Boolean(cut.handle)
+      }
+    }
+
+    for (let i = 0; i < progress.length; i += BATCH) {
+      const { error } = await db.from('user_word_progress')
+        .upsert(progress.slice(i, i + BATCH), { onConflict: 'user_id,vocabulary_id,target_language_code' })
+      if (error) console.error(`  user_word_progress failed: ${error.message}`)
+      process.stdout.write(`
+  plays ${Math.min(i + BATCH, progress.length)}/${progress.length}`)
+    }
+    console.log()
+    // Profiles and streaks already exist, so update in place rather than
+    // upserting half a row over the top of them.
+    for (const [idx, row] of profiles.entries()) {
+      const { error } = await db.from('user_profiles')
+        .update({ full_name: row.full_name, show_on_leaderboard: row.show_on_leaderboard })
+        .eq('id', row.id)
+      if (error) console.error(`
+  profile ${row.id}: ${error.message}`)
+      if (idx % 200 === 0) process.stdout.write(`
+  names ${idx}/${profiles.length}`)
+    }
+    console.log(`
+  names ${profiles.length}/${profiles.length}`)
+    for (const [idx, row] of streaks.entries()) {
+      const { error } = await db.from('user_login_streaks')
+        .update({ current_streak: row.current_streak, last_login_date: row.last_login_date })
+        .eq('user_id', row.user_id)
+      if (error) console.error(`
+  streak ${row.user_id}: ${error.message}`)
+      if (idx % 200 === 0) process.stdout.write(`
+  streaks ${idx}/${streaks.length}`)
+    }
+    console.log(`
+  streaks ${streaks.length}/${streaks.length}`)
+
+    const named = assigned.filter(a => a.handle).length
+    console.log(`
+recut ${assigned.length} learners. Top: ${assigned[0].plays.toLocaleString('en-US')} plays, ${assigned[0].streak}-day streak.`)
+    console.log(`  named: ${named} (${(named / assigned.length * 100).toFixed(1)}%), ${assigned.slice(0, 25).filter(a => a.handle).length} of the first 25`)
     return
   }
 
@@ -326,10 +446,10 @@ async function main() {
   }
 
   const push = async (table, rows, conflict) => {
-    for (let i = 0; i < rows.length; i += 500) {
-      const { error } = await db.from(table).upsert(rows.slice(i, i + 500), { onConflict: conflict })
+    for (let i = 0; i < rows.length; i += BATCH) {
+      const { error } = await db.from(table).upsert(rows.slice(i, i + BATCH), { onConflict: conflict })
       if (error) console.error(`  ${table} failed: ${error.message}`)
-      process.stdout.write(`\r  ${table} ${Math.min(i + 500, rows.length)}/${rows.length}`)
+      process.stdout.write(`\r  ${table} ${Math.min(i + BATCH, rows.length)}/${rows.length}`)
     }
     console.log()
   }

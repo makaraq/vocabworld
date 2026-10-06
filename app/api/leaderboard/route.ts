@@ -41,14 +41,18 @@ async function fetchAllPages<T>(
   }
 }
 
-// Same cap applies to `.in(...)` lookups, so ask for them in chunks.
+// Same cap applies to `.in(...)` lookups, so ask for them in chunks. Keep the
+// chunk small: `in` travels in the query string, and a few hundred UUIDs is
+// already enough URL to get the request dropped before it reaches PostgREST.
+const ID_CHUNK = 100
+
 async function fetchByIds<T>(
   ids: string[],
   build: (chunk: string[]) => any,
 ): Promise<T[]> {
   const rows: T[] = []
-  for (let i = 0; i < ids.length; i += 500) {
-    const { data, error } = await build(ids.slice(i, i + 500))
+  for (let i = 0; i < ids.length; i += ID_CHUNK) {
+    const { data, error } = await build(ids.slice(i, i + ID_CHUNK))
     if (error) throw error
     rows.push(...((data || []) as T[]))
   }

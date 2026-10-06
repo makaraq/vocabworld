@@ -27,9 +27,13 @@ const db = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_
 const { ids } = JSON.parse(readFileSync('leaderboard-crowd.json', 'utf8'))
 console.log(`Deleting ${ids.length} synthetic learners...`)
 
+// `in` filters ride in the query string, so keep the chunks small - a few
+// hundred UUIDs is already enough URL for the request to be dropped in transit.
+const ID_CHUNK = 100
+
 // Dependent rows first, in case the FKs on this project do not cascade.
-for (let i = 0; i < ids.length; i += 500) {
-  const chunk = ids.slice(i, i + 500)
+for (let i = 0; i < ids.length; i += ID_CHUNK) {
+  const chunk = ids.slice(i, i + ID_CHUNK)
   for (const table of [
     ['user_word_progress', 'user_id'],
     ['user_login_streaks', 'user_id'],
@@ -38,7 +42,7 @@ for (let i = 0; i < ids.length; i += 500) {
     const { error } = await db.from(table[0]).delete().in(table[1], chunk)
     if (error) console.error(`  ${table[0]}: ${error.message}`)
   }
-  process.stdout.write(`\r  rows cleared ${Math.min(i + 500, ids.length)}/${ids.length}`)
+  process.stdout.write(`\r  rows cleared ${Math.min(i + ID_CHUNK, ids.length)}/${ids.length}`)
 }
 console.log()
 
