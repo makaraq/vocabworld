@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js'
 import { createHash } from 'node:crypto'
 import { getApiUser } from '@/lib/auth/api-auth'
 import { effectiveStreak, localDateInTimeZone } from '@/lib/progress/progress-service'
+import { avatarSeedFor } from '@/lib/avatars/smiley-avatar'
 
 // Lazy service-role client: defers createClient so importing this route during
 // the static-export build does not require Supabase env vars at build time.
@@ -63,6 +64,10 @@ interface LeaderboardEntry {
   rank: number
   displayId: string
   firstName: string | null
+  // Seed for the generated smiley the client draws. Derived from the user id
+  // so the face matches the one on that person's own account screen, without
+  // the raw id ever leaving the server.
+  avatarSeed: string
   avatarUrl: string | null
   wordsPlayed: number
   streak: number
@@ -101,6 +106,7 @@ export async function GET(request: NextRequest) {
       rank: i + 1,
       displayId: displayIdFor(row.user_id),
       firstName: extractFirstName(row.full_name),
+      avatarSeed: avatarSeedFor(row.user_id),
       avatarUrl: row.avatar_url,
       wordsPlayed: row.words_played,
       streak: row.streak,
@@ -113,6 +119,7 @@ export async function GET(request: NextRequest) {
         rank: currentUserEntry.rank,
         displayId: displayIdFor(currentUserEntry.user_id),
         firstName: extractFirstName(currentUserEntry.full_name),
+        avatarSeed: avatarSeedFor(currentUserEntry.user_id),
         avatarUrl: currentUserEntry.avatar_url,
         wordsPlayed: currentUserEntry.words_played,
         streak: currentUserEntry.streak,

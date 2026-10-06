@@ -13,6 +13,7 @@ import { idbGet, idbPut } from "@/lib/offline/offline-storage"
 import { normalizeLangParam, vocabKey } from "@/lib/offline/offline-manager"
 import { PlaylistSelectModal } from "@/components/learning/search-word-learning"
 import { ManageAccountModal } from "@/components/account/manage-account-modal"
+import { avatarSeedFor } from "@/lib/avatars/smiley-avatar"
 import { useNotifications } from "@/hooks/use-notifications"
 import { NotificationPromptModal } from "@/components/notifications/notification-prompt-modal"
 import { CoachMarkOverlay, type CoachMarkStep } from "@/components/tutorial/coach-mark-overlay"
@@ -5141,6 +5142,7 @@ export function LanguageSelector() {
           : (user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'User')}
         email={user?.email || ''}
         avatarUrl={user?.user_metadata?.avatar_url || user?.user_metadata?.picture}
+        avatarSeed={user?.id ? avatarSeedFor(user.id) : undefined}
         isPremium={isPremium}
         planType={subscriptionStatus?.subscription?.planType ?? null}
         renewalDate={

@@ -10,6 +10,7 @@ import type { PermissionState } from "@/hooks/use-notifications"
 import { hapticsLight, hapticsMedium, hapticsWarning } from "@/lib/haptics"
 import { OfflineDownloadsSection } from "@/components/offline/offline-downloads-section"
 import { useT } from "@/components/providers/translation-provider"
+import { resolveAvatar } from "@/lib/avatars/smiley-avatar"
 
 interface ManageAccountModalProps {
   open: boolean
@@ -17,6 +18,8 @@ interface ManageAccountModalProps {
   name?: string
   email?: string
   avatarUrl?: string
+  // Seed for the generated smiley face; same seed the leaderboard draws from.
+  avatarSeed?: string
   isPremium?: boolean
   planType?: 'monthly' | 'yearly' | null
   renewalDate?: string
@@ -39,6 +42,7 @@ export function ManageAccountModal({
   name = "User",
   email = "user@example.com",
   avatarUrl,
+  avatarSeed,
   isPremium = false,
   planType = null,
   renewalDate,
@@ -244,6 +248,8 @@ export function ManageAccountModal({
     .toUpperCase()
     .slice(0, 2)
 
+  const avatar = resolveAvatar(avatarUrl, avatarSeed)
+
   const handleManageSubscription = async () => {
     try {
       const cap = (window as any)?.Capacitor
@@ -401,8 +407,8 @@ export function ManageAccountModal({
               <div className="w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden border-2 border-white/20"
                 style={{ background: "linear-gradient(135deg, #7c3aed, #db2777)" }}
               >
-                {avatarUrl ? (
-                  <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover rounded-full" />
+                {avatar ? (
+                  <img src={avatar} alt="Avatar" className="w-full h-full object-cover rounded-full" />
                 ) : (
                   <span className="text-white font-bold text-lg">{initials}</span>
                 )}

@@ -6,11 +6,13 @@ import { Icon } from "@iconify/react"
 import { useAuth } from "@/contexts/auth-context"
 import { getFlagIcon } from "@/utils/flags"
 import { useT } from "@/components/providers/translation-provider"
+import { resolveAvatar } from "@/lib/avatars/smiley-avatar"
 
 interface LeaderboardEntry {
   rank: number
   displayId: string
   firstName: string | null
+  avatarSeed: string
   avatarUrl: string | null
   wordsPlayed: number
   streak: number
@@ -272,11 +274,14 @@ export function LeaderboardModal({
         className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden border border-white/20"
         style={{ background: 'linear-gradient(135deg, #7c3aed, #db2777)' }}
       >
-        {entry.avatarUrl ? (
-          <img src={entry.avatarUrl} alt="" className="w-full h-full object-cover rounded-full" />
-        ) : (
-          <span className="text-white font-semibold text-xs">{getInitial(entry)}</span>
-        )}
+        {(() => {
+          const avatar = resolveAvatar(entry.avatarUrl, entry.avatarSeed)
+          return avatar ? (
+            <img src={avatar} alt="" className="w-full h-full object-cover rounded-full" />
+          ) : (
+            <span className="text-white font-semibold text-xs">{getInitial(entry)}</span>
+          )
+        })()}
       </div>
 
       <div className="flex-1 min-w-0">
