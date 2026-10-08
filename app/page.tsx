@@ -12,16 +12,17 @@ export default function LanguagePage() {
   const supabase = createClient()
   const { user, loading } = useAuth()
 
-  // Signed-out web visitors see a public landing page first (required by
-  // Google OAuth branding verification: the home page must be viewable
-  // without login and explain the app's purpose). The native app and
-  // signed-in users go straight into the app.
-  const [entered, setEntered] = useState(false)
+  // Signed-out web visitors get the public landing page, which is a download
+  // CTA only — the web app is not a way in any more. The native app and
+  // already signed-in users go straight into the app. `?app=1` is an escape
+  // hatch for support and testing.
+  const [bypass, setBypass] = useState(false)
   const [isWeb, setIsWeb] = useState(false)
   useEffect(() => {
     setIsWeb(!Capacitor.isNativePlatform())
+    setBypass(new URLSearchParams(window.location.search).has('app'))
   }, [])
-  const showLanding = isWeb && !loading && !user && !entered
+  const showLanding = isWeb && !loading && !user && !bypass
 
   useEffect(() => {
     const checkPaymentReturn = async () => {
@@ -40,6 +41,15 @@ export default function LanguagePage() {
     checkPaymentReturn()
   }, [supabase])
 
+  if (showLanding) {
+    return (
+      <>
+        <LandingPage />
+        <Toaster />
+      </>
+    )
+  }
+
   return (
     <div
       className="min-h-screen flex flex-col items-center justify-center p-4 pt-16 pb-8"
@@ -50,14 +60,8 @@ export default function LanguagePage() {
         backgroundRepeat: "no-repeat",
       }}
     >
-      {showLanding ? (
-        <LandingPage onGetStartedAction={() => setEntered(true)} />
-      ) : (
-        <>
-          <LanguageSelector />
-          <WelcomeOverlay />
-        </>
-      )}
+      <LanguageSelector />
+      <WelcomeOverlay />
       <Toaster />
     </div>
   )

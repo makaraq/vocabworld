@@ -388,3 +388,16 @@ input, textarea, [contenteditable] {
     }
   }
 }
+
+/* ── Landing page backdrop ──────────────────────────────────
+   Topic icons, flags and leaderboard smileys drifting behind the download
+   CTA, bouncing off one another and off the edges.
+
+   The motion is a physics loop in floating-backdrop.tsx, not CSS: collisions
+   need positions the stylesheet cannot know. All this contributes is the
+   promotion hint — the component owns `transform` and `opacity` outright, so
+   nothing here may animate or transition either of them.
+─────────────────────────────────────────────────────────────────── */
+.landing-floater {
+  will-change: transform, opacity;
+}
