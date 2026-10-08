@@ -6,10 +6,12 @@
 //
 // They are a little physics world rather than a CSS animation: each one
 // drifts at its own slow speed, and when two meet they bounce off each other
-// (equal-mass elastic, with a short squash on impact) and off the edges of
-// the page. CSS cannot do that — a collision depends on where everything
+// (equal-mass elastic, nothing else — no pop, no squash) and off the edges
+// of the page. CSS cannot do that — a collision depends on where everything
 // else is this frame — so a single rAF loop owns `transform` and `opacity`
-// and writes them straight to the DOM. No React state per frame.
+// and writes them straight to the DOM. No React state per frame: a re-render
+// of this component would overwrite the loop's work, which is why the
+// trophies keep their replay timer in a child of their own.
 //
 // Purely decorative: aria-hidden, pointer-events-none, always behind the
 // hero (which sits at z-10). Anything that wanders behind the words fades
@@ -20,13 +22,16 @@ import { Icon } from '@iconify/react'
 import { LANDING_TOPICS } from '@/components/landing/landing-topics'
 import { smileyAvatar } from '@/lib/avatars/smiley-avatar'
 
+// A sprinkle of flags, not a parade of them: the topic icons carry the page.
 const FLAGS = [
-  'flag:es-1x1', 'flag:fr-1x1', 'flag:de-1x1', 'flag:it-1x1', 'flag:jp-1x1',
-  'flag:kr-1x1', 'flag:cn-1x1', 'flag:tr-1x1', 'flag:pt-1x1', 'flag:nl-1x1',
-  'flag:se-1x1', 'flag:pl-1x1', 'flag:gr-1x1', 'flag:sa-1x1', 'flag:in-1x1',
+  'flag:es-1x1', 'flag:fr-1x1', 'flag:de-1x1', 'flag:jp-1x1',
+  'flag:tr-1x1', 'flag:kr-1x1', 'flag:it-1x1', 'flag:in-1x1',
 ]
 
 const AVATAR_SEEDS = ['k3p1', 'w2x8', '9fz2', 'q7m4', 'm8d3', 'z4v7']
+
+/** How many trophies drift around replaying the topic-complete animation. */
+const TROPHIES = 2
 
 /** Each floater joins at one of these widths, so phones stay uncrowded. */
 const TIERS = ['', 'hidden md:block', 'hidden xl:block'] as const
@@ -34,16 +39,13 @@ const TIERS = ['', 'hidden md:block', 'hidden xl:block'] as const
 /** Slow: a floater crosses the page in something like a minute. */
 const SPEED_MIN = 7
 const SPEED_MAX = 20
-/** How far the squash goes, and how fast it settles. */
-const SQUASH = 0.22
-const SQUASH_DECAY = 4.5
 /** How far a floater fades where it crosses the middle copy, and how wide
  *  the soft edge of that fade is, in px. */
 const DIMMED = 0.35
 const FEATHER = 70
 
 interface Piece {
-  kind: 'topic' | 'flag' | 'avatar'
+  kind: 'topic' | 'flag' | 'avatar' | 'trophy'
   value: string
   tier: number
   size: number
@@ -69,11 +71,13 @@ function rng(seed: number) {
 function build(): Piece[] {
   const rand = rng(20261008)
 
-  // Two of everything, interleaved so neither kind clumps in the draw order.
+  // Every topic icon twice, the flags and faces once each: interleaved so no
+  // kind clumps in the draw order, and so the thinner groups spread out.
   const groups = [
-    [...FLAGS, ...FLAGS].map((value) => ({ kind: 'flag' as const, value })),
     [...LANDING_TOPICS, ...LANDING_TOPICS].map((t) => ({ kind: 'topic' as const, value: t.icon })),
-    [...AVATAR_SEEDS, ...AVATAR_SEEDS].map((value) => ({ kind: 'avatar' as const, value })),
+    FLAGS.map((value) => ({ kind: 'flag' as const, value })),
+    AVATAR_SEEDS.map((value) => ({ kind: 'avatar' as const, value })),
+    Array.from({ length: TROPHIES }, (_, i) => ({ kind: 'trophy' as const, value: `t${i}` })),
   ]
   const mixed: { kind: Piece['kind']; value: string }[] = []
   while (groups.some((g) => g.length)) {
@@ -102,7 +106,10 @@ function build(): Piece[] {
       // Offset so the tier cycle does not lock onto the kind cycle and hand
       // phones nothing but flags.
       tier: (i + Math.floor(i / 3)) % 3,
-      size: Math.round((item.kind === 'topic' ? 38 : item.kind === 'avatar' ? 30 : 26) + rand() * 18),
+      size: Math.round(
+        (item.kind === 'trophy' ? 58 : item.kind === 'topic' ? 38 : item.kind === 'avatar' ? 30 : 26) +
+          rand() * 18,
+      ),
       left: Math.round(left * 10) / 10,
       top: Math.round(top * 10) / 10,
       speed: SPEED_MIN + rand() * (SPEED_MAX - SPEED_MIN),
@@ -123,7 +130,6 @@ interface Body {
   r: number
   angle: number
   spin: number
-  squash: number
   alpha: number
   target: number
 }
@@ -180,7 +186,6 @@ export function FloatingBackdrop() {
           r,
           angle: 0,
           spin: piece.spin,
-          squash: 0,
           alpha: 0,
           target: 1,
         })
@@ -203,26 +208,21 @@ export function FloatingBackdrop() {
         b.x += b.vx * dt
         b.y += b.vy * dt
         b.angle += b.spin * dt
-        b.squash = Math.max(0, b.squash - SQUASH_DECAY * dt)
 
         // Walls.
         if (b.x < b.r) {
           b.x = b.r
           b.vx = Math.abs(b.vx)
-          b.squash = 1
         } else if (b.x > width - b.r) {
           b.x = width - b.r
           b.vx = -Math.abs(b.vx)
-          b.squash = 1
         }
         if (b.y < b.r) {
           b.y = b.r
           b.vy = Math.abs(b.vy)
-          b.squash = 1
         } else if (b.y > height - b.r) {
           b.y = height - b.r
           b.vy = -Math.abs(b.vy)
-          b.squash = 1
         }
       }
 
@@ -258,8 +258,6 @@ export function FloatingBackdrop() {
           b.vx += (an - bn) * nx
           b.vy += (an - bn) * ny
 
-          a.squash = 1
-          b.squash = 1
           a.spin = -a.spin
           b.spin = -b.spin
         }
@@ -281,8 +279,7 @@ export function FloatingBackdrop() {
         const ceiling = Math.min(1, age / 0.9)
         b.alpha += (Math.min(b.target, ceiling) - b.alpha) * Math.min(1, dt * 4)
 
-        const scale = 1 + SQUASH * b.squash
-        b.el.style.transform = `translate3d(${b.x - b.r}px, ${b.y - b.r}px, 0) rotate(${b.angle}deg) scale(${scale.toFixed(3)})`
+        b.el.style.transform = `translate3d(${b.x - b.r}px, ${b.y - b.r}px, 0) rotate(${b.angle}deg)`
         b.el.style.opacity = b.alpha.toFixed(3)
       }
 
@@ -347,26 +344,24 @@ export function FloatingBackdrop() {
               className="w-full h-full rounded-full drop-shadow-[0_6px_10px_rgba(13,11,10,0.18)]"
             />
           )}
+          {p.kind === 'trophy' && <TrophyPiece delay={i * 900} />}
         </div>
       ))}
-
-      <TrophyFloater />
     </div>
   )
 }
 
-// The topic-complete celebration, stripped to the trophy itself: it flies in
-// every few seconds, plays once and fades. Lottie and the 110KB animation
-// load only after the hero has painted.
-const SHOW_MS = 4000
-const GAP_MS = 5000
+// The topic-complete celebration, riding along as one of the floaters: it
+// drifts and bounces like everything else and replays every few seconds.
+// Lottie and the 110KB animation load only after the hero has painted, and
+// the replay timer lives here so re-rendering it never disturbs the loop.
+const REPLAY_MS = 6000
 
-function TrophyFloater() {
+function TrophyPiece({ delay }: { delay: number }) {
   const [anim, setAnim] = useState<unknown>(null)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [Lottie, setLottie] = useState<any>(null)
   const [round, setRound] = useState(0)
-  const [visible, setVisible] = useState(false)
 
   useEffect(() => {
     let alive = true
@@ -390,24 +385,18 @@ function TrophyFloater() {
 
   useEffect(() => {
     if (!anim) return
-    let timer: number
-    const tick = (show: boolean) => {
-      setVisible(show)
-      if (show) setRound((r) => r + 1)
-      timer = window.setTimeout(() => tick(!show), show ? SHOW_MS : GAP_MS)
+    const start = window.setTimeout(() => setRound((r) => r + 1), delay)
+    const timer = window.setInterval(() => setRound((r) => r + 1), REPLAY_MS)
+    return () => {
+      window.clearTimeout(start)
+      window.clearInterval(timer)
     }
-    timer = window.setTimeout(() => tick(true), 1200)
-    return () => window.clearTimeout(timer)
-  }, [anim])
+  }, [anim, delay])
 
   if (!anim || !Lottie) return null
 
   return (
-    <div
-      className={`absolute left-1/2 -translate-x-1/2 top-[84%] w-16 h-16 xl:w-24 xl:h-24 xl:left-[85%] xl:top-[56%] transition-all duration-700 ${
-        visible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-3 scale-90'
-      }`}
-    >
+    <div className="w-full h-full drop-shadow-[0_6px_10px_rgba(13,11,10,0.18)]">
       <Lottie key={round} animationData={anim} loop={false} autoplay />
     </div>
   )
