@@ -19,13 +19,14 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { Icon } from '@iconify/react'
-import { LANDING_TOPICS } from '@/components/landing/landing-topics'
+import { LANDING_SECTIONS, LANDING_TOPICS } from '@/components/landing/landing-topics'
 import { smileyAvatar } from '@/lib/avatars/smiley-avatar'
 
 // A sprinkle of flags, not a parade of them: the topic icons carry the page.
 const FLAGS = [
-  'flag:es-1x1', 'flag:fr-1x1', 'flag:de-1x1', 'flag:jp-1x1',
-  'flag:tr-1x1', 'flag:kr-1x1', 'flag:it-1x1', 'flag:in-1x1',
+  'flag:tr-1x1', 'flag:us-1x1', 'flag:ca-1x1', 'flag:es-1x1',
+  'flag:fr-1x1', 'flag:de-1x1', 'flag:jp-1x1', 'flag:kr-1x1',
+  'flag:it-1x1', 'flag:in-1x1',
 ]
 
 const AVATAR_SEEDS = ['k3p1', 'w2x8', '9fz2', 'q7m4', 'm8d3', 'z4v7']
@@ -33,16 +34,24 @@ const AVATAR_SEEDS = ['k3p1', 'w2x8', '9fz2', 'q7m4', 'm8d3', 'z4v7']
 /** How many trophies drift around replaying the topic-complete animation. */
 const TROPHIES = 2
 
+/** Flags that must be in the phone's set, not just the desktop one. */
+const PINNED_FLAGS = ['flag:tr-1x1', 'flag:us-1x1', 'flag:ca-1x1']
+
+/** Roughly how many pieces a phone shows; the rest arrive at md and xl. */
+const PHONE_PIECES = 24
+
 /** Each floater joins at one of these widths, so phones stay uncrowded. */
 const TIERS = ['', 'hidden md:block', 'hidden xl:block'] as const
 
 /** Slow: a floater crosses the page in something like a minute. */
 const SPEED_MIN = 7
 const SPEED_MAX = 20
-/** How far a floater fades where it crosses the middle copy, and how wide
- *  the soft edge of that fade is, in px. */
-const DIMMED = 0.35
-const FEATHER = 70
+/** How far a floater fades where it crosses the grey text, and how wide the
+ *  soft edge of that fade is, in px. Barely there on purpose: the headline
+ *  is heavy enough to carry itself, only the light grey copy and the footer
+ *  links need a little air behind them. */
+const DIMMED = 0.72
+const FEATHER = 36
 
 interface Piece {
   kind: 'topic' | 'flag' | 'avatar' | 'trophy'
@@ -71,20 +80,54 @@ function rng(seed: number) {
 function build(): Piece[] {
   const rand = rng(20261008)
 
-  // Every topic icon twice, the flags and faces once each: interleaved so no
-  // kind clumps in the draw order, and so the thinner groups spread out.
+  // Every topic icon twice plus the menu's section icons, the flags and
+  // faces once each: interleaved so no kind clumps in the draw order, and so
+  // the thinner groups spread out.
+  // The section headers (FIRST AID KIT, DAILY LIFE and the rest) and the
+  // three pinned flags are promised a place on phones; everything else
+  // fills in around them.
   const groups = [
-    [...LANDING_TOPICS, ...LANDING_TOPICS].map((t) => ({ kind: 'topic' as const, value: t.icon })),
-    FLAGS.map((value) => ({ kind: 'flag' as const, value })),
-    AVATAR_SEEDS.map((value) => ({ kind: 'avatar' as const, value })),
-    Array.from({ length: TROPHIES }, (_, i) => ({ kind: 'trophy' as const, value: `t${i}` })),
+    [...LANDING_TOPICS, ...LANDING_TOPICS].map((t) => ({
+      kind: 'topic' as const,
+      value: t.icon,
+      pinned: false,
+    })),
+    LANDING_SECTIONS.map((t) => ({ kind: 'topic' as const, value: t.icon, pinned: true })),
+    FLAGS.map((value) => ({
+      kind: 'flag' as const,
+      value,
+      pinned: PINNED_FLAGS.includes(value),
+    })),
+    AVATAR_SEEDS.map((value) => ({ kind: 'avatar' as const, value, pinned: false })),
+    Array.from({ length: TROPHIES }, (_, i) => ({
+      kind: 'trophy' as const,
+      value: `t${i}`,
+      pinned: i === 0,
+    })),
   ]
-  const mixed: { kind: Piece['kind']; value: string }[] = []
+  const mixed: { kind: Piece['kind']; value: string; pinned: boolean }[] = []
   while (groups.some((g) => g.length)) {
     for (const g of groups) {
       const next = g.shift()
       if (next) mixed.push(next)
     }
+  }
+
+  // Phones get the pinned pieces plus enough others to reach PHONE_PIECES;
+  // what is left alternates between the tablet and desktop sets.
+  let onPhone = mixed.filter((m) => m.pinned).length
+  const spare = Math.max(0, PHONE_PIECES - onPhone)
+  const everyNth = Math.max(1, Math.round((mixed.length - onPhone) / Math.max(1, spare)))
+  let seen = 0
+  let rest = 0
+  const tierOf = (item: (typeof mixed)[number]) => {
+    if (item.pinned) return 0
+    const idx = seen++
+    if (idx % everyNth === 0 && onPhone < PHONE_PIECES) {
+      onPhone++
+      return 0
+    }
+    return rest++ % 2 === 0 ? 1 : 2
   }
 
   const placed: [number, number][] = []
@@ -102,10 +145,7 @@ function build(): Piece[] {
 
     return {
       ...item,
-      // Phones get a third of them, tablets two thirds, desktops the lot.
-      // Offset so the tier cycle does not lock onto the kind cycle and hand
-      // phones nothing but flags.
-      tier: (i + Math.floor(i / 3)) % 3,
+      tier: tierOf(item),
       size: Math.round(
         (item.kind === 'trophy' ? 58 : item.kind === 'topic' ? 38 : item.kind === 'avatar' ? 30 : 26) +
           rand() * 18,
@@ -153,12 +193,12 @@ export function FloatingBackdrop() {
       width = rect.width
       height = rect.height
 
-      // Only the middle copy — the headline and the lines under it. The
-      // badge and the footer look after themselves, and fading for them too
-      // washed out most of the page.
+      // Only the grey text: the lines under the headline and the footer
+      // menu. The headline and the badge are dark and solid enough to read
+      // over anything, and fading for them washed out half the page.
       const root = host.parentElement
       text = root
-        ? [...root.querySelectorAll('main h1, main p')].map((el) => {
+        ? [...root.querySelectorAll('main p, footer a, footer p')].map((el) => {
             const b = el.getBoundingClientRect()
             return {
               x0: b.left - rect.left,

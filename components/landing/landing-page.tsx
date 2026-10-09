@@ -25,9 +25,7 @@ export function LandingPage() {
         />
 
         <h1 className="mt-10 text-[#0D0B0A] font-bold text-[2.1rem] sm:text-5xl leading-[1.08] tracking-[-0.03em]">
-          Fifty languages.
-          <br />
-          Two minutes a day.
+          A base in many languages.
         </h1>
 
         <p className="mt-6 text-[#0D0B0A]/55 text-base sm:text-lg leading-relaxed">
