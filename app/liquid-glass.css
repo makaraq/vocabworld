@@ -109,6 +109,13 @@
       0 4px 14px rgba(0, 0, 0, 0.14) !important;
   }
 
+  /* Account stat cards (words, streak, review, badges…): same radius as
+     the topic tiles and the progress card above them. Phones had them at
+     rounded-lg, squarer than everything around them. */
+  html.liquid-glass .grid > .bg-white\/10.backdrop-blur-sm.rounded-lg {
+    border-radius: var(--lg-radius-tile) !important;
+  }
+
   html.liquid-glass .flashcard-scale {
     border-radius: var(--lg-radius-card) !important;
     box-shadow:
@@ -124,7 +131,7 @@
   html.liquid-glass button.rounded-full.bg-black\/20,
   html.liquid-glass [data-tour="learning-controls"] > button,
   html.liquid-glass [data-tour="language-switcher"] button,
-  html.liquid-glass button.w-full.bg-white\/10.backdrop-blur-sm {
+  html.liquid-glass button.w-full.bg-white\/10.backdrop-blur-sm:is(.rounded-xl, .rounded-2xl) {
     background-color: var(--lg-fill) !important;
     background-image: var(--lg-sheen) !important;
     border-color: transparent !important;
@@ -139,7 +146,7 @@
   html.liquid-glass button.rounded-full.bg-black\/20:active,
   html.liquid-glass [data-tour="learning-controls"] > button:not(:disabled):active,
   html.liquid-glass [data-tour="language-switcher"] button:active,
-  html.liquid-glass button.w-full.bg-white\/10.backdrop-blur-sm:active {
+  html.liquid-glass button.w-full.bg-white\/10.backdrop-blur-sm:is(.rounded-xl, .rounded-2xl):active {
     background-color: var(--lg-fill-active) !important;
     box-shadow: var(--lg-rim), var(--lg-glow-active) !important;
   }
@@ -154,7 +161,7 @@
 
   /* Text controls become capsules. */
   html.liquid-glass [data-tour="language-switcher"] button,
-  html.liquid-glass button.w-full.bg-white\/10.backdrop-blur-sm {
+  html.liquid-glass button.w-full.bg-white\/10.backdrop-blur-sm:is(.rounded-xl, .rounded-2xl) {
     border-radius: 9999px !important;
   }
 
@@ -372,7 +379,7 @@
     html.liquid-glass button.rounded-full.bg-black\/20,
     html.liquid-glass [data-tour="learning-controls"] > button,
     html.liquid-glass [data-tour="language-switcher"] button,
-    html.liquid-glass button.w-full.bg-white\/10.backdrop-blur-sm,
+    html.liquid-glass button.w-full.bg-white\/10.backdrop-blur-sm:is(.rounded-xl, .rounded-2xl),
     html.liquid-glass input.bg-black\/40.rounded-2xl,
     html.liquid-glass nav[data-tour="section-nav"] {
       background-image: none !important;
