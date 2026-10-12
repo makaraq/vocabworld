@@ -18,6 +18,7 @@ import { useNotifications } from "@/hooks/use-notifications"
 import { NotificationPromptModal } from "@/components/notifications/notification-prompt-modal"
 import { CoachMarkOverlay, type CoachMarkStep } from "@/components/tutorial/coach-mark-overlay"
 import { hapticsLight, hapticsMedium, hapticsSuccess, hapticsWarning } from "@/lib/haptics"
+import { bumpPlayCount, readPlayCounts, type PlayCounts } from "@/lib/play-counts"
 import { BadgesCard } from "@/components/achievements/badges-card"
 import { ReviewCard } from "@/components/review/review-card"
 import { TopicQuizModal } from "@/components/quiz/topic-quiz-modal"
@@ -32,6 +33,9 @@ import { useT } from "@/components/providers/translation-provider"
 import type { UiKey, UiVars } from "@/lib/i18n/ui-strings"
 
 type TFn = (key: UiKey, vars?: UiVars) => string
+
+// How long the play-count badge stays on a flashcard before fading away.
+const PLAY_COUNT_VISIBLE_MS = 2000
 
 // Coach-mark content comes from the ui-strings catalog so tours follow the
 // user's main language. Built per-render via useMemo(getTutorialSteps(t), [t]).
@@ -930,6 +934,7 @@ export function LanguageSelector() {
     repeatMainLanguage: 1, // 1x by default
     playTargetOnly: false, // Play only target language (skip native translation)
     showPhonetics: false, // Show IPA phonetic pronunciations below words
+    showPlayCount: true, // Briefly show how many times the word has been played
     rewindEnabled: false, // Loop back to start word after N words
     rewindAfterWords: 5, // Number of words before rewinding
   }
@@ -1174,6 +1179,30 @@ export function LanguageSelector() {
   // Database state
   const [topics, setTopics] = useState<Topic[]>([])
   const [vocabulary, setVocabulary] = useState<VocabularyWord[]>([])
+
+  // Play-count badge: times each word has been played (lib/play-counts.ts).
+  // It shows on the target-language card when a word with plays comes up or
+  // a play finishes, then fades after PLAY_COUNT_VISIBLE_MS. Unplayed words
+  // show nothing. Settings saved before this existed lack the key: on.
+  const [playCounts, setPlayCounts] = useState<PlayCounts>({})
+  const [playCountVisible, setPlayCountVisible] = useState(false)
+  const showPlayCount = settings.showPlayCount !== false
+  const currentWordId = vocabulary[currentWordIndex]?.id
+  const currentPlayCount = currentWordId != null ? playCounts[String(currentWordId)] || 0 : 0
+
+  useEffect(() => {
+    setPlayCounts(readPlayCounts(targetLanguageCode))
+  }, [targetLanguageCode])
+
+  useEffect(() => {
+    if (!showPlayCount || !currentPlayCount) {
+      setPlayCountVisible(false)
+      return
+    }
+    setPlayCountVisible(true)
+    const timer = window.setTimeout(() => setPlayCountVisible(false), PLAY_COUNT_VISIBLE_MS)
+    return () => window.clearTimeout(timer)
+  }, [showPlayCount, currentWordId, currentPlayCount])
   const [totalWords, setTotalWords] = useState<number>(0)
   const [currentOffset, setCurrentOffset] = useState<number>(0)
   const [hasMoreWords, setHasMoreWords] = useState<boolean>(false)
@@ -2226,6 +2255,9 @@ export function LanguageSelector() {
           }
           
           if (alnilamSuccess) {
+            if (wordId && targetLanguageCode) {
+              setPlayCounts(bumpPlayCount(targetLanguageCode, wordId))
+            }
 
             // Track word progress when audio is played successfully
             if (user?.id && wordId && targetLanguageCode) {
@@ -4427,7 +4459,9 @@ export function LanguageSelector() {
               >
                 <div
                   role="region"
-                  aria-label={`${getTranslatedLanguageName(targetLanguageCode)}: ${getCurrentContent().sourceWord}`}
+                  aria-label={`${getTranslatedLanguageName(targetLanguageCode)}: ${getCurrentContent().sourceWord}${
+                    showPlayCount && currentPlayCount ? `. ${t('learning.aria.playCount', { n: currentPlayCount })}` : ''
+                  }`}
                   data-scale={
                     currentAudioStep === 'training'
                       ? 'audio'
@@ -4435,7 +4469,7 @@ export function LanguageSelector() {
                       ? 'press'
                       : undefined
                   }
-                  className={`flashcard-scale bg-black/40 border border-white/20 rounded-2xl p-8 shadow-lg ${
+                  className={`flashcard-scale relative bg-black/40 border border-white/20 rounded-2xl p-8 shadow-lg ${
                     currentAudioStep === 'training'
                       ? 'bg-blue-500/20 border-blue-400/30'
                       : 'bg-black/40'
@@ -4465,6 +4499,16 @@ export function LanguageSelector() {
                     )}
                   </div>
                   <p className="text-white text-2xl font-medium">{getCurrentContent().sourceWord}</p>
+                  {showPlayCount && currentPlayCount > 0 && (
+                    <span
+                      className={`absolute top-3 right-4 text-white/70 text-sm font-medium tabular-nums transition-opacity duration-500 ease-out ${
+                        playCountVisible ? 'opacity-100' : 'opacity-0'
+                      }`}
+                      aria-hidden="true"
+                    >
+                      ×{currentPlayCount}
+                    </span>
+                  )}
                   {settings.showPhonetics && phonetics[currentWordIndex]?.target && (
                     <p className="text-white/50 text-sm italic mt-2" aria-label={t('learning.aria.pronunciation', { ipa: phonetics[currentWordIndex].target })}>/{phonetics[currentWordIndex].target}/</p>
                   )}
@@ -4784,6 +4828,28 @@ export function LanguageSelector() {
                     >
                       <div className={`w-5 h-5 bg-white rounded-full transition-all duration-300 ${
                         settings.showPhonetics ? "translate-x-5 sm:translate-x-6" : "translate-x-0.5"
+                      }`} />
+                    </button>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <Icon icon="solar:history-bold" width="20" height="20" className="text-white/60 flex-shrink-0" />
+                        <p className="text-white text-base">{t('settings.playCount.label')}</p>
+                      </div>
+                      <p className="text-white/50 text-sm mt-0.5">{t('settings.playCount.desc')}</p>
+                    </div>
+                    <button
+                      onClick={() => updateSetting("showPlayCount", !showPlayCount)}
+                      className={`w-11 h-6 sm:w-12 sm:h-6 rounded-full transition-all duration-300 flex-shrink-0 ${
+                        showPlayCount
+                          ? "bg-blue-500"
+                          : "bg-black/30 border border-white/20"
+                      }`}
+                    >
+                      <div className={`w-5 h-5 bg-white rounded-full transition-all duration-300 ${
+                        showPlayCount ? "translate-x-5 sm:translate-x-6" : "translate-x-0.5"
                       }`} />
                     </button>
                   </div>
