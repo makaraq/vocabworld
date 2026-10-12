@@ -1,10 +1,11 @@
 /* ── Liquid Glass ─────────────────────────────────────────────────────
    An iOS 26-style material for the web layer, after Apple's "Adopting
    Liquid Glass": glass on the controls that float above the content
-   (buttons, pills, the page dots, sheets) with a specular rim and a
-   sheen, capsule-shaped controls, corners concentric with their
-   containers, content fading under edges as it scrolls, and solid
-   fallbacks for Reduce Transparency and Increase Contrast.
+   (buttons, pills, the page dots, sheets) that catches light on its rim,
+   frosts and brightens what is behind it and comes to life under a
+   finger; capsule-shaped controls, corners concentric with their
+   containers, content fading under edges as it scrolls, and adjusted
+   versions for Reduce Transparency, Increase Contrast and Reduce Motion.
 
    It restyles the existing markup and changes nothing about behaviour.
    Every rule is scoped under <html class="liquid-glass">, which
@@ -14,10 +15,10 @@
    its !important rules outrank those (same layer, higher specificity)
    as well as the Tailwind utilities on the elements it restyles.
 
-   No new backdrop-filter layers: the glass is gradients and inset
-   shadows, which keeps the 60fps budget globals.css sets for
-   WKWebView. Real refraction needs SVG filters in backdrop-filter,
-   which WebKit does not support.
+   Built from gradients, masks and plain outer shadows, which WebKit and
+   Chrome render alike. Avoid blurred, negatively spread inset shadows on
+   rounded shapes: WebKit draws those as an even ring. Real refraction
+   needs SVG filters in backdrop-filter, which WebKit does not support.
    ──────────────────────────────────────────────────────────────────── */
 
 @property --lg-edge-top {
@@ -30,6 +31,13 @@
   syntax: "<length>";
   inherits: false;
   initial-value: 0px;
+}
+
+/* The glow under a finger. Registered so it can fade in and out. */
+@property --lg-touch {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(255, 255, 255, 0);
 }
 
 @keyframes lg-edge-top {
@@ -52,8 +60,45 @@
     --lg-radius-tile: 16px;
     --lg-radius-sheet: 38px;
 
-    --lg-fill: rgba(255, 255, 255, 0.13);
-    --lg-fill-active: rgba(255, 255, 255, 0.26);
+    /* The material. */
+    --lg-fill: rgba(255, 255, 255, 0.1);
+    --lg-fill-active: rgba(255, 255, 255, 0.2);
+    --lg-vibrancy: blur(8px) saturate(180%) brightness(1.08);
+    --lg-vibrancy-active: blur(8px) saturate(200%) brightness(1.2);
+    --lg-lift: 0 1px 2px rgba(0, 0, 0, 0.08), 0 8px 22px rgba(0, 0, 0, 0.16);
+    --lg-glow-active: 0 0 22px rgba(255, 255, 255, 0.28);
+
+    /* Rim: brightest where light enters (top left) and where it leaves
+       (bottom right), nearly clear between. */
+    --lg-rim-light: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 255, 255, 0.5) 16%,
+      rgba(255, 255, 255, 0.1) 38%,
+      rgba(255, 255, 255, 0.06) 62%,
+      rgba(255, 255, 255, 0.35) 84%,
+      rgba(255, 255, 255, 0.8) 100%);
+    --lg-rim-light-panel: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.7) 0%,
+      rgba(255, 255, 255, 0.25) 12%,
+      rgba(255, 255, 255, 0.06) 30%,
+      rgba(255, 255, 255, 0.04) 70%,
+      rgba(255, 255, 255, 0.18) 88%,
+      rgba(255, 255, 255, 0.45) 100%);
+
+    /* Lit body of the lens: a specular bloom across the top, and light
+       gathering along the bottom inner edge where it exits. */
+    --lg-body:
+      radial-gradient(130% 90% at 50% -12%,
+        rgba(255, 255, 255, 0.34) 0%,
+        rgba(255, 255, 255, 0.1) 38%,
+        rgba(255, 255, 255, 0) 58%),
+      radial-gradient(110% 70% at 50% 125%,
+        rgba(255, 255, 255, 0.2) 0%,
+        rgba(255, 255, 255, 0) 58%);
+
+    /* For things that can't hold the layered rim (text inputs, switch
+       knobs, slider thumbs) and for scrolling panels: one-pixel inset
+       lines, top bright, left fainter, a trace along the bottom. */
     --lg-sheen: linear-gradient(180deg,
       rgba(255, 255, 255, 0.24) 0%,
       rgba(255, 255, 255, 0.06) 40%,
@@ -64,13 +109,6 @@
       rgba(255, 255, 255, 0.03) 28%,
       rgba(255, 255, 255, 0) 55%,
       rgba(255, 255, 255, 0.05) 100%);
-
-    /* Light from the top left: a bright hairline on the top edge, a
-       fainter one down the left, a trace along the bottom where it exits,
-       and a soft inner glow. Each edge is its own unblurred, unspread
-       inset line: WebKit draws inset shadows that combine blur, offset
-       and negative spread on rounded corners as an even ring all the way
-       round, so the iPhone showed a hard outline instead of this. */
     --lg-rim:
       inset 0 1px 0 rgba(255, 255, 255, 0.55),
       inset 1px 0 0 rgba(255, 255, 255, 0.18),
@@ -81,11 +119,12 @@
       inset 1px 0 0 rgba(255, 255, 255, 0.14),
       inset 0 -1px 0 rgba(255, 255, 255, 0.08),
       inset 0 0 24px rgba(255, 255, 255, 0.05);
-    --lg-lift: 0 8px 22px rgba(0, 0, 0, 0.16), 0 2px 6px rgba(0, 0, 0, 0.1);
     --lg-lift-panel: 0 30px 70px rgba(0, 0, 0, 0.26), 0 6px 18px rgba(0, 0, 0, 0.12);
-    --lg-glow-active: 0 0 0 1px rgba(255, 255, 255, 0.22), 0 0 26px rgba(255, 255, 255, 0.3);
     --lg-backdrop: blur(12px) saturate(170%);
+
+    /* Overshoots a little, like a system control settling. */
     --lg-spring: cubic-bezier(0.3, 1.4, 0.5, 1);
+    --lg-spring-press: cubic-bezier(0.2, 1.8, 0.4, 1);
 
     /* Reduce Transparency swaps the glass for this. */
     --lg-solid: rgb(52, 30, 22);
@@ -94,6 +133,7 @@
   /* ── Main panel ──────────────────────────────────────────────────── */
 
   html.liquid-glass .bg-white\/5.backdrop-blur-3xl {
+    position: relative;
     border-radius: var(--lg-radius-panel) !important;
     border-color: rgba(255, 255, 255, 0.1) !important;
     background-color: rgba(255, 255, 255, 0.05) !important;
@@ -129,32 +169,177 @@
       0 6px 20px rgba(0, 0, 0, 0.16) !important;
   }
 
-  /* ── Glass controls ──────────────────────────────────────────────── */
+  /* ── Glass controls ──────────────────────────────────────────────────
+     Header and playback buttons, language pills, close/add buttons,
+     full-width text buttons, the chosen speed, the page dots and the
+     category label. Layer by layer:
+       the element  frosted, saturated, brightened view of what is behind
+                    it, a faint fill and a soft lift off the page
+       ::after      the lit body, plus the glow under a finger
+       ::before     the rim, 1.5px, catching light at two corners */
 
-  html.liquid-glass button.rounded-full.backdrop-blur-xl,
-  html.liquid-glass button.rounded-full.bg-white\/5,
-  html.liquid-glass button.rounded-full.bg-white\/10,
-  html.liquid-glass button.rounded-full.bg-black\/20,
-  html.liquid-glass [data-tour="learning-controls"] > button,
-  html.liquid-glass [data-tour="language-switcher"] button,
-  html.liquid-glass button.w-full.bg-white\/10.backdrop-blur-sm:is(.rounded-xl, .rounded-2xl) {
+  html.liquid-glass :is(
+    button.rounded-full.backdrop-blur-xl,
+    button.rounded-full.bg-white\/5,
+    button.rounded-full.bg-white\/10,
+    button.rounded-full.bg-black\/20,
+    [data-tour="learning-controls"] > button,
+    [data-tour="language-switcher"] button,
+    button.w-full.bg-white\/10.backdrop-blur-sm:is(.rounded-xl, .rounded-2xl),
+    .fixed.inset-0 > [class*="backdrop-blur"] button.w-full:is(.bg-white\/15, .bg-black\/20),
+    .fixed.inset-0 > [class*="backdrop-blur"] .flex > button.flex-1.rounded-lg.bg-white\/20,
+    nav[data-tour="section-nav"],
+    span.bg-white\/10.rounded-lg.tracking-wider
+  ) {
+    isolation: isolate;
     background-color: var(--lg-fill) !important;
-    background-image: var(--lg-sheen) !important;
+    background-image: none !important;
     border-color: transparent !important;
-    box-shadow: var(--lg-rim), var(--lg-lift) !important;
+    box-shadow: var(--lg-lift) !important;
+    -webkit-backdrop-filter: var(--lg-vibrancy) !important;
+    backdrop-filter: var(--lg-vibrancy) !important;
+    transition:
+      scale 520ms var(--lg-spring),
+      background-color 220ms ease,
+      box-shadow 220ms ease,
+      --lg-touch 260ms ease !important;
   }
 
-  /* Pressing makes the glass brighten and glow, like system controls
-     coming to life under a finger. The existing hold-to-scale stays. */
-  html.liquid-glass button.rounded-full.backdrop-blur-xl:active,
-  html.liquid-glass button.rounded-full.bg-white\/5:active,
-  html.liquid-glass button.rounded-full.bg-white\/10:active,
-  html.liquid-glass button.rounded-full.bg-black\/20:active,
-  html.liquid-glass [data-tour="learning-controls"] > button:not(:disabled):active,
-  html.liquid-glass [data-tour="language-switcher"] button:active,
-  html.liquid-glass button.w-full.bg-white\/10.backdrop-blur-sm:is(.rounded-xl, .rounded-2xl):active {
+  /* The pseudo-elements need a positioned box; don't move ones that are
+     already absolutely placed (the paywall's close button). */
+  html.liquid-glass :is(
+    button.rounded-full.backdrop-blur-xl,
+    button.rounded-full.bg-white\/5,
+    button.rounded-full.bg-white\/10,
+    button.rounded-full.bg-black\/20,
+    [data-tour="learning-controls"] > button,
+    [data-tour="language-switcher"] button,
+    button.w-full.bg-white\/10.backdrop-blur-sm:is(.rounded-xl, .rounded-2xl),
+    .fixed.inset-0 > [class*="backdrop-blur"] button.w-full:is(.bg-white\/15, .bg-black\/20),
+    .fixed.inset-0 > [class*="backdrop-blur"] .flex > button.flex-1.rounded-lg.bg-white\/20,
+    nav[data-tour="section-nav"],
+    span.bg-white\/10.rounded-lg.tracking-wider
+  ):not(.absolute, .fixed) {
+    position: relative;
+  }
+
+  html.liquid-glass :is(
+    button.rounded-full.backdrop-blur-xl,
+    button.rounded-full.bg-white\/5,
+    button.rounded-full.bg-white\/10,
+    button.rounded-full.bg-black\/20,
+    [data-tour="learning-controls"] > button,
+    [data-tour="language-switcher"] button,
+    button.w-full.bg-white\/10.backdrop-blur-sm:is(.rounded-xl, .rounded-2xl),
+    .fixed.inset-0 > [class*="backdrop-blur"] button.w-full:is(.bg-white\/15, .bg-black\/20),
+    .fixed.inset-0 > [class*="backdrop-blur"] .flex > button.flex-1.rounded-lg.bg-white\/20,
+    nav[data-tour="section-nav"],
+    span.bg-white\/10.rounded-lg.tracking-wider
+  )::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.5px;
+    pointer-events: none;
+    background: var(--lg-rim-light);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+
+  html.liquid-glass :is(
+    button.rounded-full.backdrop-blur-xl,
+    button.rounded-full.bg-white\/5,
+    button.rounded-full.bg-white\/10,
+    button.rounded-full.bg-black\/20,
+    [data-tour="learning-controls"] > button,
+    [data-tour="language-switcher"] button,
+    button.w-full.bg-white\/10.backdrop-blur-sm:is(.rounded-xl, .rounded-2xl),
+    .fixed.inset-0 > [class*="backdrop-blur"] button.w-full:is(.bg-white\/15, .bg-black\/20),
+    .fixed.inset-0 > [class*="backdrop-blur"] .flex > button.flex-1.rounded-lg.bg-white\/20,
+    nav[data-tour="section-nav"],
+    span.bg-white\/10.rounded-lg.tracking-wider
+  )::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at var(--lg-tx, 50%) var(--lg-ty, 50%),
+        var(--lg-touch) 0%,
+        rgba(255, 255, 255, 0) 70%),
+      var(--lg-body);
+  }
+
+  /* Bordered elements keep their 1px (now transparent) border so nothing
+     shifts; the rim sits on top of it rather than inside it. */
+  html.liquid-glass :is(
+    button.rounded-full.backdrop-blur-xl,
+    button.rounded-full.bg-white\/5,
+    button.rounded-full.bg-white\/10,
+    button.rounded-full.bg-black\/20,
+    [data-tour="learning-controls"] > button,
+    [data-tour="language-switcher"] button,
+    button.w-full.bg-white\/10.backdrop-blur-sm:is(.rounded-xl, .rounded-2xl),
+    .fixed.inset-0 > [class*="backdrop-blur"] button.w-full:is(.bg-white\/15, .bg-black\/20),
+    .fixed.inset-0 > [class*="backdrop-blur"] .flex > button.flex-1.rounded-lg.bg-white\/20
+  ).border::before,
+  html.liquid-glass :is(
+    button.rounded-full.backdrop-blur-xl,
+    button.rounded-full.bg-white\/5,
+    button.rounded-full.bg-white\/10,
+    button.rounded-full.bg-black\/20,
+    [data-tour="learning-controls"] > button,
+    [data-tour="language-switcher"] button,
+    button.w-full.bg-white\/10.backdrop-blur-sm:is(.rounded-xl, .rounded-2xl),
+    .fixed.inset-0 > [class*="backdrop-blur"] button.w-full:is(.bg-white\/15, .bg-black\/20),
+    .fixed.inset-0 > [class*="backdrop-blur"] .flex > button.flex-1.rounded-lg.bg-white\/20
+  ).border::after {
+    inset: -1px;
+  }
+
+  /* Coming to life under a finger: the glass swells on a spring,
+     brightens what's behind it, and lights up where it's touched
+     (--lg-tx/--lg-ty come from components/liquid-glass-switch.tsx). */
+  html.liquid-glass :is(
+    button.rounded-full.backdrop-blur-xl,
+    button.rounded-full.bg-white\/5,
+    button.rounded-full.bg-white\/10,
+    button.rounded-full.bg-black\/20,
+    [data-tour="learning-controls"] > button,
+    [data-tour="language-switcher"] button,
+    button.w-full.bg-white\/10.backdrop-blur-sm:is(.rounded-xl, .rounded-2xl),
+    .fixed.inset-0 > [class*="backdrop-blur"] button.w-full:is(.bg-white\/15, .bg-black\/20),
+    .fixed.inset-0 > [class*="backdrop-blur"] .flex > button.flex-1.rounded-lg.bg-white\/20
+  ):not(:disabled):active {
+    --lg-touch: rgba(255, 255, 255, 0.4);
+    scale: 1.08 !important;
     background-color: var(--lg-fill-active) !important;
-    box-shadow: var(--lg-rim), var(--lg-glow-active) !important;
+    box-shadow: var(--lg-lift), var(--lg-glow-active) !important;
+    -webkit-backdrop-filter: var(--lg-vibrancy-active) !important;
+    backdrop-filter: var(--lg-vibrancy-active) !important;
+    transition:
+      scale 380ms var(--lg-spring-press),
+      background-color 120ms ease,
+      box-shadow 120ms ease,
+      --lg-touch 120ms ease !important;
+  }
+
+  /* Wide text buttons swell less, or they'd crowd their neighbours. */
+  html.liquid-glass :is(
+    button.w-full.bg-white\/10.backdrop-blur-sm:is(.rounded-xl, .rounded-2xl),
+    .fixed.inset-0 > [class*="backdrop-blur"] button.w-full:is(.bg-white\/15, .bg-black\/20)
+  ):active {
+    scale: 1.03 !important;
+  }
+
+  /* Play is the primary control: a little more glass to it. */
+  html.liquid-glass [data-tour="learning-controls"] > button.w-16 {
+    --lg-fill: rgba(255, 255, 255, 0.15);
+    --lg-fill-active: rgba(255, 255, 255, 0.26);
   }
 
   /* The play button keeps its state colour as tinted glass. */
@@ -167,7 +352,9 @@
 
   /* Text controls become capsules. */
   html.liquid-glass [data-tour="language-switcher"] button,
-  html.liquid-glass button.w-full.bg-white\/10.backdrop-blur-sm:is(.rounded-xl, .rounded-2xl) {
+  html.liquid-glass button.w-full.bg-white\/10.backdrop-blur-sm:is(.rounded-xl, .rounded-2xl),
+  html.liquid-glass .fixed.inset-0 > [class*="backdrop-blur"] button.w-full:is(.rounded-xl, .rounded-2xl),
+  html.liquid-glass .fixed.inset-0 > [class*="backdrop-blur"] .flex > button.flex-1.rounded-lg {
     border-radius: 9999px !important;
   }
 
@@ -175,18 +362,51 @@
   html.liquid-glass span.bg-white\/10.rounded-lg.tracking-wider {
     border-radius: 9999px !important;
     padding: 5px 12px !important;
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    background-image: var(--lg-sheen) !important;
-    box-shadow: var(--lg-rim) !important;
   }
 
-  /* Language search field: a glass capsule, as search fields are now. */
+  /* The label and the dot capsule are passive, so their rim catches less
+     light than the buttons' and doesn't compete with them. */
+  html.liquid-glass :is(span.bg-white\/10.rounded-lg.tracking-wider, nav[data-tour="section-nav"]) {
+    --lg-rim-light: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.7) 0%,
+      rgba(255, 255, 255, 0.3) 16%,
+      rgba(255, 255, 255, 0.06) 38%,
+      rgba(255, 255, 255, 0.04) 62%,
+      rgba(255, 255, 255, 0.2) 84%,
+      rgba(255, 255, 255, 0.5) 100%);
+  }
+
+  /* Page dots: a glass capsule, like the Home Screen's. It sits at the
+     foot of a clipping container, so it's lifted clear of the bottom
+     edge or its rim and shadow get cut off flat. */
+  html.liquid-glass nav[data-tour="section-nav"] {
+    align-self: center !important;
+    width: auto !important;
+    margin-top: 10px !important;
+    margin-bottom: 12px !important;
+    padding: 8px 14px !important;
+    gap: 10px !important;
+    border-radius: 9999px !important;
+    --lg-fill: rgba(255, 255, 255, 0.07);
+  }
+
+  /* The active dot's name label hangs 24px below the dots, which always
+     put it inside that clipped strip, so it never actually showed. Lifting
+     the capsule would expose it half-cut under the glass; keep it hidden. */
+  html.liquid-glass nav[data-tour="section-nav"] button > span.absolute {
+    display: none !important;
+  }
+
+  /* Language search field: a glass capsule, as search fields are now.
+     Inputs can't hold the layered rim, so it gets the inset lines. */
   html.liquid-glass input.bg-black\/40.rounded-2xl {
     border-radius: 9999px !important;
     border-color: transparent !important;
     background-color: var(--lg-fill) !important;
     background-image: var(--lg-sheen) !important;
     box-shadow: var(--lg-rim), var(--lg-lift) !important;
+    -webkit-backdrop-filter: var(--lg-vibrancy) !important;
+    backdrop-filter: var(--lg-vibrancy) !important;
   }
 
   /* ── Section headers: title-style capitalisation, not all caps ─────
@@ -201,20 +421,6 @@
 
   html.liquid-glass h3.uppercase.tracking-wider {
     font-size: 15px !important;
-  }
-
-  /* ── Page dots: a glass capsule, like the Home Screen's ──────────── */
-
-  html.liquid-glass nav[data-tour="section-nav"] {
-    align-self: center !important;
-    width: auto !important;
-    margin-top: 10px !important;
-    padding: 8px 14px !important;
-    gap: 10px !important;
-    border-radius: 9999px !important;
-    background-color: rgba(255, 255, 255, 0.08) !important;
-    background-image: var(--lg-sheen) !important;
-    box-shadow: var(--lg-rim), 0 4px 14px rgba(0, 0, 0, 0.12) !important;
   }
 
   /* ── Progress bars: a recessed track and a lit fill ──────────────── */
@@ -236,9 +442,6 @@
 
   html.liquid-glass button.w-11.h-6.rounded-full > div.rounded-full {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
-    /* globals.css limits transitions to transform/opacity/colours on
-       native, which left out `translate` (what Tailwind v4 moves the
-       knob with), so the knob jumped instead of sliding. */
     transition-property: translate, scale, background-color, box-shadow !important;
     transition-duration: 300ms, 200ms, 200ms, 200ms !important;
     transition-timing-function: var(--lg-spring) !important;
@@ -253,22 +456,9 @@
       0 4px 12px rgba(0, 0, 0, 0.25) !important;
   }
 
-  /* ── Settings speed picker: capsule segments, the chosen one glass ─ */
-
-  html.liquid-glass .fixed.inset-0 > [class*="backdrop-blur"] .flex > button.flex-1.rounded-lg {
-    border-radius: 9999px !important;
-  }
-
   /* Slider wells: the modal's radius minus its 16px padding. */
   html.liquid-glass .fixed.inset-0 > [class*="backdrop-blur"] .bg-black\/20.rounded-xl {
     border-radius: 20px !important;
-  }
-
-  html.liquid-glass .fixed.inset-0 > [class*="backdrop-blur"] .flex > button.flex-1.rounded-lg.bg-white\/20 {
-    background-color: rgba(255, 255, 255, 0.2) !important;
-    background-image: var(--lg-sheen) !important;
-    border-color: transparent !important;
-    box-shadow: var(--lg-rim), var(--lg-lift) !important;
   }
 
   /* ── Settings sliders: capsule knob that turns to glass while held ─ */
@@ -310,24 +500,6 @@
     backdrop-filter: var(--lg-backdrop) !important;
   }
 
-  /* Full-width buttons inside them (sign-in, paywall, settings Done)
-     become capsules; the translucent ones become glass. */
-  html.liquid-glass .fixed.inset-0 > [class*="backdrop-blur"] button.w-full:is(.rounded-xl, .rounded-2xl) {
-    border-radius: 9999px !important;
-  }
-
-  html.liquid-glass .fixed.inset-0 > [class*="backdrop-blur"] button.w-full:is(.bg-white\/15, .bg-black\/20) {
-    background-color: var(--lg-fill) !important;
-    background-image: var(--lg-sheen) !important;
-    border-color: transparent !important;
-    box-shadow: var(--lg-rim), var(--lg-lift) !important;
-  }
-
-  html.liquid-glass .fixed.inset-0 > [class*="backdrop-blur"] button.w-full:is(.bg-white\/15, .bg-black\/20):active {
-    background-color: var(--lg-fill-active) !important;
-    box-shadow: var(--lg-rim), var(--lg-glow-active) !important;
-  }
-
   /* ── Bottom sheets: inset from the screen edges, rounded all round ─ */
 
   html.liquid-glass .fixed.inset-0.items-end > [class*="rounded-t-3xl"] {
@@ -342,9 +514,32 @@
     backdrop-filter: var(--lg-backdrop) !important;
   }
 
+  /* Panels that don't scroll themselves also get the light-catching rim.
+     (On a scroller it would scroll away with the content.) */
+  html.liquid-glass :is(
+    .bg-white\/5.backdrop-blur-3xl,
+    .fixed.inset-0 > [class*="backdrop-blur"][class*="rounded"].relative:not([class*="overflow-y-auto"]),
+    .fixed.inset-0.items-end > [class*="rounded-t-3xl"]
+  )::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+    padding: 1.5px;
+    pointer-events: none;
+    background: var(--lg-rim-light-panel);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+
   /* ── Reduce Transparency ─────────────────────────────────────────────
-     The class comes from the native shell (ViewController.swift); the
-     media query covers browsers that report the setting themselves. */
+     Panels go solid and controls lose their see-through frosting; the
+     rim and lit body stay, as they are light on the surface, not
+     transparency. The class comes from the native shell
+     (ViewController.swift); the media query covers browsers that report
+     the setting themselves. */
 
   html.liquid-glass.reduce-transparency .bg-white\/5.backdrop-blur-3xl,
   html.liquid-glass.reduce-transparency .fixed.inset-0 > [class*="backdrop-blur"][class*="rounded"],
@@ -355,9 +550,11 @@
     backdrop-filter: none !important;
   }
 
-  html.liquid-glass.reduce-transparency nav[data-tour="section-nav"] {
-    background-color: rgba(255, 255, 255, 0.16) !important;
-    background-image: none !important;
+  html.liquid-glass.reduce-transparency {
+    --lg-fill: rgba(255, 255, 255, 0.2);
+    --lg-fill-active: rgba(255, 255, 255, 0.3);
+    --lg-vibrancy: none;
+    --lg-vibrancy-active: none;
   }
 
   @media (prefers-reduced-transparency: reduce) {
@@ -370,37 +567,47 @@
       backdrop-filter: none !important;
     }
 
-    html.liquid-glass nav[data-tour="section-nav"] {
-      background-color: rgba(255, 255, 255, 0.16) !important;
-      background-image: none !important;
+    html.liquid-glass {
+      --lg-fill: rgba(255, 255, 255, 0.2);
+      --lg-fill-active: rgba(255, 255, 255, 0.3);
+      --lg-vibrancy: none;
+      --lg-vibrancy-active: none;
     }
   }
 
-  /* ── Increase Contrast: firmer edges and fills ───────────────────── */
+  /* ── Increase Contrast ───────────────────────────────────────────────
+     Still glass, as the system's is: a denser fill, a stronger rim and
+     a defined edge, so controls separate clearly from what's behind. */
 
   @media (prefers-contrast: more) {
-    html.liquid-glass button.rounded-full.backdrop-blur-xl,
-    html.liquid-glass button.rounded-full.bg-white\/5,
-    html.liquid-glass button.rounded-full.bg-white\/10,
-    html.liquid-glass button.rounded-full.bg-black\/20,
-    html.liquid-glass [data-tour="learning-controls"] > button,
-    html.liquid-glass [data-tour="language-switcher"] button,
-    html.liquid-glass button.w-full.bg-white\/10.backdrop-blur-sm:is(.rounded-xl, .rounded-2xl),
-    html.liquid-glass input.bg-black\/40.rounded-2xl,
-    html.liquid-glass nav[data-tour="section-nav"] {
-      background-image: none !important;
-      box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.7), var(--lg-lift) !important;
+    html.liquid-glass {
+      --lg-fill: rgba(255, 255, 255, 0.18);
+      --lg-fill-active: rgba(255, 255, 255, 0.3);
+      --lg-lift: 0 0 0 1px rgba(255, 255, 255, 0.35), 0 1px 2px rgba(0, 0, 0, 0.1), 0 8px 22px rgba(0, 0, 0, 0.2);
     }
 
     html.liquid-glass .bg-white\/5.backdrop-blur-3xl,
     html.liquid-glass .fixed.inset-0 > [class*="backdrop-blur"][class*="rounded"] {
-      border-color: rgba(255, 255, 255, 0.5) !important;
+      border-color: rgba(255, 255, 255, 0.35) !important;
     }
   }
 
-  /* ── Reduce Motion: no springy knobs ─────────────────────────────── */
+  /* ── Reduce Motion: no springs, no swelling ──────────────────────── */
 
   @media (prefers-reduced-motion: reduce) {
+    html.liquid-glass :is(
+      button.rounded-full.backdrop-blur-xl,
+      button.rounded-full.bg-white\/5,
+      button.rounded-full.bg-white\/10,
+      button.rounded-full.bg-black\/20,
+      [data-tour="learning-controls"] > button,
+      [data-tour="language-switcher"] button,
+      button.w-full.bg-white\/10.backdrop-blur-sm:is(.rounded-xl, .rounded-2xl),
+      .fixed.inset-0 > [class*="backdrop-blur"] button.w-full:is(.bg-white\/15, .bg-black\/20),
+      .fixed.inset-0 > [class*="backdrop-blur"] .flex > button.flex-1.rounded-lg.bg-white\/20
+    ):active {
+      scale: none !important;
+    }
     html.liquid-glass button.w-11.h-6.rounded-full:active > div.rounded-full {
       scale: none;
     }

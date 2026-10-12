@@ -64,5 +64,40 @@ export function LiquidGlassSwitch() {
     }
   }, [])
 
+  // Where the finger is on a pressed button, so the glass lights up under
+  // it and the glow follows as it moves (app/liquid-glass.css reads
+  // --lg-tx / --lg-ty; buttons without the material just ignore them).
+  useEffect(() => {
+    if (!liquidGlassAvailable()) return
+
+    let target: HTMLElement | null = null
+
+    const place = (e: PointerEvent) => {
+      if (!target) return
+      const r = target.getBoundingClientRect()
+      target.style.setProperty("--lg-tx", `${e.clientX - r.left}px`)
+      target.style.setProperty("--lg-ty", `${e.clientY - r.top}px`)
+    }
+    const onDown = (e: PointerEvent) => {
+      target = (e.target as Element | null)?.closest("button") ?? null
+      place(e)
+    }
+    const onUp = () => {
+      target = null
+    }
+
+    const opts = { capture: true, passive: true } as const
+    document.addEventListener("pointerdown", onDown, opts)
+    document.addEventListener("pointermove", place, opts)
+    document.addEventListener("pointerup", onUp, opts)
+    document.addEventListener("pointercancel", onUp, opts)
+    return () => {
+      document.removeEventListener("pointerdown", onDown, opts)
+      document.removeEventListener("pointermove", place, opts)
+      document.removeEventListener("pointerup", onUp, opts)
+      document.removeEventListener("pointercancel", onUp, opts)
+    }
+  }, [])
+
   return null
 }
