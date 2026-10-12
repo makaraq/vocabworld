@@ -311,9 +311,12 @@ input, textarea, [contenteditable] {
      Three rules that eliminate the biggest jank sources on iOS WKWebView:
 
      1. Constrain `transition-all` → only compositor-friendly properties
-        (transform, opacity, bg-color, border-color). The Tailwind class
-        `transition-all` animates EVERY property including box-shadow,
-        width, padding etc. which trigger layout+paint on every frame.
+        (transform, scale, translate, opacity, bg-color, border-color). The
+        Tailwind class `transition-all` animates EVERY property including
+        box-shadow, width, padding etc. which trigger layout+paint on every
+        frame. Tailwind v4's scale-* / translate-* utilities set the
+        standalone `scale` / `translate` properties, not `transform`, so
+        those must be listed too or every press-to-scale snaps.
 
      2. Reduce backdrop-filter blur radii. backdrop-blur forces the GPU
         to sample + gaussian-blur every pixel behind the element on every
@@ -324,7 +327,7 @@ input, textarea, [contenteditable] {
         never block the main thread.
   ────────────────────────────────────────────────────────────────────── */
   .cap-native .transition-all {
-    transition-property: transform, opacity, background-color, border-color !important;
+    transition-property: transform, scale, translate, opacity, background-color, border-color !important;
   }
 
   .cap-native .backdrop-blur-sm {
