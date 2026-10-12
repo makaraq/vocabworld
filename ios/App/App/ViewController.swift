@@ -26,5 +26,30 @@ class ViewController: CAPBridgeViewController {
 
         // Also apply immediately to the current page
         webView?.evaluateJavaScript(disableSelectionJS, completionHandler: nil)
+
+        // WebKit doesn't report Reduce Transparency to CSS, so mirror it onto
+        // <html> as a class; app/liquid-glass.css swaps its glass for solid
+        // fills when it's there. The user script covers the first load, the
+        // observer covers the setting changing while the app is open.
+        webView?.configuration.userContentController.addUserScript(WKUserScript(
+            source: reduceTransparencyJS(),
+            injectionTime: .atDocumentStart,
+            forMainFrameOnly: true
+        ))
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(reduceTransparencyChanged),
+            name: UIAccessibility.reduceTransparencyStatusDidChangeNotification,
+            object: nil
+        )
+    }
+
+    private func reduceTransparencyJS() -> String {
+        let on = UIAccessibility.isReduceTransparencyEnabled ? "true" : "false"
+        return "document.documentElement.classList.toggle('reduce-transparency', \(on));"
+    }
+
+    @objc private func reduceTransparencyChanged() {
+        webView?.evaluateJavaScript(reduceTransparencyJS(), completionHandler: nil)
     }
 }

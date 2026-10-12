@@ -1,0 +1,426 @@
+/* ── Liquid Glass ─────────────────────────────────────────────────────
+   An iOS 26-style material for the web layer, after Apple's "Adopting
+   Liquid Glass": glass on the controls that float above the content
+   (buttons, pills, the page dots, sheets) with a specular rim and a
+   sheen, capsule-shaped controls, corners concentric with their
+   containers, content fading under edges as it scrolls, and solid
+   fallbacks for Reduce Transparency and Increase Contrast.
+
+   It restyles the existing markup and changes nothing about behaviour.
+   Every rule is scoped under <html class="liquid-glass">, which
+   lib/liquid-glass.ts sets; without that class none of this matches.
+
+   Lives in @layer base next to the glass overrides in globals.css, so
+   its !important rules outrank those (same layer, higher specificity)
+   as well as the Tailwind utilities on the elements it restyles.
+
+   No new backdrop-filter layers: the glass is gradients and inset
+   shadows, which keeps the 60fps budget globals.css sets for
+   WKWebView. Real refraction needs SVG filters in backdrop-filter,
+   which WebKit does not support.
+   ──────────────────────────────────────────────────────────────────── */
+
+@property --lg-edge-top {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --lg-edge-bottom {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+@keyframes lg-edge-top {
+  from { --lg-edge-top: 0px; }
+  to { --lg-edge-top: 20px; }
+}
+
+@keyframes lg-edge-bottom {
+  from { --lg-edge-bottom: 20px; }
+  to { --lg-edge-bottom: 0px; }
+}
+
+@layer base {
+  html.liquid-glass {
+    /* Concentric corners: each radius is its container's minus the gap
+       between them. The panel sits 12px from cards and 20px from topic
+       tiles (panel padding + slider padding). */
+    --lg-radius-panel: 36px;
+    --lg-radius-card: 24px;
+    --lg-radius-tile: 16px;
+    --lg-radius-sheet: 38px;
+
+    --lg-fill: rgba(255, 255, 255, 0.13);
+    --lg-fill-active: rgba(255, 255, 255, 0.26);
+    --lg-sheen: linear-gradient(180deg,
+      rgba(255, 255, 255, 0.24) 0%,
+      rgba(255, 255, 255, 0.06) 40%,
+      rgba(255, 255, 255, 0) 62%,
+      rgba(255, 255, 255, 0.08) 100%);
+    --lg-sheen-panel: linear-gradient(160deg,
+      rgba(255, 255, 255, 0.14) 0%,
+      rgba(255, 255, 255, 0.03) 28%,
+      rgba(255, 255, 255, 0) 55%,
+      rgba(255, 255, 255, 0.05) 100%);
+
+    /* Light from the top left: a bright hairline on that edge, a fainter
+       one on the opposite edge where it exits, and a soft inner glow. */
+    --lg-rim:
+      inset 1.5px 1.5px 1px -1px rgba(255, 255, 255, 0.8),
+      inset -1px -1px 1px -0.5px rgba(255, 255, 255, 0.32),
+      inset 0 0 10px rgba(255, 255, 255, 0.06);
+    --lg-rim-panel:
+      inset 1.5px 1.5px 1px -1px rgba(255, 255, 255, 0.6),
+      inset -1px -1px 1px -0.5px rgba(255, 255, 255, 0.24),
+      inset 0 0 24px rgba(255, 255, 255, 0.05);
+    --lg-lift: 0 8px 22px rgba(0, 0, 0, 0.16), 0 2px 6px rgba(0, 0, 0, 0.1);
+    --lg-lift-panel: 0 30px 70px rgba(0, 0, 0, 0.26), 0 6px 18px rgba(0, 0, 0, 0.12);
+    --lg-glow-active: 0 0 0 1px rgba(255, 255, 255, 0.22), 0 0 26px rgba(255, 255, 255, 0.3);
+    --lg-backdrop: blur(12px) saturate(170%);
+    --lg-spring: cubic-bezier(0.3, 1.4, 0.5, 1);
+
+    /* Reduce Transparency swaps the glass for this. */
+    --lg-solid: rgb(52, 30, 22);
+  }
+
+  /* ── Main panel ──────────────────────────────────────────────────── */
+
+  html.liquid-glass .bg-white\/5.backdrop-blur-3xl {
+    border-radius: var(--lg-radius-panel) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    background-image: var(--lg-sheen-panel) !important;
+    box-shadow: var(--lg-rim-panel), var(--lg-lift-panel) !important;
+    -webkit-backdrop-filter: var(--lg-backdrop) !important;
+    backdrop-filter: var(--lg-backdrop) !important;
+  }
+
+  /* ── Content: topic and language tiles, flashcards ───────────────────
+     Content stays tinted rather than glass, so the controls read as a
+     separate layer above it. Borders are left alone: they carry the
+     topic completion tiers. */
+
+  html.liquid-glass .grid > button.bg-black\/40 {
+    border-radius: var(--lg-radius-tile) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      0 4px 14px rgba(0, 0, 0, 0.14) !important;
+  }
+
+  html.liquid-glass .flashcard-scale {
+    border-radius: var(--lg-radius-card) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      0 6px 20px rgba(0, 0, 0, 0.16) !important;
+  }
+
+  /* ── Glass controls ──────────────────────────────────────────────── */
+
+  html.liquid-glass button.rounded-full.backdrop-blur-xl,
+  html.liquid-glass button.rounded-full.bg-white\/5,
+  html.liquid-glass button.rounded-full.bg-white\/10,
+  html.liquid-glass button.rounded-full.bg-black\/20,
+  html.liquid-glass [data-tour="learning-controls"] > button,
+  html.liquid-glass [data-tour="language-switcher"] button,
+  html.liquid-glass button.w-full.bg-white\/10.backdrop-blur-sm {
+    background-color: var(--lg-fill) !important;
+    background-image: var(--lg-sheen) !important;
+    border-color: transparent !important;
+    box-shadow: var(--lg-rim), var(--lg-lift) !important;
+  }
+
+  /* Pressing makes the glass brighten and glow, like system controls
+     coming to life under a finger. The existing hold-to-scale stays. */
+  html.liquid-glass button.rounded-full.backdrop-blur-xl:active,
+  html.liquid-glass button.rounded-full.bg-white\/5:active,
+  html.liquid-glass button.rounded-full.bg-white\/10:active,
+  html.liquid-glass button.rounded-full.bg-black\/20:active,
+  html.liquid-glass [data-tour="learning-controls"] > button:not(:disabled):active,
+  html.liquid-glass [data-tour="language-switcher"] button:active,
+  html.liquid-glass button.w-full.bg-white\/10.backdrop-blur-sm:active {
+    background-color: var(--lg-fill-active) !important;
+    box-shadow: var(--lg-rim), var(--lg-glow-active) !important;
+  }
+
+  /* The play button keeps its state colour as tinted glass. */
+  html.liquid-glass [data-tour="learning-controls"] > button.bg-red-500\/30 {
+    background-color: rgba(239, 68, 68, 0.42) !important;
+  }
+  html.liquid-glass [data-tour="learning-controls"] > button.bg-blue-500\/30 {
+    background-color: rgba(59, 130, 246, 0.42) !important;
+  }
+
+  /* Text controls become capsules. */
+  html.liquid-glass [data-tour="language-switcher"] button,
+  html.liquid-glass button.w-full.bg-white\/10.backdrop-blur-sm {
+    border-radius: 9999px !important;
+  }
+
+  /* Category label above the flashcards. */
+  html.liquid-glass span.bg-white\/10.rounded-lg.tracking-wider {
+    border-radius: 9999px !important;
+    padding: 5px 12px !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    background-image: var(--lg-sheen) !important;
+    box-shadow: var(--lg-rim) !important;
+  }
+
+  /* Language search field: a glass capsule, as search fields are now. */
+  html.liquid-glass input.bg-black\/40.rounded-2xl {
+    border-radius: 9999px !important;
+    border-color: transparent !important;
+    background-color: var(--lg-fill) !important;
+    background-image: var(--lg-sheen) !important;
+    box-shadow: var(--lg-rim), var(--lg-lift) !important;
+  }
+
+  /* ── Section headers: title-style capitalisation, not all caps ─────
+     The strings are already cased per language in the catalogs; only the
+     CSS was forcing capitals. */
+
+  html.liquid-glass h3.uppercase.tracking-wider,
+  html.liquid-glass p.uppercase.tracking-wide {
+    text-transform: none !important;
+    letter-spacing: normal !important;
+  }
+
+  html.liquid-glass h3.uppercase.tracking-wider {
+    font-size: 15px !important;
+  }
+
+  /* ── Page dots: a glass capsule, like the Home Screen's ──────────── */
+
+  html.liquid-glass nav[data-tour="section-nav"] {
+    align-self: center !important;
+    width: auto !important;
+    margin-top: 10px !important;
+    padding: 8px 14px !important;
+    gap: 10px !important;
+    border-radius: 9999px !important;
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    background-image: var(--lg-sheen) !important;
+    box-shadow: var(--lg-rim), 0 4px 14px rgba(0, 0, 0, 0.12) !important;
+  }
+
+  /* ── Progress bars: a recessed track and a lit fill ──────────────── */
+
+  html.liquid-glass .bg-white\/10.rounded-full.h-2 {
+    background-color: rgba(0, 0, 0, 0.18) !important;
+    box-shadow:
+      inset 0 1px 2px rgba(0, 0, 0, 0.28),
+      inset 0 -0.5px 0 rgba(255, 255, 255, 0.2) !important;
+  }
+
+  html.liquid-glass .bg-white\/10.rounded-full.h-2 > div {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.45),
+      0 0 10px rgba(59, 130, 246, 0.45) !important;
+  }
+
+  /* ── Settings switches: the knob turns to glass while held ───────── */
+
+  html.liquid-glass button.w-11.h-6.rounded-full > div.rounded-full {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
+    /* globals.css limits transitions to transform/opacity/colours on
+       native, which left out `translate` (what Tailwind v4 moves the
+       knob with), so the knob jumped instead of sliding. */
+    transition-property: translate, scale, background-color, box-shadow !important;
+    transition-duration: 300ms, 200ms, 200ms, 200ms !important;
+    transition-timing-function: var(--lg-spring) !important;
+  }
+
+  html.liquid-glass button.w-11.h-6.rounded-full:active > div.rounded-full {
+    scale: 1.35 1.15;
+    background-color: rgba(255, 255, 255, 0.4) !important;
+    box-shadow:
+      var(--lg-rim),
+      0 0 0 1px rgba(255, 255, 255, 0.5),
+      0 4px 12px rgba(0, 0, 0, 0.25) !important;
+  }
+
+  /* ── Settings speed picker: capsule segments, the chosen one glass ─ */
+
+  html.liquid-glass .fixed.inset-0 > [class*="backdrop-blur"] .flex > button.flex-1.rounded-lg {
+    border-radius: 9999px !important;
+  }
+
+  /* Slider wells: the modal's radius minus its 16px padding. */
+  html.liquid-glass .fixed.inset-0 > [class*="backdrop-blur"] .bg-black\/20.rounded-xl {
+    border-radius: 20px !important;
+  }
+
+  html.liquid-glass .fixed.inset-0 > [class*="backdrop-blur"] .flex > button.flex-1.rounded-lg.bg-white\/20 {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    background-image: var(--lg-sheen) !important;
+    border-color: transparent !important;
+    box-shadow: var(--lg-rim), var(--lg-lift) !important;
+  }
+
+  /* ── Settings sliders: capsule knob that turns to glass while held ─ */
+
+  html.liquid-glass input.slider {
+    height: 6px !important;
+    border-radius: 9999px !important;
+    background-color: rgba(0, 0, 0, 0.25) !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  html.liquid-glass input.slider::-webkit-slider-thumb {
+    width: 32px !important;
+    height: 22px !important;
+    border-radius: 9999px !important;
+    border: none !important;
+    background: #fff !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
+    transition: transform 200ms var(--lg-spring), background-color 200ms !important;
+  }
+
+  html.liquid-glass input.slider:active::-webkit-slider-thumb {
+    transform: scale(1.3) !important;
+    background: rgba(255, 255, 255, 0.4) !important;
+    box-shadow:
+      var(--lg-rim),
+      0 0 0 1px rgba(255, 255, 255, 0.5),
+      0 6px 16px rgba(0, 0, 0, 0.25) !important;
+  }
+
+  /* ── Centred modals: settings, paywall, sign-in, progress… ───────── */
+
+  html.liquid-glass .fixed.inset-0 > [class*="backdrop-blur"][class*="rounded"]:not([class*="rounded-t-"]) {
+    border-radius: var(--lg-radius-panel) !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    background-image: var(--lg-sheen-panel) !important;
+    box-shadow: var(--lg-rim-panel), var(--lg-lift-panel) !important;
+    -webkit-backdrop-filter: var(--lg-backdrop) !important;
+    backdrop-filter: var(--lg-backdrop) !important;
+  }
+
+  /* Full-width buttons inside them (sign-in, paywall, settings Done)
+     become capsules; the translucent ones become glass. */
+  html.liquid-glass .fixed.inset-0 > [class*="backdrop-blur"] button.w-full:is(.rounded-xl, .rounded-2xl) {
+    border-radius: 9999px !important;
+  }
+
+  html.liquid-glass .fixed.inset-0 > [class*="backdrop-blur"] button.w-full:is(.bg-white\/15, .bg-black\/20) {
+    background-color: var(--lg-fill) !important;
+    background-image: var(--lg-sheen) !important;
+    border-color: transparent !important;
+    box-shadow: var(--lg-rim), var(--lg-lift) !important;
+  }
+
+  html.liquid-glass .fixed.inset-0 > [class*="backdrop-blur"] button.w-full:is(.bg-white\/15, .bg-black\/20):active {
+    background-color: var(--lg-fill-active) !important;
+    box-shadow: var(--lg-rim), var(--lg-glow-active) !important;
+  }
+
+  /* ── Bottom sheets: inset from the screen edges, rounded all round ─ */
+
+  html.liquid-glass .fixed.inset-0.items-end > [class*="rounded-t-3xl"] {
+    width: calc(100% - 16px) !important;
+    margin: 0 8px 8px !important;
+    overflow: hidden !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: var(--lg-radius-sheet) !important;
+    background-image: var(--lg-sheen-panel) !important;
+    box-shadow: var(--lg-rim-panel), var(--lg-lift-panel) !important;
+    -webkit-backdrop-filter: var(--lg-backdrop) !important;
+    backdrop-filter: var(--lg-backdrop) !important;
+  }
+
+  /* ── Reduce Transparency ─────────────────────────────────────────────
+     The class comes from the native shell (ViewController.swift); the
+     media query covers browsers that report the setting themselves. */
+
+  html.liquid-glass.reduce-transparency .bg-white\/5.backdrop-blur-3xl,
+  html.liquid-glass.reduce-transparency .fixed.inset-0 > [class*="backdrop-blur"][class*="rounded"],
+  html.liquid-glass.reduce-transparency .fixed.inset-0.items-end > [class*="rounded-t-3xl"] {
+    background-color: var(--lg-solid) !important;
+    background-image: none !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  html.liquid-glass.reduce-transparency nav[data-tour="section-nav"] {
+    background-color: rgba(255, 255, 255, 0.16) !important;
+    background-image: none !important;
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    html.liquid-glass .bg-white\/5.backdrop-blur-3xl,
+    html.liquid-glass .fixed.inset-0 > [class*="backdrop-blur"][class*="rounded"],
+    html.liquid-glass .fixed.inset-0.items-end > [class*="rounded-t-3xl"] {
+      background-color: var(--lg-solid) !important;
+      background-image: none !important;
+      -webkit-backdrop-filter: none !important;
+      backdrop-filter: none !important;
+    }
+
+    html.liquid-glass nav[data-tour="section-nav"] {
+      background-color: rgba(255, 255, 255, 0.16) !important;
+      background-image: none !important;
+    }
+  }
+
+  /* ── Increase Contrast: firmer edges and fills ───────────────────── */
+
+  @media (prefers-contrast: more) {
+    html.liquid-glass button.rounded-full.backdrop-blur-xl,
+    html.liquid-glass button.rounded-full.bg-white\/5,
+    html.liquid-glass button.rounded-full.bg-white\/10,
+    html.liquid-glass button.rounded-full.bg-black\/20,
+    html.liquid-glass [data-tour="learning-controls"] > button,
+    html.liquid-glass [data-tour="language-switcher"] button,
+    html.liquid-glass button.w-full.bg-white\/10.backdrop-blur-sm,
+    html.liquid-glass input.bg-black\/40.rounded-2xl,
+    html.liquid-glass nav[data-tour="section-nav"] {
+      background-image: none !important;
+      box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.7), var(--lg-lift) !important;
+    }
+
+    html.liquid-glass .bg-white\/5.backdrop-blur-3xl,
+    html.liquid-glass .fixed.inset-0 > [class*="backdrop-blur"][class*="rounded"] {
+      border-color: rgba(255, 255, 255, 0.5) !important;
+    }
+  }
+
+  /* ── Reduce Motion: no springy knobs ─────────────────────────────── */
+
+  @media (prefers-reduced-motion: reduce) {
+    html.liquid-glass button.w-11.h-6.rounded-full:active > div.rounded-full {
+      scale: none;
+    }
+    html.liquid-glass input.slider:active::-webkit-slider-thumb {
+      transform: none !important;
+    }
+  }
+}
+
+/* ── Scroll edge effect ────────────────────────────────────────────────
+   Lists fade out under their top edge once scrolled, and under their
+   bottom edge until the end, instead of being cut off hard. Driven by
+   the scroll position (Safari 26+); older versions keep plain edges.
+   Only on scrollers without a background of their own, since the mask
+   would fade that background too. */
+
+@supports (animation-timeline: scroll()) {
+  @layer base {
+    html.liquid-glass .language-grid-container,
+    html.liquid-glass [class*="overflow-y-auto"]:not([class*="bg-"]) {
+      -webkit-mask-image: linear-gradient(to bottom,
+        transparent 0,
+        #000 var(--lg-edge-top),
+        #000 calc(100% - var(--lg-edge-bottom)),
+        transparent 100%);
+      mask-image: linear-gradient(to bottom,
+        transparent 0,
+        #000 var(--lg-edge-top),
+        #000 calc(100% - var(--lg-edge-bottom)),
+        transparent 100%);
+      animation: lg-edge-top linear both, lg-edge-bottom linear both;
+      animation-timeline: scroll(self), scroll(self);
+      animation-range: 0 24px, calc(100% - 24px) 100%;
+    }
+  }
+}

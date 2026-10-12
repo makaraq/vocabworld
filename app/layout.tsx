@@ -6,7 +6,10 @@ import { TranslationProvider } from "@/components/providers/translation-provider
 import { AchievementProvider } from "@/components/achievements/achievement-provider"
 import { OfflineBanner } from "@/components/offline-banner"
 import { OfflineProvider } from "@/components/providers/offline-provider"
+import { LiquidGlassSwitch } from "@/components/liquid-glass-switch"
+import { liquidGlassBootScript } from "@/lib/liquid-glass"
 import "./globals.css"
+import "./liquid-glass.css"
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -35,7 +38,9 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${spaceGrotesk.variable}`}>
+    // The head scripts add classes (cap-native, liquid-glass) before React
+    // hydrates, so the server-rendered className is expected to differ.
+    <html lang="en" className={`${spaceGrotesk.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: `
           document.addEventListener('contextmenu', function(e) { e.preventDefault(); }, true);
@@ -60,6 +65,7 @@ export default function RootLayout({
             }
           }
         ` }} />
+        <script dangerouslySetInnerHTML={{ __html: liquidGlassBootScript }} />
       </head>
       <body className="font-sans" style={{ fontFamily: "var(--font-space-grotesk)" }}>
         <AuthProvider>
@@ -67,6 +73,7 @@ export default function RootLayout({
             <AchievementProvider>
               <OfflineProvider />
               <OfflineBanner />
+              <LiquidGlassSwitch />
               {children}
             </AchievementProvider>
           </TranslationProvider>
