@@ -65,15 +65,21 @@
       rgba(255, 255, 255, 0) 55%,
       rgba(255, 255, 255, 0.05) 100%);
 
-    /* Light from the top left: a bright hairline on that edge, a fainter
-       one on the opposite edge where it exits, and a soft inner glow. */
+    /* Light from the top left: a bright hairline on the top edge, a
+       fainter one down the left, a trace along the bottom where it exits,
+       and a soft inner glow. Each edge is its own unblurred, unspread
+       inset line: WebKit draws inset shadows that combine blur, offset
+       and negative spread on rounded corners as an even ring all the way
+       round, so the iPhone showed a hard outline instead of this. */
     --lg-rim:
-      inset 1.5px 1.5px 1px -1px rgba(255, 255, 255, 0.8),
-      inset -1px -1px 1px -0.5px rgba(255, 255, 255, 0.32),
+      inset 0 1px 0 rgba(255, 255, 255, 0.55),
+      inset 1px 0 0 rgba(255, 255, 255, 0.18),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.12),
       inset 0 0 10px rgba(255, 255, 255, 0.06);
     --lg-rim-panel:
-      inset 1.5px 1.5px 1px -1px rgba(255, 255, 255, 0.6),
-      inset -1px -1px 1px -0.5px rgba(255, 255, 255, 0.24),
+      inset 0 1px 0 rgba(255, 255, 255, 0.42),
+      inset 1px 0 0 rgba(255, 255, 255, 0.14),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.08),
       inset 0 0 24px rgba(255, 255, 255, 0.05);
     --lg-lift: 0 8px 22px rgba(0, 0, 0, 0.16), 0 2px 6px rgba(0, 0, 0, 0.1);
     --lg-lift-panel: 0 30px 70px rgba(0, 0, 0, 0.26), 0 6px 18px rgba(0, 0, 0, 0.12);
