@@ -2259,26 +2259,15 @@ export function LanguageSelector() {
               setPlayCounts(bumpPlayCount(targetLanguageCode, wordId))
             }
 
-            // Track word progress when audio is played successfully
+            // The play itself was already recorded: playWordSequence posts
+            // /api/progress/track (and awaits it) before it reports success.
+            // Posting it again here counted every play twice.
             if (user?.id && wordId && targetLanguageCode) {
-              try {
-                await fetch('/api/progress/track', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    userId: user.id,
-                    vocabularyId: wordId,
-                    targetLanguageCode: targetLanguageCode
-                  })
-                })
-                // Cancel today's streak notification and refresh review reminder
-                fetch('/api/notifications/context')
-                  .then(r => r.ok ? r.json() : null)
-                  .then(ctx => ctx && notificationsHook.onWordPlayed(ctx))
-                  .catch(() => {})
-              } catch (error) {
-                console.error('Failed to track progress:', error)
-              }
+              // Cancel today's streak notification and refresh review reminder
+              fetch('/api/notifications/context')
+                .then(r => r.ok ? r.json() : null)
+                .then(ctx => ctx && notificationsHook.onWordPlayed(ctx))
+                .catch(() => {})
             }
 
             setCurrentAudioStep('idle')

@@ -1,10 +1,9 @@
 // How many times each word has been played on this device, per target
 // language, for the play-count badge on the flashcard.
 //
-// Kept locally rather than read from user_word_progress.play_count: a single
-// play currently posts /api/progress/track twice (once from the audio
-// service's playWordSequence, once from the caller after it succeeds), so the
-// server count runs at roughly double the real number.
+// Kept locally rather than read from user_word_progress.play_count: until
+// 2026-10-12 every play posted /api/progress/track twice, so server counts
+// from before then run at roughly double the real number.
 
 const keyFor = (targetLanguageCode: string) => `sprind:plays:${targetLanguageCode}`
 
