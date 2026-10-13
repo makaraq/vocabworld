@@ -14,15 +14,19 @@ export default function LanguagePage() {
 
   // Signed-out web visitors get the public landing page, which is a download
   // CTA only — the web app is not a way in any more. The native app and
-  // already signed-in users go straight into the app. `?app=1` is an escape
-  // hatch for support and testing.
+  // already signed-in users go straight into the app. Two escape hatches, for
+  // support and for checking the page: `?app=1` forces the app, `?landing=1`
+  // forces the landing page even when signed in.
   const [bypass, setBypass] = useState(false)
+  const [forceLanding, setForceLanding] = useState(false)
   const [isWeb, setIsWeb] = useState(false)
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
     setIsWeb(!Capacitor.isNativePlatform())
-    setBypass(new URLSearchParams(window.location.search).has('app'))
+    setBypass(params.has('app'))
+    setForceLanding(params.has('landing'))
   }, [])
-  const showLanding = isWeb && !loading && !user && !bypass
+  const showLanding = isWeb && !loading && !bypass && (forceLanding || !user)
 
   useEffect(() => {
     const checkPaymentReturn = async () => {

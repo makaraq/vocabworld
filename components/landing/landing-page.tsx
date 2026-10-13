@@ -2,19 +2,21 @@
 
 // Public landing page for signed-out web visitors at https://www.sprind.uk.
 // Sprind is an app, not a web product: this page has exactly one job, which is
-// to get the visitor into the App Store. There is no web sign-in here.
+// to get the visitor into the App Store. There is no web sign-in here — even
+// the menu below the fold is a still, and tapping it goes to the App Store.
 // It doubles as the public home page Google's OAuth branding review requires,
 // so it still says, in one line, what the app is.
 
 import { AppStoreButton } from '@/components/landing/app-store-button'
 import { FloatingBackdrop } from '@/components/landing/floating-backdrop'
+import { MenuShowcase } from '@/components/landing/menu-showcase'
 
 export function LandingPage() {
   return (
     <div className="relative min-h-screen w-full bg-[#FFFDFB] flex flex-col items-center px-6 text-center overflow-hidden">
       <FloatingBackdrop />
 
-      <main className="relative z-10 flex-1 flex flex-col items-center justify-center max-w-md w-full py-24">
+      <main className="relative z-10 min-h-[82svh] flex flex-col items-center justify-center max-w-md w-full py-20">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/app-icon.png"
@@ -39,7 +41,10 @@ export function LandingPage() {
         <p className="mt-6 text-[#0D0B0A]/35 text-xs tracking-wide">iPhone and iPad</p>
       </main>
 
-      <footer className="relative z-10 w-full pb-10">
+      {/* Peeks above the fold, so there is a reason to scroll. */}
+      <MenuShowcase />
+
+      <footer className="relative z-10 w-full pt-14 pb-10">
         <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[#0D0B0A]/40 text-xs">
           <a href="/privacy-policy" className="hover:text-[#0D0B0A] underline-offset-2 hover:underline">Privacy</a>
           <a href="/terms-of-service" className="hover:text-[#0D0B0A] underline-offset-2 hover:underline">Terms</a>

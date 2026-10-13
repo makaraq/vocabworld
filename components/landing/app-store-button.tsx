@@ -13,7 +13,19 @@ import {
   openAppStore,
 } from '@/lib/app-store-link'
 
-export function AppStoreButton({ className = '' }: { className?: string }) {
+/**
+ * Anything wrapped in this goes to the App Store, in-app browsers included.
+ * The badge uses it, and so does the menu showcase further down the page.
+ */
+export function AppStoreLink({
+  className = '',
+  label,
+  children,
+}: {
+  className?: string
+  label: string
+  children: React.ReactNode
+}) {
   const [stuck, setStuck] = useState(false)
   const [steps, setSteps] = useState('')
   const [copied, setCopied] = useState(false)
@@ -46,20 +58,8 @@ export function AppStoreButton({ className = '' }: { className?: string }) {
 
   return (
     <>
-      <a
-        href={APP_STORE_URL}
-        onClick={handleClick}
-        aria-label="Download Sprind on the App Store"
-        className={`inline-block transition-transform duration-200 hover:scale-[1.03] active:scale-[0.98] ${className}`}
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/app-store-badge.png"
-          alt="Download on the App Store"
-          width={540}
-          height={160}
-          className="h-[60px] w-auto sm:h-[68px]"
-        />
+      <a href={APP_STORE_URL} onClick={handleClick} aria-label={label} className={className}>
+        {children}
       </a>
 
       {stuck && (
@@ -111,5 +111,23 @@ export function AppStoreButton({ className = '' }: { className?: string }) {
         </div>
       )}
     </>
+  )
+}
+
+export function AppStoreButton({ className = '' }: { className?: string }) {
+  return (
+    <AppStoreLink
+      label="Download Sprind on the App Store"
+      className={`inline-block transition-transform duration-200 hover:scale-[1.03] active:scale-[0.98] ${className}`}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/app-store-badge.png"
+        alt="Download on the App Store"
+        width={540}
+        height={160}
+        className="h-[60px] w-auto sm:h-[68px]"
+      />
+    </AppStoreLink>
   )
 }
