@@ -176,7 +176,7 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
         // Fallback: solid backdrop when target can't be found
         <div
           aria-hidden
-          className="absolute inset-0 bg-black/70 backdrop-blur-sm pointer-events-auto"
+          className="absolute inset-0 bg-black/30 backdrop-blur-[6px] pointer-events-auto"
           style={{ touchAction: 'none' }}
           onClick={handleNext}
         />
@@ -186,13 +186,13 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
       {rect && !missing && (
         <div
           aria-hidden
-          className="absolute rounded-2xl border-2 border-blue-400/80 pointer-events-none animate-pulse"
+          className="absolute rounded-2xl border-2 border-white/80 pointer-events-none animate-pulse"
           style={{
             top: rect.top - padding,
             left: rect.left - padding,
             width: rect.width + padding * 2,
             height: rect.height + padding * 2,
-            boxShadow: '0 0 24px 4px rgba(59, 130, 246, 0.45)',
+            boxShadow: '0 0 24px 4px rgba(255, 255, 255, 0.35)',
           }}
         />
       )}
@@ -203,7 +203,7 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
         className="absolute left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-sm pointer-events-auto"
         style={{ top: tooltipTop }}
       >
-        <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl p-5 space-y-4">
+        <div className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl sm:rounded-[32px] shadow-2xl p-5 space-y-4">
 
           {/* Step indicator */}
           <div className="flex items-center justify-between">
@@ -213,9 +213,9 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
                   key={i}
                   className={`h-1.5 rounded-full transition-all ${
                     i === stepIndex
-                      ? 'w-6 bg-blue-400'
+                      ? 'w-6 bg-white/80'
                       : i < stepIndex
-                      ? 'w-1.5 bg-blue-400/60'
+                      ? 'w-1.5 bg-white/50'
                       : 'w-1.5 bg-white/20'
                   }`}
                 />
@@ -257,7 +257,7 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
               )}
               <button
                 onClick={handleNext}
-                className="bg-blue-500 hover:bg-blue-400 active:bg-blue-600 text-white text-sm font-semibold rounded-xl px-5 py-2.5 transition-all shadow-lg shadow-blue-500/25 flex items-center gap-1.5"
+                className="bg-white/10 backdrop-blur-sm border border-white/25 hover:bg-white/20 text-white text-sm font-semibold rounded-xl px-5 py-2.5 transition-all flex items-center gap-1.5"
                 aria-label={isLast ? t('tutorial.finish.aria') : t('tutorial.next.aria')}
               >
                 {isLast ? t('tutorial.finish') : t('tutorial.next')}
@@ -274,7 +274,7 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
         {rect && !missing && !tooltipOverlapsTarget && (
           <div
             aria-hidden
-            className={`absolute left-1/2 -translate-x-1/2 w-3 h-3 bg-white/10 backdrop-blur-xl border border-white/20 rotate-45 ${
+            className={`absolute left-1/2 -translate-x-1/2 w-3 h-3 bg-white/10 backdrop-blur-2xl border border-white/20 rotate-45 ${
               placement === 'bottom'
                 ? '-top-1.5 border-r-0 border-b-0'
                 : '-bottom-1.5 border-l-0 border-t-0'

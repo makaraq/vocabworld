@@ -378,8 +378,8 @@ export function PlaylistSelectModal({ word, translation, userId, translations, n
   }
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
-      <div className="bg-gray-900 border border-white/20 rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-[6px] z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-t-3xl sm:rounded-[32px] w-full sm:max-w-md flex flex-col max-h-[90vh] shadow-2xl">
         {/* Header */}
         <div className="p-4 border-b border-white/10 flex items-center justify-between flex-shrink-0">
           <h3 className="text-white font-semibold text-lg">{t('playlistSelect.title')}</h3>
@@ -405,12 +405,12 @@ export function PlaylistSelectModal({ word, translation, userId, translations, n
               value={newPlaylistName}
               onChange={(e) => setNewPlaylistName(e.target.value)}
               placeholder={t('playlistSelect.newPlaceholder')}
-              className="flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-blue-400/50"
+              className="flex-1 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-3 py-2 text-white text-sm outline-none focus:border-white/40"
             />
             <button
               onClick={handleCreatePlaylist}
               disabled={!newPlaylistName.trim() || isCreating}
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg font-medium text-sm hover:bg-blue-600 disabled:opacity-50 transition-all"
+              className="bg-white/10 backdrop-blur-sm border border-white/25 text-white px-4 py-2 rounded-2xl font-semibold text-sm hover:bg-white/20 disabled:opacity-40 transition-all"
             >
               {isCreating ? '...' : t('playlistSelect.create')}
             </button>
@@ -436,16 +436,14 @@ export function PlaylistSelectModal({ word, translation, userId, translations, n
                   key={playlist.id}
                   onClick={() => handleSelectPlaylist(playlist.id)}
                   disabled={isAdding === playlist.id || addedTo === playlist.id}
-                  className={`w-full border rounded-lg p-3 flex items-center justify-between transition-all disabled:opacity-80 ${addedTo === playlist.id ? 'bg-green-500/15 border-green-400/30' : 'bg-white/5 hover:bg-white/10 border-white/10'}`}
+                  className={`w-full border rounded-2xl p-3 flex items-center justify-between transition-all disabled:opacity-80 ${addedTo === playlist.id ? 'bg-green-500/15 border-green-400/30' : 'bg-white/5 hover:bg-white/10 border-white/10'}`}
                 >
                   <div className="flex items-center gap-3">
                     {addedTo === playlist.id ? (
                       <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-green-400" />
                     ) : isAdding === playlist.id ? (
-                      <span className="w-5 h-5 border-2 border-purple-400/50 border-t-purple-400 rounded-full animate-spin" />
-                    ) : (
-                      <Icon icon="solar:playlist-bold" className="w-5 h-5 text-purple-400" />
-                    )}
+                      <span className="w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                    ) : null}
                     <span className={addedTo === playlist.id ? 'text-green-300 font-medium' : 'text-white font-medium'}>{playlist.name}</span>
                   </div>
                   <span className={addedTo === playlist.id ? 'text-green-400/60 text-sm' : 'text-white/40 text-sm'}>{addedTo === playlist.id ? t('playlistSelect.added') : tPlural('playlistSelect.wordCount', playlist.word_count)}</span>

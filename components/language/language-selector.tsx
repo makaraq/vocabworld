@@ -260,11 +260,29 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
   // the correct position on the very first frame. This prevents the flash of the
   // Account section (index 0) that appeared when TopicSlider remounted after
   // leaving the learning page.
+  //
+  // It also owns the `transitionend` listener that clears `transitioning`.
+  // That used to live in a `useEffect([])`, which never re-ran — but this
+  // subtree is torn down and rebuilt whenever the learning page opens, so
+  // after coming back the listener was still bound to the discarded node.
+  // The first swipe then set `transitioning` and nothing ever cleared it,
+  // and the menu stopped answering swipes until a reload.
+  const clearSnapListener = useRef<(() => void) | null>(null)
+
   const sliderRefCallback = useCallback((el: HTMLDivElement | null) => {
+    clearSnapListener.current?.()
+    clearSnapListener.current = null
     sliderRef.current = el
-    if (el) {
-      el.style.transform = `translateX(${-currentSectionForRefCallback.current * 100}%)`
+    if (!el) return
+
+    el.style.transform = `translateX(${-currentSectionForRefCallback.current * 100}%)`
+
+    const onSnapEnd = () => {
+      el.style.transition = ''
+      drag.current.transitioning = false
     }
+    el.addEventListener('transitionend', onSnapEnd)
+    clearSnapListener.current = () => el.removeEventListener('transitionend', onSnapEnd)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const drag = useRef({
@@ -276,6 +294,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
     screenW: 0,
     raf: 0,
   })
+  const snapGuard = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const dots = useRef({
     startX: null as number | null,
     endX: null as number | null,
@@ -347,6 +366,15 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
     if (!sliderRef.current) return
     sliderRef.current.style.transition = 'transform 300ms cubic-bezier(0.25,0.46,0.45,0.94)'
     sliderRef.current.style.transform = `translateX(${-section * 100}%)`
+
+    // Snapping back to where the strip already sits changes nothing, so no
+    // transition runs and no `transitionend` arrives. Release the guard on a
+    // timer too, or that case would freeze the menu just as surely.
+    if (snapGuard.current) clearTimeout(snapGuard.current)
+    snapGuard.current = setTimeout(() => {
+      if (sliderRef.current) sliderRef.current.style.transition = ''
+      drag.current.transitioning = false
+    }, 360)
   }
 
   // Set initial position before first paint to prevent flash of section 0 (Account) on remount
@@ -359,18 +387,6 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
   useEffect(() => {
     snapTo(currentSection)
   }, [currentSection])
-
-  // Clean up transition class after animation ends
-  useEffect(() => {
-    const el = sliderRef.current
-    if (!el) return
-    const handler = () => {
-      el.style.transition = ''
-      drag.current.transitioning = false
-    }
-    el.addEventListener('transitionend', handler)
-    return () => el.removeEventListener('transitionend', handler)
-  }, [])
 
   const handleTouchStart = (e: React.TouchEvent) => {
     if (drag.current.transitioning) return
@@ -601,7 +617,6 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                                 }}
                                 className="flex-1 min-w-0 flex items-center gap-3 p-3 text-left"
                               >
-                                <Icon icon={playlist.icon || "solar:playlist-minimalistic-2-linear"} width="22" height="22" className="text-blue-400 flex-shrink-0" />
                                 <div className="flex-1 min-w-0">
                                   <p className="text-white font-medium truncate">{playlist.name}</p>
                                   <p className="text-white/50 text-xs">{tPlural('myWords.wordCount', playlist.word_count || 0)}</p>
@@ -5026,8 +5041,8 @@ export function LanguageSelector() {
 
       {/* Create Playlist Modal */}
       {showCreatePlaylistModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-gray-900 border border-white/20 rounded-2xl w-full max-w-md p-6">
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-[6px] z-50 flex items-center justify-center p-4">
+          <div className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl sm:rounded-[32px] w-full max-w-md p-6 shadow-2xl">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-white font-semibold text-lg">{t('createPlaylist.title')}</h3>
               <button
@@ -5054,7 +5069,7 @@ export function LanguageSelector() {
                 onChange={(e) => setNewPlaylistName(e.target.value.slice(0, 22))}
                 placeholder={t('createPlaylist.placeholder')}
                 maxLength={22}
-                className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white outline-none focus:border-blue-400/50"
+                className="w-full bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-4 py-3 text-white outline-none focus:border-white/40"
                 autoFocus
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && newPlaylistName.trim()) {
@@ -5073,14 +5088,14 @@ export function LanguageSelector() {
                   setShowCreatePlaylistModal(false)
                   setNewPlaylistName("")
                 }}
-                className="flex-1 py-3 bg-white/10 hover:bg-white/20 rounded-lg text-white font-medium transition-all"
+                className="w-full flex-1 py-3 bg-white/10 backdrop-blur-sm border border-white/15 hover:bg-white/15 rounded-2xl text-white/80 font-medium transition-all"
               >
                 {t('common.cancel')}
               </button>
               <button
                 onClick={handleCreatePlaylist}
                 disabled={!newPlaylistName.trim() || isCreatingPlaylist}
-                className="flex-1 py-3 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-white font-medium transition-all flex items-center justify-center gap-2"
+                className="w-full flex-1 py-3 bg-white/10 backdrop-blur-sm border border-white/25 hover:bg-white/20 disabled:opacity-40 disabled:cursor-not-allowed rounded-2xl text-white font-semibold transition-all flex items-center justify-center gap-2"
               >
                 {isCreatingPlaylist ? (
                   <>
@@ -5098,8 +5113,8 @@ export function LanguageSelector() {
 
       {/* Delete Playlist Confirmation Modal */}
       {playlistToDelete && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-gray-900 border border-white/20 rounded-2xl w-full max-w-md p-6">
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-[6px] z-50 flex items-center justify-center p-4">
+          <div className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl sm:rounded-[32px] w-full max-w-md p-6 shadow-2xl">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-white font-semibold text-lg flex items-center gap-2">
                 <Icon icon="solar:trash-bin-trash-bold" width="22" height="22" className="text-red-400" />

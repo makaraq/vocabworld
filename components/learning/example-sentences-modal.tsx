@@ -178,11 +178,11 @@ export function ExampleSentencesModal({
 
   return (
     <div 
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/30 backdrop-blur-[6px]"
       onClick={onCloseAction}
     >
       <div 
-        className={`bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl max-w-lg w-full shadow-2xl transition-all duration-300 ease-out ${
+        className={`bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl sm:rounded-[32px] max-w-lg w-full shadow-2xl transition-all duration-300 ease-out ${
           isVisible ? 'scale-100 opacity-100' : 'scale-90 opacity-0'
         }`}
         onClick={(e) => e.stopPropagation()}
@@ -222,7 +222,7 @@ export function ExampleSentencesModal({
                   <div
                     key={idx}
                     className={`h-1.5 rounded-full transition-all ${
-                      idx === currentIndex ? 'w-8 bg-blue-400' : 'w-1.5 bg-white/30'
+                      idx === currentIndex ? 'w-8 bg-white/80' : 'w-1.5 bg-white/30'
                     }`}
                   />
                 ))}
@@ -276,7 +276,7 @@ export function ExampleSentencesModal({
           <div className="p-5 border-t border-white/10">
             <button
               onClick={onAddToPlaylistAction}
-              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02]"
+              className="w-full bg-white/10 backdrop-blur-sm border border-white/25 hover:bg-white/20 text-white font-semibold py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-all"
             >
               <Plus className="w-5 h-5" />
               {t('sentences.addToPlaylist')}
