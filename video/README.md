@@ -10,6 +10,8 @@ npm run studio     # preview and edit in Remotion Studio
 npm run render     # → out/sprind-launch.mp4
 ```
 
+The rendered film is in [`renders/sprind-launch.mp4`](renders/sprind-launch.mp4).
+
 Both commands first run `npm run sync`, which copies the app's assets in. To use an installed
 Chrome Headless Shell instead of Remotion's download, set `REMOTION_BROWSER_EXECUTABLE`.
 
