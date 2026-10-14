@@ -1,0 +1,104 @@
+/* The film's stylesheet. Everything under .app-ui is the app's own CSS, so
+   the screens in the phone are drawn by the same rules as the iOS app.
+
+   `still` is declared before Tailwind's layers on purpose: for !important
+   declarations the earliest layer wins, so it outranks the transitions the
+   app sets with !important in @layer base. A film is rendered one frame at a
+   time; every movement is driven from the frame number instead. */
+@layer still;
+@import "tailwindcss" source(".");
+
+@theme {
+  --font-sans: "Space Grotesk", "Noto Sans IPA", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer still {
+  .app-ui *,
+  .app-ui *::before,
+  .app-ui *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* ── From app/globals.css, as the iOS app applies it ──────────────────
+   The app shell runs in WKWebView with <html class="cap-native liquid-glass">
+   (app/layout.tsx), so the @supports (-webkit-backdrop-filter) glass block
+   always applies there; Chrome renders the film, so it is unconditional here. */
+
+.app-ui {
+  font-family: "Space Grotesk", "Noto Sans IPA", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: oklch(0.145 0 0);
+}
+
+/* Elements with no explicit font-weight class, and each Tailwind weight one
+   step up, as on native iOS. */
+.app-ui.cap-native { font-weight: 500; }
+.app-ui.cap-native .font-normal   { font-weight: 500 !important; }
+.app-ui.cap-native .font-medium   { font-weight: 600 !important; }
+.app-ui.cap-native .font-semibold { font-weight: 700 !important; }
+.app-ui.cap-native .font-bold     { font-weight: 700 !important; }
+
+.app-ui .flashcard-scale {
+  --flashcard-scale: 1;
+  transform: scale(var(--flashcard-scale)) translateZ(0);
+  transform-origin: center center;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+@layer base {
+  .app-ui,
+  .app-ui * {
+    border-color: oklch(0.922 0 0);
+  }
+
+  .app-ui.cap-native .backdrop-blur-sm {
+    -webkit-backdrop-filter: blur(4px) !important;
+    backdrop-filter: blur(4px) !important;
+  }
+  .app-ui.cap-native .backdrop-blur-md {
+    -webkit-backdrop-filter: blur(6px) !important;
+    backdrop-filter: blur(6px) !important;
+  }
+  .app-ui.cap-native .backdrop-blur-lg {
+    -webkit-backdrop-filter: blur(8px) !important;
+    backdrop-filter: blur(8px) !important;
+  }
+  .app-ui.cap-native .backdrop-blur-xl {
+    -webkit-backdrop-filter: blur(10px) !important;
+    backdrop-filter: blur(10px) !important;
+  }
+  .app-ui.cap-native .backdrop-blur-2xl {
+    -webkit-backdrop-filter: blur(12px) saturate(120%) !important;
+    backdrop-filter: blur(12px) saturate(120%) !important;
+  }
+  .app-ui.cap-native .backdrop-blur-3xl {
+    -webkit-backdrop-filter: blur(12px) !important;
+    backdrop-filter: blur(12px) !important;
+  }
+
+  /* Glass morphism (all platforms) */
+  .app-ui .bg-white\/5 {
+    background: rgba(255, 255, 255, 0.03) !important;
+  }
+  .app-ui .bg-white\/10 {
+    background: rgba(255, 255, 255, 0.08) !important;
+  }
+  .app-ui .bg-white\/15 {
+    background: rgba(255, 255, 255, 0.12) !important;
+  }
+  .app-ui .bg-white\/5.backdrop-blur-2xl {
+    background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.02) 50%,
+      rgba(255, 255, 255, 0.05) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  }
+}

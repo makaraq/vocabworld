@@ -38,6 +38,7 @@
   "exclude": [
     "node_modules",
     "tiktok-automation",
-    "tiktok-slideshows"
+    "tiktok-slideshows",
+    "video"
   ]
 }

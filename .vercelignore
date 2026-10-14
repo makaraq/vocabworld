@@ -44,6 +44,9 @@ generated-audio/
 # Mobile build outputs
 android/
 ios/
+
+# The launch film's Remotion project (video/README.md)
+video/
 capacitor-cordova-android-plugins/
 capacitor-cordova-ios-plugins/
 

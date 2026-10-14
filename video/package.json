@@ -1,0 +1,32 @@
+{
+  "name": "sprind-launch-video",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sprind product launch video (Remotion). The app screens are rebuilt from the app's own markup and Liquid Glass CSS.",
+  "scripts": {
+    "sync": "node scripts/sync-app-assets.mjs",
+    "prestudio": "npm run sync",
+    "studio": "remotion studio",
+    "prerender": "npm run sync",
+    "render": "remotion render SprindLaunch out/sprind-launch.mp4",
+    "still": "remotion still SprindLaunch",
+    "typecheck": "tsc --noEmit",
+    "fonts": "node scripts/fetch-fonts.mjs",
+    "music": "python3 scripts/compose-audio.py"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.535",
+    "@remotion/fonts": "4.0.535",
+    "@remotion/tailwind-v4": "4.0.535",
+    "@remotion/transitions": "4.0.535",
+    "lucide-react": "0.454.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "remotion": "4.0.535",
+    "tailwindcss": "4.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.8",
+    "typescript": "5.8.3"
+  }
+}
