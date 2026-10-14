@@ -83,11 +83,55 @@ the app uses:
 - the IPA under each French word, in `src/app-ui/app-data.ts`, standing in for the phonetics
   endpoint
 
+## The Last Word
+
+A second, shorter film: a 19.5-second micro-story with no narration. A traveler is lost at a
+fork in Paris; the word they learned that morning is the one they need. The app is on screen for
+about two and a half seconds; the rest is the moment it prepares you for.
+
+```bash
+npm run render:last-word   # → out/sprind-the-last-word.mp4
+```
+
+The rendered film is in [`renders/sprind-the-last-word.mp4`](renders/sprind-the-last-word.mp4).
+1080 × 1920, 30 fps, 585 frames, H.264 with AAC audio.
+
+| Time | Scene | On screen |
+| --- | --- | --- |
+| 0:00 | A fingerpost spins through *gauche*, *droite*, *tout droit* and settles on beat | Lost? |
+| 0:02 | The camera pulls back to the fork; the traveler stops and looks round | |
+| 0:03 | The phone rises: the app's learning page plays *gauche · left* | This morning's word. |
+| 0:06 | "gauche" lights up over the left-hand street; the traveler turns and follows it | |
+| 0:09 | A wall sweeps past; the quai, the river, the tower and the low sun; a bell | |
+| 0:12 | A café owner points the way, one word per beat | à gauche, / puis tout droit. / Left, then straight ahead. |
+| 0:16 | A green door, number 12, opens onto warm light | |
+| 0:17.5 | End card: the app icon, App Store badge | Learn the words you'll actually use. |
+
+Every scene is hand-built SVG in `src/last-word/` (no screenshots or stock footage), coloured
+from the app's own backdrop: plum, red, orange and a yellow glow, with its teal as the accent.
+The phone is the app's real learning page (`LearningView` in `AppScreen`, the Liquid Glass CSS,
+Directions, word 1 of 60); the end card is the main film's, with the original icon.
+
+The words are the app's: *gauche*, *droite* and *tout droit* are the first three words of
+Directions. In the subtitles, the ones from the app are in amber. None of them looks like its
+English translation.
+
+**Written for the film:** the story, the café owner's line around those words (*à … puis …*),
+the café's name ("Chez Margot") and the house number.
+
+The score (`scripts/compose-last-word.py`) is original: an accordion-like musette lead over a
+walking bass and brushes, in F at 120 BPM, reusing the voices of `compose-audio.py`. The street
+sounds are separate files cued on beats in `src/last-word/TheLastWord.tsx`: a footstep on every
+beat the traveler walks, ticks as the signpost's words flip, a church bell as the view opens,
+cups at the café, and the door's bell.
+
 ## Layout
 
 ```
 src/
   SprindLaunch.tsx      master composition: hook, app, end card, music and interface sounds
+  last-word/            The Last Word: timeline, palette and camera, the SVG scenery and
+                        figures (shapes/), the scenes, and the master composition
   timeline.ts           every frame the film depends on, and the captions
   scenes/               Hook, AppDemo (the app session), EndCard, shared stage and phone
   app-ui/               the app's screens and modals (see above)
@@ -100,6 +144,7 @@ scripts/
   fetch-fonts.mjs       Space Grotesk (the app's font), Inter, Noto subsets for the hook's
                         other scripts and the IPA → public/fonts
   compose-audio.py      the score and interface sounds → public/audio
+  compose-last-word.py  The Last Word's score and street sounds → public/audio
 ```
 
 Every animation is a pure function of the frame: springs and interpolations from

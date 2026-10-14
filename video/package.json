@@ -9,10 +9,13 @@
     "studio": "remotion studio",
     "prerender": "npm run sync",
     "render": "remotion render SprindLaunch out/sprind-launch.mp4",
+    "prerender:last-word": "npm run sync",
+    "render:last-word": "remotion render TheLastWord out/sprind-the-last-word.mp4",
     "still": "remotion still SprindLaunch",
     "typecheck": "tsc --noEmit",
     "fonts": "node scripts/fetch-fonts.mjs",
-    "music": "python3 scripts/compose-audio.py"
+    "music": "python3 scripts/compose-audio.py",
+    "music:last-word": "python3 scripts/compose-last-word.py"
   },
   "dependencies": {
     "@dicebear/collection": "9.4.3",

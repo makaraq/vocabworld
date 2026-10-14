@@ -7,7 +7,7 @@ import { FONT } from '../theme'
 // Store badge and sprind.uk are the ones the app itself links to
 // (lib/app-store-link.ts, app/layout.tsx).
 
-export const EndCard: React.FC = () => {
+export const EndCard: React.FC<{ line?: string }> = ({ line: copy = 'Learn the words you actually use.' }) => {
   const frame = useCurrentFrame()
   const { fps } = useVideoConfig()
 
@@ -65,7 +65,7 @@ export const EndCard: React.FC = () => {
             transform: `translateY(${(1 - line) * 20}px)`,
           }}
         >
-          Learn the words you actually use.
+          {copy}
         </div>
 
         <div

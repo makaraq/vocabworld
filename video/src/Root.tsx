@@ -4,6 +4,8 @@ import React from 'react'
 import { Composition } from 'remotion'
 import { SprindLaunch } from './SprindLaunch'
 import { AppScreens } from './AppScreens'
+import { TheLastWord } from './last-word/TheLastWord'
+import { LAST_WORD } from './last-word/timeline'
 import { loadFonts } from './fonts'
 import { VIDEO } from './theme'
 
@@ -15,6 +17,15 @@ export const RemotionRoot: React.FC = () => (
       id="SprindLaunch"
       component={SprindLaunch}
       durationInFrames={VIDEO.durationInFrames}
+      fps={VIDEO.fps}
+      width={VIDEO.width}
+      height={VIDEO.height}
+    />
+    {/* A micro-story: a traveler lost in Paris, and this morning's word. */}
+    <Composition
+      id="TheLastWord"
+      component={TheLastWord}
+      durationInFrames={LAST_WORD.durationInFrames}
       fps={VIDEO.fps}
       width={VIDEO.width}
       height={VIDEO.height}
