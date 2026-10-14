@@ -20,6 +20,6 @@ export const RemotionRoot: React.FC = () => (
       height={VIDEO.height}
     />
     {/* A still of the rebuilt app screens, for checking them against the app. */}
-    <Composition id="AppScreens" component={AppScreens} durationInFrames={1} fps={VIDEO.fps} width={2096} height={1070} />
+    <Composition id="AppScreens" component={AppScreens} durationInFrames={1} fps={VIDEO.fps} width={2610} height={2100} />
   </>
 )

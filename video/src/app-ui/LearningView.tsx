@@ -25,6 +25,8 @@ export interface FlashcardProps {
   pulse: number
   /** Opacity of the word text, for the swap between words. */
   textOpacity?: number
+  /** A finger held on the card, 0 → 1. */
+  touch?: number
 }
 
 export const Flashcard: React.FC<FlashcardProps> = ({
@@ -35,6 +37,7 @@ export const Flashcard: React.FC<FlashcardProps> = ({
   scale,
   pulse,
   textOpacity = 1,
+  touch,
 }) => (
   <div
     role="region"
@@ -56,6 +59,7 @@ export const Flashcard: React.FC<FlashcardProps> = ({
         /{phonetic}/
       </p>
     )}
+    {touch !== undefined && <Touch t={touch} size={56} />}
   </div>
 )
 
@@ -76,9 +80,63 @@ export interface LearningViewProps {
   /** Press on the play button, 0 → 1, and the fingertip over it. */
   playPress?: number
   playTouch?: number
+  prevPress?: number
+  prevTouch?: number
+  settingsPress?: number
+  settingsTouch?: number
+  /** A finger held on the target-language card (long press). */
+  cardTouch?: number
+  /** 0 → 1: the "Autoplay" callout over the play button, at `frame`. */
+  callout?: { opacity: number; frame: number }
   wordOpacity?: number
   contentStyle?: React.CSSProperties
 }
+
+/**
+ * The film's note on the play button while autoplay runs: a glass pill with
+ * live level bars, so it reads as playing even with the sound off.
+ */
+const AutoplayCallout: React.FC<{ opacity: number; frame: number }> = ({ opacity, frame }) => (
+  <span
+    aria-hidden
+    style={{
+      position: 'absolute',
+      bottom: 'calc(100% + 12px)',
+      left: '50%',
+      transform: `translateX(-50%) translateY(${(1 - opacity) * 6}px)`,
+      opacity,
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: 8,
+      padding: '6px 13px 6px 10px',
+      borderRadius: 9999,
+      whiteSpace: 'nowrap',
+      background: 'rgba(12,10,9,0.55)',
+      border: '1px solid rgba(251,191,36,0.55)',
+      boxShadow: '0 0 16px rgba(245,158,11,0.35)',
+      color: '#fff',
+      fontSize: 15,
+      fontWeight: 700,
+      letterSpacing: '0.02em',
+      zIndex: 6,
+    }}
+  >
+    <span style={{ display: 'inline-flex', alignItems: 'flex-end', gap: 2, height: 14 }}>
+      {[0, 1, 2, 3].map((i) => (
+        <span
+          key={i}
+          style={{
+            width: 3,
+            borderRadius: 2,
+            background: '#FBBF24',
+            height: 4 + 10 * Math.abs(Math.sin(frame * 0.35 + i * 1.3)),
+          }}
+        />
+      ))}
+    </span>
+    Autoplay
+  </span>
+)
 
 export const LearningView: React.FC<LearningViewProps> = ({
   topic,
@@ -94,6 +152,12 @@ export const LearningView: React.FC<LearningViewProps> = ({
   showPhonetics = true,
   playPress = 0,
   playTouch,
+  prevPress = 0,
+  prevTouch,
+  settingsPress = 0,
+  settingsTouch,
+  cardTouch,
+  callout,
   wordOpacity = 1,
   contentStyle,
 }) => {
@@ -119,8 +183,10 @@ export const LearningView: React.FC<LearningViewProps> = ({
           <button
             data-tour="learning-settings"
             className="w-12 h-12 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full flex items-center justify-center shadow-lg flex-shrink-0 scale-100"
+            style={glassPress(settingsPress)}
           >
             <Settings className="w-6 h-6 text-white/80" />
+            {settingsTouch !== undefined && <Touch t={settingsTouch} />}
           </button>
         </div>
 
@@ -155,6 +221,7 @@ export const LearningView: React.FC<LearningViewProps> = ({
             scale={cardScale[0]}
             pulse={pulse}
             textOpacity={wordOpacity}
+            touch={cardTouch}
           />
           <Flashcard
             label={nativeLanguage}
@@ -171,8 +238,10 @@ export const LearningView: React.FC<LearningViewProps> = ({
             className={`w-14 h-14 bg-black/40 border border-white/20 rounded-full flex items-center justify-center scale-100 ${
               playing ? 'opacity-30' : ''
             }`}
+            style={glassPress(prevPress)}
           >
             <ChevronLeft className="w-7 h-7 text-white/80" aria-hidden="true" />
+            {prevTouch !== undefined && <Touch t={prevTouch} />}
           </button>
 
           <button
@@ -185,6 +254,7 @@ export const LearningView: React.FC<LearningViewProps> = ({
               <Play className="w-8 h-8 text-white/80 ml-1" aria-hidden="true" />
             )}
             {playTouch !== undefined && <Touch t={playTouch} />}
+            {callout && callout.opacity > 0 && <AutoplayCallout opacity={callout.opacity} frame={callout.frame} />}
           </button>
 
           <button

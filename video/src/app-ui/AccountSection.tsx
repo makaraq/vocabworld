@@ -2,6 +2,7 @@ import React from 'react'
 import { BookOpen, Flame, TrendingUp } from 'lucide-react'
 import { AppIcon } from './icons'
 import { flagIcon } from './app-data'
+import { Touch } from './motion'
 
 // The ACCOUNT page of the topic menu: ProgressStats, ReviewCard, BadgesCard
 // and Manage Account (components/progress/progress-stats.tsx,
@@ -36,17 +37,24 @@ const StatTile: React.FC<{
   value: React.ReactNode
   label: string
   as?: 'div' | 'button'
-}> = ({ gradient, icon, value, label, as: Tag = 'div' }) => (
-  <Tag className="bg-white/10 backdrop-blur-sm rounded-lg p-3.5 border border-white/20">
+  touch?: number
+}> = ({ gradient, icon, value, label, as: Tag = 'div', touch }) => (
+  <Tag className="bg-white/10 backdrop-blur-sm rounded-lg p-3.5 border border-white/20" style={{ position: 'relative' }}>
     <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${gradient} flex items-center justify-center mb-1.5`}>
       {icon}
     </div>
     <div className="text-3xl font-bold text-white">{value}</div>
     <div className="text-sm text-white/90">{label}</div>
+    {touch !== undefined && <Touch t={touch} />}
   </Tag>
 )
 
-export const AccountSection: React.FC<{ data: AccountData; targetLanguage: string }> = ({ data, targetLanguage }) => (
+export const AccountSection: React.FC<{
+  data: AccountData
+  targetLanguage: string
+  /** A finger on the Leaderboard tile, 0 → 1. */
+  leaderboardTouch?: number
+}> = ({ data, targetLanguage, leaderboardTouch }) => (
   <div className="h-full flex flex-col space-y-3">
     {/* ProgressStats */}
     <div className="space-y-3.5">
@@ -94,6 +102,7 @@ export const AccountSection: React.FC<{ data: AccountData; targetLanguage: strin
           icon={<AppIcon icon="solar:cup-star-bold" className="w-5 h-5 text-white" />}
           value={data.rank ? `#${data.rank}` : '—'}
           label="Leaderboard"
+          touch={leaderboardTouch}
         />
       </div>
     </div>

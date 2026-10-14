@@ -4,14 +4,21 @@ Everything is synthesised here with numpy (no samples, no third-party
 music), so the film carries no usage-rights questions. Deterministic: a
 fixed seed drives every noise source, so re-running gives the same files.
 
+The score runs at 120 BPM, so a beat is exactly 15 frames of the 30fps film
+and the cuts land on it (src/timeline.ts):
+  0.0–2.0s   the hook: plucks and hats rising under the flipping "hello"s
+  2.0s       the drop, as "bonjour" lands
+  2.0–27.0s  the groove under the app
+  27.0s      the end card: drums out, a resolving chord and bells
+
 Writes public/audio/ (MP3, 320 kbps; needs ffmpeg):
-  sprind-theme.mp3   37s, 100 BPM, D major: a pad that opens up, soft
-                     percussion and a plucked arpeggio from the second scene,
-                     a lift into the closing scene, then a resolving chord
+  sprind-theme.mp3   30s, D major
+  sfx-tick.mp3       a short tick for each word the hook flips to
+  sfx-hit.mp3        the landing hit under "bonjour"
   sfx-tap.mp3        a soft glass tap
   sfx-select.mp3     a two-note chime
-  sfx-sweep.mp3      an airy swell under the light sweep
-  sfx-shimmer.mp3    a high shimmer as the mark appears
+  sfx-sweep.mp3      an airy swell
+  sfx-shimmer.mp3    a high shimmer
 
 Run: python3 scripts/compose-audio.py   (needs numpy)
 """
@@ -24,9 +31,11 @@ import wave
 import numpy as np
 
 SR = 44100
-BPM = 100
+BPM = 120
 BEAT = 60 / BPM
-LENGTH = 37.0
+LENGTH = 30.0
+DROP = 2.0  # "bonjour" lands (frame 60)
+CLOSE = 27.0  # the end card (frame 810)
 rng = np.random.default_rng(20261014)
 
 OUT = os.path.join(os.path.dirname(__file__), "..", "public", "audio")
@@ -212,78 +221,80 @@ def compose():
     music = np.zeros((2, N))
     arp_bus = np.zeros((2, N))
 
-    # D major, two bars per chord: Dmaj9, Bm9, Gmaj9, A6sus. MIDI notes.
+    # D major, one bar per chord at 120 BPM: Dmaj9, Bm9, Gmaj9, A6sus.
     chords = [
         ([50, 57, 61, 64, 66], 38),  # Dmaj9   (bass D2)
         ([47, 54, 57, 61, 62], 35),  # Bm9     (B1)
         ([43, 50, 54, 57, 59], 31),  # Gmaj9   (G1)
         ([45, 52, 54, 59, 61], 33),  # A6sus   (A1)
     ]
-    bar = 4 * BEAT
-    block = 2 * bar  # 4.8s
+    bar = 4 * BEAT  # 2.0s
 
-    # Pads across the whole piece, opening up as it goes.
-    t = 0.0
+    # Under the hook: a filtered Dmaj9 swelling into the drop.
+    place(music, 0.4 * pad_chord(chords[0][0], DROP + 0.2, 0.1, 0.55, attack=0.4, release=0.6), 0.0)
+
+    # Pads from the drop to the close, opening up as the film goes.
+    t = DROP
     i = 0
-    while t < 31.0:
+    while t < CLOSE - 0.01:
         notes, _ = chords[i % 4]
-        progress = t / 31.0
-        place(music, 0.55 * pad_chord(notes, block + 0.3, 0.15 + 0.6 * progress, 0.25 + 0.7 * progress), t, pan=0.0)
-        t += block
+        progress = (t - DROP) / (CLOSE - DROP)
+        place(music, 0.5 * pad_chord(notes, bar + 0.25, 0.3 + 0.5 * progress, 0.35 + 0.55 * progress, attack=0.25, release=1.0), t)
+        t += bar
         i += 1
 
-    # The close (from 31s, the last scene): drums out, a bell chord over
-    # Gmaj9 resolving to a long Dmaj9.
-    place(music, 0.55 * pad_chord([43, 50, 54, 57, 62, 66], 2.2, 0.8, 0.6, attack=0.08, release=1.2), 31.0)
-    place(music, 0.6 * pad_chord([38, 50, 57, 61, 64, 69], 4.4, 0.7, 0.35, attack=0.9, release=2.2), 32.8)
-    for m, d in ((74, 0.0), (78, 0.09), (81, 0.18), (85, 0.27)):
-        place(music, 0.16 * bell(m, 3.6), 31.0 + d, pan=(m - 79) / 10)
-    for m, d in ((69, 0.0), (73, 0.12), (76, 0.24), (81, 0.36)):
-        place(music, 0.12 * bell(m, 4.0), 32.8 + d, pan=(m - 75) / 12)
+    # The close: drums out, Gmaj9 then a long Dmaj9 with bells.
+    place(music, 0.55 * pad_chord([43, 50, 54, 57, 62, 66], 1.0, 0.8, 0.6, attack=0.05, release=0.8), CLOSE)
+    place(music, 0.6 * pad_chord([38, 50, 57, 61, 64, 69], 2.0, 0.7, 0.35, attack=0.5, release=1.6), CLOSE + 1.0)
+    for m, d in ((74, 0.0), (78, 0.08), (81, 0.16), (85, 0.24)):
+        place(music, 0.16 * bell(m, 3.0), CLOSE + d, pan=(m - 79) / 10)
+    for m, d in ((69, 0.0), (73, 0.1), (76, 0.2), (81, 0.3)):
+        place(music, 0.12 * bell(m, 2.6), CLOSE + 1.0 + d, pan=(m - 75) / 12)
 
-    # Rhythm and arpeggio from 4s (scene 2) to the close.
-    groove_start = 4 * BEAT * 0 + 3.6  # a beat before scene 2 lands at 4.0s
+    # The hook: 16th-note plucks and hats climbing toward the drop.
+    steps = int(DROP / (BEAT / 4))
+    for s16 in range(steps):
+        t = s16 * BEAT / 4
+        rise = (s16 + 1) / steps
+        note = [62, 66, 69, 73][s16 % 4] + (12 if s16 >= steps // 2 else 0)
+        place(arp_bus, (0.18 + 0.32 * rise) * pluck(note), t, pan=0.4 * np.sin(s16 * 1.1))
+        if s16 % 2 == 1:
+            place(music, 0.6 * rise * hat(), t, pan=-0.3)
+
+    # The groove: kick on every beat (soft), rim on 2 and 4, 8th-note hats,
+    # bass on the root, 16th-note arpeggio over the chord.
     beat_index = 0
-    t = groove_start
-    while t < 30.8:
+    t = DROP
+    while t < CLOSE - 0.01:
         bar_pos = beat_index % 4
-        intensity = min(1.0, (t - groove_start) / 6.0)
-        full = t >= 8.0
-        chord_i = int(t // block) % 4
-        notes, root = chords[chord_i]
+        notes, root = chords[int((t - DROP) // bar) % 4]
+        place(music, (0.42 if bar_pos in (0, 2) else 0.3) * kick(), t)
+        if bar_pos in (1, 3):
+            place(music, 0.45 * rim(), t, pan=0.15)
+        for e in range(2):
+            place(music, (0.55 if e else 0.35) * hat(open_=(e == 1 and bar_pos == 3)), t + e * BEAT / 2, pan=-0.3)
+        place(music, 0.3 * bass(root, BEAT * 0.9), t)
+        if bar_pos == 3:
+            place(music, 0.22 * bass(root + 12, BEAT * 0.4), t + BEAT / 2)
 
-        if full:
-            if bar_pos in (0, 2):
-                place(music, 0.4 * kick(), t)
-            if bar_pos in (1, 3):
-                place(music, 0.5 * rim(), t, pan=0.15)
-        elif bar_pos == 0:
-            place(music, 0.26 * kick(), t)
-
-        for e in range(2):  # 8th-note hats
-            if full or e == 1:
-                place(music, (0.55 if e else 0.35) * intensity * hat(open_=(e == 1 and bar_pos == 3)), t + e * BEAT / 2, pan=-0.3)
-
-        if full or t >= 6.0:
-            place(music, 0.3 * bass(root, BEAT * 0.9), t)
-            if bar_pos == 3:
-                place(music, 0.22 * bass(root + 12, BEAT * 0.4), t + BEAT / 2)
-
-        # 16th-note arpeggio over the chord tones, an octave up.
         pattern = [0, 2, 3, 1, 4, 2, 3, 1]
-        lift = 12 if t >= 26.0 else 0
-        for s in range(4):
-            note = notes[pattern[(beat_index * 4 + s) % 8] % len(notes)] + 12 + lift
-            vel = (0.5 if s == 0 else 0.32) * intensity
-            place(arp_bus, vel * pluck(note), t + s * BEAT / 4, pan=0.35 * np.sin(beat_index * 1.3 + s))
+        lift = 12 if t >= CLOSE - 4 * BEAT * 2 else 0
+        for s16 in range(4):
+            note = notes[pattern[(beat_index * 4 + s16) % 8] % len(notes)] + 12 + lift
+            vel = 0.5 if s16 == 0 else 0.32
+            place(arp_bus, vel * pluck(note), t + s16 * BEAT / 4, pan=0.35 * np.sin(beat_index * 1.3 + s16))
 
         t += BEAT
         beat_index += 1
 
-    # Ping-pong delay on the arpeggio (dotted 8th).
+    # The drop itself: a deep thump and a low D under "bonjour".
+    place(music, 0.7 * kick(), DROP)
+    place(music, 0.45 * bass(38, BEAT * 2), DROP)
+
+    # Ping-pong delay on the plucks (dotted 8th).
     delay = int(0.75 * BEAT * SR)
     echoes = arp_bus.copy()
-    gain = 0.42
+    gain = 0.4
     for k in range(1, 5):
         shifted = np.zeros_like(arp_bus)
         shifted[:, delay * k:] = arp_bus[:, : N - delay * k]
@@ -292,21 +303,35 @@ def compose():
         echoes += shifted * gain ** k
     music += 0.9 * echoes
 
-    # Riser into the close, and an airy swell at the very start.
-    place(music, 0.9 * noise_swell(3.4), 27.6, pan=0.0)
-    place(music, 0.45 * noise_swell(3.0), 0.2, pan=0.0)
+    # Air: a riser into the drop, and one into the close.
+    place(music, 0.55 * noise_swell(DROP), 0.0)
+    place(music, 0.8 * noise_swell(2.2), CLOSE - 2.0)
 
-    music = reverb(music, seconds=2.8, mix=0.3)[:, :N]
+    music = reverb(music, seconds=2.4, mix=0.28)[:, :N]
 
-    # Gentle bus glue and a natural fade at the very end (the film also
-    # automates the level).
     music = np.tanh(1.15 * music / np.max(np.abs(music))) / np.tanh(1.15)
-    tail = int(2.0 * SR)
+    tail = int(1.5 * SR)
     music[:, -tail:] *= np.linspace(1, 0, tail) ** 1.5
     write_audio("sprind-theme", music)
 
 
 def sfx():
+    # Tick: a short bright pluck for each word the hook flips to.
+    n = int(0.12 * SR)
+    t = np.arange(n) / SR
+    tick = (np.sin(2 * np.pi * 1760 * t) * np.exp(-t * 70)
+            + 0.4 * np.sin(2 * np.pi * 2640 * t) * np.exp(-t * 110)) * np.minimum(1, t / 0.002)
+    write_audio("sfx-tick", np.vstack([tick, tick]), peak=0.6)
+
+    # Hit: a low thump with a bright transient and a short bloom of air.
+    n = int(0.9 * SR)
+    t = np.arange(n) / SR
+    freq = 50 + 110 * np.exp(-t * 22)
+    body = np.sin(2 * np.pi * np.cumsum(freq) / SR) * np.exp(-t * 6)
+    snap = np.diff(np.concatenate([[0], rng.standard_normal(n)])) * np.exp(-t * 60) * 0.25
+    hit = np.tanh(1.8 * (body + snap))
+    write_audio("sfx-hit", reverb(np.vstack([hit, hit]), seconds=1.2, mix=0.25), peak=0.85)
+
     # Tap: a short, soft glassy tick.
     n = int(0.18 * SR)
     t = np.arange(n) / SR

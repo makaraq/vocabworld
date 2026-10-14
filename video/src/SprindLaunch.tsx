@@ -1,76 +1,65 @@
 import React from 'react'
-import { AbsoluteFill } from 'remotion'
-import { TransitionSeries, springTiming } from '@remotion/transitions'
+import { AbsoluteFill, Sequence, interpolate, useCurrentFrame } from 'remotion'
 import { BackgroundMusic, SoundEffects, type SoundCue } from './components/BackgroundMusic'
-import { sceneTransition } from './components/SceneTransition'
-import { SCENES, sceneStart, type SceneId } from './timeline'
+import { AppDemo } from './scenes/AppDemo'
+import { EndCard } from './scenes/EndCard'
+import { Hook } from './scenes/Hook'
+import { DEMO, END, HOOK, HOOK_FLIPS, HOOK_LAND, T } from './timeline'
 import { COLOR } from './theme'
-import { S1World } from './scenes/S1World'
-import { S2Meet } from './scenes/S2Meet'
-import { S3Hear } from './scenes/S3Hear'
-import { S4Topics } from './scenes/S4Topics'
-import { S5Languages } from './scenes/S5Languages'
-import { S6Habit } from './scenes/S6Habit'
-import { S7Life } from './scenes/S7Life'
-import { S8Discover } from './scenes/S8Discover'
 
-// SprindLaunch: the 37-second launch film, 1080 × 1920 at 30fps.
-//
-// Scenes play in their windows from src/timeline.ts. Each scene's sequence
-// runs on past its window by its exit transition, which overlaps the start
-// of the next window, so every scene still begins exactly on its frame and
-// the whole film is exactly 1,110 frames.
+// SprindLaunch: the 30-second launch film, 1080 × 1920 at 30fps.
+// Three sequences on explicit frames (src/timeline.ts): the hook, the app
+// as one continuous session, the end card. The hook sits on top of the app
+// and fades to reveal it; the end card fades in over the app's last frames.
 
-const SCENE_COMPONENTS: Record<SceneId, React.FC> = {
-  world: S1World,
-  meet: S2Meet,
-  hear: S3Hear,
-  topics: S4Topics,
-  languages: S5Languages,
-  habit: S6Habit,
-  life: S7Life,
-  discover: S8Discover,
-}
+const tap = (frame: number, volume = 0.32): SoundCue => ({ frame, src: 'audio/sfx-tap.mp3', volume })
 
-// Interface sounds, used sparingly: the light sweep, two taps, the move
-// into the globe, and the mark arriving.
 const SOUND_CUES: SoundCue[] = [
-  { frame: sceneStart('meet') - 6, src: 'audio/sfx-sweep.mp3', volume: 0.32 },
-  { frame: sceneStart('meet') + 50, src: 'audio/sfx-tap.mp3', volume: 0.45 },
-  { frame: sceneStart('hear') + 8, src: 'audio/sfx-tap.mp3', volume: 0.45 },
-  { frame: sceneStart('topics') + 54, src: 'audio/sfx-select.mp3', volume: 0.3 },
-  { frame: sceneStart('languages') - 8, src: 'audio/sfx-sweep.mp3', volume: 0.26 },
-  { frame: sceneStart('discover') + 54, src: 'audio/sfx-shimmer.mp3', volume: 0.32 },
+  // The hook: a tick per word, a hit as "bonjour" lands, air into the app.
+  ...HOOK_FLIPS.slice(0, -1).map((frame) => ({ frame, src: 'audio/sfx-tick.mp3', volume: 0.3 })),
+  { frame: HOOK_LAND, src: 'audio/sfx-hit.mp3', volume: 0.5 },
+  { frame: HOOK.durationInFrames - 12, src: 'audio/sfx-sweep.mp3', volume: 0.3 },
+  // The app, tap by tap.
+  tap(T.tapFrench),
+  tap(T.tapDirections),
+  tap(T.tapPlay),
+  tap(T.tapStop),
+  tap(T.tapGear),
+  tap(T.tapSlow),
+  tap(T.tapFast),
+  tap(T.tapDone, 0.24),
+  ...T.tapPrev.map((frame) => tap(frame, 0.22)),
+  tap(T.longPress, 0.24),
+  tap(T.tapNext, 0.24),
+  tap(T.tapAdd),
+  tap(T.tapRow),
+  { frame: T.added, src: 'audio/sfx-select.mp3', volume: 0.3 },
+  { frame: T.complete, src: 'audio/sfx-shimmer.mp3', volume: 0.34 },
+  tap(T.tapLeaderboard),
+  { frame: END.from + 6, src: 'audio/sfx-shimmer.mp3', volume: 0.3 },
 ]
 
-export const SprindLaunch: React.FC = () => (
-  <AbsoluteFill style={{ background: COLOR.bg }}>
-    <TransitionSeries>
-      {SCENES.flatMap((scene) => {
-        const Scene = SCENE_COMPONENTS[scene.id]
-        const exit = scene.exit
-        const items = [
-          <TransitionSeries.Sequence
-            key={scene.id}
-            name={scene.id}
-            durationInFrames={scene.durationInFrames + (exit?.durationInFrames ?? 0)}
-          >
-            <Scene />
-          </TransitionSeries.Sequence>,
-        ]
-        if (exit) {
-          items.push(
-            <TransitionSeries.Transition
-              key={`${scene.id}-exit`}
-              presentation={sceneTransition(exit.kind)}
-              timing={springTiming({ config: { damping: 200 }, durationInFrames: exit.durationInFrames })}
-            />,
-          )
-        }
-        return items
-      })}
-    </TransitionSeries>
-    <BackgroundMusic />
-    <SoundEffects cues={SOUND_CUES} />
-  </AbsoluteFill>
-)
+export const SprindLaunch: React.FC = () => {
+  const frame = useCurrentFrame()
+  const hookOpacity = interpolate(frame, [HOOK.durationInFrames - 6, HOOK.durationInFrames], [1, 0], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  })
+  return (
+    <AbsoluteFill style={{ background: COLOR.bg }}>
+      <Sequence from={DEMO.from} durationInFrames={DEMO.durationInFrames} name="The app">
+        <AppDemo />
+      </Sequence>
+      <Sequence from={HOOK.from} durationInFrames={HOOK.durationInFrames} name="Hook">
+        <AbsoluteFill style={{ opacity: hookOpacity }}>
+          <Hook />
+        </AbsoluteFill>
+      </Sequence>
+      <Sequence from={END.from} durationInFrames={END.durationInFrames} name="End card">
+        <EndCard />
+      </Sequence>
+      <BackgroundMusic />
+      <SoundEffects cues={SOUND_CUES} />
+    </AbsoluteFill>
+  )
+}

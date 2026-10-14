@@ -27,6 +27,10 @@ export interface TopicMenuProps {
   targetLanguage: string
   /** The confirmation page's dip (opacity/scale) while it hands over. */
   contentStyle?: React.CSSProperties
+  /** A finger on the ACCOUNT page's Leaderboard tile. */
+  leaderboardTouch?: number
+  /** A finger swiping the strip: x across the slider, in pt. */
+  swipeTouch?: { x: number; opacity: number }
 }
 
 export const TopicMenu: React.FC<TopicMenuProps> = ({
@@ -40,6 +44,8 @@ export const TopicMenu: React.FC<TopicMenuProps> = ({
   nativeLanguage,
   targetLanguage,
   contentStyle,
+  leaderboardTouch,
+  swipeTouch,
 }) => {
   const current = SECTIONS[section]
   return (
@@ -56,12 +62,12 @@ export const TopicMenu: React.FC<TopicMenuProps> = ({
             </h2>
           </div>
 
-          <div className="flex-1 overflow-hidden" style={{ touchAction: 'none' }}>
+          <div className="flex-1 overflow-hidden" style={{ touchAction: 'none', position: 'relative' }}>
             <div className="flex h-full" style={{ transform: `translateX(${-position * 100}%)` }}>
               {SECTIONS.map((s, sectionIndex) => (
                 <div key={s.name} className="w-full h-full flex-shrink-0 px-2">
                   {s.isAccount ? (
-                    <AccountSection data={account} targetLanguage={targetLanguage} />
+                    <AccountSection data={account} targetLanguage={targetLanguage} leaderboardTouch={leaderboardTouch} />
                   ) : s.isMyWords ? (
                     <MyWordsSection />
                   ) : (
@@ -83,6 +89,23 @@ export const TopicMenu: React.FC<TopicMenuProps> = ({
                 </div>
               ))}
             </div>
+            {swipeTouch && (
+              <span
+                aria-hidden
+                style={{
+                  position: 'absolute',
+                  left: swipeTouch.x - 23,
+                  top: '38%',
+                  width: 46,
+                  height: 46,
+                  borderRadius: '50%',
+                  background: 'radial-gradient(circle, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.22) 55%, rgba(255,255,255,0) 72%)',
+                  boxShadow: '0 0 0 1.5px rgba(255,255,255,0.45)',
+                  opacity: swipeTouch.opacity,
+                  zIndex: 5,
+                }}
+              />
+            )}
           </div>
 
           {/* Navigation dots — a glass capsule under Liquid Glass */}

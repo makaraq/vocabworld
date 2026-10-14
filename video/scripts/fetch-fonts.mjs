@@ -3,9 +3,10 @@
 // committed, so rendering never depends on the network. All are SIL OFL.
 //
 // - Space Grotesk: the app's own UI font (app/layout.tsx), for the app screens
-// - Inter, Instrument Serif, JetBrains Mono: the launch film's type
-// - Noto Sans subsets: only the glyphs the globe and language labels draw, and
-//   the IPA the flashcards show, so the files stay a few KB each
+//   and the film's captions alike
+// - Inter: the status bar, and Cyrillic, which Space Grotesk lacks
+// - Noto Sans subsets: only the glyphs the hook's "hello"s draw, and the IPA
+//   the flashcards show, so the files stay a few KB each
 //
 // curl rather than fetch: it honours HTTPS_PROXY in sandboxed environments.
 
@@ -32,15 +33,13 @@ const get = (url, binary = false) =>
 // family, css2 axis spec, subsets to keep (null = keep all, for text= subsets)
 const REQUESTS = [
   { family: 'Space Grotesk', spec: 'wght@300..700', subsets: ['latin', 'latin-ext'] },
-  { family: 'Inter', spec: 'wght@400..700', subsets: ['latin', 'latin-ext', 'cyrillic', 'greek'] },
-  { family: 'Instrument Serif', spec: 'ital@0;1', subsets: ['latin', 'latin-ext'] },
-  { family: 'JetBrains Mono', spec: 'wght@400..600', subsets: ['latin', 'latin-ext'] },
-  { family: 'Noto Sans JP', spec: 'wght@500', text: GLYPHS.jp },
-  { family: 'Noto Sans KR', spec: 'wght@500', text: GLYPHS.kr },
-  { family: 'Noto Sans Arabic', spec: 'wght@500', text: GLYPHS.ar },
-  { family: 'Noto Sans Hebrew', spec: 'wght@500', text: GLYPHS.he },
-  { family: 'Noto Sans Devanagari', spec: 'wght@500', text: GLYPHS.hi },
-  { family: 'Noto Sans Thai', spec: 'wght@500', text: GLYPHS.th },
+  // The status bar (closest to SF) and the Cyrillic Space Grotesk lacks.
+  { family: 'Inter', spec: 'wght@400..700', subsets: ['latin', 'cyrillic'] },
+  { family: 'Noto Sans JP', spec: 'wght@700', text: GLYPHS.jp },
+  { family: 'Noto Sans KR', spec: 'wght@700', text: GLYPHS.kr },
+  { family: 'Noto Sans SC', spec: 'wght@700', text: GLYPHS.sc },
+  { family: 'Noto Sans Arabic', spec: 'wght@700', text: GLYPHS.ar },
+  { family: 'Noto Sans Devanagari', spec: 'wght@700', text: GLYPHS.hi },
   // IPA for the flashcards' phonetic line, which Space Grotesk does not cover.
   { family: 'Noto Sans', spec: 'ital,wght@0,400;1,400', text: GLYPHS.ipa, as: 'Noto Sans IPA' },
 ]

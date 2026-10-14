@@ -34,106 +34,43 @@ export const FONT_FACES: FontFaceSpec[] = [
     "family": "Inter",
     "style": "normal",
     "weight": "400 700",
-    "file": "inter-greek-normal-400_700.woff2",
-    "unicodeRange": "U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF"
-  },
-  {
-    "family": "Inter",
-    "style": "normal",
-    "weight": "400 700",
-    "file": "inter-latin-ext-normal-400_700.woff2",
-    "unicodeRange": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF"
-  },
-  {
-    "family": "Inter",
-    "style": "normal",
-    "weight": "400 700",
     "file": "inter-latin-normal-400_700.woff2",
-    "unicodeRange": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD"
-  },
-  {
-    "family": "Instrument Serif",
-    "style": "italic",
-    "weight": "400",
-    "file": "instrument-serif-latin-ext-italic-400.woff2",
-    "unicodeRange": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF"
-  },
-  {
-    "family": "Instrument Serif",
-    "style": "italic",
-    "weight": "400",
-    "file": "instrument-serif-latin-italic-400.woff2",
-    "unicodeRange": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD"
-  },
-  {
-    "family": "Instrument Serif",
-    "style": "normal",
-    "weight": "400",
-    "file": "instrument-serif-latin-ext-normal-400.woff2",
-    "unicodeRange": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF"
-  },
-  {
-    "family": "Instrument Serif",
-    "style": "normal",
-    "weight": "400",
-    "file": "instrument-serif-latin-normal-400.woff2",
-    "unicodeRange": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD"
-  },
-  {
-    "family": "JetBrains Mono",
-    "style": "normal",
-    "weight": "400 600",
-    "file": "jetbrains-mono-latin-ext-normal-400_600.woff2",
-    "unicodeRange": "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF"
-  },
-  {
-    "family": "JetBrains Mono",
-    "style": "normal",
-    "weight": "400 600",
-    "file": "jetbrains-mono-latin-normal-400_600.woff2",
     "unicodeRange": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD"
   },
   {
     "family": "Noto Sans JP",
     "style": "normal",
-    "weight": "500",
-    "file": "noto-sans-jp-text-normal-500.woff2",
-    "unicodeRange": "U+3042, U+306e, U+4e2d, U+5b57, U+6587, U+65e5, U+672c, U+8449, U+8a00, U+8a9e"
+    "weight": "700",
+    "file": "noto-sans-jp-text-normal-700.woff2",
+    "unicodeRange": "U+3053, U+3061, U+306b, U+306f, U+3093"
   },
   {
     "family": "Noto Sans KR",
     "style": "normal",
-    "weight": "500",
-    "file": "noto-sans-kr-text-normal-500.woff2",
-    "unicodeRange": "U+1100, U+1106, U+110b, U+1112, U+1161, U+1165, U+116e, U+1173, U+11a8, U+11ab, U+11af, U+ac00-ac01, U+ac04, U+ac08, U+ac70-ac71, U+ac74, U+ac78, U+ad6c-ad6d, U+ad70, U+ad74, U+adf8-adf9, U+adfc, U+ae00, U+b9c8-b9c9, U+b9cc, U+b9d0, U+ba38-ba39, U+ba3c, U+ba40, U+bb34-bb35, U+bb38, U+bb3c, U+bbc0-bbc1, U+bbc4, U+bbc8, U+c544-c545, U+c548, U+c54c, U+c5b4-c5b5, U+c5b8, U+c5bc, U+c6b0-c6b1, U+c6b4, U+c6b8, U+c73c-c73d, U+c740, U+c744, U+d558-d559, U+d55c, U+d560, U+d5c8-d5c9, U+d5cc, U+d5d0, U+d6c4-d6c5, U+d6c8, U+d6cc, U+d750-d751, U+d754, U+d758"
+    "weight": "700",
+    "file": "noto-sans-kr-text-normal-700.woff2",
+    "unicodeRange": "U+1102, U+1109, U+110b, U+1112, U+1161, U+1166-1167, U+116d, U+11ab, U+11bc, U+b098, U+b09c, U+b0ad, U+b124, U+b128, U+b139, U+b140, U+b144, U+b155, U+b1e8, U+b1ec, U+b1fd, U+c0ac, U+c0b0, U+c0c1, U+c138, U+c13c, U+c14d, U+c154, U+c158, U+c169, U+c1fc, U+c200, U+c211, U+c544, U+c548, U+c559, U+c5d0, U+c5d4, U+c5e5, U+c5ec, U+c5f0, U+c601, U+c694, U+c698, U+c6a9, U+d558, U+d55c, U+d56d, U+d5e4, U+d5e8, U+d5f9, U+d600, U+d604, U+d615, U+d6a8, U+d6ac, U+d6bd"
+  },
+  {
+    "family": "Noto Sans SC",
+    "style": "normal",
+    "weight": "700",
+    "file": "noto-sans-sc-text-normal-700.woff2",
+    "unicodeRange": "U+4f60, U+597d"
   },
   {
     "family": "Noto Sans Arabic",
     "style": "normal",
-    "weight": "500",
-    "file": "noto-sans-arabic-text-normal-500.woff2",
-    "unicodeRange": "U+627-629, U+631, U+639, U+644, U+64a"
-  },
-  {
-    "family": "Noto Sans Hebrew",
-    "style": "normal",
-    "weight": "500",
-    "file": "noto-sans-hebrew-text-normal-500.woff2",
-    "unicodeRange": "U+5d0-5d1, U+5d9, U+5e2, U+5e8, U+5ea"
+    "weight": "700",
+    "file": "noto-sans-arabic-text-normal-700.woff2",
+    "unicodeRange": "U+627-628, U+62d, U+631, U+645"
   },
   {
     "family": "Noto Sans Devanagari",
     "style": "normal",
-    "weight": "500",
-    "file": "noto-sans-devanagari-text-normal-500.woff2",
-    "unicodeRange": "U+905, U+926, U+928, U+939, U+93f-940, U+94d"
-  },
-  {
-    "family": "Noto Sans Thai",
-    "style": "normal",
-    "weight": "500",
-    "file": "noto-sans-thai-text-normal-500.woff2",
-    "unicodeRange": "U+e01, U+e17, U+e22, U+e44"
+    "weight": "700",
+    "file": "noto-sans-devanagari-text-normal-700.woff2",
+    "unicodeRange": "U+924, U+928, U+92e, U+938, U+947, U+94d"
   },
   {
     "family": "Noto Sans IPA",

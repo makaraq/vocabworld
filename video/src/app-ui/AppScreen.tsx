@@ -11,15 +11,22 @@ import { PHONE } from '../theme'
 // (layout.tsx) and `liquid-glass` (lib/liquid-glass.ts), so app/globals.css
 // and app/liquid-glass.css restyle this markup exactly as they do on a phone.
 
+/** The app's `vh` units, against the phone's height rather than the film's. */
+export const vh = (n: number) => (PHONE.height * n) / 100
+
 export const AppScreen: React.FC<{
   children: React.ReactNode
   /** isTransitioning: the panel brightens while its content dips. */
   transitioning?: boolean
-}> = ({ children, transitioning = false }) => {
+  /** Modals and sheets, laid over the page as the app portals them. */
+  overlay?: React.ReactNode
+}> = ({ children, transitioning = false, overlay }) => {
   return (
     <div
       className="app-ui liquid-glass cap-native ios-device"
-      style={{ width: PHONE.width, height: PHONE.height, position: 'relative', overflow: 'hidden' }}
+      // The transform makes the screen the containing block for the app's
+      // `position: fixed` modals, so they cover the phone, not the film.
+      style={{ width: PHONE.width, height: PHONE.height, position: 'relative', overflow: 'hidden', transform: 'translateZ(0)' }}
     >
       <div
         className="flex flex-col items-center justify-center p-4 pt-16 pb-8"
@@ -44,6 +51,7 @@ export const AppScreen: React.FC<{
           </div>
         </div>
       </div>
+      {overlay}
     </div>
   )
 }

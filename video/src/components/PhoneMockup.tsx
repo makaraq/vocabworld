@@ -1,5 +1,5 @@
 import React from 'react'
-import { PHONE } from '../theme'
+import { FONT, PHONE } from '../theme'
 
 // A minimal iPhone 17 Pro Max: titanium band, black bezel, Dynamic Island,
 // status bar and home indicator around a 440 × 956pt screen. Built at 1pt =
@@ -27,7 +27,7 @@ const StatusBar: React.FC = () => (
       justifyContent: 'space-between',
       padding: '6px 34px 0 56px',
       color: '#fff',
-      fontFamily: '"Inter", sans-serif',
+      fontFamily: FONT.system,
       fontWeight: 600,
       fontSize: 17,
       letterSpacing: -0.2,

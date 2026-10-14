@@ -1,8 +1,7 @@
 import React from 'react'
-import { AbsoluteFill, Easing, interpolate } from 'remotion'
-import { COLOR, FONT, amber } from '../theme'
+import { AbsoluteFill, Easing } from 'remotion'
+import { COLOR, amber } from '../theme'
 import { PHONE_OUTER, PhoneMockup } from '../components/PhoneMockup'
-import { rise } from '../components/SceneTransition'
 import type { AudioStep } from '../app-ui/LearningView'
 
 /** The dark stage every scene stands on, with a warm light where it looks. */
@@ -27,88 +26,6 @@ export const Stage: React.FC<{
     ))}
     {children}
   </AbsoluteFill>
-)
-
-/** Serif headline, one line after another 5 frames apart. */
-export const Headline: React.FC<{
-  lines: string[]
-  frame: number
-  fps: number
-  delay?: number
-  size?: number
-  top: number
-  stagger?: number
-  color?: string
-}> = ({ lines, frame, fps, delay = 0, size = 104, top, stagger = 5, color = COLOR.text }) => (
-  <div style={{ position: 'absolute', top, left: 0, right: 0, textAlign: 'center' }}>
-    {lines.map((line, i) => (
-      <div
-        key={i}
-        style={{
-          fontFamily: FONT.serif,
-          fontSize: size,
-          lineHeight: 1.04,
-          letterSpacing: '-0.01em',
-          color,
-          ...rise(frame, fps, delay + i * stagger, { distance: 34 }),
-        }}
-      >
-        {line}
-      </div>
-    ))}
-  </div>
-)
-
-export const Subtitle: React.FC<{
-  text: string
-  frame: number
-  fps: number
-  delay: number
-  top: number
-  size?: number
-}> = ({ text, frame, fps, delay, top, size = 34 }) => (
-  <div
-    style={{
-      position: 'absolute',
-      top,
-      left: 90,
-      right: 90,
-      textAlign: 'center',
-      fontFamily: FONT.ui,
-      fontSize: size,
-      lineHeight: 1.35,
-      color: COLOR.text2,
-      whiteSpace: 'pre-line',
-      ...rise(frame, fps, delay, { distance: 20 }),
-    }}
-  >
-    {text}
-  </div>
-)
-
-export const Eyebrow: React.FC<{ text: string; frame: number; fps: number; delay: number; top: number }> = ({
-  text,
-  frame,
-  fps,
-  delay,
-  top,
-}) => (
-  <div
-    style={{
-      position: 'absolute',
-      top,
-      left: 0,
-      right: 0,
-      textAlign: 'center',
-      fontFamily: FONT.mono,
-      fontSize: 24,
-      letterSpacing: '0.22em',
-      color: COLOR.amberSoft,
-      ...rise(frame, fps, delay, { distance: 12 }),
-    }}
-  >
-    {text}
-  </div>
 )
 
 /**
@@ -202,15 +119,6 @@ export function autoplayIntervals(timing: AutoplayTiming, words: number) {
     native.push([s + timing.training, s + timing.training + timing.main])
   }
   return { target, native }
-}
-
-/** The app's 200ms page dip, as 0 → 1 → 0 around a page swap at `at`. */
-export function dipAt(frame: number, at: number, fps = 30) {
-  const half = 0.2 * fps
-  return interpolate(frame, [at - half, at, at + half], [0, 1, 0], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
 }
 
 export const clamp01 = (v: number) => Math.max(0, Math.min(1, v))

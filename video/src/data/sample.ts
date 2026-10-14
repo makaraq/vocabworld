@@ -1,5 +1,4 @@
 import type { AccountData } from '../app-ui/AccountSection'
-import type { WeekActivity } from '../components/ProgressDashboard'
 
 // Sample values for the film only. The components take the same shapes the
 // app uses (/api/progress/stats, the badges store), so real data can replace
@@ -23,10 +22,4 @@ export const ACCOUNT_SAMPLE: AccountData = {
     { icon: 'solar:fire-square-bold', gradient: 'from-slate-400 to-slate-200' },
     { icon: 'solar:medal-ribbon-star-bold', gradient: 'from-slate-400 to-slate-200' },
   ],
-}
-
-export const WEEK_SAMPLE: WeekActivity = {
-  words: [14, 22, 9, 18, 25, 12, 18],
-  streakDays: 12,
-  minutesListened: 46,
 }
