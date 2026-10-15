@@ -5,3 +5,4 @@ public/app
 __pycache__/
 # Candidate fonts for the font lab (scripts/fetch-lab-fonts.mjs).
 public/fonts-lab
+public/themes

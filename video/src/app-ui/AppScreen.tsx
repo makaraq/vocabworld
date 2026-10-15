@@ -20,7 +20,9 @@ export const AppScreen: React.FC<{
   transitioning?: boolean
   /** Modals and sheets, laid over the page as the app portals them. */
   overlay?: React.ReactNode
-}> = ({ children, transitioning = false, overlay }) => {
+  /** Replaces the page backdrop (the theme lab); the film never sets it. */
+  background?: React.CSSProperties
+}> = ({ children, transitioning = false, overlay, background }) => {
   return (
     <div
       className="app-ui liquid-glass cap-native ios-device"
@@ -36,6 +38,7 @@ export const AppScreen: React.FC<{
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
+          ...background,
         }}
       >
         <div
