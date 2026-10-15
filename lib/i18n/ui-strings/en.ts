@@ -557,6 +557,18 @@ export const en = {
   'learning.aria.nextCategory': 'Next category',
   'learning.wordsProgress': '{current} of {total} words',
   'learning.tryDifferent': 'Try Different Topic or Languages',
+
+  // Themes (components/theme)
+  'theme.title': 'Theme',
+  'theme.desc': 'Crowned themes come with Premium.',
+  'theme.name.original': 'Original',
+  'theme.name.mono': 'Mono',
+  'theme.name.plum-duotone': 'Plum',
+  'theme.name.paper': 'Paper',
+  'theme.name.rose-glass': 'Rose glass',
+  'theme.intro.title': 'Choose your theme',
+  'theme.intro.body': 'Tap one to see it. You can change it any time in Manage account.',
+  'theme.intro.done': 'Done',
 } as const
 
 export type UiKey = keyof typeof en

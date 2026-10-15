@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { LanguageSelector } from "@/components/language/language-selector"
 import { WelcomeOverlay } from "@/components/auth/welcome-overlay"
 import { LandingPage } from "@/components/landing/landing-page"
+import { ThemeBackdrop } from "@/components/theme/theme-backdrop"
 import { useAuth } from "@/contexts/auth-context"
 import { createClient } from '@/lib/supabase/browser-client'
 
@@ -55,15 +56,9 @@ export default function LanguagePage() {
   }
 
   return (
-    <div
-      className="min-h-screen flex flex-col items-center justify-center p-4 pt-16 pb-8"
-      style={{
-        backgroundImage: "url('/bg.jpeg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 pt-16 pb-8">
+      {/* The theme's backdrop (lib/themes.ts), fixed behind every screen. */}
+      <ThemeBackdrop />
       <LanguageSelector />
       <WelcomeOverlay />
       <Toaster />

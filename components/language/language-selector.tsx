@@ -17,6 +17,8 @@ import { avatarSeedFor } from "@/lib/avatars/smiley-avatar"
 import { useNotifications } from "@/hooks/use-notifications"
 import { NotificationPromptModal } from "@/components/notifications/notification-prompt-modal"
 import { CoachMarkOverlay, type CoachMarkStep } from "@/components/tutorial/coach-mark-overlay"
+import { ThemeIntroSheet } from "@/components/theme/theme-intro-sheet"
+import { keepPreview, previewTheme, revertPreview, type ThemeId } from "@/lib/themes"
 import { hapticsLight, hapticsMedium, hapticsSuccess, hapticsWarning } from "@/lib/haptics"
 import { bumpPlayCount, readPlayCounts, type PlayCounts } from "@/lib/play-counts"
 import { BadgesCard } from "@/components/achievements/badges-card"
@@ -840,6 +842,7 @@ export function LanguageSelector() {
   const [notifPromptVariant, setNotifPromptVariant] = useState<'enable' | 'settings'>('settings')
   const [showTutorial, setShowTutorial] = useState(false)
   const [showLearningTutorial, setShowLearningTutorial] = useState(false)
+  const [showThemeIntro, setShowThemeIntro] = useState(false)
 
   const handleNotifPromptDismiss = () => {
     localStorage.setItem('vw_notif_prompted', 'true')
@@ -4153,6 +4156,23 @@ export function LanguageSelector() {
     localStorage.setItem('vw_tutorial_shown', 'true')
   }
 
+  // Finishing the first tutorial (not skipping it) leads into the theme
+  // picker, once.
+  const handleTutorialComplete = () => {
+    handleTutorialDone()
+    if (!localStorage.getItem('vw_theme_intro_shown')) {
+      localStorage.setItem('vw_theme_intro_shown', 'true')
+      setTimeout(() => setShowThemeIntro(true), 400)
+    }
+  }
+
+  // A crowned theme without Premium: show it on the app straight away, then
+  // the paywall. Closing the paywall without buying puts the old theme back.
+  const handlePremiumTheme = (id: ThemeId) => {
+    previewTheme(id)
+    setTimeout(() => setShowPaywall(true), 900)
+  }
+
   // First-time learning-view tutorial: fires the first time the user opens a topic.
   // Skipped for the search/playlist views (id -1, -2) and only when vocabulary is loaded
   // so the flashcards target actually exists in the DOM.
@@ -5226,6 +5246,7 @@ export function LanguageSelector() {
         showOnLeaderboard={showOnLeaderboard}
         onLeaderboardToggle={handleLeaderboardToggle}
         showLeaderboardOption={user?.app_metadata?.provider !== 'email'}
+        onPremiumThemeAction={handlePremiumTheme}
       />
 
       {/* Benefits prompt — variant 'enable' triggers the OS permission dialog;
@@ -5241,8 +5262,16 @@ export function LanguageSelector() {
       <CoachMarkOverlay
         open={showTutorial}
         steps={tutorialSteps}
-        onComplete={handleTutorialDone}
+        onComplete={handleTutorialComplete}
         onSkip={handleTutorialDone}
+      />
+
+      {/* After the first tutorial: pick a theme, watching the app change */}
+      <ThemeIntroSheet
+        open={showThemeIntro}
+        isPremium={isPremium}
+        onPremiumAction={handlePremiumTheme}
+        onDoneAction={() => setShowThemeIntro(false)}
       />
 
       {/* First-time coach-mark tutorial (inside a topic) */}
@@ -5256,8 +5285,12 @@ export function LanguageSelector() {
       {/* Paywall Modal */}
       <PaywallModal
         isOpen={showPaywall}
-        onCloseAction={() => setShowPaywall(false)}
+        onCloseAction={() => {
+          setShowPaywall(false)
+          revertPreview()
+        }}
         onSuccessAction={() => {
+          keepPreview()
           setShowPaywall(false)
         }}
         nativeLanguageCode={nativeLanguageCode}

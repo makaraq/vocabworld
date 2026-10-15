@@ -8,8 +8,10 @@ import { OfflineBanner } from "@/components/offline-banner"
 import { OfflineProvider } from "@/components/providers/offline-provider"
 import { LiquidGlassSwitch } from "@/components/liquid-glass-switch"
 import { liquidGlassBootScript } from "@/lib/liquid-glass"
+import { themeBootScript } from "@/lib/themes"
 import "./globals.css"
 import "./liquid-glass.css"
+import "./themes.css"
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -66,6 +68,7 @@ export default function RootLayout({
           }
         ` }} />
         <script dangerouslySetInnerHTML={{ __html: liquidGlassBootScript }} />
+        <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
       </head>
       <body className="font-sans" style={{ fontFamily: "var(--font-space-grotesk)" }}>
         <AuthProvider>
