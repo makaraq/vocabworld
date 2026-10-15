@@ -4,6 +4,7 @@ import React from 'react'
 import { Composition } from 'remotion'
 import { SprindLaunch } from './SprindLaunch'
 import { AppScreens } from './AppScreens'
+import { FontLab, LAB_SIZE } from './FontLab'
 import { TheLastWord } from './last-word/TheLastWord'
 import { LAST_WORD } from './last-word/timeline'
 import { loadFonts } from './fonts'
@@ -30,6 +31,8 @@ export const RemotionRoot: React.FC = () => (
       width={VIDEO.width}
       height={VIDEO.height}
     />
+    {/* Four app screens in any font, for trying typefaces (scripts/font-lab.sh). */}
+    <Composition id="FontLab" component={FontLab} defaultProps={{ font: 'Space Grotesk' }} durationInFrames={1} fps={VIDEO.fps} width={LAB_SIZE.width} height={LAB_SIZE.height} />
     {/* A still of the rebuilt app screens, for checking them against the app. */}
     <Composition id="AppScreens" component={AppScreens} durationInFrames={1} fps={VIDEO.fps} width={2610} height={2100} />
   </>
