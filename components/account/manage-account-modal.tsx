@@ -11,6 +11,8 @@ import { hapticsLight, hapticsMedium, hapticsWarning } from "@/lib/haptics"
 import { OfflineDownloadsSection } from "@/components/offline/offline-downloads-section"
 import { useT } from "@/components/providers/translation-provider"
 import { resolveAvatar } from "@/lib/avatars/smiley-avatar"
+import { ThemePicker } from "@/components/theme/theme-picker"
+import type { ThemeId } from "@/lib/themes"
 
 interface ManageAccountModalProps {
   open: boolean
@@ -32,6 +34,8 @@ interface ManageAccountModalProps {
   // Email/password accounts have no name or photo to display, so the leaderboard
   // opt-in is hidden for them (they stay anonymized as "Learner #XXXX").
   showLeaderboardOption?: boolean
+  // A crowned theme tapped without Premium: preview it and show the paywall.
+  onPremiumThemeAction?: (id: ThemeId) => void
 }
 
 // ── Time helpers ──────────────────────────────────────────────────────────────
@@ -53,6 +57,7 @@ export function ManageAccountModal({
   showOnLeaderboard = false,
   onLeaderboardToggle,
   showLeaderboardOption = true,
+  onPremiumThemeAction,
 }: ManageAccountModalProps) {
   const { t, tMarkup } = useT()
   const [deleteStep, setDeleteStep] = useState<'idle' | 'confirm' | 'deleting' | 'error'>('idle')
@@ -453,6 +458,18 @@ export function ManageAccountModal({
                   )}
                 </div>
               )}
+            </div>
+
+            {/* Theme: each tap restyles the app behind this sheet */}
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/15 space-y-3">
+              <div className="flex items-center gap-2.5">
+                <Icon icon="solar:palette-bold" width="18" className="text-white/70" />
+                <div className="min-w-0">
+                  <span className="text-white font-medium text-sm block">{t('theme.title')}</span>
+                  <span className="text-white/45 text-xs">{t('theme.desc')}</span>
+                </div>
+              </div>
+              <ThemePicker isPremium={isPremium} onPremiumAction={(id) => onPremiumThemeAction?.(id)} />
             </div>
 
             {/* Notifications */}

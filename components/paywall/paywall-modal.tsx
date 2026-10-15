@@ -139,7 +139,8 @@ export function PaywallModal({
 
   if (purchaseSuccess) {
     const celebrationContent = (
-      <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/20 backdrop-blur-md">
+      <div data-keep-colors
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/20 backdrop-blur-md">
         <div className="relative bg-white/10 backdrop-blur-xl rounded-3xl max-w-md w-full border border-white/20 shadow-2xl flex flex-col items-center p-8">
           {/* Lottie animation */}
           <div className="w-56 h-56 -mb-2">
@@ -184,6 +185,7 @@ export function PaywallModal({
 
   const modalContent = (
     <div
+      data-keep-colors
       className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/20 backdrop-blur-md"
       onClick={(e) => {
         if (e.target === e.currentTarget) onCloseAction()
