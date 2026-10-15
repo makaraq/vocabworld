@@ -4156,8 +4156,8 @@ export function LanguageSelector() {
     localStorage.setItem('vw_tutorial_shown', 'true')
   }
 
-  // Finishing the first tutorial (not skipping it) leads into the theme
-  // picker, once.
+  // The end of the first tutorial, finished or skipped, leads into the
+  // theme picker, once.
   const handleTutorialComplete = () => {
     handleTutorialDone()
     if (!localStorage.getItem('vw_theme_intro_shown')) {
@@ -5263,7 +5263,7 @@ export function LanguageSelector() {
         open={showTutorial}
         steps={tutorialSteps}
         onComplete={handleTutorialComplete}
-        onSkip={handleTutorialDone}
+        onSkip={handleTutorialComplete}
       />
 
       {/* After the first tutorial: pick a theme, watching the app change */}
