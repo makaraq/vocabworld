@@ -19,18 +19,20 @@ import { ThemePicker } from './theme-picker'
 // tutorial that is the lesson, from Manage Account the account page.
 
 export type ThemeToolScreen = 'topics' | 'learning' | 'settings' | 'account'
-export const THEME_TOOL_SCREENS: ThemeToolScreen[] = ['topics', 'learning', 'settings', 'account']
+// In the order you'd move through the app: each step is one move away.
+export const THEME_TOOL_SCREENS: ThemeToolScreen[] = ['account', 'topics', 'learning', 'settings']
 
 // Space between the app and the screen top, and between the app and the panel.
 const GAP = 10
 // The glass bottom sheet's margin from the screen edge (app/liquid-glass.css).
 const SHEET_MARGIN = 8
 // A page switch fades out and in; arrows wait for it.
-const SWITCH_MS = 450
+const SWITCH_MS = 600
 
 export function ThemeTool({
   open,
   screen,
+  home,
   isPremium,
   onScreenAction,
   onPremiumAction,
@@ -38,6 +40,8 @@ export function ThemeTool({
 }: {
   open: boolean
   screen: ThemeToolScreen
+  /** The screen it opened on, where Done goes back to. */
+  home: ThemeToolScreen
   isPremium: boolean
   onScreenAction: (screen: ThemeToolScreen) => void
   onPremiumAction: (id: ThemeId) => void
@@ -47,12 +51,16 @@ export function ThemeTool({
   const [shown, setShown] = useState(false)
   const sheetRef = useRef<HTMLDivElement>(null)
   const lastStepRef = useRef(0)
+  const closingRef = useRef(false)
+  // Which way the last arrow went, so the screen name slides in from that side.
+  const [dir, setDir] = useState<1 | -1>(1)
 
   useEffect(() => {
     if (!open) {
       setShown(false)
       return
     }
+    closingRef.current = false
     const raf = requestAnimationFrame(() => setShown(true))
     return () => cancelAnimationFrame(raf)
   }, [open])
@@ -98,6 +106,10 @@ export function ThemeTool({
       const scale = Math.min(1, room / tallest)
       // Centre what is shown in the room; the transform's origin is the stage's top.
       const shift = regionTop + (room - tallest * scale) / 2 - top + ((tallest - height) / 2) * scale
+      // Only move for a real change, so later re-measures don't restart the glide.
+      const prevScale = parseFloat(root.style.getPropertyValue('--theme-stage-scale')) || 0
+      const prevShift = parseFloat(root.style.getPropertyValue('--theme-stage-shift')) || 0
+      if (Math.abs(prevScale - scale) < 0.005 && Math.abs(prevShift - shift) < 2) return
       root.style.setProperty('--theme-stage-scale', String(Math.round(scale * 1000) / 1000))
       root.style.setProperty('--theme-stage-shift', `${Math.round(shift)}px`)
     }
@@ -128,16 +140,41 @@ export function ThemeTool({
     const now = Date.now()
     if (now - lastStepRef.current < SWITCH_MS) return
     lastStepRef.current = now
+    const next = THEME_TOOL_SCREENS[THEME_TOOL_SCREENS.indexOf(screen) + dir]
+    if (!next) return
     hapticsLight()
-    const n = THEME_TOOL_SCREENS.length
-    onScreenAction(THEME_TOOL_SCREENS[(THEME_TOOL_SCREENS.indexOf(screen) + dir + n) % n])
+    setDir(dir)
+    snapIfLesson(screen, next)
+    onScreenAction(next)
+  }
+  const index = THEME_TOOL_SCREENS.indexOf(screen)
+
+  // Between the topics and the lesson the app swaps in place: no glide to
+  // the new size (app/globals.css, theme-stage-instant).
+  const snapIfLesson = (from: ThemeToolScreen, to: ThemeToolScreen) => {
+    const pair = [from, to].sort().join()
+    if (pair !== 'learning,topics') return
+    const root = document.documentElement
+    root.classList.add('theme-stage-instant')
+    window.setTimeout(() => root.classList.remove('theme-stage-instant'), 1000)
   }
 
+  // Done: glide back to where it opened while the app is still small, then
+  // lower the panel as the app grows back, so nothing jumps at full size.
   const close = () => {
+    if (closingRef.current) return
+    closingRef.current = true
     hapticsLight()
-    setShown(false)
-    document.documentElement.classList.remove('theme-tool-open')
-    window.setTimeout(onDoneAction, 300)
+    const finish = () => {
+      setShown(false)
+      document.documentElement.classList.remove('theme-tool-open')
+      window.setTimeout(onDoneAction, 500)
+    }
+    if (screen === home) return finish()
+    setDir(THEME_TOOL_SCREENS.indexOf(home) > THEME_TOOL_SCREENS.indexOf(screen) ? 1 : -1)
+    snapIfLesson(screen, home)
+    onScreenAction(home)
+    window.setTimeout(finish, SWITCH_MS)
   }
 
   return createPortal(
@@ -145,8 +182,8 @@ export function ThemeTool({
     <div className="fixed inset-0 z-[60] flex items-end justify-center" role="dialog" aria-label={t('theme.intro.title')}>
       <div
         ref={sheetRef}
-        className={`relative w-full max-w-md bg-white/10 backdrop-blur-2xl border border-white/15 rounded-t-3xl shadow-2xl px-4 pt-4 space-y-3.5 transition-all duration-300 ${
-          shown ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
+        className={`relative w-full max-w-md bg-white/10 backdrop-blur-2xl border border-white/15 rounded-t-3xl shadow-2xl px-4 pt-4 space-y-3.5 transition-[translate,opacity] duration-500 ${
+          shown ? 'translate-y-0 opacity-100 ease-[cubic-bezier(0.22,1,0.36,1)]' : 'translate-y-full opacity-0 ease-[cubic-bezier(0.55,0,0.75,0.4)]'
         }`}
         style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom, 0px))' }}
       >
@@ -166,13 +203,18 @@ export function ThemeTool({
         <div className="flex items-center gap-3">
           <button
             onClick={() => step(-1)}
+            disabled={index === 0}
             aria-label={t('theme.tool.previous')}
-            className="w-11 h-11 flex-shrink-0 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white"
+            className="disabled:opacity-35 transition-opacity w-11 h-11 flex-shrink-0 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white"
           >
             <Icon icon="solar:alt-arrow-right-linear" width="20" className="rotate-180" />
           </button>
           <div className="flex-1 min-w-0 text-center">
-            <p className="text-white text-sm font-semibold truncate" aria-live="polite">
+            <p
+              key={screen}
+              className={`text-white text-sm font-semibold truncate animate-in fade-in duration-500 ${dir > 0 ? 'slide-in-from-right-3' : 'slide-in-from-left-3'}`}
+              aria-live="polite"
+            >
               {t(`theme.tool.screen.${screen}` as const)}
             </p>
             <div className="flex justify-center gap-1.5 mt-1.5" aria-hidden="true">
@@ -183,8 +225,9 @@ export function ThemeTool({
           </div>
           <button
             onClick={() => step(1)}
+            disabled={index === THEME_TOOL_SCREENS.length - 1}
             aria-label={t('theme.tool.next')}
-            className="w-11 h-11 flex-shrink-0 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white"
+            className="disabled:opacity-35 transition-opacity w-11 h-11 flex-shrink-0 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white"
           >
             <Icon icon="solar:alt-arrow-right-linear" width="20" />
           </button>

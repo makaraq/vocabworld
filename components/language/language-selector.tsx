@@ -4222,11 +4222,8 @@ export function LanguageSelector() {
     setThemeTool((tool) => tool && { ...tool, screen })
   }
 
-  // Done: back to where the tool was opened.
-  const closeThemeTool = () => {
-    if (themeTool && themeTool.screen !== themeTool.from) showThemeToolScreen(themeTool.from)
-    setThemeTool(null)
-  }
+  const closeThemeTool = () => setThemeTool(null)
+
 
   // Re-check notification permission when the app returns to foreground.
   // Catches the case where the user went to iOS Settings and enabled notifications.
@@ -4806,8 +4803,8 @@ export function LanguageSelector() {
 
       {/* Settings Modal - Outside main container to avoid background blur */}
       {showSettings && (
-        <div className="fixed inset-0 bg-black/30 flex items-center justify-center p-3 sm:p-4 z-50" onClick={handleSettingsClose}>
-          <div data-theme-tool-extent className={`bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl sm:rounded-[32px] p-4 sm:p-6 md:p-8 w-full max-w-md sm:max-w-lg max-h-[85vh] sm:max-h-[90vh] overflow-y-auto shadow-2xl ${isIOS ? 'ios-glass-override' : ''}`} onClick={(e) => e.stopPropagation()} style={{ WebkitTapHighlightColor: 'transparent' }}>
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center p-3 sm:p-4 z-50 animate-in fade-in duration-300" onClick={handleSettingsClose}>
+          <div data-theme-tool-extent className={`animate-in zoom-in-95 slide-in-from-bottom-2 duration-300 bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl sm:rounded-[32px] p-4 sm:p-6 md:p-8 w-full max-w-md sm:max-w-lg max-h-[85vh] sm:max-h-[90vh] overflow-y-auto shadow-2xl ${isIOS ? 'ios-glass-override' : ''}`} onClick={(e) => e.stopPropagation()} style={{ WebkitTapHighlightColor: 'transparent' }}>
             <div className="flex items-center justify-end mb-4 sm:mb-6 md:mb-8">
               <button
                 onClick={handleSettingsClose}
@@ -5281,7 +5278,7 @@ export function LanguageSelector() {
         onPremiumThemeAction={handlePremiumTheme}
         onTryThemesAction={() => {
           setShowManageAccount(false)
-          setTimeout(openThemeTool, 300)
+          setTimeout(openThemeTool, 250)
         }}
       />
 
@@ -5307,6 +5304,7 @@ export function LanguageSelector() {
       <ThemeTool
         open={themeTool !== null}
         screen={themeTool?.screen ?? 'learning'}
+        home={themeTool?.from ?? 'learning'}
         isPremium={isPremium}
         onScreenAction={showThemeToolScreen}
         onPremiumAction={handlePremiumTheme}

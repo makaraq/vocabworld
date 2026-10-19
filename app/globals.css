@@ -413,15 +413,22 @@ input, textarea, [contenteditable] {
 ─────────────────────────────────────────────────────────────────── */
 [data-theme-tool-stage] {
   transform-origin: 50% 0;
-  transition: transform 450ms cubic-bezier(0.3, 1.15, 0.5, 1);
+  transition: transform 650ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 html.theme-tool-open [data-theme-tool-stage] {
   transform: translateY(var(--theme-stage-shift, 0px)) scale(var(--theme-stage-scale, 1));
 }
 
+/* Topics <-> lesson swap in place, without the glide. */
+html.theme-stage-instant [data-theme-tool-stage] {
+  transition: none;
+}
+
+/* Reduced motion: a short, plain ease rather than a jump. */
 @media (prefers-reduced-motion: reduce) {
   [data-theme-tool-stage] {
-    transition: none;
+    transition-duration: 280ms;
+    transition-timing-function: ease-out;
   }
 }
