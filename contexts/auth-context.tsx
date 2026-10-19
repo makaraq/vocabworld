@@ -131,12 +131,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ============================================
   // SUBSCRIPTION FETCHING
   // ============================================
+  // Only a successful response is an answer. A failed check (offline, server
+  // error, non-JSON) keeps the last known status, so it can't take Premium
+  // away, or have ThemeBackdrop drop a kept premium theme.
   const fetchSubscriptionStatus = useCallback(async (userId: string) => {
     if (!userId) return
 
     setSubscriptionLoading(true)
     try {
       const response = await fetch('/api/subscription/status')
+      if (!response.ok) throw new Error(`Subscription status ${response.status}`)
       const data = await response.json()
 
       if (data.isPremium) {
@@ -148,9 +152,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     } catch (error) {
       console.error('Failed to fetch subscription:', error)
-      if (!hasPurchaseFlag()) {
-        setSubscriptionStatus({ isPremium: false, subscription: null })
-      }
     } finally {
       setSubscriptionLoading(false)
     }

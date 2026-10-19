@@ -9,8 +9,10 @@ import { currentTheme, isPreviewing, onThemeChange, setTheme, themeById } from '
 // the theme changes it lays the old backdrop over the new one and fades it
 // out, so the change happens in front of the user rather than as a cut.
 //
-// It also keeps premium themes for Premium: once the subscription is known
-// and is not Premium, a kept premium theme goes back to the default.
+// It also keeps premium themes for Premium: once the server has said the
+// subscription is not Premium, a kept premium theme goes back to the default.
+// A failed check is not an answer (the status stays as it was, null at
+// launch), so being offline never costs a Premium user their theme.
 
 export function ThemeBackdrop() {
   const [fading, setFading] = useState<{ key: number; from: string; out: boolean } | null>(null)
