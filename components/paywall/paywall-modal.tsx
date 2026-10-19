@@ -195,15 +195,15 @@ export function PaywallModal({
         {/* Close button */}
         <button
           onClick={onCloseAction}
-          className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:bg-white/20 hover:text-white transition-all z-10"
+          className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:bg-white/20 hover:text-white transition-all z-10"
           aria-label={t('common.close')}
         >
           <Icon icon="solar:close-circle-bold" className="w-5 h-5" />
         </button>
 
-        {/* Title */}
-        <div className="px-6 pt-8 pb-6">
-          <h2 className="text-2xl font-extrabold text-white text-center leading-tight drop-shadow-lg whitespace-pre-line">
+        {/* Title: inset on both sides so it clears the close button and stays centred */}
+        <div className="px-11 pt-8 pb-6">
+          <h2 className="text-[22px] font-extrabold text-white text-center leading-tight drop-shadow-lg whitespace-pre-line">
             {showTrial ? t('paywall.title.trial') : t('paywall.title.noTrial')}
           </h2>
         </div>
@@ -269,7 +269,7 @@ export function PaywallModal({
             aria-hidden={showTrial}
             className={`col-start-1 row-start-1 self-center ${!showTrial ? '' : 'invisible pointer-events-none'}`}
           >
-            <div className="space-y-7">
+            <div className="space-y-5">
               <div className="relative flex items-start gap-4">
                 <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 shadow-md">
                   <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-white" />
@@ -302,6 +302,18 @@ export function PaywallModal({
                   <p className="font-bold text-white text-base drop-shadow">{t('paywall.benefit.search.title')}</p>
                   <p className="text-white/70 text-sm leading-snug drop-shadow">
                     {t('paywall.benefit.search.desc')}
+                  </p>
+                </div>
+              </div>
+
+              <div className="relative flex items-start gap-4">
+                <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 shadow-md">
+                  <Icon icon="solar:palette-bold" className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1 pt-1">
+                  <p className="font-bold text-white text-base drop-shadow">{t('paywall.benefit.themes.title')}</p>
+                  <p className="text-white/70 text-sm leading-snug drop-shadow">
+                    {t('paywall.benefit.themes.desc')}
                   </p>
                 </div>
               </div>
