@@ -17,7 +17,7 @@ import { avatarSeedFor } from "@/lib/avatars/smiley-avatar"
 import { useNotifications } from "@/hooks/use-notifications"
 import { NotificationPromptModal } from "@/components/notifications/notification-prompt-modal"
 import { CoachMarkOverlay, type CoachMarkStep } from "@/components/tutorial/coach-mark-overlay"
-import { ThemeIntroSheet } from "@/components/theme/theme-intro-sheet"
+import { ThemeTool, type ThemeToolScreen } from "@/components/theme/theme-tool"
 import { keepPreview, previewTheme, revertPreview, type ThemeId } from "@/lib/themes"
 import { hapticsLight, hapticsMedium, hapticsSuccess, hapticsWarning } from "@/lib/haptics"
 import { bumpPlayCount, readPlayCounts, type PlayCounts } from "@/lib/play-counts"
@@ -842,7 +842,9 @@ export function LanguageSelector() {
   const [notifPromptVariant, setNotifPromptVariant] = useState<'enable' | 'settings'>('settings')
   const [showTutorial, setShowTutorial] = useState(false)
   const [showLearningTutorial, setShowLearningTutorial] = useState(false)
-  const [showThemeIntro, setShowThemeIntro] = useState(false)
+  // The theme tool: the screen it shows the app on, and the one it opened on.
+  const [themeTool, setThemeTool] = useState<{ screen: ThemeToolScreen; from: ThemeToolScreen } | null>(null)
+  const themeToolTopicRef = useRef<Topic | null>(null)
 
   const handleNotifPromptDismiss = () => {
     localStorage.setItem('vw_notif_prompted', 'true')
@@ -4156,16 +4158,6 @@ export function LanguageSelector() {
     localStorage.setItem('vw_tutorial_shown', 'true')
   }
 
-  // The end of the first tutorial, finished or skipped, leads into the
-  // theme picker, once.
-  const handleTutorialComplete = () => {
-    handleTutorialDone()
-    if (!localStorage.getItem('vw_theme_intro_shown')) {
-      localStorage.setItem('vw_theme_intro_shown', 'true')
-      setTimeout(() => setShowThemeIntro(true), 400)
-    }
-  }
-
   // A crowned theme without Premium: show it on the app straight away, then
   // the paywall. Closing the paywall without buying puts the old theme back.
   const handlePremiumTheme = (id: ThemeId) => {
@@ -4191,9 +4183,49 @@ export function LanguageSelector() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, selectedTopic, vocabulary.length])
 
+  // The end of the first lesson's tutorial, finished or skipped, leads into
+  // the theme tool, once.
   const handleLearningTutorialDone = () => {
     setShowLearningTutorial(false)
     localStorage.setItem('vw_learning_tutorial_shown', 'true')
+    if (!localStorage.getItem('vw_theme_intro_shown')) {
+      localStorage.setItem('vw_theme_intro_shown', 'true')
+      setTimeout(openThemeTool, 400)
+    }
+  }
+
+  // The screen the app is on, in the theme tool's terms.
+  const themeToolScreenNow = (): ThemeToolScreen =>
+    currentPage === 'learning' ? (showSettings ? 'settings' : 'learning') : currentSection === 0 ? 'account' : 'topics'
+
+  // Opens the theme tool on the screen the app is on. Its lesson is the one
+  // open or last opened, else the first topic.
+  const openThemeTool = () => {
+    themeToolTopicRef.current = selectedTopic && selectedTopic.id > 0 ? selectedTopic : topics[0] ?? null
+    const screen = themeToolScreenNow()
+    setThemeTool({ screen, from: screen })
+  }
+
+  // Moves the app behind the theme tool to one of its screens.
+  const showThemeToolScreen = (screen: ThemeToolScreen) => {
+    setShowSettings(screen === 'settings')
+    if (screen === 'learning' || screen === 'settings') {
+      const topic = themeToolTopicRef.current
+      if (currentPage !== 'learning' && topic) handleTopicSelect(topic)
+    } else {
+      if (currentPage === 'learning') {
+        stopAudio()
+        transitionToPage('confirmation')
+      }
+      setCurrentSection(screen === 'account' ? 0 : lastTopicSectionRef.current)
+    }
+    setThemeTool((tool) => tool && { ...tool, screen })
+  }
+
+  // Done: back to where the tool was opened.
+  const closeThemeTool = () => {
+    if (themeTool && themeTool.screen !== themeTool.from) showThemeToolScreen(themeTool.from)
+    setThemeTool(null)
   }
 
   // Re-check notification permission when the app returns to foreground.
@@ -4349,7 +4381,7 @@ export function LanguageSelector() {
   }
 
   return (
-    <div className="w-full max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-2 sm:px-3 h-full max-h-[95vh] flex items-center">
+    <div data-theme-tool-stage className="w-full max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-2 sm:px-3 h-full max-h-[95vh] flex items-center">
       <div className={`bg-white/5 backdrop-blur-3xl border border-white/15 rounded-2xl sm:rounded-3xl px-3 sm:px-5 md:px-7 py-4 sm:py-5 md:py-6 shadow-2xl w-full max-h-full overflow-hidden ${isTransitioning ? 'bg-white/10' : 'bg-white/5'}`}>
         {currentPage === "learning" && selectedTopic?.id === -1 && (
           /* Search Word Learning - Custom word search mode */
@@ -4775,7 +4807,7 @@ export function LanguageSelector() {
       {/* Settings Modal - Outside main container to avoid background blur */}
       {showSettings && (
         <div className="fixed inset-0 bg-black/30 flex items-center justify-center p-3 sm:p-4 z-50" onClick={handleSettingsClose}>
-          <div className={`bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl sm:rounded-[32px] p-4 sm:p-6 md:p-8 w-full max-w-md sm:max-w-lg max-h-[85vh] sm:max-h-[90vh] overflow-y-auto shadow-2xl ${isIOS ? 'ios-glass-override' : ''}`} onClick={(e) => e.stopPropagation()} style={{ WebkitTapHighlightColor: 'transparent' }}>
+          <div data-theme-tool-extent className={`bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl sm:rounded-[32px] p-4 sm:p-6 md:p-8 w-full max-w-md sm:max-w-lg max-h-[85vh] sm:max-h-[90vh] overflow-y-auto shadow-2xl ${isIOS ? 'ios-glass-override' : ''}`} onClick={(e) => e.stopPropagation()} style={{ WebkitTapHighlightColor: 'transparent' }}>
             <div className="flex items-center justify-end mb-4 sm:mb-6 md:mb-8">
               <button
                 onClick={handleSettingsClose}
@@ -5247,6 +5279,10 @@ export function LanguageSelector() {
         onLeaderboardToggle={handleLeaderboardToggle}
         showLeaderboardOption={user?.app_metadata?.provider !== 'email'}
         onPremiumThemeAction={handlePremiumTheme}
+        onTryThemesAction={() => {
+          setShowManageAccount(false)
+          setTimeout(openThemeTool, 300)
+        }}
       />
 
       {/* Benefits prompt — variant 'enable' triggers the OS permission dialog;
@@ -5262,16 +5298,19 @@ export function LanguageSelector() {
       <CoachMarkOverlay
         open={showTutorial}
         steps={tutorialSteps}
-        onComplete={handleTutorialComplete}
-        onSkip={handleTutorialComplete}
+        onComplete={handleTutorialDone}
+        onSkip={handleTutorialDone}
       />
 
-      {/* After the first tutorial: pick a theme, watching the app change */}
-      <ThemeIntroSheet
-        open={showThemeIntro}
+      {/* After the first lesson's tutorial, or from Manage Account: themes
+          tried on the app itself, screen by screen */}
+      <ThemeTool
+        open={themeTool !== null}
+        screen={themeTool?.screen ?? 'learning'}
         isPremium={isPremium}
+        onScreenAction={showThemeToolScreen}
         onPremiumAction={handlePremiumTheme}
-        onDoneAction={() => setShowThemeIntro(false)}
+        onDoneAction={closeThemeTool}
       />
 
       {/* First-time coach-mark tutorial (inside a topic) */}

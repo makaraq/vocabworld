@@ -11,6 +11,7 @@ html.theme-plum-duotone { --app-backdrop: url('/themes/plum-duotone.jpg') center
 /* ── paper ── */
 html.theme-paper { --app-backdrop: radial-gradient(70% 40% at 85% 10%, #fde1c4 0%, transparent 70%), radial-gradient(80% 45% at 10% 90%, #f5c4a1 0%, transparent 70%), linear-gradient(180deg, #fbf1e4 0%, #f1d9c0 100%) #f6e7d6; }
 html.theme-paper.liquid-glass { --lg-fill: rgba(255, 255, 255, 0.5); --lg-fill-active: rgba(255, 255, 255, 0.72); }
+html.theme-paper.liquid-glass { --lg-solid: #f6e7d6; }
 html.theme-paper :is(.bg-blue-400, .bg-blue-500):not([data-keep-colors], [data-keep-colors] *) { background-color: rgb(194, 65, 12) !important; }
 html.theme-paper :is(.bg-blue-500\/20, .bg-blue-500\/30):not([data-keep-colors], [data-keep-colors] *) { background-color: rgba(194, 65, 12, 0.24) !important; }
 html.theme-paper .border-blue-400\/30:not([data-keep-colors], [data-keep-colors] *) { border-color: rgba(194, 65, 12, 0.55) !important; }
@@ -119,7 +120,125 @@ html.theme-paper.liquid-glass { --lg-lift: 0 1px 2px rgba(42, 23, 16, 0.08), 0 8
 /* ── rose-glass ── */
 html.theme-rose-glass { --app-backdrop: linear-gradient(165deg, #9f1239 0%, #f43f5e 45%, #fdba74 100%) #fb7185; }
 html.theme-rose-glass.liquid-glass { --lg-fill: rgba(255, 228, 230, 0.16); --lg-fill-active: rgba(255, 228, 230, 0.3); }
+html.theme-rose-glass.liquid-glass { --lg-solid: #7f1d33; }
 html.theme-rose-glass :is(.bg-blue-400, .bg-blue-500):not([data-keep-colors], [data-keep-colors] *) { background-color: rgb(253, 230, 138) !important; }
 html.theme-rose-glass :is(.bg-blue-500\/20, .bg-blue-500\/30):not([data-keep-colors], [data-keep-colors] *) { background-color: rgba(253, 230, 138, 0.24) !important; }
 html.theme-rose-glass .border-blue-400\/30:not([data-keep-colors], [data-keep-colors] *) { border-color: rgba(253, 230, 138, 0.55) !important; }
 html.theme-rose-glass :is(.text-blue-200, .text-blue-300, .text-blue-400):not([data-keep-colors], [data-keep-colors] *) { color: rgb(253, 230, 138) !important; }
+
+/* ── obsidian ── */
+html.theme-obsidian { --app-backdrop: radial-gradient(120% 55% at 50% -8%, rgba(140, 155, 210, 0.2) 0%, transparent 60%), radial-gradient(70% 40% at 0% 100%, rgba(40, 120, 150, 0.14) 0%, transparent 65%), radial-gradient(70% 40% at 100% 85%, rgba(110, 70, 170, 0.14) 0%, transparent 65%), #05060a; }
+html.theme-obsidian.liquid-glass { --lg-solid: #090a0f; }
+html.theme-obsidian.liquid-glass {
+  --lg-fill: rgba(7, 8, 12, 0.8);
+  --lg-fill-active: rgba(16, 18, 26, 0.9);
+  --lg-vibrancy: blur(10px) saturate(120%);
+  --lg-vibrancy-active: blur(10px) saturate(130%) brightness(1.1);
+  --lg-lift: 0 1px 0 rgba(255, 255, 255, 0.05), 0 2px 6px rgba(0, 0, 0, 0.55), 0 14px 30px rgba(0, 0, 0, 0.6);
+  --lg-glow-active: 0 0 18px rgba(150, 170, 255, 0.25);
+  --lg-rim-light: radial-gradient(circle 8px at 1.2px 13.2px, rgba(184, 123, 255, 0.85), transparent),
+        radial-gradient(circle 8px at 5.9px 5.9px, rgba(109, 134, 255, 0.95), transparent),
+        radial-gradient(circle 8px at 13.2px 1.2px, rgba(159, 240, 255, 0.95), transparent),
+        radial-gradient(circle 8px at 20px 0px, #fff, transparent),
+        radial-gradient(circle 8px at calc(100% - 1.2px) calc(100% - 13.2px), rgba(255, 194, 122, 0.8), transparent),
+        radial-gradient(circle 8px at calc(100% - 5.9px) calc(100% - 5.9px), rgba(255, 122, 208, 0.8), transparent),
+        radial-gradient(circle 8px at calc(100% - 13.2px) calc(100% - 1.2px), rgba(127, 180, 255, 0.75), transparent),
+        radial-gradient(circle 8px at calc(100% - 20px) calc(100% - 0px), rgba(143, 243, 255, 0.6), transparent),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.2) 32%, rgba(255, 255, 255, 0.07) 68%, rgba(255, 255, 255, 0.16) 100%);
+  --lg-rim-light-panel: radial-gradient(circle 13px at 2.2px 23.7px, rgba(184, 123, 255, 0.45), transparent),
+        radial-gradient(circle 13px at 10.5px 10.5px, rgba(109, 134, 255, 0.55), transparent),
+        radial-gradient(circle 13px at 23.7px 2.2px, rgba(159, 240, 255, 0.6), transparent),
+        radial-gradient(circle 13px at 36px 0px, rgba(255, 255, 255, 0.8), transparent),
+        radial-gradient(circle 13px at calc(100% - 2.2px) calc(100% - 23.7px), rgba(255, 194, 122, 0.4), transparent),
+        radial-gradient(circle 13px at calc(100% - 10.5px) calc(100% - 10.5px), rgba(255, 122, 208, 0.42), transparent),
+        radial-gradient(circle 13px at calc(100% - 23.7px) calc(100% - 2.2px), rgba(127, 180, 255, 0.4), transparent),
+        radial-gradient(circle 13px at calc(100% - 36px) calc(100% - 0px), rgba(143, 243, 255, 0.3), transparent),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.34) 0%, rgba(255, 255, 255, 0.1) 22%, rgba(255, 255, 255, 0.035) 60%, rgba(255, 255, 255, 0.07) 100%);
+  --lg-body: radial-gradient(120% 70% at 16% -12%, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.05) 32%, transparent 55%),
+        radial-gradient(100% 60% at 50% 125%, rgba(150, 170, 255, 0.08) 0%, transparent 60%);
+  --lg-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 40%, transparent 62%, rgba(255, 255, 255, 0.04) 100%);
+  --lg-sheen-panel: linear-gradient(160deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.015) 30%, transparent 55%, rgba(255, 255, 255, 0.03) 100%);
+  --lg-rim: inset 0 1px 0 rgba(255, 255, 255, 0.28), inset 1px 0 0 rgba(255, 255, 255, 0.08), inset 0 -1px 0 rgba(0, 0, 0, 0.6);
+  --lg-rim-panel: inset 0 1px 0 rgba(255, 255, 255, 0.16), inset 0 -1px 0 rgba(0, 0, 0, 0.5);
+  --lg-lift-panel: 0 30px 70px rgba(0, 0, 0, 0.6), 0 8px 20px rgba(0, 0, 0, 0.45);
+  --lg-backdrop: blur(14px) saturate(120%);
+  --ob-panel: rgba(6, 7, 11, 0.6);
+  --ob-fill-play: rgba(14, 15, 21, 0.85);
+  --ob-fill-play-active: rgba(24, 26, 36, 0.92);
+  --ob-fill-dots: rgba(7, 8, 12, 0.7);
+  --ob-rim-tile: linear-gradient(180deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.07) 28%, rgba(255, 255, 255, 0.03) 70%, rgba(255, 255, 255, 0.05) 100%);
+  --ob-rim-card: radial-gradient(circle 10px at 1.4px 15.8px, rgba(184, 123, 255, 0.65), transparent),
+        radial-gradient(circle 10px at 7px 7px, rgba(109, 134, 255, 0.75), transparent),
+        radial-gradient(circle 10px at 15.8px 1.4px, rgba(159, 240, 255, 0.8), transparent),
+        radial-gradient(circle 10px at 24px 0px, rgba(255, 255, 255, 0.9), transparent),
+        radial-gradient(circle 10px at calc(100% - 1.4px) calc(100% - 15.8px), rgba(255, 194, 122, 0.6), transparent),
+        radial-gradient(circle 10px at calc(100% - 7px) calc(100% - 7px), rgba(255, 122, 208, 0.6), transparent),
+        radial-gradient(circle 10px at calc(100% - 15.8px) calc(100% - 1.4px), rgba(127, 180, 255, 0.55), transparent),
+        radial-gradient(circle 10px at calc(100% - 24px) calc(100% - 0px), rgba(143, 243, 255, 0.45), transparent),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.14) 26%, rgba(255, 255, 255, 0.05) 66%, rgba(255, 255, 255, 0.1) 100%);
+}
+html.theme-obsidian.liquid-glass.reduce-transparency { --lg-fill: #12131a; --lg-fill-active: #1b1d26; --lg-vibrancy: none; --lg-vibrancy-active: none; --ob-panel: var(--lg-solid); --ob-fill-play: #161720; --ob-fill-play-active: #1f2130; --ob-fill-dots: #12131a; }
+@media (prefers-reduced-transparency: reduce) { html.theme-obsidian.liquid-glass { --lg-fill: #12131a; --lg-fill-active: #1b1d26; --lg-vibrancy: none; --lg-vibrancy-active: none; --ob-panel: var(--lg-solid); --ob-fill-play: #161720; --ob-fill-play-active: #1f2130; --ob-fill-dots: #12131a; } }
+html.theme-obsidian.liquid-glass :is(
+    button.rounded-full.backdrop-blur-xl,
+    button.rounded-full.bg-white\/5,
+    button.rounded-full.bg-white\/10,
+    button.rounded-full.bg-black\/20,
+    [data-tour="learning-controls"] > button,
+    [data-tour="language-switcher"] button,
+    button.w-full.bg-white\/10.backdrop-blur-sm:is(.rounded-xl, .rounded-2xl),
+    .fixed.inset-0 > [class*="backdrop-blur"] button.w-full:is(.bg-white\/15, .bg-black\/20),
+    .fixed.inset-0 > [class*="backdrop-blur"] .flex > button.flex-1.rounded-lg.bg-white\/20
+  ):not(:disabled):active { --lg-touch: rgba(150, 175, 255, 0.2); }
+html.theme-obsidian.liquid-glass [data-tour="learning-controls"] > button.w-16 { --lg-fill: var(--ob-fill-play); --lg-fill-active: var(--ob-fill-play-active); }
+html.theme-obsidian.liquid-glass nav[data-tour="section-nav"] { --lg-fill: var(--ob-fill-dots); }
+html.theme-obsidian.liquid-glass [data-tour="learning-controls"] > button.w-14 { --lg-rim-light: radial-gradient(circle 10px at 1.7px 18.4px, rgba(184, 123, 255, 0.85), transparent),
+        radial-gradient(circle 10px at 8.2px 8.2px, rgba(109, 134, 255, 0.95), transparent),
+        radial-gradient(circle 10px at 18.4px 1.7px, rgba(159, 240, 255, 0.95), transparent),
+        radial-gradient(circle 10px at 28px 0px, #fff, transparent),
+        radial-gradient(circle 10px at calc(100% - 1.7px) calc(100% - 18.4px), rgba(255, 194, 122, 0.8), transparent),
+        radial-gradient(circle 10px at calc(100% - 8.2px) calc(100% - 8.2px), rgba(255, 122, 208, 0.8), transparent),
+        radial-gradient(circle 10px at calc(100% - 18.4px) calc(100% - 1.7px), rgba(127, 180, 255, 0.75), transparent),
+        radial-gradient(circle 10px at calc(100% - 28px) calc(100% - 0px), rgba(143, 243, 255, 0.6), transparent),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.2) 32%, rgba(255, 255, 255, 0.07) 68%, rgba(255, 255, 255, 0.16) 100%); }
+html.theme-obsidian.liquid-glass [data-tour="learning-controls"] > button.w-16 { --lg-rim-light: radial-gradient(circle 11px at 1.9px 21.1px, rgba(184, 123, 255, 0.85), transparent),
+        radial-gradient(circle 11px at 9.4px 9.4px, rgba(109, 134, 255, 0.95), transparent),
+        radial-gradient(circle 11px at 21.1px 1.9px, rgba(159, 240, 255, 0.95), transparent),
+        radial-gradient(circle 11px at 32px 0px, #fff, transparent),
+        radial-gradient(circle 11px at calc(100% - 1.9px) calc(100% - 21.1px), rgba(255, 194, 122, 0.8), transparent),
+        radial-gradient(circle 11px at calc(100% - 9.4px) calc(100% - 9.4px), rgba(255, 122, 208, 0.8), transparent),
+        radial-gradient(circle 11px at calc(100% - 21.1px) calc(100% - 1.9px), rgba(127, 180, 255, 0.75), transparent),
+        radial-gradient(circle 11px at calc(100% - 32px) calc(100% - 0px), rgba(143, 243, 255, 0.6), transparent),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.2) 32%, rgba(255, 255, 255, 0.07) 68%, rgba(255, 255, 255, 0.16) 100%); }
+html.theme-obsidian.liquid-glass :is(span.bg-white\/10.rounded-lg.tracking-wider, nav[data-tour="section-nav"]) { --lg-rim-light: radial-gradient(circle 6px at 0.8px 8.6px, rgba(184, 123, 255, 0.5), transparent),
+        radial-gradient(circle 6px at 3.8px 3.8px, rgba(109, 134, 255, 0.6), transparent),
+        radial-gradient(circle 6px at 8.6px 0.8px, rgba(159, 240, 255, 0.6), transparent),
+        radial-gradient(circle 6px at 13px 0px, rgba(255, 255, 255, 0.7), transparent),
+        radial-gradient(circle 6px at calc(100% - 0.8px) calc(100% - 8.6px), rgba(255, 194, 122, 0.45), transparent),
+        radial-gradient(circle 6px at calc(100% - 3.8px) calc(100% - 3.8px), rgba(255, 122, 208, 0.45), transparent),
+        radial-gradient(circle 6px at calc(100% - 8.6px) calc(100% - 0.8px), rgba(127, 180, 255, 0.4), transparent),
+        radial-gradient(circle 6px at calc(100% - 13px) calc(100% - 0px), rgba(143, 243, 255, 0.35), transparent),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.12) 40%, rgba(255, 255, 255, 0.05) 70%, rgba(255, 255, 255, 0.1) 100%); }
+@layer base {
+  html.theme-obsidian.liquid-glass :is(
+    .bg-white\/5.backdrop-blur-3xl,
+    .fixed.inset-0 > [class*="backdrop-blur"][class*="rounded"]:not([data-keep-colors]),
+    .fixed.inset-0.items-end > [class*="rounded-t-3xl"]:not([data-keep-colors])
+  ) { background-color: var(--ob-panel) !important; border-color: rgba(255, 255, 255, 0.07) !important; }
+  html.theme-obsidian.liquid-glass :is(.grid > button.bg-black\/40, .flashcard-scale) { position: relative; }
+  html.theme-obsidian.liquid-glass :is(.grid > button.bg-black\/40, .flashcard-scale)::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1.5px; pointer-events: none; background: var(--ob-rim-tile); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+  html.theme-obsidian.liquid-glass .grid > button.bg-black\/40 { background-image: radial-gradient(120% 70% at 16% -12%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.03) 32%, transparent 55%) !important; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4), 0 10px 24px rgba(0, 0, 0, 0.45) !important; }
+  html.theme-obsidian.liquid-glass .grid > button.bg-black\/40::before { padding: 1px; }
+  html.theme-obsidian.liquid-glass .grid > button.bg-black\/40.border-2::before { border-radius: calc(var(--lg-radius-tile) - 2px); }
+  html.theme-obsidian.liquid-glass .grid > button.bg-black\/40.border-white\/20 { border-color: transparent !important; }
+  html.theme-obsidian.liquid-glass .flashcard-scale::before { border-radius: calc(var(--lg-radius-card) - 1px); background: var(--ob-rim-card); }
+  html.theme-obsidian.liquid-glass .flashcard-scale:not(.border-blue-400\/30) { border-color: transparent !important; }
+  html.theme-obsidian.liquid-glass .flashcard-scale { background-image: radial-gradient(90% 60% at 12% -10%, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 35%, transparent 60%) !important; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45), 0 16px 36px rgba(0, 0, 0, 0.5) !important; }
+  html.theme-obsidian.liquid-glass :is(div, button:not(.w-full.rounded-xl, .w-full.rounded-2xl)).bg-white\/10.backdrop-blur-sm { background-color: rgba(255, 255, 255, 0.035) !important; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), inset 0 -1px 0 rgba(0, 0, 0, 0.45) !important; }
+  html.theme-obsidian.liquid-glass :is(input.slider, .bg-white\/10.rounded-full.h-2) { background-color: rgba(255, 255, 255, 0.1) !important; box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255, 255, 255, 0.05) !important; }
+  html.theme-obsidian.liquid-glass input.slider:not(:active)::-webkit-slider-thumb { background: linear-gradient(180deg, #fbfcff 0%, #d9dde6 55%, #aab1bf 100%) !important; box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25), 0 2px 6px rgba(0, 0, 0, 0.6) !important; }
+}
+html.theme-obsidian :is(.bg-blue-400, .bg-blue-500):not([data-keep-colors], [data-keep-colors] *) { background-color: rgb(84, 112, 232) !important; }
+html.theme-obsidian :is(.bg-blue-500\/20, .bg-blue-500\/30):not([data-keep-colors], [data-keep-colors] *) { background-color: rgba(84, 112, 232, 0.24) !important; }
+html.theme-obsidian .border-blue-400\/30:not([data-keep-colors], [data-keep-colors] *) { border-color: rgba(84, 112, 232, 0.55) !important; }
+html.theme-obsidian :is(.text-blue-200, .text-blue-300, .text-blue-400):not([data-keep-colors], [data-keep-colors] *) { color: rgb(84, 112, 232) !important; }

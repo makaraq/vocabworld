@@ -7,7 +7,7 @@
 // The choice is per device (localStorage), like the Liquid Glass switch.
 // Premium themes can be previewed by anyone, but only kept with Premium.
 
-export type ThemeId = 'original' | 'mono' | 'plum-duotone' | 'paper' | 'rose-glass'
+export type ThemeId = 'original' | 'mono' | 'plum-duotone' | 'paper' | 'rose-glass' | 'obsidian'
 
 export interface AppTheme {
   id: ThemeId
@@ -16,6 +16,8 @@ export interface AppTheme {
   swatch: string
   /** Dark text on a light backdrop. */
   light?: boolean
+  /** Black glass with a chrome rim (the swatch draws its pane that way). */
+  chrome?: boolean
 }
 
 export const THEMES: AppTheme[] = [
@@ -23,15 +25,21 @@ export const THEMES: AppTheme[] = [
   { id: 'mono', premium: false, swatch: "url('/themes/mono.jpg') 62% 50% / cover" },
   { id: 'plum-duotone', premium: false, swatch: "url('/themes/plum-duotone.jpg') 62% 50% / cover" },
   {
+    id: 'rose-glass',
+    premium: false,
+    swatch: 'linear-gradient(165deg, #9f1239 0%, #f43f5e 45%, #fdba74 100%)',
+  },
+  {
     id: 'paper',
     premium: true,
     light: true,
     swatch: 'radial-gradient(70% 40% at 85% 10%, #fde1c4 0%, transparent 70%), radial-gradient(80% 45% at 10% 90%, #f5c4a1 0%, transparent 70%), linear-gradient(180deg, #fbf1e4 0%, #f1d9c0 100%)',
   },
   {
-    id: 'rose-glass',
+    id: 'obsidian',
     premium: true,
-    swatch: 'linear-gradient(165deg, #9f1239 0%, #f43f5e 45%, #fdba74 100%)',
+    chrome: true,
+    swatch: 'radial-gradient(120% 55% at 50% -8%, rgba(140, 155, 210, 0.3) 0%, transparent 60%), radial-gradient(90% 45% at 0% 100%, rgba(40, 120, 150, 0.22) 0%, transparent 65%), radial-gradient(90% 45% at 100% 85%, rgba(110, 70, 170, 0.22) 0%, transparent 65%), #05060a',
   },
 ]
 

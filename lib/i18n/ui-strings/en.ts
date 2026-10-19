@@ -565,10 +565,17 @@ export const en = {
   'theme.name.mono': 'Mono',
   'theme.name.plum-duotone': 'Plum',
   'theme.name.paper': 'Paper',
-  'theme.name.rose-glass': 'Rose glass',
+  'theme.name.rose-glass': 'Rose',
+  'theme.name.obsidian': 'Obsidian',
   'theme.intro.title': 'Choose your theme',
-  'theme.intro.body': 'Tap one to see it. You can change it any time in Manage account.',
   'theme.intro.done': 'Done',
+  'theme.tryLive': 'Try live',
+  'theme.tool.previous': 'Previous screen',
+  'theme.tool.next': 'Next screen',
+  'theme.tool.screen.topics': 'Topics',
+  'theme.tool.screen.learning': 'Learning',
+  'theme.tool.screen.settings': 'Settings',
+  'theme.tool.screen.account': 'Account',
 } as const
 
 export type UiKey = keyof typeof en

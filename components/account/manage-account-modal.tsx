@@ -36,6 +36,8 @@ interface ManageAccountModalProps {
   showLeaderboardOption?: boolean
   // A crowned theme tapped without Premium: preview it and show the paywall.
   onPremiumThemeAction?: (id: ThemeId) => void
+  // Opens the theme tool, to try themes on each screen of the app.
+  onTryThemesAction?: () => void
 }
 
 // ── Time helpers ──────────────────────────────────────────────────────────────
@@ -58,6 +60,7 @@ export function ManageAccountModal({
   onLeaderboardToggle,
   showLeaderboardOption = true,
   onPremiumThemeAction,
+  onTryThemesAction,
 }: ManageAccountModalProps) {
   const { t, tMarkup } = useT()
   const [deleteStep, setDeleteStep] = useState<'idle' | 'confirm' | 'deleting' | 'error'>('idle')
@@ -470,6 +473,15 @@ export function ManageAccountModal({
                 </div>
               </div>
               <ThemePicker isPremium={isPremium} onPremiumAction={(id) => onPremiumThemeAction?.(id)} />
+              {onTryThemesAction && (
+                <button
+                  onClick={onTryThemesAction}
+                  className="w-full rounded-full bg-white/10 border border-white/20 text-white text-sm font-semibold py-2.5 flex items-center justify-center gap-2"
+                >
+                  {t('theme.tryLive')}
+                  <Icon icon="solar:alt-arrow-right-linear" width="16" className="text-white/70" />
+                </button>
+              )}
             </div>
 
             {/* Notifications */}
