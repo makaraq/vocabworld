@@ -139,7 +139,7 @@ export function PaywallModal({
 
   if (purchaseSuccess) {
     const celebrationContent = (
-      <div data-keep-colors
+      <div
       className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/20 backdrop-blur-md">
         <div className="relative bg-white/10 backdrop-blur-xl rounded-3xl max-w-md w-full border border-white/20 shadow-2xl flex flex-col items-center p-8">
           {/* Lottie animation */}
@@ -170,7 +170,7 @@ export function PaywallModal({
           </p>
 
           {/* CTA */}
-          <button
+          <button data-keep-colors
             onClick={handleCelebrationDismiss}
             className="w-full max-w-xs py-4 bg-gray-900 hover:bg-black text-white font-bold text-base rounded-2xl shadow-lg active:scale-95 transition-all border border-white/10"
             style={{ animation: 'celebration-fade-up 0.5s ease-out 0.7s both' }}
@@ -185,7 +185,6 @@ export function PaywallModal({
 
   const modalContent = (
     <div
-      data-keep-colors
       className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/20 backdrop-blur-md"
       onClick={(e) => {
         if (e.target === e.currentTarget) onCloseAction()
@@ -220,11 +219,11 @@ export function PaywallModal({
           >
             <div className="relative">
               {/* Gradient connector bar */}
-              <div className="absolute left-[19px] top-2 bottom-2 w-1 bg-gradient-to-b from-orange-400 via-orange-300 to-white/30 rounded-full" />
+              <div data-keep-colors className="absolute left-[19px] top-2 bottom-2 w-1 bg-gradient-to-b from-orange-400 via-orange-300 to-white/30 rounded-full" />
 
               {/* Step 1: Today */}
               <div className="relative flex items-start gap-4 mb-5">
-                <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 shadow-md z-10">
+                <div data-keep-colors className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 shadow-md z-10">
                   <Icon icon="solar:lock-keyhole-unlocked-bold" className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1 pt-1">
@@ -237,7 +236,7 @@ export function PaywallModal({
 
               {/* Step 2: In 5 Days - Reminder */}
               <div className="relative flex items-start gap-4 mb-5">
-                <div className="w-10 h-10 rounded-full bg-orange-400 flex items-center justify-center flex-shrink-0 shadow-md z-10">
+                <div data-keep-colors className="w-10 h-10 rounded-full bg-orange-400 flex items-center justify-center flex-shrink-0 shadow-md z-10">
                   <Icon icon="solar:bell-bold" className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1 pt-1">
@@ -271,7 +270,7 @@ export function PaywallModal({
           >
             <div className="space-y-5">
               <div className="relative flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 shadow-md">
+                <div data-keep-colors className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 shadow-md">
                   <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1 pt-1">
@@ -283,7 +282,7 @@ export function PaywallModal({
               </div>
 
               <div className="relative flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 shadow-md">
+                <div data-keep-colors className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 shadow-md">
                   <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1 pt-1">
@@ -295,7 +294,7 @@ export function PaywallModal({
               </div>
 
               <div className="relative flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 shadow-md">
+                <div data-keep-colors className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 shadow-md">
                   <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1 pt-1">
@@ -307,7 +306,7 @@ export function PaywallModal({
               </div>
 
               <div className="relative flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 shadow-md">
+                <div data-keep-colors className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 shadow-md">
                   <Icon icon="solar:palette-bold" className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1 pt-1">
@@ -359,7 +358,7 @@ export function PaywallModal({
             }`}
           >
             {trialEligible && (
-              <span className="absolute -top-2.5 right-3 px-2.5 py-0.5 bg-gray-900 text-white text-[10px] font-bold rounded-full shadow-lg border border-white/20">
+              <span data-keep-colors className="absolute -top-2.5 right-3 px-2.5 py-0.5 bg-gray-900 text-white text-[10px] font-bold rounded-full shadow-lg border border-white/20">
                 {t('paywall.plan.trialBadge')}
               </span>
             )}
@@ -398,7 +397,7 @@ export function PaywallModal({
 
         {/* CTA Button */}
         <div className="px-6 pb-3">
-          <button
+          <button data-keep-colors
             onClick={handleSubscribe}
             disabled={loading || !user}
             className="w-full py-4 bg-gray-900 hover:bg-black text-white font-bold text-base rounded-2xl shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 border border-white/10"

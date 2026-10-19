@@ -4,7 +4,7 @@
 // Glass and swap the app's blue accent. A light theme (Paper) turns the
 // app's white-on-glass into dark ink on lighter glass by overriding the
 // white-alpha utilities the app uses; anything inside [data-keep-colors]
-// (the paywall, the theme swatches) keeps its own colours.
+// (the paywall's buttons and step icons) keeps its own colours.
 //
 // A theme can also set `solid` (the panel colour under Reduce Transparency),
 // any Liquid Glass variable (`vars`, see app/liquid-glass.css), and extra
