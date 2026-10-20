@@ -101,6 +101,7 @@ import { Icon } from '@iconify/react'
 import { Capacitor } from '@capacitor/core'
 import { getFlagIcon } from '@/utils/flags'
 import { PROGRESS_SYNCED_EVENT } from '@/lib/offline/progress-queue'
+import { getWordImageUrl } from '@/lib/word-images'
 import {
   Search,
   Languages,
@@ -3520,6 +3521,24 @@ export function LanguageSelector() {
         }))
         setPhonetics({})
         openTopic(storedVocab, stored?.json?.totalWords ?? storedVocab.length, await fetchSavedPosition())
+
+        // The stored copy never expired, so a topic edited on the server
+        // (words added, removed or reordered) stayed stale on this device for
+        // good. Re-fetch behind the instant open; if the list changed, keep
+        // the new one so the next open of the topic shows it. Offline, the
+        // fetch answers from this same copy and nothing changes.
+        getVocabularyForTopic(topic.id, targetLanguage, nativeLanguage, 1000, 0)
+          .then(async (fresh) => {
+            const freshVocab = fresh?.vocabulary
+            if (!Array.isArray(freshVocab) || freshVocab.length === 0) return
+            if (JSON.stringify(freshVocab) === JSON.stringify(storedVocab)) return
+            await idbPut('data', { key: vocabKey(topic.id, learnCode, natCode), json: fresh, savedAt: Date.now() })
+            setDataCache(prev => ({
+              ...prev,
+              vocabularyCache: { ...prev.vocabularyCache, [cacheKey]: freshVocab }
+            }))
+          })
+          .catch(() => {})
         return
       }
     } catch {}
@@ -4008,6 +4027,16 @@ export function LanguageSelector() {
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Warm the cache for the neighbouring words' illustrations so stepping
+  // through the deck never shows an image popping in.
+  useEffect(() => {
+    for (const i of [currentWordIndex + 1, currentWordIndex - 1]) {
+      const word = vocabulary[i]
+      const src = word && !word.isCustomWord ? getWordImageUrl(word.id) : null
+      if (src) new Image().src = src
+    }
+  }, [vocabulary, currentWordIndex])
 
   // Hold gesture handlers for flashcard example sentences.
   // The timer lives in a ref (not a render-scoped `let`) so it survives the
@@ -4504,29 +4533,25 @@ export function LanguageSelector() {
 
               <div
                 data-tour="learning-flashcards"
-                className="space-y-6 mb-12"
+                className="mb-8 [@media(min-height:700px)]:mb-12"
                 onTouchStart={(e) => e.stopPropagation()}
                 aria-live="polite"
                 aria-atomic="true"
                 aria-label={t('learning.aria.wordOf', { current: currentWordIndex + 1, total: vocabulary.length })}
               >
+                {/* One card: the illustration, the word being learned as the
+                    hero, and the translation under a hairline. Size carries the
+                    hierarchy, so the language names are for screen readers only.
+                    The card has one fixed height, with or without art, so the
+                    controls below never move under the finger; when the text
+                    needs a second line the illustration gives up the room.
+                    --art is the illustration's height: whatever the screen has
+                    left after the chrome (34.5rem), between 7rem and 12rem. It
+                    is in rem rather than a px breakpoint because tablets scale
+                    rem by 1.28 (globals.css) and media queries don't see that. */}
                 <div
-                  role="region"
-                  aria-label={`${getTranslatedLanguageName(targetLanguageCode)}: ${getCurrentContent().sourceWord}${
-                    showPlayCount && currentPlayCount ? `. ${t('learning.aria.playCount', { n: currentPlayCount })}` : ''
-                  }`}
-                  data-scale={
-                    currentAudioStep === 'training'
-                      ? 'audio'
-                      : holdingCardIndex === 0
-                      ? 'press'
-                      : undefined
-                  }
-                  className={`flashcard-scale relative bg-black/40 border border-white/20 rounded-2xl p-8 shadow-lg ${
-                    currentAudioStep === 'training'
-                      ? 'bg-blue-500/20 border-blue-400/30'
-                      : 'bg-black/40'
-                  }`}
+                  data-scale={holdingCardIndex === 0 ? 'press' : undefined}
+                  className="flashcard-scale relative bg-black/40 border border-white/20 rounded-2xl px-6 py-6 shadow-lg [--art:clamp(7rem,calc(100dvh_-_34.5rem),12rem)] h-[calc(var(--art)_+_10.5rem)] flex flex-col items-center justify-center"
                   onTouchStart={(e) => {
                     e.stopPropagation()
                     handleFlashcardHoldStart(0)
@@ -4545,67 +4570,66 @@ export function LanguageSelector() {
                   }}
                   onMouseLeave={handleFlashcardHoldEnd}
                 >
-                  <div className="text-white/60 text-sm mb-2 flex items-center gap-2">
-                    {getTranslatedLanguageName(targetLanguageCode)}
-                    {currentAudioStep === 'training' && (
-                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" aria-hidden="true" />
-                    )}
-                  </div>
-                  <p className="text-white text-2xl font-medium">{getCurrentContent().sourceWord}</p>
+                  {(() => {
+                    const word = vocabulary[currentWordIndex]
+                    // Custom playlist words carry a dictionary id, not a vocabulary id.
+                    const src = word && !word.isCustomWord ? getWordImageUrl(word.id) : null
+                    return src ? (
+                      <div className="mb-3 flex-1 min-h-0 w-full flex items-center justify-center">
+                        <img
+                          key={src}
+                          src={src}
+                          alt=""
+                          draggable={false}
+                          className="block h-full max-h-[var(--art)] w-auto max-w-full object-contain select-none pointer-events-none"
+                        />
+                      </div>
+                    ) : null
+                  })()}
+                  {(() => {
+                    const source = getCurrentContent().sourceWord
+                    const target = getCurrentContent().targetWord
+                    // Longer words and phrases step down a size so they stay on
+                    // one line where they can. CJK characters are about twice as
+                    // wide as Latin ones, so they count double.
+                    const length = [...source].reduce(
+                      (n, ch) => n + (/[\u1100-\u115f\u2e80-\ua4cf\uac00-\ud7a3\uf900-\ufaff\uff00-\uff60]/.test(ch) ? 2 : 1),
+                      0
+                    )
+                    const size = length <= 10 ? 'text-4xl' : length <= 14 ? 'text-3xl' : 'text-2xl'
+                    return (
+                      <>
+                        <p
+                          data-speaking={currentAudioStep === 'training' || undefined}
+                          className={`flashcard-word font-medium leading-tight text-white/95 ${size}`}
+                        >
+                          <span className="sr-only">{getTranslatedLanguageName(targetLanguageCode)}: </span>
+                          {source}
+                        </p>
+                        {settings.showPhonetics && phonetics[currentWordIndex]?.target && (
+                          <p className="text-white/45 text-sm italic mt-1.5" aria-label={t('learning.aria.pronunciation', { ipa: phonetics[currentWordIndex].target })}>/{phonetics[currentWordIndex].target}/</p>
+                        )}
+                        <div className="w-12 h-px bg-white/20 my-3.5" aria-hidden="true" />
+                        <p
+                          data-speaking={currentAudioStep === 'main' || undefined}
+                          className="flashcard-word text-xl leading-snug text-white/60"
+                        >
+                          <span className="sr-only">{getTranslatedLanguageName(nativeLanguageCode)}: </span>
+                          {target}
+                        </p>
+                      </>
+                    )
+                  })()}
                   {showPlayCount && currentPlayCount > 0 && (
                     <span
                       className={`absolute top-3 right-4 text-white/70 text-sm font-medium tabular-nums transition-opacity duration-500 ease-out ${
                         playCountVisible ? 'opacity-100' : 'opacity-0'
                       }`}
-                      aria-hidden="true"
                     >
-                      ×{currentPlayCount}
+                      <span className="sr-only">{t('learning.aria.playCount', { n: currentPlayCount })}</span>
+                      <span aria-hidden="true">×{currentPlayCount}</span>
                     </span>
                   )}
-                  {settings.showPhonetics && phonetics[currentWordIndex]?.target && (
-                    <p className="text-white/50 text-sm italic mt-2" aria-label={t('learning.aria.pronunciation', { ipa: phonetics[currentWordIndex].target })}>/{phonetics[currentWordIndex].target}/</p>
-                  )}
-                </div>
-                <div
-                  role="region"
-                  aria-label={`${getTranslatedLanguageName(nativeLanguageCode)}: ${getCurrentContent().targetWord}`}
-                  data-scale={
-                    currentAudioStep === 'main'
-                      ? 'audio'
-                      : holdingCardIndex === 1
-                      ? 'press'
-                      : undefined
-                  }
-                  className={`flashcard-scale bg-black/40 border border-white/20 rounded-2xl p-8 shadow-lg ${
-                    currentAudioStep === 'main'
-                      ? 'bg-blue-500/20 border-blue-400/30'
-                      : 'bg-black/40'
-                  }`}
-                  onTouchStart={(e) => {
-                    e.stopPropagation()
-                    handleFlashcardHoldStart(1)
-                  }}
-                  onTouchEnd={(e) => {
-                    e.stopPropagation()
-                    handleFlashcardHoldEnd()
-                  }}
-                  onMouseDown={(e) => {
-                    e.stopPropagation()
-                    handleFlashcardHoldStart(1)
-                  }}
-                  onMouseUp={(e) => {
-                    e.stopPropagation()
-                    handleFlashcardHoldEnd()
-                  }}
-                  onMouseLeave={handleFlashcardHoldEnd}
-                >
-                  <div className="text-white/60 text-sm mb-2 flex items-center gap-2">
-                    {getTranslatedLanguageName(nativeLanguageCode)}
-                    {currentAudioStep === 'main' && (
-                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" aria-hidden="true" />
-                    )}
-                  </div>
-                  <p className="text-white text-2xl font-medium">{getCurrentContent().targetWord}</p>
                 </div>
               </div>
 

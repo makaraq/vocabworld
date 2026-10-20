@@ -234,6 +234,33 @@ input, textarea, [contenteditable] {
   }
 }
 
+/* ── Flashcard word: speaking ─────────────────────────────────────────
+   The word whose audio is playing takes the accent colour with a soft
+   glow and grows a touch, then eases back when its audio ends. Themes
+   that swap blue for their own accent set --speak / --speak-glow
+   (themes.css). */
+.flashcard-word {
+  transform-origin: center;
+  transition:
+    color 300ms ease-out,
+    text-shadow 300ms ease-out,
+    transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.flashcard-word[data-speaking] {
+  color: var(--speak, rgb(147 197 253));
+  text-shadow: 0 0 16px var(--speak-glow, rgba(59, 130, 246, 0.55));
+  transform: scale(1.08);
+}
+
+/* Reduced motion keeps the emphasis but drops the movement: the word
+   switches size instead of animating to it. */
+@media (prefers-reduced-motion: reduce) {
+  .flashcard-word {
+    transition: color 300ms ease-out, text-shadow 300ms ease-out;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

@@ -16,6 +16,9 @@ html.theme-paper :is(.bg-blue-400, .bg-blue-500):not([data-keep-colors], [data-k
 html.theme-paper :is(.bg-blue-500\/20, .bg-blue-500\/30):not([data-keep-colors], [data-keep-colors] *) { background-color: rgba(194, 65, 12, 0.24) !important; }
 html.theme-paper .border-blue-400\/30:not([data-keep-colors], [data-keep-colors] *) { border-color: rgba(194, 65, 12, 0.55) !important; }
 html.theme-paper :is(.text-blue-200, .text-blue-300, .text-blue-400):not([data-keep-colors], [data-keep-colors] *) { color: rgb(194, 65, 12) !important; }
+html.theme-paper { --speak: rgb(194, 65, 12); --speak-glow: rgba(194, 65, 12, 0.28); }
+/* The speaking flashcard word, one notch more specific than the text-white remap below. */
+html.theme-paper .flashcard-word[data-speaking]:not([data-keep-colors], [data-keep-colors] *) { color: var(--speak) !important; }
 html.theme-paper .text-white:not([data-keep-colors], [data-keep-colors] *) { color: rgb(42, 23, 16) !important; }
 html.theme-paper .text-white\/5:not([data-keep-colors], [data-keep-colors] *) { color: rgba(42, 23, 16, 0.15) !important; }
 html.theme-paper .text-white\/10:not([data-keep-colors], [data-keep-colors] *) { color: rgba(42, 23, 16, 0.2) !important; }
@@ -125,6 +128,7 @@ html.theme-rose-glass :is(.bg-blue-400, .bg-blue-500):not([data-keep-colors], [d
 html.theme-rose-glass :is(.bg-blue-500\/20, .bg-blue-500\/30):not([data-keep-colors], [data-keep-colors] *) { background-color: rgba(253, 230, 138, 0.24) !important; }
 html.theme-rose-glass .border-blue-400\/30:not([data-keep-colors], [data-keep-colors] *) { border-color: rgba(253, 230, 138, 0.55) !important; }
 html.theme-rose-glass :is(.text-blue-200, .text-blue-300, .text-blue-400):not([data-keep-colors], [data-keep-colors] *) { color: rgb(253, 230, 138) !important; }
+html.theme-rose-glass { --speak: rgb(253, 230, 138); --speak-glow: rgba(253, 230, 138, 0.5); }
 
 /* ── obsidian ── */
 html.theme-obsidian { --app-backdrop: radial-gradient(120% 55% at 50% -8%, rgba(140, 155, 210, 0.2) 0%, transparent 60%), radial-gradient(70% 40% at 0% 100%, rgba(40, 120, 150, 0.14) 0%, transparent 65%), radial-gradient(70% 40% at 100% 85%, rgba(110, 70, 170, 0.14) 0%, transparent 65%), #05060a; }
@@ -242,3 +246,4 @@ html.theme-obsidian :is(.bg-blue-400, .bg-blue-500):not([data-keep-colors], [dat
 html.theme-obsidian :is(.bg-blue-500\/20, .bg-blue-500\/30):not([data-keep-colors], [data-keep-colors] *) { background-color: rgba(84, 112, 232, 0.24) !important; }
 html.theme-obsidian .border-blue-400\/30:not([data-keep-colors], [data-keep-colors] *) { border-color: rgba(84, 112, 232, 0.55) !important; }
 html.theme-obsidian :is(.text-blue-200, .text-blue-300, .text-blue-400):not([data-keep-colors], [data-keep-colors] *) { color: rgb(84, 112, 232) !important; }
+html.theme-obsidian { --speak: rgb(84, 112, 232); --speak-glow: rgba(84, 112, 232, 0.6); }
