@@ -25,7 +25,13 @@ const getLanguageCode = (languageName: string): string => {
     'Telugu': 'te', 'Tajik': 'tg', 'Turkmen': 'tk', 'Filipino': 'tl', 'Uzbek': 'uz',
     'Xhosa': 'xh', 'Yoruba': 'yo', 'Zulu': 'zu'
   };
-  return languageMap[languageName] || 'en';
+  if (languageMap[languageName]) return languageMap[languageName];
+  // The app sometimes sends the code itself: on a cold start it restores the
+  // saved codes before their names resolve, and the background preload can
+  // fetch in that window. Treating "es" as unknown used to fall back to
+  // English, so both lines of every card came back in English and were cached.
+  const code = (languageName || '').toLowerCase();
+  return Object.values(languageMap).includes(code) ? code : 'en';
 };
 
 export async function GET(request: NextRequest) {
