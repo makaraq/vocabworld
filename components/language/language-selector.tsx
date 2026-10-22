@@ -3592,6 +3592,15 @@ export function LanguageSelector() {
     }
   }
 
+  // Locale-aware casing: plain toLowerCase() turns Turkish "İ" into "i" + a combining dot (shows as a double-dotted i)
+  const toLocaleCase = (text: string, langCode: string, mode: 'lower' | 'upper') => {
+    try {
+      return mode === 'lower' ? text.toLocaleLowerCase(langCode || undefined) : text.toLocaleUpperCase(langCode || undefined)
+    } catch {
+      return mode === 'lower' ? text.toLowerCase() : text.toUpperCase()
+    }
+  }
+
   const getCurrentContent = () => {
     // Since vocabulary is now preloaded, we shouldn't see loading states
     if (vocabulary.length === 0) {
@@ -3627,12 +3636,12 @@ export function LanguageSelector() {
       }
       
       // Make uppercase
-      return displayText.toUpperCase()
+      return toLocaleCase(displayText, nativeLanguageCode, 'upper')
     }
     
     return {
-      sourceWord: currentWord.sourceWord?.toLowerCase() || '', // Training language word (what user wants to learn) - displayed in lowercase
-      targetWord: currentWord.targetWord?.toLowerCase() || '',  // Main language translation (user's native language) - displayed in lowercase
+      sourceWord: toLocaleCase(currentWord.sourceWord || '', targetLanguageCode, 'lower'), // Training language word (what user wants to learn) - displayed in lowercase
+      targetWord: toLocaleCase(currentWord.targetWord || '', nativeLanguageCode, 'lower'),  // Main language translation (user's native language) - displayed in lowercase
       category: formatCategory(currentWord.context || '') // Category for verb grouping display (use context not category)
     }
   }
