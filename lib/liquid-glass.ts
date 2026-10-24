@@ -3,9 +3,10 @@
 // so whether that class is set is the whole on/off switch.
 //
 // LIQUID_GLASS
-//   'ios' - on in the iOS app; web and Android keep the old look.
+//   'app' - on in the iOS and Android apps; web keeps the old look.
+//   'ios' - on in the iOS app only.
 //   'off' - off everywhere. The stylesheet stays loaded but matches nothing.
-export const LIQUID_GLASS: 'ios' | 'off' = 'ios'
+export const LIQUID_GLASS: 'app' | 'ios' | 'off' = 'app'
 
 // Per-device override, flipped by a two-finger hold (LiquidGlassSwitch), so
 // the old and new looks can be compared on a phone without a new build.
@@ -16,11 +17,13 @@ export const LIQUID_GLASS_STORAGE_KEY = 'sprind:liquid-glass'
 // Runs inline in <head>, before first paint, so the page never flashes the
 // old look. Kept as plain ES5 because it is not compiled.
 export const liquidGlassBootScript = `(function () {
-  if (${JSON.stringify(LIQUID_GLASS)} === 'off') return;
+  var mode = ${JSON.stringify(LIQUID_GLASS)};
+  if (mode === 'off') return;
   var key = ${JSON.stringify(LIQUID_GLASS_STORAGE_KEY)};
   var cap = window.Capacitor;
-  var ios = !!(cap && cap.isNativePlatform && cap.isNativePlatform() &&
-    cap.getPlatform && cap.getPlatform() === 'ios');
+  var native = !!(cap && cap.isNativePlatform && cap.isNativePlatform());
+  var app = native &&
+    (mode === 'app' || (cap.getPlatform && cap.getPlatform() === 'ios'));
   var pref = null;
   try {
     var q = /[?&]glass=([01])/.exec(window.location.search);
@@ -30,20 +33,21 @@ export const liquidGlassBootScript = `(function () {
     }
     pref = localStorage.getItem(key);
   } catch (e) {}
-  var on = ios ? pref !== 'off' : pref === 'on';
+  var on = app ? pref !== 'off' : pref === 'on';
   if (on) document.documentElement.classList.add('liquid-glass');
 })();`
 
-function isIOSApp(): boolean {
+function isGlassApp(): boolean {
   const cap = (window as any).Capacitor
-  return !!cap?.isNativePlatform?.() && cap?.getPlatform?.() === 'ios'
+  if (!cap?.isNativePlatform?.()) return false
+  return LIQUID_GLASS === 'app' || cap?.getPlatform?.() === 'ios'
 }
 
-// Whether this device can show the look at all: the iOS app, or a browser
+// Whether this device can show the look at all: the app, or a browser
 // that opted in with ?glass=1.
 export function liquidGlassAvailable(): boolean {
   if (LIQUID_GLASS === 'off') return false
-  if (isIOSApp()) return true
+  if (isGlassApp()) return true
   try {
     return localStorage.getItem(LIQUID_GLASS_STORAGE_KEY) !== null
   } catch {

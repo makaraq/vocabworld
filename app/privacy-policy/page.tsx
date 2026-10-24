@@ -180,10 +180,10 @@ export default function PrivacyPolicyPage() {
               </p>
             </section>
 
-            <section>
+            <section id="account-deletion">
               <h2 className="text-2xl font-semibold mb-4">Account Deletion</h2>
               <p className="text-white/90 leading-relaxed">
-                You can delete your account at any time from the Account Settings page. Deleting your account will:
+                You can delete your Sprind account at any time from the Account Settings page in the app. Deleting your account will:
               </p>
               <ul className="list-disc list-inside space-y-2 text-white/90 ml-4 mt-3">
                 <li>Permanently delete all your personal information</li>
@@ -194,6 +194,11 @@ export default function PrivacyPolicyPage() {
                 <strong>Important:</strong> Deleting your account does <strong>not</strong> automatically cancel an active App Store or Google Play subscription.
                 You must cancel your subscription separately through your Apple ID settings (iOS) or Google Play account settings (Android) before or after deleting your account,
                 otherwise you may continue to be billed.
+              </p>
+              <p className="text-white/90 leading-relaxed mt-3">
+                No longer have the app? Email <a href="mailto:support@sprind.uk?subject=Delete%20my%20account" className="underline">support@sprind.uk</a> from
+                the email address you signed in with, with the subject &ldquo;Delete my account&rdquo;. We will delete the account and all of its data
+                within 30 days and confirm by email.
               </p>
               <p className="text-white/90 leading-relaxed mt-3">
                 <strong>This action cannot be undone.</strong> Please export your data before deleting if you wish to keep a copy.

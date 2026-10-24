@@ -261,6 +261,20 @@ input, textarea, [contenteditable] {
   }
 }
 
+/* ── Enter animations: let go once they finish ───────────────────────
+   tw-animate-css fills `animate-in` forwards, so a faded-in modal overlay
+   stays "animating" its opacity for as long as it is open. Chrome (and so
+   the Android WebView) treats that overlay as a backdrop root: the glass
+   panel inside it blurs only the overlay's dim, and the page behind shows
+   through sharp. WebKit blurs the whole page regardless, so iOS never
+   showed this. `backwards` still holds the start frame during a delay and
+   ends on the element's own styles, so nothing looks different.
+
+   Outside @layer so it beats the utility that sets the shorthand. */
+.animate-in {
+  animation-fill-mode: backwards;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

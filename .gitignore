@@ -58,6 +58,8 @@ next-env.d.ts
 android/keystore.properties
 android/app/*.keystore
 android/app/*.jks
+android/*.keystore
+android/*.jks
 capacitor.config.local.ts
 
 # Logs and temporary files

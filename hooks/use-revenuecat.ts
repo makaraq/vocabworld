@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { RC_ENTITLEMENT, RC_MONTHLY_PKG, RC_YEARLY_PKG } from '@/lib/revenuecat-client'
+import { RC_ENTITLEMENT, RC_MONTHLY_PKG, RC_YEARLY_PKG, revenueCatDisabled } from '@/lib/revenuecat-client'
 
 /**
  * React hook that wraps RevenueCat purchase flows for both Capacitor and web.
@@ -31,6 +31,12 @@ function isNative(): boolean {
   return !!(window as any)?.Capacitor?.isNativePlatform?.()
 }
 
+// The native SDK is never configured while only a Test Store key is set
+// (see initRevenueCat), so calling into it would only fail less clearly.
+function assertPurchasesAvailable() {
+  if (revenueCatDisabled()) throw new Error('Purchases are not available in this version yet.')
+}
+
 export function useRevenueCat(): UseRevenueCatReturn {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -45,6 +51,7 @@ export function useRevenueCat(): UseRevenueCatReturn {
 
     try {
       if (isNative()) {
+        assertPurchasesAvailable()
         const { Purchases } = await import('@revenuecat/purchases-capacitor')
 
         const offerings = await Purchases.getOfferings()
@@ -97,6 +104,7 @@ export function useRevenueCat(): UseRevenueCatReturn {
 
     try {
       if (isNative()) {
+        assertPurchasesAvailable()
         const { Purchases } = await import('@revenuecat/purchases-capacitor')
         const { customerInfo } = await Purchases.restorePurchases()
         return RC_ENTITLEMENT in customerInfo.entitlements.active
@@ -118,6 +126,7 @@ export function useRevenueCat(): UseRevenueCatReturn {
   const getOfferings = useCallback(async (): Promise<RCPackageInfo[]> => {
     try {
       if (isNative()) {
+        assertPurchasesAvailable()
         const { Purchases } = await import('@revenuecat/purchases-capacitor')
         const offerings = await Purchases.getOfferings()
         return (offerings.current?.availablePackages ?? []).map(p => ({
@@ -144,6 +153,7 @@ export function useRevenueCat(): UseRevenueCatReturn {
     try {
       if (!isNative()) return true
 
+      assertPurchasesAvailable()
       const { Purchases, INTRO_ELIGIBILITY_STATUS } = await import('@revenuecat/purchases-capacitor')
 
       const offerings = await Purchases.getOfferings()

@@ -30,6 +30,12 @@ function isNative(): boolean {
 // ─── Initialisation ──────────────────────────────────────────────────────────
 
 let _rcInitialised = false
+let _rcDisabled = false
+
+/** True when the native SDK was left unconfigured because only a Test Store key was set. */
+export function revenueCatDisabled(): boolean {
+  return _rcDisabled
+}
 
 /**
  * Initialise RevenueCat and log in the given Supabase user ID.
@@ -48,6 +54,15 @@ export async function initRevenueCat(supabaseUserId: string): Promise<void> {
       const apiKey = platform === 'android'
         ? (process.env.NEXT_PUBLIC_REVENUECAT_ANDROID_API_KEY || '')
         : (process.env.NEXT_PUBLIC_REVENUECAT_IOS_API_KEY || '')
+
+      // RevenueCat crashes release builds on purpose when they are configured
+      // with a Test Store (test_) key. Until the Play Store key (goog_) is in
+      // .env.local, the app runs without purchases instead of crashing.
+      if (apiKey.startsWith('test_') && process.env.NODE_ENV !== 'development') {
+        console.warn('[RC] Test Store key in a release build; purchases disabled')
+        _rcDisabled = true
+        return
+      }
 
       if (!_rcInitialised) {
         // LOG_LEVEL.DEBUG useful in development — set to ERROR for production builds
