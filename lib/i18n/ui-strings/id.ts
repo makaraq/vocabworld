@@ -31,7 +31,7 @@ export const uiStrings = {
   "tutorial.learning.3.title": "Pengaturanmu",
   "tutorial.learning.3.body": "Kecepatan, putar otomatis, dan lainnya.",
   "tutorial.ready.title": "Semua siap!",
-  "tutorial.ready.body": "Pilih topik dan mulai belajar.",
+  "tutorial.ready.body": "Kamu tahu harus apa. Tunjukkan ke kata-kata itu siapa bosnya.",
   "sentences.loading": "Memuat contoh...",
   "sentences.none": "Tidak ada contoh kalimat untuk kata ini",
   "sentences.loadFailed": "Gagal memuat contoh kalimat",

@@ -31,7 +31,7 @@ export const uiStrings = {
   "tutorial.learning.3.title": "Dina inställningar",
   "tutorial.learning.3.body": "Hastighet, autouppspelning och mer.",
   "tutorial.ready.title": "Allt är klart!",
-  "tutorial.ready.body": "Välj ett ämne och börja lära dig.",
+  "tutorial.ready.body": "Du vet vad du ska göra. Visa orden vem som bestämmer.",
   "sentences.loading": "Laddar exempel...",
   "sentences.none": "Inga exempelmeningar för det här ordet",
   "sentences.loadFailed": "Det gick inte att ladda exempelmeningarna",

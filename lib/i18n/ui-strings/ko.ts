@@ -31,7 +31,7 @@ export const uiStrings = {
   "tutorial.learning.3.title": "내 설정",
   "tutorial.learning.3.body": "속도, 자동 재생 등.",
   "tutorial.ready.title": "준비 완료!",
-  "tutorial.ready.body": "주제를 골라 학습을 시작해 보세요.",
+  "tutorial.ready.body": "뭘 해야 할지 알죠? 단어들에게 누가 대장인지 보여 줘요!",
   "sentences.loading": "예문을 불러오는 중...",
   "sentences.none": "이 단어에 대한 예문이 없습니다",
   "sentences.loadFailed": "예문을 불러오지 못했습니다",

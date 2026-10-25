@@ -7,7 +7,7 @@ import { useT } from '@/components/providers/translation-provider'
 import { hapticsLight } from '@/lib/haptics'
 import type { ThemeId } from '@/lib/themes'
 import { ThemePicker } from './theme-picker'
-import { CardGuide, cardGuideHeight } from '@/components/tutorial/guide-character'
+import { CardGuide } from '@/components/tutorial/guide-character'
 
 // Trying themes on the app itself. The swatches sit in a small panel at the
 // foot of the screen, and its arrows move the app behind it between the
@@ -61,6 +61,16 @@ export function ThemeTool({
   const closingRef = useRef(false)
   // Which way the last arrow went, so the screen name slides in from that side.
   const [dir, setDir] = useState<1 | -1>(1)
+  // The panel's height, for the guide standing on its top edge.
+  const [sheetHeight, setSheetHeight] = useState(0)
+
+  useEffect(() => {
+    const sheet = sheetRef.current
+    if (!open || !guide || !sheet) return
+    const observer = new ResizeObserver(() => setSheetHeight(sheet.offsetHeight))
+    observer.observe(sheet)
+    return () => observer.disconnect()
+  }, [open, guide])
 
   useEffect(() => {
     if (!open) {
@@ -109,9 +119,7 @@ export function ThemeTool({
       // A modal centred on the stage (the lesson settings) can be taller.
       const tallest = Math.max(height, ...Array.from(stage.querySelectorAll<HTMLElement>('[data-theme-tool-extent]'), (el) => el.offsetHeight))
       const regionTop = safeTop + GAP
-      // The guide stands on the panel's top edge, so keep her clear of the app.
-      const guideRoom = guide ? cardGuideHeight('themes') : 0
-      const room = Math.max(120, window.innerHeight - sheet.offsetHeight - guideRoom - SHEET_MARGIN - GAP - regionTop)
+      const room = Math.max(120, window.innerHeight - sheet.offsetHeight - SHEET_MARGIN - GAP - regionTop)
       const scale = Math.min(1, room / tallest)
       // Centre what is shown in the room; the transform's origin is the stage's top.
       const shift = regionTop + (room - tallest * scale) / 2 - top + ((tallest - height) / 2) * scale
@@ -141,7 +149,7 @@ export function ThemeTool({
       window.removeEventListener('resize', schedule)
       probe.remove()
     }
-  }, [open, screen, guide])
+  }, [open, screen])
 
   if (!open || typeof document === 'undefined') return null
 
@@ -189,6 +197,21 @@ export function ThemeTool({
   return createPortal(
     // Covers the screen so the app behind is looked at, not used.
     <div className="fixed inset-0 z-[60] flex items-end justify-center" role="dialog" aria-label={t('theme.intro.title')}>
+      {/* The guide stands on the panel's top edge. She is the panel's
+          sibling, not its child: the glass panel clips its overflow
+          (app/liquid-glass.css), which would hide her. Rendered first so
+          the panel covers her cut-off body, and slides in with it. */}
+      {guide && sheetHeight > 0 && (
+        <div
+          aria-hidden
+          className={`absolute bottom-0 inset-x-0 mx-auto w-full max-w-md pointer-events-none transition-[translate,opacity] duration-500 ${
+            shown ? 'translate-y-0 opacity-100 ease-[cubic-bezier(0.22,1,0.36,1)]' : 'translate-y-full opacity-0 ease-[cubic-bezier(0.55,0,0.75,0.4)]'
+          }`}
+          style={{ height: sheetHeight }}
+        >
+          <CardGuide name="themes" />
+        </div>
+      )}
       <div
         ref={sheetRef}
         className={`relative w-full max-w-md bg-white/10 backdrop-blur-2xl border border-white/15 rounded-t-3xl shadow-2xl px-4 pt-4 space-y-3.5 transition-[translate,opacity] duration-500 ${
@@ -196,7 +219,6 @@ export function ThemeTool({
         }`}
         style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom, 0px))' }}
       >
-        {guide && <CardGuide name="themes" />}
         <div className="flex items-center justify-between gap-3 pl-1">
           <h2 className="text-white font-bold text-base truncate">{t('theme.intro.title')}</h2>
           <button

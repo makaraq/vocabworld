@@ -31,7 +31,7 @@ export const uiStrings = {
   "tutorial.learning.3.title": "Твои настройки",
   "tutorial.learning.3.body": "Скорость, автовоспроизведение и другое.",
   "tutorial.ready.title": "Всё готово!",
-  "tutorial.ready.body": "Выбери тему и начинай учиться.",
+  "tutorial.ready.body": "Ты знаешь, что делать. Покажи этим словам, кто тут главный.",
   "sentences.loading": "Загрузка примеров...",
   "sentences.none": "Для этого слова нет примеров предложений",
   "sentences.loadFailed": "Не удалось загрузить примеры предложений",

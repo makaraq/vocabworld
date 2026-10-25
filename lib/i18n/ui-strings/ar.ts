@@ -31,7 +31,7 @@ export const uiStrings = {
   "tutorial.learning.3.title": "إعداداتك",
   "tutorial.learning.3.body": "السرعة والتشغيل التلقائي والمزيد.",
   "tutorial.ready.title": "أنت جاهز تمامًا!",
-  "tutorial.ready.body": "اختر موضوعًا وابدأ التعلّم.",
+  "tutorial.ready.body": "أنت تعرف ما عليك فعله. أرِ هذه الكلمات من هو الزعيم!",
   "sentences.loading": "جارٍ تحميل الأمثلة...",
   "sentences.none": "لا توجد جمل توضيحية لهذه الكلمة",
   "sentences.loadFailed": "تعذّر تحميل الجمل التوضيحية",

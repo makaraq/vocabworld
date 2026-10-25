@@ -31,7 +31,7 @@ export const uiStrings = {
   "tutorial.learning.3.title": "Jouw instellingen",
   "tutorial.learning.3.body": "Snelheid, automatisch afspelen en meer.",
   "tutorial.ready.title": "Je bent er klaar voor!",
-  "tutorial.ready.body": "Kies een onderwerp en begin met leren.",
+  "tutorial.ready.body": "Je weet wat je moet doen. Laat die woorden zien wie de baas is.",
   "sentences.loading": "Voorbeelden laden...",
   "sentences.none": "Geen voorbeeldzinnen beschikbaar voor dit woord",
   "sentences.loadFailed": "Voorbeeldzinnen konden niet worden geladen",

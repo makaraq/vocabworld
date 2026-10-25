@@ -31,7 +31,7 @@ export const uiStrings = {
   "tutorial.learning.3.title": "Ayarların",
   "tutorial.learning.3.body": "Hız, otomatik oynatma ve daha fazlası.",
   "tutorial.ready.title": "Her şey hazır!",
-  "tutorial.ready.body": "Bir konu seç ve öğrenmeye başla.",
+  "tutorial.ready.body": "Ne yapacağını biliyorsun. Göster şu kelimelere kim patron!",
   "sentences.loading": "Örnekler yükleniyor...",
   "sentences.none": "Bu kelime için örnek cümle bulunmuyor",
   "sentences.loadFailed": "Örnek cümleler yüklenemedi",

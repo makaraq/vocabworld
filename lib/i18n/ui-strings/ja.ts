@@ -31,7 +31,7 @@ export const uiStrings = {
   "tutorial.learning.3.title": "あなたの設定",
   "tutorial.learning.3.body": "速度や自動再生などを調整。",
   "tutorial.ready.title": "準備完了！",
-  "tutorial.ready.body": "トピックを選んで学習を始めよう。",
+  "tutorial.ready.body": "やることはわかってるよね。単語たちに誰がボスか見せつけちゃおう！",
   "sentences.loading": "例文を読み込み中...",
   "sentences.none": "この単語の例文はありません",
   "sentences.loadFailed": "例文を読み込めませんでした",

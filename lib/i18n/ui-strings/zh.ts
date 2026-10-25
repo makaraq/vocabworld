@@ -31,7 +31,7 @@ export const uiStrings = {
   "tutorial.learning.3.title": "你的设置",
   "tutorial.learning.3.body": "语速、自动播放等。",
   "tutorial.ready.title": "一切就绪！",
-  "tutorial.ready.body": "选一个主题，开始学习吧。",
+  "tutorial.ready.body": "你知道该怎么做。让这些单词见识一下谁是老大！",
   "sentences.loading": "正在加载例句...",
   "sentences.none": "该单词暂无例句",
   "sentences.loadFailed": "例句加载失败",

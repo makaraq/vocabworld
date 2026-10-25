@@ -31,7 +31,7 @@ export const uiStrings = {
   "tutorial.learning.3.title": "Seus ajustes",
   "tutorial.learning.3.body": "Velocidade, reprodução automática e mais.",
   "tutorial.ready.title": "Tudo pronto!",
-  "tutorial.ready.body": "Escolha um tópico e comece a aprender.",
+  "tutorial.ready.body": "Você sabe o que fazer. Mostre a essas palavras quem manda.",
   "sentences.loading": "Carregando exemplos...",
   "sentences.none": "Nenhuma frase de exemplo para esta palavra",
   "sentences.loadFailed": "Não foi possível carregar as frases de exemplo",

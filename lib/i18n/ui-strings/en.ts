@@ -46,7 +46,7 @@ export const en = {
   'tutorial.learning.3.title': 'Your settings',
   'tutorial.learning.3.body': 'Speed, auto-play and more.',
   'tutorial.ready.title': "You're all set!",
-  'tutorial.ready.body': 'Pick a topic and start learning.',
+  'tutorial.ready.body': "You know what to do. Go show those words who's boss.",
 
   // ---------- Example sentences modal ----------
   'sentences.loading': 'Loading examples...',

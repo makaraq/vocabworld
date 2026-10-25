@@ -31,7 +31,7 @@ export const uiStrings = {
   "tutorial.learning.3.title": "Tvoje nastavení",
   "tutorial.learning.3.body": "Rychlost, automatické přehrávání a další.",
   "tutorial.ready.title": "Všechno je připraveno!",
-  "tutorial.ready.body": "Vyber si téma a začni se učit.",
+  "tutorial.ready.body": "Víš, co dělat. Ukaž slovíčkům, kdo je tady šéf.",
   "sentences.loading": "Načítání příkladů...",
   "sentences.none": "K tomuto slovu nejsou žádné příkladové věty",
   "sentences.loadFailed": "Příkladové věty se nepodařilo načíst",
