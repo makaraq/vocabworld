@@ -4,8 +4,8 @@ import React, { useEffect, useState } from 'react'
 import { Icon } from '@iconify/react'
 import { getFlagIcon } from '@/utils/flags'
 
-// Tutorial guide: a small girl rises from behind a tile's top-left edge,
-// leans over and points into it once, then stays put. After that only her
+// Tutorial guide: a small girl rises slowly from behind a tile's top edge,
+// grips it, leans over its corner and points into it once, then stays put. After that only her
 // face changes (a smile, a happy "talk", a blink), never her body.
 //
 // Frames were cut from one sprite sheet (public/tutorial/guide-*.webp); the
@@ -28,8 +28,6 @@ const PEEK: Frame[] = [
   { src: '/tutorial/guide-peek-1.webp', x: 61, y: -184, w: 312, h: 205 },
   { src: '/tutorial/guide-peek-2.webp', x: -3, y: -276, w: 341, h: 294 },
 ]
-// Centre of her head in the higher peek pose, from the cut line.
-const PEEK_HEAD_X = 188
 // Tallest peek pose above the cut line, and how far her hands hang below it.
 const PEEK_RISE = 300
 const HAND_DROP = 22
@@ -224,6 +222,18 @@ type Stage = 'hidden' | 'peek' | 'rise' | 'point'
 const FACE_LOOP: [number, number][] = [[0, 1800], [1, 900], [0, 2200], [2, 220], [0, 1600], [2, 220], [0, 400], [1, 700]]
 
 const SPRING = 'cubic-bezier(0.34, 1.56, 0.64, 1)'
+// Long, soft ease-out for her first appearance: no overshoot, no snap.
+const EASE_OUT = 'cubic-bezier(0.16, 1, 0.3, 1)'
+const EASE_IN_OUT = 'cubic-bezier(0.65, 0, 0.35, 1)'
+
+// Her head in the higher peek pose, from the cut line; in the pointing
+// pose, from the gripping hand. The lean glides one onto the other.
+const PEEK_HEAD = { x: 188, y: -189 }
+const POINT_HEAD = { x: POINT_HEAD_X, y: -62 }
+// Leftmost pixel of any peek frame, so she can be kept on the flat part of
+// the tile's edge, clear of its rounded corner.
+const PEEK_MIN_X = -3
+const CORNER_INSET = 18
 
 interface Rect {
   top: number
@@ -240,6 +250,9 @@ interface Props {
 
 export function GuideCharacter({ target, onGreeted }: Props) {
   const [stage, setStage] = useState<Stage>('hidden')
+  // Her hands on the edge show once she is up, so nothing pokes out in
+  // front of the tile while she rises behind it.
+  const [grip, setGrip] = useState(false)
   const [face, setFace] = useState(0)
 
   useEffect(() => {
@@ -247,8 +260,9 @@ export function GuideCharacter({ target, onGreeted }: Props) {
     const at = (ms: number, fn: () => void) => timers.push(setTimeout(fn, ms))
 
     at(150, () => setStage('peek'))
-    at(850, () => setStage('rise'))
-    at(1300, () => { setStage('point'); onGreeted?.() })
+    at(1100, () => setGrip(true))
+    at(1650, () => setStage('rise'))
+    at(2350, () => { setStage('point'); onGreeted?.() })
 
     let i = 0
     const nextFace = (delay: number) => at(delay, () => {
@@ -256,69 +270,81 @@ export function GuideCharacter({ target, onGreeted }: Props) {
       setFace(f)
       nextFace(hold)
     })
-    nextFace(2100)
+    nextFace(3400)
 
     return () => timers.forEach(clearTimeout)
     // Plays once per mount; the overlay remounts it for each showing.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Point: she leans in from above-left of the tile so her body stays off
-  // the label and only her finger reaches into its top-left quarter. Kept on
-  // screen and below the status bar.
-  const anchorLeft = Math.max(target.left + target.width * 0.3 - TIP.x * SCALE, 4)
-  const anchorTop = Math.max(target.top + target.height * 0.28 - TIP.y * SCALE, 24 + POINT_HAIR_TOP * SCALE)
+  // Peek: on the flat part of the tile's top edge, just in from its left corner.
+  const edge = target.top
+  const peekLeft = target.left + CORNER_INSET - PEEK_MIN_X * SCALE
+  const peekHeight = PEEK_RISE * SCALE
+  const handDrop = HAND_DROP * SCALE
+  const peekHead = { x: peekLeft + PEEK_HEAD.x * SCALE, y: edge + PEEK_HEAD.y * SCALE }
+
+  // Point: her head stays about where it was, a little to the left as she
+  // leans over the corner, so her finger lands in the tile. Kept on screen.
+  const anchorLeft = Math.max(peekHead.x - 24 - POINT_HEAD.x * SCALE, 4)
+  const anchorTop = Math.max(peekHead.y - POINT_HEAD.y * SCALE, 24 + POINT_HAIR_TOP * SCALE)
+  const pointHead = { x: anchorLeft + POINT_HEAD.x * SCALE, y: anchorTop + POINT_HEAD.y * SCALE }
   const tipX = anchorLeft + TIP.x * SCALE
   const tipY = anchorTop + TIP.y * SCALE
+  // How far her head travels in the lean.
+  const lean = { x: pointHead.x - peekHead.x, y: pointHead.y - peekHead.y }
 
-  // Peek: rises from behind the tile's top edge right under where her head
-  // will be when she points, so the lean reads as one movement.
-  const peekLeft = anchorLeft + (POINT_HEAD_X - PEEK_HEAD_X) * SCALE
-  const peekHeight = PEEK_RISE * SCALE
-  const peekFrame = stage === 'rise' ? 1 : 0
-  const peekUp = stage === 'peek' || stage === 'rise'
+  const peekFrame = stage === 'rise' || stage === 'point' ? 1 : 0
+  const peekUp = stage !== 'hidden'
   const pointing = stage === 'point'
+
+  // The peek frames, drawn twice: above the edge (where she rises from
+  // behind the tile) and below it (only her hands, over the front).
+  const peekImages = (
+    <div
+      className="absolute"
+      style={{
+        left: 60,
+        transform: pointing
+          ? `translate(${lean.x}px, ${lean.y}px)`
+          : peekUp ? 'translateY(0)' : `translateY(${peekHeight + 10}px)`,
+        transition: pointing ? `transform 560ms ${EASE_IN_OUT}` : `transform 1000ms ${EASE_OUT}`,
+      }}
+    >
+      {PEEK.map((f, i) => (
+        <img
+          key={f.src}
+          src={f.src}
+          alt=""
+          draggable={false}
+          className="absolute max-w-none select-none"
+          style={{
+            left: f.x * SCALE,
+            top: f.y * SCALE,
+            width: f.w * SCALE,
+            height: f.h * SCALE,
+            opacity: i === peekFrame ? 1 : 0,
+            transition: 'opacity 260ms ease-in-out',
+          }}
+        />
+      ))}
+    </div>
+  )
+  const clipBox = { left: peekLeft - 60, width: 380 * SCALE + 120 }
 
   return (
     <div aria-hidden className="absolute inset-0 pointer-events-none">
-      {/* Peek: clipped at the tile's top edge so she comes up from behind it */}
-      <div
-        className="absolute overflow-hidden"
-        style={{
-          left: peekLeft - 40,
-          top: target.top - peekHeight,
-          width: 380 * SCALE + 80,
-          height: peekHeight + HAND_DROP * SCALE,
-          opacity: pointing ? 0 : 1,
-          transition: 'opacity 140ms linear',
-        }}
-      >
+      <div style={{ opacity: pointing ? 0 : 1, transition: 'opacity 280ms ease-in-out' }}>
+        {/* Above the edge: her bottom is cut exactly at the tile's top */}
+        <div className="absolute overflow-hidden" style={{ ...clipBox, top: edge - peekHeight - 40, height: peekHeight + 40 }}>
+          <div className="absolute" style={{ top: peekHeight + 40, left: 0 }}>{peekImages}</div>
+        </div>
+        {/* Below the edge: her hands, gripping it, once she is up */}
         <div
-          className="absolute"
-          style={{
-            left: 40,
-            top: peekHeight,
-            transform: peekUp ? 'translateY(0)' : `translateY(${peekHeight + 10}px)`,
-            transition: `transform 600ms ${SPRING}`,
-          }}
+          className="absolute overflow-hidden"
+          style={{ ...clipBox, top: edge, height: handDrop + 1, opacity: grip ? 1 : 0, transition: 'opacity 200ms ease-out' }}
         >
-          {PEEK.map((f, i) => (
-            <img
-              key={f.src}
-              src={f.src}
-              alt=""
-              draggable={false}
-              className="absolute max-w-none select-none"
-              style={{
-                left: f.x * SCALE,
-                top: f.y * SCALE,
-                width: f.w * SCALE,
-                height: f.h * SCALE,
-                opacity: i === peekFrame ? 1 : 0,
-                transition: 'opacity 120ms linear',
-              }}
-            />
-          ))}
+          <div className="absolute" style={{ top: 0, left: 0 }}>{peekImages}</div>
         </div>
       </div>
 
@@ -326,19 +352,20 @@ export function GuideCharacter({ target, onGreeted }: Props) {
       {pointing && (
         <span
           className="guide-ripple absolute rounded-full border-2 border-white/80"
-          style={{ left: tipX - 14, top: tipY - 14, width: 28, height: 28, animationDelay: '220ms' }}
+          style={{ left: tipX - 14, top: tipY - 14, width: 28, height: 28, animationDelay: '520ms' }}
         />
       )}
 
-      {/* Point: leans over once and holds still; only the face changes */}
+      {/* Point: glides in from where her head was, then holds still; only
+          the face changes */}
       <div
         className="absolute"
         style={{
           left: anchorLeft,
           top: anchorTop,
           opacity: pointing ? 1 : 0,
-          transform: pointing ? 'translate(0, 0)' : 'translate(-3px, 6px)',
-          transition: pointing ? `transform 380ms ${SPRING}, opacity 140ms linear` : 'none',
+          transform: pointing ? 'translate(0, 0)' : `translate(${-lean.x}px, ${-lean.y}px)`,
+          transition: pointing ? `transform 560ms ${EASE_IN_OUT}, opacity 280ms ease-in-out` : 'none',
           filter: 'drop-shadow(0 6px 14px rgba(0,0,0,0.35))',
         }}
       >
@@ -363,6 +390,7 @@ export function GuideCharacter({ target, onGreeted }: Props) {
     </div>
   )
 }
+
 
 // Render inside the card's positioned wrapper, before the card, so the card
 // covers her cut-off body.
