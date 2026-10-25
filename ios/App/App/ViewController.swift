@@ -16,6 +16,9 @@ class ViewController: CAPBridgeViewController {
     """
 
     override func capacitorDidLoad() {
+        // App-local plugins (not npm packages) are registered by hand
+        bridge?.registerPluginInstance(SprindWidgetPlugin())
+
         // Add as a persistent user script (runs on every page load/navigation)
         let userScript = WKUserScript(
             source: disableSelectionJS,

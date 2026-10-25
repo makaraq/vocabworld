@@ -18,7 +18,36 @@
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
 		79AFEA41B698A460D971BE27 /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 197A63ADC3E32D30D4FCBBD7 /* Pods_App.framework */; };
 		B2C4E5F710A2B3D407E8F922 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C4E5F610A2B3D407E8F921 /* ViewController.swift */; };
+		5D1D0A0100000000000000B1 /* SprindWidgetPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1D0A0100000000000000A1 /* SprindWidgetPlugin.swift */; };
+		5D1D0A0100000000000000B2 /* WidgetShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1D0A0100000000000000A2 /* WidgetShared.swift */; };
+		5D1D0A0100000000000000B3 /* WidgetShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1D0A0100000000000000A2 /* WidgetShared.swift */; };
+		5D1D0A0100000000000000B4 /* FlashcardWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1D0A0100000000000000A3 /* FlashcardWidget.swift */; };
+		5D1D0A0100000000000000B5 /* SprindWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5D1D0A0100000000000000A6 /* SprindWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5D1D0A0100000000000000E1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 504EC2FC1FED79650016851F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5D1D0A0100000000000000D1;
+			remoteInfo = SprindWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		5D1D0A0100000000000000D5 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				5D1D0A0100000000000000B5 /* SprindWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		197A63ADC3E32D30D4FCBBD7 /* Pods_App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -36,6 +65,12 @@
 		8560108AC87C5B5A7E947667 /* Pods-App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.release.xcconfig"; path = "Target Support Files/Pods-App/Pods-App.release.xcconfig"; sourceTree = "<group>"; };
 		B2C4E5F610A2B3D407E8F921 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		DB4899B6CBC5D85D0A3EF4F6 /* Pods-App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.debug.xcconfig"; path = "Target Support Files/Pods-App/Pods-App.debug.xcconfig"; sourceTree = "<group>"; };
+		5D1D0A0100000000000000A1 /* SprindWidgetPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SprindWidgetPlugin.swift; sourceTree = "<group>"; };
+		5D1D0A0100000000000000A2 /* WidgetShared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetShared.swift; sourceTree = "<group>"; };
+		5D1D0A0100000000000000A3 /* FlashcardWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashcardWidget.swift; sourceTree = "<group>"; };
+		5D1D0A0100000000000000A4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5D1D0A0100000000000000A5 /* SprindWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SprindWidget.entitlements; sourceTree = "<group>"; };
+		5D1D0A0100000000000000A6 /* SprindWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SprindWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,6 +79,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				79AFEA41B698A460D971BE27 /* Pods_App.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5D1D0A0100000000000000D3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -64,6 +106,8 @@
 				448E04AD2FDA527300F7FD55 /* products.storekit */,
 				504EC3061FED79650016851F /* App */,
 				9D591E983B7F2767AB4EABC4 /* Pods */,
+				5D1D0A0100000000000000C1 /* SprindWidget */,
+				5D1D0A0100000000000000A6 /* SprindWidgetExtension.appex */,
 				16909CAD77C181DE4BDAB0EC /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -75,6 +119,7 @@
 				504EC3071FED79650016851F /* AppDelegate.swift */,
 				C1A2B3D310A2B3D407E8F930 /* SceneDelegate.swift */,
 				B2C4E5F610A2B3D407E8F921 /* ViewController.swift */,
+				5D1D0A0100000000000000A1 /* SprindWidgetPlugin.swift */,
 				504EC30B1FED79650016851F /* Main.storyboard */,
 				504EC30E1FED79650016851F /* Assets.xcassets */,
 				504EC3101FED79650016851F /* LaunchScreen.storyboard */,
@@ -94,6 +139,17 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		5D1D0A0100000000000000C1 /* SprindWidget */ = {
+			isa = PBXGroup;
+			children = (
+				5D1D0A0100000000000000A3 /* FlashcardWidget.swift */,
+				5D1D0A0100000000000000A2 /* WidgetShared.swift */,
+				5D1D0A0100000000000000A4 /* Info.plist */,
+				5D1D0A0100000000000000A5 /* SprindWidget.entitlements */,
+			);
+			path = SprindWidget;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -104,17 +160,36 @@
 				4C3DC4CC39DE32E9D36D6869 /* [CP] Check Pods Manifest.lock */,
 				504EC3001FED79650016851F /* Sources */,
 				504EC3011FED79650016851F /* Frameworks */,
+				5D1D0A0100000000000000D5 /* Embed Foundation Extensions */,
 				504EC3021FED79650016851F /* Resources */,
 				6D56AD68C55F31A8A13DEE58 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				5D1D0A0100000000000000E2 /* PBXTargetDependency */,
 			);
 			name = App;
 			productName = App;
 			productReference = 504EC3041FED79650016851F /* App.app */;
 			productType = "com.apple.product-type.application";
+		};
+		5D1D0A0100000000000000D1 /* SprindWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5D1D0A0100000000000000F1 /* Build configuration list for PBXNativeTarget "SprindWidgetExtension" */;
+			buildPhases = (
+				5D1D0A0100000000000000D2 /* Sources */,
+				5D1D0A0100000000000000D3 /* Frameworks */,
+				5D1D0A0100000000000000D4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SprindWidgetExtension;
+			productName = SprindWidgetExtension;
+			productReference = 5D1D0A0100000000000000A6 /* SprindWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -128,6 +203,10 @@
 					504EC3031FED79650016851F = {
 						CreatedOnToolsVersion = 9.2;
 						LastSwiftMigration = 1100;
+						ProvisioningStyle = Automatic;
+					};
+					5D1D0A0100000000000000D1 = {
+						CreatedOnToolsVersion = 15.0;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -146,6 +225,7 @@
 			projectRoot = "";
 			targets = (
 				504EC3031FED79650016851F /* App */,
+				5D1D0A0100000000000000D1 /* SprindWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -162,6 +242,13 @@
 				50379B232058CBB4000EE86E /* capacitor.config.json in Resources */,
 				504EC30D1FED79650016851F /* Main.storyboard in Resources */,
 				2FAD9763203C412B000D30F8 /* config.xml in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5D1D0A0100000000000000D4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -215,10 +302,29 @@
 				504EC3081FED79650016851F /* AppDelegate.swift in Sources */,
 				C1A2B3D410A2B3D407E8F931 /* SceneDelegate.swift in Sources */,
 				B2C4E5F710A2B3D407E8F922 /* ViewController.swift in Sources */,
+				5D1D0A0100000000000000B1 /* SprindWidgetPlugin.swift in Sources */,
+				5D1D0A0100000000000000B2 /* WidgetShared.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5D1D0A0100000000000000D2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5D1D0A0100000000000000B4 /* FlashcardWidget.swift in Sources */,
+				5D1D0A0100000000000000B3 /* WidgetShared.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5D1D0A0100000000000000E2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5D1D0A0100000000000000D1 /* SprindWidgetExtension */;
+			targetProxy = 5D1D0A0100000000000000E1 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		504EC30B1FED79650016851F /* Main.storyboard */ = {
@@ -396,6 +502,52 @@
 			};
 			name = Release;
 		};
+		5D1D0A0100000000000000F2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = SprindWidget/SprindWidget.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WKW7Y8QM7S;
+				INFOPLIST_FILE = SprindWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0.3;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sprind.app.widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5D1D0A0100000000000000F3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = SprindWidget/SprindWidget.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WKW7Y8QM7S;
+				INFOPLIST_FILE = SprindWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0.3;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sprind.app.widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -413,6 +565,15 @@
 			buildConfigurations = (
 				504EC3171FED79650016851F /* Debug */,
 				504EC3181FED79650016851F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5D1D0A0100000000000000F1 /* Build configuration list for PBXNativeTarget "SprindWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5D1D0A0100000000000000F2 /* Debug */,
+				5D1D0A0100000000000000F3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

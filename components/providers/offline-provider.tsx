@@ -6,6 +6,7 @@ import { offlineManager } from '@/lib/offline/offline-manager'
 import { registerOfflineIcons } from '@/lib/icons/offline-icons'
 import { progressQueue } from '@/lib/offline/progress-queue'
 import { reviewQueue } from '@/lib/offline/review-queue'
+import { syncHomeWidget } from '@/lib/widget/home-widget'
 
 // Register bundled icons/flags at module load — before any <Icon> renders — so
 // they appear offline instead of fetching api.iconify.design.
@@ -32,7 +33,15 @@ export function OfflineProvider() {
     }
     flush()
     window.addEventListener('online', flush)
-    return () => window.removeEventListener('online', flush)
+
+    // Keep the home-screen widget's words in step with the language pair (and
+    // a fresh random set each day). Off the launch path: it fetches words.
+    const widgetTimer = setTimeout(() => { syncHomeWidget().catch(() => {}) }, 5000)
+
+    return () => {
+      window.removeEventListener('online', flush)
+      clearTimeout(widgetTimer)
+    }
   }, [])
 
   return null

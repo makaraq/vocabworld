@@ -9,6 +9,7 @@ import { createClient } from "@/lib/supabase/browser-client"
 import type { PermissionState } from "@/hooks/use-notifications"
 import { hapticsLight, hapticsMedium, hapticsWarning } from "@/lib/haptics"
 import { OfflineDownloadsSection } from "@/components/offline/offline-downloads-section"
+import { HomeWidgetSection } from "@/components/account/home-widget-section"
 import { useT } from "@/components/providers/translation-provider"
 import { resolveAvatar } from "@/lib/avatars/smiley-avatar"
 import { ThemePicker } from "@/components/theme/theme-picker"
@@ -545,6 +546,9 @@ export function ManageAccountModal({
                 </div>
               </div>
             )}
+
+            {/* Home-screen flashcard widget (native apps only) */}
+            <HomeWidgetSection />
 
             {/* Offline downloads */}
             <OfflineDownloadsSection />
