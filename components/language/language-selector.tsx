@@ -3908,16 +3908,16 @@ export function LanguageSelector() {
     }
   }
 
-  const getCurrentContent = () => {
+  const getCurrentContent = (index = currentWordIndex) => {
     // Since vocabulary is now preloaded, we shouldn't see loading states
     if (vocabulary.length === 0) {
-      return { 
-        sourceWord: `No ${targetLanguage} words found`, 
+      return {
+        sourceWord: `No ${targetLanguage} words found`,
         targetWord: `Try a different topic or language combination`,
         category: ''
       }
     }
-    const currentWord = vocabulary[currentWordIndex] || vocabulary[0]
+    const currentWord = vocabulary[index] || vocabulary[0]
     // Debug: Log category info
     if (selectedTopic?.id === 41) {
     }
@@ -4386,6 +4386,180 @@ export function LanguageSelector() {
       clearTimeout(flashcardHoldTimerRef.current)
       flashcardHoldTimerRef.current = null
     }
+  }
+
+  // Tinder-style stack. The next word's card waits under the top one. Drag
+  // the top card and it follows the finger, uncovering the next card, which
+  // grows to full size as the top one leaves; let go far or fast enough and
+  // the top card flies off that side and the card under it becomes the top
+  // card. Moving the card is never a hold, so it cancels the example-sentences
+  // timer. Positions are written straight to the elements, not through state,
+  // so a drag doesn't re-render this component on every frame.
+  const cardSwipeRef = useRef<HTMLDivElement>(null)
+  const cardUnderRef = useRef<HTMLDivElement>(null)
+  const cardDragRef = useRef<{ id: number; x: number; y: number; dx: number; dy: number; t: number; vx: number; moved: boolean } | null>(null)
+  // The two cards a drag moves, from its first move until they settle or the
+  // top card has flown. under is null when the word can't change: the card
+  // only gives a little (give) and springs back.
+  const cardStackRef = useRef<{ top: HTMLDivElement; under: HTMLDivElement | null; give: number; w: number; h: number; r: number; dx: number; dy: number } | null>(null)
+  const cardFrameRef = useRef(0)
+  const cardThrowingRef = useRef(false)
+
+  const startCardStack = (top: HTMLDivElement) => {
+    // The word can't change while audio plays (the arrows are off too).
+    const locked = isPlaying || autoPlayActive || vocabulary.length < 2
+    top.style.zIndex = '10' // over the controls below it
+    cardStackRef.current = {
+      top,
+      under: locked ? null : cardUnderRef.current,
+      give: locked ? 0.25 : 1,
+      w: top.offsetWidth,
+      h: top.offsetHeight,
+      r: parseFloat(getComputedStyle(top.firstElementChild as Element).borderTopLeftRadius) || 0,
+      dx: 0,
+      dy: 0,
+    }
+  }
+
+  // Hands both cards back to their classes.
+  const releaseCardStack = () => {
+    const stack = cardStackRef.current
+    cardStackRef.current = null
+    for (const el of [stack?.top, stack?.under]) {
+      if (!el) continue
+      el.style.transform = ''
+      el.style.zIndex = ''
+      el.style.visibility = ''
+      el.style.clipPath = ''
+    }
+  }
+
+  // Puts the top card at (dx, dy). The cards are see-through, so the next
+  // card shows only where the top card has moved off it; otherwise its word
+  // would show through the top card.
+  const poseCards = (dx: number, dy: number) => {
+    const stack = cardStackRef.current
+    if (!stack) return
+    const { top, under, w, h } = stack
+    stack.dx = dx
+    stack.dy = dy
+    const tilt = Math.max(-18, Math.min(18, dx * 0.06))
+    top.style.transform = `translate(${dx}px, ${dy}px) rotate(${tilt}deg)`
+    if (!under) return
+
+    const s = 0.94 + 0.06 * Math.min(1, Math.hypot(dx, dy) / (w * 0.5))
+    // The top card's own press scale, mid-transition included.
+    const k = new DOMMatrixReadOnly(getComputedStyle(top.firstElementChild as Element).transform).a || 1
+    const hw = (w / 2) * k
+    const hh = (h / 2) * k
+    const r = Math.min(stack.r * k, hw, hh)
+    const cos = Math.cos((tilt * Math.PI) / 180)
+    const sin = Math.sin((tilt * Math.PI) / 180)
+    // The top card's rounded outline, turned and moved like the card, then
+    // put in the next card's own (scaled) frame.
+    const hole: string[] = []
+    for (const [cx, cy, a0] of [[hw - r, r - hh, -90], [hw - r, hh - r, 0], [r - hw, hh - r, 90], [r - hw, r - hh, 180]]) {
+      for (let i = 0; i <= 4; i++) {
+        const a = ((a0 + i * 22.5) * Math.PI) / 180
+        const x = cx + r * Math.cos(a)
+        const y = cy + r * Math.sin(a)
+        hole.push(`${(w / 2 + (x * cos - y * sin + dx) / s).toFixed(1)} ${(h / 2 + (x * sin + y * cos + dy) / s).toFixed(1)}`)
+      }
+    }
+    const m = 40 // room for the next card's shadow
+    under.style.visibility = 'visible'
+    under.style.transform = `scale(${s})`
+    under.style.clipPath = `path(evenodd, "M${-m} ${-m}H${w + m}V${h + m}H${-m}Z M${hole.join('L')}Z")`
+  }
+
+  // Moves the top card from one pose to another frame by frame, so the next
+  // card's cut-out keeps up with it.
+  const tweenCards = (from: [number, number], to: [number, number], duration: number, ease: (t: number) => number, done: () => void) => {
+    const start = performance.now()
+    const frame = (now: number) => {
+      const t = Math.min(1, (now - start) / duration)
+      poseCards(from[0] + (to[0] - from[0]) * ease(t), from[1] + (to[1] - from[1]) * ease(t))
+      if (t < 1) cardFrameRef.current = requestAnimationFrame(frame)
+      else done()
+    }
+    cardFrameRef.current = requestAnimationFrame(frame)
+  }
+
+  const handleCardPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (cardThrowingRef.current || !e.isPrimary) return
+    if (e.pointerType === 'mouse' && e.button !== 0) return
+    e.currentTarget.setPointerCapture(e.pointerId)
+    // Caught on its way back: carry on from where it is. A stack left from
+    // another card (the lesson closed under a drag) is just let go.
+    cancelAnimationFrame(cardFrameRef.current)
+    if (cardStackRef.current && cardStackRef.current.top !== e.currentTarget) releaseCardStack()
+    const caught = cardStackRef.current
+    const dx = caught?.dx ?? 0
+    const dy = caught?.dy ?? 0
+    const give = caught?.give ?? 1
+    cardDragRef.current = { id: e.pointerId, x: e.clientX - dx / give, y: e.clientY - dy / give, dx, dy, t: e.timeStamp, vx: 0, moved: !!caught }
+    if (!caught) handleFlashcardHoldStart(0)
+  }
+
+  const handleCardPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const drag = cardDragRef.current
+    // Once a hold has opened the example sentences, the card stays put.
+    if (!drag || drag.id !== e.pointerId || showExampleModal) return
+    const rawX = e.clientX - drag.x
+    const rawY = e.clientY - drag.y
+    if (!drag.moved) {
+      if (Math.hypot(rawX, rawY) < 10) return
+      drag.moved = true
+      handleFlashcardHoldEnd()
+      startCardStack(e.currentTarget)
+    }
+    const stack = cardStackRef.current
+    if (!stack) return
+    const dx = rawX * stack.give
+    const dy = rawY * stack.give
+    const dt = e.timeStamp - drag.t
+    if (dt > 0) drag.vx = 0.7 * ((dx - drag.dx) / dt) + 0.3 * drag.vx
+    drag.dx = dx
+    drag.dy = dy
+    drag.t = e.timeStamp
+    poseCards(dx, dy)
+  }
+
+  const handleCardPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    const drag = cardDragRef.current
+    if (!drag || drag.id !== e.pointerId) return
+    cardDragRef.current = null
+    handleFlashcardHoldEnd()
+    const stack = cardStackRef.current
+    if (!drag.moved || !stack) return
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    // A finger that paused before lifting isn't flicking.
+    const vx = e.timeStamp - drag.t > 100 ? 0 : drag.vx
+    const flung = Math.abs(vx) > 0.5 && Math.sign(vx) === Math.sign(drag.dx) && Math.abs(drag.dx) > 30
+    const thrown = e.type === 'pointerup' && stack.under !== null && (Math.abs(drag.dx) > stack.w * 0.35 || flung)
+
+    if (!thrown) {
+      if (reduceMotion) return releaseCardStack()
+      // Springs back with a little overshoot.
+      return tweenCards([drag.dx, drag.dy], [0, 0], 420, (t) => 1 + 2.2 * (t - 1) ** 3 + 1.2 * (t - 1) ** 2, releaseCardStack)
+    }
+
+    cardThrowingRef.current = true
+    const land = () => {
+      // The card under is keyed by its word, so the same element becomes the
+      // top card and nothing redraws. flushSync puts the new word in place
+      // before this frame paints. handleNext is read now, not at release, in
+      // case anything moved on meanwhile; not at all if the lesson closed.
+      if (stack.top.isConnected) flushSync(() => _arrowNavRef.current.handleNext())
+      releaseCardStack()
+      cardThrowingRef.current = false
+    }
+    if (reduceMotion) return land()
+    const toX = Math.sign(drag.dx) * (window.innerWidth / 2 + stack.w)
+    // A harder flick leaves faster.
+    const duration = Math.max(180, Math.min(320, Math.abs(toX - drag.dx) / Math.max(Math.abs(vx), 1)))
+    tweenCards([drag.dx, drag.dy], [toX, drag.dy * 2], duration, (t) => 1 - (1 - t) ** 2, land)
   }
 
   const handleAddToPlaylist = () => {
@@ -4874,7 +5048,7 @@ export function LanguageSelector() {
 
               <div
                 data-tour="learning-flashcards"
-                className="mb-8 [@media(min-height:700px)]:mb-12"
+                className="relative mb-8 [@media(min-height:700px)]:mb-12"
                 onTouchStart={(e) => e.stopPropagation()}
                 aria-live="polite"
                 aria-atomic="true"
@@ -4890,89 +5064,90 @@ export function LanguageSelector() {
                     left after the chrome (34.5rem), between 7rem and 12rem. It
                     is in rem rather than a px breakpoint because tablets scale
                     rem by 1.28 (globals.css) and media queries don't see that. */}
-                <div
-                  data-scale={holdingCardIndex === 0 ? 'press' : undefined}
-                  data-lesson-card
-                  className="flashcard-scale relative bg-black/40 border border-white/20 rounded-2xl px-6 py-6 shadow-lg [--art:clamp(7rem,calc(100dvh_-_34.5rem),12rem)] h-[calc(var(--art)_+_10.5rem)] flex flex-col items-center justify-center"
-                  onTouchStart={(e) => {
-                    e.stopPropagation()
-                    handleFlashcardHoldStart(0)
-                  }}
-                  onTouchEnd={(e) => {
-                    e.stopPropagation()
-                    handleFlashcardHoldEnd()
-                  }}
-                  onMouseDown={(e) => {
-                    e.stopPropagation()
-                    handleFlashcardHoldStart(0)
-                  }}
-                  onMouseUp={(e) => {
-                    e.stopPropagation()
-                    handleFlashcardHoldEnd()
-                  }}
-                  onMouseLeave={handleFlashcardHoldEnd}
-                >
-                  {(() => {
-                    const word = vocabulary[currentWordIndex]
-                    // Custom playlist words carry a dictionary id, not a vocabulary id.
-                    const src = word && !word.isCustomWord ? getWordImageUrl(word.id) : null
-                    return src ? (
-                      <div className="mb-3 flex-1 min-h-0 w-full flex items-center justify-center">
-                        <img
-                          key={src}
-                          src={src}
-                          alt=""
-                          draggable={false}
-                          className="block h-full max-h-[var(--art)] w-auto max-w-full object-contain select-none pointer-events-none"
-                        />
-                      </div>
-                    ) : null
-                  })()}
-                  {(() => {
-                    const source = getCurrentContent().sourceWord
-                    const target = getCurrentContent().targetWord
-                    // Longer words and phrases step down a size so they stay on
-                    // one line where they can. CJK characters are about twice as
-                    // wide as Latin ones, so they count double.
-                    const length = [...source].reduce(
-                      (n, ch) => n + (/[\u1100-\u115f\u2e80-\ua4cf\uac00-\ud7a3\uf900-\ufaff\uff00-\uff60]/.test(ch) ? 2 : 1),
-                      0
-                    )
-                    const size = length <= 10 ? 'text-4xl' : length <= 14 ? 'text-3xl' : 'text-2xl'
-                    return (
-                      <>
+                {/* A stack of two: the next word's card waits under the top
+                    card, hidden until a drag uncovers it. Each is keyed by its
+                    word, so on a throw the card under becomes the top card as
+                    the same element. The outer layer carries the throw; the card
+                    inside keeps its own press/audio scale, and the open/back
+                    morph measures the top one at rest. Touches stop here
+                    (touchstart above) so the page's swipe-back never sees a
+                    card drag. */}
+                {(vocabulary.length > 1 ? [(currentWordIndex + 1) % vocabulary.length, currentWordIndex] : [currentWordIndex]).map((index) => {
+                  const top = index === currentWordIndex
+                  const word = vocabulary[index]
+                  // Custom playlist words carry a dictionary id, not a vocabulary id.
+                  const art = word && !word.isCustomWord ? getWordImageUrl(word.id) : null
+                  const { sourceWord: source, targetWord: target } = getCurrentContent(index)
+                  // Longer words and phrases step down a size so they stay on
+                  // one line where they can. CJK characters are about twice as
+                  // wide as Latin ones, so they count double.
+                  const length = [...source].reduce(
+                    (n, ch) => n + (/[\u1100-\u115f\u2e80-\ua4cf\uac00-\ud7a3\uf900-\ufaff\uff00-\uff60]/.test(ch) ? 2 : 1),
+                    0
+                  )
+                  const size = length <= 10 ? 'text-4xl' : length <= 14 ? 'text-3xl' : 'text-2xl'
+                  return (
+                    <div
+                      key={index}
+                      ref={top ? cardSwipeRef : cardUnderRef}
+                      aria-hidden={top ? undefined : true}
+                      inert={!top}
+                      className={top ? 'relative touch-none select-none cursor-grab active:cursor-grabbing' : 'absolute inset-0 invisible pointer-events-none'}
+                      onPointerDown={top ? handleCardPointerDown : undefined}
+                      onPointerMove={top ? handleCardPointerMove : undefined}
+                      onPointerUp={top ? handleCardPointerUp : undefined}
+                      onPointerCancel={top ? handleCardPointerUp : undefined}
+                      onTouchMove={top ? (e) => e.stopPropagation() : undefined}
+                      onTouchEnd={top ? (e) => e.stopPropagation() : undefined}
+                    >
+                      <div
+                        data-scale={top && holdingCardIndex === 0 ? 'press' : undefined}
+                        data-lesson-card={top ? '' : undefined}
+                        className="flashcard-scale relative bg-black/40 border border-white/20 rounded-2xl px-6 py-6 shadow-lg [--art:clamp(7rem,calc(100dvh_-_34.5rem),12rem)] h-[calc(var(--art)_+_10.5rem)] flex flex-col items-center justify-center"
+                      >
+                        {art ? (
+                          <div className="mb-3 flex-1 min-h-0 w-full flex items-center justify-center">
+                            <img
+                              key={art}
+                              src={art}
+                              alt=""
+                              draggable={false}
+                              className="block h-full max-h-[var(--art)] w-auto max-w-full object-contain select-none pointer-events-none"
+                            />
+                          </div>
+                        ) : null}
                         <p
-                          data-speaking={currentAudioStep === 'training' || undefined}
+                          data-speaking={(top && currentAudioStep === 'training') || undefined}
                           className={`flashcard-word font-medium leading-tight text-white/95 ${size}`}
                         >
                           <span className="sr-only">{getTranslatedLanguageName(targetLanguageCode)}: </span>
                           {source}
                         </p>
-                        {settings.showPhonetics && phonetics[currentWordIndex]?.target && (
-                          <p className="text-white/45 text-sm italic mt-1.5" aria-label={t('learning.aria.pronunciation', { ipa: phonetics[currentWordIndex].target })}>/{phonetics[currentWordIndex].target}/</p>
+                        {settings.showPhonetics && phonetics[index]?.target && (
+                          <p className="text-white/45 text-sm italic mt-1.5" aria-label={t('learning.aria.pronunciation', { ipa: phonetics[index].target })}>/{phonetics[index].target}/</p>
                         )}
                         <div className="w-12 h-px bg-white/20 my-3.5" aria-hidden="true" />
                         <p
-                          data-speaking={currentAudioStep === 'main' || undefined}
+                          data-speaking={(top && currentAudioStep === 'main') || undefined}
                           className="flashcard-word text-xl leading-snug text-white/60"
                         >
                           <span className="sr-only">{getTranslatedLanguageName(nativeLanguageCode)}: </span>
                           {target}
                         </p>
-                      </>
-                    )
-                  })()}
-                  {showPlayCount && currentPlayCount > 0 && (
-                    <span
-                      className={`absolute top-3 right-4 text-white/70 text-sm font-medium tabular-nums transition-opacity duration-500 ease-out ${
-                        playCountVisible ? 'opacity-100' : 'opacity-0'
-                      }`}
-                    >
-                      <span className="sr-only">{t('learning.aria.playCount', { n: currentPlayCount })}</span>
-                      <span aria-hidden="true">×{currentPlayCount}</span>
-                    </span>
-                  )}
-                </div>
+                        {top && showPlayCount && currentPlayCount > 0 && (
+                          <span
+                            className={`absolute top-3 right-4 text-white/70 text-sm font-medium tabular-nums transition-opacity duration-500 ease-out ${
+                              playCountVisible ? 'opacity-100' : 'opacity-0'
+                            }`}
+                          >
+                            <span className="sr-only">{t('learning.aria.playCount', { n: currentPlayCount })}</span>
+                            <span aria-hidden="true">×{currentPlayCount}</span>
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
 
               {vocabulary.length === 0 && !isLoading ? (
