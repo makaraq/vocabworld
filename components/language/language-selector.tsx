@@ -135,6 +135,11 @@ import {
 // its neighbours.
 import { getTopicIcon } from "@/lib/icons/topic-icons"
 
+// Topic open/back morph: a critically damped spring (no bounce), sampled
+// for CSS linear(). ~70% of the move in the first quarter, then a long soft
+// settle.
+const MORPH_SPRING = 'linear(0 0%, 0.0661 4%, 0.2033 8%, 0.3555 13%, 0.4966 17%, 0.6164 21%, 0.7131 25%, 0.7884 29%, 0.8458 33%, 0.8887 38%, 0.9204 42%, 0.9434 46%, 0.9601 50%, 0.972 54%, 0.9805 58%, 0.9865 63%, 0.9907 67%, 0.9937 71%, 0.9958 75%, 0.9972 79%, 0.9983 83%, 0.999 88%, 0.9994 92%, 0.9998 96%, 1 100%)'
+
 // Question text translations for "Choose the language you want to learn"
 const QUESTION_TEXT_TRANSLATIONS: Record<string, string> = {
   'ar': 'اختر اللغة التي تريد تعلمها',
@@ -3318,53 +3323,301 @@ export function LanguageSelector() {
   const FADE_MS = 200
   const fadeOutStartRef = useRef(0)
   const beginPageFade = () => {
-    // The morph below snapshots the page as it is; a dimmed grid would show.
+    // The morph below starts from the page as it is; a dimmed grid would show.
     if (canMorphPages()) return
     fadeOutStartRef.current = Date.now()
     setIsTransitioning(true)
   }
 
-  // 🎬 Where the web view supports View Transitions (iOS 18+, current
-  // Android), opening a topic morphs its tile into the lesson: the tile's
-  // card grows into the flashcard card, its icon and name fly up into the
-  // header, and the rest crossfades. Back plays it in reverse into the same
-  // tile. Timing lives in app/globals.css (::view-transition-*). The lesson
-  // side carries its names permanently; the tile gets them only for the
-  // moment of the swap, since only one element may hold each name.
+  // 🎬 Opening a topic morphs its tile into the lesson: the tile's box grows
+  // into the flashcard card, its icon and name fly up into the header, the
+  // play controls rise in last. Back plays it in reverse into the same tile.
+  // All of it animates the live page (Web Animations), never snapshots: the
+  // app background and the glass panel stay real and untouched throughout.
+  // (View Transitions were tried and dropped: on iOS their snapshots lose the
+  // panel's backdrop blur, so the screen paled and shifted colour mid-way.)
+  // What is being left is cloned into a "ghost" layer inside the panel that
+  // fades away (or, going back, flies into the tile) while the new page
+  // fades in under it.
   const canMorphPages = () =>
     typeof document !== 'undefined' &&
-    typeof document.startViewTransition === 'function' &&
+    typeof Element.prototype.animate === 'function' &&
     !window.matchMedia('(prefers-reduced-motion: reduce)').matches &&
     // The theme tool swaps pages in place under a scaled app.
     !document.documentElement.classList.contains('theme-tool-open')
 
-  const nameTopicTile = (topicId: number | undefined, on: boolean) => {
-    if (topicId == null) return
-    const tile = document.querySelector<HTMLElement>(`[data-tour="topic-grid"] [data-topic-tile="${topicId}"]`)
-    if (!tile) return
-    const set = (el: HTMLElement | null, name: string) => { if (el) el.style.viewTransitionName = on ? name : '' }
-    set(tile, 'topic-card')
-    set(tile.querySelector<HTMLElement>('[data-topic-tile-icon]'), 'topic-icon')
-    set(tile.querySelector<HTMLElement>('[data-topic-tile-title]'), 'topic-title')
-  }
+  const morphCleanupRef = useRef<(() => void) | null>(null)
 
   const morphToPage = (page: "learning" | "confirmation", topicId: number | undefined) => {
+    // A morph still running jumps to its end first.
+    morphCleanupRef.current?.()
+
+    const panel = document.querySelector<HTMLElement>('[data-page-panel]')
     const swap = () => {
       fadeOutStartRef.current = 0
       setCurrentPage(page)
       setIsTransitioning(false)
     }
-    if (page === 'learning') {
-      nameTopicTile(topicId, true)
-      const vt = document.startViewTransition(() => flushSync(swap))
-      vt.finished.finally(() => nameTopicTile(topicId, false))
-    } else {
-      const vt = document.startViewTransition(() => {
-        flushSync(swap)
-        nameTopicTile(topicId, true)
-      })
-      vt.finished.finally(() => nameTopicTile(topicId, false))
+    if (!panel) return swap()
+
+    const opening = page === 'learning'
+    const find = (sel: string) => panel.querySelector<HTMLElement>(sel)
+    const tileSel = topicId == null ? null : `[data-tour="topic-grid"] [data-topic-tile="${topicId}"]`
+    const tileParts = () => {
+      const tile = tileSel ? find(tileSel) : null
+      return tile && {
+        box: tile,
+        icon: tile.querySelector<HTMLElement>('[data-topic-tile-icon]'),
+        title: tile.querySelector<HTMLElement>('[data-topic-tile-title]'),
+      }
     }
+    const lessonParts = () => {
+      const box = find('[data-lesson-card]')
+      return box && {
+        box,
+        icon: find('[data-lesson-icon]'),
+        title: find('[data-lesson-title]'),
+      }
+    }
+
+    // ── Before the swap: what is on screen now ──
+    const panelRect = panel.getBoundingClientRect()
+    const fromParts = opening ? tileParts() : lessonParts()
+    const outgoing = [...panel.children].filter(
+      (el): el is HTMLElement => el instanceof HTMLElement && !el.hasAttribute('data-morph-ghost') && el.offsetHeight > 0,
+    )
+    // Visible part of the panel, so a tile scrolled out of view is not used.
+    const inPanel = (r: DOMRect) => r.width > 0 && r.left >= panelRect.left - 1 && r.right <= panelRect.right + 1 && r.top >= panelRect.top - 1 && r.bottom <= panelRect.bottom + 1
+
+    const ghost = document.createElement('div')
+    ghost.setAttribute('data-morph-ghost', '')
+    ghost.setAttribute('aria-hidden', 'true')
+    ghost.inert = true
+    ghost.style.cssText = 'position:absolute;inset:0;pointer-events:none;z-index:5;'
+    const place = (el: HTMLElement, r: DOMRect) => {
+      el.style.position = 'absolute'
+      el.style.margin = '0'
+      el.style.left = `${r.left - panelRect.left - panel.clientLeft}px`
+      el.style.top = `${r.top - panelRect.top - panel.clientTop}px`
+      el.style.width = `${r.width}px`
+      el.style.height = `${r.height}px`
+      el.style.boxSizing = 'border-box'
+    }
+    // A clone that no lookup (tutorial, this code) can mistake for the page.
+    const cloneOf = (el: HTMLElement) => {
+      const c = el.cloneNode(true) as HTMLElement
+      for (const n of [c, ...c.querySelectorAll<HTMLElement>('[data-tour],[data-topic-tile],[data-lesson-card],[data-lesson-icon],[data-lesson-title],[id]')]) {
+        n.removeAttribute('data-tour')
+        n.removeAttribute('data-topic-tile')
+        n.removeAttribute('data-lesson-card')
+        n.removeAttribute('data-lesson-icon')
+        n.removeAttribute('data-lesson-title')
+        n.removeAttribute('id')
+      }
+      return c
+    }
+    // Text is measured by its glyphs, not its (often full-width) box.
+    const textRect = (el: HTMLElement) => {
+      const range = document.createRange()
+      range.selectNodeContents(el)
+      const r = range.getBoundingClientRect()
+      return r.width ? r : el.getBoundingClientRect()
+    }
+
+    const from = fromParts && {
+      box: fromParts.box.getBoundingClientRect(),
+      icon: fromParts.icon?.getBoundingClientRect(),
+      title: fromParts.title ? textRect(fromParts.title) : undefined,
+    }
+    const usable = from && inPanel(from.box) ? from : null
+
+    // The page being left, as it looks, in the ghost layer. The pieces that
+    // morph are left out of it (opening) or kept separate to fly (back).
+    const pageGhosts: HTMLElement[] = []
+    const scrolls: [HTMLElement | undefined, number, number][] = []
+    for (const el of outgoing) {
+      const c = cloneOf(el)
+      place(c, el.getBoundingClientRect())
+      if (usable && fromParts) {
+        // Same structure, so the morphing pieces sit at the same index path.
+        const path = (node: HTMLElement) => {
+          const p: number[] = []
+          for (let n: HTMLElement | null = node; n && n !== el; n = n.parentElement) {
+            p.unshift([...(n.parentElement?.children ?? [])].indexOf(n))
+          }
+          return p
+        }
+        const at = (p: number[]) => p.reduce<Element | undefined>((n, i) => n?.children[i], c) as HTMLElement | undefined
+        for (const part of [fromParts.box, fromParts.icon, fromParts.title]) {
+          if (part && el.contains(part)) {
+            const twin = at(path(part))
+            if (twin) twin.style.visibility = 'hidden'
+          }
+        }
+      }
+      ghost.appendChild(c)
+      pageGhosts.push(c)
+      // A copy keeps no scroll position (the topic pager is one): note it.
+      const all = [el, ...el.querySelectorAll<HTMLElement>('*')]
+      const copies = [c, ...c.querySelectorAll<HTMLElement>('*')]
+      all.forEach((n, i) => {
+        if (n.scrollLeft || n.scrollTop) scrolls.push([copies[i], n.scrollLeft, n.scrollTop])
+      })
+    }
+
+    // ── Swap ──
+    flushSync(swap)
+    panel.appendChild(ghost)
+    for (const [el, left, top] of scrolls) {
+      if (!el) continue
+      // No snapping or smooth scrolling while it is put back.
+      el.style.scrollSnapType = 'none'
+      el.style.scrollBehavior = 'auto'
+      el.scrollLeft = left
+      el.scrollTop = top
+    }
+
+    const toParts = opening ? lessonParts() : tileParts()
+    const incoming = [...panel.children].filter(
+      (el): el is HTMLElement => el instanceof HTMLElement && el !== ghost && el.offsetHeight > 0,
+    )
+    const controls = opening ? find('[data-tour="learning-controls"]') : null
+    const morphing = !!(usable && toParts && inPanel(toParts.box.getBoundingClientRect()))
+
+    const animations: Animation[] = []
+    const run = (el: Element, frames: Keyframe[], options: KeyframeAnimationOptions) => {
+      const a = el.animate(frames, { fill: 'both', ...options })
+      animations.push(a)
+      return a
+    }
+    const SPRING = CSS.supports?.('animation-timing-function', 'linear(0, 1)') ? MORPH_SPRING : 'cubic-bezier(0.32, 0.72, 0, 1)'
+    const MOVE_MS = 620
+    // Moves and scales an element from one screen box to another.
+    const flip = (a: DOMRect, b: DOMRect) => ({
+      x: a.left - b.left,
+      y: a.top - b.top,
+      sx: a.width / b.width,
+      sy: a.height / b.height,
+    })
+
+    // Everything in the new page but the morphing pieces fades in.
+    const fadeInExcept = (roots: HTMLElement[], keep: (HTMLElement | null | undefined)[], delay: number) => {
+      const kept = keep.filter(Boolean) as HTMLElement[]
+      const walk = (el: HTMLElement) => {
+        if (kept.includes(el)) return
+        if (kept.some((k) => el.contains(k))) {
+          for (const child of el.children) if (child instanceof HTMLElement) walk(child)
+          return
+        }
+        run(el, [{ opacity: 0 }, { opacity: 1 }], { duration: 260, delay, easing: 'ease-out' })
+      }
+      roots.forEach(walk)
+    }
+
+    if (morphing && usable && toParts) {
+      const to = {
+        box: toParts.box.getBoundingClientRect(),
+        icon: toParts.icon?.getBoundingClientRect(),
+        title: toParts.title ? textRect(toParts.title) : undefined,
+      }
+      // Corners stay round while the box is scaled.
+      const radius = parseFloat(getComputedStyle(toParts.box).borderTopLeftRadius) || 16
+
+      if (opening) {
+        // The real card grows out of the tile's box; its contents come in once
+        // it has mostly arrived.
+        const f = flip(usable.box, to.box)
+        run(toParts.box, [
+          { transformOrigin: '0 0', transform: `translate(${f.x}px, ${f.y}px) scale(${f.sx}, ${f.sy})`, borderRadius: `${radius / f.sx}px / ${radius / f.sy}px` },
+          { transformOrigin: '0 0', transform: 'none', borderRadius: `${radius}px` },
+        ], { duration: MOVE_MS, easing: SPRING })
+        for (const child of toParts.box.children) {
+          run(child, [{ opacity: 0 }, { opacity: 1 }], { duration: 300, delay: 170, easing: 'ease-out' })
+        }
+        // Header icon and title fly up from the tile's.
+        for (const [a, b, el] of [[usable.icon, to.icon, toParts.icon], [usable.title, to.title, toParts.title]] as const) {
+          if (!a?.height || !b?.height || !el) continue
+          const s = a.height / b.height
+          run(el, [
+            { transformOrigin: '0 0', transform: `translate(${a.left - b.left}px, ${a.top - b.top}px) scale(${s})` },
+            { transformOrigin: '0 0', transform: 'none' },
+          ], { duration: MOVE_MS, easing: SPRING })
+        }
+        fadeInExcept(incoming, [toParts.box, toParts.icon, toParts.title, controls], 70)
+        if (controls) {
+          run(controls, [
+            { opacity: 0, transform: 'translateY(18px) scale(0.96)' },
+            { opacity: 1, transform: 'none' },
+          ], { duration: 480, delay: 180, easing: SPRING })
+        }
+        // The rest of the page left behind clears quickly.
+        for (const g of pageGhosts) run(g, [{ opacity: 1 }, { opacity: 0 }], { duration: 160, easing: 'ease-out' })
+      } else {
+        // Back: the lesson card, icon and title fly into the tile as ghosts;
+        // the real tile takes over as they land.
+        const fromCard = cloneOf(fromParts!.box)
+        place(fromCard, usable.box)
+        ghost.appendChild(fromCard)
+        const f = flip(to.box, usable.box)
+        run(fromCard, [
+          { transformOrigin: '0 0', transform: 'none', borderRadius: `${radius}px` },
+          { transformOrigin: '0 0', transform: `translate(${f.x}px, ${f.y}px) scale(${f.sx}, ${f.sy})`, borderRadius: `${radius / f.sx}px / ${radius / f.sy}px` },
+        ], { duration: MOVE_MS, easing: SPRING })
+        for (const child of fromCard.children) {
+          run(child, [{ opacity: 1 }, { opacity: 0 }], { duration: 140, easing: 'ease-out' })
+        }
+        const flyers: HTMLElement[] = [fromCard]
+        for (const [a, b, src] of [[usable.icon, to.icon, fromParts!.icon], [usable.title, to.title, fromParts!.title]] as const) {
+          if (!a?.height || !b?.height || !src) continue
+          const c = cloneOf(src)
+          place(c, a)
+          // A title clone keeps its glyph box, not its full-width one.
+          c.style.whiteSpace = 'nowrap'
+          c.style.overflow = 'visible'
+          ghost.appendChild(c)
+          flyers.push(c)
+          const s = b.height / a.height
+          run(c, [
+            { transformOrigin: '0 0', transform: 'none' },
+            { transformOrigin: '0 0', transform: `translate(${b.left - a.left}px, ${b.top - a.top}px) scale(${s})` },
+          ], { duration: MOVE_MS, easing: SPRING })
+        }
+        // The real tile and its parts stay hidden until the flyers land,
+        // then trade places with them in one short crossfade.
+        const land = MOVE_MS * 0.62
+        run(toParts.box, [
+          { opacity: 0 },
+          { opacity: 0, offset: land / (land + 160) },
+          { opacity: 1 },
+        ], { duration: land + 160, easing: 'linear' })
+        for (const c of flyers) {
+          run(c, [{ opacity: 1 }, { opacity: 0 }], { duration: 160, delay: land, easing: 'ease-out' })
+        }
+        fadeInExcept(incoming, [toParts.box], 60)
+        // The rest of the lesson clears quickly.
+        for (const g of pageGhosts) run(g, [{ opacity: 1 }, { opacity: 0 }], { duration: 160, easing: 'ease-out' })
+      }
+    } else {
+      // Nothing to morph between (playlists, a tile out of view): crossfade.
+      fadeInExcept(incoming, [], 60)
+      for (const g of pageGhosts) run(g, [{ opacity: 1 }, { opacity: 0 }], { duration: 160, easing: 'ease-out' })
+    }
+
+    // Done: drop the ghosts and every leftover inline animation.
+    let finished = false
+    const cleanup = () => {
+      if (finished) return
+      finished = true
+      animations.forEach((a) => a.cancel())
+      ghost.remove()
+      if (morphCleanupRef.current === cleanup) morphCleanupRef.current = null
+    }
+    morphCleanupRef.current = cleanup
+    Promise.all(animations.map((a) => a.finished)).then(cleanup, cleanup)
+    // Timers still run where frames don't (app sent to the background
+    // mid-morph): never leave the ghost or a hidden tile behind.
+    setTimeout(cleanup, 1500)
+    if (!animations.length) cleanup()
   }
 
   const transitionToPage = (page: "learning" | "confirmation", topicId?: number) => {
@@ -4443,8 +4696,10 @@ export function LanguageSelector() {
         } ${completionBorderClass}`}
       >
         <div className="flex flex-col items-center justify-center h-full gap-2">
-          <div data-topic-tile-icon className="flex-shrink-0 flex items-center justify-center">
-            <Icon icon={getTopicIcon(topic.id)} className="w-12 h-12 xs:w-14 xs:h-14 sm:w-16 sm:h-16 mx-auto" style={{ color: 'rgba(255,255,255,0.8)' }} />
+          {/* Sized here, not by the icon, which is empty until it has
+              loaded: keeps the label still and gives the morph a box. */}
+          <div data-topic-tile-icon className="flex-shrink-0 flex items-center justify-center w-12 h-12 xs:w-14 xs:h-14 sm:w-16 sm:h-16 mx-auto">
+            <Icon icon={getTopicIcon(topic.id)} className="w-full h-full" style={{ color: 'rgba(255,255,255,0.8)' }} />
           </div>
           <p data-topic-tile-title className="text-white/90 text-base xs:text-lg sm:text-xl font-medium leading-tight px-1 text-center w-full">{getTopicDisplayName(topic.id, topic.name)}</p>
         </div>
@@ -4459,7 +4714,7 @@ export function LanguageSelector() {
 
   return (
     <div data-theme-tool-stage className="w-full max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-2 sm:px-3 h-full max-h-[95vh] flex items-center">
-      <div className={`bg-white/5 backdrop-blur-3xl border border-white/15 rounded-2xl sm:rounded-3xl px-3 sm:px-5 md:px-7 py-4 sm:py-5 md:py-6 shadow-2xl w-full max-h-full overflow-hidden ${isTransitioning ? 'bg-white/10' : 'bg-white/5'}`}>
+      <div data-page-panel className={`relative bg-white/5 backdrop-blur-3xl border border-white/15 rounded-2xl sm:rounded-3xl px-3 sm:px-5 md:px-7 py-4 sm:py-5 md:py-6 shadow-2xl w-full max-h-full overflow-hidden ${isTransitioning ? 'bg-white/10' : 'bg-white/5'}`}>
         {currentPage === "learning" && selectedTopic?.id === -1 && (
           /* Search Word Learning - Custom word search mode */
           <div
@@ -4503,13 +4758,16 @@ export function LanguageSelector() {
                 </button>
 
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 justify-center">
-                  {/* Topic Icon */}
-                  <Icon
-                    icon={getTopicIcon(selectedTopic?.id)}
-                    className="w-8 h-8 sm:w-9 sm:h-9 flex-shrink-0"
-                    style={{ color: 'rgba(255,255,255,0.8)', viewTransitionName: 'topic-icon' }}
-                  />
-                  <h1 className="text-xl sm:text-2xl md:text-3xl font-medium text-white text-center truncate" style={{ viewTransitionName: 'topic-title' }}>
+                  {/* Topic Icon. The wrapper is what the open/back morph moves:
+                      Icon swaps its own element once the icon has loaded. */}
+                  <span data-lesson-icon className="flex flex-shrink-0 w-8 h-8 sm:w-9 sm:h-9">
+                    <Icon
+                      icon={getTopicIcon(selectedTopic?.id)}
+                      className="w-full h-full"
+                      style={{ color: 'rgba(255,255,255,0.8)' }}
+                    />
+                  </span>
+                  <h1 className="text-xl sm:text-2xl md:text-3xl font-medium text-white text-center truncate" data-lesson-title>
                     {selectedTopic ? getTopicDisplayName(selectedTopic.id, selectedTopic.name) : ''}
                   </h1>
                 </div>
@@ -4602,7 +4860,7 @@ export function LanguageSelector() {
                     rem by 1.28 (globals.css) and media queries don't see that. */}
                 <div
                   data-scale={holdingCardIndex === 0 ? 'press' : undefined}
-                  style={{ viewTransitionName: 'topic-card' }}
+                  data-lesson-card
                   className="flashcard-scale relative bg-black/40 border border-white/20 rounded-2xl px-6 py-6 shadow-lg [--art:clamp(7rem,calc(100dvh_-_34.5rem),12rem)] h-[calc(var(--art)_+_10.5rem)] flex flex-col items-center justify-center"
                   onTouchStart={(e) => {
                     e.stopPropagation()
@@ -4686,7 +4944,7 @@ export function LanguageSelector() {
                   </Button>
                 </div>
               ) : (
-                <div data-tour="learning-controls" className="flex items-center justify-center gap-8" style={{ viewTransitionName: 'lesson-controls' }}>
+                <div data-tour="learning-controls" className="flex items-center justify-center gap-8">
                   <button
                     onClick={handlePrevious}
                     onTouchStart={() => setHoldingNavButton('previous')}
