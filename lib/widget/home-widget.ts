@@ -13,7 +13,7 @@
 import { Capacitor, registerPlugin } from '@capacitor/core'
 import { getCurrentUiLang, loadUiStrings, lookup } from '@/lib/i18n/ui-strings'
 import { languageName } from '@/lib/offline/offline-manager'
-import { hasWordImage } from '@/lib/word-images'
+import { getWordImageUrl } from '@/lib/word-images'
 
 export interface WidgetStatus {
   /** The widget exists on this OS version (iOS 17+, any Android). */
@@ -129,7 +129,7 @@ function toWidgetWord(w: any, targetCode: string): WidgetWord | null {
     word,
     translation,
     audio,
-    image: hasWordImage(w.id) ? `${ORIGIN}/word-images/${w.id}.webp` : null,
+    image: getWordImageUrl(w.id) ? `${ORIGIN}/word-images/${w.id}.webp` : null,
   }
 }
 
