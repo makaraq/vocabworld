@@ -463,6 +463,24 @@ input, textarea, [contenteditable] {
     transform: translateZ(0);
   }
 
+  /* …except inside the topic pager, which scrolls natively. Its tiles paint
+     into the scroller's own tiled layer, which WebKit draws ahead in the
+     scroll direction, so the next page is ready before a swipe reveals it
+     and the swipe moves one layer instead of a hundred. Pressed tiles set
+     an inline transform, which still wins. */
+  .cap-native .section-pager :is(button, [class*="rounded-2xl"], [class*="rounded-xl"]) {
+    -webkit-transform: none;
+    transform: none;
+  }
+
+  .section-pager {
+    scrollbar-width: none;
+  }
+
+  .section-pager::-webkit-scrollbar {
+    display: none;
+  }
+
   /* ── Glass morphism (all platforms) ──────────────────────────────── */
   @supports (-webkit-backdrop-filter: blur(20px)) {
     .bg-white\/5 {

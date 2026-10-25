@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } from "react"
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Topic, VocabularyWord, VocabularyResponse, getTopics, getVocabularyForTopic } from "@/lib/database"
@@ -262,53 +262,61 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
 }) => {
   const { t, tPlural } = useT()
 
-  // ── Ref-based drag state (no re-renders during drag → 60 fps) ──
+  // ── Native paging ──
+  // The strip is a real scroll container with mandatory scroll-snap, so a
+  // swipe belongs to the OS: on iOS it's a UIScrollView that tracks the
+  // finger at the display's full refresh rate off the main thread, with
+  // native momentum, rubber-banding and a snap you can catch mid-flight.
+  // It used to be dragged by JS touch handlers moving a CSS transform,
+  // which ran at 60 fps at best, trailed the finger, ignored touches while
+  // a snap settled and stalled on the re-render at release.
   const sliderRef = useRef<HTMLDivElement | null>(null)
 
   // Always-current section value for the ref callback (avoids stale closure)
   const currentSectionForRefCallback = useRef(currentSection)
   currentSectionForRefCallback.current = currentSection
 
+  // The section the scroll position last reported, so a change that came
+  // from scrolling isn't scrolled to a second time.
+  const reportedSection = useRef(currentSection)
+  // Where a scroll started from code (dots, keyboard, the theme tool) is
+  // heading. The pages it passes on the way stay out of the title.
+  const scrollTarget = useRef<number | null>(null)
+  // A desktop mouse drag that moved, so the click it ends in is swallowed.
+  const mouseDragged = useRef(false)
+
   // Ref callback fires synchronously when the DOM element is created — before
-  // useLayoutEffect and before the browser paints — so the slider is already at
-  // the correct position on the very first frame. This prevents the flash of the
+  // useLayoutEffect and before the browser paints — so the strip is already at
+  // the correct page on the very first frame. This prevents the flash of the
   // Account section (index 0) that appeared when TopicSlider remounted after
   // leaving the learning page.
   //
-  // It also owns the `transitionend` listener that clears `transitioning`.
-  // That used to live in a `useEffect([])`, which never re-ran — but this
-  // subtree is torn down and rebuilt whenever the learning page opens, so
-  // after coming back the listener was still bound to the discarded node.
-  // The first swipe then set `transitioning` and nothing ever cleared it,
-  // and the menu stopped answering swipes until a reload.
-  const clearSnapListener = useRef<(() => void) | null>(null)
+  // It also owns the ResizeObserver: this subtree is torn down and rebuilt
+  // whenever the learning page opens, and an observer set up once in an
+  // effect would stay bound to the discarded node.
+  const stopResizeObserver = useRef<(() => void) | null>(null)
 
   const sliderRefCallback = useCallback((el: HTMLDivElement | null) => {
-    clearSnapListener.current?.()
-    clearSnapListener.current = null
+    stopResizeObserver.current?.()
+    stopResizeObserver.current = null
     sliderRef.current = el
     if (!el) return
 
-    el.style.transform = `translateX(${-currentSectionForRefCallback.current * 100}%)`
+    reportedSection.current = currentSectionForRefCallback.current
+    el.scrollLeft = reportedSection.current * el.clientWidth
 
-    const onSnapEnd = () => {
-      el.style.transition = ''
-      drag.current.transitioning = false
-    }
-    el.addEventListener('transitionend', onSnapEnd)
-    clearSnapListener.current = () => el.removeEventListener('transitionend', onSnapEnd)
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+    // Rotation or a resized window changes the page width: stay on the page.
+    if (typeof ResizeObserver === 'undefined') return
+    let width = el.clientWidth
+    const ro = new ResizeObserver(() => {
+      if (el.clientWidth === width) return
+      width = el.clientWidth
+      el.scrollLeft = reportedSection.current * width
+    })
+    ro.observe(el)
+    stopResizeObserver.current = () => ro.disconnect()
+  }, [])
 
-  const drag = useRef({
-    startX: 0,
-    currentX: 0,
-    offset: 0,
-    dragging: false,
-    transitioning: false,
-    screenW: 0,
-    raf: 0,
-  })
-  const snapGuard = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const dots = useRef({
     startX: null as number | null,
     endX: null as number | null,
@@ -369,130 +377,81 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
     }
   }, [currentSection])
 
-  // ── Direct-DOM drag helpers (no setState → no re-renders → 60 fps) ──
-  const applyTransform = (section: number, offset: number) => {
-    if (!sliderRef.current) return
-    const pct = -section * 100 + (offset / drag.current.screenW) * 100
-    sliderRef.current.style.transform = `translateX(${pct}%)`
+  // The page under the middle of the strip is the current section, so the
+  // title and dots flip over at the halfway point, like a page control.
+  const handleScroll = () => {
+    const el = sliderRef.current
+    if (!el || !el.clientWidth) return
+    const page = Math.max(0, Math.min(sections.length - 1, Math.round(el.scrollLeft / el.clientWidth)))
+    if (scrollTarget.current !== null) {
+      if (page !== scrollTarget.current) return
+      scrollTarget.current = null
+    }
+    if (page === reportedSection.current) return
+    reportedSection.current = page
+    setCurrentSection(page)
   }
 
-  const snapTo = (section: number) => {
-    if (!sliderRef.current) return
-    sliderRef.current.style.transition = 'transform 300ms cubic-bezier(0.25,0.46,0.45,0.94)'
-    sliderRef.current.style.transform = `translateX(${-section * 100}%)`
-
-    // Snapping back to where the strip already sits changes nothing, so no
-    // transition runs and no `transitionend` arrives. Release the guard on a
-    // timer too, or that case would freeze the menu just as surely.
-    if (snapGuard.current) clearTimeout(snapGuard.current)
-    snapGuard.current = setTimeout(() => {
-      if (sliderRef.current) sliderRef.current.style.transition = ''
-      drag.current.transitioning = false
-    }, 360)
+  // A finger, wheel or mouse takes over from a scroll started in code.
+  const releaseScrollTarget = () => {
+    if (scrollTarget.current === null) return
+    scrollTarget.current = null
+    handleScroll()
   }
 
-  // Set initial position before first paint to prevent flash of section 0 (Account) on remount
-  useLayoutEffect(() => {
-    if (!sliderRef.current) return
-    sliderRef.current.style.transform = `translateX(${-currentSection * 100}%)`
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Sync slider position whenever currentSection changes externally (dots, keyboard)
+  // Follow section changes made elsewhere (dots, keyboard, the theme tool)
   useEffect(() => {
-    snapTo(currentSection)
+    if (currentSection === reportedSection.current) return
+    reportedSection.current = currentSection
+    const el = sliderRef.current
+    if (!el) return
+    const left = currentSection * el.clientWidth
+    if (Math.abs(el.scrollLeft - left) < 1) return
+    scrollTarget.current = currentSection
+    el.scrollTo({ left, behavior: 'smooth' })
   }, [currentSection])
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (drag.current.transitioning) return
-    const d = drag.current
-    d.startX = e.targetTouches[0].clientX
-    d.currentX = d.startX
-    d.dragging = false
-    d.offset = 0
-    d.screenW = window.innerWidth
-    if (sliderRef.current) sliderRef.current.style.transition = 'none'
-  }
+  // Desktop mouse drag. Touch and trackpads scroll the strip natively; a
+  // mouse can't, so it drags with snapping off and glides to a page on release.
+  const handlePointerDown = (e: React.PointerEvent) => {
+    releaseScrollTarget()
+    mouseDragged.current = false
+    const el = sliderRef.current
+    if (!el || e.pointerType !== 'mouse' || e.button !== 0) return
+    const startX = e.clientX
+    const startLeft = el.scrollLeft
+    const from = Math.round(startLeft / el.clientWidth)
+    el.style.scrollSnapType = 'none'
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (drag.current.transitioning) return
-    const d = drag.current
-    d.currentX = e.targetTouches[0].clientX
-    d.dragging = true
-    let diff = d.currentX - d.startX
-    // Rubber-band at edges
-    if ((currentSection === 0 && diff > 0) || (currentSection === sections.length - 1 && diff < 0)) {
-      diff *= 0.3
-    }
-    d.offset = Math.max(-d.screenW * 0.8, Math.min(d.screenW * 0.8, diff))
-    cancelAnimationFrame(d.raf)
-    d.raf = requestAnimationFrame(() => applyTransform(currentSection, d.offset))
-  }
-
-  const handleTouchEnd = () => {
-    const d = drag.current
-    cancelAnimationFrame(d.raf)
-    if (!d.dragging) return
-
-    const distance = d.startX - d.currentX
-    const threshold = Math.min(50, d.screenW * 0.15)
-    const dragPct = Math.abs(d.offset) / d.screenW
-
-    let next = currentSection
-    if ((distance > threshold || (distance > 0 && dragPct > 0.3)) && currentSection < sections.length - 1) {
-      next = currentSection + 1
-    } else if ((distance < -threshold || (distance < 0 && dragPct > 0.3)) && currentSection > 0) {
-      next = currentSection - 1
+    const onMove = (me: PointerEvent) => {
+      const dx = me.clientX - startX
+      if (Math.abs(dx) > 5) mouseDragged.current = true
+      el.scrollLeft = startLeft - dx
     }
 
-    d.dragging = false
-    d.offset = 0
-    d.transitioning = true
-    snapTo(next)
-    if (next !== currentSection) setCurrentSection(next)
-  }
+    const onUp = (ue: PointerEvent) => {
+      document.removeEventListener('pointermove', onMove)
+      document.removeEventListener('pointerup', onUp)
+      const dx = ue.clientX - startX
+      const threshold = Math.min(50, el.clientWidth * 0.15)
+      let next = from
+      if (dx < -threshold && from < sections.length - 1) next = from + 1
+      else if (dx > threshold && from > 0) next = from - 1
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (drag.current.transitioning) return
-    const d = drag.current
-    d.startX = e.clientX
-    d.currentX = d.startX
-    d.dragging = false
-    d.offset = 0
-    d.screenW = window.innerWidth
-    if (sliderRef.current) sliderRef.current.style.transition = 'none'
-
-    const onMove = (me: MouseEvent) => {
-      if (d.transitioning) return
-      d.currentX = me.clientX
-      d.dragging = true
-      let diff = d.currentX - d.startX
-      if ((currentSection === 0 && diff > 0) || (currentSection === sections.length - 1 && diff < 0)) diff *= 0.3
-      d.offset = Math.max(-d.screenW * 0.8, Math.min(d.screenW * 0.8, diff))
-      cancelAnimationFrame(d.raf)
-      d.raf = requestAnimationFrame(() => applyTransform(currentSection, d.offset))
-    }
-
-    const onUp = () => {
-      cancelAnimationFrame(d.raf)
-      if (d.dragging) {
-        const distance = d.startX - d.currentX
-        const threshold = Math.min(50, d.screenW * 0.15)
-        const dragPct = Math.abs(d.offset) / d.screenW
-        let next = currentSection
-        if ((distance > threshold || (distance > 0 && dragPct > 0.3)) && currentSection < sections.length - 1) next = currentSection + 1
-        else if ((distance < -threshold || (distance < 0 && dragPct > 0.3)) && currentSection > 0) next = currentSection - 1
-        d.transitioning = true
-        snapTo(next)
-        if (next !== currentSection) setCurrentSection(next)
+      // Snapping comes back once the glide lands, or it would cut it short
+      let restored = false
+      const restoreSnap = () => {
+        if (restored) return
+        restored = true
+        el.style.scrollSnapType = ''
       }
-      d.dragging = false
-      d.offset = 0
-      document.removeEventListener('mousemove', onMove)
-      document.removeEventListener('mouseup', onUp)
+      el.addEventListener('scrollend', restoreSnap, { once: true })
+      setTimeout(restoreSnap, 700)
+      el.scrollTo({ left: next * el.clientWidth, behavior: 'smooth' })
     }
 
-    document.addEventListener('mousemove', onMove)
-    document.addEventListener('mouseup', onUp)
+    document.addEventListener('pointermove', onMove)
+    document.addEventListener('pointerup', onUp)
   }
 
   const currentSectionData = sections[currentSection]
@@ -507,22 +466,25 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
         </h2>
       </div>
 
-      {/* Sliding container with drag support */}
-      <div 
-        className="flex-1 overflow-hidden"
-        style={{ touchAction: 'none' }}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        onMouseDown={handleMouseDown}
-      >
+      {/* Pages: a native horizontal scroller, one section per snap point */}
+      <div className="flex-1 overflow-hidden">
         <div
           ref={sliderRefCallback}
-          className="flex h-full"
-          style={{ willChange: 'transform', cursor: 'grab' }}
+          className="section-pager flex h-full overflow-x-auto overflow-y-hidden overscroll-x-contain snap-x snap-mandatory"
+          style={{ cursor: 'grab' }}
+          onScroll={handleScroll}
+          onTouchStart={releaseScrollTarget}
+          onWheel={releaseScrollTarget}
+          onPointerDown={handlePointerDown}
+          onClickCapture={(e) => {
+            if (!mouseDragged.current) return
+            mouseDragged.current = false
+            e.stopPropagation()
+            e.preventDefault()
+          }}
         >
           {sections.map((section, sectionIndex) => (
-            <div key={sectionIndex} className="w-full h-full flex-shrink-0 px-2">
+            <div key={sectionIndex} className="w-full h-full flex-shrink-0 px-2 snap-start snap-always">
               {/* Account section special content */}
               {section.isAccount ? (
                 <div className="h-full flex flex-col space-y-2.5 xs:space-y-3 sm:space-y-3">
@@ -693,9 +655,9 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
             if (Math.abs(distance) > 50) {
               e.stopPropagation()
               if (distance > 0 && currentSection < sections.length - 1) {
-                drag.current.transitioning = true; setCurrentSection(currentSection + 1)
+                setCurrentSection(currentSection + 1)
               } else if (distance < 0 && currentSection > 0) {
-                drag.current.transitioning = true; setCurrentSection(currentSection - 1)
+                setCurrentSection(currentSection - 1)
               }
               dots.current = { startX: null, endX: null, dragging: false }
               return
@@ -709,13 +671,14 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
             const tabId = btn?.getAttribute('id')
             const idx = tabId ? parseInt(tabId.replace('section-tab-', ''), 10) : -1
             if (idx >= 0 && idx < sections.length && idx !== currentSection) {
-              drag.current.transitioning = true; setCurrentSection(idx)
+              setCurrentSection(idx)
             }
           }
           dots.current = { startX: null, endX: null, dragging: false }
         }}
         onMouseDown={(e) => {
           const dt = dots.current
+          const nav = e.currentTarget // React clears currentTarget once the handler returns
           dt.startX = e.clientX; dt.endX = null; dt.dragging = false
 
           const onMove = (me: MouseEvent) => {
@@ -727,16 +690,16 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
               const distance = dt.startX - dt.endX
               if (Math.abs(distance) > 50) {
                 if (distance > 0 && currentSection < sections.length - 1) {
-                  drag.current.transitioning = true; setCurrentSection(currentSection + 1)
+                  setCurrentSection(currentSection + 1)
                 } else if (distance < 0 && currentSection > 0) {
-                  drag.current.transitioning = true; setCurrentSection(currentSection - 1)
+                  setCurrentSection(currentSection - 1)
                 }
               } else if (!dt.dragging) {
-                const rect = e.currentTarget.getBoundingClientRect()
+                const rect = nav.getBoundingClientRect()
                 const x = ue.clientX - rect.left
                 const idx = Math.floor(x / (rect.width / sections.length))
                 if (idx >= 0 && idx < sections.length && idx !== currentSection) {
-                  drag.current.transitioning = true; setCurrentSection(idx)
+                  setCurrentSection(idx)
                 }
               }
             }
@@ -758,18 +721,12 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
               aria-label={t('sections.aria.navigateTo', { section: section.name })}
               id={`section-tab-${index}`}
               onClick={() => {
-                if (!drag.current.dragging && !drag.current.transitioning && !dots.current.dragging) {
-                  drag.current.transitioning = true
-                  setCurrentSection(index)
-                }
+                if (!dots.current.dragging) setCurrentSection(index)
               }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault()
-                  if (!drag.current.dragging && !drag.current.transitioning) {
-                    drag.current.transitioning = true
-                    setCurrentSection(index)
-                  }
+                  setCurrentSection(index)
                 }
                 if (e.key === 'ArrowRight' && index < sections.length - 1) {
                   e.preventDefault()
