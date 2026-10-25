@@ -3448,8 +3448,7 @@ export function LanguageSelector() {
           return p
         }
         const at = (p: number[]) => p.reduce<Element | undefined>((n, i) => n?.children[i], c) as HTMLElement | undefined
-        // Going back, the header icon and title fade out with the page.
-        for (const part of opening ? [fromParts.box, fromParts.icon, fromParts.title] : [fromParts.box]) {
+        for (const part of [fromParts.box, fromParts.icon, fromParts.title]) {
           if (part && el.contains(part)) {
             const twin = at(path(part))
             if (twin) twin.style.visibility = 'hidden'
@@ -3559,44 +3558,22 @@ export function LanguageSelector() {
         // The rest of the page left behind clears quickly.
         for (const g of pageGhosts) run(g, [{ opacity: 1 }, { opacity: 0 }], { duration: 160, easing: 'ease-out' })
       } else {
-        // Back: a copy of the tile, in the ghost layer above the grid, shrinks
-        // from the card's size into the tile's slot by its real size, not a
-        // scale, so its icon and name stay centred inside it all the way (a
-        // label flown on its own path reached a top-row slot long before the
-        // box and stuck out of it). The card's contents ride on it and fade
-        // as the tile's own label fades in. Landed, the copy is pixel for
-        // pixel the real tile, which takes over in the same frame.
-        // A calm, even ease-out with no long tail: a spring's last few pixels
-        // creep over ~0.3 s and on a phone that settles as a tremor.
+        // Back: the real tile itself shrinks from the card's size into its
+        // place, so the box never fades or swaps on landing. The lesson's
+        // contents ride on it and clear quickly; the header icon and title
+        // fly down and hand over to the tile's own while it settles.
+        // A calm, even ease-out with no long tail: the spring's last few
+        // pixels creep over ~0.3 s and on a phone that settles as a tremor.
         const BACK_MS = 460
         const CALM = 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
-        const box = cloneOf(toParts.box)
-        place(box, to.box)
-        box.style.transform = 'none'
-        box.style.transition = 'none'
-        // The grid was just rebuilt, so the tile's icon may not have loaded
-        // yet; the lesson header shows the same one, already drawn.
-        const boxIcon = box.querySelector<HTMLElement>('[data-topic-tile-icon]')
-        const drawnIcon = fromParts!.icon?.querySelector('svg')
-        if (boxIcon && !boxIcon.querySelector('svg') && drawnIcon) {
-          const svg = drawnIcon.cloneNode(true) as SVGElement
-          svg.setAttribute('class', 'w-full h-full')
-          boxIcon.replaceChildren(svg)
-        }
-        ghost.appendChild(box)
-        const at = (r: DOMRect) => ({
-          left: `${r.left - panelRect.left - panel.clientLeft}px`,
-          top: `${r.top - panelRect.top - panel.clientTop}px`,
-          width: `${r.width}px`,
-          height: `${r.height}px`,
-        })
-        run(box, [at(usable.box), at(to.box)], { duration: BACK_MS, easing: CALM })
-        for (const child of box.children) {
-          run(child, [{ opacity: 0 }, { opacity: 1 }], { duration: 240, delay: 70, easing: 'ease-out' })
-        }
-        // The real tile waits, hidden, under its copy.
-        run(toParts.box, [{ opacity: 0 }, { opacity: 0 }], { duration: BACK_MS })
-        // The card's contents, without its box, moving with the copy.
+        const tileRadius = parseFloat(getComputedStyle(toParts.box).borderTopLeftRadius) || radius
+        const g = flip(usable.box, to.box)
+        const shrink: Keyframe[] = [
+          { transformOrigin: '0 0', transform: `translate(${g.x}px, ${g.y}px) scale(${g.sx}, ${g.sy})`, borderRadius: `${tileRadius / g.sx}px / ${tileRadius / g.sy}px` },
+          { transformOrigin: '0 0', transform: 'none', borderRadius: `${tileRadius}px` },
+        ]
+        run(toParts.box, shrink, { duration: BACK_MS, easing: CALM })
+        // The card's contents, without its box, moving with the tile.
         const contents = cloneOf(fromParts!.box)
         place(contents, to.box)
         contents.style.background = 'transparent'
@@ -3604,17 +3581,38 @@ export function LanguageSelector() {
         contents.style.boxShadow = 'none'
         contents.style.backdropFilter = 'none'
         ghost.appendChild(contents)
-        // Laid out at the card's size, then scaled down with the box.
+        // Laid out at the card's size, then scaled down with the tile.
         contents.style.width = `${usable.box.width}px`
         contents.style.height = `${usable.box.height}px`
-        const g = flip(usable.box, to.box)
         run(contents, [
           { transformOrigin: '0 0', transform: `translate(${g.x}px, ${g.y}px)` },
           { transformOrigin: '0 0', transform: `scale(${1 / g.sx}, ${1 / g.sy})` },
         ], { duration: BACK_MS, easing: CALM })
-        run(contents, [{ opacity: 1 }, { opacity: 0 }], { duration: 180, easing: 'ease-out' })
+        run(contents, [{ opacity: 1 }, { opacity: 0 }], { duration: 140, easing: 'ease-out' })
+        // Icon and title: flown down, then traded for the tile's own over the
+        // final stretch, landing together with the box.
+        const handFrom = BACK_MS * 0.8
+        const handFor = BACK_MS * 0.2
+        for (const [a, b, src, real] of [[usable.icon, to.icon, fromParts!.icon, toParts.icon], [usable.title, to.title, fromParts!.title, toParts.title]] as const) {
+          if (real) {
+            run(real, [{ opacity: 0 }, { opacity: 0, offset: handFrom / (handFrom + handFor) }, { opacity: 1 }], { duration: handFrom + handFor, easing: 'linear' })
+          }
+          if (!a?.height || !b?.height || !src) continue
+          const c = cloneOf(src)
+          place(c, a)
+          // A title clone keeps its glyph box, not its full-width one.
+          c.style.whiteSpace = 'nowrap'
+          c.style.overflow = 'visible'
+          ghost.appendChild(c)
+          const s = b.height / a.height
+          run(c, [
+            { transformOrigin: '0 0', transform: 'none' },
+            { transformOrigin: '0 0', transform: `translate(${b.left - a.left}px, ${b.top - a.top}px) scale(${s})` },
+          ], { duration: BACK_MS, easing: CALM })
+          run(c, [{ opacity: 1 }, { opacity: 1, offset: handFrom / (handFrom + handFor) }, { opacity: 0 }], { duration: handFrom + handFor, easing: 'linear' })
+        }
         fadeInExcept(incoming, [toParts.box], 60)
-        // The rest of the lesson, header icon and title included, clears.
+        // The rest of the lesson clears quickly.
         for (const p of pageGhosts) run(p, [{ opacity: 1 }, { opacity: 0 }], { duration: 160, easing: 'ease-out' })
       }
     } else {
