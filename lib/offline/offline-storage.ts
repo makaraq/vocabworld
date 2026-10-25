@@ -3,13 +3,14 @@
 // so offline data (vocabulary JSON + audio blobs) lives in IndexedDB instead.
 
 const DB_NAME = 'vw-offline'
-const DB_VERSION = 1
+const DB_VERSION = 2
 
 // Object stores:
-//  packs — one record per downloaded language pair (download state + stats)
-//  data  — cached JSON API responses (vocabulary per topic, topics list, translations)
-//  audio — audio blobs keyed `a:${languageCode}:${wordId}`
-export const STORES = ['packs', 'data', 'audio'] as const
+//  packs  — one record per downloaded language pair (download state + stats)
+//  data   — cached JSON API responses (vocabulary per topic, topics list, translations)
+//  audio  — audio blobs keyed `a:${languageCode}:${wordId}`
+//  images — flashcard art blobs keyed `i:${wordId}` (shared by every language)
+export const STORES = ['packs', 'data', 'audio', 'images'] as const
 export type StoreName = (typeof STORES)[number]
 
 let dbPromise: Promise<IDBDatabase> | null = null
@@ -27,6 +28,7 @@ function openDb(): Promise<IDBDatabase> {
       if (!db.objectStoreNames.contains('packs')) db.createObjectStore('packs', { keyPath: 'id' })
       if (!db.objectStoreNames.contains('data')) db.createObjectStore('data', { keyPath: 'key' })
       if (!db.objectStoreNames.contains('audio')) db.createObjectStore('audio', { keyPath: 'key' })
+      if (!db.objectStoreNames.contains('images')) db.createObjectStore('images', { keyPath: 'key' })
     }
     req.onsuccess = () => {
       const db = req.result

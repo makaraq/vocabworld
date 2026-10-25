@@ -18,10 +18,19 @@ execSync('CAPACITOR_BUILD=true npx next build', { cwd: root, stdio: 'inherit', e
 fs.rmSync(outDir, { recursive: true, force: true })
 fs.mkdirSync(outDir, { recursive: true })
 
-// 3. Copy public/ assets
+// 3. Copy public/ assets, minus what the app never reads from its bundle:
+//  - the audio lookup CSVs (~37 MB), read only by the server's audio API
+//  - the flashcard art, which the app loads from the site and caches
+//    (lib/offline/word-image-cache.ts) so the install doesn't grow with it
 const publicDir = path.join(root, 'public')
+const skipFromBundle = new Set([
+  path.join(publicDir, 'data', 'backblaze-urls-20250909-180354.csv'),
+  path.join(publicDir, 'data', 'common-phrases-b2-urls.csv'),
+  path.join(publicDir, 'data', 'verb-b2-urls.csv'),
+  path.join(publicDir, 'word-images'),
+])
 if (fs.existsSync(publicDir)) {
-  copyDir(publicDir, outDir)
+  copyDir(publicDir, outDir, skipFromBundle)
 }
 
 // 4. Copy _next/static bundles
@@ -37,13 +46,14 @@ copyHtmlPages(appDir, outDir)
 
 console.log('out/ assembled successfully.')
 
-function copyDir(src, dest) {
+function copyDir(src, dest, skip = new Set()) {
   fs.mkdirSync(dest, { recursive: true })
   for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
     const srcPath = path.join(src, entry.name)
     const destPath = path.join(dest, entry.name)
+    if (skip.has(srcPath)) continue
     if (entry.isDirectory()) {
-      copyDir(srcPath, destPath)
+      copyDir(srcPath, destPath, skip)
     } else {
       fs.copyFileSync(srcPath, destPath)
     }

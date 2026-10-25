@@ -81,9 +81,6 @@ export const uiStringContext: Partial<Record<UiKey, string>> = {
     'Warning shown before account deletion. Keep every <b>…</b> pair intact around the same content. "Apple ID → Subscriptions" and "Google Play → Subscriptions" are OS navigation paths — translate the words but keep the → arrows.',
   'account.delete.confirmHint':
     '{word} is the literal English word "delete" the user must type — do NOT translate the placeholder or add articles that break it. Keep <b>{word}</b> intact.',
-  'offline.idleDesc': '{size} is a size label like "≈200 MB".',
-  'offline.eta.underMinute': 'Suffix after a byte count, starts with "· ".',
-  'offline.eta.minutes': 'Suffix after a byte count, starts with "· ". {n} = minutes.',
   'offline.other.paused': '{size} is a byte size like "120 MB".',
   'searchWord.placeholder': '{language} is a language name, e.g. "Spanish".',
   'searchWord.noResults': '{word} is the word the user typed; keep the quotes around it (or the natural quote marks for this language).',

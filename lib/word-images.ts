@@ -98,7 +98,22 @@ const WORD_IMAGE_IDS = new Set<number>([
   1104, 1105, 1106, 1107, 1108, // common phrases: Where is the hotel? – What time does the tour start?
 ])
 
+// The art is not bundled into the native apps (it would grow the install with
+// every topic), so the bundled app loads it from the live site, the same way
+// its /api/ calls are rerouted in app/layout.tsx. lib/offline/word-image-cache.ts
+// keeps a copy of each image so it shows offline too.
+function imageOrigin(): string {
+  if (typeof window === 'undefined') return ''
+  const cap = (window as any).Capacitor
+  const bundled = cap?.isNativePlatform?.() && window.location.hostname === 'localhost' && !window.location.port
+  return bundled ? 'https://www.sprind.uk' : ''
+}
+
+export function hasWordImage(vocabularyId: unknown): boolean {
+  return WORD_IMAGE_IDS.has(Number(vocabularyId))
+}
+
 export function getWordImageUrl(vocabularyId: unknown): string | null {
   const id = Number(vocabularyId)
-  return WORD_IMAGE_IDS.has(id) ? `/word-images/${id}.webp` : null
+  return WORD_IMAGE_IDS.has(id) ? `${imageOrigin()}/word-images/${id}.webp` : null
 }

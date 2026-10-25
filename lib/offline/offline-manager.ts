@@ -3,6 +3,7 @@
 // A "pack" is one native→learning language pair. Downloading a pack stores:
 //  - the topics list and every topic's vocabulary JSON (the "words")
 //  - the pronunciation audio blob for every word in BOTH languages
+//  - the flashcard art for every word that has some (shared by all packs)
 // in IndexedDB, so the learn flow keeps working with no connection.
 //
 // Downloads are resumable (already-stored audio is skipped), abortable, and
@@ -13,6 +14,8 @@ import {
   idbGet, idbPut, idbDelete, idbGetAll, idbGetAllKeys,
   idbDeleteByPrefix, isIndexedDbSupported,
 } from './offline-storage'
+import { fetchAndStoreWordImage, forgetWordImages, imageKey } from './word-image-cache'
+import { hasWordImage } from '@/lib/word-images'
 
 // Same name→code mapping the API routes use, so offline lookups resolve
 // language params identically to the server.
@@ -50,7 +53,7 @@ export function normalizeLangParam(value: string | null): string {
 }
 
 export type PackStatus = 'downloading' | 'paused' | 'storage-warning' | 'error' | 'complete'
-export type PackPhase = 'words' | 'audio' | 'done'
+export type PackPhase = 'words' | 'images' | 'audio' | 'done'
 
 export interface OfflinePack {
   id: string // `${nativeCode}>${targetCode}`
@@ -64,6 +67,8 @@ export interface OfflinePack {
   audioDone: number
   audioTotal: number
   audioMissing: number
+  imagesDone?: number
+  imagesTotal?: number
   bytes: number
   neededBytes?: number
   availableBytes?: number
@@ -86,6 +91,9 @@ export const PACKS_CHANGED_EVENT = 'vw-offline-packs-changed'
 // Average observed size of one pronunciation clip; used only for the
 // pre-download storage estimate, not for progress.
 const AVG_AUDIO_BYTES = 30 * 1024
+// Same, for one flashcard image (webp, long side 640px)
+const AVG_IMAGE_BYTES = 37 * 1024
+const IMAGE_CONCURRENCY = 4
 // Primary path: /api/offline-audio-batch (50 clips per request, 2 in flight).
 const BATCH_SIZE = 50
 const BATCH_CONCURRENCY = 2
@@ -227,13 +235,15 @@ class OfflineManager {
 
     try {
       const words = await this.downloadWords(pack, aborter.signal)
+      const imageIds = await this.missingImageIds(words)
       const jobs = await this.buildAudioJobs(pack, words)
 
       if (!opts.force) {
-        const blocked = await this.checkStorage(pack, jobs.length)
+        const blocked = await this.checkStorage(pack, jobs.length, imageIds.length)
         if (blocked) return // pack left in 'storage-warning'
       }
 
+      await this.downloadImages(pack, imageIds, aborter.signal)
       await this.downloadAudio(pack, jobs, aborter.signal)
 
       pack.status = 'complete'
@@ -311,6 +321,43 @@ class OfflineManager {
     return words
   }
 
+  // Ids of this pack's words that have art not yet stored (resume support,
+  // and art cached while browsing is never fetched twice)
+  private async missingImageIds(words: DownloadedWord[]): Promise<number[]> {
+    const existing = new Set(await idbGetAllKeys('images'))
+    const ids = new Set<number>()
+    for (const w of words) {
+      if (hasWordImage(w.id) && !existing.has(imageKey(w.id))) ids.add(w.id)
+    }
+    return Array.from(ids)
+  }
+
+  // Flashcard art. A missing image never fails the pack: the card just shows
+  // without art, and the next resume or browse tries it again.
+  private async downloadImages(pack: OfflinePack, ids: number[], signal: AbortSignal): Promise<void> {
+    if (ids.length === 0) return
+    pack.phase = 'images'
+    pack.imagesTotal = ids.length
+    pack.imagesDone = 0
+    this.emit()
+
+    let index = 0
+    const worker = async () => {
+      while (true) {
+        throwIfAborted(signal)
+        const id = ids[index++]
+        if (id === undefined) return
+        const blob = await fetchAndStoreWordImage(id, signal)
+        if (!blob && !isOnline()) throw new Error('Connection lost')
+        if (blob) pack.bytes += blob.size
+        pack.imagesDone = (pack.imagesDone || 0) + 1
+        this.emit()
+      }
+    }
+    await Promise.all(Array.from({ length: IMAGE_CONCURRENCY }, () => worker()))
+    await this.savePack(pack)
+  }
+
   // Build the audio fetch list, skipping files already stored (resume support)
   private async buildAudioJobs(pack: OfflinePack, words: DownloadedWord[]): Promise<AudioJob[]> {
     const existing = new Set(await idbGetAllKeys('audio'))
@@ -344,11 +391,11 @@ class OfflineManager {
   }
 
   // Returns true when the download must stop and wait for user confirmation
-  private async checkStorage(pack: OfflinePack, remainingFiles: number): Promise<boolean> {
+  private async checkStorage(pack: OfflinePack, remainingAudio: number, remainingImages: number): Promise<boolean> {
     const info = await this.getStorageInfo()
     if (!info.supported || !info.quotaBytes) return false
 
-    const needed = remainingFiles * AVG_AUDIO_BYTES
+    const needed = remainingAudio * AVG_AUDIO_BYTES + remainingImages * AVG_IMAGE_BYTES
     const available = info.quotaBytes - info.usageBytes
     // 20% headroom so we don't fill the quota to the brim
     if (available < needed * 1.2) {
@@ -366,6 +413,8 @@ class OfflineManager {
   // request); if the server doesn't have it yet, fall back to paced
   // per-file requests against /api/universal-audio.
   private async downloadAudio(pack: OfflinePack, jobs: AudioJob[], signal: AbortSignal): Promise<void> {
+    pack.phase = 'audio'
+    this.emit()
     const remaining = await this.downloadAudioBatched(pack, jobs, signal)
     if (remaining.length > 0) {
       await this.downloadAudioPerFile(pack, remaining, signal)
@@ -638,6 +687,12 @@ class OfflineManager {
       if (!stillNeeded.has(lang)) {
         await idbDeleteByPrefix('audio', `a:${lang}:`).catch(() => {})
       }
+    }
+
+    // Art is shared by every pack — clear it with the last one
+    if (this.packs.size === 0) {
+      await idbDeleteByPrefix('images', 'i:').catch(() => {})
+      forgetWordImages()
     }
 
     this.syncMirror()

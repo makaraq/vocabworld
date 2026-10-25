@@ -112,7 +112,9 @@ import { Icon } from '@iconify/react'
 import { Capacitor } from '@capacitor/core'
 import { getFlagIcon } from '@/utils/flags'
 import { PROGRESS_SYNCED_EVENT } from '@/lib/offline/progress-queue'
-import { getWordImageUrl } from '@/lib/word-images'
+import { hasWordImage } from '@/lib/word-images'
+import { loadWordImage } from '@/lib/offline/word-image-cache'
+import { WordArt } from '@/components/language/word-art'
 import {
   Search,
   Languages,
@@ -4015,8 +4017,7 @@ export function LanguageSelector() {
   useEffect(() => {
     for (const i of [currentWordIndex + 1, currentWordIndex - 1]) {
       const word = vocabulary[i]
-      const src = word && !word.isCustomWord ? getWordImageUrl(word.id) : null
-      if (src) new Image().src = src
+      if (word && !word.isCustomWord && hasWordImage(word.id)) loadWordImage(Number(word.id))
     }
   }, [vocabulary, currentWordIndex])
 
@@ -4574,17 +4575,8 @@ export function LanguageSelector() {
                   {(() => {
                     const word = vocabulary[currentWordIndex]
                     // Custom playlist words carry a dictionary id, not a vocabulary id.
-                    const src = word && !word.isCustomWord ? getWordImageUrl(word.id) : null
-                    return src ? (
-                      <div className="mb-3 flex-1 min-h-0 w-full flex items-center justify-center">
-                        <img
-                          key={src}
-                          src={src}
-                          alt=""
-                          draggable={false}
-                          className="block h-full max-h-[var(--art)] w-auto max-w-full object-contain select-none pointer-events-none"
-                        />
-                      </div>
+                    return word && !word.isCustomWord && hasWordImage(word.id) ? (
+                      <WordArt key={word.id} wordId={Number(word.id)} />
                     ) : null
                   })()}
                   {(() => {

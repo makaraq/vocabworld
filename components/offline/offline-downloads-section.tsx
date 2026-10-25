@@ -1,9 +1,9 @@
 'use client'
 
 // "Offline Mode" section for the Manage Account modal.
-// Lets the user download their chosen language pair (all words + audio in
-// both languages) for offline learning, with live progress, storage warnings,
-// pause/resume/cancel, and management of previously downloaded packs.
+// One compact row per language pair: the current pair first (download it for
+// offline learning: words, pictures and audio in both languages), then any
+// other downloaded packs. Each row shows a short status and its buttons.
 
 import React, { useState, useEffect, useRef } from 'react'
 import { Icon } from '@iconify/react'
@@ -20,42 +20,12 @@ import { languageNamesTranslations } from '@/lib/i18n/language-names-translation
 // at ~21 KB per clip, measured)
 const EST_PACK_LABEL = '≈200 MB'
 
-function ProgressRing({ percent, indeterminate }: { percent: number; indeterminate?: boolean }) {
-  const size = 58
-  const stroke = 5
-  const r = (size - stroke) / 2
-  const c = 2 * Math.PI * r
-
-  return (
-    <div className="relative flex-shrink-0" style={{ width: size, height: size }}>
-      <svg width={size} height={size} className={indeterminate ? 'animate-spin' : '-rotate-90'} style={indeterminate ? { animationDuration: '1.2s' } : undefined}>
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth={stroke} />
-        <defs>
-          <linearGradient id="vw-dl-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#60a5fa" />
-            <stop offset="100%" stopColor="#a78bfa" />
-          </linearGradient>
-        </defs>
-        <circle
-          cx={size / 2} cy={size / 2} r={r} fill="none"
-          stroke="url(#vw-dl-grad)" strokeWidth={stroke} strokeLinecap="round"
-          strokeDasharray={c}
-          strokeDashoffset={indeterminate ? c * 0.75 : c * (1 - Math.min(100, Math.max(0, percent)) / 100)}
-          style={indeterminate ? undefined : { transition: 'stroke-dashoffset 0.3s ease' }}
-        />
-      </svg>
-      {!indeterminate && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-white text-xs font-bold tabular-nums">{Math.round(percent)}%</span>
-        </div>
-      )}
-      {indeterminate && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <Icon icon="solar:documents-bold" width="18" className="text-blue-300" />
-        </div>
-      )}
-    </div>
-  )
+// Progress of the step running now: the pictures, then the audio
+function packPercent(pack: OfflinePack): number {
+  if (pack.phase === 'images') {
+    return pack.imagesTotal ? ((pack.imagesDone || 0) / pack.imagesTotal) * 100 : 0
+  }
+  return pack.audioTotal > 0 ? (pack.audioDone / pack.audioTotal) * 100 : 0
 }
 
 function PairFlags({ nativeCode, targetCode }: { nativeCode: string; targetCode: string }) {
@@ -68,8 +38,11 @@ function PairFlags({ nativeCode, targetCode }: { nativeCode: string; targetCode:
   )
 }
 
+const roundButton = 'w-8 h-8 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-white/70 active:bg-white/20 transition-all disabled:opacity-40'
+const pillButton = 'h-8 px-3 rounded-full border text-xs font-medium flex items-center gap-1.5 transition-all disabled:opacity-40'
+
 export function OfflineDownloadsSection() {
-  const { t, tMarkup, uiLang } = useT()
+  const { t, uiLang } = useT()
   const [packs, setPacks] = useState<OfflinePack[]>([])
   const [nativeCode, setNativeCode] = useState('')
   const [targetCode, setTargetCode] = useState('')
@@ -110,18 +83,13 @@ export function OfflineDownloadsSection() {
   const langName = (code: string) =>
     languageNamesTranslations[uiLang]?.[code] || languageName(code)
 
-  const formatEta = (seconds?: number): string => {
-    if (!seconds || seconds <= 0) return ''
-    if (seconds < 90) return ` ${t('offline.eta.underMinute')}`
-    return ` ${t('offline.eta.minutes', { n: Math.round(seconds / 60) })}`
-  }
-
-  const askDelete = (id: string, action: () => void) => {
+  // First tap arms the button, a second tap within 3.5s removes the pack
+  const askDelete = (id: string) => {
     if (confirmDeleteId === id) {
       if (confirmTimer.current) clearTimeout(confirmTimer.current)
       setConfirmDeleteId(null)
       hapticsWarning()
-      action()
+      offlineManager.deletePack(id)
     } else {
       hapticsLight()
       setConfirmDeleteId(id)
@@ -130,280 +98,149 @@ export function OfflineDownloadsSection() {
     }
   }
 
-  const startDownload = (force = false) => {
+  const startDownload = (native: string, target: string, force = false) => {
     hapticsMedium()
-    offlineManager.startDownload(nativeCode, targetCode, { force }).catch(() => {})
+    offlineManager.startDownload(native, target, { force }).catch(() => {})
   }
 
-  const percent = currentPack && currentPack.audioTotal > 0
-    ? (currentPack.audioDone / currentPack.audioTotal) * 100
-    : 0
+  // One line per language pair: flags, names, a short status, its buttons
+  const renderRow = (native: string, target: string, pack?: OfflinePack) => {
+    const id = packId(native, target)
+    const status = pack?.status
+    const idle = !pack || (status === 'error' && pack.audioTotal === 0)
+    const percent = pack ? packPercent(pack) : 0
+    const showBar = !idle && (status === 'downloading' || status === 'paused' || status === 'error')
 
-  return (
-    <div className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/15 overflow-hidden">
-      <style>{`
-        @keyframes vw-dl-bounce {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(3px); }
-        }
-        @keyframes vw-dl-shimmer {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(250%); }
-        }
-      `}</style>
+    let subtitle: string
+    let subtitleClass = 'text-white/45'
+    if (idle) {
+      subtitle = isOnline ? EST_PACK_LABEL : t('offline.connectToDownload')
+    } else if (status === 'downloading') {
+      subtitle = t('offline.other.downloadingPct', { pct: Math.round(percent) })
+    } else if (status === 'complete') {
+      subtitle = `${t('offline.status.downloaded')} · ${formatBytes(pack?.bytes || 0)}`
+      subtitleClass = 'text-emerald-300/80'
+    } else if (status === 'paused') {
+      subtitle = t('offline.other.paused', { size: formatBytes(pack?.bytes || 0) })
+    } else if (status === 'storage-warning') {
+      subtitle = t('offline.other.waitingStorage')
+      subtitleClass = 'text-yellow-300/80'
+    } else {
+      subtitle = t('offline.interrupted')
+      subtitleClass = 'text-red-400/90'
+    }
 
-      <div className="px-4 py-3.5 space-y-3">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <Icon
-              icon={currentPack?.status === 'complete' ? 'solar:cloud-check-bold' : 'solar:cloud-download-bold'}
-              width="18"
-              className={currentPack?.status === 'complete' ? 'text-emerald-400' : currentPack?.status === 'downloading' ? 'text-blue-400' : 'text-white/50'}
+    const removeButton = confirmDeleteId === id ? (
+      <button
+        onClick={() => askDelete(id)}
+        className={`${pillButton} bg-red-500/80 border-red-400 text-white`}
+      >
+        {t('offline.confirm')}
+      </button>
+    ) : (
+      <button
+        onClick={() => askDelete(id)}
+        className={roundButton}
+        aria-label={status === 'complete'
+          ? t('offline.aria.deletePack', { from: langName(native), to: langName(target) })
+          : t('offline.aria.cancel')}
+      >
+        <Icon icon={status === 'complete' ? 'solar:trash-bin-trash-bold' : 'solar:close-circle-bold'} width="14" />
+      </button>
+    )
+
+    let actions: React.ReactNode
+    if (idle) {
+      actions = (
+        <button
+          onClick={() => startDownload(native, target)}
+          disabled={!isOnline}
+          className={`${pillButton} bg-blue-500/20 border-blue-400/30 text-blue-300 active:bg-blue-500/30`}
+        >
+          <Icon icon="solar:download-minimalistic-bold" width="14" />
+          {t('offline.download')}
+        </button>
+      )
+    } else if (status === 'downloading') {
+      actions = (
+        <>
+          <button
+            onClick={() => { hapticsLight(); offlineManager.pauseDownload(id) }}
+            className={roundButton}
+            aria-label={t('offline.aria.pause')}
+          >
+            <Icon icon="solar:pause-bold" width="13" />
+          </button>
+          {removeButton}
+        </>
+      )
+    } else if (status === 'storage-warning') {
+      actions = (
+        <>
+          <button
+            onClick={() => startDownload(native, target, true)}
+            className={`${pillButton} bg-yellow-500/20 border-yellow-400/30 text-yellow-300 active:bg-yellow-500/30`}
+          >
+            {t('offline.downloadAnyway')}
+          </button>
+          {removeButton}
+        </>
+      )
+    } else if (status === 'complete') {
+      actions = removeButton
+    } else {
+      actions = (
+        <>
+          <button
+            onClick={() => startDownload(native, target)}
+            disabled={!isOnline}
+            className={`${roundButton} text-blue-300`}
+            aria-label={t('offline.resume')}
+          >
+            <Icon icon="solar:play-bold" width="13" />
+          </button>
+          {removeButton}
+        </>
+      )
+    }
+
+    return (
+      <div key={id} className="py-2.5">
+        <div className="flex items-center gap-2.5">
+          <PairFlags nativeCode={native} targetCode={target} />
+          <div className="flex-1 min-w-0">
+            <p className="text-white text-sm font-medium truncate">
+              {langName(native)} → {langName(target)}
+            </p>
+            <p className={`${subtitleClass} text-[11px] tabular-nums truncate`}>{subtitle}</p>
+          </div>
+          <div className="flex items-center gap-1.5 flex-shrink-0">{actions}</div>
+        </div>
+        {showBar && (
+          <div className="mt-2 h-1 rounded-full bg-white/10 overflow-hidden">
+            <div
+              className={`h-full rounded-full ${status === 'downloading' ? 'bg-gradient-to-r from-blue-400 to-violet-400' : 'bg-white/30'}`}
+              style={{ width: `${Math.max(2, percent)}%`, transition: 'width 0.3s ease' }}
             />
-            <span className="text-white font-medium text-sm">{t('offline.title')}</span>
-          </div>
-          {currentPack?.status === 'complete' && (
-            <span className="text-[11px] font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-400/25 px-2 py-0.5 rounded-full">
-              {t('offline.status.downloaded')}
-            </span>
-          )}
-          {currentPack?.status === 'downloading' && (
-            <span className="text-[11px] font-semibold bg-blue-500/15 text-blue-300 border border-blue-400/25 px-2 py-0.5 rounded-full flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
-              {t('offline.status.downloading')}
-            </span>
-          )}
-          {currentPack?.status === 'paused' && (
-            <span className="text-[11px] font-semibold bg-white/10 text-white/60 border border-white/15 px-2 py-0.5 rounded-full">
-              {t('offline.status.paused')}
-            </span>
-          )}
-        </div>
-
-        {/* Current pair */}
-        <div className="bg-black/20 border border-white/10 rounded-xl p-3 space-y-3">
-          <div className="flex items-center gap-2.5">
-            <PairFlags nativeCode={nativeCode} targetCode={targetCode} />
-            <div className="min-w-0">
-              <p className="text-white text-sm font-semibold truncate">
-                {langName(nativeCode)} → {langName(targetCode)}
-              </p>
-              <p className="text-white/45 text-[11px]">{t('offline.currentLanguages')}</p>
-            </div>
-          </div>
-
-          {/* ── Idle: not downloaded yet ── */}
-          {(!currentPack || (currentPack.status === 'error' && currentPack.audioTotal === 0)) && (
-            <>
-              <p className="text-white/50 text-xs leading-relaxed">
-                {t('offline.idleDesc', { size: EST_PACK_LABEL })}
-              </p>
-              {currentPack?.error && (
-                <p className="text-red-400 text-xs">{currentPack.error}</p>
-              )}
-              <button
-                onClick={() => startDownload()}
-                disabled={!isOnline}
-                className="w-full bg-blue-500/20 border border-blue-400/30 text-blue-300 py-2.5 rounded-xl font-medium text-sm hover:bg-blue-500/30 active:bg-blue-500/30 transition-all flex items-center justify-center gap-2 disabled:opacity-40"
-              >
-                <Icon icon="solar:download-minimalistic-bold" width="16" />
-                {isOnline ? t('offline.download') : t('offline.connectToDownload')}
-              </button>
-            </>
-          )}
-
-          {/* ── Downloading ── */}
-          {currentPack?.status === 'downloading' && (
-            <div className="flex items-center gap-3.5">
-              <ProgressRing percent={percent} indeterminate={currentPack.phase === 'words'} />
-              <div className="flex-1 min-w-0 space-y-1.5">
-                {currentPack.phase === 'words' ? (
-                  <p className="text-white text-xs font-medium">
-                    {t('offline.preparingWords')}
-                  </p>
-                ) : (
-                  <>
-                    <p className="text-white text-xs font-medium flex items-center gap-1.5">
-                      <Icon icon="solar:download-minimalistic-bold" width="13" className="text-blue-300" style={{ animation: 'vw-dl-bounce 1s ease-in-out infinite' }} />
-                      {t('offline.downloadingAudio')}
-                    </p>
-                    <p className="text-white/50 text-[11px] tabular-nums">
-                      {formatBytes(currentPack.bytes)}{formatEta(currentPack.etaSeconds)}
-                    </p>
-                    {/* Thin shimmer bar */}
-                    <div className="h-1 rounded-full bg-white/10 overflow-hidden relative">
-                      <div
-                        className="h-full rounded-full bg-gradient-to-r from-blue-400 to-violet-400 relative overflow-hidden"
-                        style={{ width: `${Math.max(2, percent)}%`, transition: 'width 0.3s ease' }}
-                      >
-                        <div
-                          className="absolute inset-y-0 w-1/2 bg-white/30"
-                          style={{ animation: 'vw-dl-shimmer 1.4s ease-in-out infinite', filter: 'blur(4px)' }}
-                        />
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <button
-                  onClick={() => { hapticsLight(); offlineManager.pauseDownload(currentId) }}
-                  className="w-8 h-8 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-white/70 active:bg-white/20 transition-all"
-                  aria-label={t('offline.aria.pause')}
-                >
-                  <Icon icon="solar:pause-bold" width="13" />
-                </button>
-                <button
-                  onClick={() => askDelete(currentId, () => offlineManager.cancelDownload(currentId))}
-                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-all border ${
-                    confirmDeleteId === currentId
-                      ? 'bg-red-500/80 border-red-400 text-white'
-                      : 'bg-white/10 border-white/15 text-white/70 active:bg-white/20'
-                  }`}
-                  aria-label={t('offline.aria.cancel')}
-                >
-                  <Icon icon="solar:close-circle-bold" width="14" />
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* ── Paused / failed mid-download ── */}
-          {(currentPack?.status === 'paused' || (currentPack?.status === 'error' && currentPack.audioTotal > 0)) && (
-            <div className="space-y-2.5">
-              <div className="flex items-center gap-3.5">
-                <ProgressRing percent={percent} />
-                <div className="flex-1 min-w-0">
-                  <p className="text-white text-xs font-medium">
-                    {currentPack.status === 'paused' ? t('offline.paused') : t('offline.interrupted')}
-                  </p>
-                  <p className="text-white/50 text-[11px] tabular-nums">
-                    {formatBytes(currentPack.bytes)}
-                  </p>
-                  {currentPack.status === 'error' && currentPack.error && (
-                    <p className="text-red-400 text-[11px] mt-1 leading-snug">{currentPack.error}</p>
-                  )}
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => startDownload()}
-                  disabled={!isOnline}
-                  className="flex-1 bg-blue-500/20 border border-blue-400/30 text-blue-300 py-2 rounded-xl font-medium text-xs active:bg-blue-500/30 transition-all flex items-center justify-center gap-1.5 disabled:opacity-40"
-                >
-                  <Icon icon="solar:play-bold" width="12" />
-                  {isOnline ? t('offline.resume') : t('offline.reconnectResume')}
-                </button>
-                <button
-                  onClick={() => askDelete(currentId, () => offlineManager.cancelDownload(currentId))}
-                  className={`px-4 py-2 rounded-xl font-medium text-xs transition-all border ${
-                    confirmDeleteId === currentId
-                      ? 'bg-red-500/80 border-red-400 text-white'
-                      : 'bg-white/10 border-white/15 text-white/60 active:bg-white/20'
-                  }`}
-                >
-                  {confirmDeleteId === currentId ? t('offline.confirm') : t('offline.remove')}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* ── Storage warning ── */}
-          {currentPack?.status === 'storage-warning' && (
-            <div className="space-y-2.5">
-              <div className="bg-yellow-500/10 border border-yellow-400/30 rounded-xl p-2.5 flex items-start gap-2">
-                <Icon icon="solar:danger-triangle-bold" width="16" className="text-yellow-400 flex-shrink-0 mt-0.5" />
-                <p className="text-yellow-300 text-[11px] leading-relaxed">
-                  {tMarkup('offline.storageWarning', {
-                    needed: formatBytes(currentPack.neededBytes || 0),
-                    available: formatBytes(currentPack.availableBytes || 0),
-                  })}
-                </p>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => startDownload(true)}
-                  className="flex-1 bg-yellow-500/20 border border-yellow-400/30 text-yellow-300 py-2 rounded-xl font-medium text-xs active:bg-yellow-500/30 transition-all"
-                >
-                  {t('offline.downloadAnyway')}
-                </button>
-                <button
-                  onClick={() => { hapticsLight(); offlineManager.cancelDownload(currentId) }}
-                  className="px-4 py-2 rounded-xl font-medium text-xs bg-white/10 border border-white/15 text-white/60 active:bg-white/20 transition-all"
-                >
-                  {t('common.cancel')}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* ── Complete ── */}
-          {currentPack?.status === 'complete' && (
-            <div className="space-y-2">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-emerald-500/15 border border-emerald-400/25 flex items-center justify-center flex-shrink-0">
-                  <Icon icon="solar:check-circle-bold" width="20" className="text-emerald-400" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-white text-xs font-medium">{t('offline.availableOffline')}</p>
-                  <p className="text-white/50 text-[11px] tabular-nums">
-                    {formatBytes(currentPack.bytes)}
-                  </p>
-                </div>
-                <button
-                  onClick={() => askDelete(currentId, () => offlineManager.deletePack(currentId))}
-                  className={`h-8 rounded-full flex items-center justify-center transition-all border px-3 gap-1 text-[11px] font-medium ${
-                    confirmDeleteId === currentId
-                      ? 'bg-red-500/80 border-red-400 text-white'
-                      : 'bg-white/10 border-white/15 text-white/60 active:bg-white/20'
-                  }`}
-                  aria-label={t('offline.aria.delete')}
-                >
-                  <Icon icon="solar:trash-bin-trash-bold" width="13" />
-                  {confirmDeleteId === currentId ? t('offline.confirm') : ''}
-                </button>
-              </div>
-              <p className="text-white/40 text-[11px] leading-relaxed">
-                {t('offline.learnWithoutInternet', { language: langName(targetCode) })}
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Other downloaded packs */}
-        {otherPacks.length > 0 && (
-          <div className="space-y-1.5">
-            <p className="text-white/40 text-[11px] font-medium uppercase tracking-wide px-0.5">{t('offline.otherDownloads')}</p>
-            {otherPacks.map(pack => (
-              <div key={pack.id} className="bg-black/20 border border-white/10 rounded-xl px-3 py-2.5 flex items-center gap-2.5">
-                <PairFlags nativeCode={pack.nativeCode} targetCode={pack.targetCode} />
-                <div className="flex-1 min-w-0">
-                  <p className="text-white text-xs font-medium truncate">
-                    {langName(pack.nativeCode)} → {langName(pack.targetCode)}
-                  </p>
-                  <p className="text-white/45 text-[11px] tabular-nums">
-                    {pack.status === 'complete' && formatBytes(pack.bytes)}
-                    {pack.status === 'downloading' && t('offline.other.downloadingPct', { pct: pack.audioTotal ? Math.round((pack.audioDone / pack.audioTotal) * 100) : 0 })}
-                    {(pack.status === 'paused' || pack.status === 'error') && t('offline.other.paused', { size: formatBytes(pack.bytes) })}
-                    {pack.status === 'storage-warning' && t('offline.other.waitingStorage')}
-                  </p>
-                </div>
-                <button
-                  onClick={() => askDelete(pack.id, () => offlineManager.deletePack(pack.id))}
-                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-all border flex-shrink-0 ${
-                    confirmDeleteId === pack.id
-                      ? 'bg-red-500/80 border-red-400 text-white'
-                      : 'bg-white/10 border-white/15 text-white/60 active:bg-white/20'
-                  }`}
-                  aria-label={t('offline.aria.deletePack', { from: langName(pack.nativeCode), to: langName(pack.targetCode) })}
-                >
-                  <Icon icon="solar:trash-bin-trash-bold" width="13" />
-                </button>
-              </div>
-            ))}
           </div>
         )}
+      </div>
+    )
+  }
+
+  return (
+    <div className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/15 px-4 pt-3 pb-1">
+      <div className="flex items-center gap-2.5">
+        <Icon
+          icon={currentPack?.status === 'complete' ? 'solar:cloud-check-bold' : 'solar:cloud-download-bold'}
+          width="18"
+          className={currentPack?.status === 'complete' ? 'text-emerald-400' : 'text-white/50'}
+        />
+        <span className="text-white font-medium text-sm">{t('offline.title')}</span>
+      </div>
+      <div className="divide-y divide-white/10">
+        {renderRow(nativeCode, targetCode, currentPack)}
+        {otherPacks.map(pack => renderRow(pack.nativeCode, pack.targetCode, pack))}
       </div>
     </div>
   )
