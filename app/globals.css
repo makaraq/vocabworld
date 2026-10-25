@@ -178,6 +178,75 @@ input, textarea, [contenteditable] {
   }
 }
 
+/* ── Tutorial guide character ─────────────────────────────────────────
+   The ripple marks where her finger lands on the tile. */
+.guide-ripple {
+  animation: guide-ripple 600ms ease-out both;
+}
+@keyframes guide-ripple {
+  0% { transform: scale(0.3); opacity: 0.9; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+/* Card guides: a quick squash and stretch from her seat on each new
+   pose. Two identical animations so toggling between them restarts it. */
+.guide-beat-a { animation: guide-beat-a 280ms ease-out; }
+.guide-beat-b { animation: guide-beat-b 280ms ease-out; }
+@keyframes guide-beat-a {
+  0% { transform: scale(1.03, 0.96); }
+  55% { transform: scale(0.99, 1.025); }
+  100% { transform: scale(1, 1); }
+}
+@keyframes guide-beat-b {
+  0% { transform: scale(1.03, 0.96); }
+  55% { transform: scale(0.99, 1.025); }
+  100% { transform: scale(1, 1); }
+}
+/* Languages step: each flag snaps in with a bounce, holds, then drifts
+   up and fades as the next one arrives. */
+.guide-flag-pop {
+  animation: guide-flag-pop 1150ms cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+@keyframes guide-flag-pop {
+  0% { transform: translateY(10px) scale(0.2) rotate(-12deg); opacity: 0; }
+  18% { transform: translateY(-4px) scale(1.22) rotate(4deg); opacity: 1; }
+  30% { transform: translateY(0) scale(0.92) rotate(-2deg); }
+  40% { transform: translateY(0) scale(1.04) rotate(0deg); }
+  48% { transform: translateY(0) scale(1); opacity: 1; }
+  78% { transform: translateY(-3px) scale(1); opacity: 0.9; }
+  100% { transform: translateY(-14px) scale(0.85); opacity: 0; }
+}
+/* Listening step: music notes float up from her headphones. */
+.guide-note {
+  animation: guide-note 2.7s ease-out infinite both;
+}
+@keyframes guide-note {
+  0% { transform: translate(0, 6px) scale(0.6) rotate(-10deg); opacity: 0; }
+  15% { opacity: 1; }
+  50% { transform: translate(7px, -14px) scale(1) rotate(8deg); }
+  100% { transform: translate(-3px, -34px) scale(0.9) rotate(-6deg); opacity: 0; }
+}
+/* Cheering step: sparkles twinkle around her. */
+.guide-twinkle {
+  animation: guide-twinkle 1.65s ease-in-out infinite both;
+}
+@keyframes guide-twinkle {
+  0%, 100% { transform: scale(0.3) rotate(0deg); opacity: 0; }
+  35% { transform: scale(1.15) rotate(20deg); opacity: 1; }
+  60% { transform: scale(0.9) rotate(35deg); opacity: 0.85; }
+}
+.guide-caption-in {
+  animation: guide-caption-in 380ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes guide-caption-in {
+  0% { transform: translateY(10px) scale(0.96); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .guide-caption-in { animation: none; }
+  .guide-ripple, .guide-note, .guide-twinkle { display: none; }
+  .guide-flag-pop, .guide-beat-a, .guide-beat-b { animation: none; }
+}
+
 /* ── Flashcard scale transition ───────────────────────────────────────
    Two things swell a flashcard: audio playing on that card, and a
    long-press. Both used `transition-all duration-300`, so the transform,

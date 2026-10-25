@@ -31,20 +31,22 @@ export const en = {
   'tutorial.stepOf': '{current} of {total}',
 
   // ---------- Tutorial content (topics tour) ----------
-  'tutorial.topics.1.title': 'Pick a topic to start',
-  'tutorial.topics.1.body': 'Tap any topic tile to begin learning vocabulary. New words come with audio, translations, and example sentences.',
-  'tutorial.topics.2.title': 'Swipe between sections',
-  'tutorial.topics.2.body': 'Drag these dots or swipe the screen to explore everyday topics, work, travel, your saved words, and your account.',
-  'tutorial.topics.3.title': 'Switch languages anytime',
-  'tutorial.topics.3.body': 'Tap either side to change your native or target language. Your progress is saved per language pair.',
+  'tutorial.topics.1.title': 'Hi! Start here',
+  'tutorial.topics.1.body': 'Tap a topic to learn its words.',
+  'tutorial.topics.2.title': 'Swipe for more',
+  'tutorial.topics.2.body': 'More topics on every page.',
+  'tutorial.topics.3.title': 'Your languages',
+  'tutorial.topics.3.body': 'Tap to switch anytime.',
 
   // ---------- Tutorial content (learning tour) ----------
-  'tutorial.learning.1.title': 'Each word in two languages',
-  'tutorial.learning.1.body': "The top card shows the word you're learning. Below is the translation in your native language. Tap and hold either card to focus.",
-  'tutorial.learning.2.title': 'Move at your own pace',
-  'tutorial.learning.2.body': 'Tap play to hear pronunciation, or use the arrows to step forward and back. Take as long as you need on each word.',
-  'tutorial.learning.3.title': 'Make it yours',
-  'tutorial.learning.3.body': 'Open settings to adjust playback speed, turn auto-play on or off, and customize how the audio plays — so you can learn the way that works for you.',
+  'tutorial.learning.1.title': 'Picture, word, translation',
+  'tutorial.learning.1.body': 'See it, learn the word, check its meaning.',
+  'tutorial.learning.2.title': 'Listen and go',
+  'tutorial.learning.2.body': 'Play to hear it, arrows to move on.',
+  'tutorial.learning.3.title': 'Your settings',
+  'tutorial.learning.3.body': 'Speed, auto-play and more.',
+  'tutorial.ready.title': "You're all set!",
+  'tutorial.ready.body': 'Pick a topic and start learning.',
 
   // ---------- Example sentences modal ----------
   'sentences.loading': 'Loading examples...',

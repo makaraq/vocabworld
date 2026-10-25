@@ -4,6 +4,7 @@ import React, { useEffect, useLayoutEffect, useState, useCallback, useRef } from
 import { createPortal } from 'react-dom'
 import { Icon } from '@iconify/react'
 import { useT } from '@/components/providers/translation-provider'
+import { GuideCharacter, CardGuide, cardGuideHeight, GUIDE_AVATAR, GUIDE_FRAMES, type CardGuideName } from './guide-character'
 
 export interface CoachMarkStep {
   selector: string
@@ -11,6 +12,10 @@ export interface CoachMarkStep {
   body: string
   placement?: 'auto' | 'top' | 'bottom'
   padding?: number
+  // 'point': the guide peeks out from behind the target and points at it.
+  // Any other name: she rises from behind the caption card in that pose
+  // (phone, present, listen, cheer, settings).
+  guide?: 'point' | CardGuideName
 }
 
 interface Props {
@@ -39,6 +44,8 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
   const [missing, setMissing] = useState(false)
   const [tooltipHeight, setTooltipHeight] = useState(TOOLTIP_HEIGHT_FALLBACK)
   const tooltipRef = useRef<HTMLDivElement>(null)
+  // On a guide step the caption waits until she has said hello.
+  const [greeted, setGreeted] = useState(false)
 
   useEffect(() => {
     setMounted(true)
@@ -49,11 +56,21 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
     if (open) setStepIndex(0)
   }, [open])
 
+  useEffect(() => {
+    if (!open) return
+    for (const src of GUIDE_FRAMES) new Image().src = src
+  }, [open])
+
+  useEffect(() => {
+    setGreeted(false)
+  }, [stepIndex, open])
+
   const step = steps[stepIndex]
 
   const measure = useCallback(() => {
     if (!step) return
-    const el = document.querySelector(step.selector) as HTMLElement | null
+    // No selector: a scene with nothing to point at, shown centred.
+    const el = step.selector ? (document.querySelector(step.selector) as HTMLElement | null) : null
     if (!el) {
       setRect(null)
       setMissing(true)
@@ -68,7 +85,7 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
     if (!open || !mounted) return
     measure()
     const ro = new ResizeObserver(measure)
-    const el = step ? (document.querySelector(step.selector) as HTMLElement | null) : null
+    const el = step?.selector ? (document.querySelector(step.selector) as HTMLElement | null) : null
     if (el) ro.observe(el)
     window.addEventListener('resize', measure)
     window.addEventListener('scroll', measure, true)
@@ -91,6 +108,8 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
 
   const isLast = stepIndex >= steps.length - 1
   const padding = step.padding ?? 8
+  const showGuide = step.guide === 'point' && !!rect && !missing
+  const captionReady = !showGuide || greeted
 
   const handleNext = () => {
     if (isLast) onComplete()
@@ -104,7 +123,10 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
   // Determine tooltip position. Pick the side with the most usable space,
   // honoring an explicit `placement` only when that side actually fits the tooltip.
   const vh = typeof window !== 'undefined' ? window.innerHeight : 0
-  const requiredSpace = tooltipHeight + TOOLTIP_GAP + VIEWPORT_MARGIN
+  // A card guide sits on top of the card, so keep that much room above it.
+  const cardGuide = step.guide && step.guide !== 'point' ? step.guide : null
+  const guideRoom = cardGuide ? cardGuideHeight(cardGuide) : 0
+  const requiredSpace = tooltipHeight + TOOLTIP_GAP + VIEWPORT_MARGIN + guideRoom
 
   let tooltipTop = 0
   let placement: 'top' | 'bottom' = 'bottom'
@@ -123,7 +145,7 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
 
     if (placeBelow) {
       placement = 'bottom'
-      tooltipTop = rect.top + rect.height + padding + TOOLTIP_GAP
+      tooltipTop = rect.top + rect.height + padding + TOOLTIP_GAP + guideRoom
     } else {
       placement = 'top'
       tooltipTop = rect.top - padding - TOOLTIP_GAP - tooltipHeight
@@ -136,10 +158,10 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
       if (spaceBelow >= spaceAbove) {
         tooltipTop = vh - tooltipHeight - VIEWPORT_MARGIN
       } else {
-        tooltipTop = VIEWPORT_MARGIN
+        tooltipTop = VIEWPORT_MARGIN + guideRoom
       }
     } else {
-      tooltipTop = Math.max(VIEWPORT_MARGIN, Math.min(tooltipTop, vh - tooltipHeight - VIEWPORT_MARGIN))
+      tooltipTop = Math.max(VIEWPORT_MARGIN + guideRoom, Math.min(tooltipTop, vh - tooltipHeight - VIEWPORT_MARGIN))
     }
   } else {
     tooltipTop = Math.max(VIEWPORT_MARGIN, vh / 2 - tooltipHeight / 2)
@@ -197,54 +219,88 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
         />
       )}
 
-      {/* Tooltip card */}
+      {/* Guide: peeks out from behind the target, waves, then points at it */}
+      {showGuide && rect && (
+        <GuideCharacter
+          key={stepIndex}
+          target={{
+            top: rect.top - padding,
+            left: rect.left - padding,
+            width: rect.width + padding * 2,
+            height: rect.height + padding * 2,
+          }}
+          onGreeted={() => setGreeted(true)}
+        />
+      )}
+
+      {/* Tooltip card — a short speech bubble from the guide */}
       <div
         ref={tooltipRef}
-        className="absolute left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-sm pointer-events-auto"
+        className={`absolute left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-sm ${
+          captionReady ? 'pointer-events-auto' : 'pointer-events-none opacity-0'
+        }`}
         style={{ top: tooltipTop }}
       >
-        <div className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl sm:rounded-[32px] shadow-2xl p-5 space-y-4">
-
-          {/* Step indicator */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              {steps.map((_, i) => (
-                <div
-                  key={i}
-                  className={`h-1.5 rounded-full transition-all ${
-                    i === stepIndex
-                      ? 'w-6 bg-white/80'
-                      : i < stepIndex
-                      ? 'w-1.5 bg-white/50'
-                      : 'w-1.5 bg-white/20'
-                  }`}
-                />
-              ))}
-            </div>
-            <button
-              onClick={onSkip}
-              className="text-white/50 text-xs font-medium active:text-white/80 transition-colors"
-              aria-label={t('tutorial.skip.aria')}
-            >
-              {t('tutorial.skip')}
-            </button>
-          </div>
+        {cardGuide && <CardGuide key={stepIndex} name={cardGuide} />}
+        <div
+          key={captionReady ? `in-${stepIndex}` : 'waiting'}
+          className={`relative bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl sm:rounded-[32px] shadow-2xl p-4 space-y-3 ${
+            captionReady ? 'guide-caption-in' : ''
+          }`}
+        >
 
           {/* Body */}
-          <div className="space-y-1.5">
-            <h3 className="text-white text-base font-bold leading-tight">
-              {step.title}
-            </h3>
-            <p className="text-white/65 text-sm leading-relaxed">
-              {step.body}
-            </p>
+          <div className="flex items-center gap-3">
+            <div
+              aria-hidden
+              className="relative shrink-0 w-11 h-11 rounded-full overflow-hidden bg-white/15 border border-white/25"
+            >
+              <img
+                src={GUIDE_AVATAR}
+                alt=""
+                draggable={false}
+                className="absolute inset-0 w-full h-full object-cover select-none"
+              />
+            </div>
+            <div className="min-w-0 flex-1 space-y-0.5">
+              <h3 className="text-white text-base font-bold leading-tight">
+                {step.title}
+              </h3>
+              <p className="text-white/70 text-sm leading-snug">
+                {step.body}
+              </p>
+            </div>
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between pt-1">
-            <span className="text-white/40 text-xs tabular-nums">
-              {t('tutorial.stepOf', { current: stepIndex + 1, total: steps.length })}
-            </span>
+          <div className="flex items-center justify-between">
+            {/* A single scene (no tour to skip) leaves just its button */}
+            <div className={`flex items-center gap-3 ${steps.length === 1 ? 'invisible' : ''}`}>
+              <div
+                className="flex items-center gap-1.5"
+                aria-label={t('tutorial.stepOf', { current: stepIndex + 1, total: steps.length })}
+              >
+                {steps.map((_, i) => (
+                  <div
+                    key={i}
+                    className={`h-1.5 rounded-full transition-all ${
+                      i === stepIndex
+                        ? 'w-6 bg-white/80'
+                        : i < stepIndex
+                        ? 'w-1.5 bg-white/50'
+                        : 'w-1.5 bg-white/20'
+                    }`}
+                  />
+                ))}
+              </div>
+              <button
+                onClick={onSkip}
+                className="text-white/45 text-xs font-medium active:text-white/80 transition-colors"
+                aria-label={t('tutorial.skip.aria')}
+              >
+                {t('tutorial.skip')}
+              </button>
+            </div>
             <div className="flex items-center gap-2">
               {stepIndex > 0 && (
                 <button

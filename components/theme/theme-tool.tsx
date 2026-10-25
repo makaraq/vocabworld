@@ -7,6 +7,7 @@ import { useT } from '@/components/providers/translation-provider'
 import { hapticsLight } from '@/lib/haptics'
 import type { ThemeId } from '@/lib/themes'
 import { ThemePicker } from './theme-picker'
+import { CardGuide, cardGuideHeight } from '@/components/tutorial/guide-character'
 
 // Trying themes on the app itself. The swatches sit in a small panel at the
 // foot of the screen, and its arrows move the app behind it between the
@@ -17,6 +18,9 @@ import { ThemePicker } from './theme-picker'
 //
 // It opens on the screen the app is already on: after the first lesson's
 // tutorial that is the lesson, from Manage Account the account page.
+//
+// A crowned theme only previews here: the point is to try it on. Whether to
+// ask for Premium is decided on Done (onDoneAction), not on the tap.
 
 export type ThemeToolScreen = 'topics' | 'learning' | 'settings' | 'account'
 // In the order you'd move through the app: each step is one move away.
@@ -37,6 +41,7 @@ export function ThemeTool({
   onScreenAction,
   onPremiumAction,
   onDoneAction,
+  guide = false,
 }: {
   open: boolean
   screen: ThemeToolScreen
@@ -46,6 +51,8 @@ export function ThemeTool({
   onScreenAction: (screen: ThemeToolScreen) => void
   onPremiumAction: (id: ThemeId) => void
   onDoneAction: () => void
+  /** The tutorial guide sits on the panel, trying themes too (first time). */
+  guide?: boolean
 }) {
   const { t } = useT()
   const [shown, setShown] = useState(false)
@@ -102,7 +109,9 @@ export function ThemeTool({
       // A modal centred on the stage (the lesson settings) can be taller.
       const tallest = Math.max(height, ...Array.from(stage.querySelectorAll<HTMLElement>('[data-theme-tool-extent]'), (el) => el.offsetHeight))
       const regionTop = safeTop + GAP
-      const room = Math.max(120, window.innerHeight - sheet.offsetHeight - SHEET_MARGIN - GAP - regionTop)
+      // The guide stands on the panel's top edge, so keep her clear of the app.
+      const guideRoom = guide ? cardGuideHeight('themes') : 0
+      const room = Math.max(120, window.innerHeight - sheet.offsetHeight - guideRoom - SHEET_MARGIN - GAP - regionTop)
       const scale = Math.min(1, room / tallest)
       // Centre what is shown in the room; the transform's origin is the stage's top.
       const shift = regionTop + (room - tallest * scale) / 2 - top + ((tallest - height) / 2) * scale
@@ -132,7 +141,7 @@ export function ThemeTool({
       window.removeEventListener('resize', schedule)
       probe.remove()
     }
-  }, [open, screen])
+  }, [open, screen, guide])
 
   if (!open || typeof document === 'undefined') return null
 
@@ -187,6 +196,7 @@ export function ThemeTool({
         }`}
         style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom, 0px))' }}
       >
+        {guide && <CardGuide name="themes" />}
         <div className="flex items-center justify-between gap-3 pl-1">
           <h2 className="text-white font-bold text-base truncate">{t('theme.intro.title')}</h2>
           <button

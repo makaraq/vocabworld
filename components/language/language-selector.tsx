@@ -18,7 +18,7 @@ import { useNotifications } from "@/hooks/use-notifications"
 import { NotificationPromptModal } from "@/components/notifications/notification-prompt-modal"
 import { CoachMarkOverlay, type CoachMarkStep } from "@/components/tutorial/coach-mark-overlay"
 import { ThemeTool, type ThemeToolScreen } from "@/components/theme/theme-tool"
-import { keepPreview, previewTheme, revertPreview, type ThemeId } from "@/lib/themes"
+import { isPreviewing, keepPreview, previewTheme, revertPreview, type ThemeId } from "@/lib/themes"
 import { hapticsLight, hapticsMedium, hapticsSuccess, hapticsWarning } from "@/lib/haptics"
 import { bumpPlayCount, readPlayCounts, type PlayCounts } from "@/lib/play-counts"
 import { BadgesCard } from "@/components/achievements/badges-card"
@@ -48,6 +48,7 @@ function getTutorialSteps(t: TFn): CoachMarkStep[] {
       title: t('tutorial.topics.1.title'),
       body: t('tutorial.topics.1.body'),
       padding: 4,
+      guide: 'point',
     },
     {
       selector: '[data-tour="section-nav"]',
@@ -55,6 +56,7 @@ function getTutorialSteps(t: TFn): CoachMarkStep[] {
       body: t('tutorial.topics.2.body'),
       placement: 'top',
       padding: 8,
+      guide: 'phone',
     },
     {
       selector: '[data-tour="language-switcher"]',
@@ -62,8 +64,15 @@ function getTutorialSteps(t: TFn): CoachMarkStep[] {
       body: t('tutorial.topics.3.body'),
       placement: 'top',
       padding: 6,
+      guide: 'present',
     },
   ]
+}
+
+// The last scene of onboarding, after the theme tool: nothing to point at,
+// just the guide cheering them on.
+function getAllSetSteps(t: TFn): CoachMarkStep[] {
+  return [{ selector: '', title: t('tutorial.ready.title'), body: t('tutorial.ready.body'), guide: 'cheer' }]
 }
 
 function getLearningTutorialSteps(t: TFn): CoachMarkStep[] {
@@ -81,6 +90,7 @@ function getLearningTutorialSteps(t: TFn): CoachMarkStep[] {
       body: t('tutorial.learning.2.body'),
       placement: 'top',
       padding: 10,
+      guide: 'listen',
     },
     {
       selector: '[data-tour="learning-settings"]',
@@ -88,6 +98,7 @@ function getLearningTutorialSteps(t: TFn): CoachMarkStep[] {
       body: t('tutorial.learning.3.body'),
       placement: 'bottom',
       padding: 6,
+      guide: 'settings',
     },
   ]
 }
@@ -796,6 +807,7 @@ export function LanguageSelector() {
   const { t, tPlural, tMarkup, setUiLanguage } = useT()
   const tutorialSteps = useMemo(() => getTutorialSteps(t), [t])
   const learningTutorialSteps = useMemo(() => getLearningTutorialSteps(t), [t])
+  const allSetSteps = useMemo(() => getAllSetSteps(t), [t])
 
   // Custom sign out handler that resets to first page
   const handleSignOut = async () => {
@@ -843,8 +855,12 @@ export function LanguageSelector() {
   const [notifPromptVariant, setNotifPromptVariant] = useState<'enable' | 'settings'>('settings')
   const [showTutorial, setShowTutorial] = useState(false)
   const [showLearningTutorial, setShowLearningTutorial] = useState(false)
-  // The theme tool: the screen it shows the app on, and the one it opened on.
-  const [themeTool, setThemeTool] = useState<{ screen: ThemeToolScreen; from: ThemeToolScreen } | null>(null)
+  // The theme tool: the screen it shows the app on, the one it opened on, and
+  // whether it is the onboarding one (with the guide, ending in "all set").
+  const [themeTool, setThemeTool] = useState<{ screen: ThemeToolScreen; from: ThemeToolScreen; guide: boolean } | null>(null)
+  const [showAllSet, setShowAllSet] = useState(false)
+  // Set when the paywall stands between the onboarding theme tool and "all set".
+  const allSetAfterPaywallRef = useRef(false)
   const themeToolTopicRef = useRef<Topic | null>(null)
 
   const handleNotifPromptDismiss = () => {
@@ -4222,13 +4238,15 @@ export function LanguageSelector() {
   }, [currentPage, selectedTopic, vocabulary.length])
 
   // The end of the first lesson's tutorial, finished or skipped, leads into
-  // the theme tool, once.
+  // the theme tool, once, and from there into the "all set" scene.
   const handleLearningTutorialDone = () => {
     setShowLearningTutorial(false)
     localStorage.setItem('vw_learning_tutorial_shown', 'true')
     if (!localStorage.getItem('vw_theme_intro_shown')) {
       localStorage.setItem('vw_theme_intro_shown', 'true')
-      setTimeout(openThemeTool, 400)
+      setTimeout(() => openThemeTool(true), 400)
+    } else {
+      setTimeout(() => setShowAllSet(true), 400)
     }
   }
 
@@ -4238,10 +4256,10 @@ export function LanguageSelector() {
 
   // Opens the theme tool on the screen the app is on. Its lesson is the one
   // open or last opened, else the first topic.
-  const openThemeTool = () => {
+  const openThemeTool = (guide = false) => {
     themeToolTopicRef.current = selectedTopic && selectedTopic.id > 0 ? selectedTopic : topics[0] ?? null
     const screen = themeToolScreenNow()
-    setThemeTool({ screen, from: screen })
+    setThemeTool({ screen, from: screen, guide })
   }
 
   // Moves the app behind the theme tool to one of its screens.
@@ -4260,7 +4278,24 @@ export function LanguageSelector() {
     setThemeTool((tool) => tool && { ...tool, screen })
   }
 
-  const closeThemeTool = () => setThemeTool(null)
+  // Done. A crowned theme still showing was only a preview: now is the time
+  // to offer Premium. Closing the paywall puts the old theme back.
+  const closeThemeTool = () => {
+    const onboarding = !!themeTool?.guide
+    setThemeTool(null)
+    if (isPreviewing()) {
+      allSetAfterPaywallRef.current = onboarding
+      setShowPaywall(true)
+    } else if (onboarding) {
+      setShowAllSet(true)
+    }
+  }
+
+  const afterPaywall = () => {
+    if (!allSetAfterPaywallRef.current) return
+    allSetAfterPaywallRef.current = false
+    setTimeout(() => setShowAllSet(true), 400)
+  }
 
 
   // Re-check notification permission when the app returns to foreground.
@@ -5311,7 +5346,7 @@ export function LanguageSelector() {
         onPremiumThemeAction={handlePremiumTheme}
         onTryThemesAction={() => {
           setShowManageAccount(false)
-          setTimeout(openThemeTool, 250)
+          setTimeout(() => openThemeTool(), 250)
         }}
       />
 
@@ -5340,8 +5375,17 @@ export function LanguageSelector() {
         home={themeTool?.from ?? 'learning'}
         isPremium={isPremium}
         onScreenAction={showThemeToolScreen}
-        onPremiumAction={handlePremiumTheme}
+        onPremiumAction={previewTheme}
         onDoneAction={closeThemeTool}
+        guide={themeTool?.guide}
+      />
+
+      {/* Last onboarding scene, after the theme tool */}
+      <CoachMarkOverlay
+        open={showAllSet}
+        steps={allSetSteps}
+        onComplete={() => setShowAllSet(false)}
+        onSkip={() => setShowAllSet(false)}
       />
 
       {/* First-time coach-mark tutorial (inside a topic) */}
@@ -5358,10 +5402,12 @@ export function LanguageSelector() {
         onCloseAction={() => {
           setShowPaywall(false)
           revertPreview()
+          afterPaywall()
         }}
         onSuccessAction={() => {
           keepPreview()
           setShowPaywall(false)
+          afterPaywall()
         }}
         nativeLanguageCode={nativeLanguageCode}
         targetLanguageCode={targetLanguageCode}
