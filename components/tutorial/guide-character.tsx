@@ -49,7 +49,7 @@ const POINT_HAIR_TOP = 167
 const CARD_SCALE = 0.26
 const t = (name: string) => `/tutorial/guide-${name}.webp`
 
-type CardFx = 'swipe' | 'flags' | 'notes' | 'sparkles'
+type CardFx = 'swipe' | 'flags' | 'sparkles'
 
 // x: shift that lines the head up with the reference pose; cut: the row
 // where her body is cut off; w/h: image size. All in sheet pixels.
@@ -120,17 +120,17 @@ export const CARD_GUIDES = {
     loop: [[4, 900], [6, 1300], [5, 600], [7, 1200], [8, 900], [6, 1100]],
     fx: 'flags', fxAt: { x: 352, y: 112 }, fxFrame: 6, fxOn: [4, 5, 6, 7, 8],
   },
+  // Headphones on, words popping up in bubbles as she listens and learns.
   listen: {
     kind: 'poses', name: 'listen', side: 'right',
     frames: [
-      { x: 0, cut: 394, w: 327, h: 404 }, { x: -10, cut: 384, w: 333, h: 386 },
-      { x: -21, cut: 377, w: 342, h: 380 }, { x: 39, cut: 366, w: 353, h: 381 },
-      { x: 28, cut: 407, w: 355, h: 411 }, { x: 15, cut: 401, w: 378, h: 408 },
-      { x: 38, cut: 398, w: 340, h: 411 }, { x: 30, cut: 394, w: 386, h: 395 },
+      { x: 0, cut: 417, w: 361, h: 421 }, { x: 4, cut: 407, w: 361, h: 409 },
+      { x: 3, cut: 427, w: 385, h: 428 }, { x: -4, cut: 443, w: 388, h: 445 },
+      { x: 2, cut: 407, w: 348, h: 411 }, { x: -6, cut: 402, w: 405, h: 403 },
+      { x: -21, cut: 391, w: 411, h: 402 }, { x: 10, cut: 366, w: 351, h: 369 },
     ],
-    intro: [[1, 1200]],
-    loop: [[2, 700], [3, 450], [4, 450], [7, 450], [4, 450], [6, 700], [8, 900], [5, 800], [1, 1400]],
-    fx: 'notes', fxAt: { x: 286, y: 110 }, fxFrame: 1,
+    intro: [[1, 1300]],
+    loop: [[2, 1100], [3, 1000], [4, 1100], [5, 1100], [6, 1000], [7, 1400], [8, 1300], [1, 1300]],
   },
   cheer: {
     kind: 'poses', name: 'cheer', side: 'right',
@@ -505,15 +505,6 @@ export function CardGuide({ name }: { name: CardGuideName }) {
           <Icon icon={PRESENT_FLAGS[flag % PRESENT_FLAGS.length]} className="w-full h-full rounded-full shadow-md" />
         </span>
       )}
-      {up && fx && g.fx === 'notes' && [0, 1, 2].map(i => (
-        <span
-          key={i}
-          className="guide-note absolute text-[15px] font-bold leading-none text-[#f26b1d]"
-          style={{ left: fx.left + i * 6, top: fx.top, animationDelay: `${i * 0.9}s` }}
-        >
-          {i === 1 ? '♫' : '♪'}
-        </span>
-      ))}
       {up && g.fx === 'sparkles' && [[0.02, 0.5], [0.94, 0.42], [0.84, 0.06]].map(([x, y], i) => (
         <span
           key={i}

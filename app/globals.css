@@ -215,16 +215,6 @@ input, textarea, [contenteditable] {
   78% { transform: translateY(-3px) scale(1); opacity: 0.9; }
   100% { transform: translateY(-14px) scale(0.85); opacity: 0; }
 }
-/* Listening step: music notes float up from her headphones. */
-.guide-note {
-  animation: guide-note 2.7s ease-out infinite both;
-}
-@keyframes guide-note {
-  0% { transform: translate(0, 6px) scale(0.6) rotate(-10deg); opacity: 0; }
-  15% { opacity: 1; }
-  50% { transform: translate(7px, -14px) scale(1) rotate(8deg); }
-  100% { transform: translate(-3px, -34px) scale(0.9) rotate(-6deg); opacity: 0; }
-}
 /* Cheering step: sparkles twinkle around her. */
 .guide-twinkle {
   animation: guide-twinkle 1.65s ease-in-out infinite both;
@@ -243,7 +233,7 @@ input, textarea, [contenteditable] {
 }
 @media (prefers-reduced-motion: reduce) {
   .guide-caption-in { animation: none; }
-  .guide-ripple, .guide-note, .guide-twinkle { display: none; }
+  .guide-ripple, .guide-twinkle { display: none; }
   .guide-flag-pop, .guide-beat-a, .guide-beat-b { animation: none; }
 }
 
