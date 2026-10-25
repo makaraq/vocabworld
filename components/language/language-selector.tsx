@@ -1,5 +1,6 @@
 "use client"
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react"
+import { flushSync } from "react-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Topic, VocabularyWord, VocabularyResponse, getTopics, getVocabularyForTopic } from "@/lib/database"
@@ -3317,10 +3318,57 @@ export function LanguageSelector() {
   const FADE_MS = 200
   const fadeOutStartRef = useRef(0)
   const beginPageFade = () => {
+    // The morph below snapshots the page as it is; a dimmed grid would show.
+    if (canMorphPages()) return
     fadeOutStartRef.current = Date.now()
     setIsTransitioning(true)
   }
-  const transitionToPage = (page: "learning" | "confirmation") => {
+
+  // 🎬 Where the web view supports View Transitions (iOS 18+, current
+  // Android), opening a topic morphs its tile into the lesson: the tile's
+  // card grows into the flashcard card, its icon and name fly up into the
+  // header, and the rest crossfades. Back plays it in reverse into the same
+  // tile. Timing lives in app/globals.css (::view-transition-*). The lesson
+  // side carries its names permanently; the tile gets them only for the
+  // moment of the swap, since only one element may hold each name.
+  const canMorphPages = () =>
+    typeof document !== 'undefined' &&
+    typeof document.startViewTransition === 'function' &&
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches &&
+    // The theme tool swaps pages in place under a scaled app.
+    !document.documentElement.classList.contains('theme-tool-open')
+
+  const nameTopicTile = (topicId: number | undefined, on: boolean) => {
+    if (topicId == null) return
+    const tile = document.querySelector<HTMLElement>(`[data-tour="topic-grid"] [data-topic-tile="${topicId}"]`)
+    if (!tile) return
+    const set = (el: HTMLElement | null, name: string) => { if (el) el.style.viewTransitionName = on ? name : '' }
+    set(tile, 'topic-card')
+    set(tile.querySelector<HTMLElement>('[data-topic-tile-icon]'), 'topic-icon')
+    set(tile.querySelector<HTMLElement>('[data-topic-tile-title]'), 'topic-title')
+  }
+
+  const morphToPage = (page: "learning" | "confirmation", topicId: number | undefined) => {
+    const swap = () => {
+      fadeOutStartRef.current = 0
+      setCurrentPage(page)
+      setIsTransitioning(false)
+    }
+    if (page === 'learning') {
+      nameTopicTile(topicId, true)
+      const vt = document.startViewTransition(() => flushSync(swap))
+      vt.finished.finally(() => nameTopicTile(topicId, false))
+    } else {
+      const vt = document.startViewTransition(() => {
+        flushSync(swap)
+        nameTopicTile(topicId, true)
+      })
+      vt.finished.finally(() => nameTopicTile(topicId, false))
+    }
+  }
+
+  const transitionToPage = (page: "learning" | "confirmation", topicId?: number) => {
+    if (canMorphPages()) return morphToPage(page, topicId)
     if (!fadeOutStartRef.current) beginPageFade()
     const remaining = Math.max(0, FADE_MS - (Date.now() - fadeOutStartRef.current))
     setTimeout(() => {
@@ -3470,8 +3518,8 @@ export function LanguageSelector() {
       setAutoPlayActive(false)
       autoPlayRef.current = false
 
-      // Fade over to the learning page
-      transitionToPage("learning")
+      // Over to the learning page, the tile morphing into it
+      transitionToPage("learning", topic.id)
     }
 
     // 1) In-memory cache (topics already opened this session) — instant
@@ -3933,7 +3981,7 @@ export function LanguageSelector() {
 
     // Stop any currently playing audio when navigating back
     stopAudio()
-    transitionToPage("confirmation")
+    transitionToPage("confirmation", selectedTopic?.id)
   }
 
   // 🔒 LOCK SCREEN & BACKGROUND PLAYBACK
@@ -4379,6 +4427,7 @@ export function LanguageSelector() {
     return (
       <button
         key={topic.id}
+        data-topic-tile={topic.id}
         onClick={async () => {
           if (longPressFiredRef.current) { longPressFiredRef.current = false; return }
           await handleTopicClick(topic)
@@ -4394,10 +4443,10 @@ export function LanguageSelector() {
         } ${completionBorderClass}`}
       >
         <div className="flex flex-col items-center justify-center h-full gap-2">
-          <div className="flex-shrink-0 flex items-center justify-center">
+          <div data-topic-tile-icon className="flex-shrink-0 flex items-center justify-center">
             <Icon icon={getTopicIcon(topic.id)} className="w-12 h-12 xs:w-14 xs:h-14 sm:w-16 sm:h-16 mx-auto" style={{ color: 'rgba(255,255,255,0.8)' }} />
           </div>
-          <p className="text-white/90 text-base xs:text-lg sm:text-xl font-medium leading-tight px-1 text-center w-full">{getTopicDisplayName(topic.id, topic.name)}</p>
+          <p data-topic-tile-title className="text-white/90 text-base xs:text-lg sm:text-xl font-medium leading-tight px-1 text-center w-full">{getTopicDisplayName(topic.id, topic.name)}</p>
         </div>
       </button>
     )
@@ -4458,9 +4507,9 @@ export function LanguageSelector() {
                   <Icon
                     icon={getTopicIcon(selectedTopic?.id)}
                     className="w-8 h-8 sm:w-9 sm:h-9 flex-shrink-0"
-                    style={{ color: 'rgba(255,255,255,0.8)' }}
+                    style={{ color: 'rgba(255,255,255,0.8)', viewTransitionName: 'topic-icon' }}
                   />
-                  <h1 className="text-xl sm:text-2xl md:text-3xl font-medium text-white text-center truncate">
+                  <h1 className="text-xl sm:text-2xl md:text-3xl font-medium text-white text-center truncate" style={{ viewTransitionName: 'topic-title' }}>
                     {selectedTopic ? getTopicDisplayName(selectedTopic.id, selectedTopic.name) : ''}
                   </h1>
                 </div>
@@ -4553,6 +4602,7 @@ export function LanguageSelector() {
                     rem by 1.28 (globals.css) and media queries don't see that. */}
                 <div
                   data-scale={holdingCardIndex === 0 ? 'press' : undefined}
+                  style={{ viewTransitionName: 'topic-card' }}
                   className="flashcard-scale relative bg-black/40 border border-white/20 rounded-2xl px-6 py-6 shadow-lg [--art:clamp(7rem,calc(100dvh_-_34.5rem),12rem)] h-[calc(var(--art)_+_10.5rem)] flex flex-col items-center justify-center"
                   onTouchStart={(e) => {
                     e.stopPropagation()
@@ -4636,7 +4686,7 @@ export function LanguageSelector() {
                   </Button>
                 </div>
               ) : (
-                <div data-tour="learning-controls" className="flex items-center justify-center gap-8">
+                <div data-tour="learning-controls" className="flex items-center justify-center gap-8" style={{ viewTransitionName: 'lesson-controls' }}>
                   <button
                     onClick={handlePrevious}
                     onTouchStart={() => setHoldingNavButton('previous')}
