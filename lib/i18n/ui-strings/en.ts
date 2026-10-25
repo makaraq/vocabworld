@@ -564,6 +564,25 @@ export const en = {
   'theme.tool.screen.learning': 'Learning',
   'theme.tool.screen.settings': 'Settings',
   'theme.tool.screen.account': 'Account',
+
+  // ---------- Home-screen widget ----------
+  'widget.title': 'Home-screen widget',
+  'widget.desc': 'A flashcard on your home screen. Tap it to hear the word.',
+  'widget.source': 'Words from',
+  'widget.source.random': 'Random words',
+  'widget.added': 'Added',
+  'widget.addToHome': 'Add to home screen',
+  'widget.updating': 'Updating widget…',
+  'widget.updated': 'Widget updated',
+  'widget.failed': "Couldn't update the widget. Check your connection.",
+  'widget.howTo.title': 'How to add it',
+  'widget.howTo.ios.1': 'Touch and hold an empty spot on your Home Screen.',
+  'widget.howTo.ios.2': 'Tap Edit (or +), then Add Widget.',
+  'widget.howTo.ios.3': 'Search for Sprind and add the flashcard widget.',
+  'widget.howTo.android.1': 'Touch and hold an empty spot on your home screen.',
+  'widget.howTo.android.2': 'Tap Widgets.',
+  'widget.howTo.android.3': 'Find Sprind and drag the flashcard widget onto your screen.',
+  'widget.native.empty': 'Open Sprind to choose words for this widget.',
 } as const
 
 export type UiKey = keyof typeof en

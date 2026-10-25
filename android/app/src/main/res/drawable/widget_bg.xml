@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Flashcard widget backdrop: the app's dark-to-orange glow (public/bg.jpeg) -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <corners android:radius="22dp" />
+    <gradient
+        android:type="linear"
+        android:angle="315"
+        android:startColor="#FF2A2135"
+        android:centerColor="#FFD9481C"
+        android:endColor="#FFF9B11E" />
+</shape>
