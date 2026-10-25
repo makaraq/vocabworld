@@ -3567,10 +3567,16 @@ export function LanguageSelector() {
         const BACK_MS = 460
         const CALM = 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
         const tileRadius = parseFloat(getComputedStyle(toParts.box).borderTopLeftRadius) || radius
+        // The tile's icon and title boxes where they rest, before it moves.
+        const restingBox = new Map<HTMLElement, DOMRect>()
+        for (const el of [toParts.icon, toParts.title]) if (el) restingBox.set(el, el.getBoundingClientRect())
         const g = flip(usable.box, to.box)
+        // Above its neighbours while it is bigger than its slot: each tile is
+        // its own layer, drawn in order, so tiles after it would otherwise
+        // show through it (a grid item takes z-index without positioning).
         const shrink: Keyframe[] = [
-          { transformOrigin: '0 0', transform: `translate(${g.x}px, ${g.y}px) scale(${g.sx}, ${g.sy})`, borderRadius: `${tileRadius / g.sx}px / ${tileRadius / g.sy}px` },
-          { transformOrigin: '0 0', transform: 'none', borderRadius: `${tileRadius}px` },
+          { transformOrigin: '0 0', transform: `translate(${g.x}px, ${g.y}px) scale(${g.sx}, ${g.sy})`, borderRadius: `${tileRadius / g.sx}px / ${tileRadius / g.sy}px`, zIndex: 20 },
+          { transformOrigin: '0 0', transform: 'none', borderRadius: `${tileRadius}px`, zIndex: 20 },
         ]
         run(toParts.box, shrink, { duration: BACK_MS, easing: CALM })
         // The card's contents, without its box, moving with the tile.
@@ -3589,27 +3595,36 @@ export function LanguageSelector() {
           { transformOrigin: '0 0', transform: `scale(${1 / g.sx}, ${1 / g.sy})` },
         ], { duration: BACK_MS, easing: CALM })
         run(contents, [{ opacity: 1 }, { opacity: 0 }], { duration: 140, easing: 'ease-out' })
-        // Icon and title: flown down, then traded for the tile's own over the
-        // final stretch, landing together with the box.
-        const handFrom = BACK_MS * 0.8
-        const handFor = BACK_MS * 0.2
-        for (const [a, b, src, real] of [[usable.icon, to.icon, fromParts!.icon, toParts.icon], [usable.title, to.title, fromParts!.title, toParts.title]] as const) {
-          if (real) {
-            run(real, [{ opacity: 0 }, { opacity: 0, offset: handFrom / (handFrom + handFor) }, { opacity: 1 }], { duration: handFrom + handFor, easing: 'linear' })
+        // Icon and title: copies of the tile's own, in its own font and size,
+        // fly from the header's and land exactly on them; the real ones stay
+        // hidden until then and take over in the same frame. No crossfade:
+        // the tile's own label rides inside the box, which rises into a
+        // top-row slot from below, so trading for it on the way showed two
+        // labels sliding together from opposite sides.
+        const drawnIcon = fromParts!.icon?.querySelector('svg')
+        for (const [a, b, real] of [[usable.icon, to.icon, toParts.icon], [usable.title, to.title, toParts.title]] as const) {
+          if (!real) continue
+          run(real, [{ opacity: 0 }, { opacity: 0 }], { duration: BACK_MS })
+          if (!a?.height || !b?.height) continue
+          const c = cloneOf(real)
+          const box = restingBox.get(real)!
+          place(c, box)
+          // The rebuilt grid's icon may not have loaded yet; the header's
+          // is the same one, already drawn.
+          if (real === toParts.icon && !c.querySelector('svg') && drawnIcon) {
+            const svg = drawnIcon.cloneNode(true) as SVGElement
+            svg.setAttribute('class', 'w-full h-full')
+            c.replaceChildren(svg)
           }
-          if (!a?.height || !b?.height || !src) continue
-          const c = cloneOf(src)
-          place(c, a)
-          // A title clone keeps its glyph box, not its full-width one.
-          c.style.whiteSpace = 'nowrap'
-          c.style.overflow = 'visible'
           ghost.appendChild(c)
-          const s = b.height / a.height
+          // b is the glyphs (a title's box is full width): scale about them.
+          const ox = b.left - box.left
+          const oy = b.top - box.top
+          const s = a.height / b.height
           run(c, [
-            { transformOrigin: '0 0', transform: 'none' },
-            { transformOrigin: '0 0', transform: `translate(${b.left - a.left}px, ${b.top - a.top}px) scale(${s})` },
+            { transformOrigin: `${ox}px ${oy}px`, transform: `translate(${a.left - b.left}px, ${a.top - b.top}px) scale(${s})` },
+            { transformOrigin: `${ox}px ${oy}px`, transform: 'none' },
           ], { duration: BACK_MS, easing: CALM })
-          run(c, [{ opacity: 1 }, { opacity: 1, offset: handFrom / (handFrom + handFor) }, { opacity: 0 }], { duration: handFrom + handFor, easing: 'linear' })
         }
         fadeInExcept(incoming, [toParts.box], 60)
         // The rest of the lesson clears quickly.
