@@ -3468,6 +3468,11 @@ export function LanguageSelector() {
     // ── Swap ──
     flushSync(swap)
     panel.appendChild(ghost)
+    // The panel is centred, and the pages differ in height, so it moves when
+    // they swap. Everything in the ghost layer was placed against where it
+    // was: carry the layer back by that much, so it all stays put on screen.
+    const panelAfter = panel.getBoundingClientRect()
+    ghost.style.transform = `translate(${panelRect.left - panelAfter.left}px, ${panelRect.top - panelAfter.top}px)`
     for (const [el, left, top] of scrolls) {
       if (!el) continue
       // No snapping or smooth scrolling while it is put back.
@@ -3553,21 +3558,45 @@ export function LanguageSelector() {
         // The rest of the page left behind clears quickly.
         for (const g of pageGhosts) run(g, [{ opacity: 1 }, { opacity: 0 }], { duration: 160, easing: 'ease-out' })
       } else {
-        // Back: the lesson card, icon and title fly into the tile as ghosts;
-        // the real tile takes over as they land.
-        const fromCard = cloneOf(fromParts!.box)
-        place(fromCard, usable.box)
-        ghost.appendChild(fromCard)
-        const f = flip(to.box, usable.box)
-        run(fromCard, [
-          { transformOrigin: '0 0', transform: 'none', borderRadius: `${radius}px` },
-          { transformOrigin: '0 0', transform: `translate(${f.x}px, ${f.y}px) scale(${f.sx}, ${f.sy})`, borderRadius: `${radius / f.sx}px / ${radius / f.sy}px` },
-        ], { duration: MOVE_MS, easing: SPRING })
-        for (const child of fromCard.children) {
-          run(child, [{ opacity: 1 }, { opacity: 0 }], { duration: 140, easing: 'ease-out' })
-        }
-        const flyers: HTMLElement[] = [fromCard]
-        for (const [a, b, src] of [[usable.icon, to.icon, fromParts!.icon], [usable.title, to.title, fromParts!.title]] as const) {
+        // Back: the real tile itself shrinks from the card's size into its
+        // place, so the box never fades or swaps on landing. The lesson's
+        // contents ride on it and clear quickly; the header icon and title
+        // fly down and hand over to the tile's own while it settles.
+        // A calm, even ease-out with no long tail: the spring's last few
+        // pixels creep over ~0.3 s and on a phone that settles as a tremor.
+        const BACK_MS = 460
+        const CALM = 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+        const tileRadius = parseFloat(getComputedStyle(toParts.box).borderTopLeftRadius) || radius
+        const g = flip(usable.box, to.box)
+        const shrink: Keyframe[] = [
+          { transformOrigin: '0 0', transform: `translate(${g.x}px, ${g.y}px) scale(${g.sx}, ${g.sy})`, borderRadius: `${tileRadius / g.sx}px / ${tileRadius / g.sy}px` },
+          { transformOrigin: '0 0', transform: 'none', borderRadius: `${tileRadius}px` },
+        ]
+        run(toParts.box, shrink, { duration: BACK_MS, easing: CALM })
+        // The card's contents, without its box, moving with the tile.
+        const contents = cloneOf(fromParts!.box)
+        place(contents, to.box)
+        contents.style.background = 'transparent'
+        contents.style.borderColor = 'transparent'
+        contents.style.boxShadow = 'none'
+        contents.style.backdropFilter = 'none'
+        ghost.appendChild(contents)
+        // Laid out at the card's size, then scaled down with the tile.
+        contents.style.width = `${usable.box.width}px`
+        contents.style.height = `${usable.box.height}px`
+        run(contents, [
+          { transformOrigin: '0 0', transform: `translate(${g.x}px, ${g.y}px)` },
+          { transformOrigin: '0 0', transform: `scale(${1 / g.sx}, ${1 / g.sy})` },
+        ], { duration: BACK_MS, easing: CALM })
+        run(contents, [{ opacity: 1 }, { opacity: 0 }], { duration: 140, easing: 'ease-out' })
+        // Icon and title: flown down, then traded for the tile's own over the
+        // final stretch, landing together with the box.
+        const handFrom = BACK_MS * 0.8
+        const handFor = BACK_MS * 0.2
+        for (const [a, b, src, real] of [[usable.icon, to.icon, fromParts!.icon, toParts.icon], [usable.title, to.title, fromParts!.title, toParts.title]] as const) {
+          if (real) {
+            run(real, [{ opacity: 0 }, { opacity: 0, offset: handFrom / (handFrom + handFor) }, { opacity: 1 }], { duration: handFrom + handFor, easing: 'linear' })
+          }
           if (!a?.height || !b?.height || !src) continue
           const c = cloneOf(src)
           place(c, a)
@@ -3575,27 +3604,16 @@ export function LanguageSelector() {
           c.style.whiteSpace = 'nowrap'
           c.style.overflow = 'visible'
           ghost.appendChild(c)
-          flyers.push(c)
           const s = b.height / a.height
           run(c, [
             { transformOrigin: '0 0', transform: 'none' },
             { transformOrigin: '0 0', transform: `translate(${b.left - a.left}px, ${b.top - a.top}px) scale(${s})` },
-          ], { duration: MOVE_MS, easing: SPRING })
-        }
-        // The real tile and its parts stay hidden until the flyers land,
-        // then trade places with them in one short crossfade.
-        const land = MOVE_MS * 0.62
-        run(toParts.box, [
-          { opacity: 0 },
-          { opacity: 0, offset: land / (land + 160) },
-          { opacity: 1 },
-        ], { duration: land + 160, easing: 'linear' })
-        for (const c of flyers) {
-          run(c, [{ opacity: 1 }, { opacity: 0 }], { duration: 160, delay: land, easing: 'ease-out' })
+          ], { duration: BACK_MS, easing: CALM })
+          run(c, [{ opacity: 1 }, { opacity: 1, offset: handFrom / (handFrom + handFor) }, { opacity: 0 }], { duration: handFrom + handFor, easing: 'linear' })
         }
         fadeInExcept(incoming, [toParts.box], 60)
         // The rest of the lesson clears quickly.
-        for (const g of pageGhosts) run(g, [{ opacity: 1 }, { opacity: 0 }], { duration: 160, easing: 'ease-out' })
+        for (const p of pageGhosts) run(p, [{ opacity: 1 }, { opacity: 0 }], { duration: 160, easing: 'ease-out' })
       }
     } else {
       // Nothing to morph between (playlists, a tile out of view): crossfade.
