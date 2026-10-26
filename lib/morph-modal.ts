@@ -1,17 +1,22 @@
 // Opens a modal's panel out of the element that opened it and closes it back
-// into it: a container transform, as a topic tile opens into its lesson and
-// the gear into settings (language-selector.tsx), for any tile or button.
+// into it: a container transform, the very one the gear opens settings with
+// (language-selector.tsx), for any tile or button.
 //
 // The panel's own box moves (left, top, width, height), never a scale, so
-// its glass keeps its blur, rim, shadow and corners true at every size. On
-// the way its corners round up into a bubble halfway and settle to the
-// panel's own as it arrives. Its contents keep the width they have at rest,
-// so nothing reflows, and hang from the point nearest the source, so they
-// barely move while the glass opens over them; they come in as it settles
-// and clear first when it closes. A copy of the source, above everything,
-// melts into the glass as it grows out of it and forms again as the glass
-// lands on it; the source itself hides while its panel is up. The modal's
-// backdrop fades in and out alongside.
+// its glass keeps its blur, rim, shadow and corners true at every size. Its
+// way passes through a circle halfway (in eased progress), the point of it
+// nearest the source moving straight, so the glass swells round out of the
+// source before it drops into the panel. While it moves it is a bubble, its
+// corners fully round (the source's own corner kept, when the source sits in
+// one of the panel's corners, as the gear does), and it squares up to the
+// panel's corners only as it settles; closing, it rounds back up first. Its
+// contents keep the width they have at rest, so nothing reflows, and hang
+// from the point nearest the source, so they barely move while the glass
+// opens over them; they come in as it settles and clear first when it
+// closes. A copy of the source, above everything, melts into the glass as it
+// grows out of it and forms again as the glass lands on it; the source
+// itself hides while its panel is up. The modal's backdrop fades in and out
+// alongside. A bottom sheet can slide down and away instead (slide below).
 //
 // A timer, not animation events, finishes a close: a frame-starved webview
 // can stall an animation, and a panel must never stay stuck on screen.
@@ -29,6 +34,11 @@ export const MORPH_CALM = 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
 const OPEN_MS = 620
 const CLOSE_MS = 460
 const SETTLE = 'cubic-bezier(0.2, 0.8, 0.2, 1)'
+// The bubble squaring up into the panel, and rounding back up.
+const SQUARE = 'cubic-bezier(0.4, 0, 0.2, 1)'
+// A sheet sliding away: off quickly, then easing out of sight.
+const SLIDE_MS = 420
+const SLIDE = 'cubic-bezier(0.32, 0.72, 0, 1)'
 
 export type Box = { left: number; top: number; width: number; height: number }
 // Top-left, top-right, bottom-right, bottom-left; horizontal and vertical.
@@ -47,6 +57,9 @@ export type PanelMorph = {
   // Takes the panel back into its source; `done` runs once it is there, to
   // unmount the modal.
   close: (done: () => void) => void
+  // Slides it down off the screen instead (a bottom sheet), from wherever
+  // it is now (dragged, or still opening); the source shows again at once.
+  slide: (done: () => void) => void
   // Stops everything and puts the panel and the source back as they were.
   // Safe to call any number of times.
   dispose: () => void
@@ -76,20 +89,36 @@ export const cornersOf = (el: HTMLElement, box: Box): Corners => {
   }
   return corners
 }
-export const frame = (box: Box, corners: Corners): Keyframe => ({
+const place = (box: Box): Keyframe => ({
   left: `${box.left}px`,
   top: `${box.top}px`,
   width: `${box.width}px`,
   height: `${box.height}px`,
-  borderRadius: `${corners.h.map((r) => `${r}px`).join(' ')} / ${corners.v.map((r) => `${r}px`).join(' ')}`,
 })
-// Halfway (in eased progress) between two boxes, as a bubble: every corner
-// half the shorter side.
-export const bubble = (a: Box, b: Box): Keyframe => {
-  const half = (x: number, y: number) => x + (y - x) / 2
-  const box = { left: half(a.left, b.left), top: half(a.top, b.top), width: half(a.width, b.width), height: half(a.height, b.height) }
-  const r = Math.min(box.width, box.height) / 2
-  return { ...frame(box, { h: [r, r, r, r], v: [r, r, r, r] }), offset: 0.5 }
+
+// The way between two boxes: through a circle halfway (in eased progress),
+// as wide as the two halfway, the point at (x, y) across each box (0 to 1)
+// moving straight. Settings' is its top-right corner, the gear's.
+const pathOf = (a: Box, b: Box, x: number, y: number): Keyframe[] => {
+  const half = (p: number, q: number) => p + (q - p) / 2
+  const size = half(a.width, b.width)
+  const cx = half(a.left + a.width * x, b.left + b.width * x)
+  const cy = half(a.top + a.height * y, b.top + b.height * y)
+  return [place(a), { ...place({ left: cx - size * x, top: cy - size * y, width: size, height: size }), offset: 0.5 }, place(b)]
+}
+
+// Corners as a border-radius that eases within its units: the round ones
+// as percentages of the box (horizontal / vertical), so 50% stays a bubble
+// whatever the size, and the kept one (an index, or -1) in px.
+const radiusOf = (corners: Corners, box: Box, kept: number) => {
+  const h = corners.h.map((r, i) => (i === kept ? `${r}px` : `${(r / box.width) * 100}%`))
+  const v = corners.v.map((r, i) => (i === kept ? `${r}px` : `${(r / box.height) * 100}%`))
+  return `${h.join(' ')} / ${v.join(' ')}`
+}
+const bubbleOf = (source: Corners, kept: number) => {
+  const h = [0, 1, 2, 3].map((i) => (i === kept ? `${source.h[i]}px` : '50%'))
+  const v = [0, 1, 2, 3].map((i) => (i === kept ? `${source.v[i]}px` : '50%'))
+  return `${h.join(' ')} / ${v.join(' ')}`
 }
 
 // Hides an element and shows it again, both at once. Its own transitions
@@ -179,8 +208,18 @@ export function morphPanelOpen(
   hold(panel)
   const rest = panel.getBoundingClientRect()
   const restCorners = cornersOf(panel, rest)
-  // Where across the panel the contents hang from: the source's centre.
-  const anchor = Math.min(1, Math.max(0, (from.left + from.width / 2 - rest.left) / rest.width))
+  // Where across and down the panel the source's centre falls: the point
+  // the contents hang from (across) and the glass grows from.
+  const clamp = (n: number) => Math.min(1, Math.max(0, n))
+  const anchor = clamp((from.left + from.width / 2 - rest.left) / rest.width)
+  const anchorY = clamp((from.top + from.height / 2 - rest.top) / rest.height)
+  // The panel's corner the source sits in, if it sits in one (the gear in
+  // settings' top right): that corner keeps the source's curve while the
+  // rest round up, so the source stays inside the bubble.
+  const side = (n: number) => (n <= 0.25 ? 0 : n >= 0.75 ? 1 : -1)
+  const [across, down] = [side(anchor), side(anchorY)]
+  const kept = across < 0 || down < 0 ? -1 : down === 0 ? across : 3 - across
+  const bubbleRadius = bubbleOf(fromCorners, kept)
 
   // The icon's flight (options.handoff): from the source's icon to the close
   // button's, measured at rest, moving its centre, sizing and turning. The
@@ -296,8 +335,17 @@ export function morphPanelOpen(
     ...(flyer && flight
       ? [flyer.animate([{ transform: 'none', color: flight.colour.from }, { transform: flight.landed, color: flight.colour.to }], { duration: OPEN_MS, easing: morphSpring(), fill: 'forwards' })]
       : []),
-    panel.animate([frame(from, fromCorners), bubble(from, rest), frame(rest, restCorners)], { duration: OPEN_MS, easing: morphSpring(), fill: 'both' }),
-    ghost.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160, easing: 'ease-out', fill: 'both' }),
+    panel.animate(pathOf(from, rest, anchor, anchorY), { duration: OPEN_MS, easing: morphSpring(), fill: 'both' }),
+    panel.animate(
+      [
+        { borderRadius: radiusOf(fromCorners, from, kept) },
+        { borderRadius: bubbleRadius, offset: 0.25, easing: SQUARE },
+        { borderRadius: radiusOf(restCorners, rest, kept), offset: 0.75 },
+        { borderRadius: radiusOf(restCorners, rest, kept) },
+      ],
+      { duration: OPEN_MS, fill: 'both' },
+    ),
+    ghost.animate([{ opacity: 1, easing: 'ease-out' }, { opacity: 0, offset: 0.25 }, { opacity: 0 }], { duration: OPEN_MS, fill: 'both' }),
     ...contents.map((child) =>
       child.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 300, delay: 250, easing: SETTLE, fill: 'both' }),
     ),
@@ -361,11 +409,22 @@ export function morphPanelOpen(
       ...(flyer && flight
         ? [flyer.animate([flown ?? { transform: flight.landed, color: flight.colour.to }, { transform: 'none', color: flight.colour.from }], { duration: CLOSE_MS, easing: MORPH_CALM, fill: 'forwards' })]
         : []),
-      panel.animate([frame(now, nowCorners), bubble(now, to), frame(to, cornersOf(source, to))], { duration: CLOSE_MS, easing: MORPH_CALM, fill: 'forwards' }),
+      panel.animate(pathOf(now, to, anchor, anchorY), { duration: CLOSE_MS, easing: MORPH_CALM, fill: 'forwards' }),
+      panel.animate(
+        [
+          { borderRadius: radiusOf(nowCorners, now, kept), easing: SQUARE },
+          { borderRadius: bubbleRadius, offset: 0.5 },
+          { borderRadius: radiusOf(cornersOf(source, to), to, kept) },
+        ],
+        { duration: CLOSE_MS, fill: 'forwards' },
+      ),
       ...contents.map((child, i) =>
         child.animate([{ opacity: shown[i] }, { opacity: 0 }], { duration: 140, easing: 'ease-out', fill: 'forwards' }),
       ),
-      ghost.animate([{ opacity: ghostOpacity, easing: 'ease-in' }, { opacity: 0, offset: 0.55, easing: 'ease-out' }, { opacity: 1 }], { duration: CLOSE_MS, fill: 'forwards' }),
+      ghost.animate(
+        [{ opacity: ghostOpacity, easing: 'ease-in' }, { opacity: 0, offset: 0.26 }, { opacity: 0, offset: 0.65, easing: 'ease-out' }, { opacity: 1 }],
+        { duration: CLOSE_MS, fill: 'forwards' },
+      ),
       ...(backdrop ? [backdrop.animate([{ opacity: backdropOpacity }, { opacity: 0 }], { duration: 340, easing: 'ease-in', fill: 'forwards' })] : []),
     ]
     timer = setTimeout(() => {
@@ -382,5 +441,56 @@ export function morphPanelOpen(
     }, CLOSE_MS)
   }
 
-  return { close, dispose }
+  const slide = (done: () => void) => {
+    if (disposed || timer) return
+    // Where it is now, before the morph lets go of it.
+    const now = panel.getBoundingClientRect()
+    const backdropOpacity = backdrop ? getComputedStyle(backdrop).opacity : '1'
+    animations.forEach((a) => a.cancel())
+    animations = []
+    ghost?.remove()
+    ghost = null
+    landIcon()
+    unpin()
+    release()
+    showNow(source)
+    disposed = true
+    slideSheetAway(panel, backdrop, done, { now, backdropOpacity })
+  }
+
+  return { close, slide, dispose }
+}
+
+// Slides a bottom sheet down off the screen from wherever it is now (a drag
+// leaves it part way down), the backdrop fading alongside; `done` runs once
+// it is gone, to unmount the modal. `from` is where it was, when something
+// else has just moved it back to rest (PanelMorph.slide).
+export function slideSheetAway(
+  panel: HTMLElement | null,
+  backdrop: HTMLElement | null | undefined,
+  done: () => void,
+  from?: { now: DOMRect; backdropOpacity: string },
+) {
+  if (!panel || typeof panel.animate !== 'function') {
+    done()
+    return
+  }
+  const now = from?.now ?? panel.getBoundingClientRect()
+  const backdropOpacity = from?.backdropOpacity ?? (backdrop ? getComputedStyle(backdrop).opacity : '1')
+  // Its own transitions and a drag's offset out of the way; the animation
+  // carries on from that offset.
+  Object.assign(panel.style, { transition: 'none', transform: 'none', opacity: '1' })
+  const rest = panel.getBoundingClientRect()
+  const by = (y: number) => ({ transform: `translateY(${y}px)` })
+  panel.animate([by(now.top - rest.top), by(Math.max(window.innerHeight - rest.top, rest.height) + 8)], {
+    duration: SLIDE_MS,
+    easing: SLIDE,
+    fill: 'forwards',
+  })
+  backdrop?.animate([{ opacity: backdropOpacity }, { opacity: 0 }], { duration: SLIDE_MS - 80, easing: 'ease-out', fill: 'forwards' })
+  setTimeout(() => {
+    panel.style.visibility = 'hidden'
+    if (backdrop) backdrop.style.visibility = 'hidden'
+    done()
+  }, SLIDE_MS)
 }

@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/auth-context"
 import { getFlagIcon } from "@/utils/flags"
 import { useT } from "@/components/providers/translation-provider"
 import { resolveAvatar } from "@/lib/avatars/smiley-avatar"
-import { canMorphFrom, morphPanelOpen, type PanelMorph } from "@/lib/morph-modal"
+import { canMorphFrom, morphPanelOpen, slideSheetAway, type PanelMorph } from "@/lib/morph-modal"
 
 interface LeaderboardEntry {
   rank: number
@@ -26,8 +26,7 @@ interface LeaderboardModalProps {
   targetLanguageCode: string
   targetLanguageName: string
   // The tile it was opened from: when it is on screen the sheet opens out of
-  // it and closes back into it (lib/morph-modal.ts) instead of sliding. A
-  // drag down still slides it away.
+  // it (lib/morph-modal.ts) instead of sliding up; it always slides away.
   morphFrom?: () => HTMLElement | null
 }
 
@@ -75,31 +74,18 @@ export function LeaderboardModal({
     }
   }, [user?.id, period, scope, targetLanguageCode])
 
-  // Back into the tile it opened from, unless dragged down: a drag slides.
-  // (As a click handler it gets the event, which isn't 'slide'.)
-  const animateClose = useCallback((how?: unknown) => {
+  // A sheet, so it slides down and away, however it is closed (✕, the
+  // backdrop, Escape or a drag), from wherever it is; one that opened out of
+  // its tile shows the tile again as it goes (lib/morph-modal.ts).
+  const animateClose = useCallback(() => {
     if (closingRef.current) return
     closingRef.current = true
-    if (how !== 'slide' && morphRef.current) {
-      morphRef.current.close(() => {
-        document.body.style.overflow = ''
-        onCloseAction()
-      })
-      return
-    }
-    if (modalRef.current) {
-      modalRef.current.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out'
-      modalRef.current.style.transform = 'translateY(100%)'
-      modalRef.current.style.opacity = '0'
-    }
-    if (backdropRef.current) {
-      backdropRef.current.style.transition = 'opacity 0.3s ease-out'
-      backdropRef.current.style.opacity = '0'
-    }
-    setTimeout(() => {
+    const finish = () => {
       document.body.style.overflow = ''
       onCloseAction()
-    }, 300)
+    }
+    if (morphRef.current) morphRef.current.slide(finish)
+    else slideSheetAway(modalRef.current, backdropRef.current, finish)
   }, [onCloseAction])
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
@@ -156,7 +142,7 @@ export function LeaderboardModal({
     const velocity = dy / Math.max(dt, 1)
 
     if (dy > 100 || velocity > 0.4) {
-      animateClose('slide')
+      animateClose()
     } else {
       if (modalRef.current) {
         modalRef.current.style.transition = 'transform 0.3s cubic-bezier(0.2, 0, 0, 1)'
@@ -198,7 +184,7 @@ export function LeaderboardModal({
       const dt = Date.now() - startTime
       const velocity = dy / Math.max(dt, 1)
       if (dy > 100 || velocity > 0.4) {
-        animateClose('slide')
+        animateClose()
       } else {
         if (modalRef.current) {
           modalRef.current.style.transition = 'transform 0.3s cubic-bezier(0.2, 0, 0, 1)'
