@@ -231,11 +231,6 @@ input, textarea, [contenteditable] {
   0% { transform: translateY(10px) scale(0.96); opacity: 0; }
   100% { transform: translateY(0) scale(1); opacity: 1; }
 }
-@media (prefers-reduced-motion: reduce) {
-  .guide-caption-in { animation: none; }
-  .guide-ripple, .guide-twinkle { display: none; }
-  .guide-flag-pop, .guide-beat-a, .guide-beat-b { animation: none; }
-}
 
 /* ── Flashcard scale transition ───────────────────────────────────────
    Two things swell a flashcard: audio playing on that card, and a
@@ -282,17 +277,6 @@ input, textarea, [contenteditable] {
   transition: transform 200ms cubic-bezier(0.34, 1.3, 0.64, 1);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .flashcard-scale,
-  .flashcard-scale[data-scale="audio"],
-  .flashcard-scale[data-scale="press"] {
-    --flashcard-scale: 1;
-    transition:
-      background-color 200ms ease-out,
-      border-color 200ms ease-out;
-  }
-}
-
 /* ── Flashcard word: speaking ─────────────────────────────────────────
    The word whose audio is playing takes the accent colour with a soft
    glow and grows a touch, then eases back when its audio ends. Themes
@@ -312,14 +296,6 @@ input, textarea, [contenteditable] {
   transform: scale(1.08);
 }
 
-/* Reduced motion keeps the emphasis but drops the movement: the word
-   switches size instead of animating to it. */
-@media (prefers-reduced-motion: reduce) {
-  .flashcard-word {
-    transition: color 300ms ease-out, text-shadow 300ms ease-out;
-  }
-}
-
 /* ── Enter animations: let go once they finish ───────────────────────
    tw-animate-css fills `animate-in` forwards, so a faded-in modal overlay
    stays "animating" its opacity for as long as it is open. Chrome (and so
@@ -332,6 +308,47 @@ input, textarea, [contenteditable] {
    Outside @layer so it beats the utility that sets the shorthand. */
 .animate-in {
   animation-fill-mode: backwards;
+}
+
+/* ── Overlay dim fading in ───────────────────────────────────────────
+   The same cause while it fades: an overlay whose opacity is still
+   below 1 cuts its glass panel's blur off at the overlay, so the panel
+   arrived clear and frosted over once the fade ended. An overlay that
+   holds glass fades its dim instead. Its panel doesn't fade either (half
+   faded, half of what shows is the sharp page behind it): it arrives
+   whole and frosted, and only moves. Calmly: a short rise and a slight
+   grow on a soft ease-out with no snap at the end (the morph's CALM
+   curve), the dim coming up alongside. */
+.dim-in {
+  animation: dim-in 450ms cubic-bezier(0.25, 0.46, 0.45, 0.94) backwards;
+}
+@keyframes dim-in {
+  from { background-color: transparent; }
+}
+.sheet-in {
+  animation: sheet-in 450ms cubic-bezier(0.25, 0.46, 0.45, 0.94) backwards;
+}
+@keyframes sheet-in {
+  from { transform: translateY(10px) scale(0.985); }
+}
+
+/* Closing has more to it: the panel gives a small lift, as if let go,
+   then drops away and shrinks, speeding up as it goes, and dissolves
+   over that last stretch. Fading is fine on the way out: the glass
+   thinning as it leaves reads as leaving. The dim goes with it. */
+.dim-out {
+  animation: dim-out 340ms ease-in forwards;
+}
+@keyframes dim-out {
+  to { background-color: transparent; }
+}
+.sheet-out {
+  animation: sheet-out 340ms forwards;
+}
+@keyframes sheet-out {
+  0% { animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+  20% { transform: translateY(-5px) scale(1.012); opacity: 1; animation-timing-function: cubic-bezier(0.55, 0.06, 0.68, 0.19); }
+  100% { transform: translateY(36px) scale(0.92); opacity: 0; }
 }
 
 @layer base {
@@ -543,10 +560,9 @@ html.theme-stage-instant [data-theme-tool-stage] {
   transition: none;
 }
 
-/* Reduced motion: a short, plain ease rather than a jump. */
-@media (prefers-reduced-motion: reduce) {
-  [data-theme-tool-stage] {
-    transition-duration: 280ms;
-    transition-timing-function: ease-out;
-  }
+/* A close button whose icon is still flying in from the button that opened
+   its panel (lib/morph-modal.ts, handoff): its own icon waits, whenever it
+   renders, until the flying one lands. */
+[data-handoff] > * {
+  visibility: hidden !important;
 }

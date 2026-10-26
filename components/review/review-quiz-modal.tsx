@@ -1,11 +1,12 @@
 "use client"
-import { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useEffect, useLayoutEffect, useCallback, useRef } from "react"
 import { createPortal } from "react-dom"
 import { Icon } from "@iconify/react"
 import { hapticsSuccess, hapticsWarning, hapticsLight } from "@/lib/haptics"
 import { preloadSoundEffects, playCorrectSound, playWrongSound } from "@/lib/sound-effects"
 import { Rating } from "@/lib/sr/fsrs"
 import { useT } from "@/components/providers/translation-provider"
+import { canMorphFrom, morphPanelOpen, type PanelMorph } from "@/lib/morph-modal"
 
 interface QuizCard {
   cardId: number
@@ -22,6 +23,10 @@ interface ReviewQuizModalProps {
   targetLanguageCode: string
   sourceLanguageCode: string
   onClose: () => void
+  // The tile it was opened from: when it is on screen the quiz grows out of
+  // it to fill the screen, a frosted bubble, and shrinks back into it
+  // (lib/morph-modal.ts).
+  morphFrom?: () => HTMLElement | null
 }
 
 type SessionState = "loading" | "quiz" | "answered" | "complete"
@@ -31,6 +36,7 @@ export function ReviewQuizModal({
   targetLanguageCode,
   sourceLanguageCode,
   onClose,
+  morphFrom,
 }: ReviewQuizModalProps) {
   const { t } = useT()
   const [mounted, setMounted] = useState(false)
@@ -257,10 +263,27 @@ export function ReviewQuizModal({
     return "bg-white/5 border-white/10 text-white/40"
   }
 
+  // The whole view grows out of the tile: its frosted backdrop, a layer over
+  // all of it, is the bubble, and the column of contents comes in on it.
+  // Before the first paint, so it never shows full-screen first.
+  const rootRef = useRef<HTMLDivElement>(null)
+  const morphRef = useRef<PanelMorph | null>(null)
+  useLayoutEffect(() => {
+    if (!mounted) return
+    const source = morphFrom?.()
+    if (rootRef.current && canMorphFrom(source)) morphRef.current = morphPanelOpen(source, rootRef.current)
+    return () => {
+      morphRef.current?.dispose()
+      morphRef.current = null
+    }
+  }, [mounted]) // eslint-disable-line react-hooks/exhaustive-deps
+  const close = () => (morphRef.current ? morphRef.current.close(onClose) : onClose())
+
   if (!mounted) return null
 
   return createPortal(
     <div
+      ref={rootRef}
       className="fixed inset-0 z-50 flex flex-col"
       onTouchStart={(e) => e.stopPropagation()}
       onTouchMove={(e) => { e.stopPropagation(); e.preventDefault() }}
@@ -396,14 +419,14 @@ export function ReviewQuizModal({
         <div className="pt-4 pb-6 flex justify-center">
           {sessionState === "complete" && cards.length > 0 ? (
             <button
-              onClick={() => { hapticsLight(); onClose() }}
+              onClick={() => { hapticsLight(); close() }}
               className="w-full py-3.5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl text-white font-semibold text-base hover:opacity-90 transition-opacity"
             >
               {t('common.done')}
             </button>
           ) : (
             <button
-              onPointerUp={() => { hapticsLight(); onClose() }}
+              onPointerUp={() => { hapticsLight(); close() }}
               className="w-14 h-14 rounded-full bg-white/10 border border-white/15 flex items-center justify-center"
               aria-label={t('quiz.review.aria.close')}
             >

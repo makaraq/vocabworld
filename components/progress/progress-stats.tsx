@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Flame, TrendingUp, BookOpen } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { Icon } from "@iconify/react"
@@ -25,6 +25,10 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLa
   const [stats, setStats] = useState<ProgressStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [showDetailedModal, setShowDetailedModal] = useState(false)
+  // The details panel opens out of this card and closes back into it, and
+  // the leaderboard out of its tile.
+  const cardRef = useRef<HTMLDivElement>(null)
+  const leaderboardRef = useRef<HTMLButtonElement>(null)
   const [showLeaderboard, setShowLeaderboard] = useState(false)
   const [bestRank, setBestRank] = useState<number | null>(null)
   const [lastFetchKey, setLastFetchKey] = useState<string>('')
@@ -105,6 +109,7 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLa
     <>
       <div className="space-y-3 xs:space-y-3.5 sm:space-y-4">
         <div
+          ref={cardRef}
           className={`bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 xs:p-3.5 sm:p-5 border border-white/20 cursor-pointer hover:bg-white/15 ${
             holdingProgressButton ? 'scale-105 transition-all duration-75' : 'scale-100 transition-all duration-300'
           }`}
@@ -164,6 +169,7 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLa
           </div>
           
           <button
+            ref={leaderboardRef}
             onClick={() => setShowLeaderboard(true)}
             className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 xs:p-3.5 sm:p-4 border border-white/20 hover:bg-white/15 transition-all active:scale-95"
             aria-label={bestRank ? t('progress.aria.rank', { rank: bestRank }) : t('progress.aria.viewLeaderboard')}
@@ -181,6 +187,7 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLa
       
       <DetailedProgressModal
         isOpen={showDetailedModal}
+        morphFrom={() => cardRef.current}
         onCloseAction={() => setShowDetailedModal(false)}
         targetLanguageCode={targetLanguageCode}
         targetLanguageName={targetLanguageName}
@@ -188,6 +195,7 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLa
       />
       <LeaderboardModal
         open={showLeaderboard}
+        morphFrom={() => leaderboardRef.current}
         onCloseAction={() => setShowLeaderboard(false)}
         targetLanguageCode={targetLanguageCode}
         targetLanguageName={targetLanguageName}

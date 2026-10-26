@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useEffect, useRef, useCallback, useMemo } from "react"
+import React, { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } from "react"
 import { flushSync } from "react-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -116,6 +116,7 @@ import { PROGRESS_SYNCED_EVENT } from '@/lib/offline/progress-queue'
 import { hasWordImage } from '@/lib/word-images'
 import { loadWordImage } from '@/lib/offline/word-image-cache'
 import { WordArt } from '@/components/language/word-art'
+import { morphSpring, MORPH_CALM, canMorphFrom, morphPanelOpen, type PanelMorph } from '@/lib/morph-modal'
 import {
   Search,
   Languages,
@@ -135,10 +136,16 @@ import {
 // its neighbours.
 import { getTopicIcon } from "@/lib/icons/topic-icons"
 
-// Topic open/back morph: a critically damped spring (no bounce), sampled
-// for CSS linear(). ~70% of the move in the first quarter, then a long soft
-// settle.
-const MORPH_SPRING = 'linear(0 0%, 0.0661 4%, 0.2033 8%, 0.3555 13%, 0.4966 17%, 0.6164 21%, 0.7131 25%, 0.7884 29%, 0.8458 33%, 0.8887 38%, 0.9204 42%, 0.9434 46%, 0.9601 50%, 0.972 54%, 0.9805 58%, 0.9865 63%, 0.9907 67%, 0.9937 71%, 0.9958 75%, 0.9972 79%, 0.9983 83%, 0.999 88%, 0.9994 92%, 0.9998 96%, 1 100%)'
+// The settings gear's stand-in while it opens into the settings panel and
+// back (see handleSettingsClick): a copy of the button carrying the ✕ too,
+// with where it sits on each end.
+type SettingsGhost = {
+  holder: HTMLElement
+  bubble: HTMLElement
+  gear: SVGElement
+  cross: SVGElement
+  at: Record<'gear' | 'close', { transform: string; backgroundColor: string; borderColor: string }>
+}
 
 // Question text translations for "Choose the language you want to learn"
 const QUESTION_TEXT_TRANSLATIONS: Record<string, string> = {
@@ -511,8 +518,9 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                     <BadgesCard />
                   </div>
 
-                  {/* Manage Account Button */}
+                  {/* Manage Account Button: its sheet opens out of it (morphFrom below). */}
                   <button
+                    data-manage-account
                     onClick={() => setShowManageAccount(true)}
                     className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white py-3 xs:py-3.5 px-4 rounded-2xl font-semibold text-sm hover:bg-white/15 transition-all flex items-center justify-center space-x-2"
                   >
@@ -558,6 +566,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                         {t('myWords.myPlaylists')}
                       </h3>
                       <button
+                        data-create-playlist
                         onClick={onCreatePlaylist}
                         className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-all"
                         aria-label={t('myWords.createPlaylist.aria')}
@@ -2474,13 +2483,28 @@ export function LanguageSelector() {
     loadData()
   }, [])
 
+  // Completed topics per language, cached, so a language switch puts the
+  // right borders (and tiers) on the tiles from its first frame. They used
+  // to arrive after the switch, and a tile gaining or losing its 2px border
+  // moved its icon and name: a little shake at the end of the change.
+  const completedCacheKey = (userId: string, language: string) => `completed-topics:${userId}:${language}`
+  type CompletedTopics = { completedTopicIds: number[]; topicCompletionCounts: Record<number, number> }
+  const applyCachedCompleted = (language: string) => {
+    if (!user?.id) return
+    const cached = readCached<CompletedTopics>(completedCacheKey(user.id, language))
+    setCompletedTopicIds(cached?.completedTopicIds ?? [])
+    setTopicCompletionCounts(cached?.topicCompletionCounts ?? {})
+  }
+
   // Fetch completed topics when user and target language are available
   useEffect(() => {
     if (!user?.id || !targetLanguageCode) {
       setCompletedTopicIds([])
       return
     }
-    
+    // Last known first, then the server's.
+    if (readCached<CompletedTopics>(completedCacheKey(user.id, targetLanguageCode))) applyCachedCompleted(targetLanguageCode)
+
     const fetchCompletedTopics = async () => {
       try {
         const response = await fetch(`/api/progress/topics?userId=${user.id}&targetLanguageCode=${targetLanguageCode}`)
@@ -2490,6 +2514,10 @@ export function LanguageSelector() {
           if (data.topicCompletionCounts) {
             setTopicCompletionCounts(data.topicCompletionCounts)
           }
+          writeCached(completedCacheKey(user.id, targetLanguageCode), {
+            completedTopicIds: data.completedTopicIds || [],
+            topicCompletionCounts: data.topicCompletionCounts || {},
+          })
         } else {
           console.error('Failed to fetch completed topics:', response.status)
         }
@@ -3224,46 +3252,43 @@ export function LanguageSelector() {
   const handleLanguageSelect = (language: { code: string; name: string }) => {
     hapticsLight()
 
-    // Reset scroll position to top of the container
-    const languageGrid = document.querySelector('.language-grid-container')
-    if (languageGrid) {
-      languageGrid.scrollTop = 0
-    }
-    
+    // The language is applied once the list has faded out (swapLanguagePage),
+    // so nothing on screen changes while it goes; the grid's scroll goes back
+    // to the top then too, not under the finger.
     if (currentPage === "native") {
-      setNativeLanguage(language.name)
-      setNativeLanguageCode(language.code)
-      
-      // Start fade animation
-      setIsTransitioning(true)
-      
-      // If we already have a target language selected, go back to confirmation
-      // Otherwise go to target language selection
-      setTimeout(() => {
-        if (targetLanguage && targetLanguageCode) {
-          setCurrentPage("confirmation")
-        } else {
-          setQuestionText(getQuestionText(language.code))
-          setCurrentPage("target")
-        }
-        setIsTransitioning(false)
-      }, 200)
+      // Back to the menu if there's a language to learn already; else on to
+      // choosing one (first setup). The interface switches to the new main
+      // language before the next page shows.
+      swapLanguagePage(
+        () => {
+          const languageGrid = document.querySelector('.language-grid-container')
+          if (languageGrid) languageGrid.scrollTop = 0
+          setNativeLanguage(language.name)
+          setNativeLanguageCode(language.code)
+          if (targetLanguage && targetLanguageCode) {
+            setCurrentPage("confirmation")
+          } else {
+            setQuestionText(getQuestionText(language.code))
+            setCurrentPage("target")
+          }
+          setSearchQuery("")
+        },
+        () => setUiLanguage(language.code),
+      )
     } else if (currentPage === "target") {
-      setTargetLanguage(language.name)
-      setTargetLanguageCode(language.code)
-      
       // Start background preloading immediately (invisible to user)
       preloadVocabularyInBackground(nativeLanguage, language.name)
-      
-      // Normal transition - no visible loading
-      setIsTransitioning(true)
-      
-      setTimeout(() => {
+
+      swapLanguagePage(() => {
+        setTargetLanguage(language.name)
+        setTargetLanguageCode(language.code)
+        // The new language's completed topics with it, so no tile's border
+        // (and with it its contents) changes after the menu is back.
+        applyCachedCompleted(language.code)
         setCurrentPage("confirmation")
-        setIsTransitioning(false)
-      }, 200)
+        setSearchQuery("")
+      })
     }
-    setSearchQuery("")
   }
 
   const handleContinue = () => {
@@ -3271,24 +3296,121 @@ export function LanguageSelector() {
     }
   }
 
-  // New function specifically for confirmation page language changes
-  const handleConfirmationLanguageChange = (type: "native" | "target") => {
-    // Start fade animation
-    setIsTransitioning(true)
-    
-    setTimeout(() => {
-      if (type === "native") {
-        setCurrentPage("native")
-        setQuestionText("What language do you speak?")
-        // Don't clear the language - we want to show current selection
-      } else {
-        setCurrentPage("target")
-        setQuestionText(getQuestionText())
-        // Don't clear the language - we want to show current selection
-      }
+  // 🌐 The menu and the language list trade places with a plain, calm
+  // crossfade: one fades out, the panel holds still a moment, the other
+  // fades in. Only opacity moves. Nothing changes while anything shows:
+  // a picked language is applied once the list has gone (a new main
+  // language also switches the interface's, and that's waited for), and the
+  // page coming in shows only once it's drawn whole and the page is drawing
+  // on time again (afterQuietFrames). The fade used to carry the swap's
+  // aftershocks (the language switching under it, tiles' borders, a busy
+  // main thread) and a scale and blur of its own, which shimmered.
+  // The panel stays put: a list opened from the menu is held to the menu's
+  // height (pageFloor, languageFrom).
+  const [languageFrom, setLanguageFrom] = useState<"native" | "target" | null>(null)
+  useEffect(() => {
+    if (currentPage !== "native" && currentPage !== "target") setLanguageFrom(null)
+  }, [currentPage])
+  // Runs `then` once the page has drawn two frames in a row on time: the
+  // work a swap set off is done, and what starts now won't stall in it.
+  // Never later than `most` ms (a timer, which runs where frames don't).
+  const afterQuietFrames = (then: () => void, most = 400) => {
+    let done = false
+    const go = () => {
+      if (done) return
+      done = true
+      then()
+    }
+    setTimeout(go, most)
+    let last = performance.now()
+    let onTime = 0
+    const step = (now: number) => {
+      if (done) return
+      onTime = now - last < 24 ? onTime + 1 : 0
+      last = now
+      if (onTime >= 2) go()
+      else requestAnimationFrame(step)
+    }
+    requestAnimationFrame(step)
+  }
+  // What to fade so that no glass fades under a fading parent (which would
+  // keep its frost off until the fade ended): glass fades itself, with what
+  // it holds; anything with no glass in it, or with a look of its own (text,
+  // a fill, an edge), fades whole; the rest is gone into.
+  const fadeTargets = (root: HTMLElement): HTMLElement[] => {
+    const isGlass = (el: Element) => {
+      const style = getComputedStyle(el)
+      const frost = style.backdropFilter || style.getPropertyValue("-webkit-backdrop-filter")
+      return !!frost && frost !== "none"
+    }
+    const glass = [...root.querySelectorAll<HTMLElement>("*")].filter(isGlass)
+    const hasLook = (el: HTMLElement) => {
+      if ([...el.childNodes].some((n) => n.nodeType === Node.TEXT_NODE && n.textContent?.trim())) return true
+      const style = getComputedStyle(el)
+      return (
+        style.backgroundImage !== "none" ||
+        !/rgba\(.*,\s*0\)$|transparent/.test(style.backgroundColor) ||
+        parseFloat(style.borderTopWidth) > 0 ||
+        style.boxShadow !== "none"
+      )
+    }
+    const targets: HTMLElement[] = []
+    const visit = (el: HTMLElement) => {
+      if (isGlass(el) || !glass.some((g) => el.contains(g)) || hasLook(el)) targets.push(el)
+      else for (const child of el.children) if (child instanceof HTMLElement) visit(child)
+    }
+    visit(root)
+    return targets
+  }
+  const swapLanguagePage = (change: () => void, ready?: () => Promise<void>) => {
+    const panel = document.querySelector<HTMLElement>("[data-page-panel]")
+    if (!panel || !canMorphPages()) {
+      change()
+      void ready?.()
+      return
+    }
+    const pages = () =>
+      [...panel.children].filter((el): el is HTMLElement => el instanceof HTMLElement && !el.hasAttribute("data-morph-ghost"))
+    // Out on an even ease, in on a long settle: no part of it hurries.
+    const OUT_MS = 220
+    const IN_MS = 360
+    const leaving = pages()
+      .flatMap(fadeTargets)
+      .map((el) => el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: OUT_MS, easing: "cubic-bezier(0.37, 0, 0.63, 1)", fill: "forwards" }))
+    setTimeout(async () => {
+      flushSync(change)
+      // Whatever's there now stays hidden, whole, until it has settled; its
+      // own transitions (the pages have transition-all) stay out of it.
+      const coming = pages()
+      for (const el of coming) Object.assign(el.style, { transition: "none", opacity: "0" })
+      leaving.forEach((a) => a.cancel())
+      await ready?.().catch(() => {})
+      afterQuietFrames(() => {
+        // From the page hidden whole to its parts hidden one by one, in
+        // the same frame, then in.
+        const parts = coming.filter((el) => el.isConnected).flatMap(fadeTargets)
+        for (const el of parts) el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: IN_MS, easing: "cubic-bezier(0.2, 0, 0, 1)", fill: "backwards" })
+        for (const el of coming) el.style.removeProperty("opacity")
+        setTimeout(() => {
+          for (const el of coming) {
+            void el.offsetWidth
+            el.style.removeProperty("transition")
+          }
+        }, IN_MS + 20)
+      })
+    }, OUT_MS)
+  }
+
+  const openLanguagePage = (type: "native" | "target") => {
+    const panel = document.querySelector<HTMLElement>("[data-page-panel]")
+    swapLanguagePage(() => {
+      // The menu as it is now: the list is held to it (pageFloor).
+      if (panel) setMenuPanelSize({ width: panel.offsetWidth, height: panel.offsetHeight })
+      setLanguageFrom(type)
+      setCurrentPage(type)
+      setQuestionText(type === "native" ? "What language do you speak?" : getQuestionText())
       setSearchQuery("")
-      setIsTransitioning(false)
-    }, 200)
+    })
   }
 
   const handleLanguageCardClick = (type: "native" | "target") => {
@@ -3329,6 +3451,33 @@ export function LanguageSelector() {
     setIsTransitioning(true)
   }
 
+  // The lesson is held to the height of the topic menu it opens from, so the
+  // panel keeps its size between the two and the extra room goes to the
+  // flashcard's illustration (the menu's tiles grow with the screen; the
+  // lesson's chrome doesn't). Measured off the menu while it shows; a new
+  // width (rotation) drops it until the menu has been seen again. The page
+  // is read from a ref set during render, so a resize reported just after a
+  // swap is put down to the page it belongs to.
+  const [menuPanelSize, setMenuPanelSize] = useState<{ width: number; height: number } | null>(null)
+  const currentPageRef = useRef(currentPage)
+  currentPageRef.current = currentPage
+  useEffect(() => {
+    const panel = document.querySelector<HTMLElement>('[data-page-panel]')
+    if (!panel || typeof ResizeObserver === 'undefined') return
+    // Observing reports the current size at once: a page swap re-reads it.
+    const ro = new ResizeObserver(() => {
+      const width = panel.offsetWidth
+      if (currentPageRef.current === 'confirmation') {
+        const height = panel.offsetHeight
+        setMenuPanelSize((s) => (s?.width === width && s.height === height ? s : { width, height }))
+      } else {
+        setMenuPanelSize((s) => (s && s.width !== width ? null : s))
+      }
+    })
+    ro.observe(panel)
+    return () => ro.disconnect()
+  }, [loading, currentPage])
+
   // 🎬 Opening a topic morphs its tile into the lesson: the tile's box grows
   // into the flashcard card, its icon and name fly up into the header, the
   // play controls rise in last. Back plays it in reverse into the same tile.
@@ -3342,7 +3491,6 @@ export function LanguageSelector() {
   const canMorphPages = () =>
     typeof document !== 'undefined' &&
     typeof Element.prototype.animate === 'function' &&
-    !window.matchMedia('(prefers-reduced-motion: reduce)').matches &&
     // The theme tool swaps pages in place under a scaled app.
     !document.documentElement.classList.contains('theme-tool-open')
 
@@ -3495,7 +3643,7 @@ export function LanguageSelector() {
       animations.push(a)
       return a
     }
-    const SPRING = CSS.supports?.('animation-timing-function', 'linear(0, 1)') ? MORPH_SPRING : 'cubic-bezier(0.32, 0.72, 0, 1)'
+    const SPRING = morphSpring()
     const MOVE_MS = 620
     // Moves and scales an element from one screen box to another.
     const flip = (a: DOMRect, b: DOMRect) => ({
@@ -3565,7 +3713,7 @@ export function LanguageSelector() {
         // A calm, even ease-out with no long tail: the spring's last few
         // pixels creep over ~0.3 s and on a phone that settles as a tremor.
         const BACK_MS = 460
-        const CALM = 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+        const CALM = MORPH_CALM
         const tileRadius = parseFloat(getComputedStyle(toParts.box).borderTopLeftRadius) || radius
         // The tile's icon and title boxes where they rest, before it moves.
         const restingBox = new Map<HTMLElement, DOMRect>()
@@ -4172,6 +4320,41 @@ export function LanguageSelector() {
     }
   }
 
+  // ➕ Create Playlist opens out of the plus on My Words, the way settings
+  // open out of the gear: the plus's glass melts into the panel growing out
+  // of it, and its icon flies to the panel's close button, turning 45° on
+  // the way, since a plus turned 45° is the ✕ (lib/morph-modal.ts,
+  // handoff). Closing runs it back. The name field takes focus at once,
+  // inside the tap so the keyboard still comes up, without scrolling the
+  // panel mid-flight.
+  const createPlaylistPanelRef = useRef<HTMLDivElement>(null)
+  const createPlaylistBackdropRef = useRef<HTMLDivElement>(null)
+  const createPlaylistCloseRef = useRef<HTMLButtonElement>(null)
+  const createPlaylistInputRef = useRef<HTMLInputElement>(null)
+  const createPlaylistMorphRef = useRef<PanelMorph | null>(null)
+  useLayoutEffect(() => {
+    if (!showCreatePlaylistModal) return
+    const source = document.querySelector<HTMLElement>("[data-create-playlist]")
+    const panel = createPlaylistPanelRef.current
+    const close = createPlaylistCloseRef.current
+    if (panel && close && canMorphFrom(source)) {
+      createPlaylistMorphRef.current = morphPanelOpen(source, panel, createPlaylistBackdropRef.current, { handoff: { to: close, turn: 45 } })
+    }
+    createPlaylistInputRef.current?.focus({ preventScroll: true })
+    return () => {
+      createPlaylistMorphRef.current?.dispose()
+      createPlaylistMorphRef.current = null
+    }
+  }, [showCreatePlaylistModal])
+  const closeCreatePlaylist = () => {
+    const done = () => {
+      setShowCreatePlaylistModal(false)
+      setNewPlaylistName("")
+    }
+    if (createPlaylistMorphRef.current) createPlaylistMorphRef.current.close(done)
+    else done()
+  }
+
   // Create a new playlist
   const handleCreatePlaylist = async () => {
     if (!newPlaylistName.trim() || !user?.id || !nativeLanguageCode || !targetLanguageCode) return
@@ -4194,8 +4377,7 @@ export function LanguageSelector() {
         // Add the new playlist to the list with word_count = 0
         const newPlaylist = { ...data.playlist, word_count: 0 }
         setUserPlaylists(prev => [newPlaylist, ...prev])
-        setNewPlaylistName("")
-        setShowCreatePlaylistModal(false)
+        closeCreatePlaylist()
       } else {
         const error = await response.json()
         console.error('Failed to create playlist:', error)
@@ -4534,14 +4716,12 @@ export function LanguageSelector() {
     const stack = cardStackRef.current
     if (!drag.moved || !stack) return
 
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     // A finger that paused before lifting isn't flicking.
     const vx = e.timeStamp - drag.t > 100 ? 0 : drag.vx
     const flung = Math.abs(vx) > 0.5 && Math.sign(vx) === Math.sign(drag.dx) && Math.abs(drag.dx) > 30
     const thrown = e.type === 'pointerup' && stack.under !== null && (Math.abs(drag.dx) > stack.w * 0.35 || flung)
 
     if (!thrown) {
-      if (reduceMotion) return releaseCardStack()
       // Springs back with a little overshoot.
       return tweenCards([drag.dx, drag.dy], [0, 0], 420, (t) => 1 + 2.2 * (t - 1) ** 3 + 1.2 * (t - 1) ** 2, releaseCardStack)
     }
@@ -4556,7 +4736,6 @@ export function LanguageSelector() {
       releaseCardStack()
       cardThrowingRef.current = false
     }
-    if (reduceMotion) return land()
     const toX = Math.sign(drag.dx) * (window.innerWidth / 2 + stack.w)
     // A harder flick leaves faster.
     const duration = Math.max(180, Math.min(320, Math.abs(toX - drag.dx) / Math.max(Math.abs(vx), 1)))
@@ -4569,13 +4748,329 @@ export function LanguageSelector() {
     setShowPlaylistModal(true)
   }
 
+  // ⚙️ The gear button opens into the settings panel, the way a topic tile
+  // opens into its lesson, and the panel closes back into it.
+  // The panel's own box grows out from under the button: its left, top,
+  // width and height animate, never a scale, so the glass keeps its blur,
+  // rim, shadow and corners true at every size. Its contents are held at the
+  // width they have at rest, so nothing reflows, and come in once it has
+  // mostly arrived. The button's bubble melts into the glass as it grows out
+  // of it, while its gear travels to the panel's close button, nearly in the
+  // same spot, turning into the ✕ on the way; the ✕ grows its own bubble
+  // once the panel has all but settled. Closing runs it all back: the ✕'s
+  // bubble and the contents clear, the panel draws in, the ✕ turns back into
+  // the gear, and the gear's bubble forms again as the glass lands on it.
+  // A stand-in above everything does the gear's part (see moveSettingsGhost);
+  // the real gear button and ✕ hide while it is up.
+  // With no button to grow from (or where pages don't morph) the panel rises
+  // in and drops out instead (sheet-in / sheet-out in globals.css). A timer,
+  // not animation events, takes the panel away: a frame-starved webview can
+  // stall an animation, and the panel must never stay stuck on screen.
+  const SETTINGS_OPEN_MS = 620
+  const SETTINGS_CLOSE_MS = 460
+  const [settingsMotion, setSettingsMotion] = useState<'morph' | 'sheet'>('sheet')
+  const [settingsClosing, setSettingsClosing] = useState(false)
+  const settingsCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const settingsMorphRef = useRef<{ animations: Animation[]; ghost: SettingsGhost | null }>({ animations: [], ghost: null })
+  const settingsButton = () => {
+    const button = document.querySelector<HTMLElement>('[data-tour="learning-settings"]')
+    return button?.offsetWidth ? button : null
+  }
+  const settingsParts = () => {
+    const panel = document.querySelector<HTMLElement>('[data-settings-panel]')
+    const close = panel?.querySelector<HTMLElement>('[data-settings-close]')
+    return panel && close ? { panel, close } : null
+  }
+
+  // Puts the panel back in its own layout and takes the stand-in down.
+  const endSettingsMorph = () => {
+    const { animations, ghost } = settingsMorphRef.current
+    animations.forEach((a) => a.cancel())
+    ghost?.holder.remove()
+    settingsMorphRef.current = { animations: [], ghost: null }
+    const parts = settingsParts()
+    if (!parts) return
+    parts.panel.removeAttribute('data-morphing')
+    for (const prop of ['position', 'margin', 'overflow']) parts.panel.style.removeProperty(prop)
+    for (const child of parts.panel.children) {
+      const el = child as HTMLElement
+      for (const prop of ['width', 'position', 'left']) el.style.removeProperty(prop)
+    }
+    parts.close.style.removeProperty('visibility')
+  }
+
+  const cancelSettingsClose = () => {
+    endSettingsMorph()
+    if (settingsCloseTimerRef.current) clearTimeout(settingsCloseTimerRef.current)
+    settingsCloseTimerRef.current = null
+    setSettingsClosing(false)
+  }
+
+  // Lifts the panel out of the overlay's centring onto the coordinates the
+  // animation gives it. Its contents keep the width they have at rest (read
+  // first) and hang from its top-right corner, the one nearest the button,
+  // so they barely move while the glass opens over them. data-morphing lets
+  // go of Liquid Glass's important radius (liquid-glass.css) so the
+  // animation's own can apply.
+  const pinSettingsPanel = (panel: HTMLElement) => {
+    for (const child of panel.children) {
+      const el = child as HTMLElement
+      const width = el.offsetWidth
+      // The percentage follows the panel's width frame by frame.
+      Object.assign(el.style, { width: `${width}px`, position: 'relative', left: `calc(100% - ${width}px)` })
+    }
+    panel.setAttribute('data-morphing', '')
+    Object.assign(panel.style, { position: 'fixed', margin: '0', overflow: 'hidden' })
+  }
+  type SettingsRect = { left: number; top: number; width: number; height: number }
+  const settingsBox = (r: SettingsRect): Keyframe => ({
+    left: `${r.left}px`,
+    top: `${r.top}px`,
+    width: `${r.width}px`,
+    height: `${r.height}px`,
+  })
+  // The way between two boxes passes through a circle halfway (in eased
+  // progress), so the glass swells round out of the button before it drops
+  // into the tall panel. Its top-right corner, the button's, moves straight.
+  const settingsPath = (a: SettingsRect, b: SettingsRect): Keyframe[] => {
+    const half = (x: number, y: number) => x + (y - x) / 2
+    const size = half(a.width, b.width)
+    const right = half(a.left + a.width, b.left + b.width)
+    return [settingsBox(a), { ...settingsBox({ left: right - size, top: half(a.top, b.top), width: size, height: size }), offset: 0.5 }, settingsBox(b)]
+  }
+  // While it moves the glass is a bubble: three corners fully round (50%),
+  // the button's own corner, top right, kept to the button's curve, so the
+  // gear always sits inside it. The bubble squares up to the panel's corners
+  // only as it settles, and rounds back up first when it closes. The round
+  // corners are written as percentages of the box (horizontal / vertical)
+  // and the button's in px, so each eases within one unit.
+  const settingsBubble = (buttonRadius: number) => `50% ${buttonRadius}px 50% 50% / 50% ${buttonRadius}px 50% 50%`
+  const settingsCorners = (panel: HTMLElement, box: SettingsRect) => {
+    const style = getComputedStyle(panel)
+    const corner = (value: string) => {
+      const [h, v = h] = value.split(' ')
+      return { h, v }
+    }
+    const percent = (value: string, size: number) => (value.endsWith('%') ? parseFloat(value) : (parseFloat(value) / size) * 100)
+    const px = (value: string, size: number) => (value.endsWith('%') ? (parseFloat(value) / 100) * size : parseFloat(value))
+    const [tl, tr, br, bl] = [style.borderTopLeftRadius, style.borderTopRightRadius, style.borderBottomRightRadius, style.borderBottomLeftRadius].map(corner)
+    return (
+      `${percent(tl.h, box.width)}% ${px(tr.h, box.width)}px ${percent(br.h, box.width)}% ${percent(bl.h, box.width)}% / ` +
+      `${percent(tl.v, box.height)}% ${px(tr.v, box.height)}px ${percent(br.v, box.height)}% ${percent(bl.v, box.height)}%`
+    )
+  }
+
+  // The stand-in: a copy of the gear button's bubble above everything, and
+  // over it the gear and the ✕, which ride separately because the bubble
+  // comes and goes. It sits on the gear button's box; a transform carries it
+  // to the close button's. Both are measured at rest.
+  const makeSettingsGhost = (button: HTMLElement, close: HTMLElement): SettingsGhost => {
+    const home = button.getBoundingClientRect()
+    const away = close.getBoundingClientRect()
+    const holder = document.createElement('div')
+    holder.setAttribute('aria-hidden', 'true')
+    holder.style.cssText = `position:fixed;left:${home.left}px;top:${home.top}px;width:${home.width}px;height:${home.height}px;z-index:51;pointer-events:none;transform-origin:0 0;`
+    const bubble = button.cloneNode(true) as HTMLElement
+    bubble.removeAttribute('data-tour')
+    bubble.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;transition:none;scale:none;transform:none;'
+    const icons = document.createElement('div')
+    icons.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;'
+    const gear = bubble.querySelector('svg') as SVGElement
+    icons.appendChild(gear)
+    const scale = away.width / home.width
+    const xIcon = close.querySelector('svg')
+    const cross = (xIcon?.cloneNode(true) ?? document.createElementNS('http://www.w3.org/2000/svg', 'svg')) as SVGElement
+    // Sized so it ends up the ✕'s own size once the stand-in has shrunk.
+    const xBox = xIcon?.getBoundingClientRect()
+    const w = (xBox?.width ?? 20) / scale
+    const h = (xBox?.height ?? 20) / scale
+    cross.style.cssText = `position:absolute;left:50%;top:50%;width:${w}px;height:${h}px;margin:${-h / 2}px 0 0 ${-w / 2}px;opacity:0;`
+    icons.appendChild(cross)
+    holder.append(bubble, icons)
+    document.body.appendChild(holder)
+    const look = (el: HTMLElement) => {
+      const s = getComputedStyle(el)
+      return { backgroundColor: s.backgroundColor, borderColor: s.borderTopColor }
+    }
+    return {
+      holder,
+      bubble,
+      gear,
+      cross,
+      at: {
+        gear: { transform: 'none', ...look(button) },
+        close: { transform: `translate(${away.left - home.left}px, ${away.top - home.top}px) scale(${scale})`, ...look(close) },
+      },
+    }
+  }
+
+  // Animates the stand-in onto the gear button or the close button from
+  // wherever it is. The icon leaving turns away and shrinks early; the one
+  // arriving turns in after it, so they cross rather than overlap.
+  // The bubble doesn't travel. Opening, the gear's melts into the panel
+  // glass growing out from under it (the circle becomes the panel), and the
+  // ✕ grows its own once the panel has all but settled. Closing, the ✕'s
+  // dissolves first, and the gear's forms again as the glass lands on it.
+  const moveSettingsGhost = (ghost: SettingsGhost, to: 'gear' | 'close', duration: number, easing: string) => {
+    const now = (el: Element) => {
+      const s = getComputedStyle(el)
+      return { transform: s.transform, opacity: s.opacity }
+    }
+    const bubble = getComputedStyle(ghost.bubble)
+    const from = {
+      holder: now(ghost.holder),
+      bubble: now(ghost.bubble),
+      gear: now(ghost.gear),
+      cross: now(ghost.cross),
+      look: { backgroundColor: bubble.backgroundColor, borderColor: bubble.borderTopColor },
+    }
+    const target = ghost.at[to]
+    const [leaving, leavingFrom, arriving, arrivingFrom] =
+      to === 'close' ? [ghost.gear, from.gear, ghost.cross, from.cross] : [ghost.cross, from.cross, ghost.gear, from.gear]
+    const turn = to === 'close' ? 90 : -90
+    const gone = { opacity: 0, transform: `rotate(${turn}deg) scale(0.5)` }
+    // Turned back and small, unless it is partly in already (a turnaround):
+    // then it carries on from there.
+    const coming = Number(arrivingFrom.opacity) > 0.01 ? arrivingFrom : { opacity: 0, transform: `rotate(${-turn}deg) scale(0.5)` }
+    const settle = 'cubic-bezier(0.2, 0.8, 0.2, 1)'
+    const bubbleFrames: Keyframe[] =
+      to === 'close'
+        ? [
+            { ...from.bubble, easing: 'ease-out' },
+            { opacity: 0, transform: 'none', offset: 0.25 },
+            { opacity: 0, transform: 'scale(0.6)', offset: 0.6, easing: settle },
+            { opacity: 1, transform: 'none' },
+          ]
+        : [
+            { ...from.bubble, easing: 'ease-in' },
+            { opacity: 0, transform: 'scale(0.6)', offset: 0.26 },
+            { opacity: 0, transform: 'none', offset: 0.65, easing: 'ease-out' },
+            { opacity: 1, transform: 'none' },
+          ]
+    return [
+      ghost.holder.animate([from.holder, { transform: target.transform }], { duration, easing, fill: 'forwards' }),
+      ghost.bubble.animate(bubbleFrames, { duration, fill: 'forwards' }),
+      ghost.bubble.animate([from.look, { backgroundColor: target.backgroundColor, borderColor: target.borderColor }], { duration, easing, fill: 'forwards' }),
+      leaving.animate([{ ...leavingFrom, easing: 'ease-in' }, { ...gone, offset: 0.35 }, gone], { duration, fill: 'forwards' }),
+      arriving.animate(
+        [arrivingFrom, { ...coming, offset: 0.2, easing: settle }, { opacity: 1, transform: 'none', offset: 0.6 }, { opacity: 1, transform: 'none' }],
+        { duration, fill: 'forwards' },
+      ),
+    ]
+  }
+
   const handleSettingsClick = () => {
-    setShowSettings(true)
+    cancelSettingsClose()
+    const button = canMorphPages() ? settingsButton() : null
+    flushSync(() => {
+      setSettingsMotion(button ? 'morph' : 'sheet')
+      setShowSettings(true)
+    })
+    const parts = settingsParts()
+    if (!button || !parts) return
+    const { panel, close } = parts
+    // At rest, before anything moves.
+    const from = button.getBoundingClientRect()
+    const rest = panel.getBoundingClientRect()
+    const corners = settingsCorners(panel, rest)
+    const bubble = settingsBubble(from.height / 2)
+    const ghost = makeSettingsGhost(button, close)
+    pinSettingsPanel(panel)
+    close.style.visibility = 'hidden'
+    const spring = morphSpring()
+    const animations = [
+      panel.animate(settingsPath(from, rest), { duration: SETTINGS_OPEN_MS, easing: spring, fill: 'both' }),
+      panel.animate(
+        [
+          { borderRadius: bubble },
+          { borderRadius: bubble, offset: 0.25, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' },
+          { borderRadius: corners, offset: 0.75 },
+          { borderRadius: corners },
+        ],
+        { duration: SETTINGS_OPEN_MS, fill: 'both' },
+      ),
+      ...moveSettingsGhost(ghost, 'close', SETTINGS_OPEN_MS, spring),
+      // In as the bubble squares up into the panel, not while its curve
+      // would cut through them.
+      ...[...panel.children].map((child) =>
+        child.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 300, delay: 250, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)', fill: 'both' }),
+      ),
+    ]
+    settingsMorphRef.current = { animations, ghost }
+    // Arrived: the stand-in is on the close button, which takes over.
+    Promise.all(animations.map((a) => a.finished)).then(() => {
+      if (settingsMorphRef.current.animations === animations) endSettingsMorph()
+    }, () => {})
   }
 
   const handleSettingsClose = () => {
-    setShowSettings(false)
+    if (settingsCloseTimerRef.current) return
+    const parts = settingsParts()
+    const button = parts && canMorphPages() ? settingsButton() : null
+    const morph = !!(parts && button)
+    if (parts && button) {
+      const { panel, close } = parts
+      // From wherever things are now, so closing mid-opening turns it around.
+      const now = panel.getBoundingClientRect()
+      const corners = settingsCorners(panel, now)
+      const contents = [...panel.children].map((child) => getComputedStyle(child).opacity)
+      const home = button.getBoundingClientRect()
+      const bubble = settingsBubble(home.height / 2)
+      let { ghost } = settingsMorphRef.current
+      if (ghost) {
+        // Still opening: pick the stand-in up where it is.
+        const moving = moveSettingsGhost(ghost, 'gear', SETTINGS_CLOSE_MS, MORPH_CALM)
+        settingsMorphRef.current.animations.forEach((a) => a.cancel())
+        settingsMorphRef.current.animations = moving
+      } else {
+        // At rest: the stand-in starts out as the close button.
+        ghost = makeSettingsGhost(button, close)
+        ghost.holder.style.transform = ghost.at.close.transform
+        Object.assign(ghost.bubble.style, { backgroundColor: ghost.at.close.backgroundColor, borderColor: ghost.at.close.borderColor })
+        ghost.gear.style.opacity = '0'
+        ghost.cross.style.opacity = '1'
+        settingsMorphRef.current = { animations: moveSettingsGhost(ghost, 'gear', SETTINGS_CLOSE_MS, MORPH_CALM), ghost }
+      }
+      pinSettingsPanel(panel)
+      close.style.visibility = 'hidden'
+      settingsMorphRef.current.animations.push(
+        // The back morph's calm ease-out: no long tail to settle as a tremor.
+        panel.animate(settingsPath(now, home), {
+          duration: SETTINGS_CLOSE_MS,
+          easing: MORPH_CALM,
+          fill: 'forwards',
+        }),
+        panel.animate(
+          [
+            { borderRadius: corners, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' },
+            { borderRadius: bubble, offset: 0.5 },
+            { borderRadius: bubble },
+          ],
+          { duration: SETTINGS_CLOSE_MS, fill: 'forwards' },
+        ),
+        ...[...panel.children].map((child, i) =>
+          child.animate([{ opacity: contents[i] }, { opacity: 0 }], { duration: 140, easing: 'ease-out', fill: 'forwards' }),
+        ),
+      )
+    }
+    setSettingsMotion(morph ? 'morph' : 'sheet')
+    setSettingsClosing(true)
+    settingsCloseTimerRef.current = setTimeout(() => {
+      settingsCloseTimerRef.current = null
+      // The real gear shows in the same frame the stand-in goes.
+      flushSync(() => {
+        setSettingsClosing(false)
+        setShowSettings(false)
+      })
+      endSettingsMorph()
+    }, morph ? SETTINGS_CLOSE_MS : 340)
   }
+
+  // However settings close (signing out, the theme tool), the stand-in and
+  // its animations go with them.
+  useEffect(() => {
+    if (!showSettings) endSettingsMorph()
+  }, [showSettings])
 
   const updateSetting = async (key: string, value: any) => {
     
@@ -4730,6 +5225,7 @@ export function LanguageSelector() {
 
   // Moves the app behind the theme tool to one of its screens.
   const showThemeToolScreen = (screen: ThemeToolScreen) => {
+    cancelSettingsClose()
     setShowSettings(screen === 'settings')
     if (screen === 'learning' || screen === 'settings') {
       const topic = themeToolTopicRef.current
@@ -4919,9 +5415,27 @@ export function LanguageSelector() {
     return null
   }
 
+  // A lesson as tall as the menu (see menuPanelSize), and the language list
+  // when a language button on the menu opened it (openLanguagePage), so the
+  // panel keeps its size between them. A floor, not a height: where the
+  // lesson needs more it still gets it (the list's grid only fills what's
+  // left). Never past the screen, though: on a short phone the menu runs off
+  // the bottom, and the lesson would take its controls with it. The card's
+  // --art leaves 34.5rem for everything else, so a lesson whose art has all
+  // the room it may take is 100dvh less half a rem tall; the floor stops
+  // there.
+  const pageFloor =
+    (currentPage === "learning" && selectedTopic?.id !== -1) || ((currentPage === "native" || currentPage === "target") && languageFrom)
+      ? menuPanelSize?.height
+      : undefined
+
   return (
     <div data-theme-tool-stage className="w-full max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto px-2 sm:px-3 h-full max-h-[95vh] flex items-center">
-      <div data-page-panel className={`relative bg-white/5 backdrop-blur-3xl border border-white/15 rounded-2xl sm:rounded-3xl px-3 sm:px-5 md:px-7 py-4 sm:py-5 md:py-6 shadow-2xl w-full max-h-full overflow-hidden ${isTransitioning ? 'bg-white/10' : 'bg-white/5'}`}>
+      <div
+        data-page-panel
+        className={`relative bg-white/5 backdrop-blur-3xl border border-white/15 rounded-2xl sm:rounded-3xl px-3 sm:px-5 md:px-7 py-4 sm:py-5 md:py-6 shadow-2xl w-full max-h-full overflow-hidden ${pageFloor ? 'flex flex-col' : ''} ${isTransitioning ? 'bg-white/10' : 'bg-white/5'}`}
+        style={pageFloor ? { minHeight: `min(${pageFloor}px, 100dvh - 0.5rem)` } : undefined}
+      >
         {currentPage === "learning" && selectedTopic?.id === -1 && (
           /* Search Word Learning - Custom word search mode */
           <div
@@ -4945,12 +5459,14 @@ export function LanguageSelector() {
         
         {currentPage === "learning" && selectedTopic?.id !== -1 && (
           <div
-            className={`text-center transition-all duration-200 ease-in-out ${isTransitioning ? 'opacity-30 scale-95' : 'opacity-100 scale-100'}`}
+            className={`flex-1 flex flex-col text-center transition-all duration-200 ease-in-out ${isTransitioning ? 'opacity-30 scale-95' : 'opacity-100 scale-100'}`}
             onTouchStart={onTouchStart}
             onTouchMove={onTouchMove}
             onTouchEnd={onTouchEnd}
           >
-            <div className="mb-12">
+            {/* A column whose spare height (a lesson held to the menu's
+                height) all goes to the flashcard. */}
+            <div className="flex-1 flex flex-col mb-12">
               <div className="flex items-center justify-between mb-8 gap-2">
                 <button
                   onClick={handleBackToTopics}
@@ -4982,6 +5498,9 @@ export function LanguageSelector() {
                 <button
                   data-tour="learning-settings"
                   onClick={handleSettingsClick}
+                  // Hidden, at once, while settings are open out of it: its
+                  // stand-in is what moves (see handleSettingsClick).
+                  style={showSettings && settingsMotion === 'morph' ? { visibility: 'hidden', transition: 'none' } : undefined}
                   onTouchStart={() => setHoldingNavButton('settings')}
                   onTouchEnd={() => setHoldingNavButton(null)}
                   onTouchCancel={() => setHoldingNavButton(null)}
@@ -5049,7 +5568,7 @@ export function LanguageSelector() {
 
               <div
                 data-tour="learning-flashcards"
-                className="relative mb-8 [@media(min-height:700px)]:mb-12"
+                className="relative flex-1 flex flex-col mb-8 [@media(min-height:700px)]:mb-12"
                 onTouchStart={(e) => e.stopPropagation()}
                 aria-live="polite"
                 aria-atomic="true"
@@ -5061,10 +5580,12 @@ export function LanguageSelector() {
                     The card has one fixed height, with or without art, so the
                     controls below never move under the finger; when the text
                     needs a second line the illustration gives up the room.
-                    --art is the illustration's height: whatever the screen has
-                    left after the chrome (34.5rem), between 7rem and 12rem. It
-                    is in rem rather than a px breakpoint because tablets scale
-                    rem by 1.28 (globals.css) and media queries don't see that. */}
+                    --art is the illustration's height at the least: whatever
+                    the screen has left after the chrome (34.5rem), between 7rem
+                    and 12rem. It is in rem rather than a px breakpoint because
+                    tablets scale rem by 1.28 (globals.css) and media queries
+                    don't see that. A lesson held to the menu's height grows the
+                    card past that, and the illustration takes all of it. */}
                 {/* A stack of two: the next word's card waits under the top
                     card, hidden until a drag uncovers it. Each is keyed by its
                     word, so on a throw the card under becomes the top card as
@@ -5091,7 +5612,7 @@ export function LanguageSelector() {
                       ref={top ? cardSwipeRef : cardUnderRef}
                       aria-hidden={top ? undefined : true}
                       inert={!top}
-                      className={top ? 'relative touch-none select-none cursor-grab active:cursor-grabbing' : 'absolute inset-0 invisible pointer-events-none'}
+                      className={`flex flex-col ${top ? 'relative flex-1 touch-none select-none cursor-grab active:cursor-grabbing' : 'absolute inset-0 invisible pointer-events-none'}`}
                       onPointerDown={top ? handleCardPointerDown : undefined}
                       onPointerMove={top ? handleCardPointerMove : undefined}
                       onPointerUp={top ? handleCardPointerUp : undefined}
@@ -5102,7 +5623,7 @@ export function LanguageSelector() {
                       <div
                         data-scale={top && holdingCardIndex === 0 ? 'press' : undefined}
                         data-lesson-card={top ? '' : undefined}
-                        className="flashcard-scale relative bg-black/40 border border-white/20 rounded-2xl px-6 py-6 shadow-lg [--art:clamp(7rem,calc(100dvh_-_34.5rem),12rem)] h-[calc(var(--art)_+_10.5rem)] flex flex-col items-center justify-center"
+                        className="flashcard-scale relative bg-black/40 border border-white/20 rounded-2xl px-6 py-6 shadow-lg [--art:clamp(7rem,calc(100dvh_-_34.5rem),12rem)] flex-1 min-h-[calc(var(--art)_+_10.5rem)] flex flex-col items-center justify-center"
                       >
                         {/* Custom playlist words carry a dictionary id, not a vocabulary id. */}
                         {word && !word.isCustomWord && hasWordImage(word.id) ? (
@@ -5215,7 +5736,7 @@ export function LanguageSelector() {
 
         {/* Single interface - only text changes */}
         {currentPage !== "confirmation" && currentPage !== "learning" && (
-          <div className={`text-center mb-12 transition-all duration-200 ease-in-out ${isTransitioning ? 'opacity-30 scale-95' : 'opacity-100 scale-100'}`}>
+          <div className={`flex-1 basis-0 flex flex-col min-h-0 text-center mb-12 transition-all duration-200 ease-in-out ${isTransitioning ? 'opacity-30 scale-95' : 'opacity-100 scale-100'}`}>
             <h1 className="text-3xl font-normal text-white mb-8 transition-all duration-500">{questionText}</h1>
 
             {/* Search Bar */}
@@ -5232,8 +5753,12 @@ export function LanguageSelector() {
               </div>
             </div>
 
-            {/* Language Grid */}
-            <div className="max-h-96 lg:max-h-[500px] overflow-y-auto mb-6 language-grid-container">
+            {/* Language Grid: held to the menu's height (pageFloor), it fills
+                whatever the panel has left and scrolls; else it caps itself.
+                A 0px basis (not flex-1's 0%, which a panel with only a
+                minimum height reads as "as tall as the grid"), so the floor
+                sets the height and the grid can't push past it. */}
+            <div className={`${pageFloor ? 'flex-1 basis-0 min-h-0' : 'max-h-96 lg:max-h-[500px]'} overflow-y-auto mb-6 language-grid-container`}>
               <div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                 {filteredLanguages.map((language) => {
                   const handleLanguageHoldStart = (langCode: string) => {
@@ -5304,7 +5829,7 @@ export function LanguageSelector() {
             <div className="flex-shrink-0 px-3 pb-3" data-tour="language-switcher">
               <div className="flex items-center justify-center gap-3 max-w-full">
                 <button
-                  onClick={() => handleConfirmationLanguageChange("native")}
+                  onClick={() => openLanguagePage("native")}
                   onTouchStart={() => setHoldingSwapButton('native')}
                   onTouchEnd={() => setHoldingSwapButton(null)}
                   onTouchCancel={() => setHoldingSwapButton(null)}
@@ -5318,7 +5843,7 @@ export function LanguageSelector() {
                   <Languages className="w-5 h-5 text-white/60" />
                 </div>
                 <button
-                  onClick={() => handleConfirmationLanguageChange("target")}
+                  onClick={() => openLanguagePage("target")}
                   onTouchStart={() => setHoldingSwapButton('target')}
                   onTouchEnd={() => setHoldingSwapButton(null)}
                   onTouchCancel={() => setHoldingSwapButton(null)}
@@ -5336,10 +5861,11 @@ export function LanguageSelector() {
 
       {/* Settings Modal - Outside main container to avoid background blur */}
       {showSettings && (
-        <div className="fixed inset-0 bg-black/30 flex items-center justify-center p-3 sm:p-4 z-50 animate-in fade-in duration-300" onClick={handleSettingsClose}>
-          <div data-theme-tool-extent className={`animate-in zoom-in-95 slide-in-from-bottom-2 duration-300 bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl sm:rounded-[32px] p-4 sm:p-6 md:p-8 w-full max-w-md sm:max-w-lg max-h-[85vh] sm:max-h-[90vh] overflow-y-auto shadow-2xl ${isIOS ? 'ios-glass-override' : ''}`} onClick={(e) => e.stopPropagation()} style={{ WebkitTapHighlightColor: 'transparent' }}>
+        <div className={`fixed inset-0 bg-black/30 flex items-center justify-center p-3 sm:p-4 z-50 ${settingsClosing ? 'dim-out' : 'dim-in'}`} onClick={handleSettingsClose}>
+          <div data-settings-panel data-theme-tool-extent className={`${settingsMotion === 'sheet' ? (settingsClosing ? 'sheet-out' : 'sheet-in') : ''} ${settingsClosing ? 'pointer-events-none' : ''} bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl sm:rounded-[32px] p-4 sm:p-6 md:p-8 w-full max-w-md sm:max-w-lg max-h-[85vh] sm:max-h-[90vh] overflow-y-auto shadow-2xl ${isIOS ? 'ios-glass-override' : ''}`} onClick={(e) => e.stopPropagation()} style={{ WebkitTapHighlightColor: 'transparent' }}>
             <div className="flex items-center justify-end mb-4 sm:mb-6 md:mb-8">
               <button
+                data-settings-close
                 onClick={handleSettingsClose}
                 className="w-10 h-10 sm:w-11 sm:h-11 bg-black/20 backdrop-blur-sm border border-white/10 rounded-full flex items-center justify-center hover:bg-black/30 transition-all duration-300 flex-shrink-0"
               >
@@ -5623,15 +6149,17 @@ export function LanguageSelector() {
 
       {/* Create Playlist Modal */}
       {showCreatePlaylistModal && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-[6px] z-50 flex items-center justify-center p-4">
-          <div className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl sm:rounded-[32px] w-full max-w-md p-6 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* The dim and blur on a layer of their own, behind the panel: on
+              its parent they'd stop the panel's own glass from frosting
+              anything but them, and they fade in with the morph. */}
+          <div ref={createPlaylistBackdropRef} className="absolute inset-0 bg-black/30 backdrop-blur-[6px]" />
+          <div ref={createPlaylistPanelRef} className="relative bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl sm:rounded-[32px] w-full max-w-md p-6 shadow-2xl">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-white font-semibold text-lg">{t('createPlaylist.title')}</h3>
               <button
-                onClick={() => {
-                  setShowCreatePlaylistModal(false)
-                  setNewPlaylistName("")
-                }}
+                ref={createPlaylistCloseRef}
+                onClick={closeCreatePlaylist}
                 className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all"
               >
                 <Icon icon="solar:close-circle-bold" width="20" height="20" className="text-white/60" />
@@ -5649,10 +6177,10 @@ export function LanguageSelector() {
                 type="text"
                 value={newPlaylistName}
                 onChange={(e) => setNewPlaylistName(e.target.value.slice(0, 22))}
+                ref={createPlaylistInputRef}
                 placeholder={t('createPlaylist.placeholder')}
                 maxLength={22}
                 className="w-full bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-4 py-3 text-white outline-none focus:border-white/40"
-                autoFocus
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && newPlaylistName.trim()) {
                     handleCreatePlaylist()
@@ -5666,10 +6194,7 @@ export function LanguageSelector() {
             
             <div className="flex gap-3">
               <button
-                onClick={() => {
-                  setShowCreatePlaylistModal(false)
-                  setNewPlaylistName("")
-                }}
+                onClick={closeCreatePlaylist}
                 className="w-full flex-1 py-3 bg-white/10 backdrop-blur-sm border border-white/15 hover:bg-white/15 rounded-2xl text-white/80 font-medium transition-all"
               >
                 {t('common.cancel')}
@@ -5788,6 +6313,7 @@ export function LanguageSelector() {
       {/* Manage Account Modal */}
       <ManageAccountModal
         open={showManageAccount}
+        morphFrom={() => document.querySelector<HTMLElement>('[data-manage-account]')}
         onCloseAction={() => { setShowManageAccount(false); setOpenNotificationsInAccount(false) }}
         name={user?.app_metadata?.provider === 'email'
           ? (user?.email || 'User')

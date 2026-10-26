@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Icon } from "@iconify/react"
 import { hapticsLight } from "@/lib/haptics"
 import { ReviewQuizModal } from "./review-quiz-modal"
@@ -33,6 +33,8 @@ export function ReviewCard({ userId, targetLanguageCode, nativeLanguageCode }: R
   const [totalCards, setTotalCards] = useState(seeded?.totalCards ?? 0)
   const [loading, setLoading] = useState(!seeded && !!userId && !!targetLanguageCode)
   const [showQuiz, setShowQuiz] = useState(false)
+  // The quiz grows out of this tile and shrinks back into it.
+  const buttonRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     if (!userId || !targetLanguageCode) {
@@ -118,6 +120,7 @@ export function ReviewCard({ userId, targetLanguageCode, nativeLanguageCode }: R
   return (
     <>
       <button
+        ref={buttonRef}
         onClick={() => { if (dueCount > 0) { hapticsLight(); setShowQuiz(true) } }}
         className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 xs:p-3.5 sm:p-4 border border-white/20 transition-all hover:bg-white/15 active:scale-[1.03]"
         aria-label={loading ? t('review.card.aria.loading') : totalCards === 0 ? t('review.card.aria.start') : dueCount > 0 ? tPlural('review.card.aria.due', dueCount) : t('review.card.aria.caughtUp')}
@@ -164,6 +167,7 @@ export function ReviewCard({ userId, targetLanguageCode, nativeLanguageCode }: R
           targetLanguageCode={targetLanguageCode}
           sourceLanguageCode={nativeLanguageCode}
           onClose={handleQuizClose}
+          morphFrom={() => buttonRef.current}
         />
       )}
     </>

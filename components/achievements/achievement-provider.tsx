@@ -56,8 +56,13 @@ export function AchievementProvider({ children }: { children: ReactNode }) {
   }, [])
 
   // Listen for "open badges gallery" requests from anywhere in the app.
+  // The gallery opens out of whatever opened it (the badges card).
+  const badgesFromRef = useRef<HTMLElement | null>(null)
   useEffect(() => {
-    const off = subscribeOpenBadgesGallery(() => setShowBadges(true))
+    const off = subscribeOpenBadgesGallery((from) => {
+      badgesFromRef.current = from ?? null
+      setShowBadges(true)
+    })
     return off
   }, [])
 
@@ -127,7 +132,7 @@ export function AchievementProvider({ children }: { children: ReactNode }) {
             onCloseAction={closeTopic}
           />
 
-          <BadgesModal open={showBadges} onCloseAction={() => setShowBadges(false)} />
+          <BadgesModal open={showBadges} morphFrom={() => badgesFromRef.current} onCloseAction={() => setShowBadges(false)} />
         </>,
         document.body,
       )

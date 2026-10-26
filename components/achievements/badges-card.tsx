@@ -38,7 +38,7 @@ export function BadgesCard() {
 
   return (
     <button
-      onClick={() => { hapticsLight(); openBadgesGallery() }}
+      onClick={(e) => { hapticsLight(); openBadgesGallery(e.currentTarget) }}
       onTouchStart={() => setHolding(true)}
       onTouchEnd={() => setHolding(false)}
       onTouchCancel={() => setHolding(false)}

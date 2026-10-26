@@ -43,7 +43,8 @@ export interface TopicCompleteEvent {
 
 type UnlockListener = (e: UnlockEvent) => void
 type TopicListener = (e: TopicCompleteEvent) => void
-type BadgesGalleryListener = () => void
+// Gets the element the gallery was opened from, if any, to open out of.
+type BadgesGalleryListener = (from?: HTMLElement | null) => void
 
 const unlockListeners = new Set<UnlockListener>()
 const topicListeners = new Set<TopicListener>()
@@ -64,10 +65,10 @@ export function subscribeOpenBadgesGallery(fn: BadgesGalleryListener): () => voi
   return () => badgesGalleryListeners.delete(fn)
 }
 
-export function openBadgesGallery(): void {
+export function openBadgesGallery(from?: HTMLElement | null): void {
   badgesGalleryListeners.forEach((fn) => {
     try {
-      fn()
+      fn(from)
     } catch {
       /* ignore */
     }

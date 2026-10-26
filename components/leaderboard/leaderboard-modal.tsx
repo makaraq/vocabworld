@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/auth-context"
 import { getFlagIcon } from "@/utils/flags"
 import { useT } from "@/components/providers/translation-provider"
 import { resolveAvatar } from "@/lib/avatars/smiley-avatar"
+import { canMorphFrom, morphPanelOpen, type PanelMorph } from "@/lib/morph-modal"
 
 interface LeaderboardEntry {
   rank: number
@@ -24,11 +25,16 @@ interface LeaderboardModalProps {
   onCloseAction: () => void
   targetLanguageCode: string
   targetLanguageName: string
+  // The tile it was opened from: when it is on screen the sheet opens out of
+  // it and closes back into it (lib/morph-modal.ts) instead of sliding. A
+  // drag down still slides it away.
+  morphFrom?: () => HTMLElement | null
 }
 
 export function LeaderboardModal({
   open,
   onCloseAction,
+  morphFrom,
   targetLanguageCode,
   targetLanguageName,
 }: LeaderboardModalProps) {
@@ -48,6 +54,7 @@ export function LeaderboardModal({
     phase: 'idle', startY: 0, currentY: 0, startTime: 0,
   })
   const closingRef = useRef(false)
+  const morphRef = useRef<PanelMorph | null>(null)
 
   const fetchLeaderboard = useCallback(async () => {
     if (!user?.id) return
@@ -68,9 +75,18 @@ export function LeaderboardModal({
     }
   }, [user?.id, period, scope, targetLanguageCode])
 
-  const animateClose = useCallback(() => {
+  // Back into the tile it opened from, unless dragged down: a drag slides.
+  // (As a click handler it gets the event, which isn't 'slide'.)
+  const animateClose = useCallback((how?: unknown) => {
     if (closingRef.current) return
     closingRef.current = true
+    if (how !== 'slide' && morphRef.current) {
+      morphRef.current.close(() => {
+        document.body.style.overflow = ''
+        onCloseAction()
+      })
+      return
+    }
     if (modalRef.current) {
       modalRef.current.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out'
       modalRef.current.style.transform = 'translateY(100%)'
@@ -140,7 +156,7 @@ export function LeaderboardModal({
     const velocity = dy / Math.max(dt, 1)
 
     if (dy > 100 || velocity > 0.4) {
-      animateClose()
+      animateClose('slide')
     } else {
       if (modalRef.current) {
         modalRef.current.style.transition = 'transform 0.3s cubic-bezier(0.2, 0, 0, 1)'
@@ -182,7 +198,7 @@ export function LeaderboardModal({
       const dt = Date.now() - startTime
       const velocity = dy / Math.max(dt, 1)
       if (dy > 100 || velocity > 0.4) {
-        animateClose()
+        animateClose('slide')
       } else {
         if (modalRef.current) {
           modalRef.current.style.transition = 'transform 0.3s cubic-bezier(0.2, 0, 0, 1)'
@@ -212,10 +228,21 @@ export function LeaderboardModal({
       backdropRef.current?.style.removeProperty('opacity')
       backdropRef.current?.style.removeProperty('transition')
       document.body.style.overflow = 'hidden'
+      // Out of the tile, when it's on screen; else the slide up. The sheet
+      // hasn't shown yet (it starts out hidden), so starting here, after the
+      // clean-up above, shows nothing out of place.
+      const source = morphFrom?.()
+      if (modalRef.current && canMorphFrom(source)) {
+        morphRef.current = morphPanelOpen(source, modalRef.current, backdropRef.current)
+        // Its own slide up doesn't run; the morph holds it meanwhile.
+        setShown(true)
+      }
       const raf = requestAnimationFrame(() => setShown(true))
       return () => {
         cancelAnimationFrame(raf)
         document.body.style.overflow = ''
+        morphRef.current?.dispose()
+        morphRef.current = null
       }
     }
     setShown(false)
@@ -319,9 +346,12 @@ export function LeaderboardModal({
         }`}
         onClick={animateClose}
       />
+      {/* One height whatever the list holds: it loads after the sheet opens,
+          and again on every period or scope, and the sheet used to grow
+          under it (title jumping up). The list scrolls inside. */}
       <div
         ref={modalRef}
-        className={`relative w-full max-h-[85vh] bg-white/10 backdrop-blur-2xl rounded-t-3xl shadow-2xl flex flex-col transition-all duration-300 select-none ${
+        className={`relative w-full h-[85vh] bg-white/10 backdrop-blur-2xl rounded-t-3xl shadow-2xl flex flex-col transition-all duration-300 select-none ${
           shown ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
         }`}
         style={{ WebkitTapHighlightColor: 'transparent' }}
@@ -394,7 +424,7 @@ export function LeaderboardModal({
           </div>
         </div>
 
-        <div ref={scrollRef} className="px-5 pb-6 overflow-y-auto max-h-[55vh]" style={{ overscrollBehaviorY: 'none' }}>
+        <div ref={scrollRef} className="px-5 pb-6 overflow-y-auto flex-1 min-h-0" style={{ overscrollBehaviorY: 'none' }}>
           {loading ? (
             <div className="flex items-center justify-center py-12">
               <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />

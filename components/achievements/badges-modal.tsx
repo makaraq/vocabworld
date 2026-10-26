@@ -14,10 +14,15 @@ import { useAuth } from '@/contexts/auth-context'
 import { hapticsLight } from '@/lib/haptics'
 import { useT } from '@/components/providers/translation-provider'
 import type { UiKey } from '@/lib/i18n/ui-strings'
+import { canMorphFrom, morphPanelOpen, type PanelMorph } from '@/lib/morph-modal'
 
 interface Props {
   open: boolean
   onCloseAction: () => void
+  // The card it was opened from: when it is on screen the sheet opens out of
+  // it and closes back into it (lib/morph-modal.ts) instead of sliding. A
+  // drag down still slides it away.
+  morphFrom?: () => HTMLElement | null
 }
 
 const CATEGORY_LABEL_KEY: Record<AchievementCategory, UiKey> = {
@@ -34,7 +39,7 @@ const CATEGORY_ORDER: AchievementCategory[] = [
   'words', 'topics', 'streak', 'section', 'language', 'time', 'special',
 ]
 
-export function BadgesModal({ open, onCloseAction }: Props) {
+export function BadgesModal({ open, onCloseAction, morphFrom }: Props) {
   const { t, tRaw } = useT()
   const { user } = useAuth()
   const [unlocked, setUnlocked] = useState<UnlockedRecord[]>([])
@@ -47,6 +52,7 @@ export function BadgesModal({ open, onCloseAction }: Props) {
     phase: 'idle', startY: 0, currentY: 0, startTime: 0,
   })
   const closingRef = useRef(false)
+  const morphRef = useRef<PanelMorph | null>(null)
 
   const unlockedSet = useMemo(() => new Set(unlocked.map((u) => u.id)), [unlocked])
 
@@ -63,10 +69,19 @@ export function BadgesModal({ open, onCloseAction }: Props) {
     [unlocked],
   )
 
-  const animateClose = useCallback(() => {
+  // Back into the card it opened from, unless dragged down: a drag slides.
+  // (As a click handler it gets the event, which isn't 'slide'.)
+  const animateClose = useCallback((how?: unknown) => {
     if (closingRef.current) return
     closingRef.current = true
     hapticsLight()
+    if (how !== 'slide' && morphRef.current) {
+      morphRef.current.close(() => {
+        document.body.style.overflow = ''
+        onCloseAction()
+      })
+      return
+    }
     if (modalRef.current) {
       modalRef.current.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out'
       modalRef.current.style.transform = 'translateY(100%)'
@@ -136,7 +151,7 @@ export function BadgesModal({ open, onCloseAction }: Props) {
     const velocity = dy / Math.max(dt, 1)
 
     if (dy > 100 || velocity > 0.4) {
-      animateClose()
+      animateClose('slide')
     } else {
       if (modalRef.current) {
         modalRef.current.style.transition = 'transform 0.3s cubic-bezier(0.2, 0, 0, 1)'
@@ -178,7 +193,7 @@ export function BadgesModal({ open, onCloseAction }: Props) {
       const dt = Date.now() - startTime
       const velocity = dy / Math.max(dt, 1)
       if (dy > 100 || velocity > 0.4) {
-        animateClose()
+        animateClose('slide')
       } else {
         if (modalRef.current) {
           modalRef.current.style.transition = 'transform 0.3s cubic-bezier(0.2, 0, 0, 1)'
@@ -204,10 +219,21 @@ export function BadgesModal({ open, onCloseAction }: Props) {
       backdropRef.current?.style.removeProperty('opacity')
       backdropRef.current?.style.removeProperty('transition')
       document.body.style.overflow = 'hidden'
+      // Out of the card, when it's on screen; else the slide up. The sheet
+      // hasn't shown yet (it starts out hidden), so starting here, after the
+      // clean-up above, shows nothing out of place.
+      const source = morphFrom?.()
+      if (modalRef.current && canMorphFrom(source)) {
+        morphRef.current = morphPanelOpen(source, modalRef.current, backdropRef.current)
+        // Its own slide up doesn't run; the morph holds it meanwhile.
+        setShown(true)
+      }
       const raf = requestAnimationFrame(() => setShown(true))
       return () => {
         cancelAnimationFrame(raf)
         document.body.style.overflow = ''
+        morphRef.current?.dispose()
+        morphRef.current = null
       }
     }
     setShown(false)

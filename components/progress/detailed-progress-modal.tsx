@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useLayoutEffect, useMemo, useRef } from "react"
 import { createPortal } from "react-dom"
 import { X, BookOpen, CheckCircle, Circle, ChevronDown, ChevronRight } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
@@ -8,6 +8,7 @@ import { getFlagIcon } from "@/utils/flags"
 import { useT } from "@/components/providers/translation-provider"
 import { readCached, writeCached } from "@/lib/instant-cache"
 import { getTopicIcon } from "@/lib/icons/topic-icons"
+import { canMorphFrom, morphPanelOpen, type PanelMorph } from "@/lib/morph-modal"
 
 interface TopicProgress {
   topicId: number
@@ -24,6 +25,9 @@ interface DetailedProgressModalProps {
   targetLanguageCode: string
   targetLanguageName: string
   nativeLanguageCode?: string
+  // The card it was opened from: when it is on screen the panel opens out of
+  // it and closes back into it (lib/morph-modal.ts).
+  morphFrom?: () => HTMLElement | null
 }
 
 // Map language codes to flag icons (same as progress-stats)
@@ -47,7 +51,8 @@ export function DetailedProgressModal({
   onCloseAction, 
   targetLanguageCode, 
   targetLanguageName,
-  nativeLanguageCode
+  nativeLanguageCode,
+  morphFrom,
 }: DetailedProgressModalProps) {
   const { t } = useT()
   const { user } = useAuth()
@@ -155,18 +160,32 @@ export function DetailedProgressModal({
       .catch(() => setUiTranslations({}))
   }, [nativeLanguageCode])
 
+  // What the panel shows on the frame it opens, worked out here rather than
+  // in the effects below, which only run after a paint: the panel used to
+  // open short (a placeholder, then the list, then a section opening) and
+  // its title jumped up as it grew. The last known progress comes straight
+  // from the cache, and the section open by default (the first one not yet
+  // finished) is open from the start; a tap on a section takes over.
+  const cachedProgress = useMemo(
+    () => (isOpen && user?.id && targetLanguageCode ? readCached<TopicProgress[]>(progressCacheKey(user.id, targetLanguageCode)) : null),
+    [isOpen, user?.id, targetLanguageCode],
+  )
+  const progress = topicProgress.length > 0 || !cachedProgress ? topicProgress : cachedProgress
+  const isLoading = loading && !cachedProgress
+
   const toggleSection = (sectionName: string) => {
-    const newExpanded = new Set(expandedSections)
+    const newExpanded = new Set(expanded)
     if (newExpanded.has(sectionName)) {
       newExpanded.delete(sectionName)
     } else {
       newExpanded.add(sectionName)
     }
     setExpandedSections(newExpanded)
+    setAutoExpandDone(true)
   }
 
   const getSectionProgress = (topicIds: number[]) => {
-    const sectionTopics = topicProgress.filter(topic => topicIds.includes(topic.topicId))
+    const sectionTopics = progress.filter(topic => topicIds.includes(topic.topicId))
     if (sectionTopics.length === 0) return { completed: 0, total: 0, percentage: 0, learnedWords: 0, totalWords: 0 }
     
     const totalWords = sectionTopics.reduce((sum, topic) => sum + topic.totalWords, 0)
@@ -225,30 +244,54 @@ export function DetailedProgressModal({
     fetchTopicProgress()
   }, [isOpen, user?.id, targetLanguageCode])
 
-  // Auto-expand: first incomplete section, or first section if all done
+  // Auto-expand: first incomplete section, or first section if all done.
+  // Shown from the first frame (below); this keeps it once the data is in,
+  // so a refresh landing later doesn't move it.
+  const firstOpenSection = (() => {
+    if (progress.length === 0 || sections.length === 0) return null
+    return (
+      sections.find((s) => {
+        const sectionProgress = getSectionProgress(s.topicIds)
+        return sectionProgress.completed < sectionProgress.total
+      }) || sections[0]
+    )
+  })()
+  const expanded = autoExpandDone ? expandedSections : new Set(firstOpenSection ? [firstOpenSection.name] : [])
   useEffect(() => {
-    if (autoExpandDone || loading || topicProgress.length === 0 || sections.length === 0) return
-    const target = sections.find((s) => {
-      const progress = getSectionProgress(s.topicIds)
-      return progress.completed < progress.total
-    }) || sections[0]
-    if (target) {
-      setExpandedSections(new Set([target.name]))
-    }
+    if (autoExpandDone || isLoading || !firstOpenSection) return
+    setExpandedSections(new Set([firstOpenSection.name]))
     setAutoExpandDone(true)
-  }, [loading, topicProgress, sections]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isLoading, progress, sections]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Reset auto-expand state when modal reopens
   useEffect(() => {
     if (!isOpen) setAutoExpandDone(false)
   }, [isOpen])
 
+  // Out of the card it was opened from, when that's on screen. Before the
+  // first paint, so the panel never shows at full size first.
+  const panelRef = useRef<HTMLDivElement>(null)
+  const backdropRef = useRef<HTMLDivElement>(null)
+  const morphRef = useRef<PanelMorph | null>(null)
+  useLayoutEffect(() => {
+    if (!isOpen || !mounted) return
+    const source = morphFrom?.()
+    if (panelRef.current && canMorphFrom(source)) {
+      morphRef.current = morphPanelOpen(source, panelRef.current, backdropRef.current)
+    }
+    return () => {
+      morphRef.current?.dispose()
+      morphRef.current = null
+    }
+  }, [isOpen, mounted])
+  const close = () => (morphRef.current ? morphRef.current.close(onCloseAction) : onCloseAction())
+
   if (!isOpen || !mounted) return null
 
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/30 backdrop-blur-xl" />
-      <div className="relative bg-white/10 backdrop-blur-2xl rounded-3xl border border-white/20 mx-4 max-w-2xl w-full shadow-2xl max-h-[90vh] overflow-hidden">
+      <div ref={backdropRef} className="absolute inset-0 bg-black/30 backdrop-blur-xl" />
+      <div ref={panelRef} className="relative bg-white/10 backdrop-blur-2xl rounded-3xl border border-white/20 mx-4 max-w-2xl w-full shadow-2xl max-h-[90vh] overflow-hidden">
         {/* Header */}
         <div className="sticky top-0 bg-white/5 backdrop-blur-xl border-b border-white/15 p-6">
           <div className="flex items-center justify-between">
@@ -264,7 +307,7 @@ export function DetailedProgressModal({
               </div>
             </div>
             <button
-              onClick={onCloseAction}
+              onClick={close}
               className="p-2 hover:bg-white/10 rounded-full transition-colors text-white/80 hover:text-white"
               aria-label={t('progress.detail.aria.close')}
             >
@@ -275,13 +318,13 @@ export function DetailedProgressModal({
 
         {/* Content */}
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
-          {loading ? (
+          {isLoading ? (
             /* No loading animation: the cache/prefetch path makes this state
                near-invisible, so an empty block just holds the height. */
             <div className="py-12" />
           ) : (
             <div className="space-y-3">
-              {topicProgress.length === 0 ? (
+              {progress.length === 0 ? (
                 <div className="text-center py-8 text-white/70">
                   {t('progress.detail.empty')}
                 </div>
@@ -289,8 +332,8 @@ export function DetailedProgressModal({
                 <>
                   {sections.map((section) => {
                     const sectionProgress = getSectionProgress(section.topicIds)
-                    const isExpanded = expandedSections.has(section.name)
-                    const sectionTopics = topicProgress.filter(topic => section.topicIds.includes(topic.topicId))
+                    const isExpanded = expanded.has(section.name)
+                    const sectionTopics = progress.filter(topic => section.topicIds.includes(topic.topicId))
 
                 return (
                   <div key={section.name} className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/15 overflow-hidden">
@@ -399,7 +442,7 @@ export function DetailedProgressModal({
               </>
             )}
 
-            {topicProgress.length === 0 && !loading && (
+            {progress.length === 0 && !isLoading && (
               <div className="text-center py-12 text-white/70">
                 <BookOpen className="w-12 h-12 mx-auto mb-4 opacity-50 drop-shadow" />
                 <p className="drop-shadow">{t('progress.detail.emptyTitle')}</p>

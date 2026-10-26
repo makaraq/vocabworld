@@ -5,7 +5,8 @@
    frosts and brightens what is behind it and comes to life under a
    finger; capsule-shaped controls, corners concentric with their
    containers, content fading under edges as it scrolls, and adjusted
-   versions for Reduce Transparency, Increase Contrast and Reduce Motion.
+   versions for Reduce Transparency and Increase Contrast. (Reduce Motion
+   is not honoured anywhere in the app: the motion is part of the design.)
 
    It restyles the existing markup and changes nothing about behaviour.
    Every rule is scoped under <html class="liquid-glass">, which
@@ -491,8 +492,13 @@
 
   /* ── Centred modals: settings, paywall, sign-in, progress… ───────── */
 
-  html.liquid-glass .fixed.inset-0 > [class*="backdrop-blur"][class*="rounded"]:not([class*="rounded-t-"]) {
+  /* Not while one morphs (settings out of the gear button): an important
+     radius beats the animation's own, which ends on this one. */
+  html.liquid-glass .fixed.inset-0 > [class*="backdrop-blur"][class*="rounded"]:not([class*="rounded-t-"]):not([data-morphing]) {
     border-radius: var(--lg-radius-panel) !important;
+  }
+
+  html.liquid-glass .fixed.inset-0 > [class*="backdrop-blur"][class*="rounded"]:not([class*="rounded-t-"]) {
     border-color: rgba(255, 255, 255, 0.12) !important;
     background-image: var(--lg-sheen-panel) !important;
     box-shadow: var(--lg-rim-panel), var(--lg-lift-panel) !important;
@@ -502,12 +508,17 @@
 
   /* ── Bottom sheets: inset from the screen edges, rounded all round ─ */
 
-  html.liquid-glass .fixed.inset-0.items-end > [class*="rounded-t-3xl"] {
+  /* Its box, not while it morphs out of a button (lib/morph-modal.ts): the
+     animation moves the box, and ends on this one. */
+  html.liquid-glass .fixed.inset-0.items-end > [class*="rounded-t-3xl"]:not([data-morphing]) {
     width: calc(100% - 16px) !important;
     margin: 0 8px 8px !important;
+    border-radius: var(--lg-radius-sheet) !important;
+  }
+
+  html.liquid-glass .fixed.inset-0.items-end > [class*="rounded-t-3xl"] {
     overflow: hidden !important;
     border: 1px solid rgba(255, 255, 255, 0.12) !important;
-    border-radius: var(--lg-radius-sheet) !important;
     background-image: var(--lg-sheen-panel) !important;
     box-shadow: var(--lg-rim-panel), var(--lg-lift-panel) !important;
     -webkit-backdrop-filter: var(--lg-backdrop) !important;
@@ -589,30 +600,6 @@
     html.liquid-glass .bg-white\/5.backdrop-blur-3xl,
     html.liquid-glass .fixed.inset-0 > [class*="backdrop-blur"][class*="rounded"] {
       border-color: rgba(255, 255, 255, 0.35) !important;
-    }
-  }
-
-  /* ── Reduce Motion: no springs, no swelling ──────────────────────── */
-
-  @media (prefers-reduced-motion: reduce) {
-    html.liquid-glass :is(
-      button.rounded-full.backdrop-blur-xl,
-      button.rounded-full.bg-white\/5,
-      button.rounded-full.bg-white\/10,
-      button.rounded-full.bg-black\/20,
-      [data-tour="learning-controls"] > button,
-      [data-tour="language-switcher"] button,
-      button.w-full.bg-white\/10.backdrop-blur-sm:is(.rounded-xl, .rounded-2xl),
-      .fixed.inset-0 > [class*="backdrop-blur"] button.w-full:is(.bg-white\/15, .bg-black\/20),
-      .fixed.inset-0 > [class*="backdrop-blur"] .flex > button.flex-1.rounded-lg.bg-white\/20
-    ):active {
-      scale: none !important;
-    }
-    html.liquid-glass button.w-11.h-6.rounded-full:active > div.rounded-full {
-      scale: none;
-    }
-    html.liquid-glass input.slider:active::-webkit-slider-thumb {
-      transform: none !important;
     }
   }
 }
