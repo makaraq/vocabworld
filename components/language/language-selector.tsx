@@ -116,7 +116,7 @@ import { PROGRESS_SYNCED_EVENT } from '@/lib/offline/progress-queue'
 import { hasWordImage } from '@/lib/word-images'
 import { loadWordImage } from '@/lib/offline/word-image-cache'
 import { WordArt } from '@/components/language/word-art'
-import { morphSpring, panelSpring, MORPH_CALM, canMorphFrom, morphPanelOpen, lookMorph, fadeParts, fadeIn, fadeOutFromNow, type PanelMorph } from '@/lib/morph-modal'
+import { morphSpring, panelSpring, MORPH_CALM, canMorphFrom, morphPanelOpen, lookMorph, fadeParts, fadeIn, fadeOutFromNow, boxAlong, easingAt, type PanelMorph, type Track } from '@/lib/morph-modal'
 import {
   Search,
   Languages,
@@ -4879,9 +4879,12 @@ export function LanguageSelector() {
   // gear always sits inside it. The bubble squares up to the panel's corners
   // only as it settles, and rounds back up first when it closes. The round
   // corners are written as percentages of the box (horizontal / vertical)
-  // and the button's in px, so each eases within one unit.
-  const settingsBubble = (buttonRadius: number) => `50% ${buttonRadius}px 50% 50% / 50% ${buttonRadius}px 50% 50%`
-  const settingsCorners = (panel: HTMLElement, box: SettingsRect) => {
+  // and the button's in px, so each eases within one unit: [horizontal,
+  // vertical] for each.
+  type SettingsCornerSet = { tl: number[]; tr: number[]; br: number[]; bl: number[] }
+  const settingsRadius = (c: SettingsCornerSet) => `${c.tl[0]}% ${c.tr[0]}px ${c.br[0]}% ${c.bl[0]}% / ${c.tl[1]}% ${c.tr[1]}px ${c.br[1]}% ${c.bl[1]}%`
+  const settingsBubble = (buttonRadius: number): SettingsCornerSet => ({ tl: [50, 50], tr: [buttonRadius, buttonRadius], br: [50, 50], bl: [50, 50] })
+  const settingsCorners = (panel: HTMLElement, box: SettingsRect): SettingsCornerSet => {
     const style = getComputedStyle(panel)
     const corner = (value: string) => {
       const [h, v = h] = value.split(' ')
@@ -4890,10 +4893,33 @@ export function LanguageSelector() {
     const percent = (value: string, size: number) => (value.endsWith('%') ? parseFloat(value) : (parseFloat(value) / size) * 100)
     const px = (value: string, size: number) => (value.endsWith('%') ? (parseFloat(value) / 100) * size : parseFloat(value))
     const [tl, tr, br, bl] = [style.borderTopLeftRadius, style.borderTopRightRadius, style.borderBottomRightRadius, style.borderBottomLeftRadius].map(corner)
-    return (
-      `${percent(tl.h, box.width)}% ${px(tr.h, box.width)}px ${percent(br.h, box.width)}% ${percent(bl.h, box.width)}% / ` +
-      `${percent(tl.v, box.height)}% ${px(tr.v, box.height)}px ${percent(br.v, box.height)}% ${percent(bl.v, box.height)}%`
-    )
+    return {
+      tl: [percent(tl.h, box.width), percent(tl.v, box.height)],
+      tr: [px(tr.h, box.width), px(tr.v, box.height)],
+      br: [percent(br.h, box.width), percent(br.v, box.height)],
+      bl: [percent(bl.h, box.width), percent(bl.v, box.height)],
+    }
+  }
+  // How the bubble squares up into the panel's corners, and rounds back up.
+  const settingsSquaring = 'cubic-bezier(0.4, 0, 0.2, 1)'
+  const squaring = easingAt(settingsSquaring)
+  // Where the glass is at each moment (0 to 1 of the time), for the layers
+  // its look puts in (lookMorph): its box on `easing`, its corners on their
+  // own way, `squared(t)` of the way from one set to the other.
+  const settingsTrack = (a: SettingsRect, b: SettingsRect, easing: string, from: SettingsCornerSet, to: SettingsCornerSet, squared: (t: number) => number): Track => {
+    const along = boxAlong(settingsWay(a, b), easing)
+    return (t) => {
+      const { box } = along(t)
+      const p = squared(t)
+      const at = (corner: keyof SettingsCornerSet, i: number) => from[corner][i] + (to[corner][i] - from[corner][i]) * p
+      return {
+        box,
+        corners: {
+          h: [(at('tl', 0) / 100) * box.width, at('tr', 0), (at('br', 0) / 100) * box.width, (at('bl', 0) / 100) * box.width],
+          v: [(at('tl', 1) / 100) * box.height, at('tr', 1), (at('br', 1) / 100) * box.height, (at('bl', 1) / 100) * box.height],
+        },
+      }
+    }
   }
 
   // The stand-in: the gear and the ✕ above everything, on the gear button's
@@ -4994,15 +5020,18 @@ export function LanguageSelector() {
       panel.animate(settingsPath(from, rest), { duration: SETTINGS_OPEN_MS, easing: spring, fill: 'both' }),
       panel.animate(
         [
-          { borderRadius: bubble },
-          { borderRadius: bubble, offset: 0.25, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' },
-          { borderRadius: corners, offset: 0.75 },
-          { borderRadius: corners },
+          { borderRadius: settingsRadius(bubble) },
+          { borderRadius: settingsRadius(bubble), offset: 0.25, easing: settingsSquaring },
+          { borderRadius: settingsRadius(corners), offset: 0.75 },
+          { borderRadius: settingsRadius(corners) },
         ],
         { duration: SETTINGS_OPEN_MS, fill: 'both' },
       ),
       ...look.open(SETTINGS_OPEN_MS),
-      ...look.follow(settingsWay(from, rest), { duration: SETTINGS_OPEN_MS, easing: spring }),
+      ...look.follow(
+        settingsTrack(from, rest, spring, bubble, corners, (t) => (t <= 0.25 ? 0 : t >= 0.75 ? 1 : squaring((t - 0.25) / 0.5))),
+        SETTINGS_OPEN_MS,
+      ),
       ...moveSettingsGhost(ghost, 'close', SETTINGS_OPEN_MS, spring),
       growCloseBubble(close),
       ...fadeIn(coming, { duration: 300, delay: 250, easing: settingsSettle }),
@@ -5058,14 +5087,14 @@ export function LanguageSelector() {
         }),
         panel.animate(
           [
-            { borderRadius: corners, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' },
-            { borderRadius: bubble, offset: 0.5 },
-            { borderRadius: bubble },
+            { borderRadius: settingsRadius(corners), easing: settingsSquaring },
+            { borderRadius: settingsRadius(bubble), offset: 0.5 },
+            { borderRadius: settingsRadius(bubble) },
           ],
           { duration: SETTINGS_CLOSE_MS, fill: 'forwards' },
         ),
         ...lookBack(SETTINGS_CLOSE_MS),
-        ...look.follow(settingsWay(now, home), { duration: SETTINGS_CLOSE_MS, easing: MORPH_CALM }),
+        ...look.follow(settingsTrack(now, home, MORPH_CALM, corners, bubble, (t) => (t >= 0.5 ? 1 : squaring(t / 0.5))), SETTINGS_CLOSE_MS),
         closeBubbleOut(),
         ...fadeContentsOut({ duration: 140, easing: 'ease-out' }),
       )

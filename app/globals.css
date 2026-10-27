@@ -578,10 +578,9 @@ html.theme-stage-instant [data-theme-tool-stage] {
   content: none !important;
 }
 
-/* That button's rim on the panel instead, fading as the panel takes over:
-   a ring, masked as the skin's own is (liquid-glass.css, ::before). */
-[data-morph-rim] {
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
+/* A panel morphing has its own rim (the skin's ring, liquid-glass.css,
+   ::before) drawn on a layer of the morph's meanwhile, cut out by a path,
+   which costs far less to draw every frame than a mask. */
+[data-morph-ring]::before {
+  content: none !important;
 }

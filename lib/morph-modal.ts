@@ -103,11 +103,103 @@ const halfway = (a: Box, b: Box): Box => {
 }
 // Halfway (in eased progress) between two boxes, as a bubble: every corner
 // half the shorter side.
-export const bubble = (a: Box, b: Box): Keyframe => {
-  const box = halfway(a, b)
+const roundAll = (box: Box): Corners => {
   const r = Math.min(box.width, box.height) / 2
-  return { ...frame(box, { h: [r, r, r, r], v: [r, r, r, r] }), offset: 0.5 }
+  return { h: [r, r, r, r], v: [r, r, r, r] }
 }
+export const bubble = (a: Box, b: Box): Keyframe => ({ ...frame(halfway(a, b), roundAll(halfway(a, b))), offset: 0.5 })
+
+// What an easing gives `x` of the way through its time (0 to 1), worked
+// out as the browser does: the keywords, cubic-bezier() and linear().
+export const easingAt = (easing: string): ((x: number) => number) => {
+  const named: Record<string, string> = {
+    linear: 'cubic-bezier(0, 0, 1, 1)',
+    ease: 'cubic-bezier(0.25, 0.1, 0.25, 1)',
+    'ease-in': 'cubic-bezier(0.42, 0, 1, 1)',
+    'ease-out': 'cubic-bezier(0, 0, 0.58, 1)',
+    'ease-in-out': 'cubic-bezier(0.42, 0, 0.58, 1)',
+  }
+  const value = named[easing.trim()] ?? easing.trim()
+  const stops = /^linear\((.*)\)$/.exec(value)
+  if (stops) {
+    const points = stops[1].split(',').map((stop, i, all) => {
+      const [y, at] = stop.trim().split(/\s+/)
+      return { x: at ? parseFloat(at) / 100 : i / (all.length - 1), y: parseFloat(y) }
+    })
+    return (x) => {
+      for (let i = 1; i < points.length; i++) {
+        const [a, b] = [points[i - 1], points[i]]
+        if (x <= b.x) return a.y + (b.y - a.y) * (b.x > a.x ? (x - a.x) / (b.x - a.x) : 1)
+      }
+      return points[points.length - 1].y
+    }
+  }
+  const curve = /^cubic-bezier\((.*)\)$/.exec(value)
+  if (!curve) return (x) => x
+  const [x1, y1, x2, y2] = curve[1].split(',').map(parseFloat)
+  const along = (a: number, b: number, t: number) => 3 * a * t * (1 - t) ** 2 + 3 * b * t * t * (1 - t) + t ** 3
+  return (x) => {
+    let [lo, hi, t] = [0, 1, x]
+    for (let i = 0; i < 32; i++) {
+      t = (lo + hi) / 2
+      if (along(x1, x2, t) < x) lo = t
+      else hi = t
+    }
+    return along(y1, y2, t)
+  }
+}
+
+// Where a panel's glass is through a morph, at each moment of it (0 to 1
+// of the time): its box and its corners, as its own animations put them.
+export type Track = (t: number) => { box: Box; corners: Corners }
+const mix = (a: number, b: number, p: number) => a + (b - a) * p
+const mixBox = (a: Box, b: Box, p: number): Box => ({ left: mix(a.left, b.left, p), top: mix(a.top, b.top, p), width: mix(a.width, b.width, p), height: mix(a.height, b.height, p) })
+// A box moving through keyframes evenly spaced, on one easing.
+export const boxAlong = (boxes: Box[], easing: string) => {
+  const ease = easingAt(easing)
+  return (t: number) => {
+    const at = ease(t) * (boxes.length - 1)
+    const i = Math.min(boxes.length - 2, Math.max(0, Math.floor(at)))
+    return { box: mixBox(boxes[i], boxes[i + 1], at - i), segment: i, progress: at - i }
+  }
+}
+// A box and its corners through the same keyframes, as one animation moves them.
+const trackThrough = (boxes: Box[], corners: Corners[], easing: string): Track => {
+  const along = boxAlong(boxes, easing)
+  return (t) => {
+    const { box, segment, progress } = along(t)
+    const [a, b] = [corners[segment], corners[segment + 1]]
+    return { box, corners: { h: a.h.map((r, i) => mix(r, b.h[i], progress)), v: a.v.map((r, i) => mix(r, b.v[i], progress)) } }
+  }
+}
+
+// Corners as CSS draws them on a box: cut down alike where two on a side
+// would overlap.
+const fitted = (c: Corners, width: number, height: number): Corners => {
+  const fit = (side: number, a: number, b: number) => (a + b > side ? side / (a + b) : 1)
+  const f = Math.min(fit(width, c.h[0], c.h[1]), fit(width, c.h[3], c.h[2]), fit(height, c.v[0], c.v[3]), fit(height, c.v[1], c.v[2]))
+  return { h: c.h.map((r) => r * f), v: c.v.map((r) => r * f) }
+}
+type Edges = { top: number; right: number; bottom: number; left: number }
+// The corners of the box inside edges of these widths.
+const within = (c: Corners, e: Edges): Corners => ({
+  h: [c.h[0] - e.left, c.h[1] - e.right, c.h[2] - e.right, c.h[3] - e.left].map((r) => Math.max(0, r)),
+  v: [c.v[0] - e.top, c.v[1] - e.top, c.v[2] - e.bottom, c.v[3] - e.bottom].map((r) => Math.max(0, r)),
+})
+const even = (width: number): Edges => ({ top: width, right: width, bottom: width, left: width })
+// A rounded box as a path, starting at (x, y).
+const roundedPath = (x: number, y: number, width: number, height: number, c: Corners) => {
+  const n = (v: number) => +v.toFixed(2)
+  const [tl, tr, br, bl] = [0, 1, 2, 3].map((i) => ({ h: n(c.h[i]), v: n(c.v[i]) }))
+  const [right, bottom] = [x + width, y + height]
+  return (
+    `M ${n(x + tl.h)} ${n(y)} H ${n(right - tr.h)} A ${tr.h} ${tr.v} 0 0 1 ${n(right)} ${n(y + tr.v)} ` +
+    `V ${n(bottom - br.v)} A ${br.h} ${br.v} 0 0 1 ${n(right - br.h)} ${n(bottom)} H ${n(x + bl.h)} ` +
+    `A ${bl.h} ${bl.v} 0 0 1 ${n(x)} ${n(bottom - bl.v)} V ${n(y + tl.v)} A ${tl.h} ${tl.v} 0 0 1 ${n(x + tl.h)} ${n(y)} Z`
+  )
+}
+const corneredRadius = (c: Corners, scale = 1) =>
+  `${c.h.map((r) => `${r / scale}px`).join(' ')} / ${c.v.map((r) => `${r / scale}px`).join(' ')}`
 
 // Hides an element and shows it again, both at once. Its own transitions
 // are off meanwhile: with transition-all, visibility would stay visible for
@@ -178,7 +270,7 @@ const layerAbove = (...els: HTMLElement[]) => {
 // own as it grows, so it's one container changing, not a second one laid
 // over the first: fill, edge, shadow and frost blend; a sheen
 // (background-image) can't, so it rides on a layer of its own that fades
-// (sheenLayer).
+// (layerIn).
 type Look = { backgroundColor: string; borderColor: string; borderWidth: string; boxShadow: string; frost: string; backgroundImage: string }
 const lookOf = (el: HTMLElement): Look => {
   const style = getComputedStyle(el)
@@ -242,10 +334,9 @@ const placeHaze = (layer: HTMLElement, haze: Haze, origin: { left: number; top: 
     backgroundSize: haze.map(({ box }) => `${box.width}px ${box.height}px`).join(', '),
     backgroundRepeat: 'no-repeat',
   })
-const hazeLayer = (panel: HTMLElement, haze: Haze) => {
-  const layer = sheenLayer(panel, haze.map(({ image }) => image).join(', '))
+const hazeLayer = (haze: Haze) => {
+  const layer = layerIn({ backgroundImage: haze.map(({ image }) => image).join(', '), backgroundAttachment: 'fixed' })
   placeHaze(layer, haze, { left: 0, top: 0 })
-  layer.style.backgroundAttachment = 'fixed'
   return layer
 }
 // A button's, with the skin's lit body (liquid-glass.css, its ::after) as
@@ -269,22 +360,31 @@ const matchShadows = (a: string, b: string): [string, string] => {
   if (!ours.length && !theirs.length) return ['none', 'none']
   return [[...ours, ...theirs.map(seeThrough)].join(', '), [...ours.map(seeThrough), ...theirs].join(', ')]
 }
-const lookFrame = (look: Look, shadow: string): Keyframe =>
+// A shadow taken apart, and put back together a size smaller.
+type Shadow = { colour: string; x: number; y: number; blur: number; spread: number; inset: boolean }
+const LENGTH = /-?\d*\.?\d+(?:e-?\d+)?px/g
+const shadowOf = (value: string): Shadow => {
+  const [x = 0, y = 0, blur = 0, spread = 0] = (value.match(LENGTH) ?? []).map(parseFloat)
+  return { colour: value.replace(LENGTH, '').replace(/\binset\b/, '').trim(), x, y, blur, spread, inset: /\binset\b/.test(value) }
+}
+const shadowsAt = (shadows: Shadow[], scale: number) =>
+  shadows.map(({ colour, x, y, blur, spread, inset }) => `${colour} ${x / scale}px ${y / scale}px ${blur / scale}px ${spread / scale}px${inset ? ' inset' : ''}`).join(', ') || 'none'
+// The look the panel's own box takes on: fill, edge and frost. Its shadows
+// and rings are drawn apart while it morphs (lookMorph).
+const lookFrame = (look: Look): Keyframe =>
   ({
     backgroundColor: look.backgroundColor,
     borderColor: look.borderColor,
     borderWidth: look.borderWidth,
     borderStyle: 'solid',
-    boxShadow: shadow,
     backdropFilter: look.frost,
     webkitBackdropFilter: look.frost,
   }) as Keyframe
-// A sheen on a layer of its own at the back of the panel, to fade.
-const sheenLayer = (panel: HTMLElement, image: string) => {
+// A layer over the whole of the panel, part of its glass, not its contents.
+const layerIn = (style: Partial<CSSStyleDeclaration>) => {
   const layer = document.createElement('div')
   layer.setAttribute('aria-hidden', 'true')
-  Object.assign(layer.style, { position: 'absolute', inset: '0', borderRadius: 'inherit', pointerEvents: 'none', backgroundImage: image })
-  panel.prepend(layer)
+  Object.assign(layer.style, { position: 'absolute', inset: '0', pointerEvents: 'none', ...style })
   return layer
 }
 
@@ -349,26 +449,28 @@ export function fadeOutFromNow(parts: FadePart[]) {
     parts.map(({ el, look }, i) => el.animate([now[i], look ?? { opacity: 0 }], { ...timing, fill: 'forwards' }))
 }
 
-// The button's rim (the skin's, its ::before: a masked ring) on a layer of
-// the panel's, to fade like its sheen; the ring's mask is data-morph-rim's
-// (globals.css).
-const rimOf = (el: HTMLElement) => {
-  const rim = getComputedStyle(el, '::before')
-  const masked = [rim.getPropertyValue('mask-image'), rim.getPropertyValue('-webkit-mask-image')].some((mask) => mask && mask !== 'none')
-  return rim.content !== 'none' && rim.position === 'absolute' && masked ? { image: rim.backgroundImage, width: rim.paddingTop } : null
-}
-const rimLayer = (panel: HTMLElement, rim: { image: string; width: string }) => {
-  const layer = sheenLayer(panel, rim.image)
-  layer.setAttribute('data-morph-rim', '')
-  layer.style.padding = rim.width
-  return layer
+// A ring the skin draws round a box (its ::before: a band masked out of a
+// gradient), the button's and the panel's own: the gradient and how wide
+// the band is. Null when there's none.
+type Ring = { image: string; width: number }
+const ringOf = (el: HTMLElement): Ring | null => {
+  const ring = getComputedStyle(el, '::before')
+  const masked = [ring.getPropertyValue('mask-image'), ring.getPropertyValue('-webkit-mask-image')].some((mask) => mask && mask !== 'none')
+  return ring.content !== 'none' && ring.position === 'absolute' && masked ? { image: ring.backgroundImage, width: parseFloat(ring.paddingTop) || 0 } : null
 }
 
 // Border widths, from a look's `borderWidth` (top right bottom left).
-const edgesOf = (look: Look) => {
+const edgesOf = (look: Look): Edges => {
   const [top, right, bottom, left] = look.borderWidth.split(' ').map((width) => parseFloat(width) || 0)
   return { top, right, bottom, left }
 }
+const mixEdges = (a: Edges, b: Edges, p: number): Edges => ({ top: mix(a.top, b.top, p), right: mix(a.right, b.right, p), bottom: mix(a.bottom, b.bottom, p), left: mix(a.left, b.left, p) })
+const easeOut = easingAt('ease-out')
+const easeInOut = easingAt('ease-in-out')
+
+// How many times smaller the soft shadows are drawn while the panel
+// morphs, then scaled back up: blurred as they are, it doesn't show.
+const SOFT_SCALE = 3
 
 // The look half of a morph, for morphPanelOpen and for one that moves its
 // panel its own way (the settings panel's): the panel's fill, edge,
@@ -376,116 +478,246 @@ const edgesOf = (look: Look) => {
 // it grows, and back while it draws in. Make it at rest, before
 // data-morphing lets go of the skin's important look (liquid-glass.css),
 // since it ends on exactly that. Whoever pins the panel takes its own
-// sheen off meanwhile (background-image: none), and the layers standing in
-// for it go with `drop`; whoever moves it has them `follow` it.
+// sheen off meanwhile (background-image: none); whoever moves it has the
+// layers standing in for its look `follow` it, and they go with `drop`.
+//
+// The panel's box changes size every frame, and in an iPhone's web view
+// whatever changes size is drawn again whole, on the processor, at three
+// times the size: so its look comes apart while it morphs, each piece
+// drawn the cheapest way that looks the same. Only its fill and edge stay
+// on it. Its shadows go on layers of their own, drawn a third the size and
+// scaled up: the lift round it on one under it, the soft glow within on
+// one inside it. Its lit lines and the skin's rings are a colour and a
+// gradient cut out by a path, not shadows and masks. Its sheen and the
+// button's light are drawn once and scaled with it, the haze drawn once
+// and held still on screen. Lines and rings sit under the layers that are
+// drawn apart, so they're drawn with the panel rather than on layers that
+// would have to change size too.
 export function lookMorph(source: HTMLElement, panel: HTMLElement) {
   const haze = hazeOf(source)
   const sourceLook = buttonLookOf(source, !!haze)
   const restLook = lookOf(panel)
-  const rim = rimOf(source)
+  const rim = ringOf(source)
+  const ring = ringOf(panel)
+  const [sourceEdges, restEdges] = [edgesOf(sourceLook), edgesOf(restLook)]
   // The boxes the button's light and the panel's sheen belong to: inside
   // each one's edge, as a background lies.
-  const inside = (box: Box, look: Look) => {
-    const edges = edgesOf(look)
-    return { width: box.width - edges.left - edges.right, height: box.height - edges.top - edges.bottom }
+  const inside = (box: Box, edges: Edges) => ({ width: box.width - edges.left - edges.right, height: box.height - edges.top - edges.bottom })
+  const ourSize = inside(source.getBoundingClientRect(), sourceEdges)
+  const theirSize = inside(panel.getBoundingClientRect(), restEdges)
+  // Each side's shadows by kind: round the box, soft within it, and the
+  // hard lines within it, an edge lit a pixel or two.
+  const kinds = (look: Look) => {
+    const shadows = shadowsIn(look.boxShadow).map(shadowOf)
+    return { lift: shadows.filter((s) => !s.inset), glow: shadows.filter((s) => s.inset && s.blur > 0), lines: shadows.filter((s) => s.inset && s.blur <= 0) }
   }
-  const ourSize = inside(source.getBoundingClientRect(), sourceLook)
-  const theirSize = inside(panel.getBoundingClientRect(), restLook)
-  type Layers = { rim: HTMLElement | null; ours: HTMLElement | null; haze: HTMLElement | null; theirs: HTMLElement | null }
-  let layers: Layers = { rim: null, ours: null, haze: null, theirs: null }
-  // Theirs at the back, then the haze, the button's light and its rim.
-  const lay = () => {
-    if (!layers.rim && rim) layers.rim = rimLayer(panel, rim)
-    if (!layers.ours && sourceLook.backgroundImage !== 'none') layers.ours = sheenLayer(panel, sourceLook.backgroundImage)
-    if (!layers.haze && haze) layers.haze = hazeLayer(panel, haze)
-    if (!layers.theirs && restLook.backgroundImage !== 'none') layers.theirs = sheenLayer(panel, restLook.backgroundImage)
+  const sourceShadows = kinds(sourceLook)
+  const restShadows = kinds(restLook)
+  const clear = 'rgba(0, 0, 0, 0)'
+  const lines = [
+    ...sourceShadows.lines.map((shadow) => ({ shadow, onSource: shadow.colour, onPanel: clear })),
+    ...restShadows.lines.map((shadow) => ({ shadow, onSource: clear, onPanel: shadow.colour })),
+  ]
+  const shadowBefore = panel.style.boxShadow
+  // Its edge's widths at each moment of the morph, as its look moves them.
+  let edgesAt = (_t: number) => restEdges
+
+  type Layers = {
+    lines: HTMLElement[]
+    ring: HTMLElement | null
+    theirs: HTMLElement | null
+    glow: HTMLElement | null
+    haze: HTMLElement | null
+    ours: HTMLElement | null
+    rim: HTMLElement | null
+    lift: HTMLElement | null
   }
-  const opacityOf = (layer: HTMLElement | null, otherwise: string) => (layer ? getComputedStyle(layer).opacity : otherwise)
+  let layers: Layers | null = null
+  // At the back, the lines and the ring, then the panel's sheen and glow,
+  // the haze, the button's light and its rim; the lift under the panel.
+  const lay = (): Layers => {
+    if (layers) return layers
+    const scaled = { inset: 'auto', left: '0', top: '0', transformOrigin: '0 0', transform: `scale(${SOFT_SCALE})`, willChange: 'transform' }
+    const made: Layers = {
+      lines: lines.map(() => layerIn({})),
+      ring: ring ? layerIn({ backgroundImage: ring.image }) : null,
+      theirs: restLook.backgroundImage !== 'none' ? layerIn({ backgroundImage: restLook.backgroundImage }) : null,
+      glow: sourceShadows.glow.length || restShadows.glow.length ? layerIn(scaled) : null,
+      haze: haze ? hazeLayer(haze) : null,
+      ours: sourceLook.backgroundImage !== 'none' ? layerIn({ backgroundImage: sourceLook.backgroundImage }) : null,
+      rim: rim ? layerIn({ backgroundImage: rim.image }) : null,
+      lift: sourceShadows.lift.length || restShadows.lift.length ? layerIn({ ...scaled, position: 'fixed', margin: '0', zIndex: getComputedStyle(panel).zIndex }) : null,
+    }
+    panel.prepend(...[...made.lines, made.ring, made.theirs, made.glow, made.haze, made.ours, made.rim].filter((el): el is HTMLElement => !!el))
+    if (made.lift) panel.before(made.lift)
+    // Its own shadows and ring are these layers' meanwhile (globals.css).
+    panel.style.boxShadow = 'none'
+    if (ring) panel.setAttribute('data-morph-ring', '')
+    layers = made
+    return made
+  }
+  const opacityOf = (layer: HTMLElement | null | undefined, otherwise: string) => (layer ? getComputedStyle(layer).opacity : otherwise)
+  const soft = (shadows: Shadow[]) => shadowsAt(shadows, SOFT_SCALE)
   return {
     // From the button's look to the panel's, done a little before halfway.
     open: (duration: number): Animation[] => {
-      lay()
-      const [asSource, asPanel] = matchShadows(sourceLook.boxShadow, restLook.boxShadow)
+      const made = lay()
+      edgesAt = (t) => mixEdges(sourceEdges, restEdges, easeOut(Math.min(1, t / 0.4)))
       const timing = { duration, fill: 'both' as const }
+      const blend = (el: HTMLElement | null, from: Keyframe, to: Keyframe) => (el ? [el.animate([{ ...from, easing: 'ease-out' }, { ...to, offset: 0.4 }, to], timing)] : [])
       // Hidden once it's faded, so nothing draws it any more (the rim
-      // stretches with the panel, so would be redrawn every frame).
+      // changes size with the panel, so would be drawn every frame).
       const going = (layer: HTMLElement | null) =>
         layer
           ? [layer.animate([{ opacity: 1, visibility: 'visible', easing: 'ease-out' }, { opacity: 0, visibility: 'hidden', offset: 0.4 }, { opacity: 0, visibility: 'hidden' }], timing)]
           : []
+      const [liftFrom, liftTo] = matchShadows(soft(sourceShadows.lift), soft(restShadows.lift))
+      const [glowFrom, glowTo] = matchShadows(soft(sourceShadows.glow), soft(restShadows.glow))
       return [
-        panel.animate([{ ...lookFrame(sourceLook, asSource), easing: 'ease-out' }, { ...lookFrame(restLook, asPanel), offset: 0.4 }, lookFrame(restLook, asPanel)], timing),
-        ...going(layers.rim),
-        ...going(layers.ours),
-        ...going(layers.haze),
-        ...(layers.theirs ? [layers.theirs.animate([{ opacity: 0, easing: 'ease-out' }, { opacity: 1, offset: 0.4 }, { opacity: 1 }], timing)] : []),
+        ...blend(panel, lookFrame(sourceLook), lookFrame(restLook)),
+        ...made.lines.flatMap((el, i) => blend(el, { backgroundColor: lines[i].onSource }, { backgroundColor: lines[i].onPanel })),
+        ...blend(made.glow, { boxShadow: glowFrom }, { boxShadow: glowTo }),
+        ...blend(made.lift, { boxShadow: liftFrom }, { boxShadow: liftTo }),
+        ...going(made.rim),
+        ...going(made.ours),
+        ...going(made.haze),
+        ...(made.theirs ? [made.theirs.animate([{ opacity: 0, easing: 'ease-out' }, { opacity: 1, offset: 0.4 }, { opacity: 1 }], timing)] : []),
       ]
     },
     // Back into the button's look from wherever it is now (on its way out,
-    // or at rest with its own sheen), done a little after halfway, as it
-    // lands. Read now, before what moves it is cancelled; started with the
+    // or at rest with its own), done a little after halfway, as it lands.
+    // Read now, before what moves it is cancelled; started with the
     // duration.
     backFromNow: () => {
       const now = lookOf(panel)
-      const was = { rim: opacityOf(layers.rim, '0'), ours: opacityOf(layers.ours, '0'), haze: opacityOf(layers.haze, '0'), theirs: opacityOf(layers.theirs, '1') }
+      const nowEdges = edgesOf(now)
+      const was = {
+        rim: opacityOf(layers?.rim, '0'),
+        ours: opacityOf(layers?.ours, '0'),
+        haze: opacityOf(layers?.haze, '0'),
+        theirs: opacityOf(layers?.theirs, '1'),
+        lift: layers?.lift ? getComputedStyle(layers.lift).boxShadow : soft(restShadows.lift),
+        glow: layers?.glow ? getComputedStyle(layers.glow).boxShadow : soft(restShadows.glow),
+        lines: lines.map((line, i) => (layers?.lines[i] ? getComputedStyle(layers.lines[i]).backgroundColor : line.onPanel)),
+      }
       return (duration: number): Animation[] => {
-        lay()
-        const [asNow, asSource] = matchShadows(now.boxShadow, sourceLook.boxShadow)
+        const made = lay()
+        edgesAt = (t) => mixEdges(nowEdges, sourceEdges, easeInOut(Math.min(1, t / 0.6)))
         const timing = { duration, fill: 'forwards' as const }
+        const blend = (el: HTMLElement | null, from: Keyframe, to: Keyframe) => (el ? [el.animate([{ ...from, easing: 'ease-in-out' }, { ...to, offset: 0.6 }, to], timing)] : [])
         const coming = (layer: HTMLElement | null, from: string) =>
           layer ? [layer.animate([{ opacity: from, easing: 'ease-in-out' }, { opacity: 1, offset: 0.6 }, { opacity: 1 }], timing)] : []
+        const [liftNow, liftBack] = matchShadows(was.lift, soft(sourceShadows.lift))
+        const [glowNow, glowBack] = matchShadows(was.glow, soft(sourceShadows.glow))
         return [
-          panel.animate([{ ...lookFrame(now, asNow), easing: 'ease-in-out' }, { ...lookFrame(sourceLook, asSource), offset: 0.6 }, lookFrame(sourceLook, asSource)], timing),
-          ...coming(layers.rim, was.rim),
-          ...coming(layers.ours, was.ours),
-          ...coming(layers.haze, was.haze),
-          ...(layers.theirs ? [layers.theirs.animate([{ opacity: was.theirs, easing: 'ease-in-out' }, { opacity: 0, offset: 0.6 }, { opacity: 0 }], timing)] : []),
+          ...blend(panel, lookFrame(now), lookFrame(sourceLook)),
+          ...made.lines.flatMap((el, i) => blend(el, { backgroundColor: was.lines[i] }, { backgroundColor: lines[i].onSource })),
+          ...blend(made.glow, { boxShadow: glowNow }, { boxShadow: glowBack }),
+          ...blend(made.lift, { boxShadow: liftNow }, { boxShadow: liftBack }),
+          ...coming(made.rim, was.rim),
+          ...coming(made.ours, was.ours),
+          ...coming(made.haze, was.haze),
+          ...(made.theirs ? [made.theirs.animate([{ opacity: was.theirs, easing: 'ease-in-out' }, { opacity: 0, offset: 0.6 }, { opacity: 0 }], timing)] : []),
         ]
       }
     },
-    // Keeps the layers on the panel while it moves through `boxes` (evenly
-    // spaced) on `timing`. Stretched with it, as the rim is, they'd be
-    // redrawn at every size, every frame: in an iPhone's web view that's
-    // done on its processor, at three times the size, and the panel drops
-    // frames. So the button's light and the panel's sheen are each drawn
-    // once, at the size they belong to, and scaled with the panel's box;
-    // the haze is drawn once over all the ground the panel covers and held
-    // where it is on screen, as its fixed backgrounds were. The panel's
-    // curve clips them. Added onto no transform of their own, so they're
-    // worked out with the panel, frame for frame, not apart from it.
-    follow: (boxes: Box[], timing: KeyframeAnimationOptions): Animation[] => {
-      lay()
-      const options = { ...timing, fill: 'both' as const, composite: 'add' as const }
-      const scaled = (layer: HTMLElement | null, size: { width: number; height: number }, look: Look) => {
+    // Keeps the layers on the panel while it goes the way `track` gives,
+    // over `duration`: worked out a frame apart, so each one is where the
+    // panel is, frame for frame. Moved and cut on the main thread with the
+    // panel (the scaling added onto no transform of its own, which keeps
+    // WebKit from running it apart), never ahead of it or behind.
+    follow: (track: Track, duration: number): Animation[] => {
+      const made = lay()
+      const count = Math.max(2, Math.ceil(duration / 16) + 1)
+      const at = Array.from({ length: count }, (_, i) => {
+        const t = i / (count - 1)
+        const { box, corners } = track(t)
+        const edges = edgesAt(t)
+        const outer = fitted(corners, box.width, box.height)
+        const inner = { width: box.width - edges.left - edges.right, height: box.height - edges.top - edges.bottom }
+        return { box, outer, inner, innerCorners: within(outer, edges) }
+      })
+      const timing = { duration, easing: 'linear', fill: 'both' as const }
+      const added = { ...timing, composite: 'add' as const }
+      const cut = (a: string, b: string) => ({ clipPath: `path(evenodd, '${a} ${b}')` })
+      // Drawn once at its own size and scaled with the box inside the edge.
+      const scaled = (layer: HTMLElement | null, size: { width: number; height: number }) => {
         if (!layer) return []
-        Object.assign(layer.style, { inset: 'auto', left: '0', top: '0', width: `${size.width}px`, height: `${size.height}px`, borderRadius: '0', transformOrigin: '0 0', willChange: 'transform' })
-        const edges = edgesOf(look)
-        return [
-          layer.animate(
-            boxes.map((box) => ({ transform: `scale(${(box.width - edges.left - edges.right) / size.width}, ${(box.height - edges.top - edges.bottom) / size.height})` })),
-            options,
-          ),
-        ]
+        Object.assign(layer.style, { inset: 'auto', left: '0', top: '0', width: `${size.width}px`, height: `${size.height}px`, transformOrigin: '0 0', willChange: 'transform' })
+        return [layer.animate(at.map(({ inner }) => ({ transform: `scale(${inner.width / size.width}, ${inner.height / size.height})` })), added)]
       }
+      // Drawn once over all the ground the panel covers, held still.
       const held = (layer: HTMLElement | null) => {
         if (!layer || !haze) return []
-        const left = Math.min(...boxes.map((box) => box.left))
-        const top = Math.min(...boxes.map((box) => box.top))
-        const right = Math.max(...boxes.map((box) => box.left + box.width))
-        const bottom = Math.max(...boxes.map((box) => box.top + box.height))
-        Object.assign(layer.style, { inset: 'auto', left: '0', top: '0', width: `${right - left}px`, height: `${bottom - top}px`, borderRadius: '0', backgroundAttachment: 'scroll', willChange: 'transform' })
+        const left = Math.min(...at.map(({ box }) => box.left))
+        const top = Math.min(...at.map(({ box }) => box.top))
+        const right = Math.max(...at.map(({ box }) => box.left + box.width))
+        const bottom = Math.max(...at.map(({ box }) => box.top + box.height))
+        Object.assign(layer.style, { inset: 'auto', left: '0', top: '0', width: `${right - left}px`, height: `${bottom - top}px`, backgroundAttachment: 'scroll', willChange: 'transform' })
         placeHaze(layer, haze, { left, top })
-        const edges = edgesOf(restLook)
-        return [layer.animate(boxes.map((box) => ({ transform: `translate(${left - box.left - edges.left}px, ${top - box.top - edges.top}px)` })), options)]
+        return [layer.animate(at.map(({ box }) => ({ transform: `translate(${left - box.left - restEdges.left}px, ${top - box.top - restEdges.top}px)` })), added)]
       }
-      return [...scaled(layers.ours, ourSize, sourceLook), ...scaled(layers.theirs, theirSize, restLook), ...held(layers.haze)]
+      // A ring as the skin draws it: a band `width` wide inside the box
+      // within the edge, with the panel's own corners (border-radius:
+      // inherit), less the band within.
+      const banded = (layer: HTMLElement | null, width: number) =>
+        layer
+          ? [
+              layer.animate(
+                at.map(({ inner, outer }) => {
+                  const c = fitted(outer, inner.width, inner.height)
+                  return cut(roundedPath(0, 0, inner.width, inner.height, c), roundedPath(width, width, inner.width - 2 * width, inner.height - 2 * width, within(c, even(width))))
+                }),
+                timing,
+              ),
+            ]
+          : []
+      // A lit line as an inset shadow draws it: the box within the edge,
+      // less itself grown in by the spread and moved by the offset.
+      const lit = (layer: HTMLElement, s: Shadow) =>
+        layer.animate(
+          at.map(({ inner, innerCorners }) =>
+            cut(
+              roundedPath(0, 0, inner.width, inner.height, innerCorners),
+              roundedPath(s.spread + s.x, s.spread + s.y, inner.width - 2 * s.spread, inner.height - 2 * s.spread, within(innerCorners, even(s.spread))),
+            ),
+          ),
+          timing,
+        )
+      return [
+        ...made.lines.map((el, i) => lit(el, lines[i].shadow)),
+        ...banded(made.ring, ring?.width ?? 0),
+        ...banded(made.rim, rim?.width ?? 0),
+        ...(made.glow
+          ? [made.glow.animate(at.map(({ inner, innerCorners }) => ({ width: `${inner.width / SOFT_SCALE}px`, height: `${inner.height / SOFT_SCALE}px`, borderRadius: corneredRadius(innerCorners, SOFT_SCALE) })), timing)]
+          : []),
+        // Half a pixel in from the panel's edge, so where it's cut out
+        // under the panel, drawn small and soft, it's under the glass.
+        ...(made.lift
+          ? [
+              made.lift.animate(
+                at.map(({ box, outer }) => ({
+                  left: `${box.left + 0.5}px`,
+                  top: `${box.top + 0.5}px`,
+                  width: `${(box.width - 1) / SOFT_SCALE}px`,
+                  height: `${(box.height - 1) / SOFT_SCALE}px`,
+                  borderRadius: corneredRadius(within(outer, even(0.5)), SOFT_SCALE),
+                })),
+                timing,
+              ),
+            ]
+          : []),
+        ...scaled(made.ours, ourSize),
+        ...scaled(made.theirs, theirSize),
+        ...held(made.haze),
+      ]
     },
     drop: () => {
-      layers.rim?.remove()
-      layers.ours?.remove()
-      layers.haze?.remove()
-      layers.theirs?.remove()
-      layers = { rim: null, ours: null, haze: null, theirs: null }
+      if (!layers) return
+      for (const el of [...layers.lines, layers.ring, layers.theirs, layers.glow, layers.haze, layers.ours, layers.rim, layers.lift]) el?.remove()
+      layers = null
+      panel.style.boxShadow = shadowBefore
+      panel.removeAttribute('data-morph-ring')
     },
   }
 }
@@ -677,7 +909,7 @@ export function morphPanelOpen(
     panel.animate([frame(from, fromCorners), bubble(from, rest), frame(rest, restCorners)], { duration: OPEN_MS, easing: panelSpring(), fill: 'both' }),
     ...holdStill(rest, [from, halfway(from, rest), rest], { duration: OPEN_MS, easing: panelSpring() }),
     ...look.open(OPEN_MS),
-    ...look.follow([from, halfway(from, rest), rest], { duration: OPEN_MS, easing: panelSpring() }),
+    ...look.follow(trackThrough([from, halfway(from, rest), rest], [fromCorners, roundAll(halfway(from, rest)), restCorners], panelSpring()), OPEN_MS),
     ghost.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160, easing: 'ease-out', fill: 'both' }),
     // Once it's most of the way out (85%).
     ...fadeIn(coming, { duration: 300, delay: 330, easing: SETTLE }),
@@ -738,6 +970,7 @@ export function morphPanelOpen(
     hold(panel)
     pin()
     const to = source.getBoundingClientRect()
+    const toCorners = cornersOf(source, to)
     if (!ghost) {
       ghost = makeGhost(to)
       ghost.style.opacity = '0'
@@ -746,11 +979,11 @@ export function morphPanelOpen(
     if (flyer) handoff?.to.setAttribute('data-handoff', '')
     animations = [
       ...lookBack(CLOSE_MS),
-      ...look.follow([now, halfway(now, to), to], { duration: CLOSE_MS, easing: MORPH_CALM }),
+      ...look.follow(trackThrough([now, halfway(now, to), to], [nowCorners, roundAll(halfway(now, to)), toCorners], MORPH_CALM), CLOSE_MS),
       ...(flyer && flight
         ? [flyer.animate([flown ?? { transform: flight.landed, color: flight.colour.to }, { transform: 'none', color: flight.colour.from }], { duration: CLOSE_MS, easing: MORPH_CALM, fill: 'forwards' })]
         : []),
-      panel.animate([frame(now, nowCorners), bubble(now, to), frame(to, cornersOf(source, to))], { duration: CLOSE_MS, easing: MORPH_CALM, fill: 'forwards' }),
+      panel.animate([frame(now, nowCorners), bubble(now, to), frame(to, toCorners)], { duration: CLOSE_MS, easing: MORPH_CALM, fill: 'forwards' }),
       ...holdStill(heldAt, [now, halfway(now, to), to], { duration: CLOSE_MS, easing: MORPH_CALM }),
       ...fadeContentsOut({ duration: 140, easing: 'ease-out' }),
       ghost.animate([{ opacity: ghostOpacity, easing: 'ease-in' }, { opacity: 0, offset: 0.55, easing: 'ease-out' }, { opacity: 1 }], { duration: CLOSE_MS, fill: 'forwards' }),
