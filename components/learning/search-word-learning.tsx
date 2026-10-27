@@ -1,9 +1,10 @@
 "use client"
 
-import React, { useState, useRef, useCallback, useEffect } from "react"
+import React, { useState, useRef, useCallback, useEffect, useLayoutEffect } from "react"
 import { Icon } from "@iconify/react"
 import { ArrowLeft, ChevronRight } from "lucide-react"
 import { useT } from "@/components/providers/translation-provider"
+import { canMorphFrom, morphPanelOpen, type PanelMorph } from "@/lib/morph-modal"
 
 interface SearchWordLearningProps {
   nativeLanguage: string
@@ -245,9 +246,13 @@ export interface PlaylistSelectModalProps {
   targetLanguageCode: string
   onClose: () => void
   onSelect: (playlistId: string) => void
+  // The button it was opened from: when it is on screen the picker opens out
+  // of it and closes back into it (lib/morph-modal.ts), done or not, over
+  // whatever that button is on.
+  morphFrom?: () => HTMLElement | null
 }
 
-export function PlaylistSelectModal({ word, translation, userId, translations, nativeLanguageCode, targetLanguageCode, onClose, onSelect }: PlaylistSelectModalProps) {
+export function PlaylistSelectModal({ word, translation, userId, translations, nativeLanguageCode, targetLanguageCode, onClose, onSelect, morphFrom }: PlaylistSelectModalProps) {
   const { t, tPlural } = useT()
   const [playlists, setPlaylists] = useState<Array<{ id: string; name: string; word_count: number }>>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -256,6 +261,38 @@ export function PlaylistSelectModal({ word, translation, userId, translations, n
   const [isAdding, setIsAdding] = useState<string | null>(null)
   const [addedTo, setAddedTo] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+
+  const panelRef = useRef<HTMLDivElement>(null)
+  const backdropRef = useRef<HTMLDivElement>(null)
+  const morphRef = useRef<PanelMorph | null>(null)
+  const closingRef = useRef(false)
+
+  // Out of its button, before the first paint, so it never shows in place
+  // first.
+  useLayoutEffect(() => {
+    const source = morphFrom?.()
+    if (panelRef.current && canMorphFrom(source)) {
+      morphRef.current = morphPanelOpen(source, panelRef.current, backdropRef.current)
+    }
+    return () => {
+      morphRef.current?.dispose()
+      morphRef.current = null
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Back into its button, then `then`: closed, or done adding.
+  const animateClose = useCallback((then: () => void) => {
+    if (closingRef.current) return
+    closingRef.current = true
+    if (morphRef.current) morphRef.current.close(then)
+    else then()
+  }, [])
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') animateClose(onClose) }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [animateClose, onClose])
 
   // Fetch user's playlists for this language pair
   useEffect(() => {
@@ -334,7 +371,7 @@ export function PlaylistSelectModal({ word, translation, userId, translations, n
       setIsCreating(false)
       setAddedTo(playlist.id)
       await new Promise(resolve => setTimeout(resolve, 800))
-      onSelect(playlist.id)
+      animateClose(() => onSelect(playlist.id))
     } catch (err) {
       console.error('Create playlist error:', err)
       setError(err instanceof Error ? err.message : t('playlistSelect.createFailed'))
@@ -369,7 +406,7 @@ export function PlaylistSelectModal({ word, translation, userId, translations, n
       setIsAdding(null)
       setAddedTo(playlistId)
       await new Promise(resolve => setTimeout(resolve, 800))
-      onSelect(playlistId)
+      animateClose(() => onSelect(playlistId))
     } catch (err) {
       console.error('Add to playlist error:', err)
       setError(err instanceof Error ? err.message : t('playlistSelect.addFailed'))
@@ -378,13 +415,19 @@ export function PlaylistSelectModal({ word, translation, userId, translations, n
   }
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur-[6px] z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
-      <div className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-t-3xl sm:rounded-[32px] w-full sm:max-w-md flex flex-col max-h-[90vh] shadow-2xl">
+    // Above the example sentences (9999) it may be opened out of.
+    <div className="fixed inset-0 z-[10000] flex items-end sm:items-center justify-center p-0 sm:p-4">
+      {/* The dim and blur on a layer of their own, behind the panel: on its
+          parent they'd stop the panel's own glass from frosting anything but
+          them, and they fade in with the morph. */}
+      <div ref={backdropRef} className="absolute inset-0 bg-black/30 backdrop-blur-[6px]" onClick={() => animateClose(onClose)} />
+      {/* One height whatever it holds: the playlists load after it opens. */}
+      <div ref={panelRef} className="relative bg-white/10 backdrop-blur-2xl border border-white/20 rounded-t-3xl sm:rounded-[32px] w-full sm:max-w-md flex flex-col h-[min(560px,80vh)] shadow-2xl">
         {/* Header */}
         <div className="p-4 border-b border-white/10 flex items-center justify-between flex-shrink-0">
           <h3 className="text-white font-semibold text-lg">{t('playlistSelect.title')}</h3>
           <button
-            onClick={onClose}
+            onClick={() => animateClose(onClose)}
             className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all"
           >
             <Icon icon="solar:close-circle-bold" className="w-5 h-5 text-white/60" />

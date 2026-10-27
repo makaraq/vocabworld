@@ -226,8 +226,8 @@ html.theme-obsidian.liquid-glass :is(span.bg-white\/10.rounded-lg.tracking-wider
 @layer base {
   html.theme-obsidian.liquid-glass :is(
     .bg-white\/5.backdrop-blur-3xl,
-    .fixed.inset-0 > [class*="backdrop-blur"][class*="rounded"]:not([data-keep-colors]),
-    .fixed.inset-0.items-end > [class*="rounded-t-3xl"]:not([data-keep-colors])
+    .fixed.inset-0 > [class*="backdrop-blur"][class*="rounded"]:not([data-keep-colors]):not([data-morphing]),
+    .fixed.inset-0.items-end > [class*="rounded-t-3xl"]:not([data-keep-colors]):not([data-morphing])
   ) { background-color: var(--ob-panel) !important; border-color: rgba(255, 255, 255, 0.07) !important; }
   html.theme-obsidian.liquid-glass :is(.grid > button.bg-black\/40, .flashcard-scale) { position: relative; }
   html.theme-obsidian.liquid-glass :is(.grid > button.bg-black\/40, .flashcard-scale)::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1.5px; pointer-events: none; background: var(--ob-rim-tile); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }

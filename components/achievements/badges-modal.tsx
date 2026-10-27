@@ -20,8 +20,8 @@ interface Props {
   open: boolean
   onCloseAction: () => void
   // The card it was opened from: when it is on screen the sheet opens out of
-  // it and closes back into it (lib/morph-modal.ts) instead of sliding. A
-  // drag down still slides it away.
+  // it and closes back into it (lib/morph-modal.ts) instead of sliding.
+  // Dragged down, it slides away, the card forming again behind it.
   morphFrom?: () => HTMLElement | null
 }
 
@@ -69,17 +69,21 @@ export function BadgesModal({ open, onCloseAction, morphFrom }: Props) {
     [unlocked],
   )
 
-  // Back into the card it opened from, unless dragged down: a drag slides.
-  // (As a click handler it gets the event, which isn't 'slide'.)
-  const animateClose = useCallback((how?: unknown) => {
+  // Back into the card it opened from; dragged down, it slides away
+  // instead, carrying on at the drag's `velocity` (px/ms) while the card
+  // forms again (lib/morph-modal.ts). As a click handler it gets the event,
+  // which isn't 'slide'.
+  const animateClose = useCallback((how?: unknown, velocity?: number) => {
     if (closingRef.current) return
     closingRef.current = true
     hapticsLight()
-    if (how !== 'slide' && morphRef.current) {
-      morphRef.current.close(() => {
+    if (morphRef.current) {
+      const finish = () => {
         document.body.style.overflow = ''
         onCloseAction()
-      })
+      }
+      if (how === 'slide') morphRef.current.slide(finish, velocity)
+      else morphRef.current.close(finish)
       return
     }
     if (modalRef.current) {
@@ -151,7 +155,7 @@ export function BadgesModal({ open, onCloseAction, morphFrom }: Props) {
     const velocity = dy / Math.max(dt, 1)
 
     if (dy > 100 || velocity > 0.4) {
-      animateClose('slide')
+      animateClose('slide', velocity)
     } else {
       if (modalRef.current) {
         modalRef.current.style.transition = 'transform 0.3s cubic-bezier(0.2, 0, 0, 1)'
@@ -193,7 +197,7 @@ export function BadgesModal({ open, onCloseAction, morphFrom }: Props) {
       const dt = Date.now() - startTime
       const velocity = dy / Math.max(dt, 1)
       if (dy > 100 || velocity > 0.4) {
-        animateClose('slide')
+        animateClose('slide', velocity)
       } else {
         if (modalRef.current) {
           modalRef.current.style.transition = 'transform 0.3s cubic-bezier(0.2, 0, 0, 1)'

@@ -21,7 +21,7 @@ interface ManageAccountModalProps {
   onCloseAction: () => void
   // The button it was opened from: when it is on screen the sheet opens out
   // of it and closes back into it (lib/morph-modal.ts) instead of sliding.
-  // A drag down still slides it away.
+  // Dragged down, it slides away, the button forming again behind it.
   morphFrom?: () => HTMLElement | null
   name?: string
   email?: string
@@ -91,17 +91,21 @@ export function ManageAccountModal({
     setDeleteConfirmText('')
   }, [])
 
-  // Back into the button it opened from, unless dragged down: a drag slides.
-  // (As a click handler it gets the event, which isn't 'slide'.)
-  const animateClose = useCallback((how?: unknown) => {
+  // Back into the button it opened from; dragged down, it slides away
+  // instead, carrying on at the drag's `velocity` (px/ms) while the button
+  // forms again (lib/morph-modal.ts). As a click handler it gets the event,
+  // which isn't 'slide'.
+  const animateClose = useCallback((how?: unknown, velocity?: number) => {
     if (closingRef.current) return
     closingRef.current = true
-    if (how !== 'slide' && morphRef.current) {
-      morphRef.current.close(() => {
+    if (morphRef.current) {
+      const finish = () => {
         document.body.style.overflow = ''
         resetState()
         onCloseAction()
-      })
+      }
+      if (how === 'slide') morphRef.current.slide(finish, velocity)
+      else morphRef.current.close(finish)
       return
     }
     if (modalRef.current) {
@@ -174,7 +178,7 @@ export function ManageAccountModal({
     const velocity = dy / Math.max(dt, 1)
 
     if (dy > 100 || velocity > 0.4) {
-      animateClose('slide')
+      animateClose('slide', velocity)
     } else {
       if (modalRef.current) {
         modalRef.current.style.transition = 'transform 0.3s cubic-bezier(0.2, 0, 0, 1)'
@@ -216,7 +220,7 @@ export function ManageAccountModal({
       const dt = Date.now() - startTime
       const velocity = dy / Math.max(dt, 1)
       if (dy > 100 || velocity > 0.4) {
-        animateClose('slide')
+        animateClose('slide', velocity)
       } else {
         if (modalRef.current) {
           modalRef.current.style.transition = 'transform 0.3s cubic-bezier(0.2, 0, 0, 1)'

@@ -27,7 +27,8 @@ interface ExampleSentencesModalProps {
   targetLanguageCode: string
   userId?: string
   onCloseAction: () => void
-  onAddToPlaylistAction?: () => void
+  // Given the button, for the playlist picker to open out of.
+  onAddToPlaylistAction?: (button: HTMLElement) => void
 }
 
 // Module-level sentence cache so reopening the modal (and opening it after a
@@ -275,7 +276,7 @@ export function ExampleSentencesModal({
         {userId && onAddToPlaylistAction && !isLoading && !error && (
           <div className="p-5 border-t border-white/10">
             <button
-              onClick={onAddToPlaylistAction}
+              onClick={(e) => onAddToPlaylistAction(e.currentTarget)}
               className="w-full bg-white/10 backdrop-blur-sm border border-white/25 hover:bg-white/20 text-white font-semibold py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-all"
             >
               <Plus className="w-5 h-5" />

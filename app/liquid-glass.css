@@ -492,13 +492,11 @@
 
   /* ── Centred modals: settings, paywall, sign-in, progress… ───────── */
 
-  /* Not while one morphs (settings out of the gear button): an important
-     radius beats the animation's own, which ends on this one. */
+  /* Not while one morphs out of a button (lib/morph-modal.ts): the
+     animation carries its radius and its look from the button's to these,
+     and an important one would beat it. */
   html.liquid-glass .fixed.inset-0 > [class*="backdrop-blur"][class*="rounded"]:not([class*="rounded-t-"]):not([data-morphing]) {
     border-radius: var(--lg-radius-panel) !important;
-  }
-
-  html.liquid-glass .fixed.inset-0 > [class*="backdrop-blur"][class*="rounded"]:not([class*="rounded-t-"]) {
     border-color: rgba(255, 255, 255, 0.12) !important;
     background-image: var(--lg-sheen-panel) !important;
     box-shadow: var(--lg-rim-panel), var(--lg-lift-panel) !important;
@@ -508,15 +506,13 @@
 
   /* ── Bottom sheets: inset from the screen edges, rounded all round ─ */
 
-  /* Its box, not while it morphs out of a button (lib/morph-modal.ts): the
-     animation moves the box, and ends on this one. */
+  /* Not while it morphs out of a button (lib/morph-modal.ts): the
+     animation moves its box and carries its look from the button's, and
+     ends on these. */
   html.liquid-glass .fixed.inset-0.items-end > [class*="rounded-t-3xl"]:not([data-morphing]) {
     width: calc(100% - 16px) !important;
     margin: 0 8px 8px !important;
     border-radius: var(--lg-radius-sheet) !important;
-  }
-
-  html.liquid-glass .fixed.inset-0.items-end > [class*="rounded-t-3xl"] {
     overflow: hidden !important;
     border: 1px solid rgba(255, 255, 255, 0.12) !important;
     background-image: var(--lg-sheen-panel) !important;
@@ -553,8 +549,8 @@
      the setting themselves. */
 
   html.liquid-glass.reduce-transparency .bg-white\/5.backdrop-blur-3xl,
-  html.liquid-glass.reduce-transparency .fixed.inset-0 > [class*="backdrop-blur"][class*="rounded"],
-  html.liquid-glass.reduce-transparency .fixed.inset-0.items-end > [class*="rounded-t-3xl"] {
+  html.liquid-glass.reduce-transparency .fixed.inset-0 > [class*="backdrop-blur"][class*="rounded"]:not([data-morphing]),
+  html.liquid-glass.reduce-transparency .fixed.inset-0.items-end > [class*="rounded-t-3xl"]:not([data-morphing]) {
     background-color: var(--lg-solid) !important;
     background-image: none !important;
     -webkit-backdrop-filter: none !important;
@@ -570,8 +566,8 @@
 
   @media (prefers-reduced-transparency: reduce) {
     html.liquid-glass .bg-white\/5.backdrop-blur-3xl,
-    html.liquid-glass .fixed.inset-0 > [class*="backdrop-blur"][class*="rounded"],
-    html.liquid-glass .fixed.inset-0.items-end > [class*="rounded-t-3xl"] {
+    html.liquid-glass .fixed.inset-0 > [class*="backdrop-blur"][class*="rounded"]:not([data-morphing]),
+    html.liquid-glass .fixed.inset-0.items-end > [class*="rounded-t-3xl"]:not([data-morphing]) {
       background-color: var(--lg-solid) !important;
       background-image: none !important;
       -webkit-backdrop-filter: none !important;
@@ -598,7 +594,7 @@
     }
 
     html.liquid-glass .bg-white\/5.backdrop-blur-3xl,
-    html.liquid-glass .fixed.inset-0 > [class*="backdrop-blur"][class*="rounded"] {
+    html.liquid-glass .fixed.inset-0 > [class*="backdrop-blur"][class*="rounded"]:not([data-morphing]) {
       border-color: rgba(255, 255, 255, 0.35) !important;
     }
   }

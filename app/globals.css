@@ -566,3 +566,19 @@ html.theme-stage-instant [data-theme-tool-stage] {
 [data-handoff] > * {
   visibility: hidden !important;
 }
+
+/* The copy of a button its panel is morphing out of (lib/morph-modal.ts)
+   holds only what's on the button: the panel is its glass meanwhile, the
+   skin's rim and lit body included. */
+[data-morph-ghost]::before,
+[data-morph-ghost]::after {
+  content: none !important;
+}
+
+/* That button's rim on the panel instead, fading as the panel takes over:
+   a ring, masked as the skin's own is (liquid-glass.css, ::before). */
+[data-morph-rim] {
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}

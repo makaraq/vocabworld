@@ -116,7 +116,7 @@ import { PROGRESS_SYNCED_EVENT } from '@/lib/offline/progress-queue'
 import { hasWordImage } from '@/lib/word-images'
 import { loadWordImage } from '@/lib/offline/word-image-cache'
 import { WordArt } from '@/components/language/word-art'
-import { morphSpring, MORPH_CALM, canMorphFrom, morphPanelOpen, type PanelMorph } from '@/lib/morph-modal'
+import { morphSpring, MORPH_CALM, canMorphFrom, morphPanelOpen, lookMorph, fadeParts, fadeIn, fadeOutFromNow, type PanelMorph } from '@/lib/morph-modal'
 import {
   Search,
   Languages,
@@ -141,10 +141,9 @@ import { getTopicIcon } from "@/lib/icons/topic-icons"
 // with where it sits on each end.
 type SettingsGhost = {
   holder: HTMLElement
-  bubble: HTMLElement
   gear: SVGElement
   cross: SVGElement
-  at: Record<'gear' | 'close', { transform: string; backgroundColor: string; borderColor: string }>
+  at: Record<'gear' | 'close', { transform: string }>
 }
 
 // Question text translations for "Choose the language you want to learn"
@@ -2416,6 +2415,9 @@ export function LanguageSelector() {
     englishWord: string
   } | null>(null)
   const [showPlaylistModal, setShowPlaylistModal] = useState(false)
+  // The example sentences' Add to Playlist button, which the picker opens
+  // out of and closes back into.
+  const addToPlaylistButtonRef = useRef<HTMLElement | null>(null)
   const [holdingCardIndex, setHoldingCardIndex] = useState<number | null>(null)
   const pressedTileRef = useRef<{ el: HTMLElement | null; timer: number | null }>({ el: null, timer: null })
   const releasePressedTile = () => {
@@ -4742,9 +4744,10 @@ export function LanguageSelector() {
     tweenCards([drag.dx, drag.dy], [toX, drag.dy * 2], duration, (t) => 1 - (1 - t) ** 2, land)
   }
 
-  const handleAddToPlaylist = () => {
-    // Close example modal and show playlist modal
-    setShowExampleModal(false)
+  // The picker opens out of the button, over the sentences, which stay
+  // where they are for it to close back into.
+  const handleAddToPlaylist = (button: HTMLElement) => {
+    addToPlaylistButtonRef.current = button
     setShowPlaylistModal(true)
   }
 
@@ -4754,14 +4757,18 @@ export function LanguageSelector() {
   // width and height animate, never a scale, so the glass keeps its blur,
   // rim, shadow and corners true at every size. Its contents are held at the
   // width they have at rest, so nothing reflows, and come in once it has
-  // mostly arrived. The button's bubble melts into the glass as it grows out
-  // of it, while its gear travels to the panel's close button, nearly in the
+  // mostly arrived. The button's bubble is the glass that grows, while its
+  // gear travels to the panel's close button, nearly in the
   // same spot, turning into the ✕ on the way; the ✕ grows its own bubble
   // once the panel has all but settled. Closing runs it all back: the ✕'s
   // bubble and the contents clear, the panel draws in, the ✕ turns back into
   // the gear, and the gear's bubble forms again as the glass lands on it.
-  // A stand-in above everything does the gear's part (see moveSettingsGhost);
-  // the real gear button and ✕ hide while it is up.
+  // The glass is the panel's own the whole way: it starts out as the gear's
+  // bubble, in its look, and turns into the panel's as it grows (lookMorph),
+  // and the ✕ grows and loses its bubble in place, so no glass stands in for
+  // another and changes tone as it hands over. Only the icons ride above
+  // everything, on a stand-in (see moveSettingsGhost); the real gear hides
+  // while the panel is up, and the ✕'s icon while one flies in or out.
   // With no button to grow from (or where pages don't morph) the panel rises
   // in and drops out instead (sheet-in / sheet-out in globals.css). A timer,
   // not animation events, takes the panel away: a frame-starved webview can
@@ -4771,7 +4778,11 @@ export function LanguageSelector() {
   const [settingsMotion, setSettingsMotion] = useState<'morph' | 'sheet'>('sheet')
   const [settingsClosing, setSettingsClosing] = useState(false)
   const settingsCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const settingsMorphRef = useRef<{ animations: Animation[]; ghost: SettingsGhost | null }>({ animations: [], ghost: null })
+  const settingsMorphRef = useRef<{ animations: Animation[]; ghost: SettingsGhost | null; look: ReturnType<typeof lookMorph> | null }>({
+    animations: [],
+    ghost: null,
+    look: null,
+  })
   const settingsButton = () => {
     const button = document.querySelector<HTMLElement>('[data-tour="learning-settings"]')
     return button?.offsetWidth ? button : null
@@ -4781,22 +4792,25 @@ export function LanguageSelector() {
     const close = panel?.querySelector<HTMLElement>('[data-settings-close]')
     return panel && close ? { panel, close } : null
   }
+  // What it holds, not the layers its look puts in while it morphs.
+  const settingsContents = (panel: HTMLElement) =>
+    [...panel.children].filter((el): el is HTMLElement => el instanceof HTMLElement && el.style.position !== 'absolute')
 
   // Puts the panel back in its own layout and takes the stand-in down.
   const endSettingsMorph = () => {
-    const { animations, ghost } = settingsMorphRef.current
+    const { animations, ghost, look } = settingsMorphRef.current
     animations.forEach((a) => a.cancel())
     ghost?.holder.remove()
-    settingsMorphRef.current = { animations: [], ghost: null }
+    look?.drop()
+    settingsMorphRef.current = { animations: [], ghost: null, look: null }
     const parts = settingsParts()
     if (!parts) return
     parts.panel.removeAttribute('data-morphing')
-    for (const prop of ['position', 'margin', 'overflow']) parts.panel.style.removeProperty(prop)
-    for (const child of parts.panel.children) {
-      const el = child as HTMLElement
+    for (const prop of ['position', 'margin', 'overflow', 'background-image']) parts.panel.style.removeProperty(prop)
+    for (const el of settingsContents(parts.panel)) {
       for (const prop of ['width', 'position', 'left']) el.style.removeProperty(prop)
     }
-    parts.close.style.removeProperty('visibility')
+    parts.close.removeAttribute('data-handoff')
   }
 
   const cancelSettingsClose = () => {
@@ -4810,17 +4824,33 @@ export function LanguageSelector() {
   // animation gives it. Its contents keep the width they have at rest (read
   // first) and hang from its top-right corner, the one nearest the button,
   // so they barely move while the glass opens over them. data-morphing lets
-  // go of Liquid Glass's important radius (liquid-glass.css) so the
-  // animation's own can apply.
+  // go of Liquid Glass's important radius and look (liquid-glass.css) so the
+  // animations' own can apply; its sheen goes on a layer (lookMorph).
   const pinSettingsPanel = (panel: HTMLElement) => {
-    for (const child of panel.children) {
-      const el = child as HTMLElement
+    for (const el of settingsContents(panel)) {
       const width = el.offsetWidth
       // The percentage follows the panel's width frame by frame.
       Object.assign(el.style, { width: `${width}px`, position: 'relative', left: `calc(100% - ${width}px)` })
     }
     panel.setAttribute('data-morphing', '')
-    Object.assign(panel.style, { position: 'fixed', margin: '0', overflow: 'hidden' })
+    Object.assign(panel.style, { position: 'fixed', margin: '0', overflow: 'hidden', backgroundImage: 'none' })
+  }
+  // The ✕'s own bubble, growing in place once the panel has all but
+  // settled, and going first when it closes, from however it is.
+  const settingsSettle = 'cubic-bezier(0.2, 0.8, 0.2, 1)'
+  const growCloseBubble = (close: HTMLElement) =>
+    close.animate(
+      [{ opacity: 0, transform: 'scale(0.6)' }, { opacity: 0, transform: 'scale(0.6)', offset: 0.6, easing: settingsSettle }, { opacity: 1, transform: 'none' }],
+      { duration: SETTINGS_OPEN_MS, fill: 'both' },
+    )
+  const closeBubbleFromNow = (close: HTMLElement) => {
+    const style = getComputedStyle(close)
+    const now = { opacity: style.opacity, transform: style.transform }
+    return () =>
+      close.animate([{ ...now, easing: 'ease-in' }, { opacity: 0, transform: 'scale(0.6)', offset: 0.26 }, { opacity: 0, transform: 'scale(0.6)' }], {
+        duration: SETTINGS_CLOSE_MS,
+        fill: 'forwards',
+      })
   }
   type SettingsRect = { left: number; top: number; width: number; height: number }
   const settingsBox = (r: SettingsRect): Keyframe => ({
@@ -4860,22 +4890,21 @@ export function LanguageSelector() {
     )
   }
 
-  // The stand-in: a copy of the gear button's bubble above everything, and
-  // over it the gear and the ✕, which ride separately because the bubble
-  // comes and goes. It sits on the gear button's box; a transform carries it
-  // to the close button's. Both are measured at rest.
+  // The stand-in: the gear and the ✕ above everything, on the gear button's
+  // box; a transform carries it to the close button's. Both are measured at
+  // rest.
   const makeSettingsGhost = (button: HTMLElement, close: HTMLElement): SettingsGhost => {
     const home = button.getBoundingClientRect()
     const away = close.getBoundingClientRect()
     const holder = document.createElement('div')
     holder.setAttribute('aria-hidden', 'true')
     holder.style.cssText = `position:fixed;left:${home.left}px;top:${home.top}px;width:${home.width}px;height:${home.height}px;z-index:51;pointer-events:none;transform-origin:0 0;`
-    const bubble = button.cloneNode(true) as HTMLElement
-    bubble.removeAttribute('data-tour')
-    bubble.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;transition:none;scale:none;transform:none;'
     const icons = document.createElement('div')
     icons.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;'
-    const gear = bubble.querySelector('svg') as SVGElement
+    const gearIcon = button.querySelector('svg') as SVGElement
+    const gear = gearIcon.cloneNode(true) as SVGElement
+    // In the colour it had on the button, whatever it took it from.
+    gear.style.color = getComputedStyle(gearIcon).color
     icons.appendChild(gear)
     const scale = away.width / home.width
     const xIcon = close.querySelector('svg')
@@ -4886,20 +4915,15 @@ export function LanguageSelector() {
     const h = (xBox?.height ?? 20) / scale
     cross.style.cssText = `position:absolute;left:50%;top:50%;width:${w}px;height:${h}px;margin:${-h / 2}px 0 0 ${-w / 2}px;opacity:0;`
     icons.appendChild(cross)
-    holder.append(bubble, icons)
+    holder.append(icons)
     document.body.appendChild(holder)
-    const look = (el: HTMLElement) => {
-      const s = getComputedStyle(el)
-      return { backgroundColor: s.backgroundColor, borderColor: s.borderTopColor }
-    }
     return {
       holder,
-      bubble,
       gear,
       cross,
       at: {
-        gear: { transform: 'none', ...look(button) },
-        close: { transform: `translate(${away.left - home.left}px, ${away.top - home.top}px) scale(${scale})`, ...look(close) },
+        gear: { transform: 'none' },
+        close: { transform: `translate(${away.left - home.left}px, ${away.top - home.top}px) scale(${scale})` },
       },
     }
   }
@@ -4907,22 +4931,15 @@ export function LanguageSelector() {
   // Animates the stand-in onto the gear button or the close button from
   // wherever it is. The icon leaving turns away and shrinks early; the one
   // arriving turns in after it, so they cross rather than overlap.
-  // The bubble doesn't travel. Opening, the gear's melts into the panel
-  // glass growing out from under it (the circle becomes the panel), and the
-  // ✕ grows its own once the panel has all but settled. Closing, the ✕'s
-  // dissolves first, and the gear's forms again as the glass lands on it.
   const moveSettingsGhost = (ghost: SettingsGhost, to: 'gear' | 'close', duration: number, easing: string) => {
     const now = (el: Element) => {
       const s = getComputedStyle(el)
       return { transform: s.transform, opacity: s.opacity }
     }
-    const bubble = getComputedStyle(ghost.bubble)
     const from = {
       holder: now(ghost.holder),
-      bubble: now(ghost.bubble),
       gear: now(ghost.gear),
       cross: now(ghost.cross),
-      look: { backgroundColor: bubble.backgroundColor, borderColor: bubble.borderTopColor },
     }
     const target = ghost.at[to]
     const [leaving, leavingFrom, arriving, arrivingFrom] =
@@ -4932,25 +4949,9 @@ export function LanguageSelector() {
     // Turned back and small, unless it is partly in already (a turnaround):
     // then it carries on from there.
     const coming = Number(arrivingFrom.opacity) > 0.01 ? arrivingFrom : { opacity: 0, transform: `rotate(${-turn}deg) scale(0.5)` }
-    const settle = 'cubic-bezier(0.2, 0.8, 0.2, 1)'
-    const bubbleFrames: Keyframe[] =
-      to === 'close'
-        ? [
-            { ...from.bubble, easing: 'ease-out' },
-            { opacity: 0, transform: 'none', offset: 0.25 },
-            { opacity: 0, transform: 'scale(0.6)', offset: 0.6, easing: settle },
-            { opacity: 1, transform: 'none' },
-          ]
-        : [
-            { ...from.bubble, easing: 'ease-in' },
-            { opacity: 0, transform: 'scale(0.6)', offset: 0.26 },
-            { opacity: 0, transform: 'none', offset: 0.65, easing: 'ease-out' },
-            { opacity: 1, transform: 'none' },
-          ]
+    const settle = settingsSettle
     return [
       ghost.holder.animate([from.holder, { transform: target.transform }], { duration, easing, fill: 'forwards' }),
-      ghost.bubble.animate(bubbleFrames, { duration, fill: 'forwards' }),
-      ghost.bubble.animate([from.look, { backgroundColor: target.backgroundColor, borderColor: target.borderColor }], { duration, easing, fill: 'forwards' }),
       leaving.animate([{ ...leavingFrom, easing: 'ease-in' }, { ...gone, offset: 0.35 }, gone], { duration, fill: 'forwards' }),
       arriving.animate(
         [arrivingFrom, { ...coming, offset: 0.2, easing: settle }, { opacity: 1, transform: 'none', offset: 0.6 }, { opacity: 1, transform: 'none' }],
@@ -4974,9 +4975,14 @@ export function LanguageSelector() {
     const rest = panel.getBoundingClientRect()
     const corners = settingsCorners(panel, rest)
     const bubble = settingsBubble(from.height / 2)
+    const look = lookMorph(button, panel)
+    // In as the bubble squares up into the panel, not while its curve would
+    // cut through them; glass fading on its own, so its frost doesn't change
+    // as the fade ends (fadeParts). The ✕ comes in its own way.
+    const coming = fadeParts(settingsContents(panel)).filter((part) => part.el !== close)
     const ghost = makeSettingsGhost(button, close)
     pinSettingsPanel(panel)
-    close.style.visibility = 'hidden'
+    close.setAttribute('data-handoff', '')
     const spring = morphSpring()
     const animations = [
       panel.animate(settingsPath(from, rest), { duration: SETTINGS_OPEN_MS, easing: spring, fill: 'both' }),
@@ -4989,15 +4995,13 @@ export function LanguageSelector() {
         ],
         { duration: SETTINGS_OPEN_MS, fill: 'both' },
       ),
+      ...look.open(SETTINGS_OPEN_MS),
       ...moveSettingsGhost(ghost, 'close', SETTINGS_OPEN_MS, spring),
-      // In as the bubble squares up into the panel, not while its curve
-      // would cut through them.
-      ...[...panel.children].map((child) =>
-        child.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 300, delay: 250, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)', fill: 'both' }),
-      ),
+      growCloseBubble(close),
+      ...fadeIn(coming, { duration: 300, delay: 250, easing: settingsSettle }),
     ]
-    settingsMorphRef.current = { animations, ghost }
-    // Arrived: the stand-in is on the close button, which takes over.
+    settingsMorphRef.current = { animations, ghost, look }
+    // Arrived: the stand-in's ✕ is on the close button's, which takes over.
     Promise.all(animations.map((a) => a.finished)).then(() => {
       if (settingsMorphRef.current.animations === animations) endSettingsMorph()
     }, () => {})
@@ -5013,9 +5017,14 @@ export function LanguageSelector() {
       // From wherever things are now, so closing mid-opening turns it around.
       const now = panel.getBoundingClientRect()
       const corners = settingsCorners(panel, now)
-      const contents = [...panel.children].map((child) => getComputedStyle(child).opacity)
+      const fadeContentsOut = fadeOutFromNow(fadeParts(settingsContents(panel)).filter((part) => part.el !== close))
       const home = button.getBoundingClientRect()
       const bubble = settingsBubble(home.height / 2)
+      // Its look back into the gear's, and the ✕'s bubble going, from
+      // wherever they are: read before anything is cancelled.
+      const look = settingsMorphRef.current.look ?? lookMorph(button, panel)
+      const lookBack = look.backFromNow()
+      const closeBubbleOut = closeBubbleFromNow(close)
       let { ghost } = settingsMorphRef.current
       if (ghost) {
         // Still opening: pick the stand-in up where it is.
@@ -5023,16 +5032,16 @@ export function LanguageSelector() {
         settingsMorphRef.current.animations.forEach((a) => a.cancel())
         settingsMorphRef.current.animations = moving
       } else {
-        // At rest: the stand-in starts out as the close button.
+        // At rest: the stand-in starts out on the close button, with its ✕.
         ghost = makeSettingsGhost(button, close)
         ghost.holder.style.transform = ghost.at.close.transform
-        Object.assign(ghost.bubble.style, { backgroundColor: ghost.at.close.backgroundColor, borderColor: ghost.at.close.borderColor })
         ghost.gear.style.opacity = '0'
         ghost.cross.style.opacity = '1'
-        settingsMorphRef.current = { animations: moveSettingsGhost(ghost, 'gear', SETTINGS_CLOSE_MS, MORPH_CALM), ghost }
+        settingsMorphRef.current = { animations: moveSettingsGhost(ghost, 'gear', SETTINGS_CLOSE_MS, MORPH_CALM), ghost, look }
       }
+      settingsMorphRef.current.look = look
       pinSettingsPanel(panel)
-      close.style.visibility = 'hidden'
+      close.setAttribute('data-handoff', '')
       settingsMorphRef.current.animations.push(
         // The back morph's calm ease-out: no long tail to settle as a tremor.
         panel.animate(settingsPath(now, home), {
@@ -5048,9 +5057,9 @@ export function LanguageSelector() {
           ],
           { duration: SETTINGS_CLOSE_MS, fill: 'forwards' },
         ),
-        ...[...panel.children].map((child, i) =>
-          child.animate([{ opacity: contents[i] }, { opacity: 0 }], { duration: 140, easing: 'ease-out', fill: 'forwards' }),
-        ),
+        ...lookBack(SETTINGS_CLOSE_MS),
+        closeBubbleOut(),
+        ...fadeContentsOut({ duration: 140, easing: 'ease-out' }),
       )
     }
     setSettingsMotion(morph ? 'morph' : 'sheet')
@@ -6299,14 +6308,9 @@ export function LanguageSelector() {
           }}
           nativeLanguageCode={nativeLanguageCode}
           targetLanguageCode={targetLanguageCode}
-          onClose={() => {
-            setShowPlaylistModal(false)
-            setExampleModalData(null)
-          }}
-          onSelect={() => {
-            setShowPlaylistModal(false)
-            setExampleModalData(null)
-          }}
+          onClose={() => setShowPlaylistModal(false)}
+          onSelect={() => setShowPlaylistModal(false)}
+          morphFrom={() => addToPlaylistButtonRef.current}
         />
       )}
 
