@@ -4864,11 +4864,15 @@ export function LanguageSelector() {
   // The way between two boxes passes through a circle halfway (in eased
   // progress), so the glass swells round out of the button before it drops
   // into the tall panel. Its top-right corner, the button's, moves straight.
-  const settingsPath = (a: SettingsRect, b: SettingsRect): Keyframe[] => {
+  const settingsWay = (a: SettingsRect, b: SettingsRect): SettingsRect[] => {
     const half = (x: number, y: number) => x + (y - x) / 2
     const size = half(a.width, b.width)
     const right = half(a.left + a.width, b.left + b.width)
-    return [settingsBox(a), { ...settingsBox({ left: right - size, top: half(a.top, b.top), width: size, height: size }), offset: 0.5 }, settingsBox(b)]
+    return [a, { left: right - size, top: half(a.top, b.top), width: size, height: size }, b]
+  }
+  const settingsPath = (a: SettingsRect, b: SettingsRect): Keyframe[] => {
+    const [from, halfway, to] = settingsWay(a, b)
+    return [settingsBox(from), { ...settingsBox(halfway), offset: 0.5 }, settingsBox(to)]
   }
   // While it moves the glass is a bubble: three corners fully round (50%),
   // the button's own corner, top right, kept to the button's curve, so the
@@ -4998,6 +5002,7 @@ export function LanguageSelector() {
         { duration: SETTINGS_OPEN_MS, fill: 'both' },
       ),
       ...look.open(SETTINGS_OPEN_MS),
+      ...look.follow(settingsWay(from, rest), { duration: SETTINGS_OPEN_MS, easing: spring }),
       ...moveSettingsGhost(ghost, 'close', SETTINGS_OPEN_MS, spring),
       growCloseBubble(close),
       ...fadeIn(coming, { duration: 300, delay: 250, easing: settingsSettle }),
@@ -5060,6 +5065,7 @@ export function LanguageSelector() {
           { duration: SETTINGS_CLOSE_MS, fill: 'forwards' },
         ),
         ...lookBack(SETTINGS_CLOSE_MS),
+        ...look.follow(settingsWay(now, home), { duration: SETTINGS_CLOSE_MS, easing: MORPH_CALM }),
         closeBubbleOut(),
         ...fadeContentsOut({ duration: 140, easing: 'ease-out' }),
       )
