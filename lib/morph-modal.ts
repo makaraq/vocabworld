@@ -5,9 +5,9 @@
 // The panel's own box moves (left, top, width, height), never a scale, so
 // its glass keeps its blur, rim, shadow and corners true at every size. On
 // the way its corners round up into a bubble halfway and settle to the
-// panel's own as it arrives. Its contents keep the width they have at rest,
-// so nothing reflows, and hang from the point nearest the source, so they
-// barely move while the glass opens over them; they come in as it settles
+// panel's own as it arrives. Its contents keep the size they have at rest,
+// so nothing reflows, and stay where they rest on screen, so they don't
+// move at all while the glass opens over them; they come in as it settles
 // and clear first when it closes. A copy of the source, above everything,
 // melts into the glass as it grows out of it and forms again as the glass
 // lands on it; the source itself hides while its panel is up. The modal's
@@ -97,11 +97,14 @@ export const frame = (box: Box, corners: Corners): Keyframe => ({
   height: `${box.height}px`,
   borderRadius: `${corners.h.map((r) => `${r}px`).join(' ')} / ${corners.v.map((r) => `${r}px`).join(' ')}`,
 })
+const halfway = (a: Box, b: Box): Box => {
+  const half = (x: number, y: number) => x + (y - x) / 2
+  return { left: half(a.left, b.left), top: half(a.top, b.top), width: half(a.width, b.width), height: half(a.height, b.height) }
+}
 // Halfway (in eased progress) between two boxes, as a bubble: every corner
 // half the shorter side.
 export const bubble = (a: Box, b: Box): Keyframe => {
-  const half = (x: number, y: number) => x + (y - x) / 2
-  const box = { left: half(a.left, b.left), top: half(a.top, b.top), width: half(a.width, b.width), height: half(a.height, b.height) }
+  const box = halfway(a, b)
   const r = Math.min(box.width, box.height) / 2
   return { ...frame(box, { h: [r, r, r, r], v: [r, r, r, r] }), offset: 0.5 }
 }
@@ -425,7 +428,7 @@ export function lookMorph(source: HTMLElement, panel: HTMLElement) {
 const HELD = ['translate', 'scale', 'transform', 'opacity', 'transition'] as const
 const hold = (el: HTMLElement) => Object.assign(el.style, { translate: 'none', scale: 'none', transform: 'none', opacity: '1', transition: 'none' })
 const PINNED = ['position', 'margin', 'overflow', 'padding', 'background-image'] as const
-const PINNED_CHILD = ['width', 'position', 'left', 'top'] as const
+const PINNED_CHILD = ['width', 'height', 'flex-shrink', 'position', 'left', 'top'] as const
 
 // Starts the panel on the source's box and opens it out to where it lays out
 // at rest. Call once the panel is in the DOM and laid out, before it paints
@@ -460,8 +463,8 @@ export function morphPanelOpen(
   const restCorners = cornersOf(panel, rest)
   // At rest, before data-morphing lets go of its look (lookMorph).
   const look = lookMorph(source, panel)
-  // Where across the panel the contents hang from: the source's centre.
-  const anchor = Math.min(1, Math.max(0, (from.left + from.width / 2 - rest.left) / rest.width))
+  // The panel's padding, which comes off while it's pinned.
+  let pad = { left: 0, top: 0 }
 
   // The icon's flight (options.handoff): from the source's icon to the close
   // button's, measured at rest, moving its centre, sizing and turning. The
@@ -518,32 +521,43 @@ export function morphPanelOpen(
   }
 
   // Lifts the panel onto the coordinates its animation gives it, contents
-  // held at their width at rest. Its padding comes off meanwhile, or a
-  // padded panel couldn't start as small as a small button; the contents
-  // are moved in by as much, so they're where they rest once it arrives.
-  // data-morphing lets go of Liquid Glass's important geometry
+  // held at their size at rest, so nothing reflows or gets squeezed (a list
+  // that scrolls would shrink with the panel otherwise). Its padding comes
+  // off meanwhile, or a padded panel couldn't start as small as a small
+  // button; the contents are moved in by as much (holdStill moves them on
+  // from there). data-morphing lets go of Liquid Glass's important geometry
   // (liquid-glass.css) so the animation's can apply.
   const pin = () => {
     if (pinned) return
     pinned = true
     const style = getComputedStyle(panel)
-    const padLeft = parseFloat(style.paddingLeft) || 0
-    const padRight = parseFloat(style.paddingRight) || 0
-    const padTop = parseFloat(style.paddingTop) || 0
+    pad = { left: parseFloat(style.paddingLeft) || 0, top: parseFloat(style.paddingTop) || 0 }
     for (const el of contents) {
-      const width = el.offsetWidth
-      // The percentage follows the panel's width frame by frame.
       Object.assign(el.style, {
-        width: `${width}px`,
+        width: `${el.offsetWidth}px`,
+        height: `${el.offsetHeight}px`,
+        flexShrink: '0',
         position: 'relative',
-        left: `calc(${padLeft}px + (100% - ${padLeft + padRight + width}px) * ${anchor})`,
-        top: `${padTop}px`,
+        left: `${pad.left}px`,
+        top: `${pad.top}px`,
       })
     }
     panel.setAttribute('data-morphing', '')
     // Its sheen goes on a layer meanwhile (lookMorph).
     Object.assign(panel.style, { position: 'fixed', margin: '0', overflow: 'hidden', padding: '0', backgroundImage: 'none' })
   }
+  // The contents held still on screen where `at` puts them (the panel's box
+  // they lie in) while the panel moves through `boxes` on `timing`: offset
+  // against its moves frame by frame, on the same keyframes and curve, so
+  // the glass opens over them and draws in off them rather than carrying
+  // them along, and all they do is come in or go.
+  const holdStill = (at: Box, boxes: Box[], timing: KeyframeAnimationOptions) =>
+    contents.map((el) =>
+      el.animate(
+        boxes.map((box) => ({ left: `${pad.left + at.left - box.left}px`, top: `${pad.top + at.top - box.top}px` })),
+        { ...timing, fill: 'both' },
+      ),
+    )
   const unpin = () => {
     if (!pinned) return
     pinned = false
@@ -594,6 +608,7 @@ export function morphPanelOpen(
       ? [flyer.animate([{ transform: 'none', color: flight.colour.from }, { transform: flight.landed, color: flight.colour.to }], { duration: OPEN_MS, easing: panelSpring(), fill: 'forwards' })]
       : []),
     panel.animate([frame(from, fromCorners), bubble(from, rest), frame(rest, restCorners)], { duration: OPEN_MS, easing: panelSpring(), fill: 'both' }),
+    ...holdStill(rest, [from, halfway(from, rest), rest], { duration: OPEN_MS, easing: panelSpring() }),
     ...look.open(OPEN_MS),
     ghost.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160, easing: 'ease-out', fill: 'both' }),
     // Once it's most of the way out (85%).
@@ -648,6 +663,9 @@ export function morphPanelOpen(
     const flown = flyer ? { transform: getComputedStyle(flyer).transform, color: getComputedStyle(flyer).color } : null
     // Its look, back into the source's while it draws in (lookMorph).
     const lookBack = look.backFromNow()
+    // Where its contents are on screen: still held where they rest, if it
+    // hasn't arrived yet; else where it is.
+    const heldAt = pinned ? rest : now
     animations.forEach((a) => a.cancel())
     hold(panel)
     pin()
@@ -664,6 +682,7 @@ export function morphPanelOpen(
         ? [flyer.animate([flown ?? { transform: flight.landed, color: flight.colour.to }, { transform: 'none', color: flight.colour.from }], { duration: CLOSE_MS, easing: MORPH_CALM, fill: 'forwards' })]
         : []),
       panel.animate([frame(now, nowCorners), bubble(now, to), frame(to, cornersOf(source, to))], { duration: CLOSE_MS, easing: MORPH_CALM, fill: 'forwards' }),
+      ...holdStill(heldAt, [now, halfway(now, to), to], { duration: CLOSE_MS, easing: MORPH_CALM }),
       ...fadeContentsOut({ duration: 140, easing: 'ease-out' }),
       ghost.animate([{ opacity: ghostOpacity, easing: 'ease-in' }, { opacity: 0, offset: 0.55, easing: 'ease-out' }, { opacity: 1 }], { duration: CLOSE_MS, fill: 'forwards' }),
       ...(backdrop ? [backdrop.animate([{ opacity: backdropOpacity }, { opacity: 0 }], { duration: 340, easing: 'ease-in', fill: 'forwards' })] : []),
