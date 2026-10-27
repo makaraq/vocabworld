@@ -121,7 +121,7 @@
       inset 0 -1px 0 rgba(255, 255, 255, 0.08),
       inset 0 0 24px rgba(255, 255, 255, 0.05);
     --lg-lift-panel: 0 30px 70px rgba(0, 0, 0, 0.26), 0 6px 18px rgba(0, 0, 0, 0.12);
-    --lg-backdrop: blur(12px) saturate(170%);
+    --lg-backdrop: blur(12px) saturate(120%);
 
     /* Overshoots a little, like a system control settling. */
     --lg-spring: cubic-bezier(0.3, 1.4, 0.5, 1);

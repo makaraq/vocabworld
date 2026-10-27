@@ -437,7 +437,10 @@ input, textarea, [contenteditable] {
 
      2. Reduce backdrop-filter blur radii. backdrop-blur forces the GPU
         to sample + gaussian-blur every pixel behind the element on every
-        composited frame. Halving the radius is ~4x cheaper.
+        composited frame. Halving the radius is ~4x cheaper. Not on a panel
+        morphing out of a button (lib/morph-modal.ts): its frost is
+        animated to the one it has at rest, and an important one would
+        hold it here instead until it landed, then change.
 
      3. Promote frequently-animated elements to their own GPU layer so
         transforms/opacity changes stay on the compositor thread and
@@ -447,27 +450,27 @@ input, textarea, [contenteditable] {
     transition-property: transform, scale, translate, opacity, background-color, border-color !important;
   }
 
-  .cap-native .backdrop-blur-sm {
+  .cap-native .backdrop-blur-sm:where(:not([data-morphing])) {
     -webkit-backdrop-filter: blur(4px) !important;
     backdrop-filter: blur(4px) !important;
   }
-  .cap-native .backdrop-blur-md {
+  .cap-native .backdrop-blur-md:where(:not([data-morphing])) {
     -webkit-backdrop-filter: blur(6px) !important;
     backdrop-filter: blur(6px) !important;
   }
-  .cap-native .backdrop-blur-lg {
+  .cap-native .backdrop-blur-lg:where(:not([data-morphing])) {
     -webkit-backdrop-filter: blur(8px) !important;
     backdrop-filter: blur(8px) !important;
   }
-  .cap-native .backdrop-blur-xl {
+  .cap-native .backdrop-blur-xl:where(:not([data-morphing])) {
     -webkit-backdrop-filter: blur(10px) !important;
     backdrop-filter: blur(10px) !important;
   }
-  .cap-native .backdrop-blur-2xl {
+  .cap-native .backdrop-blur-2xl:where(:not([data-morphing])) {
     -webkit-backdrop-filter: blur(12px) saturate(120%) !important;
     backdrop-filter: blur(12px) saturate(120%) !important;
   }
-  .cap-native .backdrop-blur-3xl {
+  .cap-native .backdrop-blur-3xl:where(:not([data-morphing])) {
     -webkit-backdrop-filter: blur(12px) !important;
     backdrop-filter: blur(12px) !important;
   }
