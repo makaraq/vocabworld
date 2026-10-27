@@ -116,7 +116,7 @@ import { PROGRESS_SYNCED_EVENT } from '@/lib/offline/progress-queue'
 import { hasWordImage } from '@/lib/word-images'
 import { loadWordImage } from '@/lib/offline/word-image-cache'
 import { WordArt } from '@/components/language/word-art'
-import { morphSpring, MORPH_CALM, canMorphFrom, morphPanelOpen, lookMorph, fadeParts, fadeIn, fadeOutFromNow, type PanelMorph } from '@/lib/morph-modal'
+import { morphSpring, panelSpring, MORPH_CALM, canMorphFrom, morphPanelOpen, lookMorph, fadeParts, fadeIn, fadeOutFromNow, type PanelMorph } from '@/lib/morph-modal'
 import {
   Search,
   Languages,
@@ -3645,8 +3645,9 @@ export function LanguageSelector() {
       animations.push(a)
       return a
     }
-    const SPRING = morphSpring()
-    const MOVE_MS = 620
+    // The pop-ups' spring (lib/morph-modal.ts): even steps at 60 fps.
+    const SPRING = panelSpring()
+    const MOVE_MS = 680
     // Moves and scales an element from one screen box to another.
     const flip = (a: DOMRect, b: DOMRect) => ({
       x: a.left - b.left,
@@ -3686,8 +3687,9 @@ export function LanguageSelector() {
           { transformOrigin: '0 0', transform: `translate(${f.x}px, ${f.y}px) scale(${f.sx}, ${f.sy})`, borderRadius: `${radius / f.sx}px / ${radius / f.sy}px` },
           { transformOrigin: '0 0', transform: 'none', borderRadius: `${radius}px` },
         ], { duration: MOVE_MS, easing: SPRING })
+        // Three quarters of the way there.
         for (const child of toParts.box.children) {
-          run(child, [{ opacity: 0 }, { opacity: 1 }], { duration: 300, delay: 170, easing: 'ease-out' })
+          run(child, [{ opacity: 0 }, { opacity: 1 }], { duration: 300, delay: 270, easing: 'ease-out' })
         }
         // Header icon and title fly up from the tile's.
         for (const [a, b, el] of [[usable.icon, to.icon, toParts.icon], [usable.title, to.title, toParts.title]] as const) {
@@ -3703,7 +3705,7 @@ export function LanguageSelector() {
           run(controls, [
             { opacity: 0, transform: 'translateY(18px) scale(0.96)' },
             { opacity: 1, transform: 'none' },
-          ], { duration: 480, delay: 180, easing: SPRING })
+          ], { duration: 480, delay: 280, easing: SPRING })
         }
         // The rest of the page left behind clears quickly.
         for (const g of pageGhosts) run(g, [{ opacity: 1 }, { opacity: 0 }], { duration: 160, easing: 'ease-out' })

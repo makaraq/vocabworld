@@ -25,8 +25,18 @@ export const morphSpring = () =>
   CSS.supports?.('animation-timing-function', 'linear(0, 1)') ? MORPH_SPRING : 'cubic-bezier(0.32, 0.72, 0, 1)'
 // The back morph's calm ease-out: no long tail to settle as a tremor.
 export const MORPH_CALM = 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+// A pop-up opening out of its button, or a topic's tile into its lesson: a
+// critically damped spring as well, setting off at the same pace (the press
+// carries on into it), but with the move spread more evenly. iOS web views
+// render at 60 fps whatever the
+// screen does, and the spring above, most of its way in its first quarter,
+// jumps up to a tenth of it from one frame to the next, which reads as
+// choppy on a 120 Hz phone; this one about a twentieth.
+export const PANEL_SPRING = 'linear(0 0%, 0.0632 4%, 0.1457 8%, 0.2363 12%, 0.3278 16%, 0.4156 20%, 0.4973 24%, 0.5714 28%, 0.6374 32%, 0.6954 36%, 0.7458 40%, 0.7893 44%, 0.8264 48%, 0.858 52%, 0.8846 56%, 0.907 60%, 0.9258 64%, 0.9414 68%, 0.9545 72%, 0.9652 76%, 0.9742 80%, 0.9815 84%, 0.9876 88%, 0.9926 92%, 0.9967 96%, 1 100%)'
+export const panelSpring = () =>
+  CSS.supports?.('animation-timing-function', 'linear(0, 1)') ? PANEL_SPRING : 'cubic-bezier(0.25, 0.7, 0.25, 1)'
 
-const OPEN_MS = 620
+const OPEN_MS = 680
 const CLOSE_MS = 460
 const SETTLE = 'cubic-bezier(0.2, 0.8, 0.2, 1)'
 
@@ -581,12 +591,13 @@ export function morphPanelOpen(
   const coming = fadeParts(contents)
   animations = [
     ...(flyer && flight
-      ? [flyer.animate([{ transform: 'none', color: flight.colour.from }, { transform: flight.landed, color: flight.colour.to }], { duration: OPEN_MS, easing: morphSpring(), fill: 'forwards' })]
+      ? [flyer.animate([{ transform: 'none', color: flight.colour.from }, { transform: flight.landed, color: flight.colour.to }], { duration: OPEN_MS, easing: panelSpring(), fill: 'forwards' })]
       : []),
-    panel.animate([frame(from, fromCorners), bubble(from, rest), frame(rest, restCorners)], { duration: OPEN_MS, easing: morphSpring(), fill: 'both' }),
+    panel.animate([frame(from, fromCorners), bubble(from, rest), frame(rest, restCorners)], { duration: OPEN_MS, easing: panelSpring(), fill: 'both' }),
     ...look.open(OPEN_MS),
     ghost.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160, easing: 'ease-out', fill: 'both' }),
-    ...fadeIn(coming, { duration: 300, delay: 250, easing: SETTLE }),
+    // Once it's most of the way out (85%).
+    ...fadeIn(coming, { duration: 300, delay: 330, easing: SETTLE }),
     ...(backdrop ? [backdrop.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 300, easing: 'ease-out', fill: 'both' })] : []),
   ]
   // Arrived: the panel goes back to its own layout and styles. Timers still
