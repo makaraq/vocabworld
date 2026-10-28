@@ -197,6 +197,12 @@ const WORD_IMAGE_IDS = new Set<number>([
   1039, 1040, 1041, 1042, 1043, 1044, 1045, 1046, 1047, 1048, // transportation & streets: bus stop – crossing
   1049, 1050, 1051, 1052, 1053, 1054, 1055, 1057, 1058, // other places: church – fountain
   1059, 1060, 1061, 1062, 1063, // useful phrases: Where is the library? – Can you show me the way to the train station?
+  // Family (topic 12): family through best friend. neighbor – host and the
+  // five phrases are still to come (their download was cut short).
+  771, 772, 773, 774, 775, 776, 777, 778, 779, 780, 781, // immediate family: family – siblings
+  782, 783, 784, 785, 786, 787, 788, 789, 790, 791, 792, // extended family: grandmother – relative
+  793, 794, 795, 796, 797, 798, 799, 800, 801, 802, 803, 804, 805, 806, 807, // partners & marriage: husband – ex-wife
+  808, 809, // other relationships: friend, best friend
 ])
 
 // The art is not bundled into the native apps (it would grow the install with
