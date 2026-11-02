@@ -3,6 +3,8 @@
 // "Home-screen widget" section for the Manage Account modal: pick which words
 // the flashcard widget shows (one topic, or random words) and how to add it.
 // Native apps only, and only where the OS has the widget (iOS 17+).
+// useHomeWidget holds the rules; the iPhone's native account sheet
+// (components/account/native-account-sheet.tsx) draws the same state.
 
 import React, { useEffect, useState } from 'react'
 import { Capacitor } from '@capacitor/core'
@@ -19,18 +21,21 @@ interface TopicOption {
   name: string
 }
 
-type SyncState = 'idle' | 'saving' | 'saved' | 'failed'
+export type WidgetSyncState = 'idle' | 'saving' | 'saved' | 'failed'
 
-export function HomeWidgetSection() {
+export function useHomeWidget() {
   const { t } = useT()
   const [status, setStatus] = useState<WidgetStatus | null>(null)
   const [topics, setTopics] = useState<TopicOption[]>([])
   const [source, setSource] = useState<WidgetSource>('random')
-  const [syncState, setSyncState] = useState<SyncState>('idle')
+  const [syncState, setSyncState] = useState<WidgetSyncState>('idle')
   const [showHowTo, setShowHowTo] = useState(false)
 
   useEffect(() => {
-    if (!isWidgetPlatform()) return
+    if (!isWidgetPlatform()) {
+      setStatus({ supported: false, installed: 0, canPin: false })
+      return
+    }
     let cancelled = false
     setSource(getWidgetSource() ?? 'random')
     getWidgetStatus().then(s => { if (!cancelled) setStatus(s) })
@@ -64,8 +69,6 @@ export function HomeWidgetSection() {
     }
   }, [])
 
-  if (!status?.supported) return null
-
   const choose = async (next: WidgetSource) => {
     hapticsLight()
     setSource(next)
@@ -86,10 +89,35 @@ export function HomeWidgetSection() {
     if (!requested) setShowHowTo(true)
   }
 
-  const added = status.installed > 0
   const steps = Capacitor.getPlatform() === 'ios'
     ? [t('widget.howTo.ios.1'), t('widget.howTo.ios.2'), t('widget.howTo.ios.3')]
     : [t('widget.howTo.android.1'), t('widget.howTo.android.2'), t('widget.howTo.android.3')]
+
+  const statusText = syncState === 'idle'
+    ? null
+    : syncState === 'saving' ? t('widget.updating') : syncState === 'saved' ? t('widget.updated') : t('widget.failed')
+
+  return {
+    /** null while the OS is still being asked. */
+    status,
+    topics,
+    source,
+    syncState,
+    statusText,
+    showHowTo,
+    setShowHowTo,
+    added: (status?.installed ?? 0) > 0,
+    steps,
+    choose,
+    addToHome,
+  }
+}
+
+export function HomeWidgetSection() {
+  const { t } = useT()
+  const { status, topics, source, syncState, statusText, showHowTo, setShowHowTo, added, steps, choose, addToHome } = useHomeWidget()
+
+  if (!status?.supported) return null
 
   return (
     <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/15 space-y-3">
@@ -125,9 +153,9 @@ export function HomeWidgetSection() {
         </div>
       </label>
 
-      {syncState !== 'idle' && (
+      {statusText && (
         <p className={`text-xs ${syncState === 'failed' ? 'text-red-300' : 'text-white/50'}`}>
-          {syncState === 'saving' ? t('widget.updating') : syncState === 'saved' ? t('widget.updated') : t('widget.failed')}
+          {statusText}
         </p>
       )}
 

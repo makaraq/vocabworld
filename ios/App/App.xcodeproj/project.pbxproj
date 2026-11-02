@@ -19,6 +19,10 @@
 		79AFEA41B698A460D971BE27 /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 197A63ADC3E32D30D4FCBBD7 /* Pods_App.framework */; };
 		B2C4E5F710A2B3D407E8F922 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C4E5F610A2B3D407E8F921 /* ViewController.swift */; };
 		5D1D0A0100000000000000B1 /* SprindWidgetPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1D0A0100000000000000A1 /* SprindWidgetPlugin.swift */; };
+		7A5C0E0100000000000000B1 /* AccountSheetPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5C0E0100000000000000A1 /* AccountSheetPlugin.swift */; };
+		7A5C0E0100000000000000B2 /* AccountSheetState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5C0E0100000000000000A2 /* AccountSheetState.swift */; };
+		7A5C0E0100000000000000B3 /* AccountSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5C0E0100000000000000A3 /* AccountSheetView.swift */; };
+		7A5C0E0100000000000000B4 /* LevelAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5C0E0100000000000000A4 /* LevelAvatarView.swift */; };
 		5D1D0A0100000000000000B2 /* WidgetShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1D0A0100000000000000A2 /* WidgetShared.swift */; };
 		5D1D0A0100000000000000B3 /* WidgetShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1D0A0100000000000000A2 /* WidgetShared.swift */; };
 		5D1D0A0100000000000000B4 /* FlashcardWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1D0A0100000000000000A3 /* FlashcardWidget.swift */; };
@@ -66,6 +70,10 @@
 		B2C4E5F610A2B3D407E8F921 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		DB4899B6CBC5D85D0A3EF4F6 /* Pods-App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.debug.xcconfig"; path = "Target Support Files/Pods-App/Pods-App.debug.xcconfig"; sourceTree = "<group>"; };
 		5D1D0A0100000000000000A1 /* SprindWidgetPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SprindWidgetPlugin.swift; sourceTree = "<group>"; };
+		7A5C0E0100000000000000A1 /* AccountSheetPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSheetPlugin.swift; sourceTree = "<group>"; };
+		7A5C0E0100000000000000A2 /* AccountSheetState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSheetState.swift; sourceTree = "<group>"; };
+		7A5C0E0100000000000000A3 /* AccountSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSheetView.swift; sourceTree = "<group>"; };
+		7A5C0E0100000000000000A4 /* LevelAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelAvatarView.swift; sourceTree = "<group>"; };
 		5D1D0A0100000000000000A2 /* WidgetShared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetShared.swift; sourceTree = "<group>"; };
 		5D1D0A0100000000000000A3 /* FlashcardWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashcardWidget.swift; sourceTree = "<group>"; };
 		5D1D0A0100000000000000A4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -120,6 +128,10 @@
 				C1A2B3D310A2B3D407E8F930 /* SceneDelegate.swift */,
 				B2C4E5F610A2B3D407E8F921 /* ViewController.swift */,
 				5D1D0A0100000000000000A1 /* SprindWidgetPlugin.swift */,
+				7A5C0E0100000000000000A1 /* AccountSheetPlugin.swift */,
+				7A5C0E0100000000000000A2 /* AccountSheetState.swift */,
+				7A5C0E0100000000000000A3 /* AccountSheetView.swift */,
+				7A5C0E0100000000000000A4 /* LevelAvatarView.swift */,
 				504EC30B1FED79650016851F /* Main.storyboard */,
 				504EC30E1FED79650016851F /* Assets.xcassets */,
 				504EC3101FED79650016851F /* LaunchScreen.storyboard */,
@@ -303,6 +315,10 @@
 				C1A2B3D410A2B3D407E8F931 /* SceneDelegate.swift in Sources */,
 				B2C4E5F710A2B3D407E8F922 /* ViewController.swift in Sources */,
 				5D1D0A0100000000000000B1 /* SprindWidgetPlugin.swift in Sources */,
+				7A5C0E0100000000000000B1 /* AccountSheetPlugin.swift in Sources */,
+				7A5C0E0100000000000000B2 /* AccountSheetState.swift in Sources */,
+				7A5C0E0100000000000000B3 /* AccountSheetView.swift in Sources */,
+				7A5C0E0100000000000000B4 /* LevelAvatarView.swift in Sources */,
 				5D1D0A0100000000000000B2 /* WidgetShared.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

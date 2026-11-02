@@ -4,8 +4,9 @@ import React, { useState, useRef, useEffect, useCallback } from "react"
 import { createPortal } from "react-dom"
 import { Icon } from "@iconify/react"
 import { openAppSettings } from "@/lib/notifications"
-import { logOutRevenueCat } from "@/lib/revenuecat-client"
-import { createClient } from "@/lib/supabase/browser-client"
+import { deleteAccount } from "@/lib/account/delete-account"
+import { hasNativeAccountSheet } from "@/lib/native/account-sheet"
+import { NativeAccountSheet } from "@/components/account/native-account-sheet"
 import type { PermissionState } from "@/hooks/use-notifications"
 import { hapticsLight, hapticsMedium, hapticsWarning } from "@/lib/haptics"
 import { OfflineDownloadsSection } from "@/components/offline/offline-downloads-section"
@@ -17,7 +18,7 @@ import { ThemePicker } from "@/components/theme/theme-picker"
 import { canMorphFrom, morphPanelOpen, type PanelMorph } from "@/lib/morph-modal"
 import type { ThemeId } from "@/lib/themes"
 
-interface ManageAccountModalProps {
+export interface ManageAccountModalProps {
   open: boolean
   onCloseAction: () => void
   // The button it was opened from: when it is on screen the sheet opens out
@@ -49,9 +50,17 @@ interface ManageAccountModalProps {
   onTryThemesAction?: () => void
 }
 
-// ── Time helpers ──────────────────────────────────────────────────────────────
+// On iPhone the sheet is drawn natively (native-account-sheet.tsx, from the
+// same rules); if that can't open, this web sheet stands in for the session.
+export function ManageAccountModal(props: ManageAccountModalProps) {
+  const [webOnly, setWebOnly] = useState(false)
+  if (!webOnly && hasNativeAccountSheet()) {
+    return <NativeAccountSheet {...props} onUnavailableAction={() => setWebOnly(true)} />
+  }
+  return <WebAccountModal {...props} />
+}
 
-export function ManageAccountModal({
+function WebAccountModal({
   open,
   onCloseAction,
   morphFrom,
@@ -337,17 +346,7 @@ export function ManageAccountModal({
     setDeleteStep('deleting')
     setDeleteError(null)
     try {
-      const res = await fetch('/api/account/delete', { method: 'DELETE' })
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}))
-        throw new Error(data.error || 'Failed to delete account')
-      }
-      if (onSignOutAction) {
-        await onSignOutAction()
-      } else {
-        await logOutRevenueCat()
-        await createClient().auth.signOut()
-      }
+      await deleteAccount(onSignOutAction)
       onCloseAction()
     } catch (err: any) {
       setDeleteError(err.message || t('account.delete.failed'))
