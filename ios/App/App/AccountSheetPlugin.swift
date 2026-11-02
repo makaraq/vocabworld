@@ -166,33 +166,70 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
     /// Snapshots the page and works out, as the web sheet's CSS does, what its
     /// backdrop and its glass show. Nil with Reduce Transparency on (the web
     /// sheet goes solid then too) or if the snapshot fails.
-    private func makeGlass(_ done: @escaping (SheetGlass?) -> Void) {
-        guard !UIAccessibility.isReduceTransparencyEnabled, let webView = bridge?.webView else {
-            done(nil)
-            return
-        }
-        // Drawn from the screen as it is. (WKWebView.takeSnapshot handed back
-        // only the web view's plain background colour, never the page.) One
-        // pixel per point: it is blurred anyway.
-        let format = UIGraphicsImageRendererFormat()
-        format.scale = 1
-        let image = UIGraphicsImageRenderer(bounds: webView.bounds, format: format).image { _ in
-            _ = webView.drawHierarchy(in: webView.bounds, afterScreenUpdates: false)
-        }
-        guard let page = image.cgImage else {
+    private func makeGlass(from view: UIView? = nil, _ done: @escaping (SheetGlass?) -> Void) {
+        guard !UIAccessibility.isReduceTransparencyEnabled,
+              let source = view ?? bridge?.viewController?.view.window ?? bridge?.webView,
+              let page = Self.capture(source) else {
             done(nil)
             return
         }
         DispatchQueue.global(qos: .userInitiated).async {
-            let glass = SheetGlass.make(from: page, scale: 1)
+            let glass = Self.looksBlank(page) ? nil : SheetGlass.make(from: page, scale: 1)
+            #if DEBUG
+            Self.saveForDemo(page: page, glass: glass)
+            #endif
             DispatchQueue.main.async { done(glass) }
         }
     }
 
+    /// The screen as it is, drawn from the render server. (WKWebView's own
+    /// takeSnapshot handed back only its plain background colour.) Standard
+    /// 8-bit sRGB, as the web's CSS works in, at one pixel per point: it is
+    /// blurred anyway.
+    private static func capture(_ view: UIView) -> CGImage? {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        format.preferredRange = .standard
+        let image = UIGraphicsImageRenderer(bounds: view.bounds, format: format).image { _ in
+            _ = view.drawHierarchy(in: view.bounds, afterScreenUpdates: false)
+        }
+        return image.cgImage
+    }
+
+    /// One colour all over: nothing was drawn.
+    private static func looksBlank(_ image: CGImage) -> Bool {
+        let side = 8
+        var pixels = [UInt8](repeating: 0, count: side * side * 4)
+        return pixels.withUnsafeMutableBytes { buffer -> Bool in
+            guard let context = CGContext(data: buffer.baseAddress, width: side, height: side, bitsPerComponent: 8,
+                                          bytesPerRow: side * 4, space: CGColorSpaceCreateDeviceRGB(),
+                                          bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else { return true }
+            context.draw(image, in: CGRect(x: 0, y: 0, width: side, height: side))
+            let bytes = buffer.bindMemory(to: UInt8.self)
+            for i in stride(from: 4, to: bytes.count, by: 4) {
+                for c in 0..<3 where abs(Int(bytes[i + c]) - Int(bytes[c])) > 2 { return false }
+            }
+            return true
+        }
+    }
+
+    #if DEBUG
+    /// Where the demo keeps what the glass was made from (-SprindAccountDemoFrames).
+    static var demoFolder: URL?
+
+    private static func saveForDemo(page: CGImage, glass: SheetGlass?) {
+        guard let folder = demoFolder else { return }
+        try? UIImage(cgImage: page).pngData()?.write(to: folder.appendingPathComponent("glass-page.png"))
+        try? glass?.backdrop.pngData()?.write(to: folder.appendingPathComponent("glass-backdrop.png"))
+        try? glass?.sheet.pngData()?.write(to: folder.appendingPathComponent("glass-sheet.png"))
+    }
+    #endif
+
     private func refreshGlass(after delay: TimeInterval) {
         glassRefresh?.cancel()
         let work = DispatchWorkItem { [weak self] in
-            self?.makeGlass { glass in
+            // The sheet is on screen now, so only the page itself is drawn.
+            self?.makeGlass(from: self?.bridge?.webView) { glass in
                 guard let glass, let model = self?.model else { return }
                 withAnimation(.easeInOut(duration: 0.4)) { model.glass = glass }
             }
@@ -241,10 +278,17 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
         // After the launch screen (2 s) has gone and the page has painted:
         // the sheet's glass is made from it.
         DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
+            let recording = args.contains("-SprindAccountDemoFrames")
+            if recording, let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+                let folder = documents.appendingPathComponent("frames")
+                try? FileManager.default.removeItem(at: folder)
+                try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+                Self.demoFolder = folder
+            }
             let size = self.bridge?.viewController?.view.bounds.size ?? CGSize(width: 400, height: 800)
             let button = CGRect(x: size.width - 64, y: 60, width: 44, height: 44)
             self.show(state: .demo(level: level), focus: nil, source: button)
-            if args.contains("-SprindAccountDemoFrames") {
+            if recording {
                 self.model?.onAppear = { [weak self] in self?.recordFrames() }
             }
         }
@@ -253,11 +297,7 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
     /// Pictures of the screen every 40 ms for the first 0.8 s of the opening,
     /// a third of full size, for the CI check to see the morph.
     private func recordFrames() {
-        guard let window = bridge?.viewController?.view.window,
-              let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
-        let folder = documents.appendingPathComponent("frames")
-        try? FileManager.default.removeItem(at: folder)
-        try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        guard let window = bridge?.viewController?.view.window, let folder = Self.demoFolder else { return }
         let format = UIGraphicsImageRendererFormat()
         format.scale = 1
         var count = 0
@@ -287,7 +327,7 @@ struct SheetGlass {
         // Browsers composite and filter CSS in plain sRGB values, not linear
         // light: work in the snapshot's own values so 50% black means half.
         let context = CIContext(options: [.workingColorSpace: NSNull()])
-        let space = page.colorSpace ?? CGColorSpace(name: CGColorSpace.sRGB)!
+        let space = CGColorSpace(name: CGColorSpace.sRGB)!
         let input = CIImage(cgImage: page).transformed(by: CGAffineTransform(scaleX: 1 / scale, y: 1 / scale))
         let extent = input.extent
         let half = input.applyingFilter("CIColorMatrix", parameters: [
