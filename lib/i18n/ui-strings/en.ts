@@ -95,6 +95,11 @@ export const en = {
   'quiz.aria.stopAudio': 'Stop audio',
   'quiz.aria.playWord': 'Play pronunciation of {word}',
   'quiz.aria.answer': 'Answer: {option}',
+  'quiz.picture.show': 'Show picture',
+  'quiz.picture.aria.buy': 'Show the picture for one coin',
+  'quiz.picture.aria.hide': 'Hide picture',
+  'quiz.coins.none': 'More coins tomorrow',
+  'quiz.coins.aria': '{count} of {total} picture coins left today',
 
   // ---------- Review quiz ----------
   'quiz.review.title': 'Quick Recall',

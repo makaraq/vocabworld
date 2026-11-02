@@ -1,10 +1,15 @@
 "use client"
 import { useState, useEffect, useCallback, useRef } from "react"
-import { createPortal } from "react-dom"
 import { Icon } from "@iconify/react"
 import { hapticsSuccess, hapticsWarning, hapticsLight } from "@/lib/haptics"
 import { preloadSoundEffects, playCorrectSound, playWrongSound } from "@/lib/sound-effects"
 import { useT } from "@/components/providers/translation-provider"
+import { usePictureCoins } from "@/lib/picture-coins"
+import { QuizSheet } from "./quiz-sheet"
+import { CoinPurse } from "./pixel-coin"
+import {
+  QuizProgress, QuizCardFrame, QuizQuestionCard, QuizAnswers, QuizResult, QuizResultActions, QUIZ_BUTTON, usePurseMotion,
+} from "./quiz-parts"
 
 interface QuizCard {
   vocabularyId: number
@@ -33,7 +38,8 @@ export function TopicQuizModal({
   onClose,
 }: TopicQuizModalProps) {
   const { t } = useT()
-  const [mounted, setMounted] = useState(false)
+  const coins = usePictureCoins()
+  const purse = usePurseMotion()
   const [cards, setCards] = useState<QuizCard[]>([])
   const [totalWords, setTotalWords] = useState(0)
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -109,32 +115,6 @@ export function TopicQuizModal({
       }
     }
   }
-
-  useEffect(() => {
-    setMounted(true)
-    const scrollY = window.scrollY
-    const originalStyles = {
-      overflow: document.body.style.overflow,
-      position: document.body.style.position,
-      top: document.body.style.top,
-      width: document.body.style.width,
-      htmlOverflow: document.documentElement.style.overflow,
-    }
-    document.body.style.overflow = "hidden"
-    document.body.style.position = "fixed"
-    document.body.style.top = `-${scrollY}px`
-    document.body.style.width = "100%"
-    document.documentElement.style.overflow = "hidden"
-    return () => {
-      setMounted(false)
-      document.body.style.overflow = originalStyles.overflow
-      document.body.style.position = originalStyles.position
-      document.body.style.top = originalStyles.top
-      document.body.style.width = originalStyles.width
-      document.documentElement.style.overflow = originalStyles.htmlOverflow
-      window.scrollTo(0, scrollY)
-    }
-  }, [])
 
   const fetchCards = useCallback(async () => {
     setSessionState("loading")
@@ -237,195 +217,112 @@ export function TopicQuizModal({
     fetchCards()
   }
 
-  const getOptionStyle = (option: string) => {
-    if (selectedOption === null) {
-      return "bg-white/10 border-white/20 text-white hover:bg-white/20 active:scale-[0.97]"
-    }
-    if (option.toLowerCase() === cards[currentIndex]?.sourceWord.toLowerCase()) {
-      return "bg-emerald-500/30 border-emerald-400/50 text-white"
-    }
-    if (option === selectedOption && !isCorrect) {
-      return "bg-red-500/30 border-red-400/50 text-white"
-    }
-    return "bg-white/5 border-white/10 text-white/40"
+  const answerFor = (option: string) => {
+    if (selectedOption === null) return "idle" as const
+    if (option.toLowerCase() === cards[currentIndex]?.sourceWord.toLowerCase()) return "correct" as const
+    if (option === selectedOption && !isCorrect) return "wrong" as const
+    return "faded" as const
   }
 
-  if (!mounted) return null
-
   const pct = cards.length > 0 ? Math.round((correctCount / cards.length) * 100) : 0
+  const card = cards[currentIndex]
+  const asking = (sessionState === "quiz" || sessionState === "answered") && !!card
 
-  return createPortal(
-    <div
-      className="fixed inset-0 z-50 flex flex-col"
-      onTouchStart={(e) => e.stopPropagation()}
-      onTouchMove={(e) => { e.stopPropagation(); e.preventDefault() }}
-      onTouchEnd={(e) => e.stopPropagation()}
-      onMouseDown={(e) => e.stopPropagation()}
-      onMouseMove={(e) => e.stopPropagation()}
-      onMouseUp={(e) => e.stopPropagation()}
-      onPointerDown={(e) => e.stopPropagation()}
-      onPointerMove={(e) => e.stopPropagation()}
-      onPointerUp={(e) => e.stopPropagation()}
+  return (
+    <QuizSheet
+      title={t('quiz.topic.title', { topic: topicName })}
+      icon="solar:cup-star-bold"
+      iconClassName="text-yellow-400"
+      closeLabel={t('quiz.topic.aria.close')}
+      onClose={onClose}
+      headerExtra={
+        <CoinPurse
+          ref={purse.ref}
+          left={coins.left}
+          total={coins.total}
+          label={t('quiz.coins.aria', { count: coins.left, total: coins.total })}
+        />
+      }
     >
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-xl" />
+      {(close) => (
+        <>
+          <QuizProgress
+            current={currentIndex + 1}
+            total={sessionState !== "complete" ? cards.length : 0}
+            done={currentIndex + (sessionState === "answered" ? 1 : 0)}
+            suffix={totalWords > cards.length && (
+              <span className="text-white/30"> {t('quiz.topic.totalSuffix', { total: totalWords })}</span>
+            )}
+          />
 
-      <div className="relative flex flex-col h-full p-4 pt-14 sm:p-6 sm:pt-14 max-w-lg mx-auto w-full">
-        {sessionState !== "complete" && cards.length > 0 && (
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold text-white text-center mb-3">{t('quiz.topic.title', { topic: topicName })}</h2>
-            <div className="flex items-center justify-between mb-3">
-              <div className="text-sm text-white/50">
-                {t('quiz.progress', { current: currentIndex + 1, total: cards.length })}
-                {totalWords > cards.length && (
-                  <span className="text-white/30"> {t('quiz.topic.totalSuffix', { total: totalWords })}</span>
-                )}
-              </div>
-            </div>
-            <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full transition-all duration-300"
-                style={{
-                  width: `${((currentIndex + (sessionState === "answered" ? 1 : 0)) / cards.length) * 100}%`,
-                }}
-              />
-            </div>
-          </div>
-        )}
-
-        {sessionState === "loading" && (
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-white/50 text-lg">{t('quiz.topic.loading')}</div>
-          </div>
-        )}
-
-        {(sessionState === "quiz" || sessionState === "answered") &&
-          cards[currentIndex] && (
-            <div className="flex-1 flex flex-col justify-center gap-6">
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 p-8 text-center relative">
-                <div className="text-sm text-white/50 mb-2">
-                  {t('quiz.question')}
-                </div>
-                <div className="text-3xl sm:text-4xl font-bold text-white mb-3">
-                  {cards[currentIndex].targetWord}
-                </div>
-                <button
-                  onClick={() => playWordAudio(cards[currentIndex])}
-                  className={`w-10 h-10 rounded-full border flex items-center justify-center transition-all active:scale-95 mx-auto ${
-                    isPlayingAudio
-                      ? "bg-blue-500/30 border-blue-400/50"
-                      : "bg-white/10 border-white/20 hover:bg-white/20"
-                  }`}
-                  aria-label={isPlayingAudio ? t('quiz.aria.stopAudio') : t('quiz.aria.playWord', { word: cards[currentIndex].targetWord })}
-                >
-                  <Icon
-                    icon={isPlayingAudio ? "solar:volume-loud-bold" : "solar:volume-bold"}
-                    width="20"
-                    height="20"
-                    className={isPlayingAudio ? "text-blue-400" : "text-white/70"}
-                  />
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 gap-3">
-                {loadingOptions ? (
-                  Array.from({ length: 4 }).map((_, i) => (
-                    <div
-                      key={i}
-                      className="h-14 bg-white/5 border border-white/10 rounded-xl animate-pulse"
-                    />
-                  ))
-                ) : (
-                  options.map((option, i) => (
-                    <button
-                      key={`${currentIndex}-${i}`}
-                      onClick={() => handleAnswer(option)}
-                      disabled={selectedOption !== null}
-                      className={`py-3.5 px-5 rounded-xl border text-base font-medium transition-all ${getOptionStyle(option)}`}
-                      aria-label={t('quiz.aria.answer', { option })}
-                    >
-                      {option}
-                    </button>
-                  ))
-                )}
-              </div>
-            </div>
-          )}
-
-        {sessionState === "complete" && (
-          <div className="flex-1 flex flex-col items-center justify-center gap-6">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
-              <Icon
-                icon={pct >= 80 ? "solar:cup-star-bold" : "solar:check-circle-bold"}
-                width="44"
-                height="44"
-                className="text-white"
-              />
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-white mb-2">
-                {cards.length === 0
-                  ? t('quiz.topic.noWords')
-                  : pct === 100
-                  ? t('quiz.topic.perfect')
-                  : pct >= 80
-                  ? t('quiz.topic.great')
-                  : t('quiz.topic.complete')}
-              </div>
-              {cards.length > 0 && (
-                <div className="space-y-3">
-                  <div className="flex items-center justify-center gap-10 my-4">
-                    <div className="flex items-center gap-2.5">
-                      <Icon icon="solar:check-circle-bold" width="32" height="32" className="text-emerald-400" />
-                      <span className="text-emerald-400 font-bold text-2xl">{correctCount}</span>
-                    </div>
-                    <div className="flex items-center gap-2.5">
-                      <Icon icon="solar:close-circle-bold" width="32" height="32" className="text-red-400" />
-                      <span className="text-red-400 font-bold text-2xl">{cards.length - correctCount}</span>
-                    </div>
-                  </div>
-                  <div className="text-white/50 text-sm">{t('quiz.accuracy', { pct })}</div>
-                  {totalWords > cards.length && (
-                    <div className="text-white/30 text-sm">
-                      {t('quiz.topic.coverage', { count: cards.length, total: totalWords })}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        <div className="pt-4 pb-6 space-y-2.5">
-          {sessionState === "complete" && cards.length > 0 ? (
+          {sessionState === "loading" && (
             <>
-              <button
-                onClick={handleNextRound}
-                className="w-full py-3.5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl text-white font-semibold text-base hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
-              >
-                <Icon icon="solar:refresh-bold" width="18" height="18" />
-                {t('quiz.topic.tryAnother')}
-              </button>
-              <button
-                onClick={() => { hapticsLight(); onClose() }}
-                className="w-full py-3.5 bg-white/10 border border-white/15 rounded-2xl text-white/70 font-medium text-base hover:bg-white/15 transition-all"
-              >
-                {t('common.done')}
-              </button>
+              <QuizCardFrame className="justify-center">
+                <div className="text-white/50 text-lg">{t('quiz.topic.loading')}</div>
+              </QuizCardFrame>
+              <QuizAnswers options={[]} loading answerFor={answerFor} onAnswer={() => {}} locked />
             </>
-          ) : (
-            <div className="flex justify-center">
-              <button
-                onPointerUp={() => { hapticsLight(); onClose() }}
-                className="w-14 h-14 rounded-full bg-white/10 border border-white/15 flex items-center justify-center"
-                aria-label={t('quiz.topic.aria.close')}
-              >
-                <Icon icon="solar:close-circle-bold" width="28" height="28" className="text-white/50" />
-              </button>
-            </div>
           )}
-        </div>
-      </div>
-    </div>,
-    document.body
+
+          {asking && (
+            <>
+              <QuizQuestionCard
+                key={`${round}-${currentIndex}`}
+                vocabularyId={card.vocabularyId}
+                word={card.targetWord}
+                playing={isPlayingAudio}
+                onPlay={() => playWordAudio(card)}
+                coins={coins}
+                onSpent={() => purse.spent(coins.left - 1)}
+                onBroke={purse.broke}
+              />
+              <QuizAnswers
+                options={options}
+                loading={loadingOptions}
+                answerFor={answerFor}
+                onAnswer={handleAnswer}
+                locked={selectedOption !== null}
+              />
+            </>
+          )}
+
+          {sessionState === "complete" && (
+            <>
+              <QuizResult
+                icon={pct >= 80 ? "solar:cup-star-bold" : "solar:check-circle-bold"}
+                title={
+                  cards.length === 0
+                    ? t('quiz.topic.noWords')
+                    : pct === 100
+                    ? t('quiz.topic.perfect')
+                    : pct >= 80
+                    ? t('quiz.topic.great')
+                    : t('quiz.topic.complete')
+                }
+                correct={correctCount}
+                total={cards.length}
+              >
+                {totalWords > cards.length && (
+                  <div className="text-white/30 text-sm">
+                    {t('quiz.topic.coverage', { count: cards.length, total: totalWords })}
+                  </div>
+                )}
+              </QuizResult>
+              <QuizResultActions>
+                {cards.length > 0 && (
+                  <button onClick={handleNextRound} className={QUIZ_BUTTON}>
+                    <Icon icon="solar:refresh-bold" width="18" height="18" />
+                    {t('quiz.topic.tryAnother')}
+                  </button>
+                )}
+                <button onClick={() => { hapticsLight(); close() }} className={`${QUIZ_BUTTON} text-white/75 font-medium`}>
+                  {t('common.done')}
+                </button>
+              </QuizResultActions>
+            </>
+          )}
+        </>
+      )}
+    </QuizSheet>
   )
 }
