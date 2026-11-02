@@ -25,6 +25,11 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
     private weak var sheet: UIViewController?
     /// An invisible stand-in over the web button the sheet opens out of.
     private var anchor: UIView?
+    /// The page behind the sheet, blurred and dimmed as the web sheet's
+    /// backdrop does it (bg-black/50 backdrop-blur-md).
+    private var backdrop: UIVisualEffectView?
+    private var backdropDim: UIView?
+    private static let backdropBlur = UIBlurEffect(style: .systemUltraThinMaterialDark)
 
     @objc func present(_ call: CAPPluginCall) {
         let state: AccountState
@@ -34,6 +39,7 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
             call.reject("Invalid account state: \(error)")
             return
         }
+        let images = Self.images(call)
         let focus = call.getString("focus")
         var source: CGRect?
         if let x = call.getDouble("sourceX"), let y = call.getDouble("sourceY"),
@@ -43,9 +49,10 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
         }
         DispatchQueue.main.async {
             if let model = self.model, self.sheet != nil {
+                model.addImages(images)
                 model.state = state
             } else {
-                self.show(state: state, focus: focus, source: source)
+                self.show(state: state, images: images, focus: focus, source: source)
             }
             call.resolve()
         }
@@ -59,10 +66,14 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
             call.reject("Invalid account state: \(error)")
             return
         }
+        let images = Self.images(call)
         DispatchQueue.main.async {
             if let model = self.model {
+                model.addImages(images)
                 if model.state != state { model.state = state }
-                self.sheet?.overrideUserInterfaceStyle = state.dark ? .dark : .light
+                if let sheet = self.sheet {
+                    Self.applyStyle(dark: state.dark, to: sheet)
+                }
             }
             call.resolve()
         }
@@ -83,10 +94,21 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
         return try JSONDecoder().decode(AccountState.self, from: Data(json.utf8))
     }
 
-    func show(state: AccountState, focus: String?, source: CGRect?) {
+    /// Pictures sent alongside the state, as data URLs by name.
+    private static func images(_ call: CAPPluginCall) -> [String: String] {
+        guard let object = call.getObject("images") else { return [:] }
+        var links: [String: String] = [:]
+        for (key, value) in object {
+            if let link = value as? String { links[key] = link }
+        }
+        return links
+    }
+
+    func show(state: AccountState, images: [String: String] = [:], focus: String?, source: CGRect?) {
         guard let host = bridge?.viewController else { return }
 
         let model = AccountSheetModel(state: state, focus: focus)
+        model.addImages(images)
         model.onAction = { [weak self] type, value in
             var data: [String: Any] = ["type": type]
             if let value { data["value"] = value }
@@ -96,7 +118,6 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
         model.onManageSubscriptions = { [weak self] in self?.manageSubscriptions() }
 
         let controller = AccountSheetController(rootView: AccountSheetView(model: model))
-        controller.overrideUserInterfaceStyle = state.dark ? .dark : .light
         controller.modalPresentationStyle = .pageSheet
         if let sheet = controller.sheetPresentationController {
             // Short of full height, so iOS 26 draws it as floating glass, and
@@ -104,8 +125,11 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
             sheet.detents = [.custom(identifier: .init("account")) { context in
                 context.maximumDetentValue * 0.9
             }]
-            sheet.prefersGrabberVisible = true
+            // The sheet draws the web sheet's own handle, and its corners.
+            sheet.prefersGrabberVisible = false
+            sheet.preferredCornerRadius = sheetCornerRadius
         }
+        Self.applyStyle(dark: state.dark, to: controller)
         controller.presentationController?.delegate = self
 
         // Out of the button it was opened from, as the web sheet does.
@@ -119,9 +143,49 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
             controller.preferredTransition = .zoom { _ in anchor }
         }
 
+        // The web sheet's backdrop: the page blurred and dimmed behind it,
+        // fading in with the sheet.
+        let backdrop = UIVisualEffectView(effect: nil)
+        backdrop.frame = host.view.bounds
+        backdrop.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        backdrop.isUserInteractionEnabled = false
+        let dim = UIView(frame: backdrop.bounds)
+        dim.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        dim.backgroundColor = UIColor.black.withAlphaComponent(0.3)
+        dim.alpha = 0
+        backdrop.contentView.addSubview(dim)
+        host.view.addSubview(backdrop)
+        self.backdrop = backdrop
+        self.backdropDim = dim
+
         self.model = model
         self.sheet = controller
         host.present(controller, animated: true)
+        alongside(controller) { self.setBackdrop(shown: true) }
+    }
+
+    private func setBackdrop(shown: Bool) {
+        backdrop?.effect = shown ? Self.backdropBlur : nil
+        backdropDim?.alpha = shown ? 1 : 0
+    }
+
+    /// Runs `change` in step with the sheet's opening or closing.
+    private func alongside(_ controller: UIViewController, _ change: @escaping () -> Void) {
+        if let coordinator = controller.transitionCoordinator {
+            coordinator.animate(alongsideTransition: { _ in change() })
+        } else {
+            UIView.animate(withDuration: 0.35, animations: change)
+        }
+    }
+
+    /// Dark or light for the sheet's content and, from iOS 17, for the sheet's
+    /// own glass too, which otherwise follows the system setting.
+    private static func applyStyle(dark: Bool, to controller: UIViewController) {
+        let style: UIUserInterfaceStyle = dark ? .dark : .light
+        controller.overrideUserInterfaceStyle = style
+        if #available(iOS 17.0, *) {
+            controller.sheetPresentationController?.traitOverrides.userInterfaceStyle = style
+        }
     }
 
     private func close(notify: Bool) {
@@ -132,6 +196,7 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
         sheet.dismiss(animated: true) { [weak self] in
             self?.finish(notify: notify)
         }
+        alongside(sheet) { self.setBackdrop(shown: false) }
     }
 
     private func finish(notify: Bool) {
@@ -140,6 +205,9 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
         sheet = nil
         anchor?.removeFromSuperview()
         anchor = nil
+        backdrop?.removeFromSuperview()
+        backdrop = nil
+        backdropDim = nil
         if notify {
             notifyListeners("action", data: ["type": "closed"])
         }
@@ -182,6 +250,11 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
             level = asked
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            // -SprindAccountDemoSlow: every UIKit animation at a tenth of its
+            // speed, so screenshots can catch the sheet opening.
+            if args.contains("-SprindAccountDemoSlow") {
+                self.bridge?.viewController?.view.window?.layer.speed = 0.1
+            }
             let size = self.bridge?.viewController?.view.bounds.size ?? CGSize(width: 400, height: 800)
             let button = CGRect(x: size.width - 64, y: 60, width: 44, height: 44)
             self.show(state: .demo(level: level), focus: nil, source: button)
@@ -191,6 +264,17 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
 }
 
 extension AccountSheetPlugin: UIAdaptivePresentationControllerDelegate {
+    /// Being swiped down: the backdrop clears with the sheet, and comes back
+    /// if the swipe is let go of.
+    public func presentationControllerWillDismiss(_ presentationController: UIPresentationController) {
+        guard let coordinator = presentationController.presentedViewController.transitionCoordinator else { return }
+        coordinator.animate(alongsideTransition: { _ in
+            self.setBackdrop(shown: false)
+        }, completion: { context in
+            if context.isCancelled { self.setBackdrop(shown: true) }
+        })
+    }
+
     /// Swiped down: tell the web side, which keeps its own open/closed state.
     public func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
         finish(notify: true)

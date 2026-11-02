@@ -16,6 +16,9 @@
 		504EC30F1FED79650016851F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 504EC30E1FED79650016851F /* Assets.xcassets */; };
 		504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC3101FED79650016851F /* LaunchScreen.storyboard */; };
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
+		7A5C0E0200000000000000D1 /* SpaceGrotesk.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7A5C0E0200000000000000C1 /* SpaceGrotesk.ttf */; };
+		7A5C0E0200000000000000D2 /* SpaceGrotesk-LatinExt.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7A5C0E0200000000000000C2 /* SpaceGrotesk-LatinExt.ttf */; };
+		7A5C0E0200000000000000D3 /* SpaceGrotesk-Vietnamese.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7A5C0E0200000000000000C3 /* SpaceGrotesk-Vietnamese.ttf */; };
 		79AFEA41B698A460D971BE27 /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 197A63ADC3E32D30D4FCBBD7 /* Pods_App.framework */; };
 		B2C4E5F710A2B3D407E8F922 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C4E5F610A2B3D407E8F921 /* ViewController.swift */; };
 		5D1D0A0100000000000000B1 /* SprindWidgetPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1D0A0100000000000000A1 /* SprindWidgetPlugin.swift */; };
@@ -74,6 +77,9 @@
 		7A5C0E0100000000000000A2 /* AccountSheetState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSheetState.swift; sourceTree = "<group>"; };
 		7A5C0E0100000000000000A3 /* AccountSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSheetView.swift; sourceTree = "<group>"; };
 		7A5C0E0100000000000000A4 /* LevelAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelAvatarView.swift; sourceTree = "<group>"; };
+		7A5C0E0200000000000000C1 /* SpaceGrotesk.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Fonts/SpaceGrotesk.ttf; sourceTree = "<group>"; };
+		7A5C0E0200000000000000C2 /* SpaceGrotesk-LatinExt.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Fonts/SpaceGrotesk-LatinExt.ttf; sourceTree = "<group>"; };
+		7A5C0E0200000000000000C3 /* SpaceGrotesk-Vietnamese.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Fonts/SpaceGrotesk-Vietnamese.ttf; sourceTree = "<group>"; };
 		5D1D0A0100000000000000A2 /* WidgetShared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetShared.swift; sourceTree = "<group>"; };
 		5D1D0A0100000000000000A3 /* FlashcardWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlashcardWidget.swift; sourceTree = "<group>"; };
 		5D1D0A0100000000000000A4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -132,6 +138,9 @@
 				7A5C0E0100000000000000A2 /* AccountSheetState.swift */,
 				7A5C0E0100000000000000A3 /* AccountSheetView.swift */,
 				7A5C0E0100000000000000A4 /* LevelAvatarView.swift */,
+				7A5C0E0200000000000000C1 /* SpaceGrotesk.ttf */,
+				7A5C0E0200000000000000C2 /* SpaceGrotesk-LatinExt.ttf */,
+				7A5C0E0200000000000000C3 /* SpaceGrotesk-Vietnamese.ttf */,
 				504EC30B1FED79650016851F /* Main.storyboard */,
 				504EC30E1FED79650016851F /* Assets.xcassets */,
 				504EC3101FED79650016851F /* LaunchScreen.storyboard */,
@@ -250,6 +259,9 @@
 				448E04AE2FDA527300F7FD55 /* products.storekit in Resources */,
 				504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */,
 				50B271D11FEDC1A000F3C39B /* public in Resources */,
+				7A5C0E0200000000000000D1 /* SpaceGrotesk.ttf in Resources */,
+				7A5C0E0200000000000000D2 /* SpaceGrotesk-LatinExt.ttf in Resources */,
+				7A5C0E0200000000000000D3 /* SpaceGrotesk-Vietnamese.ttf in Resources */,
 				504EC30F1FED79650016851F /* Assets.xcassets in Resources */,
 				50379B232058CBB4000EE86E /* capacitor.config.json in Resources */,
 				504EC30D1FED79650016851F /* Main.storyboard in Resources */,

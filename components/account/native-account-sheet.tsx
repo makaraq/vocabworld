@@ -9,6 +9,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import type { PluginListenerHandle } from '@capacitor/core'
+import { getIcon } from '@iconify/react'
 import { useT } from '@/components/providers/translation-provider'
 import { useLevelXp } from '@/components/leveling/level-card'
 import { levelInfo, nextRank, rankForLevel, RANKS } from '@/lib/leveling/definitions'
@@ -41,6 +42,9 @@ function OpenSheet(props: NativeAccountSheetProps) {
   const [deleting, setDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
   const [waitedEnough, setWaitedEnough] = useState(false)
+  // The offline rows' flags, drawn once each as pictures (see flagPicture).
+  const [flags, setFlags] = useState<Record<string, string | null>>({})
+  const sentImages = useRef(new Set<string>())
   const presented = useRef(false)
   const onAction = useRef<(action: AccountSheetAction) => void>(() => {})
 
@@ -53,13 +57,27 @@ function OpenSheet(props: NativeAccountSheetProps) {
     return () => { cancelled = true }
   }, [avatarSrc])
 
-  // Open once the face and the widget's status are known, so nothing pops in
-  // after the sheet is up; never wait more than half a second for them.
+  const flagNames = offline.rows.flatMap((row) => [getFlagIcon(row.nativeCode), getFlagIcon(row.targetCode)])
+  const missingFlags = flagNames.filter((name) => !(name in flags))
+  const missingKey = [...new Set(missingFlags)].join(',')
+  useEffect(() => {
+    if (!missingKey) return
+    let cancelled = false
+    const names = missingKey.split(',')
+    Promise.all(names.map(flagPicture)).then((pictures) => {
+      if (cancelled) return
+      setFlags((had) => ({ ...had, ...Object.fromEntries(names.map((name, i) => [name, pictures[i]])) }))
+    })
+    return () => { cancelled = true }
+  }, [missingKey])
+
+  // Open once the face, the flags and the widget's status are known, so
+  // nothing pops in after the sheet is up; never wait more than half a second.
   useEffect(() => {
     const timer = setTimeout(() => setWaitedEnough(true), 500)
     return () => clearTimeout(timer)
   }, [])
-  const ready = waitedEnough || (avatar !== undefined && widget.status !== null)
+  const ready = waitedEnough || (avatar !== undefined && widget.status !== null && missingFlags.length === 0)
 
   const name = props.name || 'User'
   const email = props.email || ''
@@ -167,7 +185,7 @@ function OpenSheet(props: NativeAccountSheetProps) {
           done: offline.done,
           rows: offline.rows.map((row) => ({
             id: row.id,
-            flags: [flagEmoji(row.nativeCode), flagEmoji(row.targetCode)],
+            flags: [getFlagIcon(row.nativeCode), getFlagIcon(row.targetCode)],
             title: row.title,
             subtitle: row.subtitle,
             tone: row.tone,
@@ -196,18 +214,27 @@ function OpenSheet(props: NativeAccountSheetProps) {
     },
   }
   const json = JSON.stringify(state)
+  // Pictures go across once each, beside the state rather than in it.
+  const unsent: Record<string, string> = {}
+  for (const [name, picture] of Object.entries(flags)) {
+    if (picture && !sentImages.current.has(name)) unsent[name] = picture
+  }
+  const unsentKey = Object.keys(unsent).join(',')
 
   // Present once, then keep the open sheet in step with every change.
   useEffect(() => {
     if (!ready) return
+    const images = { ...unsent }
+    for (const name of Object.keys(images)) sentImages.current.add(name)
     if (presented.current) {
-      AccountSheet.update({ state: json }).catch((err) => console.error('[AccountSheet] update failed:', err))
+      AccountSheet.update({ state: json, images }).catch((err) => console.error('[AccountSheet] update failed:', err))
       return
     }
     presented.current = true
     const rect = props.morphFrom?.()?.getBoundingClientRect()
     AccountSheet.present({
       state: json,
+      images,
       focus: props.openNotifications ? 'notifications' : undefined,
       ...(rect && rect.width > 0
         ? { sourceX: rect.left, sourceY: rect.top, sourceWidth: rect.width, sourceHeight: rect.height }
@@ -218,7 +245,7 @@ function OpenSheet(props: NativeAccountSheetProps) {
     })
     // props.morphFrom and friends are read once, at opening.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ready, json])
+  }, [ready, json, unsentKey])
 
   useEffect(() => () => { AccountSheet.dismiss().catch(() => {}) }, [])
 
@@ -302,23 +329,30 @@ function OpenSheet(props: NativeAccountSheetProps) {
 async function toNativeImage(src: string | null): Promise<string | null> {
   if (!src) return null
   if (!src.startsWith('data:image/svg')) return src
+  return drawPng(src, 240)
+}
+
+/** A flag from the web's own flag set (lib/icons), drawn as a PNG for the
+ *  native sheet: its SVGs use features iOS image assets can't. */
+async function flagPicture(name: string): Promise<string | null> {
+  const icon = getIcon(name)
+  if (!icon) return null
+  const { body, width, height, left, top } = icon
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="72" height="72" viewBox="${left} ${top} ${width} ${height}">${body}</svg>`
+  return drawPng(`data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`, 72)
+}
+
+async function drawPng(src: string, size: number): Promise<string | null> {
   try {
     const img = new Image()
     img.src = src
     await img.decode()
     const canvas = document.createElement('canvas')
-    canvas.width = 240
-    canvas.height = 240
-    canvas.getContext('2d')?.drawImage(img, 0, 0, 240, 240)
+    canvas.width = size
+    canvas.height = size
+    canvas.getContext('2d')?.drawImage(img, 0, 0, size, size)
     return canvas.toDataURL('image/png')
   } catch {
     return null
   }
-}
-
-/** The flag the web sheet shows for a language, as an emoji. */
-function flagEmoji(languageCode: string): string {
-  const region = getFlagIcon(languageCode).replace(/^flag:/, '').slice(0, 2).toUpperCase()
-  if (!/^[A-Z]{2}$/.test(region)) return '🏳️'
-  return String.fromCodePoint(...Array.from(region, (letter) => 0x1f1e6 + letter.charCodeAt(0) - 65))
 }

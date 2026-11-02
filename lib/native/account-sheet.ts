@@ -14,6 +14,8 @@ export interface AccountSheetAction {
 interface AccountSheetPlugin {
   present(options: {
     state: string
+    /** Pictures the state names (the offline rows' flags), as PNG data URLs. Each is sent once. */
+    images?: Record<string, string>
     /** "notifications" opens the sheet scrolled to that card. */
     focus?: string
     /** Where the button it opens out of is, in CSS pixels. */
@@ -22,7 +24,7 @@ interface AccountSheetPlugin {
     sourceWidth?: number
     sourceHeight?: number
   }): Promise<void>
-  update(options: { state: string }): Promise<void>
+  update(options: { state: string; images?: Record<string, string> }): Promise<void>
   dismiss(): Promise<void>
   addListener(event: 'action', listener: (action: AccountSheetAction) => void): Promise<PluginListenerHandle>
 }

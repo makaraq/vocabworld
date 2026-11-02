@@ -1,10 +1,110 @@
 import SwiftUI
 import UIKit
+import CoreText
 
-// Manage Account, drawn natively: the same cards as the web sheet
-// (components/account/manage-account-modal.tsx), in the same order, with the
-// state and rules coming from the web side (AccountSheetState.swift). On iOS 26
-// the sheet itself and its buttons are Liquid Glass; before that, a material.
+// Manage Account, drawn natively to look exactly like the web sheet
+// (components/account/manage-account-modal.tsx, as the iPhone's Liquid Glass
+// skin draws it: app/liquid-glass.css). Same cards in the same order, the same
+// Space Grotesk font (Fonts/, made from the web's own font files), the same
+// Solar icons (Assets.xcassets/Solar) and the same colours: Tailwind's, with
+// white written as Color.primary so a light theme turns it dark. The state
+// and rules come from the web side (AccountSheetState.swift).
+
+// ── The web's type, icons and colours ───────────────────────────────────────
+
+/// Space Grotesk, as on the web pages, at a CSS weight (the font spans
+/// 300–700; heavier asks get 700, as in the browser). Characters it lacks
+/// fall back to its latin-ext and Vietnamese parts, then to the system font.
+enum AppFont {
+    private static let ready: Bool = {
+        for file in ["SpaceGrotesk", "SpaceGrotesk-LatinExt", "SpaceGrotesk-Vietnamese"] {
+            if let url = Bundle.main.url(forResource: file, withExtension: "ttf") {
+                _ = CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil)
+            }
+        }
+        return UIFont(name: "SpaceGrotesk", size: 12) != nil
+    }()
+    private static var cache: [String: Font] = [:]
+    private static let variationKey = UIFontDescriptor.AttributeName(rawValue: kCTFontVariationAttribute as String)
+
+    static func font(_ size: CGFloat, _ weight: Int = 400) -> Font {
+        let key = "\(size)-\(weight)"
+        if let hit = cache[key] { return hit }
+        let font: Font
+        if ready {
+            let wght = min(max(weight, 300), 700)
+            let variation: [NSNumber: NSNumber] = [NSNumber(value: 0x7767_6874): NSNumber(value: wght)]
+            func descriptor(_ name: String) -> UIFontDescriptor {
+                UIFontDescriptor(fontAttributes: [.name: name, variationKey: variation])
+            }
+            let main = descriptor("SpaceGrotesk").addingAttributes([
+                .cascadeList: [descriptor("SpaceGroteskLatinExt"), descriptor("SpaceGroteskVietnamese")],
+            ])
+            font = Font(UIFont(descriptor: main, size: size) as CTFont)
+        } else {
+            font = .system(size: size, weight: systemWeight(weight))
+        }
+        cache[key] = font
+        return font
+    }
+
+    private static func systemWeight(_ weight: Int) -> Font.Weight {
+        switch weight {
+        case ..<350: return .light
+        case ..<450: return .regular
+        case ..<550: return .medium
+        case ..<650: return .semibold
+        case ..<750: return .bold
+        default: return .heavy
+        }
+    }
+}
+
+/// A Solar icon, as the web draws it (Assets.xcassets/Solar).
+struct SolarIcon: View {
+    let name: String
+    let size: CGFloat
+
+    init(_ name: String, _ size: CGFloat) {
+        self.name = name
+        self.size = size
+    }
+
+    var body: some View {
+        Image("solar-\(name)")
+            .renderingMode(.template)
+            .resizable()
+            .scaledToFit()
+            .frame(width: size, height: size)
+    }
+}
+
+/// The Tailwind colours the web sheet uses.
+enum Tw {
+    static let yellow300 = Color(hex: "#fde047")
+    static let yellow400 = Color(hex: "#facc15")
+    static let yellow500 = Color(hex: "#eab308")
+    static let orange300 = Color(hex: "#fdba74")
+    static let orange400 = Color(hex: "#fb923c")
+    static let orange500 = Color(hex: "#f97316")
+    static let amber500 = Color(hex: "#f59e0b")
+    static let blue300 = Color(hex: "#93c5fd")
+    static let blue400 = Color(hex: "#60a5fa")
+    static let blue500 = Color(hex: "#3b82f6")
+    static let violet400 = Color(hex: "#a78bfa")
+    static let emerald300 = Color(hex: "#6ee7b7")
+    static let emerald400 = Color(hex: "#34d399")
+    static let red300 = Color(hex: "#fca5a5")
+    static let red400 = Color(hex: "#f87171")
+    static let red500 = Color(hex: "#ef4444")
+}
+
+/// "white/55" and friends: the web's white text and fills at an opacity.
+private func ink(_ opacity: Double = 1) -> Color {
+    Color.primary.opacity(opacity)
+}
+
+// ── The sheet ────────────────────────────────────────────────────────────────
 
 struct AccountSheetView: View {
     @ObservedObject var model: AccountSheetModel
@@ -12,6 +112,12 @@ struct AccountSheetView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            // The web sheet's own handle (the system one is hidden).
+            Capsule()
+                .fill(ink(0.3))
+                .frame(width: 40, height: 4)
+                .padding(.top, 12)
+                .padding(.bottom, 4)
             header
             ZStack {
                 if confirmingDelete {
@@ -33,31 +139,33 @@ struct AccountSheetView: View {
             }
             .frame(maxHeight: .infinity, alignment: .top)
         }
-        .background(SheetBackdrop())
+        .foregroundColor(ink())
+        .background(SheetSurface())
+        .overlay(SheetRim())
     }
 
     private var header: some View {
         HStack {
             Text(model.state.title)
-                .font(.system(size: 20, weight: .bold))
+                .font(AppFont.font(18, 700))
+                .tracking(0.45)
             Spacer()
             Button {
                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
                 model.onClose()
             } label: {
-                Image(systemName: "xmark")
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundColor(.primary)
-                    .frame(width: 38, height: 38)
+                SolarIcon("close-circle-bold", 20)
+                    .foregroundColor(ink(0.7))
+                    .frame(width: 32, height: 32)
                     .contentShape(Circle())
-                    .glassBackground(Circle())
+                    .modifier(WebGlass(shape: Circle()))
             }
             .buttonStyle(PressStyle())
             .accessibilityLabel(Text(model.state.closeLabel))
         }
         .padding(.horizontal, 20)
-        .padding(.top, 22)
-        .padding(.bottom, 12)
+        .padding(.top, 8)
+        .padding(.bottom, 16)
     }
 
     private var mainScroll: some View {
@@ -71,7 +179,6 @@ struct AccountSheetView: View {
 
                     ThemeCard(
                         theme: s.theme,
-                        premium: s.subscription.premium,
                         onPick: { item in
                             UIImpactFeedbackGenerator(style: .light).impactOccurred()
                             if !(item.premium && !s.subscription.premium) {
@@ -109,35 +216,34 @@ struct AccountSheetView: View {
                     }
 
                     if let offline = s.offline {
-                        OfflineCard(offline: offline) { action, id in
+                        OfflineCard(offline: offline, images: model.images) { action, id in
                             model.send("offline", "\(action):\(id)")
                         }
                         .id("offline")
                     }
 
                     Rectangle()
-                        .fill(Color.primary.opacity(0.1))
+                        .fill(ink(0.1))
                         .frame(height: 1)
                         .padding(.vertical, 4)
 
                     VStack(spacing: 12) {
-                        AccountButton(icon: "gearshape.fill", title: s.buttons.manageSubscription) {
+                        AccountButton(icon: "settings-bold", title: s.buttons.manageSubscription) {
                             UIImpactFeedbackGenerator(style: .light).impactOccurred()
                             model.onManageSubscriptions()
                         }
-                        AccountButton(icon: "trash.fill", title: s.buttons.deleteAccount) {
+                        AccountButton(icon: "trash-bin-trash-bold", title: s.buttons.deleteAccount) {
                             UINotificationFeedbackGenerator().notificationOccurred(.warning)
                             withAnimation(.spring(response: 0.4, dampingFraction: 0.86)) { confirmingDelete = true }
                         }
-                        AccountButton(icon: "rectangle.portrait.and.arrow.right", title: s.buttons.signOut) {
+                        AccountButton(icon: "logout-3-bold", title: s.buttons.signOut) {
                             UIImpactFeedbackGenerator(style: .light).impactOccurred()
                             model.send("signOut")
                         }
                     }
                     .id("buttons")
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 4)
+                .padding(.horizontal, 20)
                 .padding(.bottom, 32)
             }
             .onAppear {
@@ -176,7 +282,7 @@ struct AccountSheetView: View {
 // ── Level card ───────────────────────────────────────────────────────────────
 
 /// Your avatar in its border, your title, level and XP bar, then every border
-/// in a row: tap one to wear it for a moment.
+/// in a row: tap one to wear it for a moment (components/leveling/level-card.tsx).
 private struct LevelCardView: View {
     let level: AccountState.Level
     let profile: AccountState.Profile
@@ -218,24 +324,24 @@ private struct LevelCardView: View {
                 .id(shown.id)
                 .transition(.scale(scale: 0.5).combined(with: .opacity))
                 .padding(.horizontal, 16)
-                .padding(.vertical, 14)
+                .padding(.vertical, 12)
 
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 0) {
                     Text(profile.name)
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(AppFont.font(16, 600))
                         .lineLimit(1)
                     if let email = profile.email, !email.isEmpty, email != profile.name {
                         Text(email)
-                            .font(.system(size: 12))
-                            .foregroundColor(.secondary)
+                            .font(AppFont.font(12))
+                            .foregroundColor(ink(0.55))
                             .lineLimit(1)
                     }
-                    HStack(spacing: 4) {
+                    HStack(spacing: 0) {
                         ShinyText(text: shown.title, color: color, accent: accent)
                         if preview != nil {
-                            Text("· \(level.previewLabel)")
-                                .font(.system(size: 13, weight: .semibold))
-                                .foregroundColor(.secondary)
+                            Text(" · \(level.previewLabel)")
+                                .font(AppFont.font(14, 600))
+                                .foregroundColor(ink(0.5))
                                 .lineLimit(1)
                         }
                     }
@@ -243,51 +349,54 @@ private struct LevelCardView: View {
                 }
                 Spacer(minLength: 0)
             }
-            .padding(.top, 8)
-            .padding(.horizontal, 8)
+            .padding(.horizontal, 16)
+            .padding(.top, 20)
+            .padding(.bottom, 16)
 
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .firstTextBaseline) {
                     Text(level.levelLabel)
-                        .font(.system(size: 14, weight: .bold))
+                        .font(AppFont.font(14, 700))
                     Spacer()
                     Text(level.xpLabel)
-                        .font(.system(size: 12).monospacedDigit())
-                        .foregroundColor(.secondary)
+                        .font(AppFont.font(12).monospacedDigit())
+                        .foregroundColor(ink(0.55))
                 }
+                .padding(.bottom, 6)
                 XPBar(progress: fill, color: Color(hex: earned.color), accent: Color(hex: earned.accent))
                 if let hint = level.hint {
                     Text(hint)
-                        .font(.system(size: 11))
-                        .foregroundColor(.secondary)
+                        .font(AppFont.font(11))
+                        .foregroundColor(ink(0.45))
+                        .padding(.top, 6)
                 }
             }
             .padding(.horizontal, 16)
             .padding(.bottom, 16)
 
             Rectangle()
-                .fill(Color.primary.opacity(0.1))
+                .fill(ink(0.1))
                 .frame(height: 1)
 
             VStack(alignment: .leading, spacing: 0) {
                 HStack(spacing: 6) {
-                    Image(systemName: "medal.fill")
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(.secondary)
+                    SolarIcon("medal-ribbons-star-bold", 14)
+                        .foregroundColor(ink(0.6))
                     Text(level.bordersLabel)
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(Color.primary.opacity(0.75))
+                        .font(AppFont.font(12, 600))
+                        .foregroundColor(ink(0.7))
                     Text("\(ownedCount)/\(level.ranks.count)")
-                        .font(.system(size: 12).monospacedDigit())
-                        .foregroundColor(.secondary)
+                        .font(AppFont.font(12))
+                        .foregroundColor(ink(0.4))
                 }
                 .padding(.horizontal, 16)
+                .padding(.bottom, 8)
                 gallery(shownId: shown.id)
             }
-            .padding(.vertical, 12)
+            .padding(.top, 12)
+            .padding(.bottom, 14)
         }
-        .background(RoundedRectangle(cornerRadius: 22, style: .continuous).fill(Color.primary.opacity(0.07)))
-        .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous).strokeBorder(Color.primary.opacity(0.12), lineWidth: 1))
+        .modifier(CardSurface())
         .onAppear {
             // The bar fills from empty as the sheet opens.
             withAnimation(.spring(response: 1.1, dampingFraction: 0.85).delay(0.3)) {
@@ -325,23 +434,22 @@ private struct LevelCardView: View {
                                 .grayscale(rank.owned ? 0 : 1)
                                 .opacity(rank.owned ? 1 : 0.45)
                                 if !rank.owned {
-                                    Image(systemName: "lock.fill")
-                                        .font(.system(size: 13, weight: .bold))
+                                    SolarIcon("lock-keyhole-bold", 16)
                                         .foregroundColor(.white)
-                                        .shadow(color: .black.opacity(0.6), radius: 2)
+                                        .shadow(color: Color.black.opacity(0.5), radius: 2, x: 0, y: 1)
                                 }
                             }
                             .frame(width: 40, height: 40)
                             Text(rank.unlockLabel)
-                                .font(.system(size: 10))
-                                .foregroundColor(rank.owned ? Color.primary.opacity(0.8) : Color.secondary)
+                                .font(AppFont.font(10))
+                                .foregroundColor(ink(rank.owned ? 0.8 : 0.4))
                                 .lineLimit(1)
                         }
                         .frame(width: 68)
                         .padding(.vertical, 8)
                         .background(
                             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                .fill(Color.primary.opacity(active ? 0.1 : 0))
+                                .fill(ink(active ? 0.1 : 0))
                         )
                     }
                     .buttonStyle(PressStyle())
@@ -349,8 +457,8 @@ private struct LevelCardView: View {
                 }
             }
             .padding(.horizontal, 12)
-            .padding(.top, 14)
-            .padding(.bottom, 2)
+            .padding(.top, 12)
+            .padding(.bottom, 4)
         }
     }
 
@@ -386,11 +494,11 @@ private struct XPBar: View {
                     .fill(LinearGradient(colors: [accent, color], startPoint: .leading, endPoint: .trailing))
                     .overlay(Shimmer().clipShape(Capsule()))
                     .frame(width: width)
-                    .shadow(color: color.opacity(0.8), radius: 5)
+                    .shadow(color: color, radius: 5)
             }
         }
         .frame(height: 10)
-        .overlay(Capsule().strokeBorder(Color.white.opacity(0.1), lineWidth: 1))
+        .overlay(Capsule().strokeBorder(ink(0.1), lineWidth: 1))
     }
 }
 
@@ -417,7 +525,8 @@ private func easeInOut(_ x: Double) -> Double {
     x < 0.5 ? 2 * x * x : 1 - pow(-2 * x + 2, 2) / 2
 }
 
-/// The rank title, with light running through it in the rank's colours.
+/// The rank title, with light running through it in the rank's colours
+/// (.lvl-shiny-text).
 private struct ShinyText: View {
     let text: String
     let color: Color
@@ -427,7 +536,7 @@ private struct ShinyText: View {
         TimelineView(.animation) { context in
             let p = CGFloat(cyclePosition(context.date.timeIntervalSinceReferenceDate, 2.5)) * 2
             Text(text)
-                .font(.system(size: 14, weight: .heavy))
+                .font(AppFont.font(14, 800))
                 .lineLimit(1)
                 .foregroundStyle(
                     LinearGradient(
@@ -444,6 +553,8 @@ private struct ShinyText: View {
 
 private struct Card<Content: View>: View {
     var spacing: CGFloat = 12
+    var horizontal: CGFloat = 16
+    var vertical: CGFloat = 16
     @ViewBuilder var content: Content
 
     var body: some View {
@@ -451,31 +562,34 @@ private struct Card<Content: View>: View {
             content
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(16)
-        .background(RoundedRectangle(cornerRadius: 22, style: .continuous).fill(Color.primary.opacity(0.07)))
-        .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous).strokeBorder(Color.primary.opacity(0.12), lineWidth: 1))
+        .padding(.horizontal, horizontal)
+        .padding(.vertical, vertical)
+        .modifier(CardSurface())
     }
 }
 
+/// An icon beside a title and its line of description, as the web cards head themselves.
 private struct SectionLabel: View {
     let icon: String
+    var iconSize: CGFloat = 18
     let tint: Color
     let title: String
+    var titleWeight: Int = 500
     var desc: String? = nil
+    var descSize: CGFloat = 12
+    var descOpacity: Double = 0.45
 
     var body: some View {
         HStack(spacing: 10) {
-            Image(systemName: icon)
-                .font(.system(size: 16, weight: .semibold))
+            SolarIcon(icon, iconSize)
                 .foregroundColor(tint)
-                .frame(width: 22)
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: descSize < 12 ? 2 : 0) {
                 Text(title)
-                    .font(.system(size: 14, weight: .medium))
+                    .font(AppFont.font(14, titleWeight))
                 if let desc {
                     Text(desc)
-                        .font(.system(size: 12))
-                        .foregroundColor(.secondary)
+                        .font(AppFont.font(descSize))
+                        .foregroundColor(ink(descOpacity))
                         .fixedSize(horizontal: false, vertical: true)
                 }
             }
@@ -483,19 +597,20 @@ private struct SectionLabel: View {
     }
 }
 
+/// A small rounded badge: "On", "Added", "Free".
 private struct Badge: View {
     let text: String
     let fill: Color
     let stroke: Color
-    let ink: Color
+    let textColor: Color
 
     var body: some View {
         Text(text)
-            .font(.system(size: 12, weight: .semibold))
-            .foregroundColor(ink)
+            .font(AppFont.font(12))
+            .foregroundColor(textColor)
             .lineLimit(1)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 3)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 2)
             .background(Capsule().fill(fill))
             .overlay(Capsule().strokeBorder(stroke, lineWidth: 1))
     }
@@ -505,26 +620,41 @@ private struct SubscriptionCard: View {
     let subscription: AccountState.Subscription
 
     var body: some View {
-        Card(spacing: 6) {
+        Card {
             HStack {
-                SectionLabel(icon: "crown.fill", tint: Color(hex: "#facc15"), title: subscription.title)
+                HStack(spacing: 8) {
+                    SolarIcon("crown-bold", 20)
+                        .foregroundColor(Tw.yellow400)
+                    Text(subscription.title)
+                        .font(AppFont.font(14, 600))
+                }
                 Spacer()
                 if subscription.premium {
                     Text(subscription.badge)
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(AppFont.font(12, 600))
                         .foregroundColor(.white)
                         .padding(.horizontal, 12)
-                        .padding(.vertical, 3)
-                        .background(Capsule().fill(LinearGradient(colors: [Color(hex: "#eab308"), Color(hex: "#f97316")],
+                        .padding(.vertical, 2)
+                        .background(Capsule().fill(LinearGradient(colors: [Tw.yellow500, Tw.orange500],
                                                                   startPoint: .leading, endPoint: .trailing)))
                 } else {
-                    Badge(text: subscription.badge, fill: Color.primary.opacity(0.1), stroke: Color.primary.opacity(0.2), ink: .secondary)
+                    Text(subscription.badge)
+                        .font(AppFont.font(12, 600))
+                        .foregroundColor(ink(0.6))
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 2)
+                        .background(Capsule().fill(ink(0.1)))
+                        .overlay(Capsule().strokeBorder(ink(0.2), lineWidth: 1))
                 }
             }
-            ForEach(subscription.lines, id: \.self) { line in
-                Text(line)
-                    .font(.system(size: 12))
-                    .foregroundColor(.secondary)
+            if !subscription.lines.isEmpty {
+                VStack(alignment: .leading, spacing: 4) {
+                    ForEach(subscription.lines, id: \.self) { line in
+                        Text(line)
+                            .font(AppFont.font(12))
+                            .foregroundColor(ink(0.6))
+                    }
+                }
             }
         }
     }
@@ -532,14 +662,13 @@ private struct SubscriptionCard: View {
 
 private struct ThemeCard: View {
     let theme: AccountState.Theme
-    let premium: Bool
     let onPick: (AccountState.Theme.Item) -> Void
     let onTryLive: () -> Void
 
     var body: some View {
         Card {
-            SectionLabel(icon: "paintpalette.fill", tint: .secondary, title: theme.title, desc: theme.desc)
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 12) {
+            SectionLabel(icon: "palette-bold", tint: ink(0.7), title: theme.title, desc: theme.desc)
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 8) {
                 ForEach(theme.items) { item in
                     ThemeSwatch(item: item, on: item.id == theme.current) { onPick(item) }
                 }
@@ -548,15 +677,14 @@ private struct ThemeCard: View {
                 Button(action: onTryLive) {
                     HStack(spacing: 8) {
                         Text(label)
-                            .font(.system(size: 14, weight: .semibold))
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 12, weight: .semibold))
-                            .foregroundColor(.secondary)
+                            .font(AppFont.font(14, 600))
+                        SolarIcon("alt-arrow-right-linear", 16)
+                            .foregroundColor(ink(0.7))
                     }
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 11)
+                    .padding(.vertical, 10)
                     .contentShape(Capsule())
-                    .glassBackground(Capsule())
+                    .modifier(WebGlass(shape: Capsule()))
                 }
                 .buttonStyle(PressStyle())
             }
@@ -565,7 +693,7 @@ private struct ThemeCard: View {
 }
 
 /// A small version of a theme's backdrop with a pane of glass and two lines
-/// of "text" on it, as the theme draws them.
+/// of "text" on it, as the theme draws them (components/theme/theme-picker.tsx).
 private struct ThemeSwatch: View {
     let item: AccountState.Theme.Item
     let on: Bool
@@ -580,9 +708,8 @@ private struct ThemeSwatch: View {
                     .overlay(pane)
                     .overlay(alignment: .topTrailing) {
                         if item.premium {
-                            Image(systemName: "crown.fill")
-                                .font(.system(size: 10, weight: .bold))
-                                .foregroundColor(Color(hex: "#facc15"))
+                            SolarIcon("crown-bold", 12)
+                                .foregroundColor(Tw.yellow400)
                                 .frame(width: 20, height: 20)
                                 .background(Circle().fill(Color.black.opacity(0.45)))
                                 .padding(4)
@@ -590,8 +717,7 @@ private struct ThemeSwatch: View {
                     }
                     .overlay(alignment: .bottomTrailing) {
                         if on {
-                            Image(systemName: "checkmark")
-                                .font(.system(size: 10, weight: .heavy))
+                            SolarIcon("check-read-linear", 13)
                                 .foregroundColor(.black)
                                 .frame(width: 20, height: 20)
                                 .background(Circle().fill(Color.white))
@@ -603,16 +729,20 @@ private struct ThemeSwatch: View {
                         RoundedRectangle(cornerRadius: 12, style: .continuous)
                             .strokeBorder(on ? Color.white : Color.white.opacity(0.25), lineWidth: 2)
                     )
-                    .shadow(color: on ? Color.white.opacity(0.3) : Color.clear, radius: 4)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .inset(by: -3)
+                            .fill(Color.white.opacity(on ? 0.25 : 0))
+                    )
                     .scaleEffect(on ? 1.05 : 1)
                 Text(item.name)
-                    .font(.system(size: 11, weight: on ? .semibold : .regular))
-                    .foregroundColor(on ? Color.primary : Color.secondary)
+                    .font(AppFont.font(11, on ? 600 : 400))
+                    .foregroundColor(ink(on ? 1 : 0.6))
                     .lineLimit(1)
             }
         }
         .buttonStyle(PressStyle())
-        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: on)
+        .animation(.easeOut(duration: 0.2), value: on)
     }
 
     private var pane: some View {
@@ -696,16 +826,16 @@ private struct NotificationsCard: View {
 
     var body: some View {
         let on = notifications.on
-        Card {
+        Card(horizontal: 16, vertical: 14) {
             HStack(spacing: 12) {
-                SectionLabel(icon: "bell.fill", tint: on ? Color(hex: "#60a5fa") : .secondary,
+                SectionLabel(icon: "bell-bold", tint: on ? Tw.blue400 : ink(0.5),
                              title: notifications.title, desc: notifications.desc)
                 Spacer(minLength: 8)
                 Badge(
                     text: notifications.badge,
-                    fill: on ? Color(hex: "#3b82f6", opacity: 0.2) : Color.primary.opacity(0.1),
-                    stroke: on ? Color(hex: "#60a5fa", opacity: 0.3) : Color.primary.opacity(0.1),
-                    ink: on ? Color(hex: "#93c5fd") : .secondary
+                    fill: on ? Tw.blue500.opacity(0.2) : ink(0.1),
+                    stroke: on ? Tw.blue400.opacity(0.3) : ink(0.1),
+                    textColor: on ? Tw.blue300 : ink(0.4)
                 )
             }
             Button {
@@ -714,13 +844,16 @@ private struct NotificationsCard: View {
                     UIApplication.shared.open(url)
                 }
             } label: {
-                Label(notifications.button, systemImage: "gearshape.fill")
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(Color(hex: "#93c5fd"))
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 11)
-                    .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Color(hex: "#3b82f6", opacity: 0.2)))
-                    .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(Color(hex: "#60a5fa", opacity: 0.3), lineWidth: 1))
+                HStack(spacing: 8) {
+                    SolarIcon("settings-bold", 16)
+                    Text(notifications.button)
+                        .font(AppFont.font(14, 500))
+                }
+                .foregroundColor(Tw.blue300)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 10)
+                .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(Tw.blue500.opacity(0.2)))
+                .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).strokeBorder(Tw.blue400.opacity(0.3), lineWidth: 1))
             }
             .buttonStyle(PressStyle())
         }
@@ -732,13 +865,39 @@ private struct LeaderboardCard: View {
     let onToggle: (Bool) -> Void
 
     var body: some View {
-        Card {
-            Toggle(isOn: Binding(get: { board.on }, set: { onToggle($0) })) {
-                SectionLabel(icon: "person.3.fill", tint: board.on ? Color(hex: "#facc15") : .secondary,
-                             title: board.title, desc: board.desc)
+        Card(horizontal: 16, vertical: 14) {
+            HStack(spacing: 12) {
+                SectionLabel(icon: "users-group-rounded-bold", tint: board.on ? Tw.yellow400 : ink(0.5),
+                             title: board.title, desc: board.desc, descSize: 11, descOpacity: 0.4)
+                Spacer(minLength: 8)
+                WebSwitch(on: board.on) { onToggle(!board.on) }
             }
-            .tint(Color(hex: "#3b82f6"))
         }
+    }
+}
+
+/// The web sheet's own switch: 44 × 24, a blue track when on.
+private struct WebSwitch: View {
+    let on: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            ZStack(alignment: on ? .trailing : .leading) {
+                Capsule()
+                    .fill(on ? Tw.blue500 : Color.black.opacity(0.3))
+                    .overlay(Capsule().strokeBorder(on ? Color.clear : ink(0.2), lineWidth: 1))
+                Circle()
+                    .fill(Color.white)
+                    .frame(width: 20, height: 20)
+                    .shadow(color: Color.black.opacity(0.2), radius: 1.5, x: 0, y: 1)
+                    .padding(2)
+            }
+            .frame(width: 44, height: 24)
+            .animation(.easeInOut(duration: 0.3), value: on)
+        }
+        .buttonStyle(.plain)
+        .accessibilityAddTraits(on ? .isSelected : [])
     }
 }
 
@@ -749,47 +908,69 @@ private struct WidgetCard: View {
 
     @State private var showHowTo = false
 
+    private var sourceName: String {
+        widget.options.first { $0.value == widget.source }?.label ?? widget.options.first?.label ?? ""
+    }
+
     var body: some View {
         Card {
             HStack(spacing: 12) {
-                SectionLabel(icon: "square.grid.2x2.fill", tint: widget.added ? Color(hex: "#fb923c") : .secondary,
+                SectionLabel(icon: "widget-5-bold", tint: widget.added ? Tw.orange400 : ink(0.5),
                              title: widget.title, desc: widget.desc)
                 Spacer(minLength: 8)
                 if widget.added {
-                    Badge(text: widget.addedLabel, fill: Color(hex: "#f97316", opacity: 0.2),
-                          stroke: Color(hex: "#fb923c", opacity: 0.3), ink: Color(hex: "#fdba74"))
+                    Badge(text: widget.addedLabel, fill: Tw.orange500.opacity(0.2),
+                          stroke: Tw.orange400.opacity(0.3), textColor: Tw.orange300)
                 }
             }
 
             HStack(spacing: 12) {
                 Text(widget.sourceLabel)
-                    .font(.system(size: 12))
-                    .foregroundColor(.secondary)
-                Spacer(minLength: 8)
-                Picker(widget.sourceLabel, selection: Binding(get: { widget.source }, set: { onSource($0) })) {
-                    ForEach(widget.options, id: \.value) { option in
-                        Text(option.label).tag(option.value)
+                    .font(AppFont.font(12))
+                    .foregroundColor(ink(0.7))
+                    .fixedSize()
+                Menu {
+                    Picker(widget.sourceLabel, selection: Binding(get: { widget.source }, set: { onSource($0) })) {
+                        ForEach(widget.options, id: \.value) { option in
+                            Text(option.label).tag(option.value)
+                        }
                     }
+                } label: {
+                    HStack {
+                        Text(sourceName)
+                            .font(AppFont.font(14, 500))
+                            .foregroundColor(ink())
+                            .lineLimit(1)
+                        Spacer(minLength: 4)
+                        SolarIcon("alt-arrow-down-linear", 16)
+                            .foregroundColor(ink(0.6))
+                    }
+                    .padding(.leading, 16)
+                    .padding(.trailing, 12)
+                    .padding(.vertical, 8)
+                    .background(Capsule().fill(ink(0.1)))
+                    .overlay(Capsule().strokeBorder(ink(0.2), lineWidth: 1))
                 }
-                .pickerStyle(.menu)
-                .tint(.primary)
             }
 
             if let status = widget.status {
                 Text(status)
-                    .font(.system(size: 12))
-                    .foregroundColor(widget.statusFailed ? Color(hex: "#fca5a5") : .secondary)
+                    .font(AppFont.font(12))
+                    .foregroundColor(widget.statusFailed ? Tw.red300 : ink(0.5))
             }
 
             if let add = widget.addButton {
                 Button(action: onAdd) {
-                    Label(add, systemImage: "plus.square.fill")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 11)
-                        .background(Capsule().fill(LinearGradient(colors: [Color(hex: "#f97316"), Color(hex: "#f59e0b")],
-                                                                  startPoint: .leading, endPoint: .trailing)))
+                    HStack(spacing: 8) {
+                        SolarIcon("add-square-bold", 16)
+                        Text(add)
+                            .font(AppFont.font(14, 600))
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 10)
+                    .background(Capsule().fill(LinearGradient(colors: [Tw.orange500, Tw.amber500],
+                                                              startPoint: .leading, endPoint: .trailing)))
                 }
                 .buttonStyle(PressStyle())
             }
@@ -800,13 +981,11 @@ private struct WidgetCard: View {
             } label: {
                 HStack {
                     Text(widget.howToTitle)
-                        .font(.system(size: 12, weight: .medium))
+                        .font(AppFont.font(12, 500))
                     Spacer()
-                    Image(systemName: "chevron.down")
-                        .font(.system(size: 12, weight: .semibold))
-                        .rotationEffect(.degrees(showHowTo ? 180 : 0))
+                    SolarIcon(showHowTo ? "alt-arrow-up-linear" : "alt-arrow-down-linear", 14)
                 }
-                .foregroundColor(.secondary)
+                .foregroundColor(ink(0.7))
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
@@ -820,10 +999,11 @@ private struct WidgetCard: View {
                             Text(step)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
-                        .font(.system(size: 12))
-                        .foregroundColor(.secondary)
+                        .font(AppFont.font(12))
+                        .foregroundColor(ink(0.6))
                     }
                 }
+                .padding(.leading, 4)
                 .transition(.opacity)
             }
         }
@@ -832,51 +1012,54 @@ private struct WidgetCard: View {
 
 private struct OfflineCard: View {
     let offline: AccountState.Offline
+    let images: [String: UIImage]
     let onAction: (String, String) -> Void
 
     var body: some View {
-        Card(spacing: 0) {
+        VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 10) {
-                Image(systemName: offline.done ? "checkmark.icloud.fill" : "icloud.and.arrow.down.fill")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(offline.done ? Color(hex: "#34d399") : .secondary)
-                    .frame(width: 22)
+                SolarIcon(offline.done ? "cloud-check-bold" : "cloud-download-bold", 18)
+                    .foregroundColor(offline.done ? Tw.emerald400 : ink(0.5))
                 Text(offline.title)
-                    .font(.system(size: 14, weight: .medium))
+                    .font(AppFont.font(14, 500))
             }
-            .padding(.bottom, 4)
             ForEach(Array(offline.rows.enumerated()), id: \.element.id) { index, row in
                 if index > 0 {
                     Rectangle()
-                        .fill(Color.primary.opacity(0.1))
+                        .fill(ink(0.1))
                         .frame(height: 1)
                 }
-                OfflineRowView(row: row) { action in onAction(action, row.id) }
+                OfflineRowView(row: row, images: images) { action in onAction(action, row.id) }
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 16)
+        .padding(.top, 12)
+        .padding(.bottom, 4)
+        .modifier(CardSurface())
     }
 }
 
 private struct OfflineRowView: View {
     let row: AccountState.Offline.Row
+    let images: [String: UIImage]
     let onAction: (String) -> Void
 
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 0) {
             HStack(spacing: 10) {
-                HStack(spacing: 5) {
-                    Flag(emoji: row.flags.first ?? "")
-                    Image(systemName: "arrow.right")
-                        .font(.system(size: 10, weight: .semibold))
-                        .foregroundColor(.secondary)
-                    Flag(emoji: row.flags.count > 1 ? row.flags[1] : "")
+                HStack(spacing: 6) {
+                    Flag(image: row.flags.first.flatMap { images[$0] })
+                    SolarIcon("arrow-right-linear", 13)
+                        .foregroundColor(ink(0.4))
+                    Flag(image: row.flags.count > 1 ? images[row.flags[1]] : nil)
                 }
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 0) {
                     Text(row.title)
-                        .font(.system(size: 14, weight: .medium))
+                        .font(AppFont.font(14, 500))
                         .lineLimit(1)
                     Text(row.subtitle)
-                        .font(.system(size: 11).monospacedDigit())
+                        .font(AppFont.font(11).monospacedDigit())
                         .foregroundColor(toneColor)
                         .lineLimit(1)
                 }
@@ -890,16 +1073,17 @@ private struct OfflineRowView: View {
             if let percent = row.percent {
                 GeometryReader { geo in
                     ZStack(alignment: .leading) {
-                        Capsule().fill(Color.primary.opacity(0.1))
+                        Capsule().fill(ink(0.1))
                         Capsule()
                             .fill(row.active
-                                  ? AnyShapeStyle(LinearGradient(colors: [Color(hex: "#60a5fa"), Color(hex: "#a78bfa")],
+                                  ? AnyShapeStyle(LinearGradient(colors: [Tw.blue400, Tw.violet400],
                                                                  startPoint: .leading, endPoint: .trailing))
-                                  : AnyShapeStyle(Color.primary.opacity(0.3)))
+                                  : AnyShapeStyle(ink(0.3)))
                             .frame(width: geo.size.width * CGFloat(max(2, min(percent, 100)) / 100))
                     }
                 }
                 .frame(height: 4)
+                .padding(.top, 8)
                 .animation(.easeOut(duration: 0.3), value: percent)
             }
         }
@@ -908,10 +1092,10 @@ private struct OfflineRowView: View {
 
     private var toneColor: Color {
         switch row.tone {
-        case "good": return Color(hex: "#6ee7b7", opacity: 0.85)
-        case "warn": return Color(hex: "#fde047", opacity: 0.85)
-        case "bad": return Color(hex: "#f87171")
-        default: return .secondary
+        case "good": return Tw.emerald300.opacity(0.8)
+        case "warn": return Tw.yellow300.opacity(0.8)
+        case "bad": return Tw.red400.opacity(0.9)
+        default: return ink(0.45)
         }
     }
 
@@ -921,20 +1105,19 @@ private struct OfflineRowView: View {
         let tap: () -> Void = { onAction(action.id) }
         switch action.id {
         case "download":
-            PillButton(label: action.label ?? "", icon: "arrow.down", ink: Color(hex: "#93c5fd"),
-                       fill: Color(hex: "#3b82f6", opacity: 0.2), stroke: Color(hex: "#60a5fa", opacity: 0.3), action: tap)
+            PillButton(label: action.label ?? "", icon: "download-minimalistic-bold", textColor: Tw.blue300,
+                       fill: Tw.blue500.opacity(0.2), stroke: Tw.blue400.opacity(0.3), action: tap)
                 .disabled(action.disabled)
                 .opacity(action.disabled ? 0.4 : 1)
         case "anyway":
-            PillButton(label: action.label ?? "", icon: nil, ink: Color(hex: "#fde047"),
-                       fill: Color(hex: "#eab308", opacity: 0.2), stroke: Color(hex: "#facc15", opacity: 0.3), action: tap)
+            PillButton(label: action.label ?? "", icon: nil, textColor: Tw.yellow300,
+                       fill: Tw.yellow500.opacity(0.2), stroke: Tw.yellow400.opacity(0.3), action: tap)
         case "confirm":
-            PillButton(label: action.label ?? "", icon: nil, ink: .white,
-                       fill: Color(hex: "#ef4444", opacity: 0.8), stroke: Color(hex: "#f87171"), action: tap)
+            PillButton(label: action.label ?? "", icon: nil, textColor: .white,
+                       fill: Tw.red500.opacity(0.8), stroke: Tw.red400, action: tap)
         default:
-            RoundButton(icon: Self.icon(for: action.id),
-                        ink: action.id == "resume" ? Color(hex: "#93c5fd") : .secondary,
-                        action: tap)
+            RoundButton(icon: Self.icon(for: action.id), iconSize: action.id == "remove" || action.id == "cancel" ? 14 : 13,
+                        tint: action.id == "resume" ? Tw.blue300 : ink(0.7), action: tap)
                 .disabled(action.disabled)
                 .opacity(action.disabled ? 0.4 : 1)
         }
@@ -942,47 +1125,53 @@ private struct OfflineRowView: View {
 
     private static func icon(for action: String) -> String {
         switch action {
-        case "pause": return "pause.fill"
-        case "resume": return "play.fill"
-        case "remove": return "trash.fill"
-        default: return "xmark"
+        case "pause": return "pause-bold"
+        case "resume": return "play-bold"
+        case "remove": return "trash-bin-trash-bold"
+        default: return "close-circle-bold"
         }
     }
 }
 
+/// A round flag, drawn by the web side from its own flag set.
 private struct Flag: View {
-    let emoji: String
+    let image: UIImage?
 
     var body: some View {
-        Text(emoji)
-            .font(.system(size: 30))
-            .fixedSize()
-            .frame(width: 24, height: 24)
-            .clipShape(Circle())
-            .overlay(Circle().strokeBorder(Color.primary.opacity(0.2), lineWidth: 1))
+        ZStack {
+            if let image {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+            } else {
+                ink(0.1)
+            }
+        }
+        .frame(width: 24, height: 24)
+        .clipShape(Circle())
+        .overlay(Circle().strokeBorder(ink(0.2), lineWidth: 1))
     }
 }
 
 private struct PillButton: View {
     let label: String
     let icon: String?
-    let ink: Color
+    let textColor: Color
     let fill: Color
     let stroke: Color
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 5) {
+            HStack(spacing: 6) {
                 if let icon {
-                    Image(systemName: icon)
-                        .font(.system(size: 11, weight: .bold))
+                    SolarIcon(icon, 14)
                 }
                 Text(label)
-                    .font(.system(size: 12, weight: .medium))
+                    .font(AppFont.font(12, 500))
                     .lineLimit(1)
             }
-            .foregroundColor(ink)
+            .foregroundColor(textColor)
             .padding(.horizontal, 12)
             .frame(height: 32)
             .background(Capsule().fill(fill))
@@ -992,24 +1181,26 @@ private struct PillButton: View {
     }
 }
 
+/// The round 32 pt buttons in a download row: glass controls on the web skin.
 private struct RoundButton: View {
     let icon: String
-    let ink: Color
+    let iconSize: CGFloat
+    let tint: Color
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            Image(systemName: icon)
-                .font(.system(size: 12, weight: .bold))
-                .foregroundColor(ink)
+            SolarIcon(icon, iconSize)
+                .foregroundColor(tint)
                 .frame(width: 32, height: 32)
-                .background(Circle().fill(Color.primary.opacity(0.1)))
-                .overlay(Circle().strokeBorder(Color.primary.opacity(0.15), lineWidth: 1))
+                .contentShape(Circle())
+                .modifier(WebGlass(shape: Circle()))
         }
         .buttonStyle(PressStyle())
     }
 }
 
+/// Manage Subscription, Delete Account, Sign Out: glass controls on the web skin.
 private struct AccountButton: View {
     let icon: String
     let title: String
@@ -1018,16 +1209,16 @@ private struct AccountButton: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 8) {
-                Image(systemName: icon)
-                    .font(.system(size: 16, weight: .semibold))
+                SolarIcon(icon, 18)
                 Text(title)
-                    .font(.system(size: 14, weight: .medium))
+                    .font(AppFont.font(14, 500))
             }
-            .foregroundColor(.primary)
+            .foregroundColor(ink())
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 15)
-            .contentShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-            .glassBackground(RoundedRectangle(cornerRadius: 18, style: .continuous))
+            .padding(.vertical, 12)
+            .padding(.horizontal, 16)
+            .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .modifier(WebGlass(shape: RoundedRectangle(cornerRadius: 16, style: .continuous)))
         }
         .buttonStyle(PressStyle())
     }
@@ -1051,49 +1242,52 @@ private struct DeleteConfirmView: View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 16) {
                 Text(delete.title)
-                    .font(.system(size: 18, weight: .bold))
+                    .font(AppFont.font(18, 700))
                     .multilineTextAlignment(.center)
 
                 if let warning = delete.warning {
                     markup(warning)
-                        .font(.system(size: 12))
-                        .foregroundColor(Color(hex: "#fde047"))
+                        .font(AppFont.font(12))
+                        .foregroundColor(Tw.yellow300)
                         .multilineTextAlignment(.center)
+                        .lineSpacing(3)
                         .padding(12)
                         .frame(maxWidth: .infinity)
-                        .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(Color(hex: "#eab308", opacity: 0.1)))
-                        .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).strokeBorder(Color(hex: "#facc15", opacity: 0.3), lineWidth: 1))
+                        .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(Tw.yellow500.opacity(0.1)))
+                        .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).strokeBorder(Tw.yellow400.opacity(0.3), lineWidth: 1))
                 }
 
                 Text(delete.permanent)
-                    .font(.system(size: 12))
-                    .foregroundColor(.secondary)
+                    .font(AppFont.font(12))
+                    .foregroundColor(ink(0.6))
                     .multilineTextAlignment(.center)
+                    .lineSpacing(3)
 
-                VStack(spacing: 8) {
+                VStack(spacing: 6) {
                     markup(delete.hint)
-                        .font(.system(size: 12))
-                        .foregroundColor(.secondary)
+                        .font(AppFont.font(12))
+                        .foregroundColor(ink(0.5))
                     TextField(delete.word, text: $typed)
                         .textInputAutocapitalization(.never)
                         .disableAutocorrection(true)
                         .multilineTextAlignment(.center)
-                        .font(.system(size: 16))
+                        .font(AppFont.font(16))
                         .focused($focused)
-                        .padding(.vertical, 11)
+                        .padding(.vertical, 10)
                         .padding(.horizontal, 12)
-                        .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Color.primary.opacity(0.06)))
+                        .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(ink(0.05)))
                         .overlay(
-                            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                .strokeBorder(focused ? Color(hex: "#f87171", opacity: 0.6) : Color.primary.opacity(0.2), lineWidth: 1)
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                .strokeBorder(focused ? Tw.red400.opacity(0.6) : ink(0.2), lineWidth: 1)
                         )
                         .disabled(delete.busy)
+                        .opacity(delete.busy ? 0.4 : 1)
                 }
 
                 if let error = delete.error {
                     Text(error)
-                        .font(.system(size: 12))
-                        .foregroundColor(Color(hex: "#f87171"))
+                        .font(AppFont.font(12))
+                        .foregroundColor(Tw.red400)
                         .multilineTextAlignment(.center)
                 }
 
@@ -1103,35 +1297,34 @@ private struct DeleteConfirmView: View {
                         onCancel()
                     } label: {
                         Text(delete.cancel)
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.primary)
+                            .font(AppFont.font(14, 500))
+                            .foregroundColor(ink(0.7))
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 14)
-                            .glassBackground(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                            .padding(.vertical, 12)
+                            .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(ink(0.1)))
+                            .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).strokeBorder(ink(0.2), lineWidth: 1))
                     }
                     .buttonStyle(PressStyle())
                     .disabled(delete.busy)
+                    .opacity(delete.busy ? 0.4 : 1)
 
                     Button {
                         focused = false
                         onConfirm()
                     } label: {
                         Text(delete.busy ? delete.deleting : delete.confirm)
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(AppFont.font(14, 500))
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 14)
-                            .background(
-                                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                    .fill(Color(hex: "#ef4444", opacity: canDelete ? 0.85 : 0.4))
-                            )
+                            .padding(.vertical, 12)
+                            .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(Tw.red500.opacity(0.8)))
                     }
                     .buttonStyle(PressStyle())
                     .disabled(!canDelete)
+                    .opacity(canDelete ? 1 : 0.4)
                 }
             }
             .padding(.horizontal, 20)
-            .padding(.top, 8)
             .padding(.bottom, 32)
         }
     }
@@ -1156,33 +1349,97 @@ private func markup(_ source: String) -> Text {
 
 // ── Glass ────────────────────────────────────────────────────────────────────
 
-private struct SheetBackdrop: View {
+/// The web skin's sheet corner (--lg-radius-sheet).
+let sheetCornerRadius: CGFloat = 38
+
+/// The web sheet's glass (app/liquid-glass.css, bottom sheets): the blurred
+/// page behind it, a white wash, and a sheen lit from the top left. The page
+/// behind is dimmed by the plugin's backdrop, as the web sheet's is.
+private struct SheetSurface: View {
+    @Environment(\.colorScheme) private var scheme
+
     var body: some View {
-        if #available(iOS 26.0, *) {
-            // The sheet's own Liquid Glass shows through.
-            Color.clear
-        } else {
-            Rectangle()
-                .fill(.ultraThinMaterial)
-                .ignoresSafeArea()
+        ZStack {
+            if #available(iOS 26.0, *) {
+                // The sheet's own glass does the blurring.
+                Color.clear
+            } else {
+                Rectangle().fill(.ultraThinMaterial)
+            }
+            Color.white.opacity(scheme == .dark ? 0.1 : 0.35)
+            LinearGradient(gradient: Gradient(stops: [
+                .init(color: Color.white.opacity(0.14), location: 0),
+                .init(color: Color.white.opacity(0.03), location: 0.28),
+                .init(color: Color.white.opacity(0), location: 0.55),
+                .init(color: Color.white.opacity(0.05), location: 1),
+            ]), startPoint: UnitPoint(x: 0.33, y: 0), endPoint: UnitPoint(x: 0.67, y: 1))
         }
+        .ignoresSafeArea()
     }
 }
 
-private extension View {
-    /// Liquid Glass that answers the finger on iOS 26; a soft fill and a
-    /// hairline before it.
-    func glassBackground<S: Shape>(_ shape: S) -> AnyView {
-        #if compiler(>=6.2)
-        if #available(iOS 26.0, *) {
-            return AnyView(self.glassEffect(Glass.regular.interactive(), in: shape))
-        }
-        #endif
-        return AnyView(
-            self
-                .background(shape.fill(Color.primary.opacity(0.1)))
-                .overlay(shape.stroke(Color.primary.opacity(0.15), lineWidth: 1))
-        )
+/// The light-catching rim round the web sheet's edge.
+private struct SheetRim: View {
+    var body: some View {
+        RoundedRectangle(cornerRadius: sheetCornerRadius, style: .continuous)
+            .strokeBorder(LinearGradient(gradient: Gradient(stops: [
+                .init(color: Color.white.opacity(0.7), location: 0),
+                .init(color: Color.white.opacity(0.25), location: 0.12),
+                .init(color: Color.white.opacity(0.06), location: 0.3),
+                .init(color: Color.white.opacity(0.04), location: 0.7),
+                .init(color: Color.white.opacity(0.18), location: 0.88),
+                .init(color: Color.white.opacity(0.45), location: 1),
+            ]), startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 1.5)
+            .ignoresSafeArea()
+            .allowsHitTesting(false)
+    }
+}
+
+/// The web cards: a 10% white wash with a 15% white edge, 16 pt corners.
+private struct CardSurface: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(ink(0.1)))
+            .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).strokeBorder(ink(0.15), lineWidth: 1))
+    }
+}
+
+/// The web skin's glass controls (app/liquid-glass.css): a frosted 10% white
+/// fill, a lit body, a light-catching rim and a soft lift.
+private struct WebGlass<S: InsettableShape>: ViewModifier {
+    let shape: S
+
+    private static var rim: LinearGradient {
+        LinearGradient(gradient: Gradient(stops: [
+            .init(color: Color.white.opacity(0.95), location: 0),
+            .init(color: Color.white.opacity(0.5), location: 0.16),
+            .init(color: Color.white.opacity(0.1), location: 0.38),
+            .init(color: Color.white.opacity(0.06), location: 0.62),
+            .init(color: Color.white.opacity(0.35), location: 0.84),
+            .init(color: Color.white.opacity(0.8), location: 1),
+        ]), startPoint: .topLeading, endPoint: .bottomTrailing)
+    }
+
+    private static var lit: LinearGradient {
+        LinearGradient(gradient: Gradient(stops: [
+            .init(color: Color.white.opacity(0.22), location: 0),
+            .init(color: Color.white.opacity(0.06), location: 0.42),
+            .init(color: Color.white.opacity(0), location: 0.62),
+            .init(color: Color.white.opacity(0.1), location: 1),
+        ]), startPoint: .top, endPoint: .bottom)
+    }
+
+    func body(content: Content) -> some View {
+        content
+            .background(
+                ZStack {
+                    shape.fill(.ultraThinMaterial)
+                    shape.fill(Color.white.opacity(0.1))
+                    shape.fill(Self.lit)
+                }
+                .shadow(color: Color.black.opacity(0.16), radius: 11, x: 0, y: 8)
+            )
+            .overlay(shape.strokeBorder(Self.rim, lineWidth: 1.5))
     }
 }
 

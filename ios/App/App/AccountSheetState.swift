@@ -171,6 +171,9 @@ final class AccountSheetModel: ObservableObject {
         }
     }
     @Published private(set) var avatar: UIImage? = nil
+    /// Pictures the web side drew for the sheet (the offline rows' flags,
+    /// "flag:us-1x1"), sent once each.
+    @Published private(set) var images: [String: UIImage] = [:]
     /// Where the sheet opens to: "notifications" scrolls down to that card.
     let focus: String?
 
@@ -188,15 +191,28 @@ final class AccountSheetModel: ObservableObject {
         onAction(type, value)
     }
 
+    /// Adds pictures sent as data URLs, keyed by name.
+    func addImages(_ links: [String: String]) {
+        var next = images
+        for (key, link) in links where next[key] == nil {
+            if let image = Self.image(fromDataURL: link) { next[key] = image }
+        }
+        if next.count != images.count { images = next }
+    }
+
+    static func image(fromDataURL link: String) -> UIImage? {
+        guard link.hasPrefix("data:"), let comma = link.firstIndex(of: ",") else { return nil }
+        let encoded = String(link[link.index(after: comma)...])
+        return Data(base64Encoded: encoded).flatMap { UIImage(data: $0) }
+    }
+
     private func loadAvatar() {
         guard let link = state.profile.avatar, !link.isEmpty else {
             avatar = nil
             return
         }
         if link.hasPrefix("data:") {
-            guard let comma = link.firstIndex(of: ",") else { return }
-            let encoded = String(link[link.index(after: comma)...])
-            avatar = Data(base64Encoded: encoded).flatMap { UIImage(data: $0) }
+            avatar = Self.image(fromDataURL: link)
             return
         }
         guard let url = URL(string: link) else { return }
@@ -326,10 +342,10 @@ extension AccountState {
                 ]
             ),
             offline: Offline(title: "Offline Mode", done: false, rows: [
-                .init(id: "en>es", flags: ["🇺🇸", "🇪🇸"], title: "English → Spanish", subtitle: "Downloading 42%…",
+                .init(id: "en>es", flags: ["flag:us-1x1", "flag:es-1x1"], title: "English → Spanish", subtitle: "Downloading 42%…",
                       tone: "muted", percent: 42, active: true,
                       actions: [.init(id: "pause", label: nil, disabled: false), .init(id: "cancel", label: nil, disabled: false)]),
-                .init(id: "en>fr", flags: ["🇺🇸", "🇫🇷"], title: "English → French", subtitle: "Downloaded · 186 MB",
+                .init(id: "en>fr", flags: ["flag:us-1x1", "flag:fr-1x1"], title: "English → French", subtitle: "Downloaded · 186 MB",
                       tone: "good", percent: nil, active: false,
                       actions: [.init(id: "remove", label: nil, disabled: false)]),
             ]),

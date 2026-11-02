@@ -95,7 +95,7 @@ private struct AvatarLayers: View {
                     .frame(width: d, height: d)
             } else {
                 Text(initials)
-                    .font(.system(size: d * 0.32, weight: .bold))
+                    .font(AppFont.font(d * 0.32, 700))
                     .foregroundColor(.white)
             }
         }
@@ -116,7 +116,7 @@ private struct AvatarLayers: View {
         let drop: CGFloat = d * 0.51
         let fill = LinearGradient(colors: [color, accent], startPoint: .topLeading, endPoint: .bottomTrailing)
         let number = Text(verbatim: String(level))
-            .font(.system(size: fontSize, weight: .heavy))
+            .font(AppFont.font(fontSize, 800))
             .monospacedDigit()
             .foregroundColor(Color.white)
         return number
@@ -849,7 +849,7 @@ private struct GlyphOrbit: View {
             ForEach(0..<Self.glyphs.count, id: \.self) { i in
                 let degrees = Double(i) * 45
                 Text(Self.glyphs[i])
-                    .font(.system(size: d * 0.13, weight: .heavy))
+                    .font(AppFont.font(d * 0.13, 800))
                     .foregroundColor(.white)
                     .shadow(color: Color(hex: "#5eead4"), radius: d * 0.039)
                     .shadow(color: Color(hex: "#a78bfa"), radius: d * 0.078)
