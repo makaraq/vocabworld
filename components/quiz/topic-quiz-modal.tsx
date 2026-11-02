@@ -1,5 +1,6 @@
 "use client"
 import { useState, useEffect, useCallback, useRef } from "react"
+import { awardXp } from "@/lib/leveling/engine"
 import { Icon } from "@iconify/react"
 import { hapticsSuccess, hapticsWarning, hapticsLight } from "@/lib/haptics"
 import { preloadSoundEffects, playCorrectSound, playWrongSound } from "@/lib/sound-effects"
@@ -48,6 +49,7 @@ export function TopicQuizModal({
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
   const [sessionState, setSessionState] = useState<SessionState>("loading")
   const [correctCount, setCorrectCount] = useState(0)
+  const missedRef = useRef(false)
   const [loadingOptions, setLoadingOptions] = useState(false)
   const [isPlayingAudio, setIsPlayingAudio] = useState(false)
   const [round, setRound] = useState(1)
@@ -129,6 +131,7 @@ export function TopicQuizModal({
         setCards(data.cards)
         setCurrentIndex(0)
         setCorrectCount(0)
+        missedRef.current = false
         setSelectedOption(null)
         setIsCorrect(null)
         setOptions([])
@@ -196,9 +199,11 @@ export function TopicQuizModal({
       hapticsSuccess()
       playCorrectSound()
       setCorrectCount((c) => c + 1)
+      awardXp(userId, "quiz_correct")
     } else {
       hapticsWarning()
       playWrongSound()
+      missedRef.current = true
     }
 
     setTimeout(() => {
@@ -207,6 +212,9 @@ export function TopicQuizModal({
         setSessionState("quiz")
       } else {
         setSessionState("complete")
+        // A round with no mistakes pays a bonus on top.
+        if (!missedRef.current && cards.length > 0) awardXp(userId, "quiz_perfect")
+        missedRef.current = false
       }
     }, 1000)
   }

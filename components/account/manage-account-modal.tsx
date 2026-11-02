@@ -12,6 +12,7 @@ import { OfflineDownloadsSection } from "@/components/offline/offline-downloads-
 import { HomeWidgetSection } from "@/components/account/home-widget-section"
 import { useT } from "@/components/providers/translation-provider"
 import { resolveAvatar } from "@/lib/avatars/smiley-avatar"
+import { LevelCard } from "@/components/leveling/level-card"
 import { ThemePicker } from "@/components/theme/theme-picker"
 import { canMorphFrom, morphPanelOpen, type PanelMorph } from "@/lib/morph-modal"
 import type { ThemeId } from "@/lib/themes"
@@ -28,6 +29,8 @@ interface ManageAccountModalProps {
   avatarUrl?: string
   // Seed for the generated smiley face; same seed the leaderboard draws from.
   avatarSeed?: string
+  // Whose level and border the top card shows (lib/leveling).
+  userId?: string | null
   isPremium?: boolean
   planType?: 'monthly' | 'yearly' | null
   renewalDate?: string
@@ -56,6 +59,7 @@ export function ManageAccountModal({
   email = "user@example.com",
   avatarUrl,
   avatarSeed,
+  userId,
   isPremium = false,
   planType = null,
   renewalDate,
@@ -443,24 +447,8 @@ export function ManageAccountModal({
           </div>
         ) : (
           <div ref={scrollRef} className="px-5 pb-8 space-y-3 overflow-y-auto max-h-[75vh]" style={{ overscrollBehaviorY: 'none' }}>
-            {/* Avatar + Name card */}
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/15 flex items-center space-x-4">
-              <div className="w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden border-2 border-white/20"
-                style={{ background: "linear-gradient(135deg, #7c3aed, #db2777)" }}
-              >
-                {avatar ? (
-                  <img src={avatar} alt="Avatar" className="w-full h-full object-cover rounded-full" />
-                ) : (
-                  <span className="text-white font-bold text-lg">{initials}</span>
-                )}
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-white font-semibold text-base truncate">{name}</p>
-                {email && email !== name && (
-                  <p className="text-white/55 text-sm truncate">{email}</p>
-                )}
-              </div>
-            </div>
+            {/* Avatar in its level border, title, level and XP */}
+            <LevelCard userId={userId} name={name} email={email} avatarSrc={avatar} initials={initials} />
 
             {/* Subscription card */}
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/15 space-y-3">

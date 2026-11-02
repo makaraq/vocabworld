@@ -7,6 +7,7 @@ import { DetailedProgressModal, prefetchDetailedProgress } from "./detailed-prog
 import { readCached, writeCached } from "@/lib/instant-cache"
 import { LeaderboardModal } from "@/components/leaderboard/leaderboard-modal"
 import { getFlagIcon } from "@/utils/flags"
+import { seedFromStats } from "@/lib/leveling/engine"
 import { reportProgress } from "@/lib/achievements/engine"
 import { useT } from "@/components/providers/translation-provider"
 
@@ -74,6 +75,13 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLa
             currentStreak: data.dailyLoginStreak,
             wordsToday: data.wordsLearnedToday,
             topicsCompleted: data.topicsCompleted,
+            targetLanguageCode,
+          })
+          // ⭐ First visit since levels: back-pay the XP this progress is worth.
+          seedFromStats(user.id, {
+            wordsLearned: data.wordsLearned,
+            topicsCompleted: data.topicsCompleted,
+            streak: data.dailyLoginStreak,
             targetLanguageCode,
           })
           fetch(`/api/leaderboard/rank?userId=${user.id}&targetLanguageCode=${targetLanguageCode}`)

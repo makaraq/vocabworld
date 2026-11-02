@@ -1,0 +1,531 @@
+/* ============================================================
+   Level borders (components/leveling/level-avatar.tsx)
+   Every length is in em: 1em = the avatar's diameter.
+   Animations move transform/opacity only, on their own layers.
+   ============================================================ */
+
+.lvl-av {
+  position: relative;
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+  isolation: isolate;
+  --c: #fff;
+  --a: #999;
+  --rw: 0.06em;
+}
+.lvl-av *,
+.lvl-av *::before,
+.lvl-av *::after { box-sizing: border-box; }
+.lvl-still *,
+.lvl-still *::before,
+.lvl-still *::after { animation-play-state: paused !important; }
+
+.lvl-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  z-index: 2;
+  background: linear-gradient(135deg, #7c3aed, #db2777);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 0 0.02em rgba(0, 0, 0, 0.25);
+}
+.lvl-face img { width: 100%; height: 100%; object-fit: cover; }
+.lvl-initials { color: #fff; font-weight: 700; font-size: 0.32em; }
+
+/* The ring: a disc masked down to its rim, so a rotating conic
+   gradient on it reads as light travelling round the metal. */
+.lvl-ring,
+.lvl-ring2 {
+  position: absolute;
+  inset: calc(var(--rw) * -1);
+  border-radius: 50%;
+  z-index: 3;
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - var(--rw) - 0.5px), #000 calc(100% - var(--rw)));
+  mask: radial-gradient(farthest-side, transparent calc(100% - var(--rw) - 0.5px), #000 calc(100% - var(--rw)));
+  will-change: transform;
+}
+.lvl-ring2 { display: none; }
+
+.lvl-pill {
+  position: absolute;
+  left: 50%;
+  bottom: -0.12em;
+  transform: translateX(-50%);
+  z-index: 8;
+  min-width: 0.36em;
+  height: 0.22em;
+  padding: 0 0.07em;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--c), var(--a));
+  box-shadow: 0 0.02em 0.06em rgba(0, 0, 0, 0.45), inset 0 0 0 0.012em rgba(255, 255, 255, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lvl-pill span {
+  font-size: 0.14em;
+  line-height: 1;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes lvl-spin { to { transform: rotate(360deg); } }
+@keyframes lvl-spin-rev { to { transform: rotate(-360deg); } }
+@keyframes lvl-pulse { 0%, 100% { opacity: 0.55; transform: scale(1); } 50% { opacity: 1; transform: scale(1.08); } }
+@keyframes lvl-twinkle { 0%, 100% { opacity: 0; transform: scale(0.2) rotate(0deg); } 50% { opacity: 1; transform: scale(1) rotate(90deg); } }
+@keyframes lvl-flicker {
+  0%, 100% { transform: rotate(calc(var(--i) * 360deg / var(--n))) translateY(-0.56em) scaleY(1); opacity: 0.9; }
+  50% { transform: rotate(calc(var(--i) * 360deg / var(--n))) translateY(-0.6em) scaleY(1.35) scaleX(0.85); opacity: 1; }
+}
+@keyframes lvl-float { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, -0.035em); } }
+@keyframes lvl-flap-l { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-9deg); } }
+@keyframes lvl-flap-r { 0%, 100% { transform: scaleX(-1) rotate(0deg); } 50% { transform: scaleX(-1) rotate(-9deg); } }
+
+/* 1 · Tourist — a plain glass rim. */
+.lvl-tourist { --rw: 0.045em; }
+.lvl-tourist .lvl-ring { background: rgba(255, 255, 255, 0.4); }
+
+/* 5 · Phrasebook Holder — bronze. */
+.lvl-phrasebook { --rw: 0.07em; }
+.lvl-phrasebook .lvl-ring {
+  background: conic-gradient(from 0deg, #7c2d12, #f59e0b, #fde68a, #b45309, #7c2d12, #d97706, #fcd34d, #92400e, #7c2d12);
+  animation: lvl-spin 9s linear infinite;
+}
+
+/* 10 · Backpacker — brushed silver with rivets. */
+.lvl-backpacker { --rw: 0.075em; }
+.lvl-backpacker .lvl-ring {
+  background: conic-gradient(#6b7280, #f9fafb, #9ca3af, #e5e7eb, #4b5563, #f3f4f6, #9ca3af, #6b7280);
+  animation: lvl-spin 7s linear infinite;
+}
+.lvl-studs i {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0.07em;
+  height: 0.07em;
+  margin: -0.035em;
+  border-radius: 50%;
+  z-index: 4;
+  background: radial-gradient(circle at 35% 35%, #fff, #9ca3af 60%, #374151);
+  transform: rotate(var(--d)) translateY(-0.535em);
+}
+
+/* 15 · Conversationalist — gold and a laurel. */
+.lvl-conversationalist { --rw: 0.08em; }
+.lvl-conversationalist .lvl-ring {
+  background: conic-gradient(#92400e, #facc15, #fffbeb, #f59e0b, #92400e, #fde047, #fff7c2, #d97706, #92400e);
+  animation: lvl-spin 5s linear infinite;
+  filter: drop-shadow(0 0 0.04em rgba(250, 204, 21, 0.6));
+}
+.lvl-laurel {
+  position: absolute;
+  inset: -0.2em;
+  width: 1.4em;
+  height: 1.4em;
+  z-index: 4;
+  overflow: visible;
+  filter: drop-shadow(0 0.01em 0.02em rgba(0, 0, 0, 0.5));
+}
+
+/* 20 · Wordsmith — emerald, double rim, four cut gems. */
+.lvl-wordsmith { --rw: 0.065em; }
+.lvl-wordsmith .lvl-ring {
+  background: conic-gradient(#064e3b, #34d399, #d1fae5, #059669, #064e3b, #6ee7b7, #ecfdf5, #047857, #064e3b);
+  animation: lvl-spin 6s linear infinite;
+}
+.lvl-wordsmith .lvl-ring2 {
+  display: block;
+  inset: -0.14em;
+  --rw: 0.025em;
+  background: conic-gradient(#a7f3d0, #059669, #a7f3d0, #059669, #a7f3d0);
+  animation: lvl-spin-rev 10s linear infinite;
+}
+.lvl-glow {
+  position: absolute;
+  inset: -0.22em;
+  border-radius: 50%;
+  z-index: 0;
+  background: radial-gradient(closest-side, var(--c) 0%, transparent 100%);
+  opacity: 0.6;
+  animation: lvl-pulse 2.6s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+.lvl-gems i {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0.12em;
+  height: 0.12em;
+  margin: -0.06em;
+  z-index: 5;
+  transform: rotate(var(--d)) translateY(-0.6em) rotate(45deg);
+  background: linear-gradient(135deg, #ecfdf5 0%, #34d399 40%, #065f46 100%);
+  box-shadow: 0 0 0.05em #34d399, inset 0 0 0 0.008em rgba(255, 255, 255, 0.8);
+}
+
+/* 25 · Interpreter — sapphire with a dashed orbit and two sparks. */
+.lvl-interpreter { --rw: 0.07em; }
+.lvl-interpreter .lvl-ring {
+  background: conic-gradient(#1e3a8a, #60a5fa, #dbeafe, #2563eb, #1e3a8a, #93c5fd, #eff6ff, #1d4ed8, #1e3a8a);
+  animation: lvl-spin 5s linear infinite;
+}
+.lvl-orbit-dash {
+  position: absolute;
+  inset: -0.2em;
+  width: 1.4em;
+  height: 1.4em;
+  z-index: 1;
+  overflow: visible;
+  animation: lvl-spin 14s linear infinite;
+}
+.lvl-orbit-dash circle { fill: none; stroke: #93c5fd; stroke-width: 1.2; stroke-dasharray: 2 5; stroke-linecap: round; opacity: 0.8; }
+.lvl-spark-orbit {
+  position: absolute;
+  inset: -0.2em;
+  z-index: 5;
+  animation: lvl-spin 3.2s linear infinite;
+}
+.lvl-spark-orbit i {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 0.07em;
+  height: 0.07em;
+  margin-left: -0.035em;
+  margin-top: -0.035em;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0.04em #fff, 0 0 0.1em #60a5fa, 0 0 0.18em #2563eb;
+}
+.lvl-spark-orbit i + i { top: auto; bottom: 0; margin-top: 0; margin-bottom: -0.035em; width: 0.05em; height: 0.05em; }
+
+/* 30 · Storyteller — amethyst crystals turning slowly. */
+.lvl-storyteller { --rw: 0.075em; }
+.lvl-storyteller .lvl-ring {
+  background: conic-gradient(#4c1d95, #c084fc, #f5d0fe, #7c3aed, #4c1d95, #e9d5ff, #a855f7, #4c1d95);
+  animation: lvl-spin 6s linear infinite;
+}
+.lvl-shards {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  animation: lvl-spin 22s linear infinite;
+}
+.lvl-shards i {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0.09em;
+  height: 0.2em;
+  margin-left: -0.045em;
+  margin-top: -0.1em;
+  transform: rotate(var(--d)) translateY(-0.6em);
+  clip-path: polygon(50% 0, 100% 35%, 70% 100%, 30% 100%, 0 35%);
+  background: linear-gradient(180deg, #faf5ff, #c084fc 45%, #6d28d9);
+}
+.lvl-shards i:nth-child(even) { height: 0.14em; margin-top: -0.07em; transform: rotate(var(--d)) translateY(-0.57em); }
+
+/* 40 · Polyglot — a ruby ring on fire. */
+.lvl-polyglot { --rw: 0.075em; }
+.lvl-polyglot .lvl-ring {
+  background: conic-gradient(#7f1d1d, #f43f5e, #fed7aa, #e11d48, #7f1d1d, #fb923c, #fef3c7, #be123c, #7f1d1d);
+  animation: lvl-spin 2.6s linear infinite;
+}
+.lvl-flames { position: absolute; inset: 0; z-index: 1; }
+.lvl-flames span {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0.15em;
+  height: 0.27em;
+  margin-left: -0.075em;
+  margin-top: -0.135em;
+  border-radius: 50% 50% 40% 40% / 70% 70% 30% 30%;
+  background: radial-gradient(ellipse at 50% 85%, #fffbeb 0%, #fde047 22%, #fb923c 50%, #e11d48 80%, transparent 100%);
+  transform-origin: 50% 50%;
+  animation: lvl-flicker calc(0.5s + var(--i) * 0.037s) ease-in-out infinite;
+  animation-delay: calc(var(--i) * -0.11s);
+  filter: blur(0.006em);
+  will-change: transform;
+}
+
+/* 50 · Linguist — prismatic, holographic, sparkling. */
+.lvl-linguist { --rw: 0.075em; }
+.lvl-linguist .lvl-ring {
+  background: conic-gradient(#f472b6, #fb923c, #facc15, #4ade80, #22d3ee, #818cf8, #e879f9, #f472b6);
+  animation: lvl-spin 3s linear infinite;
+}
+.lvl-prism {
+  position: absolute;
+  inset: -0.16em;
+  border-radius: 50%;
+  z-index: 0;
+  background: conic-gradient(#f472b6, #fb923c, #facc15, #4ade80, #22d3ee, #818cf8, #e879f9, #f472b6);
+  filter: blur(0.08em);
+  opacity: 0.75;
+  animation: lvl-spin-rev 5s linear infinite;
+  will-change: transform;
+}
+.lvl-sparkles { position: absolute; inset: -0.1em; z-index: 6; pointer-events: none; }
+.lvl-sparkles svg {
+  position: absolute;
+  width: 0.16em;
+  height: 0.16em;
+  margin: -0.08em;
+  fill: #fff;
+  filter: drop-shadow(0 0 0.03em #fff);
+  animation: lvl-twinkle 2.1s ease-in-out infinite;
+}
+
+/* 60 · Lexicon Lord — aurora and the world's scripts in orbit. */
+.lvl-lexicon { --rw: 0.07em; }
+.lvl-lexicon .lvl-ring {
+  background: conic-gradient(#0f766e, #5eead4, #ede9fe, #a78bfa, #0f766e, #99f6e4, #c4b5fd, #0f766e);
+  animation: lvl-spin 4s linear infinite;
+}
+.lvl-aurora {
+  position: absolute;
+  inset: -0.26em;
+  border-radius: 50%;
+  z-index: 0;
+  filter: blur(0.09em);
+  will-change: transform;
+}
+.lvl-aurora-a {
+  background: conic-gradient(from 0deg, transparent 0 10%, #2dd4bf 25%, transparent 40% 60%, #a78bfa 75%, transparent 90%);
+  animation: lvl-spin 6s linear infinite;
+}
+.lvl-aurora-b {
+  inset: -0.2em;
+  background: conic-gradient(from 90deg, transparent 0 15%, #22d3ee 30%, transparent 45% 65%, #f0abfc 80%, transparent 95%);
+  animation: lvl-spin-rev 8s linear infinite;
+}
+.lvl-glyphs {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  animation: lvl-spin 18s linear infinite;
+}
+.lvl-glyphs span {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  transform: rotate(var(--d)) translateY(-0.68em);
+}
+.lvl-glyphs b {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%) rotate(calc(var(--d) * -1));
+  font-size: 0.13em;
+  font-weight: 800;
+  line-height: 1;
+  color: #fff;
+  text-shadow: 0 0 0.3em #5eead4, 0 0 0.6em #a78bfa;
+}
+
+/* 75 · Babel Breaker — a galaxy with planets on tilted orbits. */
+.lvl-babel { --rw: 0.07em; }
+.lvl-babel .lvl-ring {
+  background: conic-gradient(#312e81, #a5b4fc, #fbcfe8, #6366f1, #312e81, #f472b6, #e0e7ff, #4338ca, #312e81);
+  animation: lvl-spin 4s linear infinite;
+}
+.lvl-cosmos {
+  position: absolute;
+  inset: -0.22em;
+  border-radius: 50%;
+  z-index: 0;
+  background:
+    radial-gradient(0.012em 0.012em at 20% 30%, #fff 99%, transparent),
+    radial-gradient(0.01em 0.01em at 70% 18%, #fff 99%, transparent),
+    radial-gradient(0.014em 0.014em at 84% 64%, #fff 99%, transparent),
+    radial-gradient(0.01em 0.01em at 30% 82%, #fff 99%, transparent),
+    radial-gradient(0.012em 0.012em at 56% 92%, #fbcfe8 99%, transparent),
+    radial-gradient(0.01em 0.01em at 10% 56%, #c7d2fe 99%, transparent),
+    radial-gradient(0.012em 0.012em at 92% 40%, #fff 99%, transparent),
+    radial-gradient(0.01em 0.01em at 44% 8%, #c7d2fe 99%, transparent),
+    conic-gradient(from 0deg, rgba(99, 102, 241, 0.55), rgba(236, 72, 153, 0.45), rgba(30, 27, 75, 0.2), rgba(99, 102, 241, 0.55)),
+    radial-gradient(closest-side, #1e1b4b 55%, rgba(30, 27, 75, 0) 100%);
+  animation: lvl-spin 30s linear infinite;
+  will-change: transform;
+}
+.lvl-planet-orbit {
+  position: absolute;
+  inset: -0.2em;
+  z-index: 5;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+.lvl-po-a { transform: rotate(-24deg) rotateX(72deg); }
+.lvl-po-b { inset: -0.3em; transform: rotate(30deg) rotateX(76deg); }
+.lvl-planet-orbit > div {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 0.008em solid rgba(199, 210, 254, 0.55);
+  animation: lvl-spin 4s linear infinite;
+}
+.lvl-po-b > div { animation-duration: 6.5s; animation-direction: reverse; }
+.lvl-planet-orbit i {
+  position: absolute;
+  left: 50%;
+  top: -0.05em;
+  width: 0.1em;
+  height: 0.1em;
+  margin-left: -0.05em;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #fff, #f472b6 50%, #831843);
+  box-shadow: 0 0 0.08em #f472b6;
+  transform: rotateX(-72deg);
+}
+.lvl-po-b i { background: radial-gradient(circle at 30% 30%, #fff, #818cf8 50%, #312e81); box-shadow: 0 0 0.08em #818cf8; width: 0.075em; height: 0.075em; }
+
+/* 90 · Tongue of Ages — divine: rays, wings, halo. */
+.lvl-ages { --rw: 0.07em; }
+.lvl-ages .lvl-ring {
+  background: conic-gradient(#92400e, #fde68a, #fffbeb, #f59e0b, #92400e, #fef3c7, #fbbf24, #92400e);
+  animation: lvl-spin 4s linear infinite;
+}
+.lvl-ages .lvl-ring2,
+.lvl-omniglot .lvl-ring2 {
+  display: block;
+  inset: -0.13em;
+  --rw: 0.02em;
+  background: conic-gradient(#fffbeb, #fbbf24, #fffbeb, #fbbf24, #fffbeb);
+  animation: lvl-spin-rev 8s linear infinite;
+}
+.lvl-rays {
+  position: absolute;
+  inset: -0.45em;
+  border-radius: 50%;
+  z-index: 0;
+  background: repeating-conic-gradient(from 0deg, rgba(253, 230, 138, 0.85) 0deg 6deg, transparent 6deg 18deg);
+  -webkit-mask: radial-gradient(closest-side, #000 30%, transparent 100%);
+  mask: radial-gradient(closest-side, #000 30%, transparent 100%);
+  animation: lvl-spin 26s linear infinite;
+  will-change: transform;
+}
+.lvl-wing {
+  position: absolute;
+  top: -0.05em;
+  width: 0.5em;
+  height: 1em;
+  z-index: 1;
+  overflow: visible;
+  filter: drop-shadow(0 0 0.04em rgba(251, 191, 36, 0.7));
+}
+.lvl-wing-l { left: -0.42em; transform-origin: 100% 55%; animation: lvl-flap-l 2.4s ease-in-out infinite; }
+.lvl-wing-r { right: -0.42em; transform-origin: 0% 55%; transform: scaleX(-1); animation: lvl-flap-r 2.4s ease-in-out infinite; }
+.lvl-halo {
+  position: absolute;
+  left: 50%;
+  top: -0.2em;
+  width: 0.62em;
+  height: 0.14em;
+  border-radius: 50%;
+  z-index: 7;
+  border: 0.035em solid #fde68a;
+  box-shadow: 0 0 0.06em #fbbf24, inset 0 0 0.04em #fbbf24;
+  transform: translateX(-50%);
+  animation: lvl-float 2.4s ease-in-out infinite;
+}
+
+/* 100 · Omniglot — everything at once. */
+.lvl-omniglot { --rw: 0.08em; }
+.lvl-omniglot .lvl-ring {
+  background: conic-gradient(#f472b6, #fb923c, #fde047, #4ade80, #22d3ee, #818cf8, #e879f9, #f472b6);
+  animation: lvl-spin 2.2s linear infinite;
+}
+.lvl-rays-rainbow {
+  inset: -0.55em;
+  background: repeating-conic-gradient(from 0deg, rgba(244, 114, 182, 0.8) 0deg 5deg, transparent 5deg 15deg, rgba(34, 211, 238, 0.8) 15deg 20deg, transparent 20deg 30deg, rgba(253, 224, 71, 0.8) 30deg 35deg, transparent 35deg 45deg);
+  animation-duration: 18s;
+}
+.lvl-aura {
+  position: absolute;
+  inset: -0.2em;
+  border-radius: 50%;
+  z-index: 0;
+  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.95), rgba(244, 114, 182, 0.5) 60%, transparent);
+  animation: lvl-pulse 1.8s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+.lvl-omniglot .lvl-wing { top: 0.02em; }
+.lvl-omniglot .lvl-glyphs { animation-duration: 12s; }
+.lvl-omniglot .lvl-glyphs span { transform: rotate(var(--d)) translateY(-0.74em); }
+.lvl-crown {
+  position: absolute;
+  left: 50%;
+  top: -0.36em;
+  width: 0.46em;
+  height: 0.31em;
+  z-index: 9;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 0.02em 0.04em rgba(0, 0, 0, 0.5)) drop-shadow(0 0 0.05em #facc15);
+  animation: lvl-float 2s ease-in-out infinite;
+}
+
+/* ============================================================
+   XP bar shimmer + level-up overlay (components/leveling/*)
+   ============================================================ */
+
+.lvl-bar-fill { position: relative; overflow: hidden; }
+.lvl-bar-fill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.55) 50%, transparent 80%);
+  transform: translateX(-100%);
+  animation: lvl-shine 2.4s ease-in-out infinite;
+}
+@keyframes lvl-shine { 60%, 100% { transform: translateX(100%); } }
+
+@keyframes lvl-toast-in {
+  0% { opacity: 0; transform: translate(-50%, -16px) scale(0.7); }
+  60% { opacity: 1; transform: translate(-50%, 2px) scale(1.06); }
+  100% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+@keyframes lvl-toast-out { to { opacity: 0; transform: translate(-50%, -12px) scale(0.9); } }
+@keyframes lvl-bump { 0% { transform: scale(1); } 35% { transform: scale(1.3); } 100% { transform: scale(1); } }
+@keyframes lvl-float-up {
+  0% { opacity: 0; transform: translate(-50%, 0) scale(0.6); }
+  20% { opacity: 1; transform: translate(-50%, -8px) scale(1.1); }
+  100% { opacity: 0; transform: translate(-50%, -46px) scale(1); }
+}
+
+@keyframes lvl-fade { from { opacity: 0; } }
+@keyframes lvl-rays-in { from { opacity: 0; transform: scale(0.3) rotate(-60deg); } to { opacity: 1; transform: scale(1) rotate(0deg); } }
+@keyframes lvl-shock { from { opacity: 0.9; transform: translate(-50%, -50%) scale(0.2); } to { opacity: 0; transform: translate(-50%, -50%) scale(3.2); } }
+@keyframes lvl-hero-in {
+  0% { opacity: 0; transform: scale(0.2) rotate(-25deg); }
+  55% { opacity: 1; transform: scale(1.18) rotate(6deg); }
+  75% { transform: scale(0.95) rotate(-2deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+@keyframes lvl-flash { 0% { opacity: 0; } 15% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes lvl-letter {
+  0% { opacity: 0; transform: translateY(-60px) scale(2) rotate(-20deg); }
+  60% { opacity: 1; transform: translateY(6px) scale(0.92) rotate(3deg); }
+  100% { opacity: 1; transform: translateY(0) scale(1) rotate(0); }
+}
+@keyframes lvl-rise { from { opacity: 0; transform: translateY(24px) scale(0.92); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes lvl-num-pop { 0% { transform: scale(1); } 40% { transform: scale(1.45); } 100% { transform: scale(1); } }
+@keyframes lvl-text-shine { to { background-position: 200% center; } }
+
+.lvl-shiny-text {
+  background: linear-gradient(90deg, var(--c, #fff) 0%, #fff 25%, var(--a, #fff) 50%, #fff 75%, var(--c, #fff) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: lvl-text-shine 2.5s linear infinite;
+}

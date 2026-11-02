@@ -14,7 +14,8 @@ import { idbGet, idbPut } from "@/lib/offline/offline-storage"
 import { normalizeLangParam, vocabKey } from "@/lib/offline/offline-manager"
 import { PlaylistSelectModal } from "@/components/learning/search-word-learning"
 import { ManageAccountModal } from "@/components/account/manage-account-modal"
-import { avatarSeedFor } from "@/lib/avatars/smiley-avatar"
+import { avatarSeedFor, resolveAvatar } from "@/lib/avatars/smiley-avatar"
+import { awardWordXp, awardXp, setLevelUser } from "@/lib/leveling/engine"
 import { useNotifications } from "@/hooks/use-notifications"
 import { NotificationPromptModal } from "@/components/notifications/notification-prompt-modal"
 import { CoachMarkOverlay, type CoachMarkStep } from "@/components/tutorial/coach-mark-overlay"
@@ -2000,6 +2001,15 @@ export function LanguageSelector() {
                         targetLanguageCode: userTargetLangCode || undefined,
                       });
                       evaluateTimeContext(userId);
+                      // ⭐ XP: the word, plus the first-of-day and daily-goal bonuses.
+                      awardWordXp(userId, {
+                        streak: data.stats.dailyLoginStreak,
+                        wordsToday: data.stats.wordsLearnedToday,
+                        targetLanguageCode: userTargetLangCode || undefined,
+                      });
+                    } else {
+                      // A word already learned, heard again: a little XP, capped per day.
+                      awardXp(userId, 'word_repeat');
                     }
 
                     if (data.topicCompletionCounts) {
@@ -2020,6 +2030,7 @@ export function LanguageSelector() {
                           const newId = fresh[fresh.length - 1];
                           const finished = topicsRef.current.find((t) => t.id === newId);
                           if (finished) {
+                            awardXp(userId, 'topic');
                             // Stop the autoplay loop so the modal isn't drowned
                             // out by the next word starting to play.
                             try { stopAudioRef.current?.(); } catch {}
@@ -2549,6 +2560,15 @@ export function LanguageSelector() {
   // The actual celebration modal is fired from the audio-track callback so
   // it never pops on initial page load.
   const { registerTopicChoiceHandler } = useAchievementContext()
+  // ⭐ Who's earning XP, and the face the level-up screen shows.
+  useEffect(() => {
+    if (!user?.id) { setLevelUser(null); return }
+    const name: string = user.user_metadata?.full_name || user.user_metadata?.name || user.email || ''
+    setLevelUser(user.id, {
+      src: resolveAvatar(user.user_metadata?.avatar_url || user.user_metadata?.picture, avatarSeedFor(user.id)),
+      initials: name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2),
+    }, { sync: true })
+  }, [user?.id, user?.user_metadata?.avatar_url, user?.user_metadata?.picture])
   useEffect(() => {
     reportProgress({
       userId: user?.id || null,
@@ -6362,6 +6382,7 @@ export function LanguageSelector() {
         email={user?.email || ''}
         avatarUrl={user?.user_metadata?.avatar_url || user?.user_metadata?.picture}
         avatarSeed={user?.id ? avatarSeedFor(user.id) : undefined}
+        userId={user?.id ?? null}
         isPremium={isPremium}
         planType={subscriptionStatus?.subscription?.planType ?? null}
         renewalDate={

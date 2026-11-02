@@ -12,6 +12,7 @@ import { themeBootScript } from "@/lib/themes"
 import "./globals.css"
 import "./liquid-glass.css"
 import "./themes.css"
+import "./leveling.css"
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],

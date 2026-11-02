@@ -1,5 +1,6 @@
 "use client"
 import { useState, useEffect, useCallback, useRef } from "react"
+import { awardXp } from "@/lib/leveling/engine"
 import { hapticsSuccess, hapticsWarning, hapticsLight } from "@/lib/haptics"
 import { preloadSoundEffects, playCorrectSound, playWrongSound } from "@/lib/sound-effects"
 import { Rating } from "@/lib/sr/fsrs"
@@ -199,9 +200,11 @@ export function ReviewQuizModal({
       hapticsSuccess()
       playCorrectSound()
       setCorrectCount((c) => c + 1)
+      awardXp(userId, "review_correct")
     } else {
       hapticsWarning()
       playWrongSound()
+      awardXp(userId, "review_miss")
     }
 
     const rating = correct ? Rating.Good : Rating.Again

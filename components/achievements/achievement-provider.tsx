@@ -18,6 +18,8 @@ import {
 } from '@/lib/achievements/engine'
 import { TopicCompleteModal } from './topic-complete-modal'
 import { BadgesModal } from './badges-modal'
+import { LevelOverlays } from '@/components/leveling/level-overlays'
+import { startBadgeXpBridge } from '@/lib/leveling/engine'
 
 type TopicChoiceHandler = (
   topicId: number,
@@ -48,6 +50,8 @@ export function AchievementProvider({ children }: { children: ReactNode }) {
   const handlerRef = useRef<TopicChoiceHandler | null>(null)
 
   useEffect(() => setMounted(true), [])
+  // Badges pay XP by tier (lib/leveling/engine.ts).
+  useEffect(() => startBadgeXpBridge(), [])
 
   // Subscribe to topic-complete events.
   useEffect(() => {
@@ -142,6 +146,7 @@ export function AchievementProvider({ children }: { children: ReactNode }) {
     <AchievementContext.Provider value={{ registerTopicChoiceHandler }}>
       {children}
       {overlays}
+      <LevelOverlays />
     </AchievementContext.Provider>
   )
 }
