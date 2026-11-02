@@ -185,9 +185,8 @@ final class AccountSheetModel: ObservableObject {
     var onManageSubscriptions: () -> Void = {}
     /// The sheet has animated away and can come off the screen.
     var onFinished: () -> Void = {}
-
-    /// The CI check's slowed-down opening (-SprindAccountDemoSlow).
-    static var slowMotion = false
+    /// The sheet is on screen and starting to open.
+    var onAppear: () -> Void = {}
 
     /// Animates the sheet away (AccountSheetHost watches `closing`).
     func close() {

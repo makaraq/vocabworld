@@ -1366,9 +1366,6 @@ struct AccountSheetHost: View {
     @State private var drag: CGFloat = 0
     @State private var leaving = false
 
-    /// The CI check's slowed-down opening.
-    private var pace: Double { AccountSheetModel.slowMotion ? 10 : 1 }
-
     /// The web sheet's height: its 78 pt header over a scroller capped at 75%
     /// of the screen, and never over 85% (795 pt on a Pro Max).
     static func panelFrame(in screen: CGSize) -> CGRect {
@@ -1388,8 +1385,9 @@ struct AccountSheetHost: View {
         }
         .ignoresSafeArea()
         .onAppear {
+            model.onAppear()
             DispatchQueue.main.async {
-                withAnimation(.spring(response: 0.55 * pace, dampingFraction: 0.84)) { open = true }
+                withAnimation(.spring(response: 0.55, dampingFraction: 0.84)) { open = true }
             }
         }
         .onChange(of: model.closing) { closing in
@@ -1498,7 +1496,7 @@ struct AccountSheetHost: View {
 
     private func slideAway(_ panel: CGRect) {
         leaving = true
-        let duration = 0.3 * pace
+        let duration = 0.3
         withAnimation(.easeOut(duration: duration)) { drag = panel.height + 40 }
         DispatchQueue.main.asyncAfter(deadline: .now() + duration) { model.onFinished() }
     }
@@ -1507,7 +1505,7 @@ struct AccountSheetHost: View {
     private func animateAway() {
         guard !leaving else { return }
         leaving = true
-        let duration = 0.42 * pace
+        let duration = 0.42
         withAnimation(.easeInOut(duration: duration)) { open = false }
         DispatchQueue.main.asyncAfter(deadline: .now() + duration) { model.onFinished() }
     }

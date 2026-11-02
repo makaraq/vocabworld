@@ -217,8 +217,8 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
     #if DEBUG
     /// For the CI check's simulator screenshots: -SprindAccountDemo opens the
     /// sheet with made-up state (-SprindAccountDemoLevel picks the level,
-    /// -SprindAccountDemoSlow plays its opening ten times slower),
-    /// -SprindBorderGallery shows every border.
+    /// -SprindAccountDemoFrames records its opening as pictures in
+    /// Documents/frames), -SprindBorderGallery shows every border.
     func runDemoIfAsked() {
         let args = ProcessInfo.processInfo.arguments
         if args.contains("-SprindBorderGallery") {
@@ -235,11 +235,37 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
            let asked = Int(args[index + 1]) {
             level = asked
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            AccountSheetModel.slowMotion = args.contains("-SprindAccountDemoSlow")
+        // After the launch screen (2 s) has gone and the page has painted:
+        // the sheet's glass is made from it.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
             let size = self.bridge?.viewController?.view.bounds.size ?? CGSize(width: 400, height: 800)
             let button = CGRect(x: size.width - 64, y: 60, width: 44, height: 44)
             self.show(state: .demo(level: level), focus: nil, source: button)
+            if args.contains("-SprindAccountDemoFrames") {
+                self.model?.onAppear = { [weak self] in self?.recordFrames() }
+            }
+        }
+    }
+
+    /// Pictures of the screen every 40 ms for the first 0.8 s of the opening,
+    /// a third of full size, for the CI check to see the morph.
+    private func recordFrames() {
+        guard let window = bridge?.viewController?.view.window,
+              let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+        let folder = documents.appendingPathComponent("frames")
+        try? FileManager.default.removeItem(at: folder)
+        try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        var count = 0
+        Timer.scheduledTimer(withTimeInterval: 0.04, repeats: true) { timer in
+            let image = UIGraphicsImageRenderer(bounds: window.bounds, format: format).image { _ in
+                _ = window.drawHierarchy(in: window.bounds, afterScreenUpdates: false)
+            }
+            let name = String(format: "frame-%02d.png", count)
+            try? image.pngData()?.write(to: folder.appendingPathComponent(name))
+            count += 1
+            if count >= 20 { timer.invalidate() }
         }
     }
     #endif
@@ -255,7 +281,10 @@ struct SheetGlass {
     let sheet: UIImage
 
     static func make(from page: CGImage, scale: CGFloat) -> SheetGlass? {
-        let context = CIContext()
+        // Browsers composite and filter CSS in plain sRGB values, not linear
+        // light: work in the snapshot's own values so 50% black means half.
+        let context = CIContext(options: [.workingColorSpace: NSNull()])
+        let space = page.colorSpace ?? CGColorSpace(name: CGColorSpace.sRGB)!
         let input = CIImage(cgImage: page).transformed(by: CGAffineTransform(scaleX: 1 / scale, y: 1 / scale))
         let extent = input.extent
         let half = input.applyingFilter("CIColorMatrix", parameters: [
@@ -268,8 +297,9 @@ struct SheetGlass {
         let glass = backdrop
             .applyingGaussianBlur(sigma: 12)
             .applyingFilter("CIColorControls", parameters: [kCIInputSaturationKey: 1.2])
-        guard let backdropImage = context.createCGImage(backdrop.cropped(to: extent), from: extent),
-              let glassImage = context.createCGImage(glass.cropped(to: extent), from: extent) else { return nil }
+        guard let backdropImage = context.createCGImage(backdrop.cropped(to: extent), from: extent, format: .RGBA8, colorSpace: space),
+              let glassImage = context.createCGImage(glass.cropped(to: extent), from: extent, format: .RGBA8, colorSpace: space)
+        else { return nil }
         return SheetGlass(
             backdrop: UIImage(cgImage: backdropImage, scale: 1, orientation: .up),
             sheet: UIImage(cgImage: glassImage, scale: 1, orientation: .up)
