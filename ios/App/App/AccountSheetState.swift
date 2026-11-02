@@ -174,12 +174,25 @@ final class AccountSheetModel: ObservableObject {
     /// Pictures the web side drew for the sheet (the offline rows' flags,
     /// "flag:us-1x1"), sent once each.
     @Published private(set) var images: [String: UIImage] = [:]
+    /// What the web sheet's CSS makes of the page behind it (nil: solid).
+    @Published var glass: SheetGlass? = nil
+    /// Set once the sheet starts animating away.
+    @Published private(set) var closing = false
     /// Where the sheet opens to: "notifications" scrolls down to that card.
     let focus: String?
 
     var onAction: (String, String?) -> Void = { _, _ in }
-    var onClose: () -> Void = {}
     var onManageSubscriptions: () -> Void = {}
+    /// The sheet has animated away and can come off the screen.
+    var onFinished: () -> Void = {}
+
+    /// The CI check's slowed-down opening (-SprindAccountDemoSlow).
+    static var slowMotion = false
+
+    /// Animates the sheet away (AccountSheetHost watches `closing`).
+    func close() {
+        closing = true
+    }
 
     init(state: AccountState, focus: String?) {
         self.state = state

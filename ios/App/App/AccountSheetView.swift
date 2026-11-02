@@ -140,8 +140,6 @@ struct AccountSheetView: View {
             .frame(maxHeight: .infinity, alignment: .top)
         }
         .foregroundColor(ink())
-        .background(SheetSurface())
-        .overlay(SheetRim())
     }
 
     private var header: some View {
@@ -152,7 +150,7 @@ struct AccountSheetView: View {
             Spacer()
             Button {
                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                model.onClose()
+                model.close()
             } label: {
                 SolarIcon("close-circle-bold", 20)
                     .foregroundColor(ink(0.7))
@@ -1352,46 +1350,192 @@ private func markup(_ source: String) -> Text {
 /// The web skin's sheet corner (--lg-radius-sheet).
 let sheetCornerRadius: CGFloat = 38
 
-/// The web sheet's glass (app/liquid-glass.css, bottom sheets): the blurred
-/// page behind it, a white wash, and a sheen lit from the top left. The page
-/// behind is dimmed by the plugin's backdrop, as the web sheet's is.
-private struct SheetSurface: View {
-    @Environment(\.colorScheme) private var scheme
+/// The whole sheet as the web draws it (manage-account-modal.tsx under
+/// app/liquid-glass.css): the page dimmed and blurred behind it, the panel
+/// inset 8 pt from the screen's edges with 38 pt corners, its glass made from
+/// the page with the web's own CSS numbers (SheetGlass), a white wash, a sheen
+/// and a lit rim. It opens out of the button it came from, the glass growing
+/// from the button while the contents stay still (as lib/morph-modal.ts does),
+/// or slides up; dragged down by its top, it slides away.
+struct AccountSheetHost: View {
+    @ObservedObject var model: AccountSheetModel
+    /// The button it opened from, in screen points.
+    let source: CGRect?
+
+    @State private var open = false
+    @State private var drag: CGFloat = 0
+    @State private var leaving = false
+
+    /// The CI check's slowed-down opening.
+    private var pace: Double { AccountSheetModel.slowMotion ? 10 : 1 }
+
+    /// The web sheet's height: its 78 pt header over a scroller capped at 75%
+    /// of the screen, and never over 85% (795 pt on a Pro Max).
+    static func panelFrame(in screen: CGSize) -> CGRect {
+        let height = min(screen.height * 0.75 + 78, screen.height * 0.85)
+        return CGRect(x: 8, y: screen.height - 8 - height, width: screen.width - 16, height: height)
+    }
 
     var body: some View {
-        ZStack {
-            if #available(iOS 26.0, *) {
-                // The sheet's own glass does the blurring.
-                Color.clear
-            } else {
-                Rectangle().fill(.ultraThinMaterial)
+        GeometryReader { geo in
+            let screen = geo.size
+            let panel = Self.panelFrame(in: screen)
+            ZStack(alignment: .topLeading) {
+                backdrop(screen)
+                panelView(panel, screen: screen)
             }
-            Color.white.opacity(scheme == .dark ? 0.1 : 0.35)
-            LinearGradient(gradient: Gradient(stops: [
+            .frame(width: screen.width, height: screen.height, alignment: .topLeading)
+        }
+        .ignoresSafeArea()
+        .onAppear {
+            DispatchQueue.main.async {
+                withAnimation(.spring(response: 0.55 * pace, dampingFraction: 0.84)) { open = true }
+            }
+        }
+        .onChange(of: model.closing) { closing in
+            if closing { animateAway() }
+        }
+    }
+
+    // The page behind, dimmed and blurred; a tap on it closes the sheet.
+    private func backdrop(_ screen: CGSize) -> some View {
+        let fade = 1 - min(max(drag, 0) / 400, 1)
+        return ZStack {
+            if let glass = model.glass {
+                Image(uiImage: glass.backdrop)
+                    .resizable()
+            } else {
+                Color.black.opacity(0.5)
+            }
+        }
+        .frame(width: screen.width, height: screen.height)
+        .opacity(open && !leaving ? fade : 0)
+        .contentShape(Rectangle())
+        .onTapGesture { model.close() }
+    }
+
+    private func panelView(_ panel: CGRect, screen: CGSize) -> some View {
+        let whole = CGRect(origin: .zero, size: panel.size)
+        let start = source.map { $0.offsetBy(dx: -panel.minX, dy: -panel.minY) }
+        let shape = MorphShape(
+            progress: open ? 1 : 0,
+            from: start ?? whole,
+            to: whole,
+            fromRadius: start.map { min($0.width, $0.height) / 2 } ?? sheetCornerRadius,
+            toRadius: sheetCornerRadius
+        )
+        // Without a button to open from, it slides up from below instead.
+        let slide: CGFloat = (start == nil && !open) ? panel.height + 16 : 0
+        let shift = slide + drag
+        return ZStack(alignment: .top) {
+            surface(panel, screen: screen, shift: shift)
+            AccountSheetView(model: model)
+                .opacity(open ? 1 : 0)
+        }
+        .frame(width: panel.width, height: panel.height)
+        .clipShape(shape)
+        .overlay(shape.stroke(Self.rim, lineWidth: 1.5).allowsHitTesting(false))
+        .offset(x: panel.minX, y: panel.minY + shift)
+        .gesture(dragToClose(panel))
+    }
+
+    /// The glass: what the web's CSS makes of the page behind (fixed to the
+    /// screen as the panel moves, as real glass would be), a 10% white wash
+    /// and a sheen lit from the top left.
+    private func surface(_ panel: CGRect, screen: CGSize, shift: CGFloat) -> some View {
+        Color.clear
+            .frame(width: panel.width, height: panel.height)
+            .overlay(alignment: .topLeading) {
+                if let glass = model.glass {
+                    Image(uiImage: glass.sheet)
+                        .resizable()
+                        .frame(width: screen.width, height: screen.height)
+                        .offset(x: -panel.minX, y: -(panel.minY + shift))
+                } else {
+                    // Reduce Transparency: the web sheet goes solid (--lg-solid).
+                    Color(red: 52 / 255, green: 30 / 255, blue: 22 / 255)
+                }
+            }
+            .overlay(Color.white.opacity(0.1))
+            .overlay(LinearGradient(gradient: Gradient(stops: [
                 .init(color: Color.white.opacity(0.14), location: 0),
                 .init(color: Color.white.opacity(0.03), location: 0.28),
                 .init(color: Color.white.opacity(0), location: 0.55),
                 .init(color: Color.white.opacity(0.05), location: 1),
-            ]), startPoint: UnitPoint(x: 0.33, y: 0), endPoint: UnitPoint(x: 0.67, y: 1))
-        }
-        .ignoresSafeArea()
+            ]), startPoint: UnitPoint(x: 0.33, y: 0), endPoint: UnitPoint(x: 0.67, y: 1)))
+    }
+
+    /// The light-catching rim round the web sheet's edge.
+    private static let rim = LinearGradient(gradient: Gradient(stops: [
+        .init(color: Color.white.opacity(0.7), location: 0),
+        .init(color: Color.white.opacity(0.25), location: 0.12),
+        .init(color: Color.white.opacity(0.06), location: 0.3),
+        .init(color: Color.white.opacity(0.04), location: 0.7),
+        .init(color: Color.white.opacity(0.18), location: 0.88),
+        .init(color: Color.white.opacity(0.45), location: 1),
+    ]), startPoint: .topLeading, endPoint: .bottomTrailing)
+
+    /// Dragged down by its handle and header it follows the finger; let go
+    /// far or fast enough, it slides away. Upwards it only gives a little.
+    private func dragToClose(_ panel: CGRect) -> some Gesture {
+        DragGesture(minimumDistance: 8)
+            .onChanged { value in
+                guard !leaving, value.startLocation.y < 80 else { return }
+                let dy = value.translation.height
+                drag = dy < 0 ? dy * 0.15 : dy
+            }
+            .onEnded { value in
+                guard !leaving, value.startLocation.y < 80 else { return }
+                let dy = value.translation.height
+                let flick = value.predictedEndTranslation.height - dy
+                if dy > 100 || flick > 120 {
+                    slideAway(panel)
+                } else {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) { drag = 0 }
+                }
+            }
+    }
+
+    private func slideAway(_ panel: CGRect) {
+        leaving = true
+        let duration = 0.3 * pace
+        withAnimation(.easeOut(duration: duration)) { drag = panel.height + 40 }
+        DispatchQueue.main.asyncAfter(deadline: .now() + duration) { model.onFinished() }
+    }
+
+    /// Back into the button it opened from (or down, without one).
+    private func animateAway() {
+        guard !leaving else { return }
+        leaving = true
+        let duration = 0.42 * pace
+        withAnimation(.easeInOut(duration: duration)) { open = false }
+        DispatchQueue.main.asyncAfter(deadline: .now() + duration) { model.onFinished() }
     }
 }
 
-/// The light-catching rim round the web sheet's edge.
-private struct SheetRim: View {
-    var body: some View {
-        RoundedRectangle(cornerRadius: sheetCornerRadius, style: .continuous)
-            .strokeBorder(LinearGradient(gradient: Gradient(stops: [
-                .init(color: Color.white.opacity(0.7), location: 0),
-                .init(color: Color.white.opacity(0.25), location: 0.12),
-                .init(color: Color.white.opacity(0.06), location: 0.3),
-                .init(color: Color.white.opacity(0.04), location: 0.7),
-                .init(color: Color.white.opacity(0.18), location: 0.88),
-                .init(color: Color.white.opacity(0.45), location: 1),
-            ]), startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 1.5)
-            .ignoresSafeArea()
-            .allowsHitTesting(false)
+/// A rounded rectangle on its way from one frame to another: from the button
+/// to the whole panel as `progress` goes from 0 to 1.
+private struct MorphShape: Shape {
+    var progress: CGFloat
+    let from: CGRect
+    let to: CGRect
+    let fromRadius: CGFloat
+    let toRadius: CGFloat
+
+    var animatableData: CGFloat {
+        get { progress }
+        set { progress = newValue }
+    }
+
+    func path(in _: CGRect) -> Path {
+        let p = min(max(progress, 0), 1.02)
+        let x = from.minX + (to.minX - from.minX) * p
+        let y = from.minY + (to.minY - from.minY) * p
+        let width = from.width + (to.width - from.width) * p
+        let height = from.height + (to.height - from.height) * p
+        let corner = fromRadius + (toRadius - fromRadius) * p
+        let rect = CGRect(x: x, y: y, width: max(width, 1), height: max(height, 1))
+        return Path(roundedRect: rect, cornerRadius: min(corner, min(rect.width, rect.height) / 2), style: .continuous)
     }
 }
 
