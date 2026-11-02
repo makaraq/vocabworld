@@ -171,8 +171,10 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
             done(nil)
             return
         }
+        // After screen updates: without them WebKit hands back only the web
+        // view's plain background colour, not the page painted on it.
         let config = WKSnapshotConfiguration()
-        config.afterScreenUpdates = false
+        config.afterScreenUpdates = true
         webView.takeSnapshot(with: config) { image, _ in
             guard let image, let page = image.cgImage else {
                 done(nil)
