@@ -1,8 +1,8 @@
 "use client"
 
 // The two moments XP shows itself while you learn:
-//   - XpToast: a small pill under the status bar, "+12 XP", that counts up as
-//     gains chain together, with the combo and streak multipliers beside it.
+//   - XpToast: a small pill under the status bar, "+340 XP · 50%", each time
+//     the level bar passes a quarter. Every gain in between stays quiet.
 //   - LevelUpOverlay: the full-screen celebration — rays, shockwaves, the
 //     letters of LEVEL UP dropping in, confetti, and when a new rank comes
 //     with it, the old border bursting into the new one and the new title.
@@ -20,8 +20,7 @@ import {
   type LevelUpEvent,
   type XpGain,
 } from "@/lib/leveling/engine"
-import { levelInfo, rankForLevel, type XpSource } from "@/lib/leveling/definitions"
-import type { UiKey } from "@/lib/i18n/ui-strings"
+import { levelInfo, rankForLevel } from "@/lib/leveling/definitions"
 import { LevelAvatar } from "./level-avatar"
 
 export function LevelOverlays() {
@@ -39,54 +38,51 @@ export function LevelOverlays() {
 
 // ── XP toast ─────────────────────────────────────────────────────────────────
 
-const SOURCE_LABEL: Partial<Record<XpSource, UiKey>> = {
-  first_word: "level.source.firstWord",
-  daily_goal: "level.source.dailyGoal",
-  topic: "level.source.topic",
-  quiz_perfect: "level.source.perfectQuiz",
-  badge: "level.source.badge",
-  language: "level.source.language",
+/** Which quarter of which level `xp` is in, as one count that only grows. */
+function quarterOf(xp: number): number {
+  const info = levelInfo(xp)
+  return (info.level - 1) * 4 + Math.min(3, Math.floor(info.progress * 4))
 }
 
 interface ToastState {
+  /** XP earned since the toast last showed. */
   total: number
-  combo: number
-  multiplier: number
-  label: string | null
   xp: number
   bump: number
-  floaters: { id: number; amount: number }[]
 }
 
 function XpToast() {
-  const { t } = useT()
+  const { uiLang } = useT()
   const [toast, setToast] = useState<ToastState | null>(null)
   const [leaving, setLeaving] = useState(false)
   const hideTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
   const goneTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
-  const floaterId = useRef(0)
+  const unshown = useRef({ userId: null as string | null, xp: 0 })
+  const bump = useRef(0)
 
   useEffect(() => {
     return subscribeXpGain((g: XpGain) => {
+      const u = unshown.current
+      if (u.userId !== g.userId) unshown.current = { userId: g.userId, xp: 0 }
+      unshown.current.xp += g.amount
+      // A full bar is the level-up overlay's moment; it starts the count over.
+      if (g.levelAfter > g.levelBefore) {
+        unshown.current.xp = 0
+        return
+      }
+      if (quarterOf(g.totalXp) <= quarterOf(g.totalXp - g.amount)) return
+      const total = unshown.current.xp
+      unshown.current.xp = 0
       clearTimeout(hideTimer.current)
       clearTimeout(goneTimer.current)
       setLeaving(false)
-      const id = ++floaterId.current
-      setToast((prev) => ({
-        total: (prev?.total ?? 0) + g.amount,
-        combo: g.combo,
-        multiplier: Math.max(g.multiplier, prev?.multiplier ?? 1),
-        label: SOURCE_LABEL[g.source] ? t(SOURCE_LABEL[g.source]!) : prev?.label ?? null,
-        xp: g.totalXp,
-        bump: (prev?.bump ?? 0) + 1,
-        floaters: [...(prev?.floaters ?? []).slice(-3), { id, amount: g.amount }],
-      }))
+      setToast({ total, xp: g.totalXp, bump: ++bump.current })
       hideTimer.current = setTimeout(() => {
         setLeaving(true)
         goneTimer.current = setTimeout(() => setToast(null), 260)
-      }, 1900)
+      }, 2200)
     })
-  }, [t])
+  }, [])
 
   useEffect(() => () => {
     clearTimeout(hideTimer.current)
@@ -96,6 +92,12 @@ function XpToast() {
   if (!toast) return null
   const info = levelInfo(toast.xp)
   const rank = rankForLevel(info.level)
+  // The quarter just passed: 25%, 50% or 75%, written the UI language's way.
+  const reached = Math.floor(info.progress * 4) / 4
+  let pct = `${Math.round(reached * 100)}%`
+  try {
+    pct = new Intl.NumberFormat(uiLang, { style: "percent" }).format(reached)
+  } catch {}
   return (
     <div
       className="fixed left-1/2 z-[70] pointer-events-none w-max max-w-[92vw]"
@@ -107,7 +109,7 @@ function XpToast() {
       }}
     >
       <div className="relative flex items-center gap-2 pl-1.5 pr-3 py-1.5 whitespace-nowrap rounded-full bg-black/55 backdrop-blur-xl border border-white/20 shadow-2xl">
-        <div className="relative w-7 h-7 rounded-full flex items-center justify-center" style={{ background: `conic-gradient(${rank.color} ${info.progress * 360}deg, rgba(255,255,255,.15) 0)` }}>
+        <div className="relative w-7 h-7 rounded-full flex items-center justify-center" style={{ background: `conic-gradient(${rank.color} ${reached * 360}deg, rgba(255,255,255,.15) 0)` }}>
           <div className="absolute inset-[3px] rounded-full bg-black/80 flex items-center justify-center">
             <span className="text-[10px] font-extrabold text-white tabular-nums">{info.level}</span>
           </div>
@@ -115,27 +117,7 @@ function XpToast() {
         <span key={toast.bump} className="lvl-shiny-text font-extrabold text-base tabular-nums" style={{ animation: "lvl-bump .35s ease-out, lvl-text-shine 2.5s linear infinite" }}>
           +{toast.total} XP
         </span>
-        {toast.combo >= 3 && (
-          <span className="flex items-center gap-0.5 text-[11px] font-bold text-orange-300">
-            <Icon icon="solar:bolt-bold" width="12" />
-            {t("level.combo", { count: toast.combo })}
-          </span>
-        )}
-        {toast.multiplier > 1.04 && toast.combo < 3 && (
-          <span className="flex items-center gap-0.5 text-[11px] font-bold text-amber-300">
-            <Icon icon="solar:fire-bold" width="12" />×{toast.multiplier.toFixed(1)}
-          </span>
-        )}
-        {toast.label && <span className="text-[11px] font-semibold text-white/70">{toast.label}</span>}
-        {toast.floaters.map((f) => (
-          <span
-            key={f.id}
-            className="absolute left-1/2 top-full mt-1 text-xs font-extrabold text-white"
-            style={{ animation: "lvl-float-up 1s ease-out forwards", textShadow: `0 0 8px ${rank.color}` }}
-          >
-            +{f.amount}
-          </span>
-        ))}
+        <span className="text-[11px] font-bold tabular-nums" style={{ color: rank.color }}>{pct}</span>
       </div>
     </div>
   )
