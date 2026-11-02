@@ -120,10 +120,12 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
         let controller = AccountSheetController(rootView: AccountSheetView(model: model))
         controller.modalPresentationStyle = .pageSheet
         if let sheet = controller.sheetPresentationController {
-            // Short of full height, so iOS 26 draws it as floating glass, and
-            // one height only: the sheet never resizes once it's open.
+            // The web sheet's height: its header over a scroller capped at 75%
+            // of the screen (795 pt on a Pro Max). One height only, so it never
+            // resizes once it's open.
+            let screenHeight = host.view.bounds.height
             sheet.detents = [.custom(identifier: .init("account")) { context in
-                context.maximumDetentValue * 0.9
+                min(context.maximumDetentValue, screenHeight * 0.75 + 78)
             }]
             // The sheet draws the web sheet's own handle, and its corners.
             sheet.prefersGrabberVisible = false
@@ -151,7 +153,8 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
         backdrop.isUserInteractionEnabled = false
         let dim = UIView(frame: backdrop.bounds)
         dim.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        dim.backgroundColor = UIColor.black.withAlphaComponent(0.3)
+        // The material already darkens; together they come to the web's 50%.
+        dim.backgroundColor = UIColor.black.withAlphaComponent(0.2)
         dim.alpha = 0
         backdrop.contentView.addSubview(dim)
         host.view.addSubview(backdrop)
