@@ -278,9 +278,10 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
            let asked = Int(args[index + 1]) {
             level = asked
         }
-        // After the launch screen (2 s) has gone and the page has painted:
-        // the sheet's glass is made from it.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
+        // Once the page has painted, as it long has when someone opens the
+        // sheet: the glass is made from it. A cold launch in the CI simulator
+        // can take over 3.5 s to paint it.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 9) {
             let recording = args.contains("-SprindAccountDemoFrames")
             if recording, let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
                 let folder = documents.appendingPathComponent("frames")

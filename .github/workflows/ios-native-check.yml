@@ -96,19 +96,19 @@ jobs:
 
           # The sheet opening out of its button: the app records its own frames
           # every 40 ms (screenshots from out here are far too slow to catch it).
-          # The demo opens 3.5 s after launch, once the launch screen has gone.
+          # The demo opens 9 s after launch, once the page has surely painted.
           run -SprindAccountDemo -SprindAccountDemoFrames
-          sleep 8
+          sleep 14
           shoot account-top
           DATA=$(xcrun simctl get_app_container "$DEVICE" com.sprind.app data)
           for frame in "$DATA"/Documents/frames/*.png; do cp "$frame" "shots/open-$(basename "$frame")"; done
           for stop in theme offline buttons delete; do
             run -SprindAccountDemo -SprindAccountDemoScroll "$stop"
-            sleep 9
+            sleep 14
             shoot "account-$stop"
           done
           run -SprindAccountDemo -SprindAccountDemoLevel 100
-          sleep 8
+          sleep 13
           shoot account-omniglot
 
           # Every border, twice a moment apart: they should have moved
