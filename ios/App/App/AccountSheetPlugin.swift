@@ -166,48 +166,37 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
     /// Snapshots the page and works out, as the web sheet's CSS does, what its
     /// backdrop and its glass show. Nil with Reduce Transparency on (the web
     /// sheet goes solid then too) or if the snapshot fails.
-    private func makeGlass(from view: UIView? = nil, retry: Bool = true, _ done: @escaping (SheetGlass?) -> Void) {
-        guard !UIAccessibility.isReduceTransparencyEnabled,
-              let source = view ?? bridge?.viewController?.view.window ?? bridge?.webView,
-              let page = Self.capture(source) else {
+    private func makeGlass(_ done: @escaping (SheetGlass?) -> Void) {
+        guard !UIAccessibility.isReduceTransparencyEnabled, let webView = bridge?.webView else {
             done(nil)
             return
         }
-        DispatchQueue.global(qos: .userInitiated).async {
-            let blank = Self.looksBlank(page)
-            let glass = blank ? nil : SheetGlass.make(from: page, scale: 1)
-            #if DEBUG
-            Self.saveForDemo(page: page, glass: glass)
-            #endif
-            DispatchQueue.main.async {
-                // Caught before the page had drawn: one more try, a moment later.
-                if blank && retry {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                        self.makeGlass(from: view, retry: false, done)
-                    }
-                } else {
-                    done(glass)
-                }
+        // WebKit's own snapshot of the page as painted (with the sheet up it
+        // still shows just the page, as a theme change needs). It comes in the
+        // screen's wide colour, so it is turned into plain sRGB first.
+        let config = WKSnapshotConfiguration()
+        config.afterScreenUpdates = true
+        webView.takeSnapshot(with: config) { image, _ in
+            let page = image?.cgImage.flatMap { Self.plainSRGB($0, width: webView.bounds.width, height: webView.bounds.height) }
+            DispatchQueue.global(qos: .userInitiated).async {
+                let glass = page.flatMap { Self.looksBlank($0) ? nil : SheetGlass.make(from: $0, scale: 1) }
+                #if DEBUG
+                if let page { Self.saveForDemo(page: page, glass: glass) }
+                #endif
+                DispatchQueue.main.async { done(glass) }
             }
         }
     }
 
-    /// The screen as it is, from the render server, in its own wide colour:
-    /// asked for in standard range, iOS drew it another way that leaves the
-    /// web page out (and WKWebView's takeSnapshot gave only its background
-    /// colour). Then into plain 8-bit sRGB, which the web's CSS works in. One
-    /// pixel per point: it is blurred anyway.
-    private static func capture(_ view: UIView) -> CGImage? {
-        let format = UIGraphicsImageRendererFormat()
-        format.scale = 1
-        let image = UIGraphicsImageRenderer(bounds: view.bounds, format: format).image { _ in
-            _ = view.drawHierarchy(in: view.bounds, afterScreenUpdates: false)
-        }
-        guard let captured = image.cgImage, let space = CGColorSpace(name: CGColorSpace.sRGB),
-              let context = CGContext(data: nil, width: captured.width, height: captured.height, bitsPerComponent: 8,
-                                      bytesPerRow: 0, space: space,
+    /// An image redrawn as plain 8-bit sRGB, the values the web's CSS works
+    /// in, at one pixel per point (it is blurred anyway).
+    private static func plainSRGB(_ image: CGImage, width: CGFloat, height: CGFloat) -> CGImage? {
+        let w = max(1, Int(width.rounded())), h = max(1, Int(height.rounded()))
+        guard let space = CGColorSpace(name: CGColorSpace.sRGB),
+              let context = CGContext(data: nil, width: w, height: h, bitsPerComponent: 8, bytesPerRow: 0, space: space,
                                       bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else { return nil }
-        context.draw(captured, in: CGRect(x: 0, y: 0, width: captured.width, height: captured.height))
+        context.interpolationQuality = .medium
+        context.draw(image, in: CGRect(x: 0, y: 0, width: w, height: h))
         return context.makeImage()
     }
 
@@ -243,8 +232,7 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
     private func refreshGlass(after delay: TimeInterval) {
         glassRefresh?.cancel()
         let work = DispatchWorkItem { [weak self] in
-            // The sheet is on screen now, so only the page itself is drawn.
-            self?.makeGlass(from: self?.bridge?.webView) { glass in
+            self?.makeGlass { glass in
                 guard let glass, let model = self?.model else { return }
                 withAnimation(.easeInOut(duration: 0.4)) { model.glass = glass }
             }
@@ -304,16 +292,7 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
             let button = CGRect(x: size.width - 64, y: 60, width: 44, height: 44)
             self.show(state: .demo(level: level), focus: nil, source: button)
             if recording {
-                self.model?.onAppear = { [weak self] in
-                    self?.recordFrames()
-                    // Whether the page alone can be drawn with the sheet up,
-                    // as a theme change remakes the glass.
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                        guard let webView = self?.bridge?.webView, let folder = Self.demoFolder,
-                              let page = Self.capture(webView) else { return }
-                        try? UIImage(cgImage: page).pngData()?.write(to: folder.appendingPathComponent("webview-page.png"))
-                    }
-                }
+                self.model?.onAppear = { [weak self] in self?.recordFrames() }
             }
         }
     }
