@@ -171,20 +171,21 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
             done(nil)
             return
         }
-        // After screen updates: without them WebKit hands back only the web
-        // view's plain background colour, not the page painted on it.
-        let config = WKSnapshotConfiguration()
-        config.afterScreenUpdates = true
-        webView.takeSnapshot(with: config) { image, _ in
-            guard let image, let page = image.cgImage else {
-                done(nil)
-                return
-            }
-            let scale = image.scale
-            DispatchQueue.global(qos: .userInitiated).async {
-                let glass = SheetGlass.make(from: page, scale: scale)
-                DispatchQueue.main.async { done(glass) }
-            }
+        // Drawn from the screen as it is. (WKWebView.takeSnapshot handed back
+        // only the web view's plain background colour, never the page.) One
+        // pixel per point: it is blurred anyway.
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        let image = UIGraphicsImageRenderer(bounds: webView.bounds, format: format).image { _ in
+            _ = webView.drawHierarchy(in: webView.bounds, afterScreenUpdates: false)
+        }
+        guard let page = image.cgImage else {
+            done(nil)
+            return
+        }
+        DispatchQueue.global(qos: .userInitiated).async {
+            let glass = SheetGlass.make(from: page, scale: 1)
+            DispatchQueue.main.async { done(glass) }
         }
     }
 
