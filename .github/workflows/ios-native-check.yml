@@ -1,0 +1,142 @@
+name: iOS native check
+
+# Builds the iPhone app on a Mac and screenshots its native screens in the
+# simulator (the account sheet and every level border), so Swift written
+# without a Mac is compiled and looked at before it reaches Xcode Cloud.
+# Runs on branches named native-*, or by hand. Xcode Cloud still builds main.
+# The build log and screenshots are handed back as branch
+# ci/<branch>-results, so they can be read with plain git.
+
+on:
+  push:
+    branches: ['native-*']
+  workflow_dispatch:
+
+permissions:
+  contents: write   # to push the results branch
+
+jobs:
+  check:
+    runs-on: macos-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Use the newest Xcode
+        run: |
+          XCODE=$(ls -d /Applications/Xcode_*.app | grep -vi beta | sort -V | tail -1)
+          sudo xcode-select -s "$XCODE"
+          xcodebuild -version
+
+      - name: Install packages
+        run: npm ci --legacy-peer-deps
+
+      # The screens under test are native; the page behind them only needs
+      # the app's backdrop photo (and the theme photos the sheet's swatches use).
+      - name: Stand-in web bundle
+        env:
+          LANG: en_US.UTF-8   # CocoaPods, run by cap sync, needs a UTF-8 locale
+        run: |
+          mkdir -p out/themes
+          cp public/bg.jpeg out/
+          cp public/themes/*.jpg out/themes/
+          cat > out/index.html <<'EOF'
+          <!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head>
+          <body style="margin:0;min-height:100vh;background:#1e1b4b url(bg.jpeg) 62% 50%/cover"></body></html>
+          EOF
+          set -o pipefail
+          npx cap sync ios 2>&1 | tee setup.log
+
+      - name: Build for the simulator
+        run: |
+          set -o pipefail
+          xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Debug \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build CODE_SIGNING_ALLOWED=NO build 2>&1 \
+            | tee build.log | grep -E "error:|warning: .*(AccountSheet|LevelAvatar)|BUILD (SUCCEEDED|FAILED)" || true
+          grep -q "BUILD SUCCEEDED" build.log
+
+      - name: Screenshots
+        run: |
+          exec > >(tee screenshots.log) 2>&1
+          xcrun simctl list devices available --json > devices.json
+          DEVICE=$(python3 - <<'PY'
+          import json
+          best = None
+          for runtime, devices in json.load(open("devices.json"))["devices"].items():
+              if ".iOS-" not in runtime:
+                  continue
+              version = tuple(int(part) for part in runtime.split(".iOS-")[-1].split("-") if part.isdigit())
+              for device in devices:
+                  name = device["name"]
+                  if not device.get("isAvailable", True) or not name.startswith("iPhone"):
+                      continue
+                  score = (version, "Pro Max" in name, "Pro" in name)
+                  if best is None or score > best[0]:
+                      best = (score, device["udid"], name)
+          print(best[1])
+          PY
+          )
+          echo "Simulator: $DEVICE"
+          xcrun simctl boot "$DEVICE" || true   # fails harmlessly if it's already up
+          xcrun simctl bootstatus "$DEVICE" -b
+          xcrun simctl status_bar "$DEVICE" override --time 9:41 --batteryState charged --batteryLevel 100 || true
+          xcrun simctl install "$DEVICE" build/Build/Products/Debug-iphonesimulator/App.app
+          mkdir -p shots
+          shoot() { xcrun simctl io "$DEVICE" screenshot "shots/$1.png" >/dev/null; }
+          run() {
+            xcrun simctl terminate "$DEVICE" com.sprind.app >/dev/null 2>&1 || true
+            xcrun simctl launch "$DEVICE" com.sprind.app "$@"
+          }
+
+          # The sheet opening out of its button, as a burst of frames
+          run -SprindAccountDemo
+          sleep 1.3
+          for i in 0 1 2 3 4 5 6 7; do shoot "open-$i"; done
+          sleep 4
+          shoot account-top
+          for stop in theme offline buttons delete; do
+            run -SprindAccountDemo -SprindAccountDemoScroll "$stop"
+            sleep 7
+            shoot "account-$stop"
+          done
+          run -SprindAccountDemo -SprindAccountDemoLevel 100
+          sleep 6
+          shoot account-omniglot
+
+          # Every border, twice a moment apart: they should have moved
+          run -SprindBorderGallery
+          sleep 5
+          shoot borders-a
+          sleep 0.4
+          shoot borders-b
+          ls -la shots
+
+      - name: Hand the results back
+        if: always()
+        run: |
+          RESULTS=$(mktemp -d)
+          mkdir -p "$RESULTS/shots"
+          {
+            echo "commit: $GITHUB_SHA"
+            xcodebuild -version
+            grep -E "BUILD (SUCCEEDED|FAILED)" build.log || echo "no build result"
+          } > "$RESULTS/summary.txt" 2>&1
+          grep -E -B2 -A6 "error:" build.log > "$RESULTS/errors.txt" 2>/dev/null || true
+          tail -n 3000 build.log > "$RESULTS/build-tail.log" 2>/dev/null || true
+          tail -n 300 setup.log > "$RESULTS/setup-tail.log" 2>/dev/null || true
+          cp screenshots.log "$RESULTS/" 2>/dev/null || true
+          cp shots/*.png "$RESULTS/shots/" 2>/dev/null || true
+          cd "$RESULTS"
+          git init -q
+          git checkout -q -b results
+          git add -A
+          git -c user.name="ios-native-check" -c user.email="actions@users.noreply.github.com" \
+            commit -q -m "Results for $GITHUB_SHA"
+          git push -f -q "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" \
+            "HEAD:refs/heads/ci/${{ github.ref_name }}-results"
