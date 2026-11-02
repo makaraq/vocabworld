@@ -134,11 +134,31 @@ jobs:
           tail -n 300 setup.log > "$RESULTS/setup-tail.log" 2>/dev/null || true
           cp screenshots.log "$RESULTS/" 2>/dev/null || true
           cp shots/*.png "$RESULTS/shots/" 2>/dev/null || true
+          # Full-size screenshots are 2 MB each; 1434 px tall is plenty to judge them.
+          for shot in "$RESULTS"/shots/*.png; do sips -Z 1434 "$shot" >/dev/null 2>&1 || true; done
           cd "$RESULTS"
           git init -q
           git checkout -q -b results
           git add -A
           git -c user.name="ios-native-check" -c user.email="actions@users.noreply.github.com" \
             commit -q -m "Results for $GITHUB_SHA"
-          git push -f -q "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" \
-            "HEAD:refs/heads/ci/${{ github.ref_name }}-results"
+          pushed=""
+          for attempt in 1 2 3; do
+            if git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" \
+                "HEAD:refs/heads/ci/${{ github.ref_name }}-results" > "$RUNNER_TEMP/push.log" 2>&1; then
+              pushed=yes
+              break
+            fi
+            sleep 15
+          done
+          if [ -z "$pushed" ]; then
+            # The run's summary page is public, unlike its logs.
+            {
+              echo "### Handing the results back failed"
+              echo '```'
+              tail -n 30 "$RUNNER_TEMP/push.log"
+              du -sh "$RESULTS"
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
