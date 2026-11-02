@@ -105,18 +105,28 @@ private struct AvatarLayers: View {
     }
 
     private var pill: some View {
-        Text("\(level)")
-            .font(.system(size: d * 0.14, weight: .heavy).monospacedDigit())
-            .foregroundColor(.white)
-            .shadow(color: .black.opacity(0.55), radius: 1, x: 0, y: 1)
-            .padding(.horizontal, d * 0.07)
-            .frame(minWidth: d * 0.36, minHeight: d * 0.22, maxHeight: d * 0.22)
-            .background(
-                Capsule().fill(LinearGradient(colors: [color, accent], startPoint: .topLeading, endPoint: .bottomTrailing))
-            )
-            .overlay(Capsule().strokeBorder(Color.white.opacity(0.55), lineWidth: max(0.5, d * 0.012)))
-            .shadow(color: .black.opacity(0.45), radius: d * 0.03, x: 0, y: d * 0.02)
-            .offset(y: d * 0.51)
+        // Typed one by one: as a single chain this was too much for the type checker.
+        let fontSize: CGFloat = d * 0.14
+        let inset: CGFloat = d * 0.07
+        let minWidth: CGFloat = d * 0.36
+        let height: CGFloat = d * 0.22
+        let rim: CGFloat = max(0.5, d * 0.012)
+        let shadowRadius: CGFloat = d * 0.03
+        let shadowDrop: CGFloat = d * 0.02
+        let drop: CGFloat = d * 0.51
+        let fill = LinearGradient(colors: [color, accent], startPoint: .topLeading, endPoint: .bottomTrailing)
+        let number = Text(verbatim: String(level))
+            .font(.system(size: fontSize, weight: .heavy))
+            .monospacedDigit()
+            .foregroundColor(Color.white)
+        return number
+            .shadow(color: Color.black.opacity(0.55), radius: 1, x: 0, y: 1)
+            .padding(.horizontal, inset)
+            .frame(minWidth: minWidth, minHeight: height, maxHeight: height)
+            .background(Capsule().fill(fill))
+            .overlay(Capsule().strokeBorder(Color.white.opacity(0.55), lineWidth: rim))
+            .shadow(color: Color.black.opacity(0.45), radius: shadowRadius, x: 0, y: shadowDrop)
+            .offset(y: drop)
     }
 }
 
@@ -181,16 +191,21 @@ private struct RingLayers: View {
 
     var body: some View {
         let spec = ringSpec(border)
+        let width: CGFloat = spec.width * d
+        let glowColor: Color = spec.glow ?? Color.clear
+        let glowRadius: CGFloat = spec.glow == nil ? 0 : d * 0.04
+        let outerWidth: CGFloat = spec.outerWidth * d
+        let outerOutset: CGFloat = spec.outerOutset * d
         ZStack {
             if spec.colors.isEmpty {
-                Band(fill: AnyShapeStyle(Color.white.opacity(0.4)), width: spec.width * d, outset: spec.width * d, d: d)
+                Band(fill: AnyShapeStyle(Color.white.opacity(0.4)), width: width, outset: width, d: d)
             } else {
-                Band(fill: AnyShapeStyle(conic(spec.colors)), width: spec.width * d, outset: spec.width * d, d: d)
+                Band(fill: AnyShapeStyle(conic(spec.colors)), width: width, outset: width, d: d)
                     .rotationEffect(spin(t, spec.period))
-                    .shadow(color: spec.glow ?? .clear, radius: spec.glow == nil ? 0 : d * 0.04)
+                    .shadow(color: glowColor, radius: glowRadius)
             }
             if !spec.outerColors.isEmpty {
-                Band(fill: AnyShapeStyle(conic(spec.outerColors)), width: spec.outerWidth * d, outset: spec.outerOutset * d, d: d)
+                Band(fill: AnyShapeStyle(conic(spec.outerColors)), width: outerWidth, outset: outerOutset, d: d)
                     .rotationEffect(-spin(t, spec.outerPeriod))
             }
         }
@@ -275,11 +290,14 @@ private struct Pulse: View {
 
     var body: some View {
         let w = wave(t, period)
+        let scale = CGFloat(1 + 0.08 * w)
+        let opacity: Double = 0.55 + 0.45 * w
+        let radius: CGFloat = size / 2
         Circle()
-            .fill(RadialGradient(gradient: gradient, center: .center, startRadius: 0, endRadius: size / 2))
+            .fill(RadialGradient(gradient: gradient, center: .center, startRadius: 0, endRadius: radius))
             .frame(width: size, height: size)
-            .scaleEffect(1 + 0.08 * w)
-            .opacity(0.55 + 0.45 * w)
+            .scaleEffect(scale)
+            .opacity(opacity)
     }
 }
 
@@ -300,17 +318,29 @@ private struct Flames: View {
     var body: some View {
         ZStack {
             ForEach(0..<Self.count, id: \.self) { i in
-                let w = wave(t, 0.5 + Double(i) * 0.037, delay: -Double(i) * 0.11)
-                FlameShape()
-                    .fill(RadialGradient(gradient: Self.gradient, center: UnitPoint(x: 0.5, y: 0.85),
-                                         startRadius: 0, endRadius: d * 0.24))
-                    .frame(width: d * 0.15, height: d * 0.27)
-                    .scaleEffect(x: 1 - 0.15 * w, y: 1 + 0.35 * w)
-                    .opacity(0.9 + 0.1 * w)
-                    .offset(y: -d * (0.56 + 0.04 * w))
-                    .rotationEffect(.degrees(Double(i) * 360 / Double(Self.count)))
+                flame(i)
             }
         }
+    }
+
+    private func flame(_ i: Int) -> some View {
+        let w = wave(t, 0.5 + Double(i) * 0.037, delay: -Double(i) * 0.11)
+        let squeeze = CGFloat(1 - 0.15 * w)
+        let stretch = CGFloat(1 + 0.35 * w)
+        let opacity: Double = 0.9 + 0.1 * w
+        let lift: CGFloat = -d * CGFloat(0.56 + 0.04 * w)
+        let turn = Angle.degrees(Double(i) * 360 / Double(Self.count))
+        let reach: CGFloat = d * 0.24
+        let width: CGFloat = d * 0.15
+        let height: CGFloat = d * 0.27
+        let fill = RadialGradient(gradient: Self.gradient, center: UnitPoint(x: 0.5, y: 0.85), startRadius: 0, endRadius: reach)
+        return FlameShape()
+            .fill(fill)
+            .frame(width: width, height: height)
+            .scaleEffect(x: squeeze, y: stretch)
+            .opacity(opacity)
+            .offset(y: lift)
+            .rotationEffect(turn)
     }
 }
 
@@ -781,18 +811,26 @@ private struct Sparkles: View {
     var body: some View {
         ZStack {
             ForEach(0..<Self.spots.count, id: \.self) { i in
-                let spot = Self.spots[i]
-                let w = wave(t, 2.1, delay: spot.delay)
-                CurveShape(box: CGSize(width: 20, height: 20), points: Self.star)
-                    .fill(Color.white)
-                    .frame(width: d * 0.16, height: d * 0.16)
-                    .shadow(color: .white, radius: d * 0.03)
-                    .scaleEffect(0.2 + 0.8 * w)
-                    .rotationEffect(.degrees(90 * w))
-                    .opacity(w)
-                    .offset(x: d * (-0.6 + 1.2 * spot.x / 100), y: d * (-0.6 + 1.2 * spot.y / 100))
+                sparkle(Self.spots[i])
             }
         }
+    }
+
+    private func sparkle(_ spot: Spot) -> some View {
+        let w = wave(t, 2.1, delay: spot.delay)
+        let scale = CGFloat(0.2 + 0.8 * w)
+        let size: CGFloat = d * 0.16
+        let glow: CGFloat = d * 0.03
+        let x: CGFloat = d * (1.2 * spot.x / 100 - 0.6)
+        let y: CGFloat = d * (1.2 * spot.y / 100 - 0.6)
+        return CurveShape(box: CGSize(width: 20, height: 20), points: Self.star)
+            .fill(Color.white)
+            .frame(width: size, height: size)
+            .shadow(color: Color.white, radius: glow)
+            .scaleEffect(scale)
+            .rotationEffect(Angle.degrees(90 * w))
+            .opacity(w)
+            .offset(x: x, y: y)
     }
 }
 
@@ -894,11 +932,15 @@ private struct Halo: View {
     let t: Double
 
     var body: some View {
+        let bob = CGFloat(wave(t, 2.4))
+        let lift: CGFloat = -d * (0.63 + 0.035 * bob)
+        let rim: CGFloat = d * 0.035
+        let glow: CGFloat = d * 0.06
         Ellipse()
-            .strokeBorder(Color(hex: "#fde68a"), lineWidth: d * 0.035)
+            .strokeBorder(Color(hex: "#fde68a"), lineWidth: rim)
             .frame(width: d * 0.62, height: d * 0.14)
-            .shadow(color: Color(hex: "#fbbf24"), radius: d * 0.06)
-            .offset(y: -d * 0.63 - d * 0.035 * wave(t, 2.4))
+            .shadow(color: Color(hex: "#fbbf24"), radius: glow)
+            .offset(y: lift)
     }
 }
 
@@ -922,16 +964,24 @@ private struct Crown: View {
             jewel("#a78bfa", x: 44, y: 28, r: 2.6, unit: unit)
         }
         .frame(width: d * 0.46, height: d * 0.31)
-        .shadow(color: .black.opacity(0.5), radius: d * 0.04, x: 0, y: d * 0.02)
+        .shadow(color: Color.black.opacity(0.5), radius: d * 0.04, x: 0, y: d * 0.02)
         .shadow(color: Color(hex: "#facc15"), radius: d * 0.05)
-        .offset(y: -d * 0.705 - d * 0.035 * wave(t, 2))
+        .offset(y: lift)
+    }
+
+    private var lift: CGFloat {
+        let bob = CGFloat(wave(t, 2))
+        return -d * (0.705 + 0.035 * bob)
     }
 
     private func jewel(_ color: String, x: CGFloat, y: CGFloat, r: CGFloat, unit: CGFloat) -> some View {
-        Circle()
+        // The viewBox is 60 × 40 units in a 0.46 × 0.31 box: y units are a touch taller.
+        let yUnit: CGFloat = unit * (0.31 / 0.46) * (60 / 40)
+        let size: CGFloat = 2 * r * unit
+        return Circle()
             .fill(Color(hex: color))
-            .frame(width: 2 * r * unit, height: 2 * r * unit)
-            .position(x: x * unit, y: y * unit * (0.31 / 0.46) * (60.0 / 40.0))
+            .frame(width: size, height: size)
+            .position(x: x * unit, y: y * yUnit)
     }
 }
 
