@@ -2,10 +2,11 @@
 // drawn natively on iPhone (ios/App/App/PanelMorphPlugin.swift) at the
 // screen's full refresh rate; the web view stops at 60 fps. The pop-up itself
 // stays the web one: the screen is frozen under a picture of itself, the
-// pop-up is put at rest underneath, a second picture is taken, and the native
-// layer grows the pop-up's glass out of the button between the two, then
-// steps aside onto the identical live pop-up. Closing runs it the other way.
-// Stands in for lib/morph-modal.ts's morphPanelOpen (same PanelMorph), which
+// pop-up is put at rest underneath with its contents hidden and pictured, and
+// the native layer grows that glass out of the button; the contents, pictured
+// next, come in over it once it's most of the way out, as lib/morph-modal.ts
+// brings them in. Then it steps aside onto the identical live pop-up. Closing
+// runs it the other way. Stands in for morphPanelOpen (same PanelMorph), which
 // hands over to it for pop-ups that ask ({ native: true }).
 
 import { Capacitor, registerPlugin } from '@capacitor/core'
@@ -13,11 +14,19 @@ import type { PanelMorph } from '@/lib/morph-modal'
 
 type Rect = { x: number; y: number; width: number; height: number }
 
+/** A backdrop's CSS: its backdrop-filter's blur (px), and its background colour (0–1). */
+type Backdrop = { blur: number; red: number; green: number; blue: number; alpha: number }
+
 interface PanelMorphPlugin {
-  /** Covers the screen with a picture of it, as it is now. */
-  freeze(): Promise<void>
-  /** Out of `from` (the button) into `to` (the pop-up), over the frozen picture. */
+  /** Covers the screen with a picture of it, as it is now. Opening, it also
+   *  works out from it the page under the pop-up's `backdrop`. */
+  freeze(options?: { backdrop?: Backdrop }): Promise<void>
+  /** Out of `from` (the button) into `to` (the pop-up), over the frozen
+   *  picture: the pop-up's glass, pictured now, sets out at once (resolves). */
   open(options: { from: Rect; fromRadius: number; to: Rect; toRadius: number }): Promise<void>
+  /** The pop-up pictured again with its contents showing, which come in over
+   *  the glass. Resolves once it has all settled. */
+  contents(): Promise<void>
   /** Back from `from` (the pop-up) into `to` (the button). */
   close(options: { from: Rect; fromRadius: number; to: Rect; toRadius: number }): Promise<void>
   /** Away down the screen from `from`, carrying on at `velocity` (pt/ms). */
@@ -47,6 +56,29 @@ const radiusOf = (el: HTMLElement): number => {
 
 const twoFrames = () => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())))
 
+// What comes in over the glass, as lib/morph-modal.ts has it: the panel's
+// children in its flow (those laid over the whole of it are its glass).
+const contentsOf = (panel: HTMLElement) =>
+  [...panel.children].filter(
+    (el): el is HTMLElement => el instanceof HTMLElement && !['absolute', 'fixed'].includes(getComputedStyle(el).position),
+  )
+
+// The backdrop's blur and colour, for the native layer to draw it under the
+// pop-up too, where the pictures can't show it. The colour is read off a
+// pixel: Tailwind's come as color-mix() and oklab.
+const backdropOf = (el: HTMLElement | null): Backdrop | undefined => {
+  if (!el) return undefined
+  const style = getComputedStyle(el)
+  const filter = style.backdropFilter || style.getPropertyValue('-webkit-backdrop-filter')
+  const blur = parseFloat(/blur\(([\d.]+)px\)/.exec(filter)?.[1] ?? '') || 0
+  const pixel = document.createElement('canvas').getContext('2d', { willReadFrequently: true })
+  if (!pixel) return { blur, red: 0, green: 0, blue: 0, alpha: 0 }
+  pixel.fillStyle = style.backgroundColor
+  pixel.fillRect(0, 0, 1, 1)
+  const [red, green, blue, alpha] = pixel.getImageData(0, 0, 1, 1).data
+  return { blur, red: red / 255, green: green / 255, blue: blue / 255, alpha: alpha / 255 }
+}
+
 // Inline styles the morph sets while the native layer stands in for the
 // pop-up, and takes off once it's done: at rest at once, no CSS transitions.
 const HELD = ['visibility', 'transition', 'transform', 'opacity'] as const
@@ -56,8 +88,15 @@ export function nativeMorphOpen(source: HTMLElement, panel: HTMLElement, backdro
   const button = rectOf(source)
   const buttonRadius = radiusOf(source)
   let phase: 'opening' | 'open' | 'closing' | 'gone' = 'opening'
+  // The contents while only the glass is pictured.
+  let hidden: HTMLElement[] = []
+  const showContents = () => {
+    for (const el of hidden) el.style.removeProperty('visibility')
+    hidden = []
+  }
 
   const release = () => {
+    showContents()
     for (const el of parts) for (const prop of HELD) el.style.removeProperty(prop)
   }
   // Hidden until the screen is frozen under its picture (it may already be
@@ -66,7 +105,7 @@ export function nativeMorphOpen(source: HTMLElement, panel: HTMLElement, backdro
 
   const opened = (async () => {
     try {
-      await NativeMorph.freeze()
+      await NativeMorph.freeze({ backdrop: backdropOf(backdrop) })
       if (phase !== 'opening') return
       for (const el of parts) {
         el.style.setProperty('transition', 'none', 'important')
@@ -74,13 +113,20 @@ export function nativeMorphOpen(source: HTMLElement, panel: HTMLElement, backdro
         el.style.removeProperty('visibility')
       }
       panel.style.setProperty('transform', 'none', 'important')
+      // Its glass sets out on its own; the contents come once it's out.
+      hidden = contentsOf(panel)
+      for (const el of hidden) el.style.setProperty('visibility', 'hidden', 'important')
       await twoFrames()
       if (phase !== 'opening') return
       await NativeMorph.open({ from: button, fromRadius: buttonRadius, to: rectOf(panel), toRadius: radiusOf(panel) })
+      showContents()
+      await twoFrames()
+      await NativeMorph.contents()
     } catch {
       // Without the native layer it just shows, at rest.
       await NativeMorph.clear().catch(() => {})
     } finally {
+      showContents()
       if (phase === 'opening') {
         phase = 'open'
         release()

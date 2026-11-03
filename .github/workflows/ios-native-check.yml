@@ -57,10 +57,23 @@ jobs:
           window.__morphTest = async function () {
             var P = window.Capacitor.Plugins.PanelMorph, tile = document.getElementById('tile'), back = document.getElementById('back'), panel = document.getElementById('panel');
             var rect = function (el) { var r = el.getBoundingClientRect(); return { x: r.left, y: r.top, width: r.width, height: r.height }; };
-            await P.freeze();
-            back.style.opacity = '1'; panel.style.opacity = '1';
-            await new Promise(function (r) { requestAnimationFrame(function () { requestAnimationFrame(r); }); });
+            var frames = function () { return new Promise(function (r) { requestAnimationFrame(function () { requestAnimationFrame(r); }); }); };
+            var contents = Array.prototype.slice.call(panel.children);
+            var showContents = function (on) { contents.forEach(function (el) { el.style.visibility = on ? '' : 'hidden'; }); };
+            // As lib/native/panel-morph.ts opens a pop-up: its glass first, then its contents.
+            await P.freeze({ backdrop: { blur: 6, red: 0, green: 0, blue: 0, alpha: 0.5 } });
+            back.style.opacity = '1'; panel.style.opacity = '1'; showContents(false);
+            await frames();
             await P.open({ from: rect(tile), fromRadius: 24, to: rect(panel), toRadius: 24 });
+            showContents(true);
+            await frames();
+            await P.contents();
+            // And closes it again, a moment later.
+            await new Promise(function (r) { setTimeout(r, 3000); });
+            await P.freeze();
+            back.style.opacity = '0'; panel.style.opacity = '0';
+            await frames();
+            await P.close({ from: rect(panel), fromRadius: 24, to: rect(tile), toRadius: 24 });
           };
           </script>
           </body></html>
@@ -127,10 +140,13 @@ jobs:
           sleep 13
           shoot account-omniglot
 
-          # A web pop-up opening out of its tile with the native morph
+          # A web pop-up opening out of its tile with the native morph, and
+          # closing back into it 3 s later
           run -SprindMorphDemo
-          sleep 13
-          shoot morph-end
+          sleep 12
+          shoot morph-open
+          sleep 4
+          shoot morph-closed
           for frame in "$DATA"/Documents/morph/*.png; do cp "$frame" "shots/morph-$(basename "$frame")"; done
 
           # The level pop-up growing out of the Dynamic Island. The app's own

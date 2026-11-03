@@ -1,18 +1,21 @@
 import Foundation
 import Capacitor
+import CoreImage
 import SwiftUI
 import UIKit
 import WebKit
 
 /// Bridge for lib/native/panel-morph.ts: the motion of a web pop-up opening
 /// out of its button and closing back into it, drawn natively at the screen's
-/// full refresh rate (the web view stops at 60 fps). The pop-up itself stays
-/// the web one. `freeze` covers the screen with a picture of it; the web side
-/// then puts the pop-up at rest underneath, and `open` takes a second picture
-/// and grows the pop-up's glass out of the button between the two, as the
-/// native account sheet opens (AccountSheetHost), before stepping aside onto
-/// the identical live pop-up. `close` and `slide` run it the other way.
-/// Registered in ViewController.capacitorDidLoad.
+/// full refresh rate (the web view stops at 60 fps) and looking as the web
+/// morph does (lib/morph-modal.ts). The pop-up itself stays the web one.
+/// `freeze` covers the screen with a picture of it; the web side then puts
+/// the pop-up at rest underneath with its contents hidden, and `open` takes a
+/// second picture and grows the pop-up's glass out of the button between the
+/// two. `contents` pictures it once more with its contents, which come in over
+/// the glass once it's most of the way out, as the web's do; then it steps
+/// aside onto the identical live pop-up. `close` and `slide` run it the other
+/// way. Registered in ViewController.capacitorDidLoad.
 @objc(PanelMorphPlugin)
 public class PanelMorphPlugin: CAPPlugin, CAPBridgedPlugin {
     public let identifier = "PanelMorphPlugin"
@@ -20,6 +23,7 @@ public class PanelMorphPlugin: CAPPlugin, CAPBridgedPlugin {
     public let pluginMethods: [CAPPluginMethod] = [
         CAPPluginMethod(name: "freeze", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "open", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "contents", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "close", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "slide", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "clear", returnType: CAPPluginReturnPromise),
@@ -30,8 +34,20 @@ public class PanelMorphPlugin: CAPPlugin, CAPBridgedPlugin {
     private var overlayController: UIViewController?
     /// The picture under the frozen cover.
     private var frozen: UIImage?
+    /// The morph on screen, and the calls waiting for it to end.
+    private var morph: PanelMorphModel?
+    private var waiting: [CAPPluginCall] = []
+    /// Counts the freezes, so a backdrop worked out for an earlier one is let go.
+    private var freezes = 0
+    /// The backdrop being opened over, and the page under it once worked out.
+    private var backdrop: PanelBackdrop?
+    private var backdropPicture: UIImage?
+    /// The open pop-up's glass alone and where it was: closing from there,
+    /// its contents go first off this glass, as they came in.
+    private var openGlass: (picture: UIImage, panel: CGRect)?
 
     @objc func freeze(_ call: CAPPluginCall) {
+        let backdrop = PanelBackdrop(call.getObject("backdrop"))
         DispatchQueue.main.async {
             self.snapshot { image in
                 guard let image else {
@@ -42,13 +58,42 @@ public class PanelMorphPlugin: CAPPlugin, CAPBridgedPlugin {
                 let cover = UIImageView(image: image)
                 cover.contentMode = .scaleToFill
                 self.cover(with: cover, controller: nil)
+                self.endMorph()
+                self.freezes += 1
                 call.resolve()
+                // Opening: the page under the backdrop is worked out while the
+                // pop-up is put in place underneath.
+                guard let backdrop else { return }
+                let generation = self.freezes
+                self.backdrop = backdrop
+                self.backdropPicture = nil
+                DispatchQueue.global(qos: .userInitiated).async {
+                    let picture = backdrop.picture(of: image)
+                    DispatchQueue.main.async {
+                        guard self.freezes == generation else { return }
+                        self.backdropPicture = picture
+                        if let picture { self.morph?.backdropPictured(picture) }
+                    }
+                }
             }
         }
     }
 
     @objc func open(_ call: CAPPluginCall) {
         run(call, kind: .open)
+    }
+
+    @objc func contents(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            guard let morph = self.morph, morph.kind == .open else {
+                call.resolve()
+                return
+            }
+            self.waiting.append(call)
+            self.snapshot { picture in
+                if let picture, self.morph === morph { morph.contentsPictured(picture) }
+            }
+        }
     }
 
     @objc func close(_ call: CAPPluginCall) {
@@ -62,6 +107,7 @@ public class PanelMorphPlugin: CAPPlugin, CAPBridgedPlugin {
     @objc func clear(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             self.uncover()
+            self.forget()
             call.resolve()
         }
     }
@@ -87,25 +133,46 @@ public class PanelMorphPlugin: CAPPlugin, CAPBridgedPlugin {
                     call.resolve()
                     return
                 }
-                // Opening, the frozen picture is the screen without the pop-up
-                // and the new one has it; closing, the other way round.
+                // Opening, the frozen picture is the page and the new one the
+                // pop-up's glass alone; closing, the frozen one is the whole
+                // pop-up and the new one the page without it.
                 let opening = kind == .open
-                let view = PanelMorphView(
+                let panel = opening ? (to ?? from) : from
+                var glass: UIImage?
+                if opening {
+                    glass = after
+                    self.openGlass = (after, panel)
+                } else if kind == .close, let open = self.openGlass, open.panel.isAbout(panel) {
+                    glass = open.picture
+                }
+                let model = PanelMorphModel(
                     kind: kind,
-                    withPanel: opening ? after : before,
-                    withoutPanel: opening ? before : after,
-                    panel: opening ? (to ?? from) : from,
+                    page: opening ? before : after,
+                    glass: glass,
+                    whole: opening ? nil : before,
+                    backdrop: self.backdropPicture,
+                    tint: self.backdrop?.tint ?? .clear,
+                    panel: panel,
                     button: opening ? from : (to ?? from),
                     panelRadius: opening ? toRadius : fromRadius,
                     buttonRadius: opening ? fromRadius : toRadius,
                     velocity: velocity
-                ) { [weak self] in
-                    self?.uncover()
-                    call.resolve()
+                )
+                model.onEnd = { [weak self, weak model] in
+                    guard let self, let model, self.morph === model else { return }
+                    self.uncover()
+                    if !opening { self.forget() }
                 }
-                let controller = UIHostingController(rootView: view)
+                let controller = UIHostingController(rootView: PanelMorphView(model: model))
                 controller.view.backgroundColor = .clear
                 self.cover(with: controller.view, controller: controller)
+                self.morph = model
+                // Opening goes on while the contents are pictured (`contents`).
+                if opening {
+                    call.resolve()
+                } else {
+                    self.waiting.append(call)
+                }
             }
         }
     }
@@ -148,6 +215,22 @@ public class PanelMorphPlugin: CAPPlugin, CAPBridgedPlugin {
         overlay = nil
         overlayController = nil
         frozen = nil
+        endMorph()
+    }
+
+    /// The morph is over (or given up): whatever waited on it hears.
+    private func endMorph() {
+        morph = nil
+        let calls = waiting
+        waiting = []
+        for call in calls { call.resolve() }
+    }
+
+    /// The pop-up has gone: what was kept of it goes too.
+    private func forget() {
+        backdrop = nil
+        backdropPicture = nil
+        openGlass = nil
     }
 
     private func remove(_ view: UIView?, _ controller: UIViewController?) {
@@ -157,9 +240,9 @@ public class PanelMorphPlugin: CAPPlugin, CAPBridgedPlugin {
     }
 
     #if DEBUG
-    /// For the CI check: -SprindMorphDemo opens the test page's pop-up
-    /// (window.__morphTest, in the workflow's stand-in page) and records the
-    /// screen every 40 ms into Documents/morph.
+    /// For the CI check: -SprindMorphDemo opens the test page's pop-up and
+    /// closes it again (window.__morphTest, in the workflow's stand-in page),
+    /// recording the screen every 40 ms into Documents/morph.
     func runDemoIfAsked() {
         guard ProcessInfo.processInfo.arguments.contains("-SprindMorphDemo") else { return }
         DispatchQueue.main.asyncAfter(deadline: .now() + 9) {
@@ -195,110 +278,278 @@ public class PanelMorphPlugin: CAPPlugin, CAPBridgedPlugin {
     }
 }
 
+private extension CGRect {
+    /// The same box, give or take a point.
+    func isAbout(_ other: CGRect) -> Bool {
+        abs(minX - other.minX) < 1 && abs(minY - other.minY) < 1
+            && abs(width - other.width) < 1 && abs(height - other.height) < 1
+    }
+}
+
+/// A pop-up's backdrop by its CSS (lib/native/panel-morph.ts reads it): the
+/// page blurred by its backdrop-filter, with its background colour on top.
+/// The pictures only show it round the pop-up; this draws it under the
+/// pop-up too, where the glass hasn't got to yet.
+struct PanelBackdrop {
+    let blur: CGFloat
+    let red: CGFloat
+    let green: CGFloat
+    let blue: CGFloat
+    let alpha: CGFloat
+
+    init?(_ object: JSObject?) {
+        guard let object else { return nil }
+        func number(_ key: String) -> CGFloat {
+            CGFloat((object[key] as? NSNumber)?.doubleValue ?? 0)
+        }
+        blur = number("blur")
+        red = number("red")
+        green = number("green")
+        blue = number("blue")
+        alpha = number("alpha")
+    }
+
+    /// Its colour alone, standing in until the page under it is worked out.
+    var tint: Color {
+        Color(.sRGB, red: Double(red), green: Double(green), blue: Double(blue), opacity: Double(alpha))
+    }
+
+    /// The page as the backdrop shows it, at one pixel per point (it's blurred).
+    func picture(of page: UIImage) -> UIImage? {
+        guard let source = page.cgImage,
+              let plain = AccountSheetPlugin.plainSRGB(source, width: page.size.width, height: page.size.height),
+              let space = CGColorSpace(name: CGColorSpace.sRGB) else { return nil }
+        var image = CIImage(cgImage: plain)
+        let extent = image.extent
+        if blur > 0 {
+            image = image.clampedToExtent().applyingGaussianBlur(sigma: Double(blur)).cropped(to: extent)
+        }
+        if alpha > 0 {
+            image = CIImage(color: CIColor(red: red, green: green, blue: blue, alpha: alpha))
+                .cropped(to: extent)
+                .composited(over: image)
+        }
+        guard let result = Self.context.createCGImage(image, from: extent, format: .RGBA8, colorSpace: space) else { return nil }
+        return UIImage(cgImage: result, scale: 1, orientation: .up)
+    }
+
+    /// In plain sRGB values, as browsers composite CSS (and SheetGlass works).
+    private static let context = CIContext(options: [.workingColorSpace: NSNull()])
+}
+
 enum PanelMorphKind {
     case open, close, slide
 }
 
-/// The morph itself, between two pictures of the screen: the page without the
-/// pop-up, darkening as the backdrop comes in, and the page with it, seen
-/// through the pop-up's glass as it grows out of the button (or shrinks back
-/// into it, or slides away down). Its contents stay still meanwhile, as the
-/// web morph keeps them (lib/morph-modal.ts).
-struct PanelMorphView: View {
+/// One morph: its pictures, and how far it has got. Its timings are the web
+/// morph's (lib/morph-modal.ts, WebMotion).
+final class PanelMorphModel: ObservableObject {
     let kind: PanelMorphKind
-    let withPanel: UIImage
-    let withoutPanel: UIImage
+    /// The page without the pop-up: before it opens, or once it has gone.
+    let page: UIImage
+    /// The pop-up's glass alone, its contents hidden. Closing, only while
+    /// it's still where it opened.
+    let glass: UIImage?
+    /// The whole pop-up as it shows, contents and all. Opening, it's
+    /// pictured a moment after the glass sets out.
+    @Published private(set) var whole: UIImage?
+    /// The page under the pop-up's backdrop; its colour alone until then.
+    @Published private(set) var backdrop: UIImage?
+    let tint: Color
     let panel: CGRect
     let button: CGRect
     let panelRadius: CGFloat
     let buttonRadius: CGFloat
     /// The drag's speed at release, in points per millisecond (sliding away).
     let velocity: CGFloat
-    let finished: () -> Void
+    var onEnd: () -> Void = {}
 
-    /// Whether the pop-up is out (open) or in (closed, or slid away).
-    @State private var out: Bool
+    /// The glass out of the button, at rest.
+    @Published private(set) var out: Bool
+    @Published private(set) var dimmed: Bool
+    @Published private(set) var contentsShown: Bool
+    /// The button's own picture over the glass: going as the glass sets out
+    /// of it, back as the glass returns.
+    @Published private(set) var buttonShown: Bool
+    /// Sliding away: how far down it has gone.
+    @Published private(set) var drop: CGFloat = 0
 
-    init(kind: PanelMorphKind, withPanel: UIImage, withoutPanel: UIImage, panel: CGRect, button: CGRect,
-         panelRadius: CGFloat, buttonRadius: CGFloat, velocity: CGFloat, finished: @escaping () -> Void) {
+    private var startedAt: Date?
+    private var moved = false
+    private var settled: Bool
+    private var ended = false
+
+    init(kind: PanelMorphKind, page: UIImage, glass: UIImage?, whole: UIImage?, backdrop: UIImage?, tint: Color,
+         panel: CGRect, button: CGRect, panelRadius: CGFloat, buttonRadius: CGFloat, velocity: CGFloat) {
         self.kind = kind
-        self.withPanel = withPanel
-        self.withoutPanel = withoutPanel
+        self.page = page
+        self.glass = glass
+        self.whole = whole
+        self.backdrop = backdrop
+        self.tint = tint
         self.panel = panel
         self.button = button
         self.panelRadius = panelRadius
         self.buttonRadius = buttonRadius
         self.velocity = velocity
-        self.finished = finished
-        _out = State(initialValue: kind != .open)
+        let opening = kind == .open
+        out = !opening
+        dimmed = !opening
+        contentsShown = !opening
+        buttonShown = opening
+        settled = !opening
     }
+
+    func start(screen: CGSize) {
+        guard startedAt == nil else { return }
+        startedAt = Date()
+        let duration: Double
+        switch kind {
+        case .open:
+            duration = WebMotion.openDuration
+            withAnimation(WebMotion.open) { out = true }
+            withAnimation(WebMotion.backdropIn) { dimmed = true }
+            withAnimation(WebMotion.buttonOut) { buttonShown = false }
+            if whole != nil { bringContentsIn() }
+            // Without its contents pictured in time it hands over anyway: the
+            // live pop-up has them.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in
+                self?.settled = true
+                self?.endIfDone()
+            }
+        case .close:
+            duration = WebMotion.closeDuration
+            withAnimation(WebMotion.close) { out = false }
+            withAnimation(WebMotion.backdropOut) { dimmed = false }
+            withAnimation(WebMotion.contentsOut) { contentsShown = false }
+            withAnimation(WebMotion.buttonBack) { buttonShown = true }
+        case .slide:
+            // On down from where the drag left it, at the drag's pace or a
+            // little quicker, the button forming again meanwhile.
+            let travel = screen.height - panel.minY + 24
+            duration = WebMotion.slideDuration(travel: travel, velocity: velocity * 1000)
+            withAnimation(WebMotion.slide(duration)) { drop = travel }
+            withAnimation(.easeOut(duration: duration)) { dimmed = false }
+            withAnimation(.easeOut(duration: duration * 0.87).delay(duration * 0.13)) { buttonShown = true }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + duration + 0.02) { [weak self] in
+            self?.moved = true
+            self?.endIfDone()
+        }
+    }
+
+    /// Opening: the pop-up pictured with its contents.
+    func contentsPictured(_ picture: UIImage) {
+        guard kind == .open, whole == nil, !ended else { return }
+        whole = picture
+        if startedAt != nil { bringContentsIn() }
+    }
+
+    func backdropPictured(_ picture: UIImage) {
+        guard backdrop == nil, !ended else { return }
+        backdrop = picture
+    }
+
+    /// As the web's come in: once the glass is most of the way out (330 ms),
+    /// or as soon after as they're pictured.
+    private func bringContentsIn() {
+        let elapsed = startedAt.map { Date().timeIntervalSince($0) } ?? 0
+        DispatchQueue.main.asyncAfter(deadline: .now() + max(0, 0.33 - elapsed)) { [weak self] in
+            guard let self, !self.ended else { return }
+            withAnimation(WebMotion.settle) { self.contentsShown = true }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+                self?.settled = true
+                self?.endIfDone()
+            }
+        }
+    }
+
+    private func endIfDone() {
+        guard moved, settled, !ended else { return }
+        ended = true
+        onEnd()
+    }
+}
+
+/// The morph, drawn from pictures of the screen as the web morph draws it:
+/// the page, the backdrop coming in over it, and the pop-up's glass growing
+/// out of the button with the button's picture fading off it, the contents
+/// coming in once it's most of the way out. Closing, the contents go first,
+/// the glass draws back into the button and the button's picture comes back
+/// over it. Sliding away, the pop-up goes on down as it is.
+struct PanelMorphView: View {
+    @ObservedObject var model: PanelMorphModel
 
     var body: some View {
         GeometryReader { geo in
             let screen = geo.size
-            let shown: CGFloat = out ? 1 : 0
-            let drop: CGFloat = kind == .slide && !out ? screen.height - panel.minY + 40 : 0
+            let dim: Double = model.dimmed ? 1 : 0
             ZStack(alignment: .topLeading) {
-                Image(uiImage: withoutPanel)
-                    .resizable()
-                    .frame(width: screen.width, height: screen.height)
-                // The backdrop: dimming at once, then the picture of it
-                // (blur and all) everywhere but the pop-up.
-                Color.black
-                    .opacity(0.5 * Double(shown))
-                    .frame(width: screen.width, height: screen.height)
-                Image(uiImage: withPanel)
-                    .resizable()
-                    .frame(width: screen.width, height: screen.height)
-                    .mask { Outside(hole: panel).fill(style: FillStyle(eoFill: true)) }
-                    .opacity(Double(shown))
-                // The pop-up, through its glass's outline.
-                Image(uiImage: withPanel)
-                    .resizable()
-                    .frame(width: screen.width, height: screen.height)
-                    .mask { glass }
-                    .opacity(kind == .close ? Double(shown) : 1)
-                    .offset(y: drop)
+                picture(model.page, screen)
+                // The backdrop: under the pop-up as its CSS draws it (its
+                // colour alone until that's worked out), round it as pictured.
+                Group {
+                    if let backdrop = model.backdrop {
+                        picture(backdrop, screen)
+                    } else {
+                        model.tint.frame(width: screen.width, height: screen.height)
+                    }
+                }
+                .mask { box(model.panel, radius: 0) }
+                .opacity(dim)
+                if let around = model.whole ?? model.glass {
+                    picture(around, screen)
+                        .mask { Outside(hole: model.panel).fill(style: FillStyle(eoFill: true)) }
+                        .opacity(dim)
+                }
+                popUp(screen)
+                picture(model.page, screen)
+                    .mask { box(model.button, radius: model.buttonRadius) }
+                    .opacity(model.buttonShown ? 1 : 0)
             }
             .frame(width: screen.width, height: screen.height, alignment: .topLeading)
+            .onAppear {
+                DispatchQueue.main.async { model.start(screen: screen) }
+            }
         }
         .ignoresSafeArea()
-        .onAppear(perform: play)
     }
 
     @ViewBuilder
-    private var glass: some View {
-        if kind == .slide {
-            RoundedRectangle(cornerRadius: panelRadius, style: .continuous)
-                .frame(width: panel.width, height: panel.height)
-                .position(x: panel.midX, y: panel.midY)
+    private func popUp(_ screen: CGSize) -> some View {
+        if model.kind == .slide {
+            if let whole = model.whole {
+                picture(whole, screen)
+                    .mask { box(model.panel, radius: model.panelRadius) }
+                    .offset(y: model.drop)
+            }
         } else {
-            MorphShape(progress: out ? 1 : 0, from: button, to: panel, fromRadius: buttonRadius, toRadius: panelRadius)
+            let shape = MorphShape(progress: model.out ? 1 : 0, from: model.button, to: model.panel,
+                                   fromRadius: model.buttonRadius, toRadius: model.panelRadius)
+            if let glass = model.glass {
+                picture(glass, screen).mask { shape }
+                if let whole = model.whole {
+                    picture(whole, screen)
+                        .mask { shape }
+                        .opacity(model.contentsShown ? 1 : 0)
+                }
+            } else if let whole = model.whole {
+                // No picture of its glass alone (closing from somewhere new).
+                picture(whole, screen).mask { shape }
+            }
         }
     }
 
-    private func play() {
-        let duration: Double
-        let animation: Animation
-        switch kind {
-        case .open:
-            // The web morph's own curves (lib/morph-modal.ts), as the native
-            // account sheet uses them: slower out, quicker back.
-            duration = WebMotion.openDuration
-            animation = WebMotion.open
-        case .close:
-            duration = WebMotion.closeDuration
-            animation = WebMotion.close
-        case .slide:
-            // Carrying on at the drag's own speed, never slower than a flick.
-            let speed = max(Double(velocity) * 1000, 1600)
-            duration = min(0.35, max(0.18, Double(panel.height) / speed))
-            animation = .easeOut(duration: duration)
-        }
-        DispatchQueue.main.async {
-            withAnimation(animation) { out = kind == .open }
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + duration + 0.02, execute: finished)
+    private func picture(_ image: UIImage, _ screen: CGSize) -> some View {
+        Image(uiImage: image)
+            .resizable()
+            .frame(width: screen.width, height: screen.height)
+    }
+
+    private func box(_ rect: CGRect, radius: CGFloat) -> some View {
+        RoundedRectangle(cornerRadius: radius, style: .continuous)
+            .frame(width: rect.width, height: rect.height)
+            .position(x: rect.midX, y: rect.midY)
     }
 }
 

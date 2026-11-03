@@ -1365,6 +1365,12 @@ struct AccountSheetHost: View {
 
     @State private var open = false
     @State private var contentsIn = false
+    /// The contents rise 8 pt as they come in (and stay put going).
+    @State private var risen = false
+    @State private var dimmed = false
+    /// The button's own picture over the glass: going as the glass sets out
+    /// of it, back as the glass returns.
+    @State private var buttonShown = true
     @State private var drag: CGFloat = 0
     @State private var leaving = false
     @State private var dragMode = DragMode.undecided
@@ -1387,6 +1393,7 @@ struct AccountSheetHost: View {
             ZStack(alignment: .topLeading) {
                 backdrop(screen)
                 panelView(panel, screen: screen)
+                buttonPicture
             }
             .frame(width: screen.width, height: screen.height, alignment: .topLeading)
         }
@@ -1395,7 +1402,12 @@ struct AccountSheetHost: View {
             model.onAppear()
             DispatchQueue.main.async {
                 withAnimation(WebMotion.open) { open = true }
-                withAnimation(WebMotion.contentsIn) { contentsIn = true }
+                withAnimation(WebMotion.backdropIn) { dimmed = true }
+                withAnimation(WebMotion.buttonOut) { buttonShown = false }
+                withAnimation(WebMotion.contentsIn) {
+                    contentsIn = true
+                    risen = true
+                }
             }
         }
         .onChange(of: model.closing) { closing in
@@ -1409,9 +1421,25 @@ struct AccountSheetHost: View {
         let fade = 1 - min(max(drag, 0) / 400, 1)
         return Color.black.opacity(0.5)
             .frame(width: screen.width, height: screen.height)
-            .opacity(open && !leaving ? fade : 0)
+            .opacity(dimmed ? fade : 0)
             .contentShape(Rectangle())
             .onTapGesture { model.close() }
+    }
+
+    /// The button it opened from, as pictured with the page, over the glass
+    /// while the glass sets out of it and as it gets back (the web morph's
+    /// ghost of it).
+    @ViewBuilder
+    private var buttonPicture: some View {
+        if let source, let picture = model.glass?.button {
+            Image(uiImage: picture)
+                .resizable()
+                .frame(width: source.width, height: source.height)
+                .clipShape(RoundedRectangle(cornerRadius: min(source.width, source.height) / 2, style: .continuous))
+                .offset(x: source.minX, y: source.minY)
+                .opacity(buttonShown ? 1 : 0)
+                .allowsHitTesting(false)
+        }
     }
 
     private func panelView(_ panel: CGRect, screen: CGSize) -> some View {
@@ -1431,6 +1459,7 @@ struct AccountSheetHost: View {
             surface(panel, screen: screen, shift: shift)
             AccountSheetView(model: model)
                 .opacity(contentsIn ? 1 : 0)
+                .offset(y: risen ? 0 : 8)
         }
         .frame(width: panel.width, height: panel.height)
         // Before the offset, so the drag's points are the panel's own.
@@ -1503,17 +1532,24 @@ struct AccountSheetHost: View {
                 let dy = value.translation.height
                 let flick = value.predictedEndTranslation.height - dy
                 if dy > 100 || flick > 120 {
-                    slideAway(panel)
+                    var velocity = flick * 2
+                    if #available(iOS 17.0, *) { velocity = value.velocity.height }
+                    slideAway(panel, velocity: velocity)
                 } else {
                     withAnimation(WebMotion.snapBack) { drag = 0 }
                 }
             }
     }
 
-    private func slideAway(_ panel: CGRect) {
+    /// On down off the screen at the drag's pace or a little quicker, as the
+    /// web sheet goes, the backdrop clearing and the button forming again.
+    private func slideAway(_ panel: CGRect, velocity: CGFloat) {
         leaving = true
-        let duration = 0.3
-        withAnimation(.easeOut(duration: duration)) { drag = panel.height + 40 }
+        let gone = panel.height + 40
+        let duration = WebMotion.slideDuration(travel: gone - drag, velocity: velocity)
+        withAnimation(WebMotion.slide(duration)) { drag = gone }
+        withAnimation(.easeOut(duration: duration)) { dimmed = false }
+        withAnimation(.easeOut(duration: duration * 0.87).delay(duration * 0.13)) { buttonShown = true }
         DispatchQueue.main.asyncAfter(deadline: .now() + duration) { model.onFinished() }
     }
 
@@ -1521,9 +1557,12 @@ struct AccountSheetHost: View {
     private func animateAway() {
         guard !leaving else { return }
         leaving = true
-        // The contents clear first, then the glass goes back into the button.
+        // The contents clear first, then the glass goes back into the button,
+        // whose picture comes back over it as it gets there.
         withAnimation(WebMotion.contentsOut) { contentsIn = false }
         withAnimation(WebMotion.close) { open = false }
+        withAnimation(WebMotion.backdropOut) { dimmed = false }
+        withAnimation(WebMotion.buttonBack) { buttonShown = true }
         DispatchQueue.main.asyncAfter(deadline: .now() + WebMotion.closeDuration) { model.onFinished() }
     }
 }
@@ -1563,9 +1602,12 @@ struct MorphShape: Shape {
 }
 
 /// The web pop-ups' motion (lib/morph-modal.ts), so the native ones match it:
-/// opening on PANEL_SPRING over 680 ms with the contents coming in from 330 ms
-/// over 300 ms on SETTLE, closing quicker on MORPH_CALM over 460 ms, and a
-/// drag let go short snapping back over 300 ms.
+/// opening on PANEL_SPRING over 680 ms, the backdrop in over 300 ms and the
+/// button's picture off the glass in 160 ms, the contents coming in from
+/// 330 ms over 300 ms on SETTLE; closing quicker on MORPH_CALM over 460 ms,
+/// the contents gone in 140 ms, the backdrop out over 340 ms and the button's
+/// picture back over the last 45%; a drag let go short snapping back over
+/// 300 ms, and one let go far enough going on down at its own pace.
 enum WebMotion {
     static let openDuration = 0.68
     static let closeDuration = 0.46
@@ -1579,9 +1621,25 @@ enum WebMotion {
     }
 
     static let close = Animation.timingCurve(0.25, 0.46, 0.45, 0.94, duration: closeDuration)
-    static let contentsIn = Animation.timingCurve(0.2, 0.8, 0.2, 1, duration: 0.3).delay(0.33)
-    static let contentsOut = Animation.easeOut(duration: 0.16)
+    /// SETTLE, the contents' own curve.
+    static let settle = Animation.timingCurve(0.2, 0.8, 0.2, 1, duration: 0.3)
+    static let contentsIn = settle.delay(0.33)
+    static let contentsOut = Animation.easeOut(duration: 0.14)
+    static let backdropIn = Animation.easeOut(duration: 0.3)
+    static let backdropOut = Animation.easeIn(duration: 0.34)
+    static let buttonOut = Animation.easeOut(duration: 0.16)
+    static let buttonBack = Animation.easeOut(duration: closeDuration * 0.45).delay(closeDuration * 0.55)
     static let snapBack = Animation.timingCurve(0.2, 0, 0, 1, duration: 0.3)
+
+    /// Sliding away, `travel` points on down from a drag let go at
+    /// `velocity` points a second: at that pace or a little quicker.
+    static func slideDuration(travel: CGFloat, velocity: CGFloat) -> Double {
+        min(0.42, max(0.22, Double(travel) / max(Double(velocity) / 1000, 1.6) / 1000))
+    }
+
+    static func slide(_ duration: Double) -> Animation {
+        .timingCurve(0.25, 0.8, 0.25, 1, duration: duration)
+    }
 }
 
 /// An easing given as evenly spaced samples, as CSS linear() gives it.

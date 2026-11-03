@@ -32,6 +32,8 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
     /// The theme the glass was last made under. (The sheet marks a tapped
     /// theme as chosen at once, so the state alone can't show it changed.)
     private var glassTheme = ""
+    /// The button the sheet opened from, pictured along with the glass.
+    private var source: CGRect?
 
     @objc func present(_ call: CAPPluginCall) {
         let state: AccountState
@@ -127,6 +129,7 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
         model.onManageSubscriptions = { [weak self] in self?.manageSubscriptions() }
         model.onFinished = { [weak self] in self?.finish() }
         self.model = model
+        self.source = source
         notifyOnFinish = true
         glassTheme = Self.themeKey(state)
 
@@ -168,6 +171,7 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
         sheet?.dismiss(animated: false)
         model = nil
         sheet = nil
+        source = nil
         notifyOnFinish = true
         if notify {
             notifyListeners("action", data: ["type": "closed"])
@@ -189,10 +193,15 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
         // screen's wide colour, so it is turned into plain sRGB first.
         let config = WKSnapshotConfiguration()
         config.afterScreenUpdates = true
+        let source = self.source
         webView.takeSnapshot(with: config) { image, _ in
             let page = image?.cgImage.flatMap { Self.plainSRGB($0, width: webView.bounds.width, height: webView.bounds.height) }
+            // The button it opens from, as sharp as the screen shows it.
+            let button = source.flatMap { rect in
+                image?.cgImage.flatMap { Self.crop($0, to: rect, pointsWide: webView.bounds.width) }
+            }
             DispatchQueue.global(qos: .userInitiated).async {
-                let glass = page.flatMap { Self.looksBlank($0) ? nil : SheetGlass.make(from: $0, scale: 1) }
+                let glass = page.flatMap { Self.looksBlank($0) ? nil : SheetGlass.make(from: $0, scale: 1, button: button) }
                 #if DEBUG
                 if let page { Self.saveForDemo(page: page, glass: glass) }
                 #endif
@@ -202,8 +211,9 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
     }
 
     /// An image redrawn as plain 8-bit sRGB, the values the web's CSS works
-    /// in, at one pixel per point (it is blurred anyway).
-    private static func plainSRGB(_ image: CGImage, width: CGFloat, height: CGFloat) -> CGImage? {
+    /// in, at one pixel per point (it is blurred anyway). Also the pop-ups'
+    /// backdrops (PanelBackdrop).
+    static func plainSRGB(_ image: CGImage, width: CGFloat, height: CGFloat) -> CGImage? {
         let w = max(1, Int(width.rounded())), h = max(1, Int(height.rounded()))
         guard let space = CGColorSpace(name: CGColorSpace.sRGB),
               let context = CGContext(data: nil, width: w, height: h, bitsPerComponent: 8, bytesPerRow: 0, space: space,
@@ -211,6 +221,15 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
         context.interpolationQuality = .medium
         context.draw(image, in: CGRect(x: 0, y: 0, width: w, height: h))
         return context.makeImage()
+    }
+
+    /// Part of a picture of the screen (`pointsWide` across), at its full sharpness.
+    private static func crop(_ image: CGImage, to rect: CGRect, pointsWide: CGFloat) -> UIImage? {
+        let scale = CGFloat(image.width) / max(pointsWide, 1)
+        let pixels = CGRect(x: rect.minX * scale, y: rect.minY * scale,
+                            width: rect.width * scale, height: rect.height * scale).integral
+        guard let part = image.cropping(to: pixels) else { return nil }
+        return UIImage(cgImage: part, scale: scale, orientation: .up)
     }
 
     /// One colour all over: nothing was drawn.
@@ -340,8 +359,10 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
 /// blurred anyway.
 struct SheetGlass {
     let sheet: UIImage
+    /// The button the sheet opens from, as pictured with the page.
+    let button: UIImage?
 
-    static func make(from page: CGImage, scale: CGFloat) -> SheetGlass? {
+    static func make(from page: CGImage, scale: CGFloat, button: UIImage?) -> SheetGlass? {
         // Browsers composite and filter CSS in plain sRGB values, not linear
         // light: work in the snapshot's own values so 50% black means half.
         let context = CIContext(options: [.workingColorSpace: NSNull()])
@@ -360,7 +381,7 @@ struct SheetGlass {
             .applyingFilter("CIColorControls", parameters: [kCIInputSaturationKey: 1.2])
         guard let image = context.createCGImage(glass.cropped(to: extent), from: extent, format: .RGBA8, colorSpace: space)
         else { return nil }
-        return SheetGlass(sheet: UIImage(cgImage: image, scale: 1, orientation: .up))
+        return SheetGlass(sheet: UIImage(cgImage: image, scale: 1, orientation: .up), button: button)
     }
 }
 
