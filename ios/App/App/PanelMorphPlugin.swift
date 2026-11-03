@@ -46,9 +46,10 @@ public class PanelMorphPlugin: CAPPlugin, CAPBridgedPlugin {
     /// The backdrop being opened over, and the page under it once worked out.
     private var backdrop: PanelBackdrop?
     private var backdropPicture: UIImage?
-    /// The open pop-up's glass alone and where it was: closing from there,
-    /// its contents go first off this glass, as they came in.
-    private var openGlass: (picture: UIImage, panel: CGRect)?
+    /// The account sheet's own glass (SheetGlass), made from the page as the
+    /// pop-up opens and kept for its close: the pop-ups grow out of their
+    /// button just as the account sheet does.
+    private var glassPicture: UIImage?
 
     @objc func freeze(_ call: CAPPluginCall) {
         let backdrop = PanelBackdrop(call.getObject("backdrop"))
@@ -71,6 +72,7 @@ public class PanelMorphPlugin: CAPPlugin, CAPBridgedPlugin {
                 let generation = self.freezes
                 self.backdrop = backdrop
                 self.backdropPicture = nil
+                self.glassPicture = nil
                 DispatchQueue.global(qos: .userInitiated).async {
                     let picture = backdrop.picture(of: image)
                     DispatchQueue.main.async {
@@ -131,27 +133,27 @@ public class PanelMorphPlugin: CAPPlugin, CAPBridgedPlugin {
                 call.resolve()
                 return
             }
-            self.snapshot { after in
+            // Opening sets out at once from the frozen page (the pop-up's
+            // contents are pictured next, `contents`); closing pictures the
+            // page without the pop-up first.
+            let pictured: (@escaping (UIImage?) -> Void) -> Void = kind == .open
+                ? { $0(before) }
+                : { self.snapshot($0) }
+            pictured { after in
                 guard let after else {
                     self.uncover()
                     call.resolve()
                     return
                 }
-                // Opening, the frozen picture is the page and the new one the
-                // pop-up's glass alone; closing, the frozen one is the whole
-                // pop-up and the new one the page without it.
                 let opening = kind == .open
                 let panel = opening ? (to ?? from) : from
-                var glass: UIImage?
-                if opening {
-                    glass = after
-                    self.openGlass = (after, panel)
-                } else if kind == .close, let open = self.openGlass, open.panel.isAbout(panel) {
-                    glass = open.picture
-                }
+                let page = opening ? before : after
+                // The account sheet's glass, made from the page behind.
+                let glass = self.glassPicture ?? Self.sheetGlass(of: page)
+                self.glassPicture = glass
                 let model = PanelMorphModel(
                     kind: kind,
-                    page: opening ? before : after,
+                    page: page,
                     glass: glass,
                     whole: opening ? nil : before,
                     backdrop: self.backdropPicture,
@@ -179,6 +181,15 @@ public class PanelMorphPlugin: CAPPlugin, CAPBridgedPlugin {
                 }
             }
         }
+    }
+
+    /// The native account sheet's glass (SheetGlass: the page dimmed and
+    /// blurred by the web sheet's own CSS numbers), at one pixel per point.
+    private static func sheetGlass(of page: UIImage) -> UIImage? {
+        guard let source = page.cgImage,
+              let plain = AccountSheetPlugin.plainSRGB(source, width: page.size.width, height: page.size.height)
+        else { return nil }
+        return SheetGlass.make(from: plain, scale: 1, button: nil)?.sheet
     }
 
     /// The web view's own picture of the page as painted: just the page, with
@@ -250,7 +261,7 @@ public class PanelMorphPlugin: CAPPlugin, CAPBridgedPlugin {
     private func forget() {
         backdrop = nil
         backdropPicture = nil
-        openGlass = nil
+        glassPicture = nil
     }
 
     private func remove(_ view: UIView?, _ controller: UIViewController?) {
@@ -417,8 +428,8 @@ final class PanelMorphModel: ObservableObject {
     let kind: PanelMorphKind
     /// The page without the pop-up: before it opens, or once it has gone.
     let page: UIImage
-    /// The pop-up's glass alone, its contents hidden. Closing, only while
-    /// it's still where it opened.
+    /// The account sheet's glass made from the page (SheetGlass), which the
+    /// pop-up grows as.
     let glass: UIImage?
     /// The whole pop-up as it shows, contents and all. Opening, it's
     /// pictured a moment after the glass sets out.
@@ -565,9 +576,8 @@ struct PanelMorphView: View {
                         model.tint.frame(width: screen.width, height: screen.height)
                     }
                 }
-                .mask { box(model.panel, radius: 0) }
                 .opacity(dim)
-                if let around = model.whole ?? model.glass {
+                if let around = model.whole {
                     picture(around, screen)
                         .mask { Outside(hole: model.panel).fill(style: FillStyle(eoFill: true)) }
                         .opacity(dim)
@@ -596,21 +606,33 @@ struct PanelMorphView: View {
         } else {
             let shape = MorphShape(progress: model.out ? 1 : 0, from: model.button, to: model.panel,
                                    fromRadius: model.buttonRadius, toRadius: model.panelRadius)
-            // Pictured over the whole backdrop, the glass comes and goes with
-            // it, as real glass over it darkens and clears.
-            let glassShown: Double = model.dimmed ? 1 : 0
+            // The account sheet's own glass, grown as it grows (AccountSheetHost),
             if let glass = model.glass {
-                picture(glass, screen).mask { shape }.opacity(glassShown)
-                if let whole = model.whole {
-                    picture(whole, screen)
-                        .mask { shape }
-                        .opacity(model.contentsShown ? 1 : 0)
-                }
-            } else if let whole = model.whole {
-                // No picture of its glass alone (closing from somewhere new).
-                picture(whole, screen).mask { shape }.opacity(glassShown)
+                sheetGlass(glass, screen).mask { shape }
             }
+            // the pop-up itself coming in over it once it's most of the way out,
+            if let whole = model.whole {
+                picture(whole, screen)
+                    .mask { shape }
+                    .opacity(model.contentsShown ? 1 : 0)
+            }
+            // and the account sheet's lit rim round it all the way.
+            shape.stroke(AccountSheetHost.rim, lineWidth: 1.5)
+                .opacity(model.contentsShown && model.out ? 0 : 1)
         }
+    }
+
+    /// The glass as the account sheet draws it: the page through it, a 10%
+    /// white wash and a sheen lit from the top left.
+    private func sheetGlass(_ image: UIImage, _ screen: CGSize) -> some View {
+        ZStack(alignment: .topLeading) {
+            picture(image, screen)
+            Color.white.opacity(0.1)
+            AccountSheetHost.sheen
+                .frame(width: model.panel.width, height: model.panel.height)
+                .offset(x: model.panel.minX, y: model.panel.minY)
+        }
+        .frame(width: screen.width, height: screen.height, alignment: .topLeading)
     }
 
     private func picture(_ image: UIImage, _ screen: CGSize) -> some View {

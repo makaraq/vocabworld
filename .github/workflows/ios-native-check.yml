@@ -58,14 +58,11 @@ jobs:
             var P = window.Capacitor.Plugins.PanelMorph, tile = document.getElementById('tile'), back = document.getElementById('back'), panel = document.getElementById('panel');
             var rect = function (el) { var r = el.getBoundingClientRect(); return { x: r.left, y: r.top, width: r.width, height: r.height }; };
             var frames = function () { return new Promise(function (r) { requestAnimationFrame(function () { requestAnimationFrame(r); }); }); };
-            var contents = Array.prototype.slice.call(panel.children);
-            var showContents = function (on) { contents.forEach(function (el) { el.style.visibility = on ? '' : 'hidden'; }); };
-            // As lib/native/panel-morph.ts opens a pop-up: its glass first, then its contents.
+            // As lib/native/panel-morph.ts opens a pop-up: the native glass at
+            // once, then the pop-up itself pictured to come in over it.
             await P.freeze({ backdrop: { blur: 6, red: 0, green: 0, blue: 0, alpha: 0.5 } });
-            back.style.opacity = '1'; panel.style.opacity = '1'; showContents(false);
-            await frames();
             await P.open({ from: rect(tile), fromRadius: 24, to: rect(panel), toRadius: 24 });
-            showContents(true);
+            back.style.opacity = '1'; panel.style.opacity = '1';
             await frames();
             await P.contents();
             // And closes it again, a moment later.

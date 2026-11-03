@@ -337,6 +337,11 @@
     scale: 1.03 !important;
   }
 
+  /* Manage Account doesn't swell: its sheet grows out of it instead. */
+  html.liquid-glass button.w-full.bg-white\/10.backdrop-blur-sm.rounded-2xl[data-manage-account]:not(:disabled):active {
+    scale: none !important;
+  }
+
   /* Play is the primary control: a little more glass to it. */
   html.liquid-glass [data-tour="learning-controls"] > button.w-16 {
     --lg-fill: rgba(255, 255, 255, 0.15);

@@ -1,13 +1,13 @@
 // Opens a web pop-up out of its button, and closes it back, with the motion
 // drawn natively on iPhone (ios/App/App/PanelMorphPlugin.swift) at the
 // screen's full refresh rate; the web view stops at 60 fps. The pop-up itself
-// stays the web one: the screen is frozen under a picture of itself, the
-// pop-up is put at rest underneath with its contents hidden and pictured, and
-// the native layer grows that glass out of the button; the contents, pictured
-// next, come in over it once it's most of the way out, as lib/morph-modal.ts
-// brings them in. Then it steps aside onto the identical live pop-up. Closing
-// runs it the other way. Stands in for morphPanelOpen (same PanelMorph), which
-// hands over to it for pop-ups that ask ({ native: true }).
+// stays the web one: the screen is frozen under a picture of itself and the
+// native layer grows the account sheet's own glass out of the button at once
+// (as the native account sheet opens); the pop-up, put at rest underneath and
+// pictured, comes in over it once it's most of the way out. Then it steps
+// aside onto the identical live pop-up. Closing runs it the other way. Stands
+// in for morphPanelOpen (same PanelMorph), which hands over to it for pop-ups
+// that ask ({ native: true }).
 
 import { Capacitor, registerPlugin } from '@capacitor/core'
 import type { PanelMorph } from '@/lib/morph-modal'
@@ -22,10 +22,10 @@ interface PanelMorphPlugin {
    *  works out from it the page under the pop-up's `backdrop`. */
   freeze(options?: { backdrop?: Backdrop }): Promise<void>
   /** Out of `from` (the button) into `to` (the pop-up), over the frozen
-   *  picture: the pop-up's glass, pictured now, sets out at once (resolves). */
+   *  picture: the account sheet's glass sets out at once (resolves). */
   open(options: { from: Rect; fromRadius: number; to: Rect; toRadius: number }): Promise<void>
-  /** The pop-up pictured again with its contents showing, which come in over
-   *  the glass. Resolves once it has all settled. */
+  /** The pop-up pictured, now it shows underneath: it comes in over the
+   *  glass. Resolves once it has all settled. */
   contents(): Promise<void>
   /** Back from `from` (the pop-up) into `to` (the button). */
   close(options: { from: Rect; fromRadius: number; to: Rect; toRadius: number }): Promise<void>
@@ -56,12 +56,6 @@ const radiusOf = (el: HTMLElement): number => {
 
 const twoFrames = () => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())))
 
-// What comes in over the glass, as lib/morph-modal.ts has it: the panel's
-// children in its flow (those laid over the whole of it are its glass).
-const contentsOf = (panel: HTMLElement) =>
-  [...panel.children].filter(
-    (el): el is HTMLElement => el instanceof HTMLElement && !['absolute', 'fixed'].includes(getComputedStyle(el).position),
-  )
 
 // The backdrop's blur and colour, for the native layer to draw it under the
 // pop-up too, where the pictures can't show it. The colour is read off a
@@ -88,15 +82,7 @@ export function nativeMorphOpen(source: HTMLElement, panel: HTMLElement, backdro
   const button = rectOf(source)
   const buttonRadius = radiusOf(source)
   let phase: 'opening' | 'open' | 'closing' | 'gone' = 'opening'
-  // The contents while only the glass is pictured.
-  let hidden: HTMLElement[] = []
-  const showContents = () => {
-    for (const el of hidden) el.style.removeProperty('visibility')
-    hidden = []
-  }
-
   const release = () => {
-    showContents()
     for (const el of parts) for (const prop of HELD) el.style.removeProperty(prop)
   }
   // Hidden until the screen is frozen under its picture (it may already be
@@ -107,26 +93,22 @@ export function nativeMorphOpen(source: HTMLElement, panel: HTMLElement, backdro
     try {
       await NativeMorph.freeze({ backdrop: backdropOf(backdrop) })
       if (phase !== 'opening') return
+      // At rest, still hidden: where it will be is known at once, and the
+      // native glass sets out there straight away, as the account sheet's does.
       for (const el of parts) {
         el.style.setProperty('transition', 'none', 'important')
         el.style.setProperty('opacity', '1', 'important')
-        el.style.removeProperty('visibility')
       }
       panel.style.setProperty('transform', 'none', 'important')
-      // Its glass sets out on its own; the contents come once it's out.
-      hidden = contentsOf(panel)
-      for (const el of hidden) el.style.setProperty('visibility', 'hidden', 'important')
-      await twoFrames()
-      if (phase !== 'opening') return
       await NativeMorph.open({ from: button, fromRadius: buttonRadius, to: rectOf(panel), toRadius: radiusOf(panel) })
-      showContents()
+      // Then the pop-up itself, under the cover, pictured to come in over the glass.
+      for (const el of parts) el.style.removeProperty('visibility')
       await twoFrames()
       await NativeMorph.contents()
     } catch {
       // Without the native layer it just shows, at rest.
       await NativeMorph.clear().catch(() => {})
     } finally {
-      showContents()
       if (phase === 'opening') {
         phase = 'open'
         release()

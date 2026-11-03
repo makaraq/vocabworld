@@ -1374,6 +1374,8 @@ struct AccountSheetHost: View {
     @State private var drag: CGFloat = 0
     @State private var leaving = false
     @State private var dragMode = DragMode.undecided
+    /// Where the finger was when the drag took the sheet up.
+    @State private var dragStart: CGFloat = 0
 
     private enum DragMode {
         case undecided, sheet, ignored
@@ -1477,26 +1479,36 @@ struct AccountSheetHost: View {
             .frame(width: panel.width, height: panel.height)
             .overlay(alignment: .topLeading) {
                 if let glass = model.glass {
-                    Image(uiImage: glass.sheet)
-                        .resizable()
-                        .frame(width: screen.width, height: screen.height)
-                        .offset(x: -panel.minX, y: -(panel.minY + shift))
+                    // Each new picture of the page blends in over the last
+                    // (a theme changing behind it).
+                    ZStack(alignment: .topLeading) {
+                        Image(uiImage: glass.sheet)
+                            .resizable()
+                            .frame(width: screen.width, height: screen.height)
+                            .id(ObjectIdentifier(glass.sheet))
+                            .transition(.opacity)
+                    }
+                    .offset(x: -panel.minX, y: -(panel.minY + shift))
                 } else {
                     // Reduce Transparency: the web sheet goes solid (--lg-solid).
                     Color(red: 52 / 255, green: 30 / 255, blue: 22 / 255)
                 }
             }
             .overlay(Color.white.opacity(0.1))
-            .overlay(LinearGradient(gradient: Gradient(stops: [
-                .init(color: Color.white.opacity(0.14), location: 0),
-                .init(color: Color.white.opacity(0.03), location: 0.28),
-                .init(color: Color.white.opacity(0), location: 0.55),
-                .init(color: Color.white.opacity(0.05), location: 1),
-            ]), startPoint: UnitPoint(x: 0.33, y: 0), endPoint: UnitPoint(x: 0.67, y: 1)))
+            .overlay(Self.sheen)
     }
 
+    /// The sheet's sheen, lit from the top left (also the pop-ups' glass as
+    /// they open, PanelMorphView).
+    static let sheen = LinearGradient(gradient: Gradient(stops: [
+        .init(color: Color.white.opacity(0.14), location: 0),
+        .init(color: Color.white.opacity(0.03), location: 0.28),
+        .init(color: Color.white.opacity(0), location: 0.55),
+        .init(color: Color.white.opacity(0.05), location: 1),
+    ]), startPoint: UnitPoint(x: 0.33, y: 0), endPoint: UnitPoint(x: 0.67, y: 1))
+
     /// The light-catching rim round the web sheet's edge.
-    private static let rim = LinearGradient(gradient: Gradient(stops: [
+    static let rim = LinearGradient(gradient: Gradient(stops: [
         .init(color: Color.white.opacity(0.7), location: 0),
         .init(color: Color.white.opacity(0.25), location: 0.12),
         .init(color: Color.white.opacity(0.06), location: 0.3),
@@ -1510,46 +1522,63 @@ struct AccountSheetHost: View {
     /// contents hold still meanwhile); let go far or fast enough, it slides
     /// away. Upwards it only gives a little.
     private func dragToClose(_ panel: CGRect) -> some Gesture {
-        DragGesture(minimumDistance: 6)
+        // Measured on the screen, not on the panel: the panel moves under the
+        // finger, and measured on it the drag would chase itself (half speed,
+        // jittering).
+        DragGesture(minimumDistance: 6, coordinateSpace: .global)
             .onChanged { value in
                 guard !leaving else { return }
                 if dragMode == .undecided {
-                    let fromTop = value.startLocation.y < 80
+                    let fromTop = value.startLocation.y - panel.minY < 80
                     let downwards = value.translation.height > abs(value.translation.width)
                     let atTop = (model.scrollView?.contentOffset.y ?? 0) <= 0.5
                     dragMode = fromTop || (downwards && atTop) ? .sheet : .ignored
-                    if dragMode == .sheet { model.scrollView?.isScrollEnabled = false }
+                    if dragMode == .sheet {
+                        dragStart = value.translation.height
+                        model.scrollView?.isScrollEnabled = false
+                    }
                 }
                 guard dragMode == .sheet else { return }
-                let dy = value.translation.height
-                drag = dy < 0 ? dy * 0.15 : dy
+                // From where it was taken up (no jump by the first few points),
+                // giving only a little upwards, as a sheet does.
+                let dy = value.translation.height - dragStart
+                drag = dy >= 0 ? dy : -pow(-dy, 0.7)
             }
             .onEnded { value in
                 let wasSheet = dragMode == .sheet
                 dragMode = .undecided
                 model.scrollView?.isScrollEnabled = true
                 guard !leaving, wasSheet else { return }
-                let dy = value.translation.height
-                let flick = value.predictedEndTranslation.height - dy
-                if dy > 100 || flick > 120 {
-                    var velocity = flick * 2
-                    if #available(iOS 17.0, *) { velocity = value.velocity.height }
+                var velocity = (value.predictedEndTranslation.height - value.translation.height) * 2
+                if #available(iOS 17.0, *) { velocity = value.velocity.height }
+                if drag > panel.height * 0.25 || velocity > 700 || (drag > 60 && velocity > 250) {
                     slideAway(panel, velocity: velocity)
                 } else {
-                    withAnimation(WebMotion.snapBack) { drag = 0 }
+                    // Back up on a spring that starts at the finger's own speed.
+                    let spring = Animation.interpolatingSpring(
+                        mass: 1, stiffness: 320, damping: 32,
+                        initialVelocity: drag > 1 ? Double(-velocity / drag) : 0
+                    )
+                    withAnimation(spring) { drag = 0 }
                 }
             }
     }
 
-    /// On down off the screen at the drag's pace or a little quicker, as the
-    /// web sheet goes, the backdrop clearing and the button forming again.
+    /// On down off the screen, carrying on at the finger's own speed, the
+    /// backdrop clearing and the button forming again.
     private func slideAway(_ panel: CGRect, velocity: CGFloat) {
         leaving = true
         let gone = panel.height + 40
-        let duration = WebMotion.slideDuration(travel: gone - drag, velocity: velocity)
-        withAnimation(WebMotion.slide(duration)) { drag = gone }
-        withAnimation(.easeOut(duration: duration)) { dimmed = false }
-        withAnimation(.easeOut(duration: duration * 0.87).delay(duration * 0.13)) { buttonShown = true }
+        let remaining = max(gone - drag, 1)
+        let duration = 0.45
+        // Critically damped, setting off at the finger's speed.
+        let spring = Animation.interpolatingSpring(
+            mass: 1, stiffness: 250, damping: 31.6,
+            initialVelocity: Double(max(velocity, 0) / remaining)
+        )
+        withAnimation(spring) { drag = gone }
+        withAnimation(.easeOut(duration: 0.35)) { dimmed = false }
+        withAnimation(.easeOut(duration: 0.3).delay(0.08)) { buttonShown = true }
         DispatchQueue.main.asyncAfter(deadline: .now() + duration) { model.onFinished() }
     }
 

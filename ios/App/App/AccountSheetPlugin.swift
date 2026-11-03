@@ -29,6 +29,9 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
     /// when it asked for the close itself.
     private var notifyOnFinish = true
     private var glassRefreshes: [DispatchWorkItem] = []
+    /// Counts the glass refreshes asked for, and the newest one on screen.
+    private var glassRequests = 0
+    private var glassShown = 0
     /// The theme the glass was last made under. (The sheet marks a tapped
     /// theme as chosen at once, so the state alone can't show it changed.)
     private var glassTheme = ""
@@ -80,12 +83,12 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
             if model.state != state { model.state = state }
             self.sheet?.overrideUserInterfaceStyle = state.dark ? .dark : .light
             // A new theme restyles the page behind, which shows through live;
-            // the glass is made again from it partway through the page's 700 ms
-            // cross-fade, and once more when it has settled.
+            // the glass follows the page's 700 ms cross-fade, made again from it
+            // every tenth of a second until it has settled.
             let theme = Self.themeKey(state)
             if theme != self.glassTheme {
                 self.glassTheme = theme
-                self.refreshGlass(after: [0.3, 0.85])
+                self.refreshGlass(after: stride(from: 0.05, through: 1.05, by: 0.1).map { $0 })
             }
             call.resolve()
         }
@@ -264,9 +267,14 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
         glassRefreshes.forEach { $0.cancel() }
         glassRefreshes = delays.map { delay in
             let work = DispatchWorkItem { [weak self] in
-                self?.makeGlass { glass in
-                    guard let glass, let model = self?.model else { return }
-                    withAnimation(.easeInOut(duration: 0.3)) { model.glass = glass }
+                guard let self else { return }
+                self.glassRequests += 1
+                let request = self.glassRequests
+                self.makeGlass { glass in
+                    // Only ever forward: a slow picture never replaces a newer one.
+                    guard let glass, let model = self.model, request > self.glassShown else { return }
+                    self.glassShown = request
+                    withAnimation(.linear(duration: 0.12)) { model.glass = glass }
                 }
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: work)
