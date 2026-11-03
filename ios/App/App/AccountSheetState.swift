@@ -200,10 +200,6 @@ final class AccountSheetModel: ObservableObject {
     /// The theme last tapped, and when: the page's word on it is a moment
     /// behind, and an older one mustn't put the tick back.
     var pickedTheme: (id: String, at: Date)?
-    /// The page as it was when a theme was tapped, held behind the sheet while
-    /// the page changes underneath, then faded away over the new one.
-    @Published var heldPage: UIImage?
-    @Published var heldPageGone = false
 
     /// Animates the sheet away (AccountSheetHost watches `closing`).
     func close() {

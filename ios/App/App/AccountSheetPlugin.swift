@@ -34,6 +34,11 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
     /// A theme coming in (becomeTheme), and the page's word that came meanwhile.
     private var switchingTheme = false
     private var deferredState: AccountState?
+    /// The still picture of the screen over a theme change, what it still
+    /// waits for, and a count of them (for the timeout).
+    private var curtain: UIView?
+    private var curtainWaits: Set<String> = []
+    private var curtainDrops = 0
     /// The theme the glass was last made under. (The sheet marks a tapped
     /// theme as chosen at once, so the state alone can't show it changed.)
     private var glassTheme = ""
@@ -113,12 +118,12 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
         if model.state != state { model.state = state }
     }
 
-    /// The sheet takes on a theme all at once, on its own: its glass made from
-    /// the theme's backdrop drawn here (as its swatch is), its fills and text
-    /// colour from the theme's look (measured by the page when the sheet
-    /// opened), all coming in together over the page's own 700 ms, the page
-    /// held behind it (holdPage) fading away onto the new one. Nothing waits
-    /// on the page to repaint or to answer.
+    /// The sheet takes on a theme. Tapped here, it happens behind a still
+    /// picture of the whole screen (dropCurtain): the page, the glass, the
+    /// fills, the text colour and the tick all change out of sight, and once
+    /// the new screen is wholly ready (its glass made, the page's new
+    /// backdrop painted) the picture dissolves away onto it, so nothing half
+    /// done ever shows. Changed by the page itself, it simply blends in.
     private func becomeTheme(_ item: AccountState.Theme.Item, from base: AccountState) {
         guard let model else { return }
         var next = base
@@ -128,51 +133,89 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
         glassTheme = Self.themeKey(next)
         glassRequests += 1
         let request = glassRequests
-        switchingTheme = true
-        let target = next
+        let hidden = curtain != nil
         #if DEBUG
-        NSLog("[theme] become %@ request %ld", item.id, request)
+        NSLog("[theme] become %@ request %ld behind curtain %@", item.id, request, hidden ? "yes" : "no")
         #endif
-        // The look, the tick and the text colour change at once, here and now:
-        // nothing of it waits on anything. The page held behind stays until
-        // the page says its new backdrop is painted (themeShown): a photo
-        // theme's photo takes a moment to decode, and let go of sooner it
-        // would show an empty backdrop, then the photo popping in.
-        withAnimation(.timingCurve(0.22, 1, 0.36, 1, duration: 0.7)) {
-            model.state = target
+        if hidden {
+            switchingTheme = true
+            model.state = next
+            sheet?.overrideUserInterfaceStyle = next.dark ? .dark : .light
+            curtainWaits = ["glass", "page"]
+        } else {
+            withAnimation(.timingCurve(0.22, 1, 0.36, 1, duration: 0.7)) { model.state = next }
+            sheet?.overrideUserInterfaceStyle = next.dark ? .dark : .light
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
-            // UIKit's own parts follow (SwiftUI's already have).
-            self.sheet?.overrideUserInterfaceStyle = target.dark ? .dark : .light
-            guard request == self.glassRequests else { return }
-            self.switchingTheme = false
-            if let waiting = self.deferredState {
-                self.deferredState = nil
-                self.apply(waiting)
-            }
+        // The glass made from the new backdrop, drawn as its swatch is.
+        guard !UIAccessibility.isReduceTransparencyEnabled else {
+            curtainReady("glass")
+            return
         }
-        // The glass follows as soon as it's made from the new backdrop (drawn
-        // as its swatch is, on the main thread; blurred off it), blending in.
-        guard !UIAccessibility.isReduceTransparencyEnabled else { return }
         let size = bridge?.webView?.bounds.size ?? UIScreen.main.bounds.size
         let button = model.glass?.button
-        let blur = target.look?.blur ?? 12
+        let blur = next.look?.blur ?? 12
         DispatchQueue.main.async {
-            let backdrop = Self.drawBackdropOnMain(item, size: size)
-            #if DEBUG
-            NSLog("[theme] backdrop drawn: %@", backdrop == nil ? "no" : "yes")
-            #endif
-            guard let backdrop else { return }
+            guard let backdrop = Self.drawBackdropOnMain(item, size: size) else {
+                self.curtainReady("glass")
+                return
+            }
             DispatchQueue.global(qos: .userInitiated).async {
                 let glass = SheetGlass.make(from: backdrop, scale: 1, button: button, blur: blur)
                 DispatchQueue.main.async {
                     #if DEBUG
                     NSLog("[theme] glass made: %@", glass == nil ? "no" : "yes")
                     #endif
-                    guard let glass, self.model === model, request == self.glassRequests else { return }
-                    withAnimation(.easeInOut(duration: 0.45)) { model.glass = glass }
+                    guard self.model === model, request == self.glassRequests else { return }
+                    if let glass {
+                        if self.curtain != nil {
+                            model.glass = glass
+                        } else {
+                            withAnimation(.easeInOut(duration: 0.45)) { model.glass = glass }
+                        }
+                    }
+                    self.curtainReady("glass")
                 }
             }
+        }
+    }
+
+    /// The whole screen as it is, laid over itself while a theme changes
+    /// underneath (becomeTheme). It goes when everything has changed, or
+    /// after 1.5 s whatever happens.
+    private func dropCurtain() {
+        guard curtain == nil, let window = bridge?.viewController?.view.window,
+              let still = window.snapshotView(afterScreenUpdates: false) else { return }
+        still.frame = window.bounds
+        still.isUserInteractionEnabled = false
+        window.addSubview(still)
+        curtain = still
+        curtainDrops += 1
+        let drop = curtainDrops
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            if drop == self.curtainDrops { self.liftCurtain() }
+        }
+    }
+
+    /// One of the things the curtain waits for is done ("glass", "page").
+    private func curtainReady(_ what: String) {
+        curtainWaits.remove(what)
+        if curtain != nil, curtainWaits.isEmpty { liftCurtain() }
+    }
+
+    /// The still picture dissolves away onto the changed screen.
+    private func liftCurtain() {
+        guard let still = curtain else { return }
+        curtain = nil
+        curtainWaits = []
+        UIView.animate(withDuration: 0.45, delay: 0, options: [.curveEaseInOut, .allowUserInteraction]) {
+            still.alpha = 0
+        } completion: { _ in
+            still.removeFromSuperview()
+        }
+        switchingTheme = false
+        if let waiting = deferredState {
+            deferredState = nil
+            apply(waiting)
         }
     }
 
@@ -216,46 +259,12 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
         return renderer.cgImage
     }
 
-    /// A theme tapped: the page as it is now, held behind the sheet, before
-    /// the page is asked to change (it changes at once underneath).
-    private func holdPage(then done: @escaping () -> Void) {
-        guard let model, let webView = bridge?.webView else {
-            done()
-            return
-        }
-        let config = WKSnapshotConfiguration()
-        config.afterScreenUpdates = false
-        webView.takeSnapshot(with: config) { [weak self] image, _ in
-            if let image, self?.model === model {
-                model.heldPageGone = false
-                model.heldPage = image
-                // Let go of anyway if the page never says (or the theme was
-                // the one already on).
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-                    if model.heldPage === image { self?.releaseHeldPage() }
-                }
-            }
-            done()
-        }
-    }
-
+    /// The page's new backdrop is painted (a photo theme's photo decoded):
+    /// the curtain can go once the glass is made too.
     @objc func themeShown(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
-            self.releaseHeldPage()
+            self.curtainReady("page")
             call.resolve()
-        }
-    }
-
-    /// The page held behind the sheet fades away onto the page as it is now.
-    private func releaseHeldPage() {
-        guard let model, let held = model.heldPage, !model.heldPageGone else { return }
-        withAnimation(.easeInOut(duration: 0.45)) { model.heldPageGone = true }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            // Unless another theme has been picked since.
-            if model.heldPage === held {
-                model.heldPage = nil
-                model.heldPageGone = false
-            }
         }
     }
 
@@ -295,13 +304,12 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
             if type == "theme", let self, let model = self.model, let id = value,
                let item = model.state.theme.items.first(where: { $0.id == id }),
                !(item.premium && !model.state.subscription.premium) {
-                // The page as it is held behind the sheet; then the page is
-                // told (it changes at once underneath) and the sheet changes
-                // on its own, at once.
-                self.holdPage {
-                    self.notifyListeners("action", data: data)
-                    self.becomeTheme(item, from: model.state)
-                }
+                // The screen stills under a picture of itself; the page is
+                // told (it changes at once, underneath) and so does the sheet;
+                // then the picture dissolves onto the new screen.
+                self.dropCurtain()
+                self.notifyListeners("action", data: data)
+                self.becomeTheme(item, from: model.state)
             } else {
                 self?.notifyListeners("action", data: data)
             }
@@ -352,6 +360,9 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
         source = nil
         switchingTheme = false
         deferredState = nil
+        curtain?.removeFromSuperview()
+        curtain = nil
+        curtainWaits = []
         notifyOnFinish = true
         if notify {
             notifyListeners("action", data: ["type": "closed"])
