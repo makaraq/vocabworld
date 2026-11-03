@@ -316,7 +316,6 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
                 // told (it changes at once, underneath) and so does the sheet;
                 // then the picture dissolves onto the new screen.
                 self.tappedAt = Date()
-                self.model?.trace = []
                 self.trace("tapped \(id)")
                 self.dropCurtain()
                 self.notifyListeners("action", data: data)
@@ -363,14 +362,10 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
         "\(state.theme.current)|\(state.dark)"
     }
 
-    /// What a theme change did and when (ms after the tap), shown small under
-    /// the build stamp so a switch that goes wrong on a phone can be read off.
+    /// What a theme change did and when (ms after the tap), in the log.
     private func trace(_ what: String) {
         let ms = Int(Date().timeIntervalSince(tappedAt) * 1000)
-        let line = "\(ms) \(what)"
-        NSLog("[theme] %@", line)
-        guard let model else { return }
-        model.trace = Array((model.trace + [line]).suffix(8))
+        NSLog("[theme] %@", "\(ms) \(what)")
     }
 
     private func finish() {

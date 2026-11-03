@@ -250,13 +250,6 @@ struct AccountSheetView: View {
                             .foregroundColor(ink(0.3))
                             .padding(.top, 4)
                     }
-                    if !model.trace.isEmpty {
-                        Text(verbatim: model.trace.joined(separator: "\n"))
-                            .font(AppFont.font(9))
-                            .monospacedDigit()
-                            .foregroundColor(ink(0.3))
-                            .multilineTextAlignment(.center)
-                    }
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 32)
@@ -720,7 +713,7 @@ private struct ThemeSwatch: View {
             VStack(spacing: 6) {
                 Color.clear
                     .aspectRatio(3.0 / 4.0, contentMode: .fit)
-                    .overlay(ThemeBackdrop(item: item))
+                    .overlay(ThemeBackdrop(item: item).allowsHitTesting(false))
                     .overlay(pane)
                     .overlay(alignment: .topTrailing) {
                         if item.premium {
@@ -756,6 +749,10 @@ private struct ThemeSwatch: View {
                     .foregroundColor(ink(on ? 1 : 0.6))
                     .lineLimit(1)
             }
+            // Taps only inside the swatch: a photo theme's photo fills it by
+            // spilling past its sides (clipped from sight, but not from
+            // touch), and took the taps meant for its neighbour.
+            .contentShape(Rectangle())
         }
         .buttonStyle(PressStyle())
         .animation(.easeOut(duration: 0.2), value: on)
