@@ -329,11 +329,12 @@
       --lg-touch 120ms ease !important;
   }
 
-  /* Wide text buttons swell less, or they'd crowd their neighbours. */
+  /* Wide text buttons swell less, or they'd crowd their neighbours.
+     (:not(#_) outranks the swell rule above; Manage Account has its own.) */
   html.liquid-glass :is(
     button.w-full.bg-white\/10.backdrop-blur-sm:is(.rounded-xl, .rounded-2xl),
     .fixed.inset-0 > [class*="backdrop-blur"] button.w-full:is(.bg-white\/15, .bg-black\/20)
-  ):active {
+  ):not([data-manage-account], :disabled, #_):active {
     scale: 1.03 !important;
   }
 
