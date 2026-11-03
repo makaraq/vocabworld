@@ -79,6 +79,7 @@ public class IslandToastPlugin: CAPPlugin, CAPBridgedPlugin {
         root.addChild(controller)
         root.view.addSubview(controller.view)
         controller.didMove(toParent: root)
+        model.onStatusBarHidden = { [weak root] hidden in root?.hidesStatusBar = hidden }
         model.onDone = { [weak self] in
             self?.window?.isHidden = true
             self?.window = nil
@@ -141,6 +142,9 @@ final class IslandToastModel: ObservableObject {
     @Published private(set) var bump = 0
     let island: CGRect
     var onDone: () -> Void = {}
+    /// The status bar steps aside while it's wide over it, as it does for
+    /// the system's own.
+    var onStatusBarHidden: (Bool) -> Void = { _ in }
     private var collapse: DispatchWorkItem?
 
     init(toast: IslandToast, island: CGRect) {
@@ -150,6 +154,7 @@ final class IslandToastModel: ObservableObject {
 
     func start() {
         UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+        onStatusBarHidden(true)
         // The island's own springy widening.
         withAnimation(.spring(response: 0.42, dampingFraction: 0.72)) { open = true }
         withAnimation(.easeOut(duration: 0.22).delay(0.14)) { contentsShown = true }
@@ -174,32 +179,47 @@ final class IslandToastModel: ObservableObject {
     private func shrink() {
         withAnimation(.easeIn(duration: 0.12)) { contentsShown = false }
         withAnimation(.spring(response: 0.34, dampingFraction: 0.92).delay(0.08)) { open = false }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) { [weak self] in self?.onStatusBarHidden(false) }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in self?.onDone() }
     }
 }
 
 /// The black pill, widening out of the island and shrinking back into it.
+/// It keeps the island's height, as the system's own do: what it shows sits
+/// either side of the camera, the only places there are pixels to show it.
 struct IslandToastView: View {
     @ObservedObject var model: IslandToastModel
 
     var body: some View {
         GeometryReader { geo in
             let island = model.island
-            let wide = CGRect(x: (geo.size.width - min(geo.size.width - 28, 312)) / 2, y: island.minY,
-                              width: min(geo.size.width - 28, 312), height: 54)
+            let width = min(geo.size.width - 56, 344)
+            let wide = CGRect(x: (geo.size.width - width) / 2, y: island.minY, width: width, height: island.height)
             // Closed, it's tucked inside the island, out of sight behind it
             // even where the island is a little smaller than this one.
             let pill = model.open ? wide : island.insetBy(dx: 20, dy: 3.5)
+            // The ring round the left end's own curve; the XP short of the right's.
+            let ringInset = (wide.height - LevelRing.size) / 2
+            let left = CGRect(x: wide.minX + ringInset, y: wide.minY,
+                              width: island.minX - 6 - (wide.minX + ringInset), height: wide.height)
+            let right = CGRect(x: island.maxX + 6, y: wide.minY,
+                               width: wide.maxX - 14 - (island.maxX + 6), height: wide.height)
             ZStack(alignment: .topLeading) {
                 Capsule(style: .continuous)
                     .fill(Color.black)
                     .frame(width: pill.width, height: pill.height)
                     .offset(x: pill.minX, y: pill.minY)
-                contents
-                    .frame(width: wide.width - 24, height: wide.height)
-                    .offset(x: wide.minX + 12, y: wide.minY)
+                leftContents
+                    .frame(width: left.width, height: left.height, alignment: .leading)
+                    .scaleEffect(model.contentsShown ? 1 : 0.7, anchor: .trailing)
+                    .offset(x: left.minX, y: left.minY)
                     .opacity(model.contentsShown ? 1 : 0)
-                    .scaleEffect(model.contentsShown ? 1 : 0.7, anchor: .top)
+                    .blur(radius: model.contentsShown ? 0 : 4)
+                rightContents
+                    .frame(width: right.width, height: right.height, alignment: .trailing)
+                    .scaleEffect(model.contentsShown ? 1 : 0.7, anchor: .leading)
+                    .offset(x: right.minX, y: right.minY)
+                    .opacity(model.contentsShown ? 1 : 0)
                     .blur(radius: model.contentsShown ? 0 : 4)
             }
             .frame(width: geo.size.width, height: geo.size.height, alignment: .topLeading)
@@ -210,31 +230,40 @@ struct IslandToastView: View {
         }
     }
 
-    private var contents: some View {
+    /// The level and the quarter reached.
+    private var leftContents: some View {
         let toast = model.toast
         let color = Color(hex: toast.color)
-        let accent = Color(hex: toast.accent)
-        return HStack(spacing: 10) {
+        return HStack(spacing: 6) {
             LevelRing(level: toast.level, progress: toast.progress, color: color)
-            Text("+\(toast.xp) XP")
-                .font(AppFont.font(18, 800))
-                .monospacedDigit()
-                .foregroundStyle(LinearGradient(colors: [color, .white, accent], startPoint: .leading, endPoint: .trailing))
-                .lineLimit(1)
-                .id(model.bump)
-                .transition(.scale(scale: 1.3).combined(with: .opacity))
-            Spacer(minLength: 6)
             Text(toast.percent)
-                .font(AppFont.font(15, 700))
+                .font(AppFont.font(14, 700))
                 .monospacedDigit()
                 .foregroundColor(color)
                 .lineLimit(1)
+                .minimumScaleFactor(0.7)
         }
+    }
+
+    /// The XP earned.
+    private var rightContents: some View {
+        let toast = model.toast
+        let color = Color(hex: toast.color)
+        let accent = Color(hex: toast.accent)
+        return Text("+\(toast.xp) XP")
+            .font(AppFont.font(16, 800))
+            .monospacedDigit()
+            .foregroundStyle(LinearGradient(colors: [color, .white, accent], startPoint: .leading, endPoint: .trailing))
+            .lineLimit(1)
+            .minimumScaleFactor(0.6)
+            .id(model.bump)
+            .transition(.scale(scale: 1.3).combined(with: .opacity))
     }
 }
 
 /// The level in a ring filled to the quarter reached, as the web pop-up draws it.
 private struct LevelRing: View {
+    static let size: CGFloat = 28
     let level: Int
     let progress: Double
     let color: Color
@@ -242,16 +271,17 @@ private struct LevelRing: View {
     var body: some View {
         ZStack {
             Circle()
-                .stroke(Color.white.opacity(0.15), lineWidth: 3)
+                .stroke(Color.white.opacity(0.15), lineWidth: 2.5)
             Circle()
                 .trim(from: 0, to: CGFloat(min(max(progress, 0), 1)))
-                .stroke(color, style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                .stroke(color, style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
                 .rotationEffect(.degrees(-90))
             Text(verbatim: String(level))
-                .font(AppFont.font(12, 800))
+                .font(AppFont.font(11, 800))
                 .monospacedDigit()
                 .foregroundColor(.white)
+                .minimumScaleFactor(0.7)
         }
-        .frame(width: 32, height: 32)
+        .frame(width: Self.size, height: Self.size)
     }
 }

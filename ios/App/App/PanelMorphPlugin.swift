@@ -317,9 +317,17 @@ public class PanelMorphPlugin: CAPPlugin, CAPBridgedPlugin {
 }
 
 /// The root of a window put up over the app's (the morph's cover, the
-/// island's pop-up): it leaves the status bar as the app has it.
+/// island's pop-up): it leaves the status bar as the app has it, unless told
+/// to hide it meanwhile.
 final class StatusBarAsApp: UIViewController {
     private weak var app: UIViewController?
+
+    var hidesStatusBar = false {
+        didSet {
+            guard hidesStatusBar != oldValue else { return }
+            UIView.animate(withDuration: 0.25) { self.setNeedsStatusBarAppearanceUpdate() }
+        }
+    }
 
     init(app: UIViewController) {
         self.app = app
@@ -336,7 +344,8 @@ final class StatusBarAsApp: UIViewController {
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle { app?.preferredStatusBarStyle ?? .default }
-    override var prefersStatusBarHidden: Bool { app?.prefersStatusBarHidden ?? false }
+    override var prefersStatusBarHidden: Bool { hidesStatusBar || (app?.prefersStatusBarHidden ?? false) }
+    override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation { .fade }
 }
 
 private extension CGRect {
@@ -587,8 +596,11 @@ struct PanelMorphView: View {
         } else {
             let shape = MorphShape(progress: model.out ? 1 : 0, from: model.button, to: model.panel,
                                    fromRadius: model.buttonRadius, toRadius: model.panelRadius)
+            // Pictured over the whole backdrop, the glass comes and goes with
+            // it, as real glass over it darkens and clears.
+            let glassShown: Double = model.dimmed ? 1 : 0
             if let glass = model.glass {
-                picture(glass, screen).mask { shape }
+                picture(glass, screen).mask { shape }.opacity(glassShown)
                 if let whole = model.whole {
                     picture(whole, screen)
                         .mask { shape }
@@ -596,7 +608,7 @@ struct PanelMorphView: View {
                 }
             } else if let whole = model.whole {
                 // No picture of its glass alone (closing from somewhere new).
-                picture(whole, screen).mask { shape }
+                picture(whole, screen).mask { shape }.opacity(glassShown)
             }
         }
     }

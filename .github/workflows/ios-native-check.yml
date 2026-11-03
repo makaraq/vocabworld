@@ -123,6 +123,11 @@ jobs:
             xcrun simctl launch "$DEVICE" com.sprind.app "$@"
           }
 
+          # A first launch to warm up: the very first after installing can be
+          # too slow to have painted the page's backdrop photo by the demo.
+          run
+          sleep 8
+
           # The sheet opening out of its button: the app records its own frames
           # every 40 ms (screenshots from out here are far too slow to catch it).
           # The demo opens 9 s after launch, once the page has surely painted.
