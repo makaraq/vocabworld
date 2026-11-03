@@ -251,8 +251,7 @@ struct AccountSheetView: View {
                             .padding(.top, 4)
                     }
                     if !model.trace.isEmpty {
-                        Text(verbatim: model.trace.joined(separator: "
-"))
+                        Text(verbatim: model.trace.joined(separator: "\n"))
                             .font(AppFont.font(9))
                             .monospacedDigit()
                             .foregroundColor(ink(0.3))
