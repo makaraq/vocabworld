@@ -75,22 +75,48 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
         }
         let images = Self.images(call)
         DispatchQueue.main.async {
-            guard let model = self.model else {
-                call.resolve()
-                return
-            }
-            model.addImages(images)
-            if model.state != state { model.state = state }
-            self.sheet?.overrideUserInterfaceStyle = state.dark ? .dark : .light
-            // A new theme restyles the page behind, which shows through live;
-            // the glass follows the page's 700 ms cross-fade, made again from it
-            // every tenth of a second until it has settled.
-            let theme = Self.themeKey(state)
-            if theme != self.glassTheme {
-                self.glassTheme = theme
-                self.refreshGlass(after: stride(from: 0.05, through: 1.05, by: 0.1).map { $0 })
-            }
+            self.model?.addImages(images)
+            self.apply(state)
             call.resolve()
+        }
+    }
+
+    /// Keeps the open sheet in step with the page's state.
+    private func apply(_ incoming: AccountState) {
+        guard let model else { return }
+        var state = incoming
+        // Two themes tapped quickly: the page's word on the first comes after
+        // the second was tapped, and mustn't move the tick back.
+        if let picked = model.pickedTheme, Date().timeIntervalSince(picked.at) < 1.5,
+           state.theme.current != picked.id {
+            state.theme.current = picked.id
+            state.look = model.state.look
+            state.dark = model.state.dark
+        }
+        let theme = Self.themeKey(state)
+        let themeChanged = theme != glassTheme
+        if model.state != state {
+            if themeChanged {
+                // A new theme's glass (its fills, its solid colour) comes in
+                // over the page's own 700 ms cross-fade, not at a cut.
+                withAnimation(.timingCurve(0.22, 1, 0.36, 1, duration: 0.7)) { model.state = state }
+            } else {
+                model.state = state
+            }
+        }
+        let style: UIUserInterfaceStyle = state.dark ? .dark : .light
+        if let sheet, sheet.overrideUserInterfaceStyle != style {
+            // Light text turning dark (Paper) and back: dissolved, not cut.
+            UIView.transition(with: sheet.view, duration: 0.35, options: [.transitionCrossDissolve, .allowUserInteraction]) {
+                sheet.overrideUserInterfaceStyle = style
+            }
+        }
+        // A new theme restyles the page behind, which shows through live; the
+        // glass follows the page's 700 ms cross-fade, made again from it every
+        // tenth of a second until it has settled.
+        if themeChanged {
+            glassTheme = theme
+            refreshGlass(after: stride(from: 0.05, through: 1.05, by: 0.1).map { $0 })
         }
     }
 
@@ -197,6 +223,8 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
         let config = WKSnapshotConfiguration()
         config.afterScreenUpdates = true
         let source = self.source
+        // The sheet's own blur as the theme has it (Obsidian's is heavier).
+        let blur = self.model?.state.look?.blur ?? 12
         webView.takeSnapshot(with: config) { image, _ in
             let page = image?.cgImage.flatMap { Self.plainSRGB($0, width: webView.bounds.width, height: webView.bounds.height) }
             // The button it opens from, as sharp as the screen shows it.
@@ -204,7 +232,7 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
                 image?.cgImage.flatMap { Self.crop($0, to: rect, pointsWide: webView.bounds.width) }
             }
             DispatchQueue.global(qos: .userInitiated).async {
-                let glass = page.flatMap { Self.looksBlank($0) ? nil : SheetGlass.make(from: $0, scale: 1, button: button) }
+                let glass = page.flatMap { Self.looksBlank($0) ? nil : SheetGlass.make(from: $0, scale: 1, button: button, blur: blur) }
                 #if DEBUG
                 if let page { Self.saveForDemo(page: page, glass: glass) }
                 #endif
@@ -336,6 +364,18 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
             if recording {
                 self.model?.onAppear = { [weak self] in self?.recordFrames() }
             }
+            // -SprindAccountDemoTheme paper|obsidian: two seconds in, the page
+            // switches theme as it does when a swatch is tapped.
+            if let index = args.firstIndex(of: "-SprindAccountDemoTheme"), index + 1 < args.count {
+                let id = args[index + 1]
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    guard var state = self.model?.state else { return }
+                    state.theme.current = id
+                    state.dark = id != "paper"
+                    state.look = .demo(id)
+                    self.apply(state)
+                }
+            }
         }
     }
 
@@ -360,7 +400,8 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
 }
 
 /// What the web sheet's glass shows of the page behind it, by its CSS: the
-/// backdrop's bg-black/50 over a 6 px blur, then the sheet's own blur(12px)
+/// backdrop's bg-black/50 over a 6 px blur, then the sheet's own blur(12px,
+/// or the theme's)
 /// saturate(1.2) (one 13.4 px blur, as two blurs add up). The white wash,
 /// sheen and rim go on top, and the backdrop itself is drawn live
 /// (AccountSheetHost). Made from a snapshot at one pixel per point: it is
@@ -370,7 +411,7 @@ struct SheetGlass {
     /// The button the sheet opens from, as pictured with the page.
     let button: UIImage?
 
-    static func make(from page: CGImage, scale: CGFloat, button: UIImage?) -> SheetGlass? {
+    static func make(from page: CGImage, scale: CGFloat, button: UIImage?, blur: Double = 12) -> SheetGlass? {
         // Browsers composite and filter CSS in plain sRGB values, not linear
         // light: work in the snapshot's own values so 50% black means half.
         let context = CIContext(options: [.workingColorSpace: NSNull()])
@@ -385,7 +426,7 @@ struct SheetGlass {
                 "inputAVector": CIVector(x: 0, y: 0, z: 0, w: 1),
             ])
             .clampedToExtent()
-            .applyingGaussianBlur(sigma: (6.0 * 6.0 + 12.0 * 12.0).squareRoot())
+            .applyingGaussianBlur(sigma: (6.0 * 6.0 + blur * blur).squareRoot())
             .applyingFilter("CIColorControls", parameters: [kCIInputSaturationKey: 1.2])
         guard let image = context.createCGImage(glass.cropped(to: extent), from: extent, format: .RGBA8, colorSpace: space)
         else { return nil }

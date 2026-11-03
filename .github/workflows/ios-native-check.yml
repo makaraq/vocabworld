@@ -138,6 +138,13 @@ jobs:
             sleep 14
             shoot "account-$stop"
           done
+          # Switching theme with the sheet open, as a tapped swatch does: the
+          # sheet should take on the theme's own glass.
+          for theme in paper obsidian; do
+            run -SprindAccountDemo -SprindAccountDemoTheme "$theme"
+            sleep 15
+            shoot "theme-$theme"
+          done
           run -SprindAccountDemo -SprindAccountDemoLevel 100
           sleep 13
           shoot account-omniglot

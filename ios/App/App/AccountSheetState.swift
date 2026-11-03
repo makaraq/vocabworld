@@ -12,6 +12,8 @@ struct AccountState: Decodable, Equatable {
     var closeLabel: String
     /// Dark glass and white text: every theme but the light one (Paper).
     var dark: Bool
+    /// The theme's own glass, as the page's CSS draws the web sheet.
+    var look: SheetLook?
     var profile: Profile
     var level: Level
     var subscription: Subscription
@@ -190,6 +192,9 @@ final class AccountSheetModel: ObservableObject {
     /// The sheet's scroller, for the drag to close (it starts the drag only
     /// at the top, and holds the scroller still meanwhile).
     weak var scrollView: UIScrollView?
+    /// The theme last tapped, and when: the page's word on it is a moment
+    /// behind, and an older one mustn't put the tick back.
+    var pickedTheme: (id: String, at: Date)?
 
     /// Animates the sheet away (AccountSheetHost watches `closing`).
     func close() {
@@ -238,6 +243,70 @@ final class AccountSheetModel: ObservableObject {
                 self.avatar = image
             }
         }.resume()
+    }
+}
+
+/// The theme's glass for the sheet (components/account/native-account-sheet.tsx
+/// reads it off an unseen copy of the web sheet): Paper's frosted white,
+/// Obsidian's dark panel, Rose Glass's tinted buttons, and so on.
+struct SheetLook: Decodable, Equatable {
+    struct RGBA: Decodable, Equatable {
+        var r: Double
+        var g: Double
+        var b: Double
+        var a: Double
+
+        var color: Color { Color(.sRGB, red: r, green: g, blue: b, opacity: a) }
+    }
+
+    var panel: RGBA
+    var card: RGBA
+    var cardEdge: RGBA
+    var button: RGBA
+    /// The sheet with Reduce Transparency on (--lg-solid).
+    var solid: RGBA
+    /// The sheet's own backdrop blur, in points.
+    var blur: Double
+
+    /// The original theme's, until the page says otherwise.
+    static let standard = SheetLook(
+        panel: RGBA(r: 1, g: 1, b: 1, a: 0.1),
+        card: RGBA(r: 1, g: 1, b: 1, a: 0.1),
+        cardEdge: RGBA(r: 1, g: 1, b: 1, a: 0.15),
+        button: RGBA(r: 1, g: 1, b: 1, a: 0.1),
+        solid: RGBA(r: 52 / 255, g: 30 / 255, b: 22 / 255, a: 1),
+        blur: 12
+    )
+}
+
+#if DEBUG
+extension SheetLook {
+    /// For the CI check (-SprindAccountDemoTheme): the looks the page's CSS
+    /// gives Paper and Obsidian, as measured in the browser.
+    static func demo(_ id: String) -> SheetLook {
+        func c(_ r: Double, _ g: Double, _ b: Double, _ a: Double) -> RGBA { RGBA(r: r / 255, g: g / 255, b: b / 255, a: a) }
+        switch id {
+        case "paper":
+            return SheetLook(panel: c(255, 255, 255, 0.39), card: c(255, 255, 255, 0.39), cardEdge: c(42, 23, 16, 0.09),
+                             button: c(255, 255, 255, 0.5), solid: c(246, 231, 214, 1), blur: 12)
+        case "obsidian":
+            return SheetLook(panel: c(6, 7, 11, 0.6), card: c(255, 255, 255, 0.035), cardEdge: c(255, 255, 255, 0.15),
+                             button: c(7, 8, 12, 0.8), solid: c(9, 10, 15, 1), blur: 14)
+        default:
+            return .standard
+        }
+    }
+}
+#endif
+
+private struct SheetLookKey: EnvironmentKey {
+    static let defaultValue = SheetLook.standard
+}
+
+extension EnvironmentValues {
+    var sheetLook: SheetLook {
+        get { self[SheetLookKey.self] }
+        set { self[SheetLookKey.self] = newValue }
     }
 }
 

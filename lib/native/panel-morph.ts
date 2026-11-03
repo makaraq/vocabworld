@@ -23,7 +23,7 @@ interface PanelMorphPlugin {
   freeze(options?: { backdrop?: Backdrop }): Promise<void>
   /** Out of `from` (the button) into `to` (the pop-up), over the frozen
    *  picture: the account sheet's glass sets out at once (resolves). */
-  open(options: { from: Rect; fromRadius: number; to: Rect; toRadius: number }): Promise<void>
+  open(options: { from: Rect; fromRadius: number; to: Rect; toRadius: number; fill?: { red: number; green: number; blue: number; alpha: number } }): Promise<void>
   /** The pop-up pictured, now it shows underneath: it comes in over the
    *  glass. Resolves once it has all settled. */
   contents(): Promise<void>
@@ -65,12 +65,17 @@ const backdropOf = (el: HTMLElement | null): Backdrop | undefined => {
   const style = getComputedStyle(el)
   const filter = style.backdropFilter || style.getPropertyValue('-webkit-backdrop-filter')
   const blur = parseFloat(/blur\(([\d.]+)px\)/.exec(filter)?.[1] ?? '') || 0
+  return { blur, ...colourOf(style.backgroundColor) }
+}
+
+// A CSS colour as sRGB 0–1, read off a pixel.
+const colourOf = (colour: string) => {
   const pixel = document.createElement('canvas').getContext('2d', { willReadFrequently: true })
-  if (!pixel) return { blur, red: 0, green: 0, blue: 0, alpha: 0 }
-  pixel.fillStyle = style.backgroundColor
+  if (!pixel) return { red: 1, green: 1, blue: 1, alpha: 0.1 }
+  pixel.fillStyle = colour
   pixel.fillRect(0, 0, 1, 1)
   const [red, green, blue, alpha] = pixel.getImageData(0, 0, 1, 1).data
-  return { blur, red: red / 255, green: green / 255, blue: blue / 255, alpha: alpha / 255 }
+  return { red: red / 255, green: green / 255, blue: blue / 255, alpha: alpha / 255 }
 }
 
 // Inline styles the morph sets while the native layer stands in for the
@@ -100,7 +105,9 @@ export function nativeMorphOpen(source: HTMLElement, panel: HTMLElement, backdro
         el.style.setProperty('opacity', '1', 'important')
       }
       panel.style.setProperty('transform', 'none', 'important')
-      await NativeMorph.open({ from: button, fromRadius: buttonRadius, to: rectOf(panel), toRadius: radiusOf(panel) })
+      // The pop-up's own fill as the theme has it, for the glass as it grows.
+      const fill = colourOf(getComputedStyle(panel).backgroundColor)
+      await NativeMorph.open({ from: button, fromRadius: buttonRadius, to: rectOf(panel), toRadius: radiusOf(panel), fill })
       // Then the pop-up itself, under the cover, pictured to come in over the glass.
       for (const el of parts) el.style.removeProperty('visibility')
       await twoFrames()

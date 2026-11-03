@@ -181,6 +181,7 @@ struct AccountSheetView: View {
                             UIImpactFeedbackGenerator(style: .light).impactOccurred()
                             if !(item.premium && !s.subscription.premium) {
                                 model.state.theme.current = item.id
+                                model.pickedTheme = (item.id, Date())
                             }
                             model.send("theme", item.id)
                         },
@@ -1399,6 +1400,8 @@ struct AccountSheetHost: View {
             }
             .frame(width: screen.width, height: screen.height, alignment: .topLeading)
         }
+        // The theme's glass, for the cards and buttons inside.
+        .environment(\.sheetLook, model.state.look ?? .standard)
         .ignoresSafeArea()
         .onAppear {
             model.onAppear()
@@ -1475,7 +1478,8 @@ struct AccountSheetHost: View {
     /// screen as the panel moves, as real glass would be), a 10% white wash
     /// and a sheen lit from the top left.
     private func surface(_ panel: CGRect, screen: CGSize, shift: CGFloat) -> some View {
-        Color.clear
+        let look = model.state.look ?? .standard
+        return Color.clear
             .frame(width: panel.width, height: panel.height)
             .overlay(alignment: .topLeading) {
                 if let glass = model.glass {
@@ -1491,10 +1495,11 @@ struct AccountSheetHost: View {
                     .offset(x: -panel.minX, y: -(panel.minY + shift))
                 } else {
                     // Reduce Transparency: the web sheet goes solid (--lg-solid).
-                    Color(red: 52 / 255, green: 30 / 255, blue: 22 / 255)
+                    look.solid.color
                 }
             }
-            .overlay(Color.white.opacity(0.1))
+            // The theme's own panel fill (10% white in most, Obsidian's dark glass).
+            .overlay(look.panel.color)
             .overlay(Self.sheen)
     }
 
@@ -1692,12 +1697,15 @@ struct SampledCurve: CustomAnimation {
     }
 }
 
-/// The web cards: a 10% white wash with a 15% white edge, 16 pt corners.
+/// The web cards, 16 pt corners, filled and edged as the theme has them
+/// (a 10% white wash with a 15% white edge in most; Paper's frosted white).
 private struct CardSurface: ViewModifier {
+    @Environment(\.sheetLook) private var look
+
     func body(content: Content) -> some View {
         content
-            .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(ink(0.1)))
-            .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).strokeBorder(ink(0.15), lineWidth: 1))
+            .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(look.card.color))
+            .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).strokeBorder(look.cardEdge.color, lineWidth: 1))
     }
 }
 
@@ -1705,6 +1713,7 @@ private struct CardSurface: ViewModifier {
 /// fill, a lit body, a light-catching rim and a soft lift.
 private struct WebGlass<S: InsettableShape>: ViewModifier {
     let shape: S
+    @Environment(\.sheetLook) private var look
 
     private static var rim: LinearGradient {
         LinearGradient(gradient: Gradient(stops: [
@@ -1731,7 +1740,8 @@ private struct WebGlass<S: InsettableShape>: ViewModifier {
             .background(
                 ZStack {
                     shape.fill(.ultraThinMaterial)
-                    shape.fill(Color.white.opacity(0.1))
+                    // The theme's button fill (--lg-fill).
+                    shape.fill(look.button.color)
                     shape.fill(Self.lit)
                 }
                 .shadow(color: Color.black.opacity(0.16), radius: 11, x: 0, y: 8)

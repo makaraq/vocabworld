@@ -7,7 +7,7 @@
 // web keep. The native side only lays it out and animates it, and sends back
 // what was tapped.
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { PluginListenerHandle } from '@capacitor/core'
 import { getIcon } from '@iconify/react'
 import { useT } from '@/components/providers/translation-provider'
@@ -86,6 +86,9 @@ function OpenSheet(props: NativeAccountSheetProps) {
   const rank = rankForLevel(info.level)
   const next = nextRank(info.level)
   const theme = themeById(themeId)
+  // The theme's own glass for the sheet, read off the page's CSS as it is now.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const look = useMemo(() => sheetLook(), [themeId])
   const notif = props.notifPermission
   const widgetOptions = [
     { value: 'random', label: t('widget.source.random') },
@@ -101,6 +104,7 @@ function OpenSheet(props: NativeAccountSheetProps) {
     title: t('account.title'),
     closeLabel: t('account.aria.close'),
     dark: !theme.light,
+    look,
     profile: { name, email: email || null, avatar: avatar ?? null, initials },
     level: {
       level: info.level,
@@ -323,6 +327,58 @@ function OpenSheet(props: NativeAccountSheetProps) {
   }, [])
 
   return null
+}
+
+type Rgba = { r: number; g: number; b: number; a: number }
+
+/** The web sheet's glass as the current theme draws it: the sheet's own fill
+ *  and blur, its cards' fill and edge, its buttons' fill, and its solid colour
+ *  under Reduce Transparency. Themes restyle these (Paper's frosted white,
+ *  Rose Glass's tint, Obsidian's dark panel), so they are read off an unseen
+ *  copy of the web sheet (manage-account-modal.tsx) rather than written down
+ *  twice. */
+function sheetLook(): { panel: Rgba; card: Rgba; cardEdge: Rgba; button: Rgba; solid: Rgba; blur: number } | null {
+  if (typeof document === 'undefined') return null
+  const probe = document.createElement('div')
+  probe.className = 'fixed inset-0 z-50 flex items-end justify-center'
+  probe.setAttribute('aria-hidden', 'true')
+  Object.assign(probe.style, { visibility: 'hidden', pointerEvents: 'none' })
+  probe.innerHTML =
+    '<div class="relative w-full max-h-[85vh] bg-white/10 backdrop-blur-2xl rounded-t-3xl shadow-2xl flex flex-col">' +
+    '<div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/15"></div>' +
+    '<button class="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white py-3 px-4 rounded-2xl font-medium text-sm"></button>' +
+    '</div>'
+  document.body.appendChild(probe)
+  try {
+    const panel = probe.firstElementChild as HTMLElement
+    const [card, button] = Array.from(panel.children) as HTMLElement[]
+    const panelStyle = getComputedStyle(panel)
+    const filter = panelStyle.backdropFilter || panelStyle.getPropertyValue('-webkit-backdrop-filter')
+    const solid = getComputedStyle(document.documentElement).getPropertyValue('--lg-solid').trim()
+    return {
+      panel: rgba(panelStyle.backgroundColor),
+      card: rgba(getComputedStyle(card).backgroundColor),
+      cardEdge: rgba(getComputedStyle(card).borderTopColor),
+      button: rgba(getComputedStyle(button).backgroundColor),
+      solid: rgba(solid || 'rgb(52, 30, 22)'),
+      blur: parseFloat(/blur\(([\d.]+)px\)/.exec(filter)?.[1] ?? '') || 12,
+    }
+  } finally {
+    probe.remove()
+  }
+}
+
+// Any CSS colour (Tailwind's come as color-mix() and oklab) as sRGB 0–1, read
+// off a pixel.
+let pixel: CanvasRenderingContext2D | null = null
+function rgba(colour: string): Rgba {
+  pixel ??= document.createElement('canvas').getContext('2d', { willReadFrequently: true })
+  if (!pixel) return { r: 1, g: 1, b: 1, a: 0.1 }
+  pixel.clearRect(0, 0, 1, 1)
+  pixel.fillStyle = colour
+  pixel.fillRect(0, 0, 1, 1)
+  const [r, g, b, a] = pixel.getImageData(0, 0, 1, 1).data
+  return { r: r / 255, g: g / 255, b: b / 255, a: a / 255 }
 }
 
 /** UIImage can't read SVG, and the generated smiley face is one: draw it as a PNG. */

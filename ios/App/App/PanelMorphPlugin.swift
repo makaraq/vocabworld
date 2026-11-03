@@ -50,6 +50,8 @@ public class PanelMorphPlugin: CAPPlugin, CAPBridgedPlugin {
     /// pop-up opens and kept for its close: the pop-ups grow out of their
     /// button just as the account sheet does.
     private var glassPicture: UIImage?
+    /// The open pop-up's own fill, for its glass as it closes.
+    private var openFill: Color?
 
     @objc func freeze(_ call: CAPPluginCall) {
         let backdrop = PanelBackdrop(call.getObject("backdrop"))
@@ -127,6 +129,8 @@ public class PanelMorphPlugin: CAPPlugin, CAPBridgedPlugin {
         let fromRadius = CGFloat(call.getDouble("fromRadius") ?? 16)
         let toRadius = CGFloat(call.getDouble("toRadius") ?? 16)
         let velocity = CGFloat(call.getDouble("velocity") ?? 0)
+        // The pop-up's own fill as the theme has it (10% white in most).
+        let fill = PanelBackdrop(call.getObject("fill")).map { $0.tint } ?? Color.white.opacity(0.1)
         DispatchQueue.main.async {
             guard let before = self.frozen else {
                 self.uncover()
@@ -151,6 +155,7 @@ public class PanelMorphPlugin: CAPPlugin, CAPBridgedPlugin {
                 // The account sheet's glass, made from the page behind.
                 let glass = self.glassPicture ?? Self.sheetGlass(of: page)
                 self.glassPicture = glass
+                if opening { self.openFill = fill }
                 let model = PanelMorphModel(
                     kind: kind,
                     page: page,
@@ -158,6 +163,7 @@ public class PanelMorphPlugin: CAPPlugin, CAPBridgedPlugin {
                     whole: opening ? nil : before,
                     backdrop: self.backdropPicture,
                     tint: self.backdrop?.tint ?? .clear,
+                    fill: opening ? fill : (self.openFill ?? fill),
                     panel: panel,
                     button: opening ? from : (to ?? from),
                     panelRadius: opening ? toRadius : fromRadius,
@@ -262,6 +268,7 @@ public class PanelMorphPlugin: CAPPlugin, CAPBridgedPlugin {
         backdrop = nil
         backdropPicture = nil
         glassPicture = nil
+        openFill = nil
     }
 
     private func remove(_ view: UIView?, _ controller: UIViewController?) {
@@ -437,6 +444,8 @@ final class PanelMorphModel: ObservableObject {
     /// The page under the pop-up's backdrop; its colour alone until then.
     @Published private(set) var backdrop: UIImage?
     let tint: Color
+    /// The pop-up's own fill, washed over its glass as it grows.
+    let fill: Color
     let panel: CGRect
     let button: CGRect
     let panelRadius: CGFloat
@@ -460,7 +469,7 @@ final class PanelMorphModel: ObservableObject {
     private var settled: Bool
     private var ended = false
 
-    init(kind: PanelMorphKind, page: UIImage, glass: UIImage?, whole: UIImage?, backdrop: UIImage?, tint: Color,
+    init(kind: PanelMorphKind, page: UIImage, glass: UIImage?, whole: UIImage?, backdrop: UIImage?, tint: Color, fill: Color,
          panel: CGRect, button: CGRect, panelRadius: CGFloat, buttonRadius: CGFloat, velocity: CGFloat) {
         self.kind = kind
         self.page = page
@@ -468,6 +477,7 @@ final class PanelMorphModel: ObservableObject {
         self.whole = whole
         self.backdrop = backdrop
         self.tint = tint
+        self.fill = fill
         self.panel = panel
         self.button = button
         self.panelRadius = panelRadius
@@ -636,7 +646,7 @@ struct PanelMorphView: View {
     private func sheetGlass(_ image: UIImage, _ screen: CGSize) -> some View {
         ZStack(alignment: .topLeading) {
             picture(image, screen)
-            Color.white.opacity(0.1)
+            model.fill
             AccountSheetHost.sheen
                 .frame(width: model.panel.width, height: model.panel.height)
                 .offset(x: model.panel.minX, y: model.panel.minY)
