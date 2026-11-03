@@ -308,7 +308,7 @@ function OpenSheet(props: NativeAccountSheetProps) {
             setTheme(picked.id, { instant: true })
             // Once the new backdrop is on the page (a photo theme's photo has
             // to be decoded first), the sheet lets the old one go.
-            void themePainted(picked.swatch).then(() => AccountSheet.themeShown().catch(() => {}))
+            void themePainted(picked.swatch).then((note) => AccountSheet.themeShown({ note }).catch(() => {}))
           }
           break
         }
@@ -357,19 +357,24 @@ function OpenSheet(props: NativeAccountSheetProps) {
 }
 
 /** Resolves once a theme just put on the page has painted: its photo, if it
- *  has one, decoded, then two frames drawn. Never later than 1.5 s. */
-function themePainted(swatch: string): Promise<void> {
+ *  has one, decoded, then two frames drawn. Never later than 1.5 s. Says how
+ *  it went (for the sheet's trace): what is on <html> and whether the photo
+ *  decoded. */
+function themePainted(swatch: string): Promise<string> {
   const src = swatch.match(/url\('([^']+)'\)/)?.[1]
   const frames = () => new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())))
   const painted = (async () => {
+    let photo = 'no photo'
     if (src) {
       const img = new Image()
       img.src = src
-      await img.decode().catch(() => {})
+      photo = await img.decode().then(() => 'photo ok', () => 'photo failed')
     }
     await frames()
+    const on = Array.from(document.documentElement.classList).filter((c) => c.startsWith('theme-')).join(' ') || 'no theme class'
+    return `${photo}, ${on}`
   })()
-  return Promise.race([painted, new Promise<void>((r) => setTimeout(r, 1500))])
+  return Promise.race([painted, new Promise<string>((r) => setTimeout(() => r('page timed out'), 1500))])
 }
 
 type Rgba = { r: number; g: number; b: number; a: number }

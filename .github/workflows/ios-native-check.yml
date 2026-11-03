@@ -145,6 +145,14 @@ jobs:
             sleep 17
             shoot "theme-$theme"
           done
+          # Swatches tapped as a finger does, every 5 s: away to Paper, then
+          # back to the photo themes.
+          run -SprindAccountDemo -SprindAccountDemoScroll theme -SprindAccountDemoTaps paper,mono,original,mono
+          sleep 15
+          for step in 1-paper 2-mono 3-original 4-mono; do
+            shoot "tap-$step"
+            sleep 5
+          done
           echo "--- the app's theme log ---"
           xcrun simctl spawn "$DEVICE" log show --style compact --last 3m --predicate 'eventMessage CONTAINS "[theme]"' || true
           echo "--- crash reports ---"

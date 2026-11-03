@@ -200,6 +200,8 @@ final class AccountSheetModel: ObservableObject {
     /// The theme last tapped, and when: the page's word on it is a moment
     /// behind, and an older one mustn't put the tick back.
     var pickedTheme: (id: String, at: Date)?
+    /// The last theme change, step by step (AccountSheetPlugin.trace).
+    @Published var trace: [String] = []
 
     /// Animates the sheet away (AccountSheetHost watches `closing`).
     func close() {

@@ -250,6 +250,14 @@ struct AccountSheetView: View {
                             .foregroundColor(ink(0.3))
                             .padding(.top, 4)
                     }
+                    if !model.trace.isEmpty {
+                        Text(verbatim: model.trace.joined(separator: "
+"))
+                            .font(AppFont.font(9))
+                            .monospacedDigit()
+                            .foregroundColor(ink(0.3))
+                            .multilineTextAlignment(.center)
+                    }
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 32)

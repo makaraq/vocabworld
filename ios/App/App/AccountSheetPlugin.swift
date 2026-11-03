@@ -42,6 +42,8 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
     /// The theme the glass was last made under. (The sheet marks a tapped
     /// theme as chosen at once, so the state alone can't show it changed.)
     private var glassTheme = ""
+    /// When the last theme was tapped, for the trace's timings.
+    private var tappedAt = Date()
     /// The button the sheet opened from, pictured along with the glass.
     private var source: CGRect?
 
@@ -97,6 +99,7 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
         // While a theme is coming in, the page's word waits: set at once, it
         // would cut the change short. It is the same theme, applied after.
         if switchingTheme {
+            if deferredState == nil { trace("page says \(incoming.theme.current)") }
             deferredState = incoming
             return
         }
@@ -112,6 +115,7 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
         if Self.themeKey(state) != glassTheme,
            let item = state.theme.items.first(where: { $0.id == state.theme.current }) {
             // A theme changed on the page by itself (not tapped here).
+            trace("page moved to \(state.theme.current)")
             becomeTheme(item, from: state)
             return
         }
@@ -156,6 +160,7 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
         let blur = next.look?.blur ?? 12
         DispatchQueue.main.async {
             guard let backdrop = Self.drawBackdropOnMain(item, size: size) else {
+                self.trace("no backdrop for \(item.id)")
                 self.curtainReady("glass")
                 return
             }
@@ -166,6 +171,7 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
                     NSLog("[theme] glass made: %@", glass == nil ? "no" : "yes")
                     #endif
                     guard self.model === model, request == self.glassRequests else { return }
+                    self.trace(glass == nil ? "glass failed" : "glass made")
                     if let glass {
                         if self.curtain != nil {
                             model.glass = glass
@@ -205,6 +211,7 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
     /// The still picture dissolves away onto the changed screen.
     private func liftCurtain() {
         guard let still = curtain else { return }
+        trace(curtainWaits.isEmpty ? "shown" : "shown, still waiting on \(curtainWaits.sorted().joined(separator: "+"))")
         curtain = nil
         curtainWaits = []
         UIView.animate(withDuration: 0.45, delay: 0, options: [.curveEaseInOut, .allowUserInteraction]) {
@@ -263,6 +270,7 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
     /// the curtain can go once the glass is made too.
     @objc func themeShown(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
+            self.trace("page: \(call.getString("note") ?? "painted")")
             self.curtainReady("page")
             call.resolve()
         }
@@ -307,10 +315,14 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
                 // The screen stills under a picture of itself; the page is
                 // told (it changes at once, underneath) and so does the sheet;
                 // then the picture dissolves onto the new screen.
+                self.tappedAt = Date()
+                self.model?.trace = []
+                self.trace("tapped \(id)")
                 self.dropCurtain()
                 self.notifyListeners("action", data: data)
                 self.becomeTheme(item, from: model.state)
             } else {
+                if type == "theme" { self?.trace("tap on \(value ?? "?") not taken") }
                 self?.notifyListeners("action", data: data)
             }
         }
@@ -349,6 +361,16 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
 
     private static func themeKey(_ state: AccountState) -> String {
         "\(state.theme.current)|\(state.dark)"
+    }
+
+    /// What a theme change did and when (ms after the tap), shown small under
+    /// the build stamp so a switch that goes wrong on a phone can be read off.
+    private func trace(_ what: String) {
+        let ms = Int(Date().timeIntervalSince(tappedAt) * 1000)
+        let line = "\(ms) \(what)"
+        NSLog("[theme] %@", line)
+        guard let model else { return }
+        model.trace = Array((model.trace + [line]).suffix(8))
     }
 
     private func finish() {
@@ -506,6 +528,19 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
             self.show(state: .demo(level: level), focus: nil, source: button)
             if recording {
                 self.model?.onAppear = { [weak self] in self?.recordFrames() }
+            }
+            // -SprindAccountDemoTaps paper,mono,original: a swatch tapped
+            // every five seconds, from two seconds in, as a finger does.
+            if let index = args.firstIndex(of: "-SprindAccountDemoTaps"), index + 1 < args.count {
+                for (n, id) in args[index + 1].split(separator: ",").map(String.init).enumerated() {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2 + Double(n) * 5) {
+                        guard let model = self.model,
+                              let item = model.state.theme.items.first(where: { $0.id == id }) else { return }
+                        model.state.theme.current = item.id
+                        model.pickedTheme = (item.id, Date())
+                        model.send("theme", item.id)
+                    }
+                }
             }
             // -SprindAccountDemoTheme paper|obsidian: two seconds in, the page
             // switches theme as it does when a swatch is tapped.
