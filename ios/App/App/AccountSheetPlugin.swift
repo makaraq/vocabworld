@@ -127,40 +127,50 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
         switchingTheme = true
         let held = model.heldPage
         let size = bridge?.webView?.bounds.size ?? UIScreen.main.bounds.size
-        let backdrop = Self.drawBackdrop(item, size: size)
         let button = model.glass?.button
         let blur = next.look?.blur ?? 12
         let reduced = UIAccessibility.isReduceTransparencyEnabled
-        DispatchQueue.global(qos: .userInitiated).async {
-            let glass = reduced ? nil : backdrop.flatMap { SheetGlass.make(from: $0, scale: 1, button: button, blur: blur) }
-            DispatchQueue.main.async {
-                guard self.model === model, request == self.glassRequests else { return }
-                withAnimation(.timingCurve(0.22, 1, 0.36, 1, duration: 0.7)) {
-                    model.state = next
-                    if let glass { model.glass = glass }
-                    model.heldPageGone = true
+        let target = next
+        // SwiftUI draws on the main thread only; the blur goes off it.
+        Task { @MainActor in
+            let backdrop = reduced ? nil : Self.drawBackdrop(item, size: size)
+            DispatchQueue.global(qos: .userInitiated).async {
+                let glass = backdrop.flatMap { SheetGlass.make(from: $0, scale: 1, button: button, blur: blur) }
+                DispatchQueue.main.async {
+                    self.land(target, on: model, glass: glass, request: request, held: held)
                 }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
-                    // Unless another theme has been picked since.
-                    if model.heldPage === held {
-                        model.heldPage = nil
-                        model.heldPageGone = false
-                    }
-                    // UIKit's own parts follow (SwiftUI's already have).
-                    self.sheet?.overrideUserInterfaceStyle = next.dark ? .dark : .light
-                    guard request == self.glassRequests else { return }
-                    self.switchingTheme = false
-                    if let waiting = self.deferredState {
-                        self.deferredState = nil
-                        self.apply(waiting)
-                    }
-                }
+            }
+        }
+    }
+
+    /// A new theme's look, glass and all, coming in together over 700 ms.
+    private func land(_ target: AccountState, on model: AccountSheetModel, glass: SheetGlass?, request: Int, held: UIImage?) {
+        guard self.model === model, request == glassRequests else { return }
+        withAnimation(.timingCurve(0.22, 1, 0.36, 1, duration: 0.7)) {
+            model.state = target
+            if let glass { model.glass = glass }
+            model.heldPageGone = true
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+            // Unless another theme has been picked since.
+            if model.heldPage === held {
+                model.heldPage = nil
+                model.heldPageGone = false
+            }
+            // UIKit's own parts follow (SwiftUI's already have).
+            self.sheet?.overrideUserInterfaceStyle = target.dark ? .dark : .light
+            guard request == self.glassRequests else { return }
+            self.switchingTheme = false
+            if let waiting = self.deferredState {
+                self.deferredState = nil
+                self.apply(waiting)
             }
         }
     }
 
     /// A theme's backdrop as the swatch draws it (ThemeBackdrop), at the
     /// screen's shape and one pixel per point: what the glass is made from.
+    @MainActor
     private static func drawBackdrop(_ item: AccountState.Theme.Item, size: CGSize) -> CGImage? {
         guard size.width > 0, size.height > 0 else { return nil }
         // Drawn at the swatch's own scale (its gradients are sized for it),
