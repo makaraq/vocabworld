@@ -78,26 +78,28 @@ export function savedTheme(): ThemeId {
   }
 }
 
-/** Puts a theme on screen, cross-fading the backdrop. Does not save it. */
-function show(id: ThemeId) {
+/** Puts a theme on screen, cross-fading the backdrop (unless `instant`:
+ *  the native account sheet does its own cross-fade over the page). Does not
+ *  save it. */
+function show(id: ThemeId, instant = false) {
   const root = document.documentElement
   const from = getComputedStyle(root).getPropertyValue('--app-backdrop').trim()
   for (const t of THEMES) root.classList.remove(`theme-${t.id}`)
   if (id !== DEFAULT_THEME) root.classList.add(`theme-${id}`)
-  window.dispatchEvent(new CustomEvent(THEME_EVENT, { detail: { id, from } }))
+  window.dispatchEvent(new CustomEvent(THEME_EVENT, { detail: { id, from, instant } }))
 }
 
 // A premium theme being tried on, and what to go back to.
 let preview: { id: ThemeId; previous: ThemeId } | null = null
 
 /** Chooses a theme and keeps it. */
-export function setTheme(id: ThemeId) {
+export function setTheme(id: ThemeId, options: { instant?: boolean } = {}) {
   preview = null
   try {
     if (id === DEFAULT_THEME) localStorage.removeItem(THEME_STORAGE_KEY)
     else localStorage.setItem(THEME_STORAGE_KEY, id)
   } catch {}
-  show(id)
+  show(id, options.instant)
 }
 
 /** Shows a theme without keeping it, until it is kept or reverted. */
@@ -122,11 +124,12 @@ export function revertPreview() {
   show(previous)
 }
 
-/** Subscribes to theme changes: the new id, and the backdrop it replaced. */
-export function onThemeChange(fn: (id: ThemeId, fromBackdrop: string) => void) {
+/** Subscribes to theme changes: the new id, the backdrop it replaced, and
+ *  whether it changes at once (no cross-fade of the page). */
+export function onThemeChange(fn: (id: ThemeId, fromBackdrop: string, instant: boolean) => void) {
   const handler = (e: Event) => {
-    const { id, from } = (e as CustomEvent<{ id: ThemeId; from: string }>).detail
-    fn(id, from)
+    const { id, from, instant } = (e as CustomEvent<{ id: ThemeId; from: string; instant?: boolean }>).detail
+    fn(id, from, !!instant)
   }
   window.addEventListener(THEME_EVENT, handler)
   return () => window.removeEventListener(THEME_EVENT, handler)

@@ -50,6 +50,18 @@ function OpenSheet(props: NativeAccountSheetProps) {
 
   useEffect(() => onThemeChange((id) => setThemeId(id)), [])
 
+  // Every theme's backdrop decoded ahead, so a newly picked one is painted at
+  // once (the sheet pictures the page for its glass straight away).
+  useEffect(() => {
+    for (const item of THEMES) {
+      const src = item.swatch.match(/url\('([^']+)'\)/)?.[1]
+      if (!src) continue
+      const img = new Image()
+      img.src = src
+      img.decode().catch(() => {})
+    }
+  }, [])
+
   const avatarSrc = resolveAvatar(props.avatarUrl, props.avatarSeed)
   useEffect(() => {
     let cancelled = false
@@ -281,7 +293,9 @@ function OpenSheet(props: NativeAccountSheetProps) {
             props.onCloseAction()
             props.onPremiumThemeAction?.(picked.id)
           } else {
-            setTheme(picked.id)
+            // At once: the sheet holds a picture of the page as it was and
+            // cross-fades it away itself, its glass and colours with it.
+            setTheme(picked.id, { instant: true })
           }
           break
         }

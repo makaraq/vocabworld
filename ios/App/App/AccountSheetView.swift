@@ -1400,8 +1400,10 @@ struct AccountSheetHost: View {
             }
             .frame(width: screen.width, height: screen.height, alignment: .topLeading)
         }
-        // The theme's glass, for the cards and buttons inside.
+        // The theme's glass, for the cards and buttons inside, and its text
+        // light or dark: changed with the rest of a new theme, in step.
         .environment(\.sheetLook, model.state.look ?? .standard)
+        .environment(\.colorScheme, model.state.dark ? .dark : .light)
         .ignoresSafeArea()
         .onAppear {
             model.onAppear()
@@ -1424,11 +1426,21 @@ struct AccountSheetHost: View {
     // and live, so a theme changes in front of the user; a tap closes the sheet.
     private func backdrop(_ screen: CGSize) -> some View {
         let fade = 1 - min(max(drag, 0) / 400, 1)
-        return Color.black.opacity(0.5)
-            .frame(width: screen.width, height: screen.height)
-            .opacity(dimmed ? fade : 0)
-            .contentShape(Rectangle())
-            .onTapGesture { model.close() }
+        return ZStack {
+            // A new theme: the page as it was, fading away over the new one.
+            if let page = model.heldPage {
+                Image(uiImage: page)
+                    .resizable()
+                    .frame(width: screen.width, height: screen.height)
+                    .opacity(model.heldPageGone ? 0 : 1)
+            }
+            Color.black.opacity(0.5)
+                .frame(width: screen.width, height: screen.height)
+                .opacity(dimmed ? fade : 0)
+        }
+        .frame(width: screen.width, height: screen.height)
+        .contentShape(Rectangle())
+        .onTapGesture { model.close() }
     }
 
     /// The button it opened from, as pictured with the page, over the glass

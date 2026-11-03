@@ -94,29 +94,68 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
             state.dark = model.state.dark
         }
         let theme = Self.themeKey(state)
-        let themeChanged = theme != glassTheme
-        if model.state != state {
-            if themeChanged {
-                // A new theme's glass (its fills, its solid colour) comes in
-                // over the page's own 700 ms cross-fade, not at a cut.
-                withAnimation(.timingCurve(0.22, 1, 0.36, 1, duration: 0.7)) { model.state = state }
-            } else {
-                model.state = state
-            }
+        guard theme != glassTheme else {
+            if model.state != state { model.state = state }
+            return
         }
-        let style: UIUserInterfaceStyle = state.dark ? .dark : .light
-        if let sheet, sheet.overrideUserInterfaceStyle != style {
-            // Light text turning dark (Paper) and back: dissolved, not cut.
-            UIView.transition(with: sheet.view, duration: 0.35, options: [.transitionCrossDissolve, .allowUserInteraction]) {
-                sheet.overrideUserInterfaceStyle = style
+        // A new theme, all of it in one move: the page has changed at once
+        // underneath (setTheme's instant) while the sheet held a picture of it
+        // as it was (holdPage). The new page is pictured for the glass, then
+        // the old picture fades away over it as the glass, the theme's fills
+        // and its text colour change, together, over the page's own 700 ms.
+        glassTheme = theme
+        glassRefreshes.forEach { $0.cancel() }
+        glassRefreshes = []
+        glassRequests += 1
+        let request = glassRequests
+        let held = model.heldPage
+        let next = state
+        makeGlass(blur: next.look?.blur) { [weak self] glass in
+            guard let self, self.model === model, request == self.glassRequests else { return }
+            withAnimation(.timingCurve(0.22, 1, 0.36, 1, duration: 0.7)) {
+                model.state = next
+                if let glass {
+                    self.glassShown = request
+                    model.glass = glass
+                }
+                model.heldPageGone = true
             }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+                // Unless another theme has been picked since.
+                if model.heldPage === held {
+                    model.heldPage = nil
+                    model.heldPageGone = false
+                }
+                // UIKit's own parts follow (SwiftUI's already have).
+                self.sheet?.overrideUserInterfaceStyle = next.dark ? .dark : .light
+            }
+            // Once more when it has settled, in case anything on the page
+            // painted late.
+            self.refreshGlass(after: [0.5])
         }
-        // A new theme restyles the page behind, which shows through live; the
-        // glass follows the page's 700 ms cross-fade, made again from it every
-        // tenth of a second until it has settled.
-        if themeChanged {
-            glassTheme = theme
-            refreshGlass(after: stride(from: 0.05, through: 1.05, by: 0.1).map { $0 })
+    }
+
+    /// A theme tapped: the page as it is now, held behind the sheet, before
+    /// the page is asked to change (it changes at once underneath).
+    private func holdPage(then done: @escaping () -> Void) {
+        guard let model, let webView = bridge?.webView else {
+            done()
+            return
+        }
+        let config = WKSnapshotConfiguration()
+        config.afterScreenUpdates = false
+        webView.takeSnapshot(with: config) { [weak self] image, _ in
+            if let image, self?.model === model {
+                model.heldPageGone = false
+                model.heldPage = image
+                // Dropped if no new theme follows (the one already on).
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    if model.heldPage === image, !model.heldPageGone {
+                        model.heldPage = nil
+                    }
+                }
+            }
+            done()
         }
     }
 
@@ -153,7 +192,12 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
         model.onAction = { [weak self] type, value in
             var data: [String: Any] = ["type": type]
             if let value { data["value"] = value }
-            self?.notifyListeners("action", data: data)
+            if type == "theme" {
+                // The page as it is, held behind the sheet first (apply).
+                self?.holdPage { self?.notifyListeners("action", data: data) }
+            } else {
+                self?.notifyListeners("action", data: data)
+            }
         }
         model.onManageSubscriptions = { [weak self] in self?.manageSubscriptions() }
         model.onFinished = { [weak self] in self?.finish() }
@@ -212,7 +256,7 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
     /// Snapshots the page and works out, as the web sheet's CSS does, what its
     /// backdrop and its glass show. Nil with Reduce Transparency on (the web
     /// sheet goes solid then too) or if the snapshot fails.
-    private func makeGlass(_ done: @escaping (SheetGlass?) -> Void) {
+    private func makeGlass(blur themeBlur: Double? = nil, _ done: @escaping (SheetGlass?) -> Void) {
         guard !UIAccessibility.isReduceTransparencyEnabled, let webView = bridge?.webView else {
             done(nil)
             return
@@ -224,7 +268,7 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
         config.afterScreenUpdates = true
         let source = self.source
         // The sheet's own blur as the theme has it (Obsidian's is heavier).
-        let blur = self.model?.state.look?.blur ?? 12
+        let blur = themeBlur ?? self.model?.state.look?.blur ?? 12
         webView.takeSnapshot(with: config) { image, _ in
             let page = image?.cgImage.flatMap { Self.plainSRGB($0, width: webView.bounds.width, height: webView.bounds.height) }
             // The button it opens from, as sharp as the screen shows it.
@@ -302,7 +346,7 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
                     // Only ever forward: a slow picture never replaces a newer one.
                     guard let glass, let model = self.model, request > self.glassShown else { return }
                     self.glassShown = request
-                    withAnimation(.linear(duration: 0.12)) { model.glass = glass }
+                    withAnimation(.easeInOut(duration: 0.3)) { model.glass = glass }
                 }
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: work)

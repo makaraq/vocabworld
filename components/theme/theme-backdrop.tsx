@@ -20,7 +20,12 @@ export function ThemeBackdrop() {
 
   useEffect(
     () =>
-      onThemeChange((_, from) => {
+      onThemeChange((_, from, instant) => {
+        // The native account sheet cross-fades over the page itself.
+        if (instant) {
+          setFading(null)
+          return
+        }
         const key = Date.now()
         setFading({ key, from, out: false })
         requestAnimationFrame(() => requestAnimationFrame(() => setFading((f) => (f?.key === key ? { ...f, out: true } : f))))
