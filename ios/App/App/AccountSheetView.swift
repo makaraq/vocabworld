@@ -241,6 +241,15 @@ struct AccountSheetView: View {
                         }
                     }
                     .id("buttons")
+
+                    // Which build this is (Xcode Cloud's number and commit).
+                    if let build = s.build {
+                        Text(verbatim: build)
+                            .font(AppFont.font(10))
+                            .monospacedDigit()
+                            .foregroundColor(ink(0.3))
+                            .padding(.top, 4)
+                    }
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 32)

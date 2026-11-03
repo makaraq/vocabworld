@@ -23,6 +23,8 @@ struct AccountState: Decodable, Equatable {
     var widget: Widget?
     var offline: Offline?
     var buttons: Buttons
+    /// Which build this is, "#123 · 34896c1" (none outside Xcode Cloud).
+    var build: String?
     var delete: Delete
 
     struct Profile: Decodable, Equatable {

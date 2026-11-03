@@ -43,6 +43,11 @@ if [ -n "$missing" ]; then
 fi
 echo "Supabase env present (URL length: ${#NEXT_PUBLIC_SUPABASE_URL})"
 
+# Which build this is, shown small at the foot of Manage Account: Xcode
+# Cloud's build number and the commit it built.
+export NEXT_PUBLIC_BUILD_NUMBER="${CI_BUILD_NUMBER:-}"
+export NEXT_PUBLIC_BUILD_COMMIT="$(printf '%s' "${CI_COMMIT:-}" | cut -c1-7)"
+
 npm run build:ios
 
 cd "$CI_PRIMARY_REPOSITORY_PATH/ios/App"

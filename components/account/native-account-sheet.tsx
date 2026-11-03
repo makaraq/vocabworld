@@ -211,6 +211,12 @@ function OpenSheet(props: NativeAccountSheetProps) {
           })),
         }
       : null,
+    // Which build this is: Xcode Cloud's number and commit (ci_post_clone.sh).
+    build: process.env.NEXT_PUBLIC_BUILD_COMMIT
+      ? [process.env.NEXT_PUBLIC_BUILD_NUMBER && `#${process.env.NEXT_PUBLIC_BUILD_NUMBER}`, process.env.NEXT_PUBLIC_BUILD_COMMIT]
+          .filter(Boolean)
+          .join(' · ')
+      : null,
     buttons: {
       manageSubscription: t('account.manageSubscription'),
       deleteAccount: t('account.deleteAccount'),
