@@ -115,7 +115,8 @@ import { Capacitor } from '@capacitor/core'
 import { getFlagIcon } from '@/utils/flags'
 import { PROGRESS_SYNCED_EVENT } from '@/lib/offline/progress-queue'
 import { hasWordImage } from '@/lib/word-images'
-import { loadWordImage } from '@/lib/offline/word-image-cache'
+import { loadWordImage, readStoredWordImage } from '@/lib/offline/word-image-cache'
+import { keepQuiet, whenQuiet } from '@/lib/quiet-window'
 import { WordArt } from '@/components/language/word-art'
 import { morphSpring, panelSpring, MORPH_CALM, canMorphFrom, morphPanelOpen, lookMorph, fadeParts, fadeIn, fadeOutFromNow, boxAlong, easingAt, type PanelMorph, type Track } from '@/lib/morph-modal'
 import {
@@ -2411,9 +2412,13 @@ export function LanguageSelector() {
     const targetWordForAudio = word.targetWord || ''
     if (targetWordForAudio) url += `&targetWord=${encodeURIComponent(targetWordForAudio)}`
 
+    // Once the topic has finished opening (lib/quiet-window.ts).
     const controller = new AbortController()
-    fetch(url, { method: 'GET', cache: 'force-cache', signal: controller.signal })
-      .catch(() => {}) // fire-and-forget; ignore failures
+    whenQuiet().then(() => {
+      if (controller.signal.aborted) return
+      fetch(url, { method: 'GET', cache: 'force-cache', signal: controller.signal })
+        .catch(() => {}) // fire-and-forget; ignore failures
+    })
     return () => controller.abort()
   }, [vocabulary, currentWordIndex, targetLanguageCode])
 
@@ -2736,7 +2741,9 @@ export function LanguageSelector() {
     if (!vocab || vocab.length === 0) {
       return
     }
-    
+    // Once the topic has finished opening (lib/quiet-window.ts).
+    await whenQuiet()
+
     try {
       
       // Get vocabulary IDs from the vocab array
@@ -2784,10 +2791,14 @@ export function LanguageSelector() {
     if (currentPage !== 'learning' || vocabulary.length === 0) return
     const word = vocabulary[currentWordIndex]
     if (!word?.id || !nativeLanguageCode || !targetLanguageCode) return
+    // And once the topic has finished opening (lib/quiet-window.ts).
+    let live = true
     const timer = setTimeout(() => {
-      prefetchExampleSentences(word.id, targetLanguageCode, nativeLanguageCode)
+      whenQuiet().then(() => {
+        if (live) prefetchExampleSentences(word.id, targetLanguageCode, nativeLanguageCode)
+      })
     }, 250)
-    return () => clearTimeout(timer)
+    return () => { live = false; clearTimeout(timer) }
   }, [currentPage, vocabulary, currentWordIndex, nativeLanguageCode, targetLanguageCode])
 
   // Smart background preloading - invisible to user.
@@ -2812,6 +2823,8 @@ export function LanguageSelector() {
         const existing = await idbGet<{ json: any }>('data', vocabKey(topic.id, learnCode, natCode))
         if (Array.isArray(existing?.json?.vocabulary) && existing.json.vocabulary.length > 0) continue
 
+        // Never while a topic is opening (lib/quiet-window.ts).
+        await whenQuiet()
         const vocabularyResponse = await getVocabularyForTopic(
           topic.id,
           targetLang,
@@ -3521,6 +3534,9 @@ export function LanguageSelector() {
   const morphToPage = (page: "learning" | "confirmation", topicId: number | undefined) => {
     // A morph still running jumps to its end first.
     morphCleanupRef.current?.()
+    // Background downloads wait until it has played (lib/quiet-window.ts).
+    // Before the swap: the new page's effects run inside it.
+    keepQuiet(800)
 
     const panel = document.querySelector<HTMLElement>('[data-page-panel]')
     const swap = () => {
@@ -3836,6 +3852,36 @@ export function LanguageSelector() {
     }, remaining)
   }
 
+  // A topic's stored words (IndexedDB), read once per open. A touch on its
+  // tile starts the read, and the first card's art with it (warmTopic), so
+  // by the time the tap lands both are usually in hand and the lesson opens
+  // complete instead of filling in while it grows out of the tile.
+  const storedVocabReadsRef = useRef(new Map<string, Promise<{ json: any } | undefined>>())
+  const readStoredVocab = (topicId: number) => {
+    const key = vocabKey(topicId, normalizeLangParam(targetLanguage), normalizeLangParam(nativeLanguage))
+    let read = storedVocabReadsRef.current.get(key)
+    if (!read) {
+      read = idbGet<{ json: any }>('data', key).catch(() => undefined)
+      storedVocabReadsRef.current.set(key, read)
+      // Kept just long enough for the tap that follows the touch.
+      read.then(() => setTimeout(() => storedVocabReadsRef.current.delete(key), 2000))
+    }
+    return read
+  }
+  const warmTopic = (topic: Topic) => {
+    if (typeof topic.id !== 'number' || topic.id <= 0) return
+    const inMemory = dataCache.vocabularyCache[`${topic.id}-${targetLanguage}-${nativeLanguage}`]
+    const words: Promise<VocabularyWord[] | undefined> = inMemory?.length
+      ? Promise.resolve(inMemory)
+      : readStoredVocab(topic.id).then((stored) => stored?.json?.vocabulary)
+    const posKey = user?.id && targetLanguageCode ? `pos:${user.id}:${topic.id}:${targetLanguageCode}` : null
+    const at = (posKey ? readCached<number>(posKey) : null) ?? 0
+    words.then((vocab) => {
+      const word = vocab?.[at < vocab.length ? at : 0]
+      if (word && !word.isCustomWord && hasWordImage(word.id)) readStoredWordImage(Number(word.id))
+    })
+  }
+
   const handleTopicSelect = async (topic: Topic) => {
     
     // Special case: Playlist learning - topic id -2
@@ -3990,7 +4036,7 @@ export function LanguageSelector() {
     // 2) IndexedDB (background preload / offline pack / earlier session) —
     // reads locally in a few ms, so this is instant too
     try {
-      const stored = await idbGet<{ json: any }>('data', vocabKey(topic.id, learnCode, natCode))
+      const stored = await readStoredVocab(topic.id)
       const storedVocab: VocabularyWord[] | undefined = stored?.json?.vocabulary
       if (Array.isArray(storedVocab) && storedVocab.length > 0) {
         setDataCache(prev => ({
@@ -4008,7 +4054,10 @@ export function LanguageSelector() {
         // good. Re-fetch behind the instant open; if the list changed, keep
         // the new one so the next open of the topic shows it. Offline, the
         // fetch answers from this same copy and nothing changes.
-        getVocabularyForTopic(topic.id, targetLanguage, nativeLanguage, 1000, 0)
+        // Once it has finished opening: on iPhone a whole topic's reply is
+        // unpacked on the thread drawing the open (lib/quiet-window.ts).
+        whenQuiet()
+          .then(() => getVocabularyForTopic(topic.id, targetLanguage, nativeLanguage, 1000, 0))
           .then(async (fresh) => {
             const freshVocab = fresh?.vocabulary
             if (!Array.isArray(freshVocab) || freshVocab.length === 0) return
@@ -4554,11 +4603,17 @@ export function LanguageSelector() {
 
   // Warm the cache for the neighbouring words' illustrations so stepping
   // through the deck never shows an image popping in.
+  // Once the topic has finished opening (lib/quiet-window.ts).
   useEffect(() => {
-    for (const i of [currentWordIndex + 1, currentWordIndex - 1]) {
-      const word = vocabulary[i]
-      if (word && !word.isCustomWord && hasWordImage(word.id)) loadWordImage(Number(word.id))
-    }
+    let live = true
+    whenQuiet().then(() => {
+      if (!live) return
+      for (const i of [currentWordIndex + 1, currentWordIndex - 1]) {
+        const word = vocabulary[i]
+        if (word && !word.isCustomWord && hasWordImage(word.id)) loadWordImage(Number(word.id))
+      }
+    })
+    return () => { live = false }
   }, [vocabulary, currentWordIndex])
 
   // Hold gesture handlers for flashcard example sentences.
@@ -5403,6 +5458,7 @@ export function LanguageSelector() {
       : ''
 
     const handleTopicHoldStart = (e: React.TouchEvent) => {
+      warmTopic(topic)
       releasePressedTile()
       longPressFiredRef.current = false
       touchStartPos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }

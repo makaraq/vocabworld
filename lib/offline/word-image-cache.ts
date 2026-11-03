@@ -5,6 +5,7 @@
 
 import { idbGet, idbPut, isIndexedDbSupported } from './offline-storage'
 import { getWordImageUrl } from '@/lib/word-images'
+import { whenQuiet } from '@/lib/quiet-window'
 
 export const imageKey = (wordId: string | number) => `i:${wordId}`
 
@@ -59,6 +60,10 @@ export function loadWordImage(wordId: number): Promise<string | null> {
       try {
         const stored = await idbGet<{ blob: Blob }>('images', imageKey(wordId))
         if (stored?.blob) return remember(wordId, stored.blob)
+        // Not while a topic is opening: on iPhone the reply is unpacked on
+        // the thread drawing it (lib/quiet-window.ts). The card shows the
+        // image from its URL meanwhile.
+        await whenQuiet()
         const blob = await fetchAndStoreWordImage(wordId)
         if (blob) return remember(wordId, blob)
       } catch {}
@@ -68,6 +73,18 @@ export function loadWordImage(wordId: number): Promise<string | null> {
 
   inFlight.set(wordId, job)
   return job
+}
+
+// The stored copy only (memory → IndexedDB), never the network: a touch on a
+// topic's tile reads its first card's art ahead of the tap, so the card opens
+// with it already there.
+export function readStoredWordImage(wordId: number): Promise<string | null> {
+  const cached = objectUrls.get(wordId)
+  if (cached) return Promise.resolve(cached)
+  if (!getWordImageUrl(wordId) || !isIndexedDbSupported()) return Promise.resolve(null)
+  return idbGet<{ blob: Blob }>('images', imageKey(wordId))
+    .then(stored => (stored?.blob ? remember(wordId, stored.blob) : null))
+    .catch(() => null)
 }
 
 // Drop the object URLs, e.g. after the images store was cleared
