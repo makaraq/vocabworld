@@ -677,7 +677,8 @@ private struct ThemeCard: View {
     var body: some View {
         Card {
             SectionLabel(icon: "palette-bold", tint: ink(0.7), title: theme.title, desc: theme.desc)
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 8) {
+            // All on one row, as ThemePicker's compact layout has them.
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 6, alignment: .top), count: 6), spacing: 6) {
                 ForEach(theme.items) { item in
                     ThemeSwatch(item: item, on: item.id == theme.current) { onPick(item) }
                 }
@@ -717,37 +718,41 @@ private struct ThemeSwatch: View {
                     .overlay(pane)
                     .overlay(alignment: .topTrailing) {
                         if item.premium {
-                            SolarIcon("crown-bold", 12)
+                            SolarIcon("crown-bold", 10)
                                 .foregroundColor(Tw.yellow400)
-                                .frame(width: 20, height: 20)
+                                .frame(width: 16, height: 16)
                                 .background(Circle().fill(Color.black.opacity(0.45)))
                                 .padding(4)
                         }
                     }
                     .overlay(alignment: .bottomTrailing) {
                         if on {
-                            SolarIcon("check-read-linear", 13)
+                            SolarIcon("check-read-linear", 11)
                                 .foregroundColor(.black)
-                                .frame(width: 20, height: 20)
+                                .frame(width: 16, height: 16)
                                 .background(Circle().fill(Color.white))
                                 .padding(4)
                         }
                     }
-                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
                             .strokeBorder(on ? Color.white : Color.white.opacity(0.25), lineWidth: 2)
                     )
                     .background(
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
                             .inset(by: -3)
                             .fill(Color.white.opacity(on ? 0.25 : 0))
                     )
                     .scaleEffect(on ? 1.05 : 1)
+                // Regular weight even when chosen: bold would push the longer
+                // names (Обсидиан) past their cell.
                 Text(item.name)
-                    .font(AppFont.font(11, on ? 600 : 400))
+                    .font(AppFont.font(10, on ? 500 : 400))
                     .foregroundColor(ink(on ? 1 : 0.6))
-                    .lineLimit(1)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             // Taps only inside the swatch: a photo theme's photo fills it by
             // spilling past its sides (clipped from sight, but not from

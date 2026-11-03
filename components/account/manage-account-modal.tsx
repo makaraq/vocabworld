@@ -492,7 +492,7 @@ function WebAccountModal({
                   <span className="text-white/45 text-xs">{t('theme.desc')}</span>
                 </div>
               </div>
-              <ThemePicker isPremium={isPremium} onPremiumAction={(id) => onPremiumThemeAction?.(id)} />
+              <ThemePicker compact isPremium={isPremium} onPremiumAction={(id) => onPremiumThemeAction?.(id)} />
               {onTryThemesAction && (
                 <button
                   onClick={onTryThemesAction}
