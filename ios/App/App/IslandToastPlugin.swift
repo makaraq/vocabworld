@@ -55,7 +55,7 @@ public class IslandToastPlugin: CAPPlugin, CAPBridgedPlugin {
 
     @discardableResult
     func present(_ toast: IslandToast) -> Bool {
-        guard let host = bridge?.viewController?.view.window, let island = Self.island(in: host),
+        guard let app = bridge?.viewController, let host = app.view.window, let island = Self.island(in: host),
               let scene = host.windowScene else { return false }
         // Already out: the numbers change, and it stays a moment longer.
         if let model {
@@ -68,10 +68,17 @@ public class IslandToastPlugin: CAPPlugin, CAPBridgedPlugin {
         window.backgroundColor = .clear
         // Touches go straight through to the app.
         window.isUserInteractionEnabled = false
+        // Its own root leaves the status bar as the app has it.
+        let root = StatusBarAsApp(app: app)
+        window.rootViewController = root
+        window.isHidden = false
         let controller = UIHostingController(rootView: IslandToastView(model: model))
         controller.view.backgroundColor = .clear
-        window.rootViewController = controller
-        window.isHidden = false
+        controller.view.frame = root.view.bounds
+        controller.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        root.addChild(controller)
+        root.view.addSubview(controller.view)
+        controller.didMove(toParent: root)
         model.onDone = { [weak self] in
             self?.window?.isHidden = true
             self?.window = nil
@@ -180,7 +187,9 @@ struct IslandToastView: View {
             let island = model.island
             let wide = CGRect(x: (geo.size.width - min(geo.size.width - 28, 312)) / 2, y: island.minY,
                               width: min(geo.size.width - 28, 312), height: 54)
-            let pill = model.open ? wide : island
+            // Closed, it's tucked inside the island, out of sight behind it
+            // even where the island is a little smaller than this one.
+            let pill = model.open ? wide : island.insetBy(dx: 20, dy: 3.5)
             ZStack(alignment: .topLeading) {
                 Capsule(style: .continuous)
                     .fill(Color.black)

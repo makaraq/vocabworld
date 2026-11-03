@@ -29,9 +29,13 @@ public class PanelMorphPlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "clear", returnType: CAPPluginReturnPromise),
     ]
 
-    /// What covers the web view now: the frozen picture, or the morph.
+    /// What covers the web view now: the frozen picture, or the morph. It goes
+    /// in a window of its own over the app's: Capacitor's view controller's
+    /// view is the web view itself, and anything inside it would be in the
+    /// web view's pictures of the page.
     private var overlay: UIView?
     private var overlayController: UIViewController?
+    private var coverWindow: UIWindow?
     /// The picture under the frozen cover.
     private var frozen: UIImage?
     /// The morph on screen, and the calls waiting for it to end.
@@ -192,16 +196,16 @@ public class PanelMorphPlugin: CAPPlugin, CAPBridgedPlugin {
     /// Puts `view` over the web view, then takes away what was there before,
     /// so nothing flickers between them. It takes the touches meanwhile.
     private func cover(with view: UIView, controller: UIViewController?) {
-        guard let host = bridge?.viewController else { return }
-        view.frame = host.view.bounds
+        guard let root = coverRoot() else { return }
+        view.frame = root.view.bounds
         view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         view.isUserInteractionEnabled = true
         if let controller {
-            host.addChild(controller)
-            host.view.addSubview(view)
-            controller.didMove(toParent: host)
+            root.addChild(controller)
+            root.view.addSubview(view)
+            controller.didMove(toParent: root)
         } else {
-            host.view.addSubview(view)
+            root.view.addSubview(view)
         }
         let previous = overlay
         let previousController = overlayController
@@ -210,10 +214,26 @@ public class PanelMorphPlugin: CAPPlugin, CAPBridgedPlugin {
         remove(previous, previousController)
     }
 
+    /// The cover's window, put up over the app's when first needed.
+    private func coverRoot() -> UIViewController? {
+        if let root = coverWindow?.rootViewController { return root }
+        guard let app = bridge?.viewController, let scene = app.view.window?.windowScene else { return nil }
+        let window = UIWindow(windowScene: scene)
+        window.windowLevel = .normal + 1
+        window.backgroundColor = .clear
+        let root = StatusBarAsApp(app: app)
+        window.rootViewController = root
+        window.isHidden = false
+        coverWindow = window
+        return root
+    }
+
     private func uncover() {
         remove(overlay, overlayController)
         overlay = nil
         overlayController = nil
+        coverWindow?.isHidden = true
+        coverWindow = nil
         frozen = nil
         endMorph()
     }
@@ -242,7 +262,8 @@ public class PanelMorphPlugin: CAPPlugin, CAPBridgedPlugin {
     #if DEBUG
     /// For the CI check: -SprindMorphDemo opens the test page's pop-up and
     /// closes it again (window.__morphTest, in the workflow's stand-in page),
-    /// recording the screen every 40 ms into Documents/morph.
+    /// recording the screen every 40 ms into Documents/morph while either is
+    /// on screen.
     func runDemoIfAsked() {
         guard ProcessInfo.processInfo.arguments.contains("-SprindMorphDemo") else { return }
         DispatchQueue.main.asyncAfter(deadline: .now() + 9) {
@@ -254,14 +275,31 @@ public class PanelMorphPlugin: CAPPlugin, CAPBridgedPlugin {
             self.bridge?.webView?.evaluateJavaScript("window.__morphTest && window.__morphTest()", completionHandler: nil)
             let format = UIGraphicsImageRendererFormat()
             format.scale = 1
+            let start = Date()
             var count = 0
+            var tail = 0
             Timer.scheduledTimer(withTimeInterval: 0.04, repeats: true) { timer in
+                if count >= 60 || Date().timeIntervalSince(start) > 9 {
+                    timer.invalidate()
+                    return
+                }
+                // The first two, then only while the cover is up and just after.
+                if self.overlay != nil {
+                    tail = 2
+                } else if tail > 0 {
+                    tail -= 1
+                } else if count >= 2 {
+                    return
+                }
+                // The cover's own window too, over the app's.
+                let windows = window.windowScene?.windows.sorted { $0.windowLevel.rawValue < $1.windowLevel.rawValue } ?? [window]
                 let image = UIGraphicsImageRenderer(bounds: window.bounds, format: format).image { _ in
-                    _ = window.drawHierarchy(in: window.bounds, afterScreenUpdates: false)
+                    for shown in windows where !shown.isHidden {
+                        _ = shown.drawHierarchy(in: shown.bounds, afterScreenUpdates: false)
+                    }
                 }
                 try? image.pngData()?.write(to: folder.appendingPathComponent(String(format: "frame-%02d.png", count)))
                 count += 1
-                if count >= 25 { timer.invalidate() }
             }
         }
     }
@@ -276,6 +314,29 @@ public class PanelMorphPlugin: CAPPlugin, CAPBridgedPlugin {
               width > 0, height > 0 else { return nil }
         return CGRect(x: x, y: y, width: width, height: height)
     }
+}
+
+/// The root of a window put up over the app's (the morph's cover, the
+/// island's pop-up): it leaves the status bar as the app has it.
+final class StatusBarAsApp: UIViewController {
+    private weak var app: UIViewController?
+
+    init(app: UIViewController) {
+        self.app = app
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) is not used")
+    }
+
+    override func loadView() {
+        view = UIView()
+        view.backgroundColor = .clear
+    }
+
+    override var preferredStatusBarStyle: UIStatusBarStyle { app?.preferredStatusBarStyle ?? .default }
+    override var prefersStatusBarHidden: Bool { app?.prefersStatusBarHidden ?? false }
 }
 
 private extension CGRect {

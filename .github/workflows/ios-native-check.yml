@@ -182,8 +182,12 @@ jobs:
           tail -n 300 setup.log > "$RESULTS/setup-tail.log" 2>/dev/null || true
           cp screenshots.log "$RESULTS/" 2>/dev/null || true
           cp shots/*.png "$RESULTS/shots/" 2>/dev/null || true
-          # Full-size screenshots are 2 MB each; 1434 px tall is plenty to judge them.
-          for shot in "$RESULTS"/shots/*.png; do sips -Z 1434 "$shot" >/dev/null 2>&1 || true; done
+          # Full-size screenshots are 2 MB each; 1434 px tall is plenty to judge
+          # them. (The app's own frames are smaller already: left as they are.)
+          for shot in "$RESULTS"/shots/*.png; do
+            height=$(sips -g pixelHeight "$shot" 2>/dev/null | awk '/pixelHeight/ { print $2 }')
+            if [ "${height:-0}" -gt 1434 ]; then sips -Z 1434 "$shot" >/dev/null 2>&1 || true; fi
+          done
           cd "$RESULTS"
           git init -q
           git checkout -q -b results
