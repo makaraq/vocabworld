@@ -337,8 +337,10 @@
     scale: 1.03 !important;
   }
 
-  /* Manage Account doesn't swell: its sheet grows out of it instead. */
-  html.liquid-glass button.w-full.bg-white\/10.backdrop-blur-sm.rounded-2xl[data-manage-account]:not(:disabled):active {
+  /* Manage Account doesn't swell: its sheet grows out of it instead.
+     (:not(#_) is only there to outrank the swell rules above, whose long
+     selectors would otherwise win.) */
+  html.liquid-glass button[data-manage-account]:not(#_):active {
     scale: none !important;
   }
 
