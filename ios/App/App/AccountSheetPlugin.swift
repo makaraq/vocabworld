@@ -28,7 +28,10 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
     /// Whether the web side still needs telling when the sheet has gone: not
     /// when it asked for the close itself.
     private var notifyOnFinish = true
-    private var glassRefresh: DispatchWorkItem?
+    private var glassRefreshes: [DispatchWorkItem] = []
+    /// The theme the glass was last made under. (The sheet marks a tapped
+    /// theme as chosen at once, so the state alone can't show it changed.)
+    private var glassTheme = ""
 
     @objc func present(_ call: CAPPluginCall) {
         let state: AccountState
@@ -72,12 +75,16 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
                 return
             }
             model.addImages(images)
-            let themeChanged = model.state.theme.current != state.theme.current || model.state.dark != state.dark
             if model.state != state { model.state = state }
             self.sheet?.overrideUserInterfaceStyle = state.dark ? .dark : .light
-            // A new theme restyles the page behind: once its backdrop has
-            // cross-faded, the glass is made again from it.
-            if themeChanged { self.refreshGlass(after: 0.7) }
+            // A new theme restyles the page behind, which shows through live;
+            // the glass is made again from it partway through the page's 700 ms
+            // cross-fade, and once more when it has settled.
+            let theme = Self.themeKey(state)
+            if theme != self.glassTheme {
+                self.glassTheme = theme
+                self.refreshGlass(after: [0.3, 0.85])
+            }
             call.resolve()
         }
     }
@@ -121,6 +128,7 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
         model.onFinished = { [weak self] in self?.finish() }
         self.model = model
         notifyOnFinish = true
+        glassTheme = Self.themeKey(state)
 
         // The page behind becomes the sheet's glass first, then the sheet
         // opens over it (a snapshot and two blurs: a few hundredths of a second).
@@ -148,10 +156,15 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
         }
     }
 
+    private static func themeKey(_ state: AccountState) -> String {
+        "\(state.theme.current)|\(state.dark)"
+    }
+
     private func finish() {
         guard model != nil else { return }
         let notify = notifyOnFinish
-        glassRefresh?.cancel()
+        glassRefreshes.forEach { $0.cancel() }
+        glassRefreshes = []
         sheet?.dismiss(animated: false)
         model = nil
         sheet = nil
@@ -224,21 +237,22 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
     private static func saveForDemo(page: CGImage, glass: SheetGlass?) {
         guard let folder = demoFolder else { return }
         try? UIImage(cgImage: page).pngData()?.write(to: folder.appendingPathComponent("glass-page.png"))
-        try? glass?.backdrop.pngData()?.write(to: folder.appendingPathComponent("glass-backdrop.png"))
         try? glass?.sheet.pngData()?.write(to: folder.appendingPathComponent("glass-sheet.png"))
     }
     #endif
 
-    private func refreshGlass(after delay: TimeInterval) {
-        glassRefresh?.cancel()
-        let work = DispatchWorkItem { [weak self] in
-            self?.makeGlass { glass in
-                guard let glass, let model = self?.model else { return }
-                withAnimation(.easeInOut(duration: 0.4)) { model.glass = glass }
+    private func refreshGlass(after delays: [TimeInterval]) {
+        glassRefreshes.forEach { $0.cancel() }
+        glassRefreshes = delays.map { delay in
+            let work = DispatchWorkItem { [weak self] in
+                self?.makeGlass { glass in
+                    guard let glass, let model = self?.model else { return }
+                    withAnimation(.easeInOut(duration: 0.3)) { model.glass = glass }
+                }
             }
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: work)
+            return work
         }
-        glassRefresh = work
-        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: work)
     }
 
     /// Apple's own subscription sheet, over this one; the App Store page if
@@ -318,13 +332,13 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
     #endif
 }
 
-/// What the web sheet's CSS makes of the page behind it: the backdrop
-/// (bg-black/50 over a 6 px blur) and the glass (a further blur(12px)
-/// saturate(1.2) of that). The white wash, sheen and rim go on top
+/// What the web sheet's glass shows of the page behind it, by its CSS: the
+/// backdrop's bg-black/50 over a 6 px blur, then the sheet's own blur(12px)
+/// saturate(1.2) (one 13.4 px blur, as two blurs add up). The white wash,
+/// sheen and rim go on top, and the backdrop itself is drawn live
 /// (AccountSheetHost). Made from a snapshot at one pixel per point: it is
 /// blurred anyway.
 struct SheetGlass {
-    let backdrop: UIImage
     let sheet: UIImage
 
     static func make(from page: CGImage, scale: CGFloat) -> SheetGlass? {
@@ -334,23 +348,19 @@ struct SheetGlass {
         let space = CGColorSpace(name: CGColorSpace.sRGB)!
         let input = CIImage(cgImage: page).transformed(by: CGAffineTransform(scaleX: 1 / scale, y: 1 / scale))
         let extent = input.extent
-        let half = input.applyingFilter("CIColorMatrix", parameters: [
-            "inputRVector": CIVector(x: 0.5, y: 0, z: 0, w: 0),
-            "inputGVector": CIVector(x: 0, y: 0.5, z: 0, w: 0),
-            "inputBVector": CIVector(x: 0, y: 0, z: 0.5, w: 0),
-            "inputAVector": CIVector(x: 0, y: 0, z: 0, w: 1),
-        ])
-        let backdrop = half.clampedToExtent().applyingGaussianBlur(sigma: 6)
-        let glass = backdrop
-            .applyingGaussianBlur(sigma: 12)
+        let glass = input
+            .applyingFilter("CIColorMatrix", parameters: [
+                "inputRVector": CIVector(x: 0.5, y: 0, z: 0, w: 0),
+                "inputGVector": CIVector(x: 0, y: 0.5, z: 0, w: 0),
+                "inputBVector": CIVector(x: 0, y: 0, z: 0.5, w: 0),
+                "inputAVector": CIVector(x: 0, y: 0, z: 0, w: 1),
+            ])
+            .clampedToExtent()
+            .applyingGaussianBlur(sigma: (6.0 * 6.0 + 12.0 * 12.0).squareRoot())
             .applyingFilter("CIColorControls", parameters: [kCIInputSaturationKey: 1.2])
-        guard let backdropImage = context.createCGImage(backdrop.cropped(to: extent), from: extent, format: .RGBA8, colorSpace: space),
-              let glassImage = context.createCGImage(glass.cropped(to: extent), from: extent, format: .RGBA8, colorSpace: space)
+        guard let image = context.createCGImage(glass.cropped(to: extent), from: extent, format: .RGBA8, colorSpace: space)
         else { return nil }
-        return SheetGlass(
-            backdrop: UIImage(cgImage: backdropImage, scale: 1, orientation: .up),
-            sheet: UIImage(cgImage: glassImage, scale: 1, orientation: .up)
-        )
+        return SheetGlass(sheet: UIImage(cgImage: image, scale: 1, orientation: .up))
     }
 }
 

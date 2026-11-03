@@ -26,6 +26,7 @@
 		7A5C0E0100000000000000B2 /* AccountSheetState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5C0E0100000000000000A2 /* AccountSheetState.swift */; };
 		7A5C0E0100000000000000B3 /* AccountSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5C0E0100000000000000A3 /* AccountSheetView.swift */; };
 		7A5C0E0100000000000000B4 /* LevelAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5C0E0100000000000000A4 /* LevelAvatarView.swift */; };
+		7A5C0E0100000000000000B5 /* PanelMorphPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5C0E0100000000000000A5 /* PanelMorphPlugin.swift */; };
 		5D1D0A0100000000000000B2 /* WidgetShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1D0A0100000000000000A2 /* WidgetShared.swift */; };
 		5D1D0A0100000000000000B3 /* WidgetShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1D0A0100000000000000A2 /* WidgetShared.swift */; };
 		5D1D0A0100000000000000B4 /* FlashcardWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1D0A0100000000000000A3 /* FlashcardWidget.swift */; };
@@ -77,6 +78,7 @@
 		7A5C0E0100000000000000A2 /* AccountSheetState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSheetState.swift; sourceTree = "<group>"; };
 		7A5C0E0100000000000000A3 /* AccountSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSheetView.swift; sourceTree = "<group>"; };
 		7A5C0E0100000000000000A4 /* LevelAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelAvatarView.swift; sourceTree = "<group>"; };
+		7A5C0E0100000000000000A5 /* PanelMorphPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelMorphPlugin.swift; sourceTree = "<group>"; };
 		7A5C0E0200000000000000C1 /* SpaceGrotesk.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Fonts/SpaceGrotesk.ttf; sourceTree = "<group>"; };
 		7A5C0E0200000000000000C2 /* SpaceGrotesk-LatinExt.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Fonts/SpaceGrotesk-LatinExt.ttf; sourceTree = "<group>"; };
 		7A5C0E0200000000000000C3 /* SpaceGrotesk-Vietnamese.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Fonts/SpaceGrotesk-Vietnamese.ttf; sourceTree = "<group>"; };
@@ -138,6 +140,7 @@
 				7A5C0E0100000000000000A2 /* AccountSheetState.swift */,
 				7A5C0E0100000000000000A3 /* AccountSheetView.swift */,
 				7A5C0E0100000000000000A4 /* LevelAvatarView.swift */,
+				7A5C0E0100000000000000A5 /* PanelMorphPlugin.swift */,
 				7A5C0E0200000000000000C1 /* SpaceGrotesk.ttf */,
 				7A5C0E0200000000000000C2 /* SpaceGrotesk-LatinExt.ttf */,
 				7A5C0E0200000000000000C3 /* SpaceGrotesk-Vietnamese.ttf */,
@@ -331,6 +334,7 @@
 				7A5C0E0100000000000000B2 /* AccountSheetState.swift in Sources */,
 				7A5C0E0100000000000000B3 /* AccountSheetView.swift in Sources */,
 				7A5C0E0100000000000000B4 /* LevelAvatarView.swift in Sources */,
+				7A5C0E0100000000000000B5 /* PanelMorphPlugin.swift in Sources */,
 				5D1D0A0100000000000000B2 /* WidgetShared.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

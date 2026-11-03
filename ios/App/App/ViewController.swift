@@ -20,8 +20,11 @@ class ViewController: CAPBridgeViewController {
         bridge?.registerPluginInstance(SprindWidgetPlugin())
         let accountSheet = AccountSheetPlugin()
         bridge?.registerPluginInstance(accountSheet)
+        let panelMorph = PanelMorphPlugin()
+        bridge?.registerPluginInstance(panelMorph)
         #if DEBUG
         accountSheet.runDemoIfAsked()
+        panelMorph.runDemoIfAsked()
         #endif
 
         // Add as a persistent user script (runs on every page load/navigation)

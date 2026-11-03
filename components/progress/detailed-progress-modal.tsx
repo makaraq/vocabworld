@@ -277,7 +277,7 @@ export function DetailedProgressModal({
     if (!isOpen || !mounted) return
     const source = morphFrom?.()
     if (panelRef.current && canMorphFrom(source)) {
-      morphRef.current = morphPanelOpen(source, panelRef.current, backdropRef.current)
+      morphRef.current = morphPanelOpen(source, panelRef.current, backdropRef.current, { native: true })
     }
     return () => {
       morphRef.current?.dispose()

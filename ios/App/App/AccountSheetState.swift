@@ -187,6 +187,9 @@ final class AccountSheetModel: ObservableObject {
     var onFinished: () -> Void = {}
     /// The sheet is on screen and starting to open.
     var onAppear: () -> Void = {}
+    /// The sheet's scroller, for the drag to close (it starts the drag only
+    /// at the top, and holds the scroller still meanwhile).
+    weak var scrollView: UIScrollView?
 
     /// Animates the sheet away (AccountSheetHost watches `closing`).
     func close() {

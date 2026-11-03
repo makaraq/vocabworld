@@ -16,6 +16,8 @@
 // A timer, not animation events, finishes a close: a frame-starved webview
 // can stall an animation, and a panel must never stay stuck on screen.
 
+import { hasNativeMorph, nativeMorphOpen } from '@/lib/native/panel-morph'
+
 // Topic open/back morph: a critically damped spring (no bounce), sampled
 // for CSS linear(). ~70% of the move in the first quarter, then a long soft
 // settle.
@@ -51,6 +53,9 @@ export type MorphOptions = {
   // melts and forms without its icon, and the close button's own glass
   // comes in with the rest of the contents, after.
   handoff?: { to: HTMLElement; turn: number }
+  // On iPhone, draw the motion natively, at the screen's full refresh rate
+  // (lib/native/panel-morph.ts); the web view stops at 60 fps.
+  native?: boolean
 }
 
 export type PanelMorph = {
@@ -738,6 +743,7 @@ export function morphPanelOpen(
   backdrop?: HTMLElement | null,
   options: MorphOptions = {},
 ): PanelMorph {
+  if (options.native && hasNativeMorph()) return nativeMorphOpen(source, panel, backdrop ?? null)
   let animations: Animation[] = []
   let ghost: HTMLElement | null = null
   let flyer: HTMLElement | null = null

@@ -243,6 +243,7 @@ struct AccountSheetView: View {
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 32)
+                .background(ScrollViewFinder { model.scrollView = $0 })
             }
             .onAppear {
                 if model.focus == "notifications" {
@@ -1365,6 +1366,11 @@ struct AccountSheetHost: View {
     @State private var open = false
     @State private var drag: CGFloat = 0
     @State private var leaving = false
+    @State private var dragMode = DragMode.undecided
+
+    private enum DragMode {
+        case undecided, sheet, ignored
+    }
 
     /// The web sheet's height: its 78 pt header over a scroller capped at 75%
     /// of the screen, and never over 85% (795 pt on a Pro Max).
@@ -1395,21 +1401,15 @@ struct AccountSheetHost: View {
         }
     }
 
-    // The page behind, dimmed and blurred; a tap on it closes the sheet.
+    // The page behind, dimmed as the web sheet's backdrop does it (bg-black/50),
+    // and live, so a theme changes in front of the user; a tap closes the sheet.
     private func backdrop(_ screen: CGSize) -> some View {
         let fade = 1 - min(max(drag, 0) / 400, 1)
-        return ZStack {
-            if let glass = model.glass {
-                Image(uiImage: glass.backdrop)
-                    .resizable()
-            } else {
-                Color.black.opacity(0.5)
-            }
-        }
-        .frame(width: screen.width, height: screen.height)
-        .opacity(open && !leaving ? fade : 0)
-        .contentShape(Rectangle())
-        .onTapGesture { model.close() }
+        return Color.black.opacity(0.5)
+            .frame(width: screen.width, height: screen.height)
+            .opacity(open && !leaving ? fade : 0)
+            .contentShape(Rectangle())
+            .onTapGesture { model.close() }
     }
 
     private func panelView(_ panel: CGRect, screen: CGSize) -> some View {
@@ -1431,10 +1431,11 @@ struct AccountSheetHost: View {
                 .opacity(open ? 1 : 0)
         }
         .frame(width: panel.width, height: panel.height)
+        // Before the offset, so the drag's points are the panel's own.
+        .simultaneousGesture(dragToClose(panel))
         .clipShape(shape)
         .overlay(shape.stroke(Self.rim, lineWidth: 1.5).allowsHitTesting(false))
         .offset(x: panel.minX, y: panel.minY + shift)
-        .gesture(dragToClose(panel))
     }
 
     /// The glass: what the web's CSS makes of the page behind (fixed to the
@@ -1473,17 +1474,30 @@ struct AccountSheetHost: View {
         .init(color: Color.white.opacity(0.45), location: 1),
     ]), startPoint: .topLeading, endPoint: .bottomTrailing)
 
-    /// Dragged down by its handle and header it follows the finger; let go
-    /// far or fast enough, it slides away. Upwards it only gives a little.
+    /// As the web sheet: dragged down by its handle and header, or anywhere
+    /// once its contents are scrolled to the top, it follows the finger (the
+    /// contents hold still meanwhile); let go far or fast enough, it slides
+    /// away. Upwards it only gives a little.
     private func dragToClose(_ panel: CGRect) -> some Gesture {
-        DragGesture(minimumDistance: 8)
+        DragGesture(minimumDistance: 6)
             .onChanged { value in
-                guard !leaving, value.startLocation.y < 80 else { return }
+                guard !leaving else { return }
+                if dragMode == .undecided {
+                    let fromTop = value.startLocation.y < 80
+                    let downwards = value.translation.height > abs(value.translation.width)
+                    let atTop = (model.scrollView?.contentOffset.y ?? 0) <= 0.5
+                    dragMode = fromTop || (downwards && atTop) ? .sheet : .ignored
+                    if dragMode == .sheet { model.scrollView?.isScrollEnabled = false }
+                }
+                guard dragMode == .sheet else { return }
                 let dy = value.translation.height
                 drag = dy < 0 ? dy * 0.15 : dy
             }
             .onEnded { value in
-                guard !leaving, value.startLocation.y < 80 else { return }
+                let wasSheet = dragMode == .sheet
+                dragMode = .undecided
+                model.scrollView?.isScrollEnabled = true
+                guard !leaving, wasSheet else { return }
                 let dy = value.translation.height
                 let flick = value.predictedEndTranslation.height - dy
                 if dy > 100 || flick > 120 {
@@ -1512,8 +1526,9 @@ struct AccountSheetHost: View {
 }
 
 /// A rounded rectangle on its way from one frame to another: from the button
-/// to the whole panel as `progress` goes from 0 to 1.
-private struct MorphShape: Shape {
+/// to the whole panel as `progress` goes from 0 to 1. (Also the web pop-ups'
+/// glass in PanelMorphView.)
+struct MorphShape: Shape {
     var progress: CGFloat
     let from: CGRect
     let to: CGRect
@@ -1582,6 +1597,46 @@ private struct WebGlass<S: InsettableShape>: ViewModifier {
                 .shadow(color: Color.black.opacity(0.16), radius: 11, x: 0, y: 8)
             )
             .overlay(shape.strokeBorder(Self.rim, lineWidth: 1.5))
+    }
+}
+
+/// Finds the UIKit scroller under a SwiftUI ScrollView. Like the web sheet's
+/// (overscroll-behavior: none) it doesn't bounce, and the drag to close needs
+/// to know when it is at the top.
+private struct ScrollViewFinder: UIViewRepresentable {
+    let found: (UIScrollView) -> Void
+
+    func makeUIView(context: Context) -> FinderView {
+        FinderView(found: found)
+    }
+
+    func updateUIView(_ view: FinderView, context: Context) {}
+
+    final class FinderView: UIView {
+        private let found: (UIScrollView) -> Void
+
+        init(found: @escaping (UIScrollView) -> Void) {
+            self.found = found
+            super.init(frame: .zero)
+            isUserInteractionEnabled = false
+        }
+
+        required init?(coder: NSCoder) {
+            return nil
+        }
+
+        override func didMoveToWindow() {
+            super.didMoveToWindow()
+            var view = superview
+            while let current = view {
+                if let scroll = current as? UIScrollView {
+                    scroll.bounces = false
+                    found(scroll)
+                    return
+                }
+                view = current.superview
+            }
+        }
     }
 }
 

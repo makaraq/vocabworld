@@ -47,7 +47,23 @@ jobs:
           cp public/themes/*.jpg out/themes/
           cat > out/index.html <<'EOF'
           <!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head>
-          <body style="margin:0;min-height:100vh;background:#1e1b4b url(bg.jpeg) 62% 50%/cover"></body></html>
+          <body style="margin:0;min-height:100vh;background:#1e1b4b url(bg.jpeg) 62% 50%/cover;font-family:-apple-system,sans-serif">
+          <!-- A stand-in for a web pop-up, for the native morph (-SprindMorphDemo) -->
+          <div id="tile" style="position:fixed;left:24px;top:260px;width:180px;height:96px;border-radius:24px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;display:flex;align-items:center;justify-content:center">Leaderboard</div>
+          <div id="back" style="position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0"></div>
+          <div id="panel" style="position:fixed;left:16px;right:16px;top:150px;height:620px;border-radius:24px;background:rgba(255,255,255,.1);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.2);color:#fff;padding:24px;box-sizing:border-box;opacity:0">
+          <h2 style="margin:0 0 16px">Leaderboard</h2><p>1. Alex Martin, 12,340 XP</p><p>2. Sam Lee, 11,020 XP</p><p>3. Kim Park, 9,870 XP</p></div>
+          <script>
+          window.__morphTest = async function () {
+            var P = window.Capacitor.Plugins.PanelMorph, tile = document.getElementById('tile'), back = document.getElementById('back'), panel = document.getElementById('panel');
+            var rect = function (el) { var r = el.getBoundingClientRect(); return { x: r.left, y: r.top, width: r.width, height: r.height }; };
+            await P.freeze();
+            back.style.opacity = '1'; panel.style.opacity = '1';
+            await new Promise(function (r) { requestAnimationFrame(function () { requestAnimationFrame(r); }); });
+            await P.open({ from: rect(tile), fromRadius: 24, to: rect(panel), toRadius: 24 });
+          };
+          </script>
+          </body></html>
           EOF
           set -o pipefail
           npx cap sync ios 2>&1 | tee setup.log
@@ -110,6 +126,12 @@ jobs:
           run -SprindAccountDemo -SprindAccountDemoLevel 100
           sleep 13
           shoot account-omniglot
+
+          # A web pop-up opening out of its tile with the native morph
+          run -SprindMorphDemo
+          sleep 13
+          shoot morph-end
+          for frame in "$DATA"/Documents/morph/*.png; do cp "$frame" "shots/morph-$(basename "$frame")"; done
 
           # Every border, twice a moment apart: they should have moved
           run -SprindBorderGallery

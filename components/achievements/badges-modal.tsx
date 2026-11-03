@@ -228,7 +228,7 @@ export function BadgesModal({ open, onCloseAction, morphFrom }: Props) {
       // clean-up above, shows nothing out of place.
       const source = morphFrom?.()
       if (modalRef.current && canMorphFrom(source)) {
-        morphRef.current = morphPanelOpen(source, modalRef.current, backdropRef.current)
+        morphRef.current = morphPanelOpen(source, modalRef.current, backdropRef.current, { native: true })
         // Its own slide up doesn't run; the morph holds it meanwhile.
         setShown(true)
       }
