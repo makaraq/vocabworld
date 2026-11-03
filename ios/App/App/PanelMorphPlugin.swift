@@ -576,6 +576,15 @@ struct PanelMorphView: View {
                         model.tint.frame(width: screen.width, height: screen.height)
                     }
                 }
+                // Everywhere until the pop-up is pictured; then only under it,
+                // the picture having the real one round it.
+                .mask {
+                    if model.whole != nil {
+                        box(model.panel, radius: 0)
+                    } else {
+                        Rectangle()
+                    }
+                }
                 .opacity(dim)
                 if let around = model.whole {
                     picture(around, screen)
