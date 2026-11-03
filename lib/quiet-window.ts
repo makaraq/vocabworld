@@ -13,7 +13,9 @@ export function keepQuiet(ms: number): void {
   quietUntil = Math.max(quietUntil, now() + ms)
 }
 
-// Resolves once no animation is asking for quiet (at once, usually).
+// Resolves once no animation is asking for quiet (a tick later, usually).
+// It looks a tick later, not at once: a pop-up's own effects can run just
+// before the one that starts its morph and asks for quiet.
 export function whenQuiet(): Promise<void> {
   return new Promise((resolve) => {
     const check = () => {
@@ -21,6 +23,6 @@ export function whenQuiet(): Promise<void> {
       if (left <= 0) resolve()
       else setTimeout(check, left)
     }
-    check()
+    setTimeout(check, 0)
   })
 }

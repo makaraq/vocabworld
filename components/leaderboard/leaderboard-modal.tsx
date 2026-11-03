@@ -8,6 +8,8 @@ import { getFlagIcon } from "@/utils/flags"
 import { useT } from "@/components/providers/translation-provider"
 import { resolveAvatar } from "@/lib/avatars/smiley-avatar"
 import { canMorphFrom, morphPanelOpen, type PanelMorph } from "@/lib/morph-modal"
+import { readCached, writeCached } from "@/lib/instant-cache"
+import { whenQuiet } from "@/lib/quiet-window"
 
 interface LeaderboardEntry {
   rank: number
@@ -29,6 +31,12 @@ interface LeaderboardModalProps {
   // it and closes back into it (lib/morph-modal.ts) instead of sliding.
   // Dragged down, it slides away, the tile forming again behind it.
   morphFrom?: () => HTMLElement | null
+}
+
+// The last list seen for each board, shown at once the next time it opens.
+interface LeaderboardSnapshot {
+  entries: LeaderboardEntry[]
+  currentUserRank: LeaderboardEntry | null
 }
 
 export function LeaderboardModal({
@@ -58,8 +66,19 @@ export function LeaderboardModal({
 
   const fetchLeaderboard = useCallback(async () => {
     if (!user?.id) return
-    setLoading(true)
+    const cacheKey = `leaderboard:${user.id}:${period}:${scope}:${scope === 'language' ? targetLanguageCode : 'all'}`
+    const cached = readCached<LeaderboardSnapshot>(cacheKey)
+    if (cached) {
+      setEntries(cached.entries)
+      setCurrentUserRank(cached.currentUserRank)
+      setLoading(false)
+    } else {
+      setLoading(true)
+    }
     try {
+      // A list already on show refreshes once the sheet has opened out: on
+      // iPhone the reply is unpacked on the thread drawing it (lib/quiet-window.ts).
+      if (cached) await whenQuiet()
       const params = new URLSearchParams({ period, scope })
       if (scope === 'language') params.set('targetLanguageCode', targetLanguageCode)
       const res = await fetch(`/api/leaderboard?${params}`)
@@ -67,6 +86,7 @@ export function LeaderboardModal({
         const data = await res.json()
         setEntries(data.entries || [])
         setCurrentUserRank(data.currentUserRank || null)
+        writeCached(cacheKey, { entries: data.entries || [], currentUserRank: data.currentUserRank || null })
       }
     } catch (err) {
       console.error('Failed to fetch leaderboard:', err)

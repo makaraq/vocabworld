@@ -7,6 +7,7 @@ import { Icon } from "@iconify/react"
 import { getFlagIcon } from "@/utils/flags"
 import { useT } from "@/components/providers/translation-provider"
 import { readCached, writeCached } from "@/lib/instant-cache"
+import { whenQuiet } from "@/lib/quiet-window"
 import { getTopicIcon } from "@/lib/icons/topic-icons"
 import { canMorphFrom, morphPanelOpen, type PanelMorph } from "@/lib/morph-modal"
 
@@ -221,6 +222,8 @@ export function DetailedProgressModal({
     const fetchTopicProgress = async () => {
       try {
         const url = `/api/progress/topics?userId=${user.id}&languageCode=${targetLanguageCode}&detailed=true`
+        // What's on show refreshes once it has opened (lib/quiet-window.ts).
+        if (cached) await whenQuiet()
 
         const response = await fetch(url)
 

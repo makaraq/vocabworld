@@ -17,6 +17,7 @@
 // can stall an animation, and a panel must never stay stuck on screen.
 
 import { hasNativeMorph, nativeMorphOpen } from '@/lib/native/panel-morph'
+import { keepQuiet } from '@/lib/quiet-window'
 
 // Topic open/back morph: a critically damped spring (no bounce), sampled
 // for CSS linear(). ~70% of the move in the first quarter, then a long soft
@@ -744,6 +745,8 @@ export function morphPanelOpen(
   options: MorphOptions = {},
 ): PanelMorph {
   if (options.native && hasNativeMorph()) return nativeMorphOpen(source, panel, backdrop ?? null)
+  // Background downloads wait until it has opened (lib/quiet-window.ts).
+  keepQuiet(OPEN_MS + 100)
   let animations: Animation[] = []
   let ghost: HTMLElement | null = null
   let flyer: HTMLElement | null = null
@@ -956,6 +959,7 @@ export function morphPanelOpen(
 
   const close = (done: () => void) => {
     if (disposed || timer) return
+    keepQuiet(CLOSE_MS + 100)
     // From wherever it is now (mid-opening, or dragged), so it turns around.
     const now = panel.getBoundingClientRect()
     const nowCorners = cornersOf(panel, now)
@@ -1022,6 +1026,7 @@ export function morphPanelOpen(
     const dragged = new DOMMatrixReadOnly(getComputedStyle(panel).transform).m42
     const travel = Math.max(0, window.innerHeight - now.top) + 24
     const duration = Math.max(220, Math.min(420, travel / Math.max(velocity, 1.6)))
+    keepQuiet(duration + 100)
     const backdropOpacity = backdrop ? getComputedStyle(backdrop).opacity : '1'
     animations.forEach((a) => a.cancel())
     panel.style.transition = 'none'
