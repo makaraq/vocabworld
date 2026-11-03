@@ -133,6 +133,16 @@ jobs:
           shoot morph-end
           for frame in "$DATA"/Documents/morph/*.png; do cp "$frame" "shots/morph-$(basename "$frame")"; done
 
+          # The level pop-up growing out of the Dynamic Island. The app's own
+          # frames can't show the island; this screenshot, with the screen's
+          # outline in black, shows the pop-up over it.
+          run -SprindIslandDemo
+          sleep 10.2
+          xcrun simctl io "$DEVICE" screenshot --mask=black shots/island-open.png >/dev/null || shoot island-open
+          sleep 3
+          shoot island-end
+          for frame in "$DATA"/Documents/island/*.png; do cp "$frame" "shots/island-$(basename "$frame")"; done
+
           # Every border, twice a moment apart: they should have moved
           run -SprindBorderGallery
           sleep 5

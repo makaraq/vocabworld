@@ -282,12 +282,13 @@ struct PanelMorphView: View {
         let animation: Animation
         switch kind {
         case .open:
-            // As the native account sheet opens.
-            duration = 0.6
-            animation = .spring(response: 0.55, dampingFraction: 0.84)
+            // The web morph's own curves (lib/morph-modal.ts), as the native
+            // account sheet uses them: slower out, quicker back.
+            duration = WebMotion.openDuration
+            animation = WebMotion.open
         case .close:
-            duration = 0.42
-            animation = .easeInOut(duration: duration)
+            duration = WebMotion.closeDuration
+            animation = WebMotion.close
         case .slide:
             // Carrying on at the drag's own speed, never slower than a flick.
             let speed = max(Double(velocity) * 1000, 1600)

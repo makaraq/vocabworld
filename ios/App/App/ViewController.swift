@@ -22,9 +22,12 @@ class ViewController: CAPBridgeViewController {
         bridge?.registerPluginInstance(accountSheet)
         let panelMorph = PanelMorphPlugin()
         bridge?.registerPluginInstance(panelMorph)
+        let islandToast = IslandToastPlugin()
+        bridge?.registerPluginInstance(islandToast)
         #if DEBUG
         accountSheet.runDemoIfAsked()
         panelMorph.runDemoIfAsked()
+        islandToast.runDemoIfAsked()
         #endif
 
         // Add as a persistent user script (runs on every page load/navigation)

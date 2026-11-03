@@ -1364,6 +1364,7 @@ struct AccountSheetHost: View {
     let source: CGRect?
 
     @State private var open = false
+    @State private var contentsIn = false
     @State private var drag: CGFloat = 0
     @State private var leaving = false
     @State private var dragMode = DragMode.undecided
@@ -1393,7 +1394,8 @@ struct AccountSheetHost: View {
         .onAppear {
             model.onAppear()
             DispatchQueue.main.async {
-                withAnimation(.spring(response: 0.55, dampingFraction: 0.84)) { open = true }
+                withAnimation(WebMotion.open) { open = true }
+                withAnimation(WebMotion.contentsIn) { contentsIn = true }
             }
         }
         .onChange(of: model.closing) { closing in
@@ -1428,7 +1430,7 @@ struct AccountSheetHost: View {
         return ZStack(alignment: .top) {
             surface(panel, screen: screen, shift: shift)
             AccountSheetView(model: model)
-                .opacity(open ? 1 : 0)
+                .opacity(contentsIn ? 1 : 0)
         }
         .frame(width: panel.width, height: panel.height)
         // Before the offset, so the drag's points are the panel's own.
@@ -1503,7 +1505,7 @@ struct AccountSheetHost: View {
                 if dy > 100 || flick > 120 {
                     slideAway(panel)
                 } else {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) { drag = 0 }
+                    withAnimation(WebMotion.snapBack) { drag = 0 }
                 }
             }
     }
@@ -1519,15 +1521,18 @@ struct AccountSheetHost: View {
     private func animateAway() {
         guard !leaving else { return }
         leaving = true
-        let duration = 0.42
-        withAnimation(.easeInOut(duration: duration)) { open = false }
-        DispatchQueue.main.asyncAfter(deadline: .now() + duration) { model.onFinished() }
+        // The contents clear first, then the glass goes back into the button.
+        withAnimation(WebMotion.contentsOut) { contentsIn = false }
+        withAnimation(WebMotion.close) { open = false }
+        DispatchQueue.main.asyncAfter(deadline: .now() + WebMotion.closeDuration) { model.onFinished() }
     }
 }
 
 /// A rounded rectangle on its way from one frame to another: from the button
-/// to the whole panel as `progress` goes from 0 to 1. (Also the web pop-ups'
-/// glass in PanelMorphView.)
+/// to the whole panel as `progress` goes from 0 to 1. As the web morph does
+/// (lib/morph-modal.ts), it rounds up into a bubble halfway, every corner
+/// half its shorter side, and settles to the panel's own corners as it
+/// arrives. (Also the web pop-ups' glass in PanelMorphView.)
 struct MorphShape: Shape {
     var progress: CGFloat
     let from: CGRect
@@ -1541,14 +1546,62 @@ struct MorphShape: Shape {
     }
 
     func path(in _: CGRect) -> Path {
-        let p = min(max(progress, 0), 1.02)
+        let p = min(max(progress, 0), 1)
         let x = from.minX + (to.minX - from.minX) * p
         let y = from.minY + (to.minY - from.minY) * p
-        let width = from.width + (to.width - from.width) * p
-        let height = from.height + (to.height - from.height) * p
-        let corner = fromRadius + (toRadius - fromRadius) * p
-        let rect = CGRect(x: x, y: y, width: max(width, 1), height: max(height, 1))
-        return Path(roundedRect: rect, cornerRadius: min(corner, min(rect.width, rect.height) / 2), style: .continuous)
+        let width = max(from.width + (to.width - from.width) * p, 1)
+        let height = max(from.height + (to.height - from.height) * p, 1)
+        let halfwayWidth = (from.width + to.width) / 2
+        let halfwayHeight = (from.height + to.height) / 2
+        let bubble = min(halfwayWidth, halfwayHeight) / 2
+        let corner = p < 0.5
+            ? fromRadius + (bubble - fromRadius) * (p / 0.5)
+            : bubble + (toRadius - bubble) * ((p - 0.5) / 0.5)
+        let rect = CGRect(x: x, y: y, width: width, height: height)
+        return Path(roundedRect: rect, cornerRadius: min(corner, min(width, height) / 2), style: .continuous)
+    }
+}
+
+/// The web pop-ups' motion (lib/morph-modal.ts), so the native ones match it:
+/// opening on PANEL_SPRING over 680 ms with the contents coming in from 330 ms
+/// over 300 ms on SETTLE, closing quicker on MORPH_CALM over 460 ms, and a
+/// drag let go short snapping back over 300 ms.
+enum WebMotion {
+    static let openDuration = 0.68
+    static let closeDuration = 0.46
+
+    static var open: Animation {
+        if #available(iOS 17.0, *) {
+            return Animation(SampledCurve.panelSpring)
+        }
+        // The web's own stand-in where linear() isn't supported.
+        return .timingCurve(0.25, 0.7, 0.25, 1, duration: openDuration)
+    }
+
+    static let close = Animation.timingCurve(0.25, 0.46, 0.45, 0.94, duration: closeDuration)
+    static let contentsIn = Animation.timingCurve(0.2, 0.8, 0.2, 1, duration: 0.3).delay(0.33)
+    static let contentsOut = Animation.easeOut(duration: 0.16)
+    static let snapBack = Animation.timingCurve(0.2, 0, 0, 1, duration: 0.3)
+}
+
+/// An easing given as evenly spaced samples, as CSS linear() gives it.
+@available(iOS 17.0, *)
+struct SampledCurve: CustomAnimation {
+    let samples: [Double]
+    let duration: TimeInterval
+
+    /// PANEL_SPRING: a critically damped spring, sampled every 4%.
+    static let panelSpring = SampledCurve(samples: [
+        0, 0.0632, 0.1457, 0.2363, 0.3278, 0.4156, 0.4973, 0.5714, 0.6374, 0.6954, 0.7458, 0.7893, 0.8264,
+        0.858, 0.8846, 0.907, 0.9258, 0.9414, 0.9545, 0.9652, 0.9742, 0.9815, 0.9876, 0.9926, 0.9967, 1,
+    ], duration: WebMotion.openDuration)
+
+    func animate<V: VectorArithmetic>(value: V, time: TimeInterval, context: inout AnimationContext<V>) -> V? {
+        guard time < duration else { return nil }
+        let at = time / duration * Double(samples.count - 1)
+        let i = min(Int(at), samples.count - 2)
+        let eased = samples[i] + (samples[i + 1] - samples[i]) * (at - Double(i))
+        return value.scaled(by: eased)
     }
 }
 

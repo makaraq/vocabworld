@@ -2,7 +2,9 @@
 
 // The two moments XP shows itself while you learn:
 //   - XpToast: a small pill under the status bar, "+340 XP · 50%", each time
-//     the level bar passes a quarter. Every gain in between stays quiet.
+//     the level bar passes a quarter. Every gain in between stays quiet. On an
+//     iPhone with a Dynamic Island it grows out of the island instead
+//     (lib/native/island-toast.ts).
 //   - LevelUpOverlay: the full-screen celebration — rays, shockwaves, the
 //     letters of LEVEL UP dropping in, confetti, and when a new rank comes
 //     with it, the old border bursting into the new one and the new title.
@@ -21,6 +23,7 @@ import {
   type XpGain,
 } from "@/lib/leveling/engine"
 import { levelInfo, rankForLevel } from "@/lib/leveling/definitions"
+import { showInIsland } from "@/lib/native/island-toast"
 import { LevelAvatar } from "./level-avatar"
 
 export function LevelOverlays() {
@@ -51,6 +54,17 @@ interface ToastState {
   bump: number
 }
 
+/** The quarter of the level `xp` has just passed (25%, 50% or 75%), and
+ *  how it is written in the UI language. */
+function quarterReached(xp: number, uiLang: string) {
+  const reached = Math.floor(levelInfo(xp).progress * 4) / 4
+  let pct = `${Math.round(reached * 100)}%`
+  try {
+    pct = new Intl.NumberFormat(uiLang, { style: "percent" }).format(reached)
+  } catch {}
+  return { reached, pct }
+}
+
 function XpToast() {
   const { uiLang } = useT()
   const [toast, setToast] = useState<ToastState | null>(null)
@@ -59,8 +73,20 @@ function XpToast() {
   const goneTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
   const unshown = useRef({ userId: null as string | null, xp: 0 })
   const bump = useRef(0)
+  const lang = useRef(uiLang)
+  lang.current = uiLang
 
   useEffect(() => {
+    const showWeb = (total: number, xp: number) => {
+      clearTimeout(hideTimer.current)
+      clearTimeout(goneTimer.current)
+      setLeaving(false)
+      setToast({ total, xp, bump: ++bump.current })
+      hideTimer.current = setTimeout(() => {
+        setLeaving(true)
+        goneTimer.current = setTimeout(() => setToast(null), 260)
+      }, 2200)
+    }
     return subscribeXpGain((g: XpGain) => {
       const u = unshown.current
       if (u.userId !== g.userId) unshown.current = { userId: g.userId, xp: 0 }
@@ -73,14 +99,12 @@ function XpToast() {
       if (quarterOf(g.totalXp) <= quarterOf(g.totalXp - g.amount)) return
       const total = unshown.current.xp
       unshown.current.xp = 0
-      clearTimeout(hideTimer.current)
-      clearTimeout(goneTimer.current)
-      setLeaving(false)
-      setToast({ total, xp: g.totalXp, bump: ++bump.current })
-      hideTimer.current = setTimeout(() => {
-        setLeaving(true)
-        goneTimer.current = setTimeout(() => setToast(null), 260)
-      }, 2200)
+      // On an iPhone with a Dynamic Island it grows out of the island instead.
+      const level = levelInfo(g.totalXp).level
+      const rank = rankForLevel(level)
+      const { reached, pct } = quarterReached(g.totalXp, lang.current)
+      void showInIsland({ level, xp: total, percent: pct, progress: reached, color: rank.color, accent: rank.accent })
+        .then((shown) => { if (!shown) showWeb(total, g.totalXp) })
     })
   }, [])
 
@@ -93,11 +117,7 @@ function XpToast() {
   const info = levelInfo(toast.xp)
   const rank = rankForLevel(info.level)
   // The quarter just passed: 25%, 50% or 75%, written the UI language's way.
-  const reached = Math.floor(info.progress * 4) / 4
-  let pct = `${Math.round(reached * 100)}%`
-  try {
-    pct = new Intl.NumberFormat(uiLang, { style: "percent" }).format(reached)
-  } catch {}
+  const { reached, pct } = quarterReached(toast.xp, uiLang)
   return (
     <div
       className="fixed left-1/2 z-[70] pointer-events-none w-max max-w-[92vw]"
