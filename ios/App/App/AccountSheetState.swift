@@ -81,6 +81,9 @@ struct AccountState: Decodable, Equatable {
             var chrome: Bool
             /// The photo behind a photo theme, as a path in the web files (public/).
             var image: String?
+            /// The theme's glass for the sheet, measured by the page as the
+            /// sheet opened, so it can switch the moment it's tapped.
+            var look: SheetLook?
         }
     }
 

@@ -789,7 +789,9 @@ private struct ThemeSwatch: View {
     }
 }
 
-private struct ThemeBackdrop: View {
+/// A theme's backdrop, as its swatch shows it (and as the sheet's glass is
+/// made from when the theme changes, AccountSheetPlugin.becomeTheme).
+struct ThemeBackdrop: View {
     let item: AccountState.Theme.Item
 
     var body: some View {

@@ -13,7 +13,7 @@ import { getIcon } from '@iconify/react'
 import { useT } from '@/components/providers/translation-provider'
 import { useLevelXp } from '@/components/leveling/level-card'
 import { levelInfo, nextRank, rankForLevel, RANKS } from '@/lib/leveling/definitions'
-import { THEMES, currentTheme, onThemeChange, setTheme, themeById, type ThemeId } from '@/lib/themes'
+import { DEFAULT_THEME, THEMES, currentTheme, onThemeChange, setTheme, themeById, type ThemeId } from '@/lib/themes'
 import { resolveAvatar } from '@/lib/avatars/smiley-avatar'
 import { getFlagIcon } from '@/utils/flags'
 import { AccountSheet, type AccountSheetAction } from '@/lib/native/account-sheet'
@@ -101,6 +101,9 @@ function OpenSheet(props: NativeAccountSheetProps) {
   // The theme's own glass for the sheet, read off the page's CSS as it is now.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const look = useMemo(() => sheetLook(), [themeId])
+  // Every theme's, measured once: the sheet switches theme on its own the
+  // moment one is tapped, without waiting to hear back from the page.
+  const looks = useMemo(() => themeLooks(), [])
   const notif = props.notifPermission
   const widgetOptions = [
     { value: 'random', label: t('widget.source.random') },
@@ -164,6 +167,7 @@ function OpenSheet(props: NativeAccountSheetProps) {
         light: !!item.light,
         chrome: !!item.chrome,
         image: item.swatch.match(/url\('([^']+)'\)/)?.[1] ?? null,
+        look: looks[item.id] ?? null,
       })),
       tryLive: props.onTryThemesAction ? t('theme.tryLive') : null,
     },
@@ -386,6 +390,27 @@ function sheetLook(): { panel: Rgba; card: Rgba; cardEdge: Rgba; button: Rgba; s
   } finally {
     probe.remove()
   }
+}
+
+/** sheetLook for every theme, each read with its class on the page for an
+ *  instant (one task, so nothing is painted in between), then put back. */
+function themeLooks(): Record<string, ReturnType<typeof sheetLook>> {
+  if (typeof document === 'undefined') return {}
+  const root = document.documentElement
+  const classes = (): string[] => Array.from(root.classList).filter((c) => c.startsWith('theme-'))
+  const had = classes()
+  const out: Record<string, ReturnType<typeof sheetLook>> = {}
+  try {
+    for (const item of THEMES) {
+      root.classList.remove(...classes())
+      if (item.id !== DEFAULT_THEME) root.classList.add(`theme-${item.id}`)
+      out[item.id] = sheetLook()
+    }
+  } finally {
+    root.classList.remove(...classes())
+    root.classList.add(...had)
+  }
+  return out
 }
 
 // Any CSS colour (Tailwind's come as color-mix() and oklab) as sRGB 0–1, read
