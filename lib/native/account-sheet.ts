@@ -26,6 +26,9 @@ interface AccountSheetPlugin {
   }): Promise<void>
   update(options: { state: string; images?: Record<string, string> }): Promise<void>
   dismiss(): Promise<void>
+  /** A theme picked in the sheet is now painted on the page (its photo
+   *  decoded and drawn): the sheet lets go of its picture of the old one. */
+  themeShown(): Promise<void>
   addListener(event: 'action', listener: (action: AccountSheetAction) => void): Promise<PluginListenerHandle>
 }
 

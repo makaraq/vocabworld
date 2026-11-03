@@ -306,6 +306,9 @@ function OpenSheet(props: NativeAccountSheetProps) {
             // At once: the sheet holds a picture of the page as it was and
             // cross-fades it away itself, its glass and colours with it.
             setTheme(picked.id, { instant: true })
+            // Once the new backdrop is on the page (a photo theme's photo has
+            // to be decoded first), the sheet lets the old one go.
+            void themePainted(picked.swatch).then(() => AccountSheet.themeShown().catch(() => {}))
           }
           break
         }
@@ -351,6 +354,22 @@ function OpenSheet(props: NativeAccountSheetProps) {
   }, [])
 
   return null
+}
+
+/** Resolves once a theme just put on the page has painted: its photo, if it
+ *  has one, decoded, then two frames drawn. Never later than 1.5 s. */
+function themePainted(swatch: string): Promise<void> {
+  const src = swatch.match(/url\('([^']+)'\)/)?.[1]
+  const frames = () => new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())))
+  const painted = (async () => {
+    if (src) {
+      const img = new Image()
+      img.src = src
+      await img.decode().catch(() => {})
+    }
+    await frames()
+  })()
+  return Promise.race([painted, new Promise<void>((r) => setTimeout(r, 1500))])
 }
 
 type Rgba = { r: number; g: number; b: number; a: number }

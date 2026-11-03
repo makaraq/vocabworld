@@ -142,9 +142,13 @@ jobs:
           # sheet should take on the theme's own glass.
           for theme in paper obsidian; do
             run -SprindAccountDemo -SprindAccountDemoTheme "$theme"
-            sleep 15
+            sleep 17
             shoot "theme-$theme"
           done
+          echo "--- the app's theme log ---"
+          xcrun simctl spawn "$DEVICE" log show --style compact --last 3m --predicate 'eventMessage CONTAINS "[theme]"' || true
+          echo "--- crash reports ---"
+          ls -la ~/Library/Logs/DiagnosticReports 2>/dev/null | grep -i "app" || echo "none"
           run -SprindAccountDemo -SprindAccountDemoLevel 100
           sleep 13
           shoot account-omniglot

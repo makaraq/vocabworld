@@ -21,6 +21,7 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "present", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "update", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "dismiss", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "themeShown", returnType: CAPPluginReturnPromise),
     ]
 
     private var model: AccountSheetModel?
@@ -85,6 +86,9 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
     /// Keeps the open sheet in step with the page's state.
     private func apply(_ incoming: AccountState) {
         guard let model else { return }
+        #if DEBUG
+        NSLog("[theme] apply %@ (on %@, switching %@)", incoming.theme.current, glassTheme, switchingTheme ? "yes" : "no")
+        #endif
         // While a theme is coming in, the page's word waits: set at once, it
         // would cut the change short. It is the same theme, applied after.
         if switchingTheme {
@@ -125,38 +129,19 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
         glassRequests += 1
         let request = glassRequests
         switchingTheme = true
-        let held = model.heldPage
-        let size = bridge?.webView?.bounds.size ?? UIScreen.main.bounds.size
-        let button = model.glass?.button
-        let blur = next.look?.blur ?? 12
-        let reduced = UIAccessibility.isReduceTransparencyEnabled
         let target = next
-        // SwiftUI draws on the main thread only; the blur goes off it.
-        Task { @MainActor in
-            let backdrop = reduced ? nil : Self.drawBackdrop(item, size: size)
-            DispatchQueue.global(qos: .userInitiated).async {
-                let glass = backdrop.flatMap { SheetGlass.make(from: $0, scale: 1, button: button, blur: blur) }
-                DispatchQueue.main.async {
-                    self.land(target, on: model, glass: glass, request: request, held: held)
-                }
-            }
-        }
-    }
-
-    /// A new theme's look, glass and all, coming in together over 700 ms.
-    private func land(_ target: AccountState, on model: AccountSheetModel, glass: SheetGlass?, request: Int, held: UIImage?) {
-        guard self.model === model, request == glassRequests else { return }
+        #if DEBUG
+        NSLog("[theme] become %@ request %ld", item.id, request)
+        #endif
+        // The look, the tick and the text colour change at once, here and now:
+        // nothing of it waits on anything. The page held behind stays until
+        // the page says its new backdrop is painted (themeShown): a photo
+        // theme's photo takes a moment to decode, and let go of sooner it
+        // would show an empty backdrop, then the photo popping in.
         withAnimation(.timingCurve(0.22, 1, 0.36, 1, duration: 0.7)) {
             model.state = target
-            if let glass { model.glass = glass }
-            model.heldPageGone = true
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
-            // Unless another theme has been picked since.
-            if model.heldPage === held {
-                model.heldPage = nil
-                model.heldPageGone = false
-            }
             // UIKit's own parts follow (SwiftUI's already have).
             self.sheet?.overrideUserInterfaceStyle = target.dark ? .dark : .light
             guard request == self.glassRequests else { return }
@@ -166,6 +151,53 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
                 self.apply(waiting)
             }
         }
+        // The glass follows as soon as it's made from the new backdrop (drawn
+        // as its swatch is, on the main thread; blurred off it), blending in.
+        guard !UIAccessibility.isReduceTransparencyEnabled else { return }
+        let size = bridge?.webView?.bounds.size ?? UIScreen.main.bounds.size
+        let button = model.glass?.button
+        let blur = target.look?.blur ?? 12
+        DispatchQueue.main.async {
+            let backdrop = Self.drawBackdropOnMain(item, size: size)
+            #if DEBUG
+            NSLog("[theme] backdrop drawn: %@", backdrop == nil ? "no" : "yes")
+            #endif
+            guard let backdrop else { return }
+            DispatchQueue.global(qos: .userInitiated).async {
+                let glass = SheetGlass.make(from: backdrop, scale: 1, button: button, blur: blur)
+                DispatchQueue.main.async {
+                    #if DEBUG
+                    NSLog("[theme] glass made: %@", glass == nil ? "no" : "yes")
+                    #endif
+                    guard let glass, self.model === model, request == self.glassRequests else { return }
+                    withAnimation(.easeInOut(duration: 0.45)) { model.glass = glass }
+                }
+            }
+        }
+    }
+
+    /// drawBackdrop, from code the compiler can't see is on the main thread
+    /// (it is: every caller is).
+    private static func drawBackdropOnMain(_ item: AccountState.Theme.Item, size: CGSize) -> CGImage? {
+        if #available(iOS 17.0, *) {
+            return MainActor.assumeIsolated { drawBackdrop(item, size: size) }
+        }
+        return drawBackdropByHand(item, size: size)
+    }
+
+    /// Before iOS 17: a photo theme's photo, filling the screen; the drawn
+    /// themes (Paper, Rose Glass, Obsidian) keep the glass they have.
+    private static func drawBackdropByHand(_ item: AccountState.Theme.Item, size: CGSize) -> CGImage? {
+        guard let path = item.image, let photo = ThemeImages.load(path), size.width > 0, size.height > 0 else { return nil }
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        let image = UIGraphicsImageRenderer(size: size, format: format).image { _ in
+            let fill = max(size.width / photo.size.width, size.height / photo.size.height)
+            let drawn = CGSize(width: photo.size.width * fill, height: photo.size.height * fill)
+            photo.draw(in: CGRect(x: (size.width - drawn.width) / 2, y: (size.height - drawn.height) / 2,
+                                  width: drawn.width, height: drawn.height))
+        }
+        return image.cgImage
     }
 
     /// A theme's backdrop as the swatch draws it (ThemeBackdrop), at the
@@ -197,14 +229,33 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
             if let image, self?.model === model {
                 model.heldPageGone = false
                 model.heldPage = image
-                // Dropped if no new theme follows (the one already on).
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                    if model.heldPage === image, !model.heldPageGone {
-                        model.heldPage = nil
-                    }
+                // Let go of anyway if the page never says (or the theme was
+                // the one already on).
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                    if model.heldPage === image { self?.releaseHeldPage() }
                 }
             }
             done()
+        }
+    }
+
+    @objc func themeShown(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            self.releaseHeldPage()
+            call.resolve()
+        }
+    }
+
+    /// The page held behind the sheet fades away onto the page as it is now.
+    private func releaseHeldPage() {
+        guard let model, let held = model.heldPage, !model.heldPageGone else { return }
+        withAnimation(.easeInOut(duration: 0.45)) { model.heldPageGone = true }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            // Unless another theme has been picked since.
+            if model.heldPage === held {
+                model.heldPage = nil
+                model.heldPageGone = false
+            }
         }
     }
 
@@ -489,13 +540,16 @@ public class AccountSheetPlugin: CAPPlugin, CAPBridgedPlugin {
 /// blurred anyway.
 struct SheetGlass {
     let sheet: UIImage
+    /// Made once: a Core Image context is slow to set up, and a theme change
+    /// shouldn't wait on one.
+    private static let context = CIContext(options: [.workingColorSpace: NSNull()])
     /// The button the sheet opens from, as pictured with the page.
     let button: UIImage?
 
     static func make(from page: CGImage, scale: CGFloat, button: UIImage?, blur: Double = 12) -> SheetGlass? {
         // Browsers composite and filter CSS in plain sRGB values, not linear
         // light: work in the snapshot's own values so 50% black means half.
-        let context = CIContext(options: [.workingColorSpace: NSNull()])
+        let context = Self.context
         let space = CGColorSpace(name: CGColorSpace.sRGB)!
         let input = CIImage(cgImage: page).transformed(by: CGAffineTransform(scaleX: 1 / scale, y: 1 / scale))
         let extent = input.extent
