@@ -49,27 +49,35 @@ export function markUnlocked(
   return { added: true, record }
 }
 
-// Track which languages the user has practiced for the polyglot achievements.
-export function recordLanguageStarted(code: string): number {
+// Which languages this account has practiced, for the polyglot achievements.
+// The list used to be one per device, so a new account on a phone that had
+// seen ten languages unlocked every language badge on arrival. An account that
+// already holds a language badge earned it from that old list, so it carries
+// the list over; anyone else starts empty.
+function languagesStarted(userId: string | null | undefined): string[] {
+  const own = localStorage.getItem(`${LANG_SET_KEY}::${userId || 'guest'}`)
+  const holdsBadge = getUnlocked(userId).some((r) => r.id.startsWith('languages_'))
+  const raw = own ?? (holdsBadge ? localStorage.getItem(LANG_SET_KEY) : null)
+  const parsed = raw ? JSON.parse(raw) : []
+  return Array.isArray(parsed) ? parsed : []
+}
+
+export function recordLanguageStarted(userId: string | null | undefined, code: string): number {
   if (typeof window === 'undefined' || !code) return 0
   try {
-    const raw = localStorage.getItem(LANG_SET_KEY)
-    const set = new Set<string>(raw ? JSON.parse(raw) : [])
+    const set = new Set<string>(languagesStarted(userId))
     set.add(code)
-    localStorage.setItem(LANG_SET_KEY, JSON.stringify(Array.from(set)))
+    localStorage.setItem(`${LANG_SET_KEY}::${userId || 'guest'}`, JSON.stringify(Array.from(set)))
     return set.size
   } catch {
     return 0
   }
 }
 
-export function getLanguagesStartedCount(): number {
+export function getLanguagesStartedCount(userId: string | null | undefined): number {
   if (typeof window === 'undefined') return 0
   try {
-    const raw = localStorage.getItem(LANG_SET_KEY)
-    if (!raw) return 0
-    const arr = JSON.parse(raw)
-    return Array.isArray(arr) ? arr.length : 0
+    return languagesStarted(userId).length
   } catch {
     return 0
   }

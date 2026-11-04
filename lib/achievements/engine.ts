@@ -114,7 +114,7 @@ export function reportProgress(ctx: EvaluationContext): void {
 
   // Track which target language is currently being practiced.
   if (ctx.targetLanguageCode) {
-    const count = recordLanguageStarted(ctx.targetLanguageCode)
+    const count = recordLanguageStarted(userId, ctx.targetLanguageCode)
     evalMetric(userId, 'languagesStarted', count)
   }
 
