@@ -6,7 +6,7 @@
 import { Capacitor, registerPlugin, type PluginListenerHandle } from '@capacitor/core'
 
 export interface AccountSheetAction {
-  /** closed, theme, tryThemes, leaderboard, widgetSource, widgetAdd, offline, deleteAccount or signOut */
+  /** closed, theme, tryThemes, leaderboard, widgetSource, widgetAdd, offline, deleteAccount, signOut or islandTest */
   type: string
   value?: string
 }

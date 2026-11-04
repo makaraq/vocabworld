@@ -189,7 +189,8 @@ final class IslandToastModel: ObservableObject {
 }
 
 /// The black pill, swelling out of the island and shrinking back into it.
-/// The numbers sit either side of the camera, and the cheer in the row below.
+/// The numbers sit on its centre line, with the cheer between them, under the
+/// camera.
 struct IslandToastView: View {
     @ObservedObject var model: IslandToastModel
 
@@ -197,20 +198,18 @@ struct IslandToastView: View {
         GeometryReader { geo in
             let island = model.island
             let width = min(geo.size.width - 24, 372)
-            let wide = CGRect(x: (geo.size.width - width) / 2, y: island.minY, width: width, height: island.height + 38)
+            let wide = CGRect(x: (geo.size.width - width) / 2, y: island.minY, width: width, height: island.height + 46)
             // Closed, it's tucked inside the island, out of sight behind it
             // even where the island is a little smaller than this one.
             let pill = model.open ? wide : island.insetBy(dx: 20, dy: 3.5)
-            // The ring inside the top left corner's curve; the XP short of the right's.
-            let ringInset: CGFloat = 12
-            let rowY = island.minY + 2
-            let left = CGRect(x: wide.minX + ringInset, y: rowY,
-                              width: island.minX - 6 - (wide.minX + ringInset), height: island.height)
-            let right = CGRect(x: island.maxX + 6, y: rowY,
-                               width: wide.maxX - 18 - (island.maxX + 6), height: island.height)
-            let cheer = CGRect(x: wide.minX + 20, y: island.maxY + 4, width: wide.width - 40, height: 28)
+            let rowY = wide.midY - LevelRing.size / 2
+            let left = CGRect(x: wide.minX + 14, y: rowY, width: 98, height: LevelRing.size)
+            let right = CGRect(x: wide.maxX - 16 - 84, y: rowY, width: 84, height: LevelRing.size)
+            let cheerTop = island.maxY + 1
+            let cheer = CGRect(x: left.maxX + 6, y: cheerTop,
+                               width: right.minX - 6 - (left.maxX + 6), height: wide.maxY - 8 - cheerTop)
             ZStack(alignment: .topLeading) {
-                RoundedRectangle(cornerRadius: model.open ? 34 : pill.height / 2, style: .continuous)
+                RoundedRectangle(cornerRadius: model.open ? 36 : pill.height / 2, style: .continuous)
                     .fill(Color.black)
                     .frame(width: pill.width, height: pill.height)
                     .offset(x: pill.minX, y: pill.minY)
@@ -248,7 +247,7 @@ struct IslandToastView: View {
         return HStack(spacing: 6) {
             LevelRing(level: toast.level, progress: toast.progress, color: color)
             Text(toast.percent)
-                .font(AppFont.font(16, 700))
+                .font(AppFont.font(22, 700))
                 .monospacedDigit()
                 .foregroundColor(color)
                 .lineLimit(1)
@@ -274,10 +273,11 @@ struct IslandToastView: View {
     /// The cheer, under the camera.
     private var cheerContents: some View {
         Text(model.toast.message)
-            .font(AppFont.font(15, 700))
+            .font(AppFont.font(14, 700))
             .foregroundColor(.white)
-            .lineLimit(1)
-            .minimumScaleFactor(0.7)
+            .multilineTextAlignment(.center)
+            .lineLimit(2)
+            .minimumScaleFactor(0.75)
             .id(model.toast.message)
             .transition(.opacity)
     }
@@ -285,7 +285,7 @@ struct IslandToastView: View {
 
 /// The level in a ring filled to the quarter reached, as the web pop-up draws it.
 private struct LevelRing: View {
-    static let size: CGFloat = 32
+    static let size: CGFloat = 42
     let level: Int
     let progress: Double
     let color: Color
@@ -293,13 +293,13 @@ private struct LevelRing: View {
     var body: some View {
         ZStack {
             Circle()
-                .stroke(Color.white.opacity(0.15), lineWidth: 2.5)
+                .stroke(Color.white.opacity(0.15), lineWidth: 3)
             Circle()
                 .trim(from: 0, to: CGFloat(min(max(progress, 0), 1)))
-                .stroke(color, style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
+                .stroke(color, style: StrokeStyle(lineWidth: 3, lineCap: .round))
                 .rotationEffect(.degrees(-90))
             Text(verbatim: String(level))
-                .font(AppFont.font(13, 800))
+                .font(AppFont.font(17, 800))
                 .monospacedDigit()
                 .foregroundColor(.white)
                 .minimumScaleFactor(0.7)

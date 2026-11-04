@@ -12,6 +12,7 @@ import type { PluginListenerHandle } from '@capacitor/core'
 import { getIcon } from '@iconify/react'
 import { useT } from '@/components/providers/translation-provider'
 import { useLevelXp } from '@/components/leveling/level-card'
+import { showIslandTest } from '@/components/leveling/level-overlays'
 import { levelInfo, nextRank, rankForLevel, RANKS } from '@/lib/leveling/definitions'
 import { DEFAULT_THEME, THEMES, currentTheme, onThemeChange, setTheme, themeById, type ThemeId } from '@/lib/themes'
 import { resolveAvatar } from '@/lib/avatars/smiley-avatar'
@@ -33,7 +34,7 @@ export function NativeAccountSheet(props: NativeAccountSheetProps) {
 }
 
 function OpenSheet(props: NativeAccountSheetProps) {
-  const { t } = useT()
+  const { t, uiLang } = useT()
   const xp = useLevelXp(props.userId)
   const widget = useHomeWidget()
   const offline = useOfflinePacks()
@@ -335,6 +336,9 @@ function OpenSheet(props: NativeAccountSheetProps) {
         case 'signOut':
           props.onSignOutAction?.()
           props.onCloseAction()
+          break
+        case 'islandTest':
+          showIslandTest(t, uiLang)
           break
       }
     }
