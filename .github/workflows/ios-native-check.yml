@@ -176,7 +176,7 @@ jobs:
           run -SprindIslandDemo
           sleep 10.2
           xcrun simctl io "$DEVICE" screenshot --mask=black shots/island-open.png >/dev/null || shoot island-open
-          sleep 3
+          sleep 5
           shoot island-end
           for frame in "$DATA"/Documents/island/*.png; do cp "$frame" "shots/island-$(basename "$frame")"; done
 

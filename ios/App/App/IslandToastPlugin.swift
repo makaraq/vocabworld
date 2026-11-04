@@ -115,7 +115,7 @@ public class IslandToastPlugin: CAPPlugin, CAPBridgedPlugin {
                 }
                 try? image.pngData()?.write(to: folder.appendingPathComponent(String(format: "frame-%02d.png", count)))
                 count += 1
-                if count >= 40 { timer.invalidate() }
+                if count >= 70 { timer.invalidate() }
             }
         }
     }
@@ -173,7 +173,7 @@ final class IslandToastModel: ObservableObject {
         collapse?.cancel()
         let work = DispatchWorkItem { [weak self] in self?.shrink() }
         collapse = work
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.4, execute: work)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 4.5, execute: work)
     }
 
     private func shrink() {
