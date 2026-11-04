@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Capacitor } from '@capacitor/core'
 import { useAuth } from '@/contexts/auth-context'
 import { useT } from '@/components/providers/translation-provider'
-import { hapticsLight } from '@/lib/haptics'
+import { haptic } from '@/lib/haptics'
 import languageTranslatorAnim from '@/lib/animations/language-translator.json'
 
 export function WelcomeOverlay() {
@@ -64,7 +64,7 @@ export function WelcomeOverlay() {
   }, [loading, user])
   
   const handleGoogleSignIn = async () => {
-    hapticsLight()
+    haptic.tap()
     setIsSigningIn(true)
     try {
       // On native, listen for the in-app browser closing so we can reset the
@@ -90,7 +90,7 @@ export function WelcomeOverlay() {
   }
 
   const handleAppleSignIn = async () => {
-    hapticsLight()
+    haptic.tap()
     setIsSigningIn(true)
     try {
       // Native Apple sheet on iOS — resolves in-app, no browser redirect.
@@ -105,7 +105,7 @@ export function WelcomeOverlay() {
 
   const handleEmailSubmit = async (e: FormEvent) => {
     e.preventDefault()
-    hapticsLight()
+    haptic.tap()
     setEmailError(null)
     setEmailNotice(null)
 
@@ -143,7 +143,7 @@ export function WelcomeOverlay() {
   }
 
   const handleForgotPassword = async () => {
-    hapticsLight()
+    haptic.tap()
     setEmailError(null)
     setEmailNotice(null)
 
@@ -284,7 +284,7 @@ export function WelcomeOverlay() {
             </Button>
 
             <Button
-              onClick={() => { hapticsLight(); setShowEmailForm(true); setEmailError(null); setEmailNotice(null) }}
+              onClick={() => { haptic.tap(); setShowEmailForm(true); setEmailError(null); setEmailNotice(null) }}
               disabled={loading || isSigningIn}
               className="w-full h-14 bg-white/15 hover:bg-white/25 text-white font-semibold px-6 rounded-xl border border-white/30 transition-all duration-200 flex items-center justify-center gap-3 text-lg shadow-lg hover:shadow-xl transform hover:scale-105"
             >

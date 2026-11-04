@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect, useRef } from "react"
 import { Icon } from "@iconify/react"
-import { hapticsLight } from "@/lib/haptics"
+import { haptic } from "@/lib/haptics"
 import { ReviewQuizModal } from "./review-quiz-modal"
 import { REVIEW_SYNCED_EVENT } from "@/lib/offline/review-queue"
 import { useT } from "@/components/providers/translation-provider"
@@ -121,7 +121,7 @@ export function ReviewCard({ userId, targetLanguageCode, nativeLanguageCode }: R
     <>
       <button
         ref={buttonRef}
-        onClick={() => { if (dueCount > 0) { hapticsLight(); setShowQuiz(true) } }}
+        onClick={() => { if (dueCount > 0) { haptic.tap(); setShowQuiz(true) } }}
         className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 xs:p-3.5 sm:p-4 border border-white/20 transition-all hover:bg-white/15 active:scale-[1.03]"
         aria-label={loading ? t('review.card.aria.loading') : totalCards === 0 ? t('review.card.aria.start') : dueCount > 0 ? tPlural('review.card.aria.due', dueCount) : t('review.card.aria.caughtUp')}
       >

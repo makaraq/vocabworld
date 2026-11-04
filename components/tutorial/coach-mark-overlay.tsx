@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useLayoutEffect, useState, useCallback, useRef } from 'react'
+import { haptic } from '@/lib/haptics'
 import { createPortal } from 'react-dom'
 import { Icon } from '@iconify/react'
 import { useT } from '@/components/providers/translation-provider'
@@ -112,11 +113,13 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
   const captionReady = !showGuide || greeted
 
   const handleNext = () => {
+    haptic.tap()
     if (isLast) onComplete()
     else setStepIndex(i => i + 1)
   }
 
   const handleBack = () => {
+    haptic.tap()
     if (stepIndex > 0) setStepIndex(i => i - 1)
   }
 
@@ -294,7 +297,7 @@ export function CoachMarkOverlay({ open, steps, onComplete, onSkip }: Props) {
                 ))}
               </div>
               <button
-                onClick={onSkip}
+                onClick={() => { haptic.tap(); onSkip() }}
                 className="text-white/45 text-xs font-medium active:text-white/80 transition-colors"
                 aria-label={t('tutorial.skip.aria')}
               >

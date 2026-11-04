@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Icon } from '@iconify/react'
-import { hapticsLight } from '@/lib/haptics'
+import { haptic } from '@/lib/haptics'
 import { useT } from '@/components/providers/translation-provider'
 import type { UiKey } from '@/lib/i18n/ui-strings'
 
@@ -113,14 +113,14 @@ export function NotificationPromptModal({
           {/* Buttons */}
           <div className="space-y-2 pt-1">
             <button
-              onClick={() => { hapticsLight(); onPrimary() }}
+              onClick={() => { haptic.tap(); onPrimary() }}
               className="w-full bg-blue-500 hover:bg-blue-400 active:bg-blue-600 text-white font-semibold rounded-2xl py-3.5 transition-all text-sm flex items-center justify-center gap-2"
             >
               <Icon icon={primaryIcon} width="16" />
               {primaryLabel}
             </button>
             <button
-              onClick={() => { hapticsLight(); onDismiss() }}
+              onClick={() => { haptic.tap(); onDismiss() }}
               className="w-full text-white/40 text-sm py-2.5 rounded-2xl active:bg-white/5 transition-all"
             >
               {t('notifPrompt.notNow')}

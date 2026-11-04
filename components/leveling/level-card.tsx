@@ -8,7 +8,7 @@
 import React, { useEffect, useRef, useState, useSyncExternalStore } from "react"
 import { Icon } from "@iconify/react"
 import { useT } from "@/components/providers/translation-provider"
-import { hapticsLight } from "@/lib/haptics"
+import { haptic } from "@/lib/haptics"
 import { RANKS, levelInfo, nextRank, rankForLevel, type BorderId } from "@/lib/leveling/definitions"
 import { getLevelState, subscribeLevelChange } from "@/lib/leveling/engine"
 import { LevelAvatar } from "./level-avatar"
@@ -49,7 +49,7 @@ export function LevelCard({ userId, name, email, avatarSrc, initials }: LevelCar
   useEffect(() => () => clearTimeout(previewTimer.current), [])
 
   const tryOn = (id: BorderId) => {
-    hapticsLight()
+    haptic.tap()
     clearTimeout(previewTimer.current)
     setPreview(id === rank.id ? null : id)
     if (id !== rank.id) previewTimer.current = setTimeout(() => setPreview(null), 2600)

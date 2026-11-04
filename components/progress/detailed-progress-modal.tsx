@@ -1,5 +1,6 @@
 "use client"
 import { useState, useEffect, useLayoutEffect, useMemo, useRef } from "react"
+import { haptic } from "@/lib/haptics"
 import { createPortal } from "react-dom"
 import { X, BookOpen, CheckCircle, Circle, ChevronDown, ChevronRight } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
@@ -310,7 +311,7 @@ export function DetailedProgressModal({
               </div>
             </div>
             <button
-              onClick={close}
+              onClick={() => { haptic.tap(); close() }}
               className="p-2 hover:bg-white/10 rounded-full transition-colors text-white/80 hover:text-white"
               aria-label={t('progress.detail.aria.close')}
             >
@@ -342,7 +343,7 @@ export function DetailedProgressModal({
                   <div key={section.name} className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/15 overflow-hidden">
                     {/* Section Header */}
                     <button
-                      onClick={() => toggleSection(section.name)}
+                      onClick={() => { haptic.tap(); toggleSection(section.name) }}
                       className="w-full p-4 flex items-center gap-4 hover:bg-white/5 transition-colors"
                       aria-expanded={isExpanded}
                       aria-label={t('progress.detail.aria.section', { section: uiTranslations[SECTION_KEYS[section.name]] || section.name, completed: sectionProgress.completed, total: sectionProgress.total })}

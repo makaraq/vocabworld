@@ -14,7 +14,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import { Icon } from "@iconify/react"
 import { useT } from "@/components/providers/translation-provider"
-import { hapticsHeavy, hapticsLight, hapticsSuccess } from "@/lib/haptics"
+import { haptic } from "@/lib/haptics"
 import {
   getLevelProfile,
   subscribeLevelUp,
@@ -167,7 +167,6 @@ function LevelUpOverlay() {
   }, [])
 
   const close = useCallback(() => {
-    hapticsLight()
     setQueue((q) => q.slice(1))
   }, [])
 
@@ -184,7 +183,6 @@ function LevelUpScene({ evt, onClose, t }: { evt: LevelUpEvent; onClose: () => v
   const rank = swapped ? evt.rank : evt.rankBefore
 
   useEffect(() => {
-    hapticsHeavy()
     const timers: ReturnType<typeof setTimeout>[] = []
     const steps = evt.to - evt.from
     const start = 650
@@ -192,18 +190,20 @@ function LevelUpScene({ evt, onClose, t }: { evt: LevelUpEvent; onClose: () => v
     for (let i = 1; i <= steps; i++) {
       timers.push(setTimeout(() => {
         setShownLevel(evt.from + i)
-        hapticsLight()
+        // The last step lands on success, below.
+        if (i < steps) haptic.tap()
       }, start + i * stepMs))
     }
     const end = start + steps * stepMs
+    timers.push(setTimeout(() => haptic.success(), end))
     timers.push(setTimeout(() => {
-      hapticsSuccess()
+      haptic.celebrate()
       burst(canvasRef.current, [evt.rankBefore.color, evt.rankBefore.accent, "#ffffff", "#fde047"], 140)
     }, 380))
     if (evt.newRank) {
       timers.push(setTimeout(() => {
         setSwapped(true)
-        hapticsHeavy()
+        haptic.celebrate()
         burst(canvasRef.current, [evt.rank.color, evt.rank.accent, "#ffffff"], 220)
       }, end + 250))
     }
@@ -213,6 +213,7 @@ function LevelUpScene({ evt, onClose, t }: { evt: LevelUpEvent; onClose: () => v
   const finish = () => {
     if (leaving) return
     setLeaving(true)
+    haptic.tap()
     setTimeout(onClose, 280)
   }
 

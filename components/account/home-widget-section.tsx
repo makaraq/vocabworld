@@ -9,7 +9,7 @@
 import React, { useEffect, useState } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { Icon } from '@iconify/react'
-import { hapticsLight, hapticsMedium } from '@/lib/haptics'
+import { haptic } from '@/lib/haptics'
 import { useT } from '@/components/providers/translation-provider'
 import {
   getWidgetSource, getWidgetStatus, isWidgetPlatform, requestPinWidget, syncHomeWidget,
@@ -70,7 +70,7 @@ export function useHomeWidget() {
   }, [])
 
   const choose = async (next: WidgetSource) => {
-    hapticsLight()
+    haptic.select()
     setSource(next)
     setSyncState('saving')
     try {
@@ -82,7 +82,7 @@ export function useHomeWidget() {
   }
 
   const addToHome = async () => {
-    hapticsMedium()
+    haptic.action()
     // Words first, so the widget isn't empty when it lands
     if (!getWidgetSource()) await choose(source)
     const requested = await requestPinWidget()
@@ -170,7 +170,7 @@ export function HomeWidgetSection() {
       )}
 
       <button
-        onClick={() => { hapticsLight(); setShowHowTo(v => !v) }}
+        onClick={() => { haptic.tap(); setShowHowTo(v => !v) }}
         aria-expanded={showHowTo}
         className="w-full flex items-center justify-between text-white/70 text-xs font-medium"
       >

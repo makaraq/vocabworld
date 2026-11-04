@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
-import { hapticsMedium } from "@/lib/haptics"
+import { haptic } from "@/lib/haptics"
 import { liquidGlassAvailable, setLiquidGlass } from "@/lib/liquid-glass"
 
 // Hold two fingers still anywhere for HOLD_MS to flip between the Liquid
@@ -36,7 +36,7 @@ export function LiquidGlassSwitch() {
       timer = window.setTimeout(() => {
         timer = undefined
         setLiquidGlass(!document.documentElement.classList.contains("liquid-glass"))
-        hapticsMedium()
+        haptic.hold()
         window.addEventListener("click", swallowClick, { capture: true, once: true })
         window.setTimeout(() => window.removeEventListener("click", swallowClick, { capture: true }), 1000)
       }, HOLD_MS)

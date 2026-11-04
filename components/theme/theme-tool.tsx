@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Icon } from '@iconify/react'
 import { useT } from '@/components/providers/translation-provider'
-import { hapticsLight } from '@/lib/haptics'
+import { haptic } from '@/lib/haptics'
 import type { ThemeId } from '@/lib/themes'
 import { ThemePicker } from './theme-picker'
 import { CardGuide } from '@/components/tutorial/guide-character'
@@ -159,7 +159,7 @@ export function ThemeTool({
     lastStepRef.current = now
     const next = THEME_TOOL_SCREENS[THEME_TOOL_SCREENS.indexOf(screen) + dir]
     if (!next) return
-    hapticsLight()
+    haptic.select()
     setDir(dir)
     snapIfLesson(screen, next)
     onScreenAction(next)
@@ -181,7 +181,7 @@ export function ThemeTool({
   const close = () => {
     if (closingRef.current) return
     closingRef.current = true
-    hapticsLight()
+    haptic.tap()
     const finish = () => {
       setShown(false)
       document.documentElement.classList.remove('theme-tool-open')

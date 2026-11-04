@@ -10,7 +10,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Icon } from '@iconify/react'
 import { getFlagIcon } from '@/utils/flags'
-import { hapticsLight, hapticsMedium, hapticsWarning } from '@/lib/haptics'
+import { haptic } from '@/lib/haptics'
 import {
   offlineManager, packId, languageName, formatBytes,
   type OfflinePack,
@@ -158,10 +158,10 @@ export function useOfflinePacks() {
     if (confirmDeleteId === id) {
       if (confirmTimer.current) clearTimeout(confirmTimer.current)
       setConfirmDeleteId(null)
-      hapticsWarning()
+      haptic.destructive()
       offlineManager.deletePack(id)
     } else {
-      hapticsLight()
+      haptic.tap()
       setConfirmDeleteId(id)
       if (confirmTimer.current) clearTimeout(confirmTimer.current)
       confirmTimer.current = setTimeout(() => setConfirmDeleteId(null), 3500)
@@ -175,11 +175,11 @@ export function useOfflinePacks() {
       case 'download':
       case 'resume':
       case 'anyway':
-        hapticsMedium()
+        haptic.action()
         offlineManager.startDownload(row.nativeCode, row.targetCode, { force: action === 'anyway' }).catch(() => {})
         break
       case 'pause':
-        hapticsLight()
+        haptic.tap()
         offlineManager.pauseDownload(row.id)
         break
       case 'remove':
