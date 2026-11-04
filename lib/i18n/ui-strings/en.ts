@@ -621,6 +621,16 @@ export const en = {
   'level.rank.babel': 'Babel Breaker',
   'level.rank.ages': 'Tongue of Ages',
   'level.rank.omniglot': 'Omniglot',
+  "level.cheer.1": "Keep it going!",
+  "level.cheer.2": "You're on a roll!",
+  "level.cheer.3": "Every word counts.",
+  "level.cheer.4": "Look at you go!",
+  "level.cheer.5": "Small steps, big progress.",
+  "level.cheer.6": "Your future self says thanks.",
+  "level.cheer.7": "One word closer.",
+  "level.cheer.8": "Nice momentum!",
+  "level.cheer.9": "This is how fluency starts.",
+  "level.cheer.10": "You're getting better at this.",
 } as const
 
 export type UiKey = keyof typeof en

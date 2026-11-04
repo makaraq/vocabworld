@@ -5,8 +5,9 @@ import UIKit
 
 /// Bridge for lib/native/island-toast.ts: on iPhones with a Dynamic Island,
 /// the XP pop-up (each quarter of a level, components/leveling/level-overlays.tsx)
-/// grows out of the island itself: a black pill widening from it with the
-/// level, the XP and the quarter reached, that shrinks back into it. (A real
+/// grows out of the island itself: a black pill swelling from it with the
+/// level, the XP, the quarter reached and a short cheer, that shrinks back
+/// into it. (A real
 /// Live Activity can't: iOS keeps an app's own activity out of the island
 /// while the app is open.) Phones without an island keep the web pop-up.
 /// Registered in ViewController.capacitorDidLoad.
@@ -33,6 +34,7 @@ public class IslandToastPlugin: CAPPlugin, CAPBridgedPlugin {
             level: call.getInt("level") ?? 1,
             xp: call.getInt("xp") ?? 0,
             percent: call.getString("percent") ?? "",
+            message: call.getString("message") ?? "",
             progress: call.getDouble("progress") ?? 0,
             color: call.getString("color") ?? "#ffffff",
             accent: call.getString("accent") ?? "#94a3b8"
@@ -101,7 +103,7 @@ public class IslandToastPlugin: CAPPlugin, CAPBridgedPlugin {
             let folder = documents.appendingPathComponent("island")
             try? FileManager.default.removeItem(at: folder)
             try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
-            self.present(IslandToast(level: 57, xp: 340, percent: "50%", progress: 0.5, color: "#f0abfc", accent: "#22d3ee"))
+            self.present(IslandToast(level: 57, xp: 340, percent: "50%", message: "Small steps, big progress.", progress: 0.5, color: "#f0abfc", accent: "#22d3ee"))
             let format = UIGraphicsImageRendererFormat()
             format.scale = 1
             var count = 0
@@ -127,6 +129,8 @@ struct IslandToast: Equatable {
     let xp: Int
     /// The quarter reached, written the UI language's way ("50%").
     let percent: String
+    /// A short cheer, in the UI language, under the camera.
+    let message: String
     let progress: Double
     let color: String
     let accent: String
@@ -184,28 +188,29 @@ final class IslandToastModel: ObservableObject {
     }
 }
 
-/// The black pill, widening out of the island and shrinking back into it.
-/// It keeps the island's height, as the system's own do: what it shows sits
-/// either side of the camera, the only places there are pixels to show it.
+/// The black pill, swelling out of the island and shrinking back into it.
+/// The numbers sit either side of the camera, and the cheer in the row below.
 struct IslandToastView: View {
     @ObservedObject var model: IslandToastModel
 
     var body: some View {
         GeometryReader { geo in
             let island = model.island
-            let width = min(geo.size.width - 56, 344)
-            let wide = CGRect(x: (geo.size.width - width) / 2, y: island.minY, width: width, height: island.height)
+            let width = min(geo.size.width - 24, 372)
+            let wide = CGRect(x: (geo.size.width - width) / 2, y: island.minY, width: width, height: island.height + 38)
             // Closed, it's tucked inside the island, out of sight behind it
             // even where the island is a little smaller than this one.
             let pill = model.open ? wide : island.insetBy(dx: 20, dy: 3.5)
-            // The ring round the left end's own curve; the XP short of the right's.
-            let ringInset = (wide.height - LevelRing.size) / 2
-            let left = CGRect(x: wide.minX + ringInset, y: wide.minY,
-                              width: island.minX - 6 - (wide.minX + ringInset), height: wide.height)
-            let right = CGRect(x: island.maxX + 6, y: wide.minY,
-                               width: wide.maxX - 14 - (island.maxX + 6), height: wide.height)
+            // The ring inside the top left corner's curve; the XP short of the right's.
+            let ringInset: CGFloat = 12
+            let rowY = island.minY + 2
+            let left = CGRect(x: wide.minX + ringInset, y: rowY,
+                              width: island.minX - 6 - (wide.minX + ringInset), height: island.height)
+            let right = CGRect(x: island.maxX + 6, y: rowY,
+                               width: wide.maxX - 18 - (island.maxX + 6), height: island.height)
+            let cheer = CGRect(x: wide.minX + 20, y: island.maxY + 4, width: wide.width - 40, height: 28)
             ZStack(alignment: .topLeading) {
-                Capsule(style: .continuous)
+                RoundedRectangle(cornerRadius: model.open ? 34 : pill.height / 2, style: .continuous)
                     .fill(Color.black)
                     .frame(width: pill.width, height: pill.height)
                     .offset(x: pill.minX, y: pill.minY)
@@ -219,6 +224,12 @@ struct IslandToastView: View {
                     .frame(width: right.width, height: right.height, alignment: .trailing)
                     .scaleEffect(model.contentsShown ? 1 : 0.7, anchor: .leading)
                     .offset(x: right.minX, y: right.minY)
+                    .opacity(model.contentsShown ? 1 : 0)
+                    .blur(radius: model.contentsShown ? 0 : 4)
+                cheerContents
+                    .frame(width: cheer.width, height: cheer.height, alignment: .center)
+                    .scaleEffect(model.contentsShown ? 1 : 0.8, anchor: .top)
+                    .offset(x: cheer.minX, y: cheer.minY)
                     .opacity(model.contentsShown ? 1 : 0)
                     .blur(radius: model.contentsShown ? 0 : 4)
             }
@@ -237,7 +248,7 @@ struct IslandToastView: View {
         return HStack(spacing: 6) {
             LevelRing(level: toast.level, progress: toast.progress, color: color)
             Text(toast.percent)
-                .font(AppFont.font(14, 700))
+                .font(AppFont.font(16, 700))
                 .monospacedDigit()
                 .foregroundColor(color)
                 .lineLimit(1)
@@ -251,7 +262,7 @@ struct IslandToastView: View {
         let color = Color(hex: toast.color)
         let accent = Color(hex: toast.accent)
         return Text("+\(toast.xp) XP")
-            .font(AppFont.font(16, 800))
+            .font(AppFont.font(19, 800))
             .monospacedDigit()
             .foregroundStyle(LinearGradient(colors: [color, .white, accent], startPoint: .leading, endPoint: .trailing))
             .lineLimit(1)
@@ -259,11 +270,22 @@ struct IslandToastView: View {
             .id(model.bump)
             .transition(.scale(scale: 1.3).combined(with: .opacity))
     }
+
+    /// The cheer, under the camera.
+    private var cheerContents: some View {
+        Text(model.toast.message)
+            .font(AppFont.font(15, 700))
+            .foregroundColor(.white)
+            .lineLimit(1)
+            .minimumScaleFactor(0.7)
+            .id(model.toast.message)
+            .transition(.opacity)
+    }
 }
 
 /// The level in a ring filled to the quarter reached, as the web pop-up draws it.
 private struct LevelRing: View {
-    static let size: CGFloat = 28
+    static let size: CGFloat = 32
     let level: Int
     let progress: Double
     let color: Color
@@ -277,7 +299,7 @@ private struct LevelRing: View {
                 .stroke(color, style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
                 .rotationEffect(.degrees(-90))
             Text(verbatim: String(level))
-                .font(AppFont.font(11, 800))
+                .font(AppFont.font(13, 800))
                 .monospacedDigit()
                 .foregroundColor(.white)
                 .minimumScaleFactor(0.7)

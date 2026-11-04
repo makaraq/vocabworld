@@ -10,6 +10,8 @@ export interface IslandToastOptions {
   xp: number
   /** The quarter of the level reached, written the UI language's way ("50%"). */
   percent: string
+  /** A short cheer, in the UI language, shown under the camera. */
+  message: string
   /** 0–1: how far round the level ring goes. */
   progress: number
   /** The rank's colours. */

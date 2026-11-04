@@ -65,8 +65,44 @@ function quarterReached(xp: number, uiLang: string) {
   return { reached, pct }
 }
 
+const CHEERS = [
+  "level.cheer.1",
+  "level.cheer.2",
+  "level.cheer.3",
+  "level.cheer.4",
+  "level.cheer.5",
+  "level.cheer.6",
+  "level.cheer.7",
+  "level.cheer.8",
+  "level.cheer.9",
+  "level.cheer.10",
+] as const
+const CHEERS_LEFT_KEY = "vw-island-cheers-left"
+
+/** A cheer for the island pop-up: each one shows once before any repeats,
+ *  across launches. */
+function nextCheer(): (typeof CHEERS)[number] {
+  let left: number[] = []
+  try {
+    const stored: unknown = JSON.parse(localStorage.getItem(CHEERS_LEFT_KEY) ?? "[]")
+    if (Array.isArray(stored)) left = stored.filter((i) => Number.isInteger(i) && i >= 0 && i < CHEERS.length)
+  } catch {}
+  if (left.length === 0) {
+    left = CHEERS.map((_, i) => i)
+    for (let i = left.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[left[i], left[j]] = [left[j], left[i]]
+    }
+  }
+  const pick = left.pop() as number
+  try {
+    localStorage.setItem(CHEERS_LEFT_KEY, JSON.stringify(left))
+  } catch {}
+  return CHEERS[pick]
+}
+
 function XpToast() {
-  const { uiLang } = useT()
+  const { uiLang, t } = useT()
   const [toast, setToast] = useState<ToastState | null>(null)
   const [leaving, setLeaving] = useState(false)
   const hideTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
@@ -75,6 +111,8 @@ function XpToast() {
   const bump = useRef(0)
   const lang = useRef(uiLang)
   lang.current = uiLang
+  const translate = useRef(t)
+  translate.current = t
 
   useEffect(() => {
     const showWeb = (total: number, xp: number) => {
@@ -103,7 +141,7 @@ function XpToast() {
       const level = levelInfo(g.totalXp).level
       const rank = rankForLevel(level)
       const { reached, pct } = quarterReached(g.totalXp, lang.current)
-      void showInIsland({ level, xp: total, percent: pct, progress: reached, color: rank.color, accent: rank.accent })
+      void showInIsland({ level, xp: total, percent: pct, message: translate.current(nextCheer()), progress: reached, color: rank.color, accent: rank.accent })
         .then((shown) => { if (!shown) showWeb(total, g.totalXp) })
     })
   }, [])
