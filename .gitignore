@@ -110,3 +110,6 @@ dist/
 
 .vercel
 .env*.local
+
+# Generated phrase audio: 2.3 GB, not used by the app or the build
+scripts/common-phrases-audio/
