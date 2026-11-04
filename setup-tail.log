@@ -1,0 +1,16 @@
+✔ Copying web assets from out to ios/App/App/public in 3.72ms
+✔ Creating capacitor.config.json in ios/App/App in 683.46μs
+✔ copy ios in 68.24ms
+✔ Updating iOS plugins in 7.61ms
+✔ Updating iOS native dependencies with pod install in 20.65s
+[info] Found 8 Capacitor plugins for ios:
+       @capacitor-community/apple-sign-in@7.1.0
+       @capacitor/app@7.1.0
+       @capacitor/browser@7.0.5
+       @capacitor/haptics@7.0.5
+       @capacitor/local-notifications@7.0.6
+       @capacitor/splash-screen@7.0.5
+       @revenuecat/purchases-capacitor@11.3.2
+       capacitor-rate-app@4.0.3
+✔ update ios in 20.75s
+[info] Sync finished in 20.925s
