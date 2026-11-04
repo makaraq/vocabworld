@@ -160,8 +160,8 @@ final class IslandToastModel: ObservableObject {
         UIImpactFeedbackGenerator(style: .soft).impactOccurred()
         onStatusBarHidden(true)
         // The island's own springy widening.
-        withAnimation(.spring(response: 0.42, dampingFraction: 0.72)) { open = true }
-        withAnimation(.easeOut(duration: 0.22).delay(0.14)) { contentsShown = true }
+        withAnimation(.spring(response: 0.7, dampingFraction: 0.78)) { open = true }
+        withAnimation(.easeOut(duration: 0.3).delay(0.24)) { contentsShown = true }
         scheduleCollapse()
     }
 
@@ -181,10 +181,10 @@ final class IslandToastModel: ObservableObject {
     }
 
     private func shrink() {
-        withAnimation(.easeIn(duration: 0.12)) { contentsShown = false }
-        withAnimation(.spring(response: 0.34, dampingFraction: 0.92).delay(0.08)) { open = false }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) { [weak self] in self?.onStatusBarHidden(false) }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in self?.onDone() }
+        withAnimation(.easeIn(duration: 0.2)) { contentsShown = false }
+        withAnimation(.spring(response: 0.6, dampingFraction: 0.92).delay(0.14)) { open = false }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in self?.onStatusBarHidden(false) }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in self?.onDone() }
     }
 }
 
