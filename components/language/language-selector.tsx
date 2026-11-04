@@ -21,7 +21,7 @@ import { NotificationPromptModal } from "@/components/notifications/notification
 import { CoachMarkOverlay, type CoachMarkStep } from "@/components/tutorial/coach-mark-overlay"
 import { ThemeTool, type ThemeToolScreen } from "@/components/theme/theme-tool"
 import { isPreviewing, keepPreview, previewTheme, revertPreview, type ThemeId } from "@/lib/themes"
-import { hapticsLight, hapticsMedium, hapticsSuccess, hapticsWarning } from "@/lib/haptics"
+import { haptic } from "@/lib/haptics"
 import { bumpPlayCount, readPlayCounts, type PlayCounts } from "@/lib/play-counts"
 import { BadgesCard } from "@/components/achievements/badges-card"
 import { ReviewCard } from "@/components/review/review-card"
@@ -522,7 +522,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                   {/* Manage Account Button: its sheet opens out of it (morphFrom below). */}
                   <button
                     data-manage-account
-                    onClick={() => setShowManageAccount(true)}
+                    onClick={() => { haptic.tap(); setShowManageAccount(true) }}
                     className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white py-3 xs:py-3.5 px-4 rounded-2xl font-semibold text-sm hover:bg-white/15 transition-all flex items-center justify-center space-x-2"
                   >
                     <Icon icon="solar:user-circle-bold" width="18" height="18" className="text-white/70" />
@@ -538,9 +538,11 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                     onClick={() => {
                       // Premium check - show paywall if not premium
                       if (!isPremium) {
+                        haptic.denied()
                         setShowPaywall(true)
                         return
                       }
+                      haptic.tap()
                       lastTopicSectionRef.current = currentSection
                       onTopicSelect({ id: -1, name: 'Search Word', icon: '' } as Topic)
                     }}
@@ -568,7 +570,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                       </h3>
                       <button
                         data-create-playlist
-                        onClick={onCreatePlaylist}
+                        onClick={() => { haptic.tap(); onCreatePlaylist() }}
                         className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-all"
                         aria-label={t('myWords.createPlaylist.aria')}
                       >
@@ -605,6 +607,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                             >
                               <button
                                 onClick={() => {
+                                  haptic.tap()
                                   // Open playlist learning view
                                   lastTopicSectionRef.current = currentSection
                                   onTopicSelect({ id: -2, name: playlist.name, icon: '', playlistId: playlist.id } as any)
@@ -618,7 +621,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
                                 <Icon icon="solar:alt-arrow-right-linear" width="16" height="16" className="text-white/40 flex-shrink-0" />
                               </button>
                               <button
-                                onClick={() => onDeletePlaylist(playlist)}
+                                onClick={() => { haptic.tap(); onDeletePlaylist(playlist) }}
                                 className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 hover:bg-red-500/20 active:bg-red-500/30 transition-all group"
                                 aria-label={t('myWords.deletePlaylist.aria', { name: playlist.name })}
                               >
@@ -739,7 +742,7 @@ const TopicSlider: React.FC<TopicSliderProps> = ({
               aria-label={t('sections.aria.navigateTo', { section: section.name })}
               id={`section-tab-${index}`}
               onClick={() => {
-                if (!dots.current.dragging) setCurrentSection(index)
+                if (!dots.current.dragging) { haptic.select(); setCurrentSection(index) }
               }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -2022,10 +2025,7 @@ export function LanguageSelector() {
                       setCompletedTopicIds((prev) => {
                         const next: number[] = data.completedTopicIds;
                         // First-ever topic completion → ask for a store review (once only)
-                        // Any newly completed topic → success haptic
                         if (next.length > prev.length) {
-                          hapticsSuccess()
-
                           // 🏆 Pop the topic-complete celebration modal.
                           const fresh = next.filter((id) => !prev.includes(id));
                           const newId = fresh[fresh.length - 1];
@@ -2631,7 +2631,7 @@ export function LanguageSelector() {
         if (!next) return
         // Honor subscription gating — Continue must not bypass the paywall.
         if (!ctx.canAccessTopic(next.id)) {
-          hapticsWarning()
+          haptic.denied()
           ctx.setShowPaywall(true)
           return
         }
@@ -3026,7 +3026,7 @@ export function LanguageSelector() {
         if (signal.aborted) throw new DOMException('Autoplay aborted', 'AbortError');
 
         if (rewindNow) {
-          hapticsMedium()
+          haptic.action()
           i = loopStartIndex;
           wordCount = 0;
         } else {
@@ -3285,7 +3285,7 @@ export function LanguageSelector() {
   })
 
   const handleLanguageSelect = (language: { code: string; name: string }) => {
-    hapticsLight()
+    haptic.select()
 
     // The language is applied once the list has faded out (swapLanguagePage),
     // so nothing on screen changes while it goes; the grid's scroll goes back
@@ -3437,6 +3437,7 @@ export function LanguageSelector() {
   }
 
   const openLanguagePage = (type: "native" | "target") => {
+    haptic.tap()
     const panel = document.querySelector<HTMLElement>("[data-page-panel]")
     swapLanguagePage(() => {
       // The menu as it is now: the list is held to it (pageFloor).
@@ -4262,6 +4263,7 @@ export function LanguageSelector() {
   }
 
   const handlePreviousCategory = () => {
+    haptic.tap()
     unlockAudio()
     stopAudio()
     
@@ -4290,6 +4292,7 @@ export function LanguageSelector() {
   }
   
   const handleNextCategory = () => {
+    haptic.tap()
     unlockAudio()
     stopAudio()
     
@@ -4318,7 +4321,7 @@ export function LanguageSelector() {
   }
 
   const handlePrevious = () => {
-    hapticsLight()
+    haptic.tap()
     // 🔓 MOBILE FIX: Unlock audio on any user gesture
     unlockAudio()
     
@@ -4340,7 +4343,7 @@ export function LanguageSelector() {
   }
 
   const handleNext = () => {
-    hapticsLight()
+    haptic.tap()
     // 🔓 MOBILE FIX: Unlock audio on any user gesture
     unlockAudio()
     
@@ -4361,7 +4364,7 @@ export function LanguageSelector() {
   }
 
   const handlePlay = async () => {
-    hapticsMedium()
+    haptic.action()
     // Mark that user has interacted (prevents auto-play on page load)
     setHasUserInteracted(true)
 
@@ -4432,6 +4435,7 @@ export function LanguageSelector() {
   const handleCreatePlaylist = async () => {
     if (!newPlaylistName.trim() || !user?.id || !nativeLanguageCode || !targetLanguageCode) return
     
+    haptic.action()
     setIsCreatingPlaylist(true)
     try {
       const response = await fetch('/api/playlists', {
@@ -4468,6 +4472,7 @@ export function LanguageSelector() {
   const handleDeletePlaylist = async () => {
     if (!playlistToDelete || !user?.id) return
 
+    haptic.destructive()
     setIsDeletingPlaylist(true)
     try {
       const response = await fetch(`/api/playlists?playlistId=${playlistToDelete.id}`, {
@@ -4497,7 +4502,7 @@ export function LanguageSelector() {
   }
 
   const handleBackToTopics = async () => {
-    hapticsLight()
+    haptic.tap()
     // Save current position before going back — fire-and-forget so the back
     // navigation never waits on the network (the local mirror written by the
     // auto-save effect already has the position for instant resume).
@@ -4629,7 +4634,7 @@ export function LanguageSelector() {
     if (flashcardHoldTimerRef.current) clearTimeout(flashcardHoldTimerRef.current)
     setHoldingCardIndex(cardIndex)
     flashcardHoldTimerRef.current = setTimeout(() => {
-      hapticsMedium() // confirm the long-press revealed the example sentences
+      haptic.hold() // confirm the long-press revealed the example sentences
       setExampleModalData({
         vocabularyId: currentWord.id,
         sourceWord: getCurrentContent().sourceWord,
@@ -5068,6 +5073,7 @@ export function LanguageSelector() {
   }
 
   const handleSettingsClick = () => {
+    haptic.tap()
     cancelSettingsClose()
     const button = canMorphPages() ? settingsButton() : null
     flushSync(() => {
@@ -5120,6 +5126,7 @@ export function LanguageSelector() {
 
   const handleSettingsClose = () => {
     if (settingsCloseTimerRef.current) return
+    haptic.tap()
     const parts = settingsParts()
     const button = parts && canMorphPages() ? settingsButton() : null
     const morph = !!(parts && button)
@@ -5426,13 +5433,13 @@ export function LanguageSelector() {
 
     // Check if user can access this topic
     if (!canAccessTopic(topic.id)) {
-      hapticsWarning()
+      haptic.denied()
       setShowPaywall(true)
       return
     }
 
     // User has access, proceed
-    hapticsLight()
+    haptic.tap()
     lastTopicSectionRef.current = currentSection
     handleTopicSelect(topic)
   }
@@ -5472,7 +5479,7 @@ export function LanguageSelector() {
         longPressTimerRef.current = setTimeout(() => {
           longPressFiredRef.current = true
           longPressTimerRef.current = null
-          hapticsMedium()
+          haptic.hold()
           setQuizTopic({ id: topic.id, name: getTopicDisplayName(topic.id, topic.name) })
           releasePressedTile()
         }, 500)
@@ -6009,7 +6016,7 @@ export function LanguageSelector() {
                       <p className="text-white/50 text-sm mt-0.5">{t('settings.autoplay.desc')}</p>
                     </div>
                     <button
-                      onClick={() => updateSetting("autoPlay", !settings.autoPlay)}
+                      onClick={() => { haptic.toggle(); updateSetting("autoPlay", !settings.autoPlay) }}
                       className={`w-11 h-6 sm:w-12 sm:h-6 rounded-full transition-all duration-300 flex-shrink-0 ${
                         settings.autoPlay 
                           ? "bg-blue-500" 
@@ -6031,7 +6038,7 @@ export function LanguageSelector() {
                       <p className="text-white/50 text-sm mt-0.5">{t('settings.targetOnly.desc')}</p>
                     </div>
                     <button
-                      onClick={() => updateSetting("playTargetOnly", !settings.playTargetOnly)}
+                      onClick={() => { haptic.toggle(); updateSetting("playTargetOnly", !settings.playTargetOnly) }}
                       className={`w-11 h-6 sm:w-12 sm:h-6 rounded-full transition-all duration-300 flex-shrink-0 ${
                         settings.playTargetOnly 
                           ? "bg-blue-500" 
@@ -6053,7 +6060,7 @@ export function LanguageSelector() {
                       <p className="text-white/50 text-sm mt-0.5">{t('settings.phonetics.desc')}</p>
                     </div>
                     <button
-                      onClick={() => updateSetting("showPhonetics", !settings.showPhonetics)}
+                      onClick={() => { haptic.toggle(); updateSetting("showPhonetics", !settings.showPhonetics) }}
                       className={`w-11 h-6 sm:w-12 sm:h-6 rounded-full transition-all duration-300 flex-shrink-0 ${
                         settings.showPhonetics 
                           ? "bg-blue-500" 
@@ -6075,7 +6082,7 @@ export function LanguageSelector() {
                       <p className="text-white/50 text-sm mt-0.5">{t('settings.playCount.desc')}</p>
                     </div>
                     <button
-                      onClick={() => updateSetting("showPlayCount", !showPlayCount)}
+                      onClick={() => { haptic.toggle(); updateSetting("showPlayCount", !showPlayCount) }}
                       className={`w-11 h-6 sm:w-12 sm:h-6 rounded-full transition-all duration-300 flex-shrink-0 ${
                         showPlayCount
                           ? "bg-blue-500"
@@ -6101,7 +6108,7 @@ export function LanguageSelector() {
                     <p className="text-white/50 text-sm mt-0.5">{t('settings.rewind.desc')}</p>
                   </div>
                   <button
-                    onClick={() => updateSetting("rewindEnabled", !settings.rewindEnabled)}
+                    onClick={() => { haptic.toggle(); updateSetting("rewindEnabled", !settings.rewindEnabled) }}
                     className={`w-11 h-6 sm:w-12 sm:h-6 rounded-full transition-all duration-300 flex-shrink-0 ${
                       settings.rewindEnabled
                         ? "bg-blue-500"
@@ -6149,6 +6156,7 @@ export function LanguageSelector() {
                         <button
                           key={speed}
                           onClick={() => {
+                            haptic.select()
                             updateSetting("pronunciationSpeed", speed)
                           }}
                           className={`flex-1 px-3 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base transition-all duration-300 ${
@@ -6281,7 +6289,7 @@ export function LanguageSelector() {
               <h3 className="text-white font-semibold text-lg">{t('createPlaylist.title')}</h3>
               <button
                 ref={createPlaylistCloseRef}
-                onClick={closeCreatePlaylist}
+                onClick={() => { haptic.tap(); closeCreatePlaylist() }}
                 className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all"
               >
                 <Icon icon="solar:close-circle-bold" width="20" height="20" className="text-white/60" />
@@ -6316,7 +6324,7 @@ export function LanguageSelector() {
             
             <div className="flex gap-3">
               <button
-                onClick={closeCreatePlaylist}
+                onClick={() => { haptic.tap(); closeCreatePlaylist() }}
                 className="w-full flex-1 py-3 bg-white/10 backdrop-blur-sm border border-white/15 hover:bg-white/15 rounded-2xl text-white/80 font-medium transition-all"
               >
                 {t('common.cancel')}
@@ -6350,7 +6358,7 @@ export function LanguageSelector() {
                 {t('deletePlaylist.title')}
               </h3>
               <button
-                onClick={() => setPlaylistToDelete(null)}
+                onClick={() => { haptic.tap(); setPlaylistToDelete(null) }}
                 disabled={isDeletingPlaylist}
                 className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 disabled:opacity-50 transition-all"
               >
@@ -6367,7 +6375,7 @@ export function LanguageSelector() {
 
             <div className="flex gap-3">
               <button
-                onClick={() => setPlaylistToDelete(null)}
+                onClick={() => { haptic.tap(); setPlaylistToDelete(null) }}
                 disabled={isDeletingPlaylist}
                 className="flex-1 py-3 bg-white/10 hover:bg-white/20 disabled:opacity-50 rounded-lg text-white font-medium transition-all"
               >

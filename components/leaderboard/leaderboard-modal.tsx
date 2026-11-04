@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useCallback, useEffect, useRef, useState } from "react"
+import { haptic } from "@/lib/haptics"
 import { createPortal } from "react-dom"
 import { Icon } from "@iconify/react"
 import { useAuth } from "@/contexts/auth-context"
@@ -394,7 +395,7 @@ export function LeaderboardModal({
             {t('leaderboard.title')}
           </h2>
           <button
-            onClick={animateClose}
+            onClick={() => { haptic.tap(); animateClose() }}
             className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:bg-white/20 transition-all cursor-pointer"
             aria-label={t('leaderboard.aria.close')}
           >
@@ -407,7 +408,7 @@ export function LeaderboardModal({
             {([['week', t('leaderboard.thisWeek')], ['alltime', t('leaderboard.allTime')]] as const).map(([key, label]) => (
               <button
                 key={key}
-                onClick={() => setPeriod(key)}
+                onClick={() => { haptic.select(); setPeriod(key) }}
                 className={`flex-1 py-2 text-xs font-semibold transition-all ${
                   period === key ? 'bg-blue-500 text-white' : 'text-white/50 active:bg-white/10'
                 }`}
@@ -422,7 +423,7 @@ export function LeaderboardModal({
 
           <div className="flex bg-black/20 border border-white/10 rounded-xl overflow-hidden" role="tablist" aria-label={t('leaderboard.aria.scope')}>
             <button
-              onClick={() => setScope('language')}
+              onClick={() => { haptic.select(); setScope('language') }}
               className={`flex-1 py-2 text-xs font-semibold transition-all flex items-center justify-center gap-1.5 ${
                 scope === 'language' ? 'bg-blue-500 text-white' : 'text-white/50 active:bg-white/10'
               }`}
@@ -434,7 +435,7 @@ export function LeaderboardModal({
               {targetLanguageName}
             </button>
             <button
-              onClick={() => setScope('global')}
+              onClick={() => { haptic.select(); setScope('global') }}
               className={`flex-1 py-2 text-xs font-semibold transition-all flex items-center justify-center gap-1.5 ${
                 scope === 'global' ? 'bg-blue-500 text-white' : 'text-white/50 active:bg-white/10'
               }`}

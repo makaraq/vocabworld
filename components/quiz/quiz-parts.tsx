@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react"
 import { Icon } from "@iconify/react"
-import { hapticsLight, hapticsMedium, hapticsWarning } from "@/lib/haptics"
+import { haptic } from "@/lib/haptics"
 import { hasWordImage } from "@/lib/word-images"
 import { loadWordImage } from "@/lib/offline/word-image-cache"
 import { useWordImage } from "@/hooks/use-word-image"
@@ -115,13 +115,13 @@ export function QuizQuestionCard({ vocabularyId, word, playing, onPlay, coins, o
     if (turning.current) return
     if (!owned) {
       if (!coins.buy(vocabularyId)) {
-        hapticsWarning()
+        haptic.denied()
         onBroke()
         return
       }
       onSpent()
     }
-    hapticsMedium()
+    haptic.action()
     turn(true)
   }
 
@@ -130,7 +130,7 @@ export function QuizQuestionCard({ vocabularyId, word, playing, onPlay, coins, o
       {flipped ? (
         <QuizCardFrame className="p-0">
           <button
-            onClick={() => { hapticsLight(); turn(false) }}
+            onClick={() => { haptic.tap(); turn(false) }}
             className="absolute inset-0 w-full h-full flex flex-col items-center px-6 py-5 rounded-[inherit] focus:outline-none"
             aria-label={t("quiz.picture.aria.hide")}
           >

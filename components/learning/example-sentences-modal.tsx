@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { haptic } from '@/lib/haptics'
 import { Icon } from '@iconify/react'
 import { X, ChevronLeft, ChevronRight, Plus } from 'lucide-react'
 import createSupabaseClient from '@/lib/supabase/client'
@@ -170,10 +171,12 @@ export function ExampleSentencesModal({
   }, [vocabularyId, nativeLanguageCode, targetLanguageCode])
 
   const handlePrevious = () => {
+    haptic.tap()
     setCurrentIndex((prev) => (prev > 0 ? prev - 1 : sentences.length - 1))
   }
 
   const handleNext = () => {
+    haptic.tap()
     setCurrentIndex((prev) => (prev < sentences.length - 1 ? prev + 1 : 0))
   }
 
@@ -195,7 +198,7 @@ export function ExampleSentencesModal({
             <p className="text-white/60 text-sm drop-shadow">{targetWord}</p>
           </div>
           <button
-            onClick={onCloseAction}
+            onClick={() => { haptic.tap(); onCloseAction() }}
             className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all"
           >
             <X className="w-5 h-5 text-white/80" />
@@ -276,7 +279,7 @@ export function ExampleSentencesModal({
         {userId && onAddToPlaylistAction && !isLoading && !error && (
           <div className="p-5 border-t border-white/10">
             <button
-              onClick={(e) => onAddToPlaylistAction(e.currentTarget)}
+              onClick={(e) => { haptic.tap(); onAddToPlaylistAction(e.currentTarget) }}
               className="w-full bg-white/10 backdrop-blur-sm border border-white/25 hover:bg-white/20 text-white font-semibold py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-all"
             >
               <Plus className="w-5 h-5" />

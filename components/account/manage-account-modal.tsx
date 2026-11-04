@@ -8,7 +8,7 @@ import { deleteAccount } from "@/lib/account/delete-account"
 import { hasNativeAccountSheet } from "@/lib/native/account-sheet"
 import { NativeAccountSheet } from "@/components/account/native-account-sheet"
 import type { PermissionState } from "@/hooks/use-notifications"
-import { hapticsLight, hapticsMedium, hapticsWarning } from "@/lib/haptics"
+import { haptic } from "@/lib/haptics"
 import { OfflineDownloadsSection } from "@/components/offline/offline-downloads-section"
 import { HomeWidgetSection } from "@/components/account/home-widget-section"
 import { useT } from "@/components/providers/translation-provider"
@@ -527,7 +527,7 @@ function WebAccountModal({
                     </span>
                   </div>
                   <button
-                    onClick={() => { hapticsMedium(); openAppSettings() }}
+                    onClick={() => { haptic.tap(); openAppSettings() }}
                     className="w-full bg-blue-500/20 border border-blue-400/30 text-blue-300 py-2.5 rounded-xl font-medium text-sm hover:bg-blue-500/30 transition-all flex items-center justify-center gap-2"
                   >
                     <Icon icon="solar:settings-bold" width="16" />
@@ -551,7 +551,7 @@ function WebAccountModal({
                       </div>
                     </div>
                     <button
-                      onClick={() => { hapticsMedium(); onLeaderboardToggle?.(!showOnLeaderboard) }}
+                      onClick={() => { haptic.toggle(); onLeaderboardToggle?.(!showOnLeaderboard) }}
                       aria-pressed={showOnLeaderboard}
                       className={`w-11 h-6 rounded-full transition-all duration-300 flex-shrink-0 relative ${
                         showOnLeaderboard ? 'bg-blue-500' : 'bg-black/30 border border-white/20'
@@ -577,7 +577,7 @@ function WebAccountModal({
 
             {/* Manage Subscription */}
             <button
-              onClick={() => { hapticsLight(); handleManageSubscription() }}
+              onClick={() => { haptic.tap(); handleManageSubscription() }}
               className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white py-3 px-4 rounded-2xl font-medium text-sm hover:bg-white/15 transition-all flex items-center justify-center space-x-2"
             >
               <Icon icon="solar:settings-bold" width="18" height="18" />
@@ -586,7 +586,7 @@ function WebAccountModal({
 
             {/* Delete Account */}
             <button
-              onClick={() => { hapticsWarning(); setDeleteStep('confirm') }}
+              onClick={() => { haptic.destructive(); setDeleteStep('confirm') }}
               className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white py-3 px-4 rounded-2xl font-medium text-sm hover:bg-white/15 transition-all flex items-center justify-center space-x-2"
             >
               <Icon icon="solar:trash-bin-trash-bold" width="18" height="18" />
@@ -595,7 +595,7 @@ function WebAccountModal({
 
             {/* Sign Out */}
             <button
-              onClick={() => { hapticsLight(); onSignOutAction?.(); onCloseAction() }}
+              onClick={() => { haptic.tap(); onSignOutAction?.(); onCloseAction() }}
               className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white py-3 px-4 rounded-2xl font-medium text-sm hover:bg-white/15 transition-all flex items-center justify-center space-x-2"
             >
               <Icon icon="solar:logout-3-bold" width="18" height="18" />

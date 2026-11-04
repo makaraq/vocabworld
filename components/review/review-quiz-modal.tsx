@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect, useCallback, useRef } from "react"
 import { awardXp } from "@/lib/leveling/engine"
-import { hapticsSuccess, hapticsWarning, hapticsLight } from "@/lib/haptics"
+import { haptic } from "@/lib/haptics"
 import { preloadSoundEffects, playCorrectSound, playWrongSound } from "@/lib/sound-effects"
 import { Rating } from "@/lib/sr/fsrs"
 import { useT } from "@/components/providers/translation-provider"
@@ -80,7 +80,7 @@ export function ReviewQuizModal({
       return
     }
 
-    hapticsLight()
+    haptic.tap()
     setIsPlayingAudio(true)
 
     let url = `/api/universal-audio?wordId=${card.vocabularyId}&languageCode=${targetLanguageCode}`
@@ -197,12 +197,12 @@ export function ReviewQuizModal({
     setSessionState("answered")
 
     if (correct) {
-      hapticsSuccess()
+      haptic.correct()
       playCorrectSound()
       setCorrectCount((c) => c + 1)
       awardXp(userId, "review_correct")
     } else {
-      hapticsWarning()
+      haptic.wrong()
       playWrongSound()
       awardXp(userId, "review_miss")
     }
@@ -307,7 +307,7 @@ export function ReviewQuizModal({
                 total={cards.length}
               />
               <QuizResultActions>
-                <button onClick={() => { hapticsLight(); close() }} className={QUIZ_BUTTON}>
+                <button onClick={() => { haptic.tap(); close() }} className={QUIZ_BUTTON}>
                   {t('common.done')}
                 </button>
               </QuizResultActions>

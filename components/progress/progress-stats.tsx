@@ -1,5 +1,6 @@
 "use client"
 import { useEffect, useRef, useState } from "react"
+import { haptic } from "@/lib/haptics"
 import { Flame, TrendingUp, BookOpen } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { Icon } from "@iconify/react"
@@ -121,7 +122,7 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLa
           className={`bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 xs:p-3.5 sm:p-5 border border-white/20 cursor-pointer hover:bg-white/15 ${
             holdingProgressButton ? 'scale-105 transition-all duration-75' : 'scale-100 transition-all duration-300'
           }`}
-          onClick={() => setShowDetailedModal(true)}
+          onClick={() => { haptic.tap(); setShowDetailedModal(true) }}
           onTouchStart={() => setHoldingProgressButton(true)}
           onTouchEnd={() => setHoldingProgressButton(false)}
           onTouchCancel={() => setHoldingProgressButton(false)}
@@ -178,7 +179,7 @@ export function ProgressStats({ targetLanguageCode, targetLanguageName, nativeLa
           
           <button
             ref={leaderboardRef}
-            onClick={() => setShowLeaderboard(true)}
+            onClick={() => { haptic.tap(); setShowLeaderboard(true) }}
             className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 xs:p-3.5 sm:p-4 border border-white/20 hover:bg-white/15 transition-all active:scale-95"
             aria-label={bestRank ? t('progress.aria.rank', { rank: bestRank }) : t('progress.aria.viewLeaderboard')}
           >

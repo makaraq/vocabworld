@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState, useRef, useCallback, useEffect, useLayoutEffect } from "react"
+import { haptic } from "@/lib/haptics"
 import { Icon } from "@iconify/react"
 import { ArrowLeft, ChevronRight } from "lucide-react"
 import { useT } from "@/components/providers/translation-provider"
@@ -125,7 +126,7 @@ export function SearchWordLearning({
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <button
-          onClick={onBack}
+          onClick={() => { haptic.tap(); onBack() }}
           className="w-10 h-10 bg-black/30 border border-white/20 rounded-full flex items-center justify-center hover:bg-black/50 transition-all flex-shrink-0"
           aria-label={t('searchWord.aria.back')}
         >
@@ -140,7 +141,7 @@ export function SearchWordLearning({
           {fromLanguage}
         </button>
         <button
-          onClick={() => setSourceIsNative(prev => !prev)}
+          onClick={() => { haptic.select(); setSourceIsNative(prev => !prev) }}
           className="w-9 h-9 bg-white/10 border border-white/20 rounded-full flex items-center justify-center hover:bg-white/20 transition-all flex-shrink-0"
           aria-label={t('searchWord.aria.swap')}
         >
@@ -174,7 +175,7 @@ export function SearchWordLearning({
         )}
         {inputWord && !isSearching && (
           <button
-            onClick={() => { setInputWord(""); setSuggestions([]); setError(null) }}
+            onClick={() => { haptic.tap(); setInputWord(""); setSuggestions([]); setError(null) }}
             className="text-white/40 hover:text-white/70 transition-colors flex-shrink-0"
             aria-label={t('searchWord.aria.clear')}
           >
@@ -194,7 +195,7 @@ export function SearchWordLearning({
           {suggestions.map((suggestion, idx) => (
             <button
               key={idx}
-              onClick={() => handleSuggestionTap(suggestion)}
+              onClick={() => { haptic.tap(); handleSuggestionTap(suggestion) }}
               className={`w-full flex items-center justify-between px-5 py-4 rounded-xl transition-all text-left ${
                 addedSuggestions.has(suggestion)
                   ? 'bg-green-500/20 border border-green-400/30'
@@ -427,7 +428,7 @@ export function PlaylistSelectModal({ word, translation, userId, translations, n
         <div className="p-4 border-b border-white/10 flex items-center justify-between flex-shrink-0">
           <h3 className="text-white font-semibold text-lg">{t('playlistSelect.title')}</h3>
           <button
-            onClick={() => animateClose(onClose)}
+            onClick={() => { haptic.tap(); animateClose(onClose) }}
             className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all"
           >
             <Icon icon="solar:close-circle-bold" className="w-5 h-5 text-white/60" />
@@ -451,7 +452,7 @@ export function PlaylistSelectModal({ word, translation, userId, translations, n
               className="flex-1 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-3 py-2 text-white text-sm outline-none focus:border-white/40"
             />
             <button
-              onClick={handleCreatePlaylist}
+              onClick={() => { haptic.action(); handleCreatePlaylist() }}
               disabled={!newPlaylistName.trim() || isCreating}
               className="bg-white/10 backdrop-blur-sm border border-white/25 text-white px-4 py-2 rounded-2xl font-semibold text-sm hover:bg-white/20 disabled:opacity-40 transition-all"
             >
@@ -477,7 +478,7 @@ export function PlaylistSelectModal({ word, translation, userId, translations, n
               {playlists.map((playlist) => (
                 <button
                   key={playlist.id}
-                  onClick={() => handleSelectPlaylist(playlist.id)}
+                  onClick={() => { haptic.select(); handleSelectPlaylist(playlist.id) }}
                   disabled={isAdding === playlist.id || addedTo === playlist.id}
                   className={`w-full border rounded-2xl p-3 flex items-center justify-between transition-all disabled:opacity-80 ${addedTo === playlist.id ? 'bg-green-500/15 border-green-400/30' : 'bg-white/5 hover:bg-white/10 border-white/10'}`}
                 >

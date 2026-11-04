@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { Icon } from '@iconify/react'
 import { useT } from '@/components/providers/translation-provider'
-import { hapticsLight } from '@/lib/haptics'
+import { haptic } from '@/lib/haptics'
 import { THEMES, currentTheme, onThemeChange, setTheme, type ThemeId } from '@/lib/themes'
 
 // A row of theme swatches. Tapping one changes the app at once. A premium
@@ -40,9 +40,8 @@ export function ThemePicker({
             role="radio"
             aria-checked={on}
             onClick={() => {
-              hapticsLight()
-              if (theme.premium && !isPremium) onPremiumAction(theme.id)
-              else setTheme(theme.id)
+              if (theme.premium && !isPremium) { haptic.denied(); onPremiumAction(theme.id) }
+              else { haptic.select(); setTheme(theme.id) }
             }}
             className="flex flex-col items-center gap-1.5 min-w-0"
           >

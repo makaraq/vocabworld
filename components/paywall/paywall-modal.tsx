@@ -11,7 +11,7 @@ import { PRICING, formatPrice } from '@/lib/pricing'
 import { useAuth } from '@/contexts/auth-context'
 import { useRevenueCat } from '@/hooks/use-revenuecat'
 import { syncTrialReminder } from '@/lib/revenuecat-client'
-import { hapticsLight, hapticsMedium, hapticsSuccess } from '@/lib/haptics'
+import { haptic } from '@/lib/haptics'
 import { useT } from '@/components/providers/translation-provider'
 
 interface PaywallModalProps {
@@ -94,13 +94,13 @@ export function PaywallModal({
 
   const handleSubscribe = async () => {
     if (!user) return
-    hapticsLight()
+    haptic.action()
     clearError()
 
     const success = await purchasePackage(selectedPlan)
 
     if (success) {
-      hapticsSuccess()
+      haptic.success()
       setOptimisticPremium(selectedPlan)
       setPurchaseSuccess(true)
       fetch('/api/subscription/sync-rc', { method: 'POST' }).catch(() => {})
@@ -110,14 +110,14 @@ export function PaywallModal({
   }
 
   const handleCelebrationDismiss = () => {
-    hapticsLight()
+    haptic.tap()
     onSuccessAction?.()
     onCloseAction()
     setPurchaseSuccess(false)
   }
 
   const handleRestore = async () => {
-    hapticsLight()
+    haptic.tap()
     setRestoreStatus('loading')
     const success = await restorePurchases()
     if (success) {
@@ -324,7 +324,7 @@ export function PaywallModal({
         <div className="px-6 pt-6 pb-2 grid grid-cols-2 gap-3">
           {/* Monthly */}
           <button
-            onClick={() => { hapticsMedium(); setSelectedPlan('monthly') }}
+            onClick={() => { haptic.select(); setSelectedPlan('monthly') }}
             className={`relative p-4 rounded-2xl border-2 text-left transition-all backdrop-blur-sm ${
               selectedPlan === 'monthly'
                 ? 'border-white/70 bg-white/15'
@@ -350,7 +350,7 @@ export function PaywallModal({
 
           {/* Yearly */}
           <button
-            onClick={() => { hapticsMedium(); setSelectedPlan('yearly') }}
+            onClick={() => { haptic.select(); setSelectedPlan('yearly') }}
             className={`relative p-4 rounded-2xl border-2 text-left transition-all backdrop-blur-sm ${
               selectedPlan === 'yearly'
                 ? 'border-white/70 bg-white/15'

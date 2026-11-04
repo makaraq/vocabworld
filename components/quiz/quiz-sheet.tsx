@@ -2,7 +2,7 @@
 import { useState, useEffect, useLayoutEffect, useCallback, useRef, type ReactNode } from "react"
 import { createPortal } from "react-dom"
 import { Icon } from "@iconify/react"
-import { hapticsLight } from "@/lib/haptics"
+import { haptic } from "@/lib/haptics"
 import { canMorphFrom, morphPanelOpen, type PanelMorph } from "@/lib/morph-modal"
 
 interface QuizSheetProps {
@@ -243,7 +243,7 @@ export function QuizSheet({ title, icon, iconClassName, closeLabel, onClose, hea
           <div className="shrink-0 flex items-center gap-3">
             {headerExtra}
             <button
-              onClick={() => { hapticsLight(); close() }}
+              onClick={() => { haptic.tap(); close() }}
               className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:bg-white/20 transition-all cursor-pointer"
               aria-label={closeLabel}
             >

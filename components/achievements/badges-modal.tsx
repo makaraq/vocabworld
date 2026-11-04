@@ -11,7 +11,7 @@ import {
 } from '@/lib/achievements/definitions'
 import { getUnlocked, UnlockedRecord } from '@/lib/achievements/storage'
 import { useAuth } from '@/contexts/auth-context'
-import { hapticsLight } from '@/lib/haptics'
+import { haptic } from '@/lib/haptics'
 import { useT } from '@/components/providers/translation-provider'
 import type { UiKey } from '@/lib/i18n/ui-strings'
 import { canMorphFrom, morphPanelOpen, type PanelMorph } from '@/lib/morph-modal'
@@ -76,7 +76,7 @@ export function BadgesModal({ open, onCloseAction, morphFrom }: Props) {
   const animateClose = useCallback((how?: unknown, velocity?: number) => {
     if (closingRef.current) return
     closingRef.current = true
-    hapticsLight()
+    haptic.tap()
     if (morphRef.current) {
       const finish = () => {
         document.body.style.overflow = ''

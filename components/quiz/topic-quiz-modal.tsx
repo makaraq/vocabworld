@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import { awardXp } from "@/lib/leveling/engine"
 import { Icon } from "@iconify/react"
-import { hapticsSuccess, hapticsWarning, hapticsLight } from "@/lib/haptics"
+import { haptic } from "@/lib/haptics"
 import { preloadSoundEffects, playCorrectSound, playWrongSound } from "@/lib/sound-effects"
 import { useT } from "@/components/providers/translation-provider"
 import { usePictureCoins } from "@/lib/picture-coins"
@@ -79,7 +79,7 @@ export function TopicQuizModal({
       return
     }
 
-    hapticsLight()
+    haptic.tap()
     setIsPlayingAudio(true)
 
     let url = `/api/universal-audio?wordId=${card.vocabularyId}&languageCode=${targetLanguageCode}`
@@ -196,12 +196,12 @@ export function TopicQuizModal({
     setSessionState("answered")
 
     if (correct) {
-      hapticsSuccess()
+      haptic.correct()
       playCorrectSound()
       setCorrectCount((c) => c + 1)
       awardXp(userId, "quiz_correct")
     } else {
-      hapticsWarning()
+      haptic.wrong()
       playWrongSound()
       missedRef.current = true
     }
@@ -220,7 +220,7 @@ export function TopicQuizModal({
   }
 
   const handleNextRound = () => {
-    hapticsLight()
+    haptic.tap()
     setRound((r) => r + 1)
     fetchCards()
   }
@@ -323,7 +323,7 @@ export function TopicQuizModal({
                     {t('quiz.topic.tryAnother')}
                   </button>
                 )}
-                <button onClick={() => { hapticsLight(); close() }} className={`${QUIZ_BUTTON} text-white/75 font-medium`}>
+                <button onClick={() => { haptic.tap(); close() }} className={`${QUIZ_BUTTON} text-white/75 font-medium`}>
                   {t('common.done')}
                 </button>
               </QuizResultActions>

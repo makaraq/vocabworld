@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Icon } from '@iconify/react'
 import Lottie from 'lottie-react'
-import { hapticsSuccess } from '@/lib/haptics'
+import { haptic } from '@/lib/haptics'
 import trophyAnim from '@/lib/animations/trophy.json'
 import { useT } from '@/components/providers/translation-provider'
 
@@ -51,7 +51,7 @@ export function TopicCompleteModal({
     if (open) {
       const raf = requestAnimationFrame(() => setShown(true))
       setAnimKey((k) => k + 1)
-      hapticsSuccess()
+      haptic.success()
       return () => cancelAnimationFrame(raf)
     }
     setShown(false)
