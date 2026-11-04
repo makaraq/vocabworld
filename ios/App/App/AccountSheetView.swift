@@ -249,11 +249,6 @@ struct AccountSheetView: View {
                             .monospacedDigit()
                             .foregroundColor(ink(0.3))
                             .padding(.top, 4)
-                            // Three taps fire the real island pop-up, to test it.
-                            .padding(.vertical, 10)
-                            .padding(.horizontal, 40)
-                            .contentShape(Rectangle())
-                            .onTapGesture(count: 3) { model.send("islandTest") }
                     }
                 }
                 .padding(.horizontal, 20)

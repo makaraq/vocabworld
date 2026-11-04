@@ -22,7 +22,7 @@ import {
   type LevelUpEvent,
   type XpGain,
 } from "@/lib/leveling/engine"
-import { RANKS, levelInfo, rankForLevel } from "@/lib/leveling/definitions"
+import { levelInfo, rankForLevel } from "@/lib/leveling/definitions"
 import { showInIsland } from "@/lib/native/island-toast"
 import { LevelAvatar } from "./level-avatar"
 
@@ -99,29 +99,6 @@ function nextCheer(): (typeof CHEERS)[number] {
     localStorage.setItem(CHEERS_LEFT_KEY, JSON.stringify(left))
   } catch {}
   return CHEERS[pick]
-}
-
-let islandTests = 0
-
-/** Fires the island pop-up for testing (three taps on Manage Account's build
- *  stamp): a new rank, quarter and cheer each time, in the UI language. */
-export function showIslandTest(t: (key: (typeof CHEERS)[number]) => string, uiLang: string) {
-  const n = islandTests++
-  const rank = RANKS[n % RANKS.length]
-  const reached = ((n % 3) + 1) / 4
-  let percent = `${reached * 100}%`
-  try {
-    percent = new Intl.NumberFormat(uiLang, { style: "percent" }).format(reached)
-  } catch {}
-  void showInIsland({
-    level: rank.minLevel,
-    xp: 100 + (n % 8) * 60,
-    percent,
-    message: t(nextCheer()),
-    progress: reached,
-    color: rank.color,
-    accent: rank.accent,
-  })
 }
 
 function XpToast() {
