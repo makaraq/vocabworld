@@ -195,7 +195,7 @@ export default function LevelLab() {
             </tbody>
           </table>
           <p className="text-[11px] text-white/45 mt-3">
-            Level n needs 30·(n−1)² + 0.2·(n−1)³ XP in total: level 2 at 30, 10 at {xpForLevel(10).toLocaleString()}, 50 at {xpForLevel(50).toLocaleString()}, 100 at {xpForLevel(100).toLocaleString()}.
+            Level n needs 60·(n−1)² + 0.4·(n−1)³ XP in total: level 2 at 60, 10 at {xpForLevel(10).toLocaleString()}, 50 at {xpForLevel(50).toLocaleString()}, 100 at {xpForLevel(100).toLocaleString()}.
             Existing learners are back-paid for the words, topics and badges they already have the first time they open the app.
           </p>
         </Section>

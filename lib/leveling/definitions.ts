@@ -5,14 +5,14 @@
 // How the numbers were picked, from how the app is actually used:
 //   - A topic is ~20-25 words and a language has 43 topics (~1,000 words).
 //   - The daily goal is 20 words, so a "daily" learner plays ~20 new words a day.
-//   - The first levels must come in minutes (level 2 after 3 words, level 5 on
-//     day one) so the bar is always visibly moving; later levels stretch out so
-//     a border keeps meaning something.
+//   - The first level comes in a couple of words so the bar visibly moves, but
+//     a whole first topic is only level 3-4; later levels stretch out so a
+//     border keeps meaning something.
 //   - Simulated (simulateLearner below), a daily-goal learner reaches level 5
-//     on day 1, 10 on day 4, 20 ("Wordsmith") in about two weeks, finishes a
-//     language around level 35, 50 ("Linguist") at ~4 months and 100 at
-//     ~20 months. A casual learner gets to 20 in ~3 months. Levels past 50
-//     are for people who keep reviewing and pick up more languages.
+//     on day 2, 10 on day 8, 20 ("Wordsmith") at ~5 weeks, finishes a language
+//     around level 23, 50 ("Linguist") at ~8.5 months and 100 at ~3.7 years.
+//     A casual learner gets to 10 in ~5 weeks and 20 in ~7 months. Levels past
+//     50 are for people who keep reviewing and pick up more languages.
 
 export const MAX_LEVEL = 100
 
@@ -20,7 +20,7 @@ export const MAX_LEVEL = 100
 export function xpForLevel(level: number): number {
   const l = Math.max(1, Math.min(MAX_LEVEL, Math.floor(level)))
   const n = l - 1
-  return Math.round(30 * n * n + 0.2 * n * n * n)
+  return Math.round(60 * n * n + 0.4 * n * n * n)
 }
 
 export interface LevelInfo {
@@ -68,7 +68,7 @@ export const XP_BASE: Record<XpSource, number> = {
   word: 10,
   word_repeat: 2,
   first_word: 25,
-  daily_goal: 100,
+  daily_goal: 50,
   topic: 150,
   quiz_correct: 5,
   quiz_perfect: 75,
@@ -83,7 +83,7 @@ export const MULTIPLIED: ReadonlySet<XpSource> = new Set<XpSource>([
   'word', 'word_repeat', 'quiz_correct', 'review_correct', 'review_miss',
 ])
 
-export const BADGE_XP = { bronze: 50, silver: 100, gold: 250, platinum: 600, diamond: 1500 } as const
+export const BADGE_XP = { bronze: 15, silver: 40, gold: 120, platinum: 300, diamond: 800 } as const
 
 /** Repeats stop paying after this much XP in one day, so autoplay can't farm. */
 export const DAILY_REPEAT_CAP = 200
@@ -191,13 +191,17 @@ export function simulateLearner(persona: Persona, days: number, seed = 7): SimDa
   let topics = 0
   const out: SimDay[] = []
   const badgeAt = new Map<number, number>([
-    [1, BADGE_XP.bronze], [10, BADGE_XP.bronze], [25, BADGE_XP.silver], [50, BADGE_XP.silver],
+    [1, BADGE_XP.bronze], [5, BADGE_XP.bronze], [10, BADGE_XP.bronze], [25, BADGE_XP.silver], [50, BADGE_XP.silver],
     [100, BADGE_XP.gold], [250, BADGE_XP.gold], [500, BADGE_XP.platinum], [1000, BADGE_XP.platinum],
     [2500, BADGE_XP.diamond], [5000, BADGE_XP.diamond],
   ])
   const streakBadges = new Map<number, number>([
     [3, BADGE_XP.bronze], [7, BADGE_XP.silver], [14, BADGE_XP.gold], [30, BADGE_XP.platinum], [100, BADGE_XP.diamond],
   ])
+  // Words-in-a-day badges, each paid the first time a day reaches it.
+  xp += [
+    [5, BADGE_XP.bronze], [10, BADGE_XP.bronze], [20, BADGE_XP.silver], [50, BADGE_XP.gold], [100, BADGE_XP.platinum],
+  ].reduce((sum, [need, pay]) => sum + (persona.wordsPerDay >= need ? pay : 0), 0)
   for (let day = 1; day <= days; day++) {
     if (rand() < persona.activeChance) {
       streak++
