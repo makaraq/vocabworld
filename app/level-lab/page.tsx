@@ -11,6 +11,7 @@ import { LevelAvatar } from "@/components/leveling/level-avatar"
 import {
   BADGE_XP,
   DAILY_GOAL_WORDS,
+  DAILY_REPEAT_CAP,
   PERSONAS,
   RANKS,
   XP_BASE,
@@ -65,7 +66,7 @@ export default function LevelLab() {
 
   const actions: { label: string; icon: string; xp: string; run: () => void }[] = [
     { label: "Learn a word", icon: "solar:headphones-round-bold", xp: `+${XP_BASE.word}`, run: word },
-    { label: "Learn 10 in a row", icon: "solar:bolt-bold", xp: "combo!", run: tenWords },
+    { label: "Learn 10 in a row", icon: "solar:bolt-bold", xp: `+${XP_BASE.word * 10}`, run: tenWords },
     { label: "Replay a word", icon: "solar:repeat-bold", xp: `+${XP_BASE.word_repeat}`, run: () => awardXp(LAB_USER, "word_repeat", { streak }) },
     { label: "Finish a topic", icon: "solar:check-circle-bold", xp: `+${XP_BASE.topic}`, run: () => awardXp(LAB_USER, "topic") },
     { label: "Quiz: right answer", icon: "solar:question-circle-bold", xp: `+${XP_BASE.quiz_correct}`, run: () => awardXp(LAB_USER, "quiz_correct", { streak }) },
@@ -98,7 +99,7 @@ export default function LevelLab() {
         </Section>
 
         {/* Earn XP */}
-        <Section title="Earn XP" hint={`Day streak ${streak} → ×${streakMultiplier(streak).toFixed(2)} on words, quizzes and reviews. Chain actions within 45s for up to ×${comboMultiplier(11).toFixed(1)} more.`}>
+        <Section title="Earn XP" hint={`Day streak ${streak} → ×${streakMultiplier(streak).toFixed(2)} on words, quizzes and reviews. Chain right answers within 45s for up to ×${comboMultiplier(11).toFixed(1)} more.`}>
           <div className="flex items-center gap-3 mb-3">
             <Icon icon="solar:fire-bold" className="text-orange-400" width="18" />
             <input type="range" min={0} max={40} value={streak} onChange={(e) => setStreak(+e.target.value)} className="flex-1 accent-orange-400" />
@@ -169,33 +170,34 @@ export default function LevelLab() {
         <PersonaChart />
 
         {/* Rules */}
-        <Section title="Where XP comes from" hint="Rewards marked ×streak ×combo grow with your streak and with chained actions.">
+        <Section title="Where XP comes from" hint="×streak grows with your day streak. ×combo grows with right answers in a row.">
           <table className="w-full text-[13px]">
             <tbody>
               {[
-                ["New word heard through", XP_BASE.word, true],
-                ["Replay a learned word (max 200/day)", XP_BASE.word_repeat, true],
-                ["First word of the day", XP_BASE.first_word, false],
-                [`Daily goal (${DAILY_GOAL_WORDS} words)`, XP_BASE.daily_goal, false],
-                ["Topic completed (first time)", XP_BASE.topic, false],
-                ["Quiz right answer", XP_BASE.quiz_correct, true],
-                ["Quiz perfect round", XP_BASE.quiz_perfect, false],
-                ["Review remembered", XP_BASE.review_correct, true],
-                ["Review forgotten", XP_BASE.review_miss, true],
-                ["New language", XP_BASE.language, false],
-                ["Badge: bronze / silver / gold", `${BADGE_XP.bronze} / ${BADGE_XP.silver} / ${BADGE_XP.gold}`, false],
-                ["Badge: platinum / diamond", `${BADGE_XP.platinum} / ${BADGE_XP.diamond}`, false],
+                ["New word heard through", XP_BASE.word, "×streak"],
+                [`Replay a learned word (max ${DAILY_REPEAT_CAP}/day)`, XP_BASE.word_repeat, ""],
+                ["First word of the day", XP_BASE.first_word, ""],
+                [`Daily goal (${DAILY_GOAL_WORDS} words)`, XP_BASE.daily_goal, ""],
+                ["Topic completed (first time)", XP_BASE.topic, ""],
+                ["Quiz right answer", XP_BASE.quiz_correct, "×streak ×combo"],
+                ["Quiz perfect round", XP_BASE.quiz_perfect, ""],
+                ["Review remembered", XP_BASE.review_correct, "×streak ×combo"],
+                ["Review forgotten", XP_BASE.review_miss, "×streak"],
+                ["New language", XP_BASE.language, ""],
+                ["Badge: bronze / silver / gold", `${BADGE_XP.bronze} / ${BADGE_XP.silver} / ${BADGE_XP.gold}`, ""],
+                ["Badge: platinum / diamond", `${BADGE_XP.platinum} / ${BADGE_XP.diamond}`, ""],
+                ["Any language badge", BADGE_XP.bronze, ""],
               ].map(([label, amount, mult]) => (
                 <tr key={label as string} className="border-b border-white/5">
                   <td className="py-2 text-white/75">{label}</td>
                   <td className="py-2 text-right font-bold tabular-nums">+{amount}</td>
-                  <td className="py-2 pl-2 text-right text-[10px] text-orange-300 w-16">{mult ? "×streak ×combo" : ""}</td>
+                  <td className="py-2 pl-2 text-right text-[10px] text-orange-300 w-16">{mult}</td>
                 </tr>
               ))}
             </tbody>
           </table>
           <p className="text-[11px] text-white/45 mt-3">
-            Level n needs 60·(n−1)² + 0.4·(n−1)³ XP in total: level 2 at 60, 10 at {xpForLevel(10).toLocaleString()}, 50 at {xpForLevel(50).toLocaleString()}, 100 at {xpForLevel(100).toLocaleString()}.
+            Level n needs 50·(n−1)·(n+6) XP in total: level 2 at {xpForLevel(2).toLocaleString()}, 10 at {xpForLevel(10).toLocaleString()}, 50 at {xpForLevel(50).toLocaleString()}, 100 at {xpForLevel(100).toLocaleString()}.
             Existing learners are back-paid for the words, topics and badges they already have the first time they open the app.
           </p>
         </Section>

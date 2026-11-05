@@ -10,11 +10,12 @@
 //   - getLevelState(userId)              current XP/level for the account sheet
 //   - setLevelUser(userId, profile, { sync: true })  who's signed in; starts sync
 
-import { ACHIEVEMENTS_BY_ID, type Tier } from '@/lib/achievements/definitions'
+import { ACHIEVEMENTS_BY_ID, type AchievementDef } from '@/lib/achievements/definitions'
 import { getUnlocked } from '@/lib/achievements/storage'
 import { subscribeUnlock } from '@/lib/achievements/engine'
 import {
   BADGE_XP,
+  COMBO_SOURCES,
   COMBO_WINDOW_MS,
   DAILY_GOAL_WORDS,
   DAILY_REPEAT_CAP,
@@ -175,10 +176,11 @@ export function awardXp(
   }
 
   let multiplier = 1
-  if (MULTIPLIED.has(source)) {
+  if (MULTIPLIED.has(source)) multiplier = streakMultiplier(state.streak)
+  if (COMBO_SOURCES.has(source)) {
     state.combo = now - state.lastGainAt < COMBO_WINDOW_MS ? state.combo + 1 : 1
     state.lastGainAt = now
-    multiplier = streakMultiplier(state.streak) * comboMultiplier(state.combo)
+    multiplier *= comboMultiplier(state.combo)
   }
   const amount = Math.max(1, Math.round(base * multiplier))
   if (source === 'word_repeat') state.repeatXpToday += amount
@@ -237,8 +239,10 @@ export function awardWordXp(
   }
 }
 
-function badgeXp(tier: Tier): number {
-  return BADGE_XP[tier]
+/** By tier, except language badges: opening a language takes no learning, so
+ *  ten of them mustn't be worth more than a hundred words. */
+function badgeXp(def: AchievementDef): number {
+  return def.category === 'language' ? BADGE_XP.bronze : BADGE_XP[def.tier]
 }
 
 /**
@@ -260,7 +264,7 @@ export function seedFromStats(
   if (!state.seeded) {
     const badges = getUnlocked(userId).reduce((sum, r) => {
       const def = ACHIEVEMENTS_BY_ID[r.id]
-      return sum + (def ? badgeXp(def.tier) : 0)
+      return sum + (def ? badgeXp(def) : 0)
     }, 0)
     const earned =
       (stats.wordsLearned ?? 0) * XP_BASE.word +
@@ -300,7 +304,7 @@ export function startBadgeXpBridge(): void {
   subscribeUnlock(({ achievement }) => {
     const userId = currentUserId
     if (!getLevelState(userId).seeded) return
-    awardXp(userId, 'badge', { amount: badgeXp(achievement.tier) })
+    awardXp(userId, 'badge', { amount: badgeXp(achievement) })
   })
 }
 
