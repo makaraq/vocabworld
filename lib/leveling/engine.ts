@@ -373,7 +373,9 @@ export function setLevelUser(
     clearTimeout(pushTimer)
     if (next) {
       listenForFlush()
-      void syncNow()
+      // Ask for the total even with nothing to send: a sign-in on a new device
+      // has XP waiting on the server.
+      void syncNow(false, true)
     }
   }
 }
