@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect, useCallback, useRef } from "react"
-import { awardXp } from "@/lib/leveling/engine"
+import { awardXp, holdCelebrations } from "@/lib/leveling/engine"
 import { Icon } from "@iconify/react"
 import { haptic } from "@/lib/haptics"
 import { preloadSoundEffects, playCorrectSound, playWrongSound } from "@/lib/sound-effects"
@@ -56,6 +56,9 @@ export function TopicQuizModal({
   const audioElRef = useRef<HTMLAudioElement | null>(null)
   const audioContextRef = useRef<AudioContext | null>(null)
   const activeSourceRef = useRef<AudioBufferSourceNode | null>(null)
+
+  // A border earned here celebrates once the quiz is closed.
+  useEffect(() => holdCelebrations(), [])
 
   useEffect(() => {
     preloadSoundEffects()

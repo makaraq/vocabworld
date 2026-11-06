@@ -1,13 +1,15 @@
 "use client"
 
-// The two moments XP shows itself while you learn:
+// The two moments XP shows itself:
 //   - XpToast: a small pill under the status bar, "+340 XP · 50%", each time
-//     the level bar passes a quarter. Every gain in between stays quiet. On an
-//     iPhone with a Dynamic Island it grows out of the island instead
-//     (lib/native/island-toast.ts).
-//   - LevelUpOverlay: the full-screen celebration — rays, shockwaves, the
-//     letters of LEVEL UP dropping in, confetti, and when a new rank comes
-//     with it, the old border bursting into the new one and the new title.
+//     the level bar passes a quarter, and "LEVEL UP!" when it fills. Every gain
+//     in between stays quiet. On an iPhone with a Dynamic Island it grows out
+//     of the island instead (lib/native/island-toast.ts).
+//   - LevelUpOverlay: the full-screen celebration of a new border — rays,
+//     shockwaves, the letters of LEVEL UP dropping in, confetti, the old border
+//     bursting into the new one and the new title. It never interrupts
+//     learning: a border earned in a lesson, quiz or review waits until that's
+//     over (holdCelebrations in lib/leveling/engine.ts).
 // Mounted once, by AchievementProvider (and by the Level Lab).
 
 import React, { useCallback, useEffect, useRef, useState } from "react"
@@ -16,14 +18,18 @@ import { Icon } from "@iconify/react"
 import { useT } from "@/components/providers/translation-provider"
 import { haptic } from "@/lib/haptics"
 import {
+  celebrationsHeld,
+  clearUnseenRankUp,
   getLevelProfile,
-  subscribeLevelUp,
+  getUnseenRankUp,
+  subscribeLevelChange,
   subscribeXpGain,
   type LevelUpEvent,
   type XpGain,
 } from "@/lib/leveling/engine"
 import { levelInfo, rankForLevel } from "@/lib/leveling/definitions"
 import { showInIsland } from "@/lib/native/island-toast"
+import { whenQuiet } from "@/lib/quiet-window"
 import { LevelAvatar } from "./level-avatar"
 
 export function LevelOverlays() {
@@ -39,6 +45,8 @@ export function LevelOverlays() {
   )
 }
 
+const LETTERS_KEY = "level.up" as const
+
 // ── XP toast ─────────────────────────────────────────────────────────────────
 
 /** Which quarter of which level `xp` is in, as one count that only grows. */
@@ -52,12 +60,14 @@ interface ToastState {
   total: number
   xp: number
   bump: number
+  /** The bar just filled, rather than passing a quarter. */
+  levelUp: boolean
 }
 
-/** The quarter of the level `xp` has just passed (25%, 50% or 75%), and
- *  how it is written in the UI language. */
-function quarterReached(xp: number, uiLang: string) {
-  const reached = Math.floor(levelInfo(xp).progress * 4) / 4
+/** The quarter of the level `xp` has just passed (25%, 50% or 75%), or the
+ *  whole bar for a level-up, and how it is written in the UI language. */
+function quarterReached(xp: number, uiLang: string, levelUp = false) {
+  const reached = levelUp ? 1 : Math.floor(levelInfo(xp).progress * 4) / 4
   let pct = `${Math.round(reached * 100)}%`
   try {
     pct = new Intl.NumberFormat(uiLang, { style: "percent" }).format(reached)
@@ -115,11 +125,11 @@ function XpToast() {
   translate.current = t
 
   useEffect(() => {
-    const showWeb = (total: number, xp: number) => {
+    const showWeb = (total: number, xp: number, levelUp: boolean) => {
       clearTimeout(hideTimer.current)
       clearTimeout(goneTimer.current)
       setLeaving(false)
-      setToast({ total, xp, bump: ++bump.current })
+      setToast({ total, xp, bump: ++bump.current, levelUp })
       hideTimer.current = setTimeout(() => {
         setLeaving(true)
         goneTimer.current = setTimeout(() => setToast(null), 260)
@@ -129,20 +139,23 @@ function XpToast() {
       const u = unshown.current
       if (u.userId !== g.userId) unshown.current = { userId: g.userId, xp: 0 }
       unshown.current.xp += g.amount
-      // A full bar is the level-up overlay's moment; it starts the count over.
-      if (g.levelAfter > g.levelBefore) {
+      const levelUp = g.levelAfter > g.levelBefore
+      // A new border away from a lesson is about to get the full-screen moment.
+      const newBorder = rankForLevel(g.levelBefore).id !== rankForLevel(g.levelAfter).id
+      if (levelUp && newBorder && !celebrationsHeld()) {
         unshown.current.xp = 0
         return
       }
-      if (quarterOf(g.totalXp) <= quarterOf(g.totalXp - g.amount)) return
+      if (!levelUp && quarterOf(g.totalXp) <= quarterOf(g.totalXp - g.amount)) return
       const total = unshown.current.xp
       unshown.current.xp = 0
       // On an iPhone with a Dynamic Island it grows out of the island instead.
       const level = levelInfo(g.totalXp).level
       const rank = rankForLevel(level)
-      const { reached, pct } = quarterReached(g.totalXp, lang.current)
-      void showInIsland({ level, xp: total, percent: pct, message: translate.current(nextCheer()), progress: reached, color: rank.color, accent: rank.accent })
-        .then((shown) => { if (!shown) showWeb(total, g.totalXp) })
+      const { reached, pct } = quarterReached(g.totalXp, lang.current, levelUp)
+      const message = translate.current(levelUp ? LETTERS_KEY : nextCheer())
+      void showInIsland({ level, xp: total, percent: pct, message, progress: reached, color: rank.color, accent: rank.accent })
+        .then((shown) => { if (!shown) showWeb(total, g.totalXp, levelUp) })
     })
   }, [])
 
@@ -155,7 +168,7 @@ function XpToast() {
   const info = levelInfo(toast.xp)
   const rank = rankForLevel(info.level)
   // The quarter just passed: 25%, 50% or 75%, written the UI language's way.
-  const { reached, pct } = quarterReached(toast.xp, uiLang)
+  const { reached, pct } = quarterReached(toast.xp, uiLang, toast.levelUp)
   return (
     <div
       className="fixed left-1/2 z-[70] pointer-events-none w-max max-w-[92vw]"
@@ -175,7 +188,7 @@ function XpToast() {
         <span key={toast.bump} className="lvl-shiny-text font-extrabold text-base tabular-nums" style={{ animation: "lvl-bump .35s ease-out, lvl-text-shine 2.5s linear infinite" }}>
           +{toast.total} XP
         </span>
-        <span className="text-[11px] font-bold tabular-nums" style={{ color: rank.color }}>{pct}</span>
+        <span className="text-[11px] font-bold tabular-nums" style={{ color: rank.color }}>{toast.levelUp ? t(LETTERS_KEY) : pct}</span>
       </div>
     </div>
   )
@@ -183,29 +196,46 @@ function XpToast() {
 
 // ── Level-up overlay ─────────────────────────────────────────────────────────
 
-const LETTERS_KEY = "level.up" as const
+/** How long after learning ends before the celebration, so the way back out of
+ *  the lesson has finished and the learner has landed. */
+const SETTLE_MS = 900
 
 function LevelUpOverlay() {
   const { t } = useT()
-  const [queue, setQueue] = useState<LevelUpEvent[]>([])
-  const evt = queue[0] ?? null
+  const [evt, setEvt] = useState<LevelUpEvent | null>(null)
+  const showing = useRef(false)
 
   useEffect(() => {
-    return subscribeLevelUp((e) => {
-      setQueue((q) => {
-        // Several levels at once (a big badge) merge into one celebration.
-        if (q.length > 0) {
-          const last = q[q.length - 1]
-          const merged: LevelUpEvent = { ...last, to: e.to, rank: e.rank, newRank: last.newRank || e.newRank }
-          return [...q.slice(0, -1), merged]
-        }
-        return [e]
-      })
-    })
+    let timer: ReturnType<typeof setTimeout> | undefined
+    let alive = true
+    const ready = () =>
+      !showing.current && !celebrationsHeld() && document.visibilityState === "visible" && !!getUnseenRankUp()
+    const check = () => {
+      if (timer !== undefined || !ready()) return
+      timer = setTimeout(async () => {
+        await whenQuiet()
+        timer = undefined
+        // Learning may have started again while this waited.
+        if (!alive || !ready()) return
+        showing.current = true
+        setEvt(getUnseenRankUp())
+      }, SETTLE_MS)
+    }
+    check()
+    const off = subscribeLevelChange(check)
+    document.addEventListener("visibilitychange", check)
+    return () => {
+      alive = false
+      clearTimeout(timer)
+      off()
+      document.removeEventListener("visibilitychange", check)
+    }
   }, [])
 
   const close = useCallback(() => {
-    setQueue((q) => q.slice(1))
+    clearUnseenRankUp()
+    showing.current = false
+    setEvt(null)
   }, [])
 
   if (!evt) return null

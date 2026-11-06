@@ -6,7 +6,9 @@
 //   - awardWordXp(userId, stats)         a new word: base + first-of-day + daily goal
 //   - seedFromStats(userId, stats)       first run for an existing learner: back-pay
 //                                         the XP they already earned, silently
-//   - subscribeXpGain / subscribeLevelUp UI listeners (components/leveling)
+//   - subscribeXpGain                    UI listener (components/leveling)
+//   - getUnseenRankUp / clearUnseenRankUp a new border still to be celebrated
+//   - holdCelebrations()                 "learning now": a border waits till this ends
 //   - getLevelState(userId)              current XP/level for the account sheet
 //   - setLevelUser(userId, profile, { sync: true })  who's signed in; starts sync
 
@@ -53,12 +55,15 @@ export interface LevelState {
   /** This device's back-pay, not yet sent. The server grants a user's
    *  back-pay once, so a second device's is dropped rather than added. */
   seedXp: number
+  /** Levels crossed since a new border was earned, until its celebration has
+   *  played. Saved, so closing the app mid-lesson can't lose the moment. */
+  unseenRank: { from: number; to: number } | null
 }
 
 const EMPTY: LevelState = {
   xp: 0, seeded: false, lastGainAt: 0, combo: 0, streak: 0,
   firstWordDay: '', goalDay: '', repeatDay: '', repeatXpToday: 0, languages: [],
-  syncedXp: 0, pendingXp: 0, seedXp: 0,
+  syncedXp: 0, pendingXp: 0, seedXp: 0, unseenRank: null,
 }
 
 export interface XpGain {
@@ -85,18 +90,11 @@ export interface LevelUpEvent {
 }
 
 type GainListener = (e: XpGain) => void
-type LevelUpListener = (e: LevelUpEvent) => void
 const gainListeners = new Set<GainListener>()
-const levelUpListeners = new Set<LevelUpListener>()
 
 export function subscribeXpGain(fn: GainListener): () => void {
   gainListeners.add(fn)
   return () => gainListeners.delete(fn)
-}
-
-export function subscribeLevelUp(fn: LevelUpListener): () => void {
-  levelUpListeners.add(fn)
-  return () => levelUpListeners.delete(fn)
 }
 
 /** Fires whenever a user's XP changes (gains, seeding, Level Lab edits). */
@@ -189,6 +187,12 @@ export function awardXp(
   state.xp += amount
   state.pendingXp += amount
   const levelAfter = levelInfo(state.xp).level
+  if (levelAfter > levelBefore) {
+    if (state.unseenRank) state.unseenRank.to = levelAfter
+    else if (rankForLevel(levelBefore).id !== rankForLevel(levelAfter).id) {
+      state.unseenRank = { from: levelBefore, to: levelAfter }
+    }
+  }
   save(userId, state)
 
   const gain: XpGain = {
@@ -196,14 +200,50 @@ export function awardXp(
     totalXp: state.xp, levelBefore, levelAfter,
   }
   if (!opts.silent) emit(gainListeners, gain)
-  if (levelAfter > levelBefore) {
-    const rankBefore = rankForLevel(levelBefore)
-    const rank = rankForLevel(levelAfter)
-    emit(levelUpListeners, {
-      userId, from: levelBefore, to: levelAfter, rankBefore, rank, newRank: rank.id !== rankBefore.id,
-    })
-  }
   return gain
+}
+
+// ── Celebrating a new border ─────────────────────────────────────────────────
+// The full-screen moment never interrupts learning. Lessons, quizzes and
+// reviews hold it for as long as they're open, and it plays once they're done.
+
+let celebrationHolds = 0
+
+/** Learning has started. Call what it returns when it ends. */
+export function holdCelebrations(): () => void {
+  celebrationHolds++
+  let released = false
+  return () => {
+    if (released) return
+    released = true
+    celebrationHolds--
+    window.dispatchEvent(new Event(CHANGE_EVENT))
+  }
+}
+
+export function celebrationsHeld(): boolean {
+  return celebrationHolds > 0
+}
+
+/** The signed-in learner's new border still to be celebrated, if any. */
+export function getUnseenRankUp(): LevelUpEvent | null {
+  if (typeof window === 'undefined' || !currentUserId) return null
+  const unseen = getLevelState(currentUserId).unseenRank
+  if (!unseen) return null
+  return {
+    userId: currentUserId,
+    from: unseen.from,
+    to: unseen.to,
+    rankBefore: rankForLevel(unseen.from),
+    rank: rankForLevel(unseen.to),
+    newRank: true,
+  }
+}
+
+export function clearUnseenRankUp(): void {
+  const state = getLevelState(currentUserId)
+  state.unseenRank = null
+  save(currentUserId, state)
 }
 
 /**
@@ -321,8 +361,11 @@ export function setLevelUser(
   profile: LevelProfile = {},
   opts: { sync?: boolean } = {},
 ): void {
+  const changed = userId !== currentUserId
   currentUserId = userId
   currentProfile = profile
+  // A border they earned last time and never saw can play now.
+  if (changed && typeof window !== 'undefined') window.dispatchEvent(new Event(CHANGE_EVENT))
   const next = opts.sync ? userId : null
   if (next !== syncUserId) {
     syncUserId = next

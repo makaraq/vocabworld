@@ -22,7 +22,7 @@ import {
   streakMultiplier,
   xpForLevel,
 } from "@/lib/leveling/definitions"
-import { awardWordXp, awardXp, resetLevel, setLevelUser, setXp } from "@/lib/leveling/engine"
+import { awardWordXp, awardXp, holdCelebrations, resetLevel, setLevelUser, setXp } from "@/lib/leveling/engine"
 import { avatarSeedFor, resolveAvatar } from "@/lib/avatars/smiley-avatar"
 
 const LAB_USER = "level-lab"
@@ -41,6 +41,16 @@ export default function LevelLab() {
     setLevelUser(LAB_USER, { src: avatar, initials: "ME" })
     return () => clearInterval(burstRef.current)
   }, [avatar])
+
+  // Stands in for a lesson: new borders wait until it ends, as in the app.
+  const [inLesson, setInLesson] = useState(false)
+  const lessonRef = useRef<(() => void) | null>(null)
+  useEffect(() => () => lessonRef.current?.(), [])
+  const toggleLesson = () => {
+    lessonRef.current?.()
+    lessonRef.current = inLesson ? null : holdCelebrations()
+    setInLesson(!inLesson)
+  }
 
   const word = () => {
     const n = wordsToday + 1
@@ -76,6 +86,7 @@ export default function LevelLab() {
     { label: "Gold badge", icon: "solar:cup-star-bold", xp: `+${BADGE_XP.gold}`, run: () => awardXp(LAB_USER, "badge", { amount: BADGE_XP.gold }) },
     { label: "Diamond badge", icon: "solar:crown-star-bold", xp: `+${BADGE_XP.diamond}`, run: () => awardXp(LAB_USER, "badge", { amount: BADGE_XP.diamond }) },
     { label: "Start a new language", icon: "solar:global-bold", xp: `+${XP_BASE.language}`, run: () => awardXp(LAB_USER, "language") },
+    { label: inLesson ? "Leave the lesson" : "Start a lesson", icon: "solar:book-bold", xp: inLesson ? "borders wait" : "not in one", run: toggleLesson },
     { label: "New day", icon: "solar:sun-2-bold", xp: "resets daily", run: () => { setWordsToday(0); setStreak((s) => s + 1); clearDay() } },
   ]
 

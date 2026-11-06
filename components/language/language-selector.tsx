@@ -15,7 +15,7 @@ import { normalizeLangParam, vocabKey } from "@/lib/offline/offline-manager"
 import { PlaylistSelectModal } from "@/components/learning/search-word-learning"
 import { ManageAccountModal } from "@/components/account/manage-account-modal"
 import { avatarSeedFor, resolveAvatar } from "@/lib/avatars/smiley-avatar"
-import { awardWordXp, awardXp, setLevelUser } from "@/lib/leveling/engine"
+import { awardWordXp, awardXp, holdCelebrations, setLevelUser } from "@/lib/leveling/engine"
 import { useNotifications } from "@/hooks/use-notifications"
 import { NotificationPromptModal } from "@/components/notifications/notification-prompt-modal"
 import { CoachMarkOverlay, type CoachMarkStep } from "@/components/tutorial/coach-mark-overlay"
@@ -2574,6 +2574,9 @@ export function LanguageSelector() {
       initials: name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2),
     }, { sync: true })
   }, [user?.id, user?.user_metadata?.avatar_url, user?.user_metadata?.picture])
+  // ⭐ A new border's full-screen moment waits until the lesson is over.
+  const onLearningPage = currentPage === "learning"
+  useEffect(() => (onLearningPage ? holdCelebrations() : undefined), [onLearningPage])
   useEffect(() => {
     reportProgress({
       userId: user?.id || null,
