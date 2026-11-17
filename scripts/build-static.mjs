@@ -30,12 +30,15 @@ fs.mkdirSync(outDir, { recursive: true })
 //  - the audio lookup CSVs (~37 MB), read only by the server's audio API
 //  - the flashcard art, which the app loads from the site and caches
 //    (lib/offline/word-image-cache.ts) so the install doesn't grow with it
+//  - two old background photos nothing references any more (~875 KB)
 const publicDir = path.join(root, 'public')
 const skipFromBundle = new Set([
   path.join(publicDir, 'data', 'backblaze-urls-20250909-180354.csv'),
   path.join(publicDir, 'data', 'common-phrases-b2-urls.csv'),
   path.join(publicDir, 'data', 'verb-b2-urls.csv'),
   path.join(publicDir, 'word-images'),
+  path.join(publicDir, 'bg (2).jpeg'),
+  path.join(publicDir, 'gradient-background.jpeg'),
 ])
 if (fs.existsSync(publicDir)) {
   copyDir(publicDir, outDir, skipFromBundle)
